@@ -168,7 +168,7 @@ type
     function GetConnection(usage: String): TFDBConnection; Override;
     procedure YieldConnection(stmt: TFDBConnection); Override;
     function NamePrefix: String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; overload; override;
     constructor Create(sHL7Dict: String); overload;
@@ -1434,11 +1434,11 @@ begin
     FManager.Free;
 end;
 
-function THL7V2AccessDictionary.sizeInBytesV : cardinal;
+function THL7V2AccessDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FManager.sizeInBytes);
-  inc(result, FStmt.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FManager.sizeInBytes(magic));
+  inc(result, FStmt.sizeInBytes(magic));
 end;
 
 end.

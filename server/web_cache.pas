@@ -30,6 +30,8 @@ type
     FMaxSize: Cardinal;
     FCaching : boolean;
     function generateKey(ep : String; req : TIdHTTPRequestInfo) : String;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -88,24 +90,27 @@ var
   pos : integer;
   co : TCachedHTTPResponse;
 begin
-  pos := response.ContentStream.Position;
-  key := generateKey(ep, request);
-  co := TCachedHTTPResponse.Create;
-  try
-    co.ContentType := response.ContentType;
-    co.LoadFromStream(response.ContentStream);
-    co.Summary := summary;
-    FLock.Lock;
+  if Caching then
+  begin
+    pos := response.ContentStream.Position;
+    key := generateKey(ep, request);
+    co := TCachedHTTPResponse.Create;
     try
-      FCache.AddOrSetValue(key, co.Link);
-      inc(FSize, co.Size);
+      co.ContentType := response.ContentType;
+      co.LoadFromStream(response.ContentStream);
+      co.Summary := summary;
+      FLock.Lock;
+      try
+        FCache.AddOrSetValue(key, co.Link);
+        inc(FSize, co.Size);
+      finally
+        FLock.Unlock;
+      end;
     finally
-      FLock.Unlock;
+      co.Free;
     end;
-  finally
-    co.Free;
+    response.ContentStream.Position := pos;
   end;
-  response.ContentStream.Position := pos;
 end;
 
 function THTTPCacheManager.respond(ep : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; var summary : String): boolean;
@@ -140,6 +145,11 @@ begin
   end;
 end;
 
+
+function THTTPCacheManager.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + SizeOf(FLock) + SizeOf(FSize) + FCache.sizeInBytes(magic)+SizeOf(FMaxSize)+SizeOf(FCaching);
+end;
 
 procedure THTTPCacheManager.Trim;
 var

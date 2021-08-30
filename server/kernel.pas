@@ -74,6 +74,9 @@ type
   TFhirServerMaintenanceThread = class (TFslThread)
   private
     FKernel : TFHIRServiceKernel;
+    FMaxMem : UInt64;
+    function MemIsMax : boolean;
+    procedure ClearCaches;
   protected
     function ThreadName : String; override;
     procedure Initialise; override;
@@ -99,6 +102,7 @@ type
     procedure loadTerminologies;
     procedure loadEndPoints;
     procedure startWebServer;
+    procedure SetCacheStatus(status : boolean);
     procedure stopWebServer;
     procedure unloadEndpoints;
     procedure unloadTerminologies;
@@ -142,10 +146,25 @@ uses
 
 { TFhirServerMaintenanceThread }
 
+procedure TFhirServerMaintenanceThread.ClearCaches;
+var
+  ep : TFhirServerEndpoint;
+begin
+  Logging.log('Clear Caches because memory in use = '+DescribeBytes(Logging.InternalMem)+', and max is '+DescribeBytes(FMaxMem));
+  FKernel.WebServer.clearCache;
+  for ep in FKernel.FEndPoints do
+    ep.clearCache;
+  Logging.log('Cleared Cache. Memory in use = '+DescribeBytes(Logging.InternalMem));
+end;
+
 constructor TFhirServerMaintenanceThread.Create(kernel : TFHIRServiceKernel);
+var
+  u : UInt64;
 begin
   inherited Create();
   FKernel := kernel;
+  u := FKernel.Settings.Ini.service['max-memory'].readAsInt(0);
+  FMaxMem := u * 1024 * 1024;
 end;
 
 destructor TFhirServerMaintenanceThread.Destroy;
@@ -165,6 +184,11 @@ begin
   TimePeriod := 5000;
 end;
 
+function TFhirServerMaintenanceThread.MemIsMax: boolean;
+begin
+  result := (FMaxMem > 0) and (Logging.InternalMem > FMaxMem);
+end;
+
 function TFhirServerMaintenanceThread.threadName: String;
 begin
   result := 'Server Maintenance Thread';
@@ -175,6 +199,8 @@ var
   ep : TFhirServerEndpoint;
 begin
   try
+    if MemIsMax then
+      ClearCaches;
     for ep in FKernel.FEndPoints do
       if not Terminated then
         ep.internalThread;
@@ -241,6 +267,8 @@ begin
     FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
     FMaintenanceThread.Start;
 
+    SetCacheStatus(settings.Ini.web['caching'].value = 'true');
+
     // post start up time.
     getReport('|', true); // base line the object counting
     Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
@@ -285,6 +313,7 @@ begin
 end;
 
 {$IFNDEF NO_JS}
+
 procedure TFHIRServiceKernel.registerJs(sender : TObject; js : TJsHost);
 begin
   js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
@@ -293,7 +322,21 @@ begin
   js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
   js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
+
 {$ENDIF}
+
+procedure TFHIRServiceKernel.SetCacheStatus(status: boolean);
+var
+  ep : TFhirServerEndpoint;
+begin
+  if (status) then
+    Logging.log('HTTP Caching is On')
+  else
+    Logging.log('HTTP Caching is Off');
+  WebServer.setCacheStatus(status);
+  for ep in FEndPoints do
+    ep.setCacheStatus(status);
+end;
 
 // --- core functionality ------------------------------------------------------
 
@@ -333,7 +376,6 @@ var
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create;
-  FWebServer.Common.cache.Caching := settings.Ini.web['caching'].value = 'true';
 
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
@@ -407,6 +449,12 @@ begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
       ep.InstallDatabase;
+      Logging.log('  .. installed');
+      if getCommandLineParam('packages', fn) then
+      begin
+        Logging.log('  .. installing packages');
+        ep.LoadPackages(fn);
+      end;
     finally
       ep.free;
     end;
@@ -652,7 +700,8 @@ begin
     Logging.logToFile('c:\temp\fhirserver.log')
   else
     Logging.logToFile(tempFile('fhirserver.log'));
-
+  Logging.FileLog.Policy.FullPolicy := lfpChop;
+  Logging.FileLog.Policy.MaximumSize := 1024 * 1024;
 
   // if there's no parameters, then we don't log to the screen
   // if the cmd parameter is 'console' or 'exec' then we also log to the screen

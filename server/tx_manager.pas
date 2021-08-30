@@ -34,13 +34,13 @@ interface
 
 uses
   SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
-  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang,
+  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang, fsl_logging,
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_icd10, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
-  tx_mimetypes, ftx_lang, fsl_logging, tx_ndc, tx_hgvs,
+  tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs,
   utilities, server_config;
 
 const
@@ -85,7 +85,9 @@ Type
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
     procedure sweepSnomed;
+    procedure clearSnomed;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
+    procedure getCacheInfo(ci: TCacheInformation); virtual;
 
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
@@ -227,7 +229,10 @@ Type
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
 
-    function cacheSize : UInt64; virtual;
+    function cacheSize(magic : integer) : UInt64; virtual;
+    procedure clearCache; virtual;
+    procedure SetCacheStatus(status : boolean); virtual;
+    procedure getCacheInfo(ci: TCacheInformation); virtual;
     procedure defineFeatures(features: TFslList<TFHIRFeature>); virtual;
   end;
 
@@ -731,7 +736,7 @@ begin
 end;
 
 
-function TTerminologyServerStore.cacheSize: UInt64;
+function TTerminologyServerStore.cacheSize(magic : integer): UInt64;
 begin
   result := 0;
 end;
@@ -1161,6 +1166,11 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.SetCacheStatus(status: boolean);
+begin
+  // nothing right now.
+end;
+
 procedure TTerminologyServerStore.DropTerminologyResource(aType : String; id : String);
 var
   vs, vs1 : TFhirValueSetW;
@@ -1256,6 +1266,11 @@ begin
 end;
 
 //---- access procedures. All return values are owned, and must be freed -------
+
+procedure TTerminologyServerStore.getCacheInfo(ci: TCacheInformation);
+begin
+  FCommonTerminologies.getCacheInfo(ci);
+end;
 
 function TTerminologyServerStore.getCodeSystem(url: String): TFhirCodeSystemW;
 begin
@@ -1397,6 +1412,11 @@ begin
         raise ETerminologyError.Create('Expansion Parameters Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
     end;
   exit(version);
+end;
+
+procedure TTerminologyServerStore.clearCache;
+begin
+  FCommonTerminologies.clearSnomed;
 end;
 
 Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
@@ -1760,6 +1780,15 @@ begin
     FProviderClasses.Add(p.systemUri(nil), p.link);
 end;
 
+procedure TCommonTerminologies.clearSnomed;
+var
+  ss : TSnomedServices;
+begin
+  for ss in FSnomed do
+    if ss <> FDefSnomed then
+      ss.unloadMe;
+end;
+
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
 var
   p : TCodeSystemProvider;
@@ -1817,6 +1846,29 @@ begin
   FNciMeta.Free;
   FLanguages.Free;
   inherited;
+end;
+
+procedure TCommonTerminologies.getCacheInfo(ci: TCacheInformation);
+var
+  ss : TSnomedServices;
+  icd : TICD10Provider;
+begin
+  if FLanguages <> nil then
+    ci.Add('Languages', FLanguages.sizeInBytes(ci.magic));
+  if FLoinc <> nil then
+    ci.Add('Loinc', FLoinc.sizeInBytes(ci.magic));
+  for ss in FSnomed do
+    ci.Add('SCT/'+ss.EditionName+'/'+ss.VersionDate, ss.sizeInBytes(ci.magic));
+  for icd in FIcd10 do
+    ci.Add('Icd10', icd.sizeInBytes(ci.magic));
+  if FUcum <> nil then
+    ci.Add('Ucum', FUcum.sizeInBytes(ci.magic));
+  if FACIR <> nil then
+    ci.Add('ACIR', FACIR.sizeInBytes(ci.magic));
+  if FProviderClasses <> nil then
+    ci.Add('ProviderClasses', FProviderClasses.sizeInBytes(ci.magic));
+  if FNDFRT <> nil then
+    ci.Add('NDFRT', FNDFRT.sizeInBytes(ci.magic));
 end;
 
 procedure TCommonTerminologies.getSummary(b: TStringBuilder);
@@ -2074,7 +2126,7 @@ var
 begin
   for ss in FSnomed do
     if ss <> FDefSnomed then
-      ss.checkUnload;
+      ss.checkUnloadMe;
 end;
 
 procedure TCommonTerminologies.SetACIR(const Value: TACIRServices);

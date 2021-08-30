@@ -47,7 +47,7 @@ type
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
     procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     [SetupFixture] Procedure SetUp;
@@ -507,10 +507,10 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
-function TFHIRValidatorTests.sizeInBytesV : cardinal;
+function TFHIRValidatorTests.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FServices.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FServices.sizeInBytes(magic));
 end;
 
 end.

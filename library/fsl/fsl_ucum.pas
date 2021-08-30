@@ -40,7 +40,7 @@ Type
     FUnitCode: String;
     FValue: TFslDecimal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
@@ -75,9 +75,9 @@ begin
   result := TUcumPair(inherited link);
 end;
 
-function TUcumPair.sizeInBytesV : cardinal;
+function TUcumPair.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUnitCode.length * sizeof(char)) + 12);
 end;
 

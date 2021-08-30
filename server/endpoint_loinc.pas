@@ -50,17 +50,19 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
 
 { TLoincWebEndPoint }
 
-function TLoincWebEndPoint.cacheSize: UInt64;
+function TLoincWebEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
 end;
 
 procedure TLoincWebEndPoint.clearCache;
@@ -78,12 +80,22 @@ begin
   inherited;
 end;
 
+procedure TLoincWebEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+end;
+
 function TLoincWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   FLoincServer := TLoincWebServer.Create(config.name, config['path'].value, common);
   FLoincServer.FTx := Terminologies.Link;
   WebEndPoint := FLoincServer;
   result := FLoincServer.link;
+end;
+
+procedure TLoincWebEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 function TLoincWebEndPoint.summary: String;

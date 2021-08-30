@@ -50,7 +50,7 @@ type
     json : TJsonObject;
     FShuttingDown: boolean;
     procedure initSettings; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(filename: String; versions : TFHIRVersionSet);
     destructor Destroy; override;
@@ -357,12 +357,12 @@ begin
 end;
 
 
-function TFHIRClientRegistry.sizeInBytesV : cardinal;
+function TFHIRClientRegistry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, copy.sizeInBytes);
-  inc(result, json.sizeInBytes);
+  inc(result, copy.sizeInBytes(magic));
+  inc(result, json.sizeInBytes(magic));
 end;
 
 end.

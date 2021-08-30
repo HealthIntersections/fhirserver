@@ -666,7 +666,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -3802,10 +3802,10 @@ begin
 end;
 
 
-function TFHIRMeta4.sizeInBytesV : cardinal;
+function TFHIRMeta4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResource.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
 { TFHIRAuditEvent4 }

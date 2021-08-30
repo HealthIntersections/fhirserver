@@ -71,7 +71,7 @@ Type
 
       Procedure AddText(oDocument: TWPWorkingDocument; Const sContent : String); Overload;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -99,7 +99,7 @@ Type
       Procedure WriteParagraphStop(oParagraph : TWPWorkingDocumentParaPiece; bNextIsSection : Boolean; oSection : TWPWorkingDocumentSectionStartPiece); Override;
       Procedure WriteText(oText : TWPWorkingDocumentTextPiece); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -234,10 +234,10 @@ Begin
   End;
 End;
 
-function TWPCdaReader.sizeInBytesV : cardinal;
+function TWPCdaReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDoc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDoc.sizeInBytes(magic));
 end;
 
 { TWPCdaWriter }
@@ -333,11 +333,11 @@ Begin
   oTextNode := FCurrent.addText(oText.Content);
 End;
 
-function TWPCdaWriter.sizeInBytesV : cardinal;
+function TWPCdaWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDoc.sizeInBytes);
-  inc(result, FCurrent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDoc.sizeInBytes(magic));
+  inc(result, FCurrent.sizeInBytes(magic));
 end;
 
 End.

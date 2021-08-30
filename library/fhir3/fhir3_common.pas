@@ -706,7 +706,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -4077,10 +4077,10 @@ begin
       result.Add(TFHIRCoding3.create(i.Link));
 end;
 
-function TFHIRMeta3.sizeInBytesV : cardinal;
+function TFHIRMeta3.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResource.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
 { TFhirBinary3 }

@@ -82,7 +82,7 @@ Type
     [DifferenceEngineTestCase]
     procedure DifferenceEngineTest(Name : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 {$ENDIF}
 
@@ -287,10 +287,10 @@ initialization
   TDUnitX.RegisterTestFixture(TDifferenceEngineTest);
   TDUnitX.RegisterTestFixture(TDifferenceEngineTests);
 {$ENDIF}
-function TDifferenceEngineTest.sizeInBytesV : cardinal;
+function TDifferenceEngineTest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, tests.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, tests.sizeInBytes(magic));
 end;
 
 end.

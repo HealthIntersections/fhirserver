@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_http, fsl_lang,
+  fsl_base, fsl_http, fsl_lang, fsl_utilities,
   fhir_objects, fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
@@ -72,6 +72,8 @@ type
     procedure readLine(s : String);
     procedure load(filename : String);
     procedure countDescendents(node : TICD10Node);
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions; isDefault : boolean; filename : String);
     destructor Destroy; override;
@@ -484,6 +486,11 @@ end;
 function TICD10Provider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.create('Not implemented: TICD10Provider.searchFilter');
+end;
+
+function TICD10Provider.sizeInBytesV(magic: integer): cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + FUrl.length + FVersion.length + FRoots.sizeInBytes(magic) + FCodes.sizeInBytes(magic) + FLanguage.length + FTitle.length + 48;
 end;
 
 function TICD10Provider.SpecialEnumeration: String;

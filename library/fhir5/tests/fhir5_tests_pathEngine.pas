@@ -65,7 +65,7 @@ Type
     [FHIRPathTestCase]
     procedure FHIRPathTest(Name : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -299,12 +299,12 @@ begin
   resources.Free;
 end;
 
-function TFHIRPathTests.sizeInBytesV : cardinal;
+function TFHIRPathTests.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, engine.sizeInBytes);
-  inc(result, resources.sizeInBytes);
-  inc(result, ucum.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, engine.sizeInBytes(magic));
+  inc(result, resources.sizeInBytes(magic));
+  inc(result, ucum.sizeInBytes(magic));
 end;
 
 initialization

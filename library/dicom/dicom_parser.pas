@@ -103,7 +103,7 @@ Type
     Function MakeError(iBack : cardinal; sMessage : String) : Exception;
 //    Function BufferFactory(iSize : Integer): TFslBuffer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(iMaxLength : Integer);
     destructor Destroy; Override;
@@ -179,7 +179,7 @@ Type
     Function ParseReleaseResponse : TDicomReleaseResponsePDU;
     Function ParseAbort : TDicomAbortPDU;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Execute : TDicomPDU;
     Function ExecuteInstance : TDicomInstance;
@@ -306,16 +306,16 @@ End;
 
 
 (*
-function TDicomParserContext.sizeInBytesV : cardinal;
+function TDicomParserContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FInput.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FMap.sizeInBytes);
-  inc(result, FMapBig.sizeInBytes);
-  inc(result, FMapOffset.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FInput.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FMapBig.sizeInBytes(magic));
+  inc(result, FMapOffset.sizeInBytes(magic));
   inc(result, (FErrorMessage.length * sizeof(char)) + 12);
-  inc(result, FVRRepresentation.sizeInBytes);
+  inc(result, FVRRepresentation.sizeInBytes(magic));
 end;
 
       function TDicomParser.IsPDU: Boolean;
@@ -410,10 +410,10 @@ begin
 end;
 
 
-function TDicomParserBase.sizeInBytesV : cardinal;
+function TDicomParserBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 { TDicomParser }
@@ -1305,9 +1305,9 @@ Begin
   FContext.Mark(aRole, 2);
 end;
 
-function TDicomPDUDecoder.sizeInBytesV : cardinal;
+function TDicomPDUDecoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TDicomFileDecoder }

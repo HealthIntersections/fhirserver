@@ -46,7 +46,7 @@ type
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(definition : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -65,7 +65,7 @@ type
     function doSort(sender : TObject; const L, R: T): Integer;
     {$ENDIF}
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -135,7 +135,7 @@ type
     FOnLog: TWorkProgressEvent;
     FLoadPackage : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -266,12 +266,12 @@ begin
 end;
 
 
-function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
+function TFHIRCustomResourceInformation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSearchParameters.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  inc(result, FSearchParameters.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { TResourceMemoryCache }
@@ -572,20 +572,20 @@ begin
   FMap.clear();
 end;
 
-function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
+function TFHIRMetadataResourceManager<T>.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
-function TResourceMemoryCache.sizeInBytesV : cardinal;
+function TResourceMemoryCache.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flist.sizeInBytes);
-  inc(result, FLoadInfo.sizeInBytes);
-//  inc(result, FResourceTypes.sizeInBytes);
-//  inc(result, FPackages.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flist.sizeInBytes(magic));
+  inc(result, FLoadInfo.sizeInBytes(magic));
+//  inc(result, FResourceTypes.sizeInBytes(magic));
+//  inc(result, FPackages.sizeInBytes(magic));
   inc(result, (FLoadPackage.length * sizeof(char)) + 12);
 end;
 

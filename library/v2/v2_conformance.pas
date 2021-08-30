@@ -108,7 +108,7 @@ Type
     Function GetEventClassName: String;
     function GetAsString: String;
   Protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure Assign(oSource : TFslObject); Override;
     Property EventClass   : THCPValidateEventClass      Read FEventClass Write FEventClass;
@@ -129,7 +129,7 @@ Type
     function GetAsString: String;
  Protected
    Function ItemClass:TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
  Public
    Function  Iterator : TFslIterator; Override;
    Function  RecordError(Const AClass : THCPValidateEventClass; Const APath,AMsg : String; Const AElement: THL7V2BaseObject = Nil):Integer;
@@ -146,7 +146,7 @@ Type
     FName: String;
     Procedure SetValue(Const AValue: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(AOwner : THCPPropertyElement);
     Procedure Assign(oSource : TFslObject); Override;
@@ -177,7 +177,7 @@ Type
   Private
     FPropList: THCPPropList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -195,7 +195,7 @@ Type
     Function GetEnumeratedProp(APath, AName : String; Const AValues : Array Of String; ADef : Integer = -1): Integer;
   Protected
     Procedure updateProperties; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -209,7 +209,7 @@ Type
     FSequence : Integer;
     FPath : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Property Sequence : Integer Read FSequence Write FSequence;
     Procedure Assign(oSource : TFslObject); Override;
@@ -235,7 +235,7 @@ Type
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String);
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure Assign(oSource : TFslObject); Override;
     Function  ValidItem(Const ACode : String;Out VCaseCorrect : Boolean; Out VTableCode : String):Boolean;
@@ -270,7 +270,7 @@ Type
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String);
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -313,7 +313,7 @@ Type
     Procedure Read(AElement : TMXmlElement; sPath : String); Virtual;
     Procedure updateProperties; Override;
     Procedure ValidateCell(Const AHL7CommonDataCell,AHL7CommonDataCellParent: THL7V2Cell; Const AFieldName : String; Const AHCPValidateEvents: THCPValidateEvents);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -367,7 +367,7 @@ Type
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String); Override;
     Procedure ValidateComponent(Const AHL7Component : THL7V2Component; Const AHL7DataElement: THL7V2DataElement; Const AFieldName : String; Const AHCPValidateEvents: THCPValidateEvents);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -405,7 +405,7 @@ Type
     Procedure Read(AElement : TMXmlElement; sPath : String); Override;
     Procedure updateProperties; Override;
     Procedure ValidateField(Const AHL7DataElement: THL7V2DataElement; Const ASegment : THL7V2Segment; Const AHCPValidateEvents: THCPValidateEvents);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -456,7 +456,7 @@ Type
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String); Virtual;
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function StillRequired: Boolean; Virtual;
     Function StillPossible: Boolean;
@@ -501,7 +501,7 @@ Type
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String); Override;
     Procedure ValidateSegment(Const ASegment : THL7V2Segment; Const AHCPValidateEvents : THCPValidateEvents);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -516,7 +516,7 @@ Type
     FSegments    : THCPSegmentBaseList;
   Protected
     Procedure Read(AElement : TMXmlElement; sPath : String); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor  Destroy; Override;
@@ -536,7 +536,7 @@ Type
     Procedure Read(AElement : TMXmlElement; sPath : String);
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure Assign(oSource : TFslObject); Override;
     Property Name : String Read FName;
@@ -574,7 +574,7 @@ Type
     Procedure ResetNumberofRepeatsFound(Const AHCPSegGroup: THCPSegGroup);
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -617,7 +617,7 @@ Type
     FName : String; // The unique name or number associated with a particular use-case element
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(sName : String);
   End;
@@ -657,7 +657,7 @@ Type
     Procedure Read(AElement : TMXmlElement; sPath : String);
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Property Purpose : String Read FPurpose; // Identifies the reason and/or objectives for the usecase
     Property Description : String Read FDescription; // Descriptive text for the use-case. In cases where the usecase is not broken down into component elements, this will include the complete details of the usecase. Otherwise, it will contain a basic overview.
@@ -676,7 +676,7 @@ Type
     Procedure Read(AElement : TMXmlElement; sPath : String);
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -722,7 +722,7 @@ Type
     Procedure Read(AElement : TMXmlElement);
   Protected
     Procedure updateProperties; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -837,9 +837,9 @@ Begin
   FEventClass   := THCPValidateEvent(oSource).FEventClass;
 End;
 
-function THCPValidateEvent.sizeInBytesV : cardinal;
+function THCPValidateEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMsg.length * sizeof(char)) + 12);
 end;
 
@@ -897,12 +897,12 @@ Begin
     End;
 End;
 
-function THCPValidateEvents.sizeInBytesV : cardinal;
+function THCPValidateEvents.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
-  inc(result, FHL7Message.sizeInBytes);
-  inc(result, FErrorCollector.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FHL7Message.sizeInBytes(magic));
+  inc(result, FErrorCollector.sizeInBytes(magic));
 end;
 
 Function THCPValidateEvent.GetEventClassName: String;
@@ -945,10 +945,10 @@ Begin
   End;
 End;
 
-function THCPProperty.sizeInBytesV : cardinal;
+function THCPProperty.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOwner.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOwner.sizeInBytes(magic));
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
@@ -1004,10 +1004,10 @@ Begin
   Inherited;
 End;
 
-function THCPProperties.sizeInBytesV : cardinal;
+function THCPProperties.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPropList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPropList.sizeInBytes(magic));
 end;
 
 { THCPPropertyElement }
@@ -1106,10 +1106,10 @@ Begin
  // nothing
 End;
 
-function THCPPropertyElement.sizeInBytesV : cardinal;
+function THCPPropertyElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { THCPNode }
@@ -1121,9 +1121,9 @@ Begin
   FSequence := THCPNode(oSource).FSequence;
 End;
 
-function THCPNode.sizeInBytesV : cardinal;
+function THCPNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
 end;
 
@@ -1189,9 +1189,9 @@ Begin
     End;
 End;
 
-function THCPTableItem.sizeInBytesV : cardinal;
+function THCPTableItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FInstruction.length * sizeof(char)) + 12);
   inc(result, (FDisplayName.length * sizeof(char)) + 12);
@@ -1312,14 +1312,14 @@ Begin
     End;
 End;
 
-function THCPTable.sizeInBytesV : cardinal;
+function THCPTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTableType.length * sizeof(char)) + 12);
   inc(result, (FCodeSys.length * sizeof(char)) + 12);
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FItems.sizeInBytes);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 { THCPTables }
@@ -1590,14 +1590,14 @@ Begin
     End;
 End;
 
-function THCPCell.sizeInBytesV : cardinal;
+function THCPCell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FDatatype.length * sizeof(char)) + 12);
   inc(result, (FTable.length * sizeof(char)) + 12);
   inc(result, (FConstantValue.length * sizeof(char)) + 12);
-  inc(result, FDataValues.sizeInBytes);
+  inc(result, FDataValues.sizeInBytes(magic));
   inc(result, (FPredicate.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FReference.length * sizeof(char)) + 12);
@@ -1775,10 +1775,10 @@ Begin
     End;
 End;
 
-function THCPComponent.sizeInBytesV : cardinal;
+function THCPComponent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSubComponents.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSubComponents.sizeInBytes(magic));
 end;
 
 { THCPComponentIterator }
@@ -2002,11 +2002,11 @@ Begin
     End;
 End;
 
-function THCPField.sizeInBytesV : cardinal;
+function THCPField.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FItemNo.length * sizeof(char)) + 12);
-  inc(result, FComponents.sizeInBytes);
+  inc(result, FComponents.sizeInBytes(magic));
 end;
 
 { THCPFieldIterator }
@@ -2192,10 +2192,10 @@ Begin
   FMax := LSrc.FMax;
 End;
 
-function THCPSegmentBase.sizeInBytesV : cardinal;
+function THCPSegmentBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOwnerGroup.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOwnerGroup.sizeInBytes(magic));
   inc(result, (FPredicate.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FReference.length * sizeof(char)) + 12);
@@ -2337,10 +2337,10 @@ Begin
     End;
 End;
 
-function THCPSegment.sizeInBytesV : cardinal;
+function THCPSegment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFields.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFields.sizeInBytes(magic));
 end;
 
 { THCPSegGroup }
@@ -2388,10 +2388,10 @@ Begin
     End;
 End;
 
-function THCPSegGroup.sizeInBytesV : cardinal;
+function THCPSegGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSegments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSegments.sizeInBytes(magic));
 end;
 
 { THCPMetaData }
@@ -2429,9 +2429,9 @@ Begin
   FTopics := GetProp('Topics');
 End;
 
-function THCPMetaData.sizeInBytesV : cardinal;
+function THCPMetaData.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FOrgName.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -2809,19 +2809,19 @@ Begin
     End;
 End;
 
-function THCPStaticDef.sizeInBytesV : cardinal;
+function THCPStaticDef.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMsgType.length * sizeof(char)) + 12);
   inc(result, (FEventType.length * sizeof(char)) + 12);
   inc(result, (FMsgStructID.length * sizeof(char)) + 12);
   inc(result, (FOrderControl.length * sizeof(char)) + 12);
   inc(result, (FEventDesc.length * sizeof(char)) + 12);
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
-  inc(result, FMetaData.sizeInBytes);
+  inc(result, FMetaData.sizeInBytes(magic));
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FReference.length * sizeof(char)) + 12);
-  inc(result, FSegments.sizeInBytes);
+  inc(result, FSegments.sizeInBytes(magic));
 end;
 
 { THCPStaticDefList }
@@ -2928,10 +2928,10 @@ Begin
   FQueryMode := THCPQueryModeType(GetEnumeratedProp(Path, 'QueryMode', HCP_QueryModeType_VAL, ord(hcpqmRealTime)));
 End;
 
-function THCPDynamicDef.sizeInBytesV : cardinal;
+function THCPDynamicDef.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStaticDefs.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStaticDefs.sizeInBytes(magic));
 end;
 
 { THCPDynamicDefList }
@@ -3107,14 +3107,14 @@ Begin
     End;
 End;
 
-function THCPSpecification.sizeInBytesV : cardinal;
+function THCPSpecification.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMetaData.sizeInBytes);
-  inc(result, FUseCase.sizeInBytes);
-  inc(result, FEncodings.sizeInBytes);
-  inc(result, FDynamicDefs.sizeInBytes);
-  inc(result, FTables.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMetaData.sizeInBytes(magic));
+  inc(result, FUseCase.sizeInBytes(magic));
+  inc(result, FEncodings.sizeInBytes(magic));
+  inc(result, FDynamicDefs.sizeInBytes(magic));
+  inc(result, FTables.sizeInBytes(magic));
 end;
 
 { THCPUseCase }
@@ -3211,12 +3211,12 @@ Begin
   end;
 End;
 
-function THCPUseCase.sizeInBytesV : cardinal;
+function THCPUseCase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPurpose.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
-  inc(result, FElements.sizeInBytes);
+  inc(result, FElements.sizeInBytes(magic));
 end;
 
 { THCPUseCaseElement }
@@ -3234,9 +3234,9 @@ Begin
   FName := GetProp('Name');
 End;
 
-function THCPUseCaseElement.sizeInBytesV : cardinal;
+function THCPUseCaseElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 

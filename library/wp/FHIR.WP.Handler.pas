@@ -71,7 +71,7 @@ Type
       Function GetHostDocument : TWPWorkingDocument; Virtual;
       Procedure SetHostDocument(Const oDocument : TWPWorkingDocument; oStyles : TWPStyles); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1388,10 +1388,10 @@ begin
 end;
 
 
-function TWPDocumentHandler.sizeInBytesV : cardinal;
+function TWPDocumentHandler.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 End.

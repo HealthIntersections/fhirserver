@@ -281,15 +281,17 @@ procedure TTelnetThreadHelper.ping;
 var
   mem : UInt64;
   ep : TFHIRServerEndPoint;
+  magic : integer;
 begin
+  magic := TFslObject.nextMagic;
   if (now > FNextPing) then
   begin
     mem := 0;
     for ep in FServer.FEndPoints do
     begin
-      mem := mem + ep.cacheSize;
+      mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+DescribeBytes(mem)+' MB cached');
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+DescribeBytes(mem)+' MB used');
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
@@ -297,20 +299,64 @@ end;
 procedure TTelnetThreadHelper.processCommand(s: String);
 var
   ep : TFHIRServerEndPoint;
+  ci: TCacheInformation;
 begin
   if (s = '@console') then
+  begin
+    Logging.log('Console connected');
     FEnhanced := true
+  end
   else if (s = '@threads') then
+  begin
+    Logging.log('Console requested Thread List');
     send('$@threads: '+GetThreadReport)
+  end
   else if (s = '@classes') then
+  begin
+    Logging.log('Console requested Object Class Count');
     send('$@classes: '+TFslObject.getReport('|', false))
+  end
   else if (s = '@classes+') then
+  begin
+    Logging.log('Console requested Object Class Delta');
     send('$@classes: '+TFslObject.getReport('|', true))
+  end
+  else if (s = '@caches') then
+  begin
+    Logging.log('Console requested Cache Information');
+    ci := TCacheInformation.create;
+    try
+      for ep in FServer.FEndPoints do
+        ep.getCacheInfo(ci);
+      send('$@cache: '+ci.text('|'));
+    finally
+      ci.Free;
+    end;
+  end
+  else if (s = '@locks') then
+  begin
+    Logging.log('Console requested Lock Information');
+    FServer.FLock.Lock('ProcessCommand');
+    try
+      send('$@locks: '+DumpLocks(true, '|'))
+    finally
+      FServer.FLock.Unlock;
+    end;
+  end
   else if (s = '@cache') then
   begin
+    Logging.log('Clear Cache because of instruction from console: '+Logging.MemoryStatus);
     for ep in FServer.FEndPoints do
       ep.clearCache;
-    ping;
+    Logging.log('Clear Cache finished: '+Logging.MemoryStatus);
+    ci := TCacheInformation.create;
+    try
+      for ep in FServer.FEndPoints do
+        ep.getCacheInfo(ci);
+      send('$@cache: '+ci.text('|'));
+    finally
+      ci.Free;
+    end;
   end
   else
     send('Unrecognised command '+s);

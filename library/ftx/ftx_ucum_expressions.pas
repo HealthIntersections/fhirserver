@@ -48,7 +48,7 @@ Type
     FFactor: Integer;
     FAnnotation : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(iFactor : integer); overload;
     constructor Create(iFactor : integer; Annotation : String); overload;
@@ -68,7 +68,7 @@ Type
     procedure SetUnit_(const Value: TUcumUnit);
     procedure SetExponent(const Value: Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oUnit_ : TUcumUnit; oPrefix : TUcumPrefix; iExponent : Integer); Overload;
     destructor Destroy; Override;
@@ -88,7 +88,7 @@ Type
     procedure SetComponent(const Value: TUcumComponent);
     procedure SetTerm(const Value: TUcumTerm);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -120,7 +120,7 @@ Type
     function nextChar() : UnicodeChar;
     function peekChar() : UnicodeChar;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(sSource : String);
 
@@ -137,7 +137,7 @@ Type
     FExponent : integer;
     procedure SetBase(value : TUcumBaseUnit);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(base : TUcumBaseUnit; exponent : integer); overload;
     destructor Destroy; Override;
@@ -151,7 +151,7 @@ Type
     FValue : TFslDecimal;
     FUnits : TFslList<TUcumCanonicalUnit>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -176,7 +176,7 @@ Type
      function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
      function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -191,7 +191,7 @@ Type
     function parseComp : TUcumComponent;
     function ParseTerm(bFirst : Boolean) : TUcumTerm;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
     class function Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
@@ -250,9 +250,9 @@ begin
   result := TUcumFactor(Inherited Link);
 end;
 
-function TUcumFactor.sizeInBytesV : cardinal;
+function TUcumFactor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FAnnotation.length * sizeof(char)) + 12);
 end;
 
@@ -300,11 +300,11 @@ begin
   FUnit_ := Value;
 end;
 
-function TUcumSymbol.sizeInBytesV : cardinal;
+function TUcumSymbol.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPrefix.sizeInBytes);
-  inc(result, FUnit_.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPrefix.sizeInBytes(magic));
+  inc(result, FUnit_.sizeInBytes(magic));
 end;
 
 { TUcumTerm }
@@ -347,20 +347,20 @@ begin
     Operator := NOOP;
 end;
 
-function TUcumTerm.sizeInBytesV : cardinal;
+function TUcumTerm.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FComponent.sizeInBytes);
-  inc(result, FTerm.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FComponent.sizeInBytes(magic));
+  inc(result, FTerm.sizeInBytes(magic));
 end;
 
 { TUcumExpressionParser }
 
-function TUcumExpressionParser.sizeInBytesV : cardinal;
+function TUcumExpressionParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModel.sizeInBytes);
-  inc(result, FLexer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModel.sizeInBytes(magic));
+  inc(result, FLexer.sizeInBytes(magic));
 end;
 
 class function TUcumExpressionParser.Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
@@ -695,9 +695,9 @@ Begin
 End;
 
 
-function TUcumLexer.sizeInBytesV : cardinal;
+function TUcumLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSourceString.length * sizeof(char)) + 12);
   inc(result, length(Fsource) * Sizeof(UnicodeChar));
   inc(result, (Ftoken.length * sizeof(char)) + 12);
@@ -1021,12 +1021,12 @@ begin
 end;
 
 
-function TUcumConverter.sizeInBytesV : cardinal;
+function TUcumConverter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fmodel.sizeInBytes);
-  inc(result, Fhandlers.sizeInBytes);
-  inc(result, Fone.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fmodel.sizeInBytes(magic));
+  inc(result, Fhandlers.sizeInBytes(magic));
+  inc(result, Fone.sizeInBytes(magic));
 end;
 
 { TUcumComponent }
@@ -1070,10 +1070,10 @@ begin
   Value := FValue.Multiply(i);
 end;
 
-function TUcumCanonical.sizeInBytesV : cardinal;
+function TUcumCanonical.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUnits.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUnits.sizeInBytes(magic));
 end;
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;
@@ -1171,10 +1171,10 @@ begin
 end;
 
 
-function TUcumCanonicalUnit.sizeInBytesV : cardinal;
+function TUcumCanonicalUnit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBase.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBase.sizeInBytes(magic));
 end;
 
 End.

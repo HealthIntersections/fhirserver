@@ -81,7 +81,7 @@ Type
     cursor : integer;
     function GetCurrent: TJsonNode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
     function MoveNext() : boolean;
@@ -105,7 +105,7 @@ Type
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -143,7 +143,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : boolean); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
@@ -158,7 +158,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -173,7 +173,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -210,7 +210,7 @@ Type
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -251,7 +251,7 @@ Type
     FNode: TJsonNode;
     procedure SetNode(const Value: TJsonNode);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name : String; node : TJsonNode);
     destructor Destroy; Override;
@@ -269,7 +269,7 @@ Type
 
     function unescape(s : String) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -291,7 +291,7 @@ Type
     function GetSourceLocation: TSourceLocation; virtual; abstract;
 
     Function JSONString(const value : String) : String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -355,7 +355,7 @@ Type
     procedure DoName(const name : String);
   protected
     procedure doValue(name, value : String); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link: TJsonWriterDirect; overload;
     function canInject : boolean; override;
@@ -383,7 +383,7 @@ Type
     FValue : String;
     FChildren : TFslList<TCanonicalJsonNode>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aType : TCanonicalJsonNodeType);
     destructor Destroy; override;
@@ -399,7 +399,7 @@ Type
     procedure commitArray(node : TCanonicalJsonNode);
   protected
     procedure doValue(name, value : String); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Function Link: TJsonWriterCanonical; overload;
     function GetSourceLocation : TSourceLocation; override;
@@ -435,7 +435,7 @@ Type
     Function Path : String;
     function GetValue: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oStream : TFslStream; loose : boolean = false); Overload;
     destructor Destroy; Override;
@@ -466,7 +466,7 @@ Type
     procedure readObject(obj : TJsonObject; root : boolean);
     procedure readArray(arr : TJsonArray; root : boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oStream : TStream; loose : boolean); Overload;
     constructor Create(oStream : TFslStream; loose : boolean);  Overload;
@@ -509,7 +509,7 @@ Type
 
     class procedure runtest(test : TJsonObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -605,7 +605,7 @@ type
     Procedure SetUpdatedAt(Value: TDateTime);
     procedure Setwebsite(Value: string);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     constructor Create(header, payload : TJsonObject); overload;
@@ -833,10 +833,10 @@ begin
 end;
 
 
-function TJSONWriter.sizeInBytesV : cardinal;
+function TJSONWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 class procedure TJSONWriter.writeObject(stream: TFslStream; obj: TJsonObject; pretty : boolean = false);
@@ -1247,9 +1247,9 @@ begin
   FCache := '';
 end;
 
-function TJsonWriterDirect.sizeInBytesV : cardinal;
+function TJsonWriterDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FCache.length * sizeof(char)) + 12);
 end;
@@ -1462,11 +1462,11 @@ begin
   end;
 end;
 
-function TJSONLexer.sizeInBytesV : cardinal;
+function TJSONLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPeek.length * sizeof(char)) + 12);
-  inc(result, FStates.sizeInBytes);
+  inc(result, FStates.sizeInBytes(magic));
 end;
 
 { TJSONParser }
@@ -1581,10 +1581,10 @@ begin
   End;
 end;
 
-function TJSONParser.sizeInBytesV : cardinal;
+function TJSONParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLex.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLex.sizeInBytes(magic));
   inc(result, (FItemName.length * sizeof(char)) + 12);
   inc(result, (FItemValue.length * sizeof(char)) + 12);
 end;
@@ -2202,10 +2202,10 @@ begin
   FItems[i] := TJsonString.Create(Path+'['+inttostr(i)+']', Value);
 end;
 
-function TJsonArray.sizeInBytesV : cardinal;
+function TJsonArray.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 { TJsonString }
@@ -2247,9 +2247,9 @@ begin
   result := 'string';
 end;
 
-function TJsonString.sizeInBytesV : cardinal;
+function TJsonString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2292,9 +2292,9 @@ begin
   result := 'number';
 end;
 
-function TJsonNumber.sizeInBytesV : cardinal;
+function TJsonNumber.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2622,11 +2622,11 @@ begin
   end;
 end;
 
-function TJsonObject.sizeInBytesV : cardinal;
+function TJsonObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FProperties.sizeInBytes);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { TJsonBoolean }
@@ -2693,9 +2693,9 @@ begin
     result := def;
 end;
 
-function TJsonBoolean.sizeInBytesV : cardinal;
+function TJsonBoolean.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TJsonArrayEnumerator }
@@ -2718,19 +2718,19 @@ begin
 end;
 
 
-function TJsonArrayEnumerator.sizeInBytesV : cardinal;
+function TJsonArrayEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FArray.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FArray.sizeInBytes(magic));
 end;
 
 { TJsonPatchEngine }
 
-function TJsonPatchEngine.sizeInBytesV : cardinal;
+function TJsonPatchEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatch.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatch.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 class function TJsonPatchEngine.applyPatch(target: TJsonObject; patch: TJsonArray) : TJsonObject;
@@ -3033,11 +3033,11 @@ begin
   FNode := Value;
 end;
 
-function TJsonPointerMatch.sizeInBytesV : cardinal;
+function TJsonPointerMatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FNode.sizeInBytes);
+  inc(result, FNode.sizeInBytes(magic));
 end;
 
 { TJsonNull }
@@ -3141,10 +3141,10 @@ begin
   result := s.Replace('~1', '/').Replace('~0', '~');
 end;
 
-function TJsonPointerQuery.sizeInBytesV : cardinal;
+function TJsonPointerQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMatches.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMatches.sizeInBytes(magic));
 end;
 
 { TJsonWriterCanonical }
@@ -3333,11 +3333,11 @@ begin
   end;
 end;
 
-function TJsonWriterCanonical.sizeInBytesV : cardinal;
+function TJsonWriterCanonical.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObject.sizeInBytes);
-  inc(result, FStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObject.sizeInBytes(magic));
+  inc(result, FStack.sizeInBytes(magic));
 end;
 
 { TCanonicalJsonNode }
@@ -3361,12 +3361,12 @@ begin
 end;
 
 
-function TCanonicalJsonNode.sizeInBytesV : cardinal;
+function TCanonicalJsonNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 { TJWT }
@@ -3746,11 +3746,11 @@ begin
   payload.forceObj['address']['country'] := value;
 end;
 
-function TJWT.sizeInBytesV : cardinal;
+function TJWT.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FPayLoad.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FPayLoad.sizeInBytes(magic));
   inc(result, (FOriginalSource.length * sizeof(char)) + 12);
 end;
 

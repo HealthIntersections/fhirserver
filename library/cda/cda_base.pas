@@ -129,7 +129,7 @@ Type
     FCursor : Integer;
     Function GetCurrent : Tv3PropertyDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oFocus : Tv3Base; bInheritedProperties : Boolean);
     destructor Destroy; Override;
@@ -180,7 +180,7 @@ Type
     Function RIMClassNameV: String; Virtual;
     Function CDAClassNameV: String; Virtual;
     Function CDAClassTypeV: TCDAClassType; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     sourcelocation : TSourceLocation;
@@ -334,7 +334,7 @@ Type
     Function RIMClassNameV: String; Override;
     Function CDAClassNameV: String; Override;
     Function CDAClassTypeV : TCDAClassType; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -524,11 +524,11 @@ begin
   FCursor := 0;
 end;
 
-function Tv3DataTypePropertyIterator.sizeInBytesV : cardinal;
+function Tv3DataTypePropertyIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFocus.sizeInBytes);
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFocus.sizeInBytes(magic));
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { Tv3Base }
@@ -676,14 +676,14 @@ begin
   Result := FExtensions;
 end;
 
-function Tv3Base.sizeInBytesV : cardinal;
+function Tv3Base.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcomments.sizeInBytes);
-  inc(result, FElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcomments.sizeInBytes(magic));
+  inc(result, FElement.sizeInBytes(magic));
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FExtensions.sizeInBytes);
-  inc(result, FTag.sizeInBytes);
+  inc(result, FExtensions.sizeInBytes(magic));
+  inc(result, FTag.sizeInBytes(magic));
   inc(result, (FTagId.length * sizeof(char)) + 12);
 end;
 
@@ -927,19 +927,19 @@ begin
 end;
 
 (*
-function Tv3PropertyDefinition.sizeInBytesV : cardinal;
+function Tv3PropertyDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FValueType.sizeInBytes);
-  inc(result, FCollectionState.sizeInBytes);
-  inc(result, FPossibles.sizeInBytes);
+  inc(result, FOwner.sizeInBytes(magic));
+  inc(result, FValueType.sizeInBytes(magic));
+  inc(result, FCollectionState.sizeInBytes(magic));
+  inc(result, FPossibles.sizeInBytes(magic));
   inc(result, (FClassName.length * sizeof(char)) + 12);
-  inc(result, FValueBase.sizeInBytes);
-  inc(result, FValueCollection.sizeInBytes);
-  inc(result, FValueString.sizeInBytes);
-  inc(result, FValueStrings.sizeInBytes);
+  inc(result, FValueBase.sizeInBytes(magic));
+  inc(result, FValueCollection.sizeInBytes(magic));
+  inc(result, FValueString.sizeInBytes(magic));
+  inc(result, FValueStrings.sizeInBytes(magic));
 end;
 
 function Tv3Base.CheckType(aValue: Tv3BaseCollection; aType: Tv3BaseCollectionType): Tv3BaseCollection;
@@ -1322,9 +1322,9 @@ begin
   inherited;
 end;
 
-function Tv3Extension.sizeInBytesV : cardinal;
+function Tv3Extension.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FText.length * sizeof(char)) + 12);

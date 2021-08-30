@@ -108,7 +108,7 @@ Type
       Procedure ReadAttachments(oDocument : TWPWorkingDocument);
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -183,7 +183,7 @@ Type
 
       Function SupportsNestedRows : Boolean; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -254,7 +254,7 @@ Type
       Procedure ReadStyle;
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -304,7 +304,7 @@ Type
       Procedure WriteTableCell(oTableCell : TWPDocumentTableCell);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -407,7 +407,7 @@ Type
       Procedure ProducePieceSectionStart(oPiece : TWPWorkingDocumentSectionStartPiece);
       Procedure ProducePiece(oPiece : TWPWorkingDocumentPiece);
       Procedure ProduceStyle(oStyle : TWPStyle);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1254,11 +1254,11 @@ End;
 
 
 
-function TWPNativeReader.sizeInBytesV : cardinal;
+function TWPNativeReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAnnotationMap.sizeInBytes);
-  inc(result, FActiveExtractor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAnnotationMap.sizeInBytes(magic));
+  inc(result, FActiveExtractor.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
 end;
 
@@ -1978,12 +1978,12 @@ Begin
 End;
 
 
-function TWPNativeWriter.sizeInBytesV : cardinal;
+function TWPNativeWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FActiveFormatter.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FActiveFormatter.sizeInBytes(magic));
   inc(result, (FText.length * sizeof(char)) + 12);
-  inc(result, FTextPiece.sizeInBytes);
+  inc(result, FTextPiece.sizeInBytes(magic));
 end;
 
 Constructor TWPNativeDocumentReader.Create;
@@ -2741,10 +2741,10 @@ Begin
 End;
 
 
-function TWPNativeDocumentReader.sizeInBytesV : cardinal;
+function TWPNativeDocumentReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FActiveExtractor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FActiveExtractor.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
 end;
 
@@ -3390,10 +3390,10 @@ Begin
   FFormatter.ProduceTAG(TAG_NAME_COORD);
 End;
 
-function TWPNativeDocumentWriter.sizeInBytesV : cardinal;
+function TWPNativeDocumentWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFormatter.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFormatter.sizeInBytes(magic));
 end;
 
 procedure TWPNativeReader.ReadAdornment(oAdornments: TWPDocumentImageAdornments);
@@ -4611,9 +4611,9 @@ End;
 
 
 
-function TWPSnapshotWriter.sizeInBytesV : cardinal;
+function TWPSnapshotWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 

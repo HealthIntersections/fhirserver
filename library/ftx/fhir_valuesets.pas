@@ -70,7 +70,7 @@ Type
     Fversion : String;
     FMode : TFhirExpansionParamsFixedVersionMode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(system, version : String); overload;
     constructor Create(system, version : String; mode : TFhirExpansionParamsFixedVersionMode); overload;
@@ -94,7 +94,7 @@ Type
     FUid: String;
     FValueSetMode: TValueSetValidationMode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -160,7 +160,7 @@ Type
     function findValueSet(url : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     procedure listDisplays(displays : TCodeDisplays; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
     procedure listDisplays(displays : TCodeDisplays; c: TFhirCodeSystemConceptW); overload;
     procedure listDisplays(displays: TCodeDisplays; c: TFhirValueSetComposeIncludeConceptW); overload;
@@ -182,7 +182,7 @@ Type
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String); overload;
     destructor Destroy; override;
@@ -345,12 +345,12 @@ begin
   result := FOnGetValueSet(self, url);
 end;
 
-function TValueSetWorker.sizeInBytesV : cardinal;
+function TValueSetWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FParams.sizeInBytes);
-  inc(result, FAdditionalResources.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FParams.sizeInBytes(magic));
+  inc(result, FAdditionalResources.sizeInBytes(magic));
 end;
 
 { TValueSetChecker }
@@ -1126,11 +1126,11 @@ begin
   end;
 end;
 
-function TValueSetChecker.sizeInBytesV : cardinal;
+function TValueSetChecker.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOthers.sizeInBytes);
-  inc(result, FValueSet.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOthers.sizeInBytes(magic));
+  inc(result, FValueSet.sizeInBytes(magic));
   inc(result, (FId.length * sizeof(char)) + 12);
 end;
 
@@ -2005,11 +2005,11 @@ begin
   FFixedVersions := TFslList<TFhirExpansionParamsFixedVersion>.create;
 end;
 
-function TFHIRExpansionParams.sizeInBytesV : cardinal;
+function TFHIRExpansionParams.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFixedVersions.sizeInBytes);
-  inc(result, FdisplayLanguage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFixedVersions.sizeInBytes(magic));
+  inc(result, FdisplayLanguage.sizeInBytes(magic));
   inc(result, (FUid.length * sizeof(char)) + 12);
 end;
 
@@ -2063,9 +2063,9 @@ begin
   FVersion := version;
 end;
 
-function TFhirExpansionParamsFixedVersion.sizeInBytesV : cardinal;
+function TFhirExpansionParamsFixedVersion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fsystem.length * sizeof(char)) + 12);
   inc(result, (Fversion.length * sizeof(char)) + 12);
 end;

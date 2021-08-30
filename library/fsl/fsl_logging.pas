@@ -54,7 +54,7 @@ Type
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override; //
 
@@ -100,7 +100,7 @@ Type
     Procedure CycleFile(sName : String);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(filename : String);
     destructor Destroy; Override;
@@ -145,7 +145,7 @@ Type
     procedure checkDay;
     procedure close;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -168,6 +168,8 @@ Type
 
     Function DescribeSize(b, min: Cardinal): String;
     function MemoryStatus : String;
+
+    function InternalMem : UInt64;
   end;
 
 var
@@ -196,9 +198,9 @@ begin
   Result.FFullPolicy := FFullPolicy;
 end;
 
-function TLoggerPolicy.sizeInBytesV : cardinal;
+function TLoggerPolicy.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FHeader.length * sizeof(char)) + 12);
 end;
@@ -412,11 +414,11 @@ begin
   End;
 end;
 
-function TLogger.sizeInBytesV : cardinal;
+function TLogger.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FPolicy.sizeInBytes);
+  inc(result, FPolicy.sizeInBytes(magic));
   inc(result, (FOpenName.length * sizeof(char)) + 12);
 end;
 
@@ -538,7 +540,7 @@ begin
 {$ENDIF}
 end;
 
-function intMem : Uint64;
+function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
   st : TMemoryManagerUsageSummary;
@@ -559,9 +561,9 @@ var
 begin
   os := OSMem;
   if os <> 0 then
-    result := memToMB(intMem) + ' / '+memToMB(os)
+    result := memToMB(Logging.InternalMem) + ' / '+memToMB(os)
   else
-    result := memToMB(intMem);
+    result := memToMB(Logging.InternalMem);
 end;
 
 procedure TLogging.checkDay;
@@ -747,11 +749,11 @@ begin
   result := ' #'+inttostr(FCount);
 end;
 
-function TLogging.sizeInBytesV : cardinal;
+function TLogging.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFileLogger.sizeInBytes);
-  inc(result, FListeners.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFileLogger.sizeInBytes(magic));
+  inc(result, FListeners.sizeInBytes(magic));
   inc(result, (FWorkingLine.length * sizeof(char)) + 12);
 end;
 

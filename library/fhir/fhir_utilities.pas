@@ -67,7 +67,7 @@ type
     FResource: TFHIRResourceV;
     procedure SetResource(const Value: TFHIRResourceV);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(reference : String; resource : TFHIRResourceV);
     destructor Destroy; override;
@@ -422,11 +422,11 @@ begin
 
 end;
 
-function TResourceWithReference.sizeInBytesV : cardinal;
+function TResourceWithReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FReference.length * sizeof(char)) + 12);
-  inc(result, FResource.sizeInBytes);
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
 class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;

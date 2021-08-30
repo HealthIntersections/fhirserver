@@ -420,8 +420,10 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
   TFslDateTimeWrapper = class (TFslObject)
@@ -5392,7 +5394,7 @@ begin
   LoadMessages; // load while thread safe
 //  FAppFolder := AppFolder;
   FDB := DB;
-  FLock := TFslLock.Create('fhir-store');
+  FLock := TFslLock.Create('fhir-store r'+factory.versionString);
   FQueue := TFslList<TFHIRQueuedResource>.Create;
   FSpaces := TFHIRIndexSpaces.create;
   FRegisteredValueSets := TFslStringDictionary.create;
@@ -6337,9 +6339,9 @@ end;
 //  conn.Terminate;
 //end;
 //
-function TFHIRNativeStorageService.cacheSize: UInt64;
+function TFHIRNativeStorageService.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize + FRegisteredValueSets.sizeInBytes + FQueue.sizeInBytes;
+  result := inherited cacheSize(magic) + FRegisteredValueSets.sizeInBytes(magic) + FQueue.sizeInBytes(magic);
 end;
 
 procedure TFHIRNativeStorageService.checkDropResource(session: TFhirSession; request: TFHIRRequest; resource: TFHIRResourceV; tags: TFHIRTagList);
@@ -6745,6 +6747,12 @@ begin
       raise;
     end;
   end;
+end;
+
+procedure TFHIRNativeStorageService.SetCacheStatus(status: boolean);
+begin
+  // nothing at this time.
+  inherited;
 end;
 
 function TFHIRNativeStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
@@ -7344,6 +7352,12 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+procedure TFHIRNativeStorageService.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  // nothing at this time.
 end;
 
 function TFHIRNativeStorageService.getClientInfo(id: String): TRegisteredClientInformation;

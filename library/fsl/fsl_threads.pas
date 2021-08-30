@@ -76,7 +76,6 @@ type
     FNext, FPrev: TFslLock;
 
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
-    FCategory: String;               // category in the lock list
     FName: String;                   // Name of the critical section object
     FLockName: Array of String;      // Name of the current Lock (first one to grab)
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
@@ -112,11 +111,10 @@ type
     {$ENDIF}
 
     // debugging support
-    property Category: String Read FCategory Write FCategory;
     class function CurrentCount: Integer;
     // use with caution - not thread safe
     property OwnID: Integer Read FOwnID;
-    property Name: String Read FName;
+    property Name: String Read FName write FName;
 //    property LockName: String Read FLockName;
     property DelayCount: Integer Read FDelayCount;
     property UseCount: Integer Read FUseCount;
@@ -129,7 +127,7 @@ type
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
-function DumpLocks : String;
+function DumpLocks(all : boolean; sep : String = '') : String;
 
 Type
   TFslThreadHandle = TThreadHandle;
@@ -212,7 +210,7 @@ Type
     FException : String;
     FExceptionClass : ExceptClass;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskResponsePackage; overload;
     property Exception : String read FException write FException;
@@ -230,7 +228,7 @@ Type
     FRequest: TBackgroundTaskRequestPackage;
     FResponse: TBackgroundTaskResponsePackage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
     destructor Destroy; override;
@@ -263,7 +261,7 @@ Type
     FPct: integer;
     FMessage: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskStatusInfo; overload;
 
@@ -347,7 +345,7 @@ Type
     FEngines : TFslList<TBackgroundTaskEngine>;
     procedure log(s : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -631,14 +629,17 @@ end;
 
 procedure InitUnit;
 begin
-  InitializeCriticalSection(GCritSct);
-  GHaveCritSect := true;
-  GBackgroundTasks := TBackgroundTaskManager.Create;
-  GThreadList := TList.Create;
-  IdThread.fsThreadName := SetThreadName;
-  IdThread.fsThreadStatus := SetThreadStatus;
-  IdThread.fsThreadClose := CloseThreadInternal;
-  GetThreadNameStatusDelegate := GetThreadNameStatus;
+  if not GHaveCritSect then
+  begin
+    InitializeCriticalSection(GCritSct);
+    GHaveCritSect := true;
+    GBackgroundTasks := TBackgroundTaskManager.Create;
+    GThreadList := TList.Create;
+    IdThread.fsThreadName := SetThreadName;
+    IdThread.fsThreadStatus := SetThreadStatus;
+    IdThread.fsThreadClose := CloseThreadInternal;
+    GetThreadNameStatusDelegate := GetThreadNameStatus;
+  end;
 end;
 
 procedure DoneUnit;
@@ -694,11 +695,11 @@ begin
   result := TBackgroundTaskPackagePair(inherited link);
 end;
 
-function TBackgroundTaskPackagePair.sizeInBytesV : cardinal;
+function TBackgroundTaskPackagePair.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
 end;
 
 { TBackgroundTaskResponsePackage }
@@ -708,9 +709,9 @@ begin
   result := TBackgroundTaskResponsePackage(inherited link);
 end;
 
-function TBackgroundTaskResponsePackage.sizeInBytesV : cardinal;
+function TBackgroundTaskResponsePackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FException.length * sizeof(char)) + 12);
 end;
 
@@ -733,7 +734,6 @@ end;
 constructor TFslLock.Create;
 begin
   inherited Create;
-  FCategory := '';
   FName := ClassName;
   SetLength(FLockName, 0);
   FDelayCount := 0;
@@ -923,12 +923,27 @@ end;
 function TFslLock.DebugSummary: String;
 var
   i : integer;
+  function Col(s : String; width : integer): String;
+  begin
+    result := copy(s, 1, width - 1);
+    result := StringPadRight(result, ' ', width);
+  end;
 begin
-  Result := IntToStr(FOwnID)+' "'+FCategory+'" "'+FName+'" '+IntToStr(FDelayCount)+' '+
-     IntToStr(FUseCount)+' ' +IntToStr(FCurrLockTime)+' '+IntToStr(FTimeLocked)+' '+IntToStr(FDelayTime)+' '+
-     IntToStr(FEntryCount)+' '+threadToString(FLockThread)+' ';
+  Result :=
+    Col(IntToStr(FOwnID), 3)+
+    Col(FName, 26)+
+    Col(IntToStr(FUseCount), 7)+
+    Col(IntToStr(FDelayCount), 7)+
+    Col(IntToStr(FCurrLockTime), 9)+
+    Col(IntToStr(FTimeLocked), 10)+
+    Col(IntToStr(FDelayTime), 10)+
+    Col(threadToString(FLockThread), 9);
+
   for i := 0 to High(FLockName) do
-    result := result + '/' + FLockName[i];
+    if (i > 0) then
+      result := result + '|' + FLockName[i]
+    else
+      result := result + FLockName[i];
 end;
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
@@ -958,16 +973,20 @@ Begin
   End;
 End;
 
-function DumpLocks : String;
+function DumpLocks(all : boolean; sep : String = '') : String;
 var
   oCrit : TFslLock;
 Begin
-  Result := IntToStr(TFslLock.CurrentCount) + ' Locked Critical Sections (@'+InttoStr(GetTickCount64)+')'+#13#10;
+  if (sep = '') then
+    sep := #13#10;
+
+  Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
+  Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
-    if oCrit.EntryCount > 0 Then
-      Result := Result + oCrit.DebugSummary + #13#10;
+    if all or (oCrit.EntryCount > 0) Then
+      Result := Result + oCrit.DebugSummary + sep;
     oCrit := oCrit.FNext;
   End;
 End;
@@ -1596,10 +1615,10 @@ End;
 
 
 
-function TBackgroundTaskManager.sizeInBytesV : cardinal;
+function TBackgroundTaskManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEngines.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEngines.sizeInBytes(magic));
 end;
 
 { TBackgroundTaskUIRequest }
@@ -1644,9 +1663,9 @@ begin
     result := inttostr(pct);
 end;
 
-function TBackgroundTaskStatusInfo.sizeInBytesV : cardinal;
+function TBackgroundTaskStatusInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FMessage.length * sizeof(char)) + 12);
 end;

@@ -79,7 +79,7 @@ Type
     Protected
       Function ToWindowsResourceType(oResourceType : TFslResourceType) : PChar;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       Procedure BeforeDestruction; Override;
@@ -218,7 +218,7 @@ Type
       Function HandleNew : TGraphic; Virtual;
       Function HandleClass : TGraphicClass; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -343,7 +343,7 @@ Type
       Function CreateHandle : TFslGraphicHandle; Overload; Virtual;
 
       Procedure Change; Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -441,7 +441,7 @@ Type
     Protected
       Function CreateHandle : TFslGraphicHandle; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -522,7 +522,7 @@ Type
     Protected
       Function CreateHandle : TFslGraphicHandle; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -1059,9 +1059,9 @@ End;
 
 
 
-function TFslResourceStream.sizeInBytesV : cardinal;
+function TFslResourceStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FResourceName.length * sizeof(char)) + 12);
 end;
@@ -1360,10 +1360,10 @@ Begin
 End;
 
 
-function TFslVCLGraphic.sizeInBytesV : cardinal;
+function TFslVCLGraphic.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffer.sizeInBytes(magic));
 end;
 
 Function TFslVCLGraphicList.GetGraphic(iIndex: Integer): TFslVCLGraphic;
@@ -1847,10 +1847,10 @@ End;
 
 
 
-function TFslGraphicObject.sizeInBytesV : cardinal;
+function TFslGraphicObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCapability.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCapability.sizeInBytes(magic));
 end;
 
 Function TFslGraphicCapability.FromPixel(iValue: Integer): TFslGraphicMetre;
@@ -2022,10 +2022,10 @@ End;
 
 
 
-function TFslBrush.sizeInBytesV : cardinal;
+function TFslBrush.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBitmap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBitmap.sizeInBytes(magic));
 end;
 
 Constructor TFslFont.Create;
@@ -2442,9 +2442,9 @@ Type
   End;
 
 
-function TFslFont.sizeInBytesV : cardinal;
+function TFslFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 

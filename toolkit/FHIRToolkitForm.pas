@@ -836,7 +836,7 @@ begin
       frame.OnStopped := GetStopped;
       frame.work('Save', false,
         procedure (context : pointer)
-        begin;
+        begin
           ok := frame.save;
         end);
       result := ok;

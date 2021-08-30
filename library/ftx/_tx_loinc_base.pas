@@ -43,7 +43,7 @@ Type
   private
     FDisplayName: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure Define(oFiler : TFslFiler); Override;
     Procedure Assign(oSource : TFslObject); Override;
@@ -90,9 +90,9 @@ begin
   result := TLOINCCode(Inherited Link);
 end;
 
-function TLOINCCode.sizeInBytesV : cardinal;
+function TLOINCCode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDisplayName.length * sizeof(char)) + 12);
 end;
 

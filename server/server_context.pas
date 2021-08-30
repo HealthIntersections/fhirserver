@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_collections,
+  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging,
   fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
@@ -53,6 +53,7 @@ Type
     FQuestionnaires: TFslMap<TFhirQuestionnaireW>;
     FForms: TFslStringMatch;
     FValueSetDependencies: TDictionary<String, TList<string>>;
+    FCaching: boolean;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -66,8 +67,9 @@ Type
     procedure clear(rtype: string; id: String); overload;
     procedure clearVS(id: string);
     procedure clear; overload;
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
+    property caching : boolean read FCaching write FCaching;
   end;
 
   TFHIRServerContext = class;
@@ -166,8 +168,10 @@ Type
 
     procedure DoneLoading(conn : TFDBConnection);
 
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
+    procedure SetCacheStatus(status : boolean);
+    procedure getCacheInfo(ci: TCacheInformation);
 
     property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
   end;
@@ -195,11 +199,11 @@ begin
   inherited;
 end;
 
-function TQuestionnaireCache.cacheSize : UInt64;
+function TQuestionnaireCache.cacheSize(magic : integer) : UInt64;
 begin
   FLock.Lock;
   try
-    result := FQuestionnaires.sizeInBytes + FForms.sizeInBytes;
+    result := FQuestionnaires.sizeInBytes(magic) + FForms.sizeInBytes(magic);
   finally
     FLock.Unlock;
   end;
@@ -270,26 +274,35 @@ end;
 function TQuestionnaireCache.getForm(rtype: String;
   id: String): String;
 begin
-  FLock.Lock('getForm');
-  try
-    result := FForms[rtype + '/' + id];
-  finally
-    FLock.Unlock;
-  end;
-
+  if FCaching then
+  begin
+    FLock.Lock('getForm');
+    try
+      result := FForms[rtype + '/' + id];
+    finally
+      FLock.Unlock;
+    end;
+  end
+  else
+    result := '';
 end;
 
 function TQuestionnaireCache.getQuestionnaire(rtype: String;
   id: String): TFhirQuestionnaireW;
 begin
-  FLock.Lock('getQuestionnaire');
-  try
-    result := FQuestionnaires[rtype + '/' + id]
-      .Link as TFhirQuestionnaireW;
-    // comes off linked - must happen inside the lock
-  finally
-    FLock.Unlock;
-  end;
+  if FCaching then
+  begin
+    FLock.Lock('getQuestionnaire');
+    try
+      result := FQuestionnaires[rtype + '/' + id]
+        .Link as TFhirQuestionnaireW;
+      // comes off linked - must happen inside the lock
+    finally
+      FLock.Unlock;
+    end;
+  end
+  else
+    result := nil;
 end;
 
 procedure TQuestionnaireCache.putForm(rtype: String;
@@ -298,21 +311,24 @@ var
   s: String;
   l: TList<String>;
 begin
-  FLock.Lock('putForm');
-  try
-    FForms[rtype + '/' + id] := form;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
+  if FCaching then
+  begin
+    FLock.Lock('putForm');
+    try
+      FForms[rtype + '/' + id] := form;
+      for s in dependencies do
       begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
+        if not FValueSetDependencies.TryGetValue(id, l) then
+        begin
+          l := TList<String>.Create;
+          FValueSetDependencies.add(s, l);
+        end;
+        if not l.Contains(id) then
+          l.add(id);
       end;
-      if not l.Contains(id) then
-        l.add(id);
+    finally
+      FLock.Unlock;
     end;
-  finally
-    FLock.Unlock;
   end;
 end;
 
@@ -322,31 +338,34 @@ var
   s: String;
   l: TList<String>;
 begin
-  FLock.Lock('putQuestionnaire');
-  try
-    FQuestionnaires[rtype + '/' + id] := q.Link;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
+  if FCaching then
+  begin
+    FLock.Lock('putQuestionnaire');
+    try
+      FQuestionnaires[rtype + '/' + id] := q.Link;
+      for s in dependencies do
       begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
+        if not FValueSetDependencies.TryGetValue(id, l) then
+        begin
+          l := TList<String>.Create;
+          FValueSetDependencies.add(s, l);
+        end;
+        if not l.Contains(id) then
+          l.add(id);
       end;
-      if not l.Contains(id) then
-        l.add(id);
+    finally
+      FLock.Unlock;
     end;
-  finally
-    FLock.Unlock;
   end;
 end;
 
 { TFHIRServerContext }
 
-function TFHIRServerContext.cacheSize: UInt64;
+function TFHIRServerContext.cacheSize(magic : integer): UInt64;
 begin
-  result := FQuestionnaireCache.cacheSize + FClientCacheManager.cacheSize;
+  result := FQuestionnaireCache.cacheSize(magic) + FClientCacheManager.cacheSize(magic);
   if FTerminologyServer <> nil then
-    result := result + FTerminologyServer.cacheSize;
+    result := result + FTerminologyServer.cacheSize(magic);
 end;
 
 procedure TFHIRServerContext.clearCache;
@@ -436,6 +455,13 @@ begin
   FSubscriptionManager.DoneLoading(conn);
 end;
 
+procedure TFHIRServerContext.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.Add('FQuestionnaireCache', FQuestionnaireCache.sizeInBytes(ci.magic));
+  ci.Add('FClientCacheManager', FClientCacheManager.sizeInBytes(ci.magic));
+end;
+
 function TFHIRServerContext.GetFactory: TFHIRFactory;
 begin
   result := Storage.Factory;
@@ -483,6 +509,13 @@ procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
   FJWTServices.Free;
   FJWTServices := Value;
+end;
+
+procedure TFHIRServerContext.SetCacheStatus(status: boolean);
+begin
+  FQuestionnaireCache.caching := status;
+  if FTerminologyServer <> nil then
+    FTerminologyServer.SetCacheStatus(status);
 end;
 
 procedure TFHIRServerContext.SetClientCacheManager(const Value: TClientCacheManager);

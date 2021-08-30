@@ -165,7 +165,7 @@ Type
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
     procedure SetContext(const Value: TFslObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(const lang : THTTPLanguages);
     destructor Destroy; override;
@@ -1665,20 +1665,20 @@ begin
   end;
 end;
 
-function TQuestionnaireBuilder.sizeInBytesV : cardinal;
+function TQuestionnaireBuilder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProfiles.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
-  inc(result, FQuestionnaire.sizeInBytes);
-  inc(result, FAnswers.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProfiles.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
+  inc(result, FQuestionnaire.sizeInBytes(magic));
+  inc(result, FAnswers.sizeInBytes(magic));
   inc(result, (FQuestionnaireId.length * sizeof(char)) + 12);
-  inc(result, FFactory.sizeInBytes);
-  inc(result, vsCache.sizeInBytes);
-  inc(result, FPrebuiltQuestionnaire.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, FLang.sizeInBytes);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, vsCache.sizeInBytes(magic));
+  inc(result, FPrebuiltQuestionnaire.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FLang.sizeInBytes(magic));
 end;
 
 end.

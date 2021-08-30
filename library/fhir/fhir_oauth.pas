@@ -121,7 +121,7 @@ type
     FpreFetch: TStringList;
     FHook : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -163,7 +163,7 @@ type
     FId: integer;
     FThisHost: string;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -280,7 +280,7 @@ type
     function loginOAuthClient: boolean;
     function loginBackendClient : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -598,14 +598,14 @@ begin
   end;
 end;
 
-function TRegisteredFHIRServer.sizeInBytesV : cardinal;
+function TRegisteredFHIRServer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, (FfhirEndpoint.length * sizeof(char)) + 12);
   inc(result, (Fclientid.length * sizeof(char)) + 12);
   inc(result, (Fclientsecret.length * sizeof(char)) + 12);
-  inc(result, Fcdshooks.sizeInBytes);
+  inc(result, Fcdshooks.sizeInBytes(magic));
   inc(result, (FtokenEndpoint.length * sizeof(char)) + 12);
   inc(result, (FauthorizeEndpoint.length * sizeof(char)) + 12);
   inc(result, (FPassword.length * sizeof(char)) + 12);
@@ -644,11 +644,11 @@ begin
   result := false;
 end;
 
-function TRegisteredCDSHook.sizeInBytesV : cardinal;
+function TRegisteredCDSHook.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fname.length * sizeof(char)) + 12);
-  inc(result, FpreFetch.sizeInBytes);
+  inc(result, FpreFetch.sizeInBytes(magic));
   inc(result, (FHook.length * sizeof(char)) + 12);
 end;
 
@@ -962,11 +962,11 @@ begin
   Ftoken := Value;
 end;
 
-function TSmartAppLaunchLogin.sizeInBytesV : cardinal;
+function TSmartAppLaunchLogin.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftoken.sizeInBytes);
-  inc(result, Fserver.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftoken.sizeInBytes(magic));
+  inc(result, Fserver.sizeInBytes(magic));
   inc(result, (FFinalState.length * sizeof(char)) + 12);
   inc(result, (FAuthCode.length * sizeof(char)) + 12);
   inc(result, (FInitialState.length * sizeof(char)) + 12);

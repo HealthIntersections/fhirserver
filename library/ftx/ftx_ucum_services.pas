@@ -48,7 +48,7 @@ Type
     FConcept: TFhirValueSetComposeIncludeConceptW;
     procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     constructor Create(code : String); overload;
@@ -61,7 +61,7 @@ Type
     FCursor : integer; // used on the first
     FCanonical: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(canonical : String);
     property canonical : String read FCanonical write FCanonical;
@@ -86,7 +86,7 @@ Type
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
@@ -273,7 +273,7 @@ Type
     procedure SetDefinition(Value: TUcumServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -288,7 +288,7 @@ Type
   private
     FSvc : TUcumServices;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(svc : TUcumServices);
     destructor Destroy; override;
@@ -313,7 +313,7 @@ type
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
 { TFhirValueSetComposeIncludeConceptLocal }
@@ -342,9 +342,9 @@ procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
 end;
 
-function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
@@ -752,15 +752,15 @@ end;
 
 
 
-function TUcumServices.sizeInBytesV : cardinal;
+function TUcumServices.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModel.sizeInBytes);
-  inc(result, FHandlers.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModel.sizeInBytes(magic));
+  inc(result, FHandlers.sizeInBytes(magic));
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FCommonUnits.sizeInBytes);
-  inc(result, FCommonUnitList.sizeInBytes);
+  inc(result, FCommonUnits.sizeInBytes(magic));
+  inc(result, FCommonUnitList.sizeInBytes(magic));
 end;
 
 { TUcumServiceList }
@@ -824,10 +824,10 @@ begin
 end;
 
 
-function TUcumServiceList.sizeInBytesV : cardinal;
+function TUcumServiceList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 function TUcumServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
@@ -1188,9 +1188,9 @@ begin
   FCanonical := canonical;
 end;
 
-function TUcumFilterContext.sizeInBytesV : cardinal;
+function TUcumFilterContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCanonical.length * sizeof(char)) + 12);
 end;
 
@@ -1221,10 +1221,10 @@ begin
   FConcept := Value;
 end;
 
-function TUCUMContext.sizeInBytesV : cardinal;
+function TUCUMContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConcept.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConcept.sizeInBytes(magic));
 end;
 
 { TUcumServiceImplementation }
@@ -1261,10 +1261,10 @@ begin
   result := FSvc.multiply(o1, o2);
 end;
 
-function TUcumServiceImplementation.sizeInBytesV : cardinal;
+function TUcumServiceImplementation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSvc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSvc.sizeInBytes(magic));
 end;
 
 End.

@@ -152,6 +152,7 @@ Type
     // Reference counted using Interlocked* Windows API functions.
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
+    FMagic : integer;
     {$IFOPT D+}
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
@@ -188,7 +189,7 @@ Type
 
     Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; virtual;
+    function sizeInBytesV(magic : integer) : cardinal; virtual;
   Public
     constructor Create; Overload; Virtual;
     destructor Destroy; Override;
@@ -207,7 +208,8 @@ Type
     Function Assignable : Boolean; Overload; Virtual;
     Function Duplicate : TFslObject; Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Virtual;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
+    class function nextMagic : integer;
 
     // Determine if self is a valid reference of the specified class.
     Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
@@ -327,7 +329,7 @@ Type
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure NotifyChange(const Item: T; Action: TCollectionNotification);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     constructor Create; Overload; Override;
@@ -481,6 +483,7 @@ Type
     FDefault : T;
     FHasDefault : boolean;
     FName : String;
+    FMagic : integer;
 
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
@@ -532,7 +535,7 @@ Type
     property IsEmpty : Boolean read GetEmpty;
     property defaultValue : T read FDefault write SetDefault;
     property hasDefault : Boolean read FHasDefault write SetHasDefault;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
 
     type
       TFslPairEnumerator = class(TEnumerator<TFslPair<T>>)
@@ -637,6 +640,7 @@ Type
   TFslStringDictionary = class (TDictionary<String, String>)
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    FMagic : integer;
     function GetValue(const Key: String): String;
     procedure SetValue(const Key, Value: String);
   public
@@ -645,7 +649,7 @@ Type
     Function Link : TFslStringDictionary; Overload;
     procedure assign(source : TFslStringDictionary);
     property Values[const Key: String]: String read GetValue write SetValue; default;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
   end;
 
   TFslStringSet = class (TFslObject)
@@ -653,7 +657,7 @@ Type
     // not sorted - this doesn't get long enough to make it worth sorting
     FItems : TArray<String>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(initial : String); overload;
     constructor Create(initial : array of String); overload;
@@ -694,7 +698,7 @@ Type
     function GetItem(const Key: String): String;
     procedure SetItem(const Key, Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -705,6 +709,9 @@ Type
   end;
 
 implementation
+
+var
+  GLastMagic : integer = 0;
 
 type
   TClassTrackingType = class (TObject)
@@ -1058,7 +1065,7 @@ begin
   if result = '' then
     result := 'Nothing to report';
   {$ELSE}
-  result := 'Object Tracking is not enable';
+  result := 'Object Tracking is not enabled';
   {$ENDIF}
 end;
 
@@ -1094,6 +1101,12 @@ Begin
     InterlockedIncrement(FFslObjectReferenceCount);
   End;
 End;
+
+class function TFslObject.nextMagic: integer;
+begin
+  inc(GLastMagic);
+  result := GLastMagic;
+end;
 
 Function TFslObject.Duplicate : TFslObject;
 Begin
@@ -1280,15 +1293,20 @@ Begin
   Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
 
-function TFslObject.sizeInBytes : cardinal;
+function TFslObject.sizeInBytes(magic : integer) : cardinal;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
-    result := sizeInBytesV;
+  begin
+    FMagic := magic;
+    result := sizeInBytesV(magic);
+  end;
 end;
 
-function TFslObject.sizeInBytesV : cardinal;
+function TFslObject.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := sizeof(self);
   {$IFOPT D+}
@@ -2160,16 +2178,16 @@ begin
   Result := TFslEnumerator.Create(Self);
 end;
 
-function TFslList<T>.sizeInBytesV : cardinal;
+function TFslList<T>.sizeInBytesV(magic : integer) : cardinal;
 var
   i : T;
 begin
   result := sizeof(self);
   inc(result, length(FItems) * sizeof(Pointer));
-  inc(result, FComparer.sizeInBytes);
+  inc(result, FComparer.sizeInBytes(magic));
   inc(result, sizeof(FArrayManager));
   for i in FItems do
-    inc(result, TFslObject(t).sizeInBytes);
+    inc(result, TFslObject(i).sizeInBytes(magic));
 end;
 
 { TFslList<T>.TFslEnumerator }
@@ -2703,14 +2721,17 @@ begin
   Result := FValueCollection;
 end;
 
-function TFslMap<T>.sizeInBytes : cardinal;
+function TFslMap<T>.sizeInBytes(magic : integer) : cardinal;
 var
   p : TFslPair<T>;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
   begin
+    FMagic := magic;
     result := sizeOf(self);
     inc(result, length(FItems) * Sizeof(TItem));
     if FSortedKeys <> nil then
@@ -2718,12 +2739,12 @@ begin
     if FAsAddedKeys <> nil then
       inc(result, sizeof(FAsAddedKeys) + FAsAddedKeys.Count * 2 * sizeof(pointer));
     if FDefault <> nil then
-      inc(result, TFslObject(FDefault).sizeInBytes);
+      inc(result, TFslObject(FDefault).sizeInBytes(magic));
     inc(result, (length(FName) * sizeof(char))+12);
     for p in self do
     begin
       inc(result, (length(p.Key) * sizeof(char))+12);
-      inc(result, p.Value.sizeInBytes);
+      inc(result, p.Value.sizeInBytes(magic));
     end;
   end;
 end;
@@ -2933,12 +2954,17 @@ begin
   Items[key] := value;
 end;
 
-function TFslStringDictionary.sizeInBytes : cardinal;
+function TFslStringDictionary.sizeInBytes(magic : integer) : cardinal;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
+  begin
+    FMagic := magic;
     result := sizeOf(self);
+  end;
 end;
 
 procedure TFslStringDictionary.assign(source : TFslStringDictionary);
@@ -3140,11 +3166,11 @@ begin
   result := false;
 end;
 
-function TFslStringSet.sizeInBytesV : cardinal;
+function TFslStringSet.sizeInBytesV(magic : integer) : cardinal;
 var
   s : String;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FItems) * sizeof(pointer));
   for s in FItems do
     inc(result, (length(s) * 2) + 12);
@@ -3218,10 +3244,10 @@ begin
   FDict.AddOrSetValue(key, value);
 end;
 
-function TFslStringMap.sizeInBytesV : cardinal;
+function TFslStringMap.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDict.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDict.sizeInBytes(magic));
 end;
 
 { ETodo }

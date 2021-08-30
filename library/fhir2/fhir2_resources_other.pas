@@ -282,7 +282,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -327,7 +327,7 @@ Type
     FList : TFhirParametersParameterList;
     function GetCurrent : TFhirParametersParameter;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirParametersParameterList);
     destructor Destroy; override;
@@ -392,7 +392,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -422,7 +422,7 @@ Type
     FList : TFhirParametersList;
     function GetCurrent : TFhirParameters;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirParametersList);
     destructor Destroy; override;
@@ -511,7 +511,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -568,7 +568,7 @@ Type
     FList : TFhirAuditEventEventList;
     function GetCurrent : TFhirAuditEventEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventEventList);
     destructor Destroy; override;
@@ -660,7 +660,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -738,7 +738,7 @@ Type
     FList : TFhirAuditEventParticipantList;
     function GetCurrent : TFhirAuditEventParticipant;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventParticipantList);
     destructor Destroy; override;
@@ -807,7 +807,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -842,7 +842,7 @@ Type
     FList : TFhirAuditEventParticipantNetworkList;
     function GetCurrent : TFhirAuditEventParticipantNetwork;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventParticipantNetworkList);
     destructor Destroy; override;
@@ -912,7 +912,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -952,7 +952,7 @@ Type
     FList : TFhirAuditEventSourceList;
     function GetCurrent : TFhirAuditEventSource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventSourceList);
     destructor Destroy; override;
@@ -1041,7 +1041,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1115,7 +1115,7 @@ Type
     FList : TFhirAuditEventObjectList;
     function GetCurrent : TFhirAuditEventObject;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventObjectList);
     destructor Destroy; override;
@@ -1184,7 +1184,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1220,7 +1220,7 @@ Type
     FList : TFhirAuditEventObjectDetailList;
     function GetCurrent : TFhirAuditEventObjectDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventObjectDetailList);
     destructor Destroy; override;
@@ -1292,7 +1292,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1336,7 +1336,7 @@ Type
     FList : TFhirAuditEventList;
     function GetCurrent : TFhirAuditEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAuditEventList);
     destructor Destroy; override;
@@ -1410,7 +1410,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1446,7 +1446,7 @@ Type
     FList : TFhirBinaryList;
     function GetCurrent : TFhirBinary;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBinaryList);
     destructor Destroy; override;
@@ -1519,7 +1519,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1555,7 +1555,7 @@ Type
     FList : TFhirBundleLinkList;
     function GetCurrent : TFhirBundleLink;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleLinkList);
     destructor Destroy; override;
@@ -1631,7 +1631,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1686,7 +1686,7 @@ Type
     FList : TFhirBundleEntryList;
     function GetCurrent : TFhirBundleEntry;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleEntryList);
     destructor Destroy; override;
@@ -1755,7 +1755,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1790,7 +1790,7 @@ Type
     FList : TFhirBundleEntrySearchList;
     function GetCurrent : TFhirBundleEntrySearch;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleEntrySearchList);
     destructor Destroy; override;
@@ -1875,7 +1875,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1930,7 +1930,7 @@ Type
     FList : TFhirBundleEntryRequestList;
     function GetCurrent : TFhirBundleEntryRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleEntryRequestList);
     destructor Destroy; override;
@@ -2007,7 +2007,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2053,7 +2053,7 @@ Type
     FList : TFhirBundleEntryResponseList;
     function GetCurrent : TFhirBundleEntryResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleEntryResponseList);
     destructor Destroy; override;
@@ -2131,7 +2131,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2179,7 +2179,7 @@ Type
     FList : TFhirBundleList;
     function GetCurrent : TFhirBundle;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBundleList);
     destructor Destroy; override;
@@ -2252,7 +2252,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2298,7 +2298,7 @@ Type
     FList : TFhirClaimPayeeList;
     function GetCurrent : TFhirClaimPayee;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimPayeeList);
     destructor Destroy; override;
@@ -2365,7 +2365,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2401,7 +2401,7 @@ Type
     FList : TFhirClaimDiagnosisList;
     function GetCurrent : TFhirClaimDiagnosis;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimDiagnosisList);
     destructor Destroy; override;
@@ -2485,7 +2485,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2550,7 +2550,7 @@ Type
     FList : TFhirClaimCoverageList;
     function GetCurrent : TFhirClaimCoverage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimCoverageList);
     destructor Destroy; override;
@@ -2657,7 +2657,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2764,7 +2764,7 @@ Type
     FList : TFhirClaimItemList;
     function GetCurrent : TFhirClaimItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimItemList);
     destructor Destroy; override;
@@ -2852,7 +2852,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2927,7 +2927,7 @@ Type
     FList : TFhirClaimItemDetailList;
     function GetCurrent : TFhirClaimItemDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimItemDetailList);
     destructor Destroy; override;
@@ -3012,7 +3012,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3083,7 +3083,7 @@ Type
     FList : TFhirClaimItemDetailSubDetailList;
     function GetCurrent : TFhirClaimItemDetailSubDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimItemDetailSubDetailList);
     destructor Destroy; override;
@@ -3154,7 +3154,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3195,7 +3195,7 @@ Type
     FList : TFhirClaimItemProsthesisList;
     function GetCurrent : TFhirClaimItemProsthesis;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimItemProsthesisList);
     destructor Destroy; override;
@@ -3264,7 +3264,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3305,7 +3305,7 @@ Type
     FList : TFhirClaimMissingTeethList;
     function GetCurrent : TFhirClaimMissingTeeth;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimMissingTeethList);
     destructor Destroy; override;
@@ -3444,7 +3444,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3604,7 +3604,7 @@ Type
     FList : TFhirClaimList;
     function GetCurrent : TFhirClaim;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimList);
     destructor Destroy; override;
@@ -3682,7 +3682,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3725,7 +3725,7 @@ Type
     FList : TFhirClaimResponseItemList;
     function GetCurrent : TFhirClaimResponseItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemList);
     destructor Destroy; override;
@@ -3794,7 +3794,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3835,7 +3835,7 @@ Type
     FList : TFhirClaimResponseItemAdjudicationList;
     function GetCurrent : TFhirClaimResponseItemAdjudication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemAdjudicationList);
     destructor Destroy; override;
@@ -3906,7 +3906,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3945,7 +3945,7 @@ Type
     FList : TFhirClaimResponseItemDetailList;
     function GetCurrent : TFhirClaimResponseItemDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemDetailList);
     destructor Destroy; override;
@@ -4014,7 +4014,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4055,7 +4055,7 @@ Type
     FList : TFhirClaimResponseItemDetailAdjudicationList;
     function GetCurrent : TFhirClaimResponseItemDetailAdjudication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemDetailAdjudicationList);
     destructor Destroy; override;
@@ -4123,7 +4123,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4158,7 +4158,7 @@ Type
     FList : TFhirClaimResponseItemDetailSubDetailList;
     function GetCurrent : TFhirClaimResponseItemDetailSubDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemDetailSubDetailList);
     destructor Destroy; override;
@@ -4227,7 +4227,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4268,7 +4268,7 @@ Type
     FList : TFhirClaimResponseItemDetailSubDetailAdjudicationList;
     function GetCurrent : TFhirClaimResponseItemDetailSubDetailAdjudication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseItemDetailSubDetailAdjudicationList);
     destructor Destroy; override;
@@ -4345,7 +4345,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4397,7 +4397,7 @@ Type
     FList : TFhirClaimResponseAddItemList;
     function GetCurrent : TFhirClaimResponseAddItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseAddItemList);
     destructor Destroy; override;
@@ -4466,7 +4466,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4507,7 +4507,7 @@ Type
     FList : TFhirClaimResponseAddItemAdjudicationList;
     function GetCurrent : TFhirClaimResponseAddItemAdjudication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseAddItemAdjudicationList);
     destructor Destroy; override;
@@ -4575,7 +4575,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4615,7 +4615,7 @@ Type
     FList : TFhirClaimResponseAddItemDetailList;
     function GetCurrent : TFhirClaimResponseAddItemDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseAddItemDetailList);
     destructor Destroy; override;
@@ -4684,7 +4684,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4725,7 +4725,7 @@ Type
     FList : TFhirClaimResponseAddItemDetailAdjudicationList;
     function GetCurrent : TFhirClaimResponseAddItemDetailAdjudication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseAddItemDetailAdjudicationList);
     destructor Destroy; override;
@@ -4800,7 +4800,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4846,7 +4846,7 @@ Type
     FList : TFhirClaimResponseErrorList;
     function GetCurrent : TFhirClaimResponseError;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseErrorList);
     destructor Destroy; override;
@@ -4917,7 +4917,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4958,7 +4958,7 @@ Type
     FList : TFhirClaimResponseNoteList;
     function GetCurrent : TFhirClaimResponseNote;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseNoteList);
     destructor Destroy; override;
@@ -5042,7 +5042,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5107,7 +5107,7 @@ Type
     FList : TFhirClaimResponseCoverageList;
     function GetCurrent : TFhirClaimResponseCoverage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseCoverageList);
     destructor Destroy; override;
@@ -5235,7 +5235,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5384,7 +5384,7 @@ Type
     FList : TFhirClaimResponseList;
     function GetCurrent : TFhirClaimResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClaimResponseList);
     destructor Destroy; override;
@@ -5454,7 +5454,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5489,7 +5489,7 @@ Type
     FList : TFhirContractActorList;
     function GetCurrent : TFhirContractActor;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractActorList);
     destructor Destroy; override;
@@ -5572,7 +5572,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5638,7 +5638,7 @@ Type
     FList : TFhirContractValuedItemList;
     function GetCurrent : TFhirContractValuedItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractValuedItemList);
     destructor Destroy; override;
@@ -5707,7 +5707,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5748,7 +5748,7 @@ Type
     FList : TFhirContractSignerList;
     function GetCurrent : TFhirContractSigner;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractSignerList);
     destructor Destroy; override;
@@ -5842,7 +5842,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5923,7 +5923,7 @@ Type
     FList : TFhirContractTermList;
     function GetCurrent : TFhirContractTerm;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractTermList);
     destructor Destroy; override;
@@ -5989,7 +5989,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6024,7 +6024,7 @@ Type
     FList : TFhirContractTermActorList;
     function GetCurrent : TFhirContractTermActor;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractTermActorList);
     destructor Destroy; override;
@@ -6107,7 +6107,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6173,7 +6173,7 @@ Type
     FList : TFhirContractTermValuedItemList;
     function GetCurrent : TFhirContractTermValuedItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractTermValuedItemList);
     destructor Destroy; override;
@@ -6236,7 +6236,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6267,7 +6267,7 @@ Type
     FList : TFhirContractFriendlyList;
     function GetCurrent : TFhirContractFriendly;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractFriendlyList);
     destructor Destroy; override;
@@ -6330,7 +6330,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6361,7 +6361,7 @@ Type
     FList : TFhirContractLegalList;
     function GetCurrent : TFhirContractLegal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractLegalList);
     destructor Destroy; override;
@@ -6424,7 +6424,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6455,7 +6455,7 @@ Type
     FList : TFhirContractRuleList;
     function GetCurrent : TFhirContractRule;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractRuleList);
     destructor Destroy; override;
@@ -6568,7 +6568,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6671,7 +6671,7 @@ Type
     FList : TFhirContractList;
     function GetCurrent : TFhirContract;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirContractList);
     destructor Destroy; override;
@@ -6754,7 +6754,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6814,7 +6814,7 @@ Type
     FList : TFhirEligibilityRequestList;
     function GetCurrent : TFhirEligibilityRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirEligibilityRequestList);
     destructor Destroy; override;
@@ -6907,7 +6907,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6981,7 +6981,7 @@ Type
     FList : TFhirEligibilityResponseList;
     function GetCurrent : TFhirEligibilityResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirEligibilityResponseList);
     destructor Destroy; override;
@@ -7070,7 +7070,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7145,7 +7145,7 @@ Type
     FList : TFhirEnrollmentRequestList;
     function GetCurrent : TFhirEnrollmentRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirEnrollmentRequestList);
     destructor Destroy; override;
@@ -7238,7 +7238,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7312,7 +7312,7 @@ Type
     FList : TFhirEnrollmentResponseList;
     function GetCurrent : TFhirEnrollmentResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirEnrollmentResponseList);
     destructor Destroy; override;
@@ -7405,7 +7405,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7479,7 +7479,7 @@ Type
     FList : TFhirExplanationOfBenefitList;
     function GetCurrent : TFhirExplanationOfBenefit;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirExplanationOfBenefitList);
     destructor Destroy; override;
@@ -7556,7 +7556,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7602,7 +7602,7 @@ Type
     FList : TFhirListEntryList;
     function GetCurrent : TFhirListEntry;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirListEntryList);
     destructor Destroy; override;
@@ -7702,7 +7702,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7789,7 +7789,7 @@ Type
     FList : TFhirListList;
     function GetCurrent : TFhirList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirListList);
     destructor Destroy; override;
@@ -7862,7 +7862,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7901,7 +7901,7 @@ Type
     FList : TFhirMedicationProductList;
     function GetCurrent : TFhirMedicationProduct;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationProductList);
     destructor Destroy; override;
@@ -7966,7 +7966,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8002,7 +8002,7 @@ Type
     FList : TFhirMedicationProductIngredientList;
     function GetCurrent : TFhirMedicationProductIngredient;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationProductIngredientList);
     destructor Destroy; override;
@@ -8071,7 +8071,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8107,7 +8107,7 @@ Type
     FList : TFhirMedicationProductBatchList;
     function GetCurrent : TFhirMedicationProductBatch;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationProductBatchList);
     destructor Destroy; override;
@@ -8173,7 +8173,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8208,7 +8208,7 @@ Type
     FList : TFhirMedicationPackageList;
     function GetCurrent : TFhirMedicationPackage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationPackageList);
     destructor Destroy; override;
@@ -8273,7 +8273,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8309,7 +8309,7 @@ Type
     FList : TFhirMedicationPackageContentList;
     function GetCurrent : TFhirMedicationPackageContent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationPackageContentList);
     destructor Destroy; override;
@@ -8383,7 +8383,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8434,7 +8434,7 @@ Type
     FList : TFhirMedicationList;
     function GetCurrent : TFhirMedication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationList);
     destructor Destroy; override;
@@ -8509,7 +8509,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8549,7 +8549,7 @@ Type
     FList : TFhirMessageHeaderResponseList;
     function GetCurrent : TFhirMessageHeaderResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMessageHeaderResponseList);
     destructor Destroy; override;
@@ -8628,7 +8628,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8679,7 +8679,7 @@ Type
     FList : TFhirMessageHeaderSourceList;
     function GetCurrent : TFhirMessageHeaderSource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMessageHeaderSourceList);
     destructor Destroy; override;
@@ -8750,7 +8750,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8791,7 +8791,7 @@ Type
     FList : TFhirMessageHeaderDestinationList;
     function GetCurrent : TFhirMessageHeaderDestination;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMessageHeaderDestinationList);
     destructor Destroy; override;
@@ -8879,7 +8879,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8958,7 +8958,7 @@ Type
     FList : TFhirMessageHeaderList;
     function GetCurrent : TFhirMessageHeader;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMessageHeaderList);
     destructor Destroy; override;
@@ -9040,7 +9040,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9088,7 +9088,7 @@ Type
     FList : TFhirOperationOutcomeIssueList;
     function GetCurrent : TFhirOperationOutcomeIssue;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationOutcomeIssueList);
     destructor Destroy; override;
@@ -9153,7 +9153,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9183,7 +9183,7 @@ Type
     FList : TFhirOperationOutcomeList;
     function GetCurrent : TFhirOperationOutcome;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationOutcomeList);
     destructor Destroy; override;
@@ -9252,7 +9252,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9288,7 +9288,7 @@ Type
     FList : TFhirOrderWhenList;
     function GetCurrent : TFhirOrderWhen;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOrderWhenList);
     destructor Destroy; override;
@@ -9370,7 +9370,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9434,7 +9434,7 @@ Type
     FList : TFhirOrderList;
     function GetCurrent : TFhirOrder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOrderList);
     destructor Destroy; override;
@@ -9522,7 +9522,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9580,7 +9580,7 @@ Type
     FList : TFhirOrderResponseList;
     function GetCurrent : TFhirOrderResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOrderResponseList);
     destructor Destroy; override;
@@ -9669,7 +9669,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9744,7 +9744,7 @@ Type
     FList : TFhirPaymentNoticeList;
     function GetCurrent : TFhirPaymentNotice;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirPaymentNoticeList);
     destructor Destroy; override;
@@ -9825,7 +9825,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9886,7 +9886,7 @@ Type
     FList : TFhirPaymentReconciliationDetailList;
     function GetCurrent : TFhirPaymentReconciliationDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirPaymentReconciliationDetailList);
     destructor Destroy; override;
@@ -9953,7 +9953,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9989,7 +9989,7 @@ Type
     FList : TFhirPaymentReconciliationNoteList;
     function GetCurrent : TFhirPaymentReconciliationNote;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirPaymentReconciliationNoteList);
     destructor Destroy; override;
@@ -10090,7 +10090,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10187,7 +10187,7 @@ Type
     FList : TFhirPaymentReconciliationList;
     function GetCurrent : TFhirPaymentReconciliation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirPaymentReconciliationList);
     destructor Destroy; override;
@@ -10256,7 +10256,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10287,7 +10287,7 @@ Type
     FList : TFhirProcessRequestItemList;
     function GetCurrent : TFhirProcessRequestItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcessRequestItemList);
     destructor Destroy; override;
@@ -10393,7 +10393,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10494,7 +10494,7 @@ Type
     FList : TFhirProcessRequestList;
     function GetCurrent : TFhirProcessRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcessRequestList);
     destructor Destroy; override;
@@ -10565,7 +10565,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10601,7 +10601,7 @@ Type
     FList : TFhirProcessResponseNotesList;
     function GetCurrent : TFhirProcessResponseNotes;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcessResponseNotesList);
     destructor Destroy; override;
@@ -10696,7 +10696,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10784,7 +10784,7 @@ Type
     FList : TFhirProcessResponseList;
     function GetCurrent : TFhirProcessResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcessResponseList);
     destructor Destroy; override;
@@ -10858,7 +10858,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10903,7 +10903,7 @@ Type
     FList : TFhirProvenanceAgentList;
     function GetCurrent : TFhirProvenanceAgent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProvenanceAgentList);
     destructor Destroy; override;
@@ -10970,7 +10970,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11006,7 +11006,7 @@ Type
     FList : TFhirProvenanceAgentRelatedAgentList;
     function GetCurrent : TFhirProvenanceAgentRelatedAgent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProvenanceAgentRelatedAgentList);
     destructor Destroy; override;
@@ -11083,7 +11083,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11133,7 +11133,7 @@ Type
     FList : TFhirProvenanceEntityList;
     function GetCurrent : TFhirProvenanceEntity;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProvenanceEntityList);
     destructor Destroy; override;
@@ -11223,7 +11223,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11293,7 +11293,7 @@ Type
     FList : TFhirProvenanceList;
     function GetCurrent : TFhirProvenance;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProvenanceList);
     destructor Destroy; override;
@@ -11374,7 +11374,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11419,7 +11419,7 @@ Type
     FList : TFhirSubscriptionChannelList;
     function GetCurrent : TFhirSubscriptionChannel;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSubscriptionChannelList);
     destructor Destroy; override;
@@ -11509,7 +11509,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11572,7 +11572,7 @@ Type
     FList : TFhirSubscriptionList;
     function GetCurrent : TFhirSubscription;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSubscriptionList);
     destructor Destroy; override;
@@ -11865,13 +11865,13 @@ begin
   result := (FPartList <> nil) and (FPartList.count > 0);
 end;
 
-function TFhirParametersParameter.sizeInBytesV : cardinal;
+function TFhirParametersParameter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FpartList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FpartList.sizeInBytes(magic));
 end;
 
 { TFhirParametersParameterListEnumerator }
@@ -11900,10 +11900,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirParametersParameterListEnumerator.sizeInBytesV : cardinal;
+function TFhirParametersParameterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirParametersParameterList }
@@ -12151,10 +12151,10 @@ begin
   result := (FParameterList <> nil) and (FParameterList.count > 0);
 end;
 
-function TFhirParameters.sizeInBytesV : cardinal;
+function TFhirParameters.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FparameterList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FparameterList.sizeInBytes(magic));
 end;
 
 { TFhirParametersListEnumerator }
@@ -12183,10 +12183,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirParametersListEnumerator.sizeInBytesV : cardinal;
+function TFhirParametersListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirParametersList }
@@ -12645,16 +12645,16 @@ begin
   result := (FPurposeOfEventList <> nil) and (FPurposeOfEventList.count > 0);
 end;
 
-function TFhirAuditEventEvent.sizeInBytesV : cardinal;
+function TFhirAuditEventEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FsubtypeList.sizeInBytes);
-  inc(result, FAction.sizeInBytes);
-  inc(result, FDateTime.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FOutcomeDesc.sizeInBytes);
-  inc(result, FpurposeOfEventList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FsubtypeList.sizeInBytes(magic));
+  inc(result, FAction.sizeInBytes(magic));
+  inc(result, FDateTime.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FOutcomeDesc.sizeInBytes(magic));
+  inc(result, FpurposeOfEventList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventEventListEnumerator }
@@ -12683,10 +12683,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventEventListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventEventListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventEventList }
@@ -13235,20 +13235,20 @@ begin
   result := (FPurposeOfUseList <> nil) and (FPurposeOfUseList.count > 0);
 end;
 
-function TFhirAuditEventParticipant.sizeInBytesV : cardinal;
+function TFhirAuditEventParticipant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FroleList.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FUserId.sizeInBytes);
-  inc(result, FAltId.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FRequestor.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FpolicyList.sizeInBytes);
-  inc(result, FMedia.sizeInBytes);
-  inc(result, FNetwork.sizeInBytes);
-  inc(result, FpurposeOfUseList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FroleList.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FUserId.sizeInBytes(magic));
+  inc(result, FAltId.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FRequestor.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FpolicyList.sizeInBytes(magic));
+  inc(result, FMedia.sizeInBytes(magic));
+  inc(result, FNetwork.sizeInBytes(magic));
+  inc(result, FpurposeOfUseList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventParticipantListEnumerator }
@@ -13277,10 +13277,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventParticipantListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventParticipantListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventParticipantList }
@@ -13560,11 +13560,11 @@ begin
     Type_Element := TFhirEnum.create(SYSTEMS_TFhirNetworkTypeEnum[value], CODES_TFhirNetworkTypeEnum[value]);
 end;
 
-function TFhirAuditEventParticipantNetwork.sizeInBytesV : cardinal;
+function TFhirAuditEventParticipantNetwork.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAddress.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventParticipantNetworkListEnumerator }
@@ -13593,10 +13593,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventParticipantNetworkListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventParticipantNetworkListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventParticipantNetworkList }
@@ -13902,12 +13902,12 @@ begin
   result := (FType_List <> nil) and (FType_List.count > 0);
 end;
 
-function TFhirAuditEventSource.sizeInBytesV : cardinal;
+function TFhirAuditEventSource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSite.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, Ftype_List.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventSourceListEnumerator }
@@ -13936,10 +13936,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventSourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventSourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventSourceList }
@@ -14453,19 +14453,19 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirAuditEventObject.sizeInBytesV : cardinal;
+function TFhirAuditEventObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FRole.sizeInBytes);
-  inc(result, FLifecycle.sizeInBytes);
-  inc(result, FsecurityLabelList.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FQuery.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FRole.sizeInBytes(magic));
+  inc(result, FLifecycle.sizeInBytes(magic));
+  inc(result, FsecurityLabelList.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FQuery.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventObjectListEnumerator }
@@ -14494,10 +14494,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventObjectListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventObjectListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventObjectList }
@@ -14782,11 +14782,11 @@ begin
     FValue.value := nil;
 end;
 
-function TFhirAuditEventObjectDetail.sizeInBytesV : cardinal;
+function TFhirAuditEventObjectDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventObjectDetailListEnumerator }
@@ -14815,10 +14815,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventObjectDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventObjectDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventObjectDetailList }
@@ -15148,13 +15148,13 @@ begin
   result := (FObject_List <> nil) and (FObject_List.count > 0);
 end;
 
-function TFhirAuditEvent.sizeInBytesV : cardinal;
+function TFhirAuditEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEvent.sizeInBytes);
-  inc(result, FparticipantList.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, Fobject_List.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEvent.sizeInBytes(magic));
+  inc(result, FparticipantList.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, Fobject_List.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventListEnumerator }
@@ -15183,10 +15183,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAuditEventListEnumerator.sizeInBytesV : cardinal;
+function TFhirAuditEventListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAuditEventList }
@@ -15480,11 +15480,11 @@ begin
     FContent.value := nil;
 end;
 
-function TFhirBinary.sizeInBytesV : cardinal;
+function TFhirBinary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContentType.sizeInBytes);
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContentType.sizeInBytes(magic));
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirBinaryListEnumerator }
@@ -15513,10 +15513,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBinaryListEnumerator.sizeInBytesV : cardinal;
+function TFhirBinaryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBinaryList }
@@ -15805,11 +15805,11 @@ begin
     FUrl.value := '';
 end;
 
-function TFhirBundleLink.sizeInBytesV : cardinal;
+function TFhirBundleLink.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRelation.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRelation.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
 end;
 
 { TFhirBundleLinkListEnumerator }
@@ -15838,10 +15838,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleLinkListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleLinkListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleLinkList }
@@ -16211,15 +16211,15 @@ begin
   FResponse := value;
 end;
 
-function TFhirBundleEntry.sizeInBytesV : cardinal;
+function TFhirBundleEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flink_List.sizeInBytes);
-  inc(result, FFullUrl.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FSearch.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flink_List.sizeInBytes(magic));
+  inc(result, FFullUrl.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FSearch.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryListEnumerator }
@@ -16248,10 +16248,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleEntryListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleEntryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryList }
@@ -16531,11 +16531,11 @@ begin
     FScore.value := '';
 end;
 
-function TFhirBundleEntrySearch.sizeInBytesV : cardinal;
+function TFhirBundleEntrySearch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMode.sizeInBytes);
-  inc(result, FScore.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FScore.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntrySearchListEnumerator }
@@ -16564,10 +16564,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleEntrySearchListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleEntrySearchListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntrySearchList }
@@ -17008,15 +17008,15 @@ begin
     FIfNoneExist.value := '';
 end;
 
-function TFhirBundleEntryRequest.sizeInBytesV : cardinal;
+function TFhirBundleEntryRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FIfNoneMatch.sizeInBytes);
-  inc(result, FIfModifiedSince.sizeInBytes);
-  inc(result, FIfMatch.sizeInBytes);
-  inc(result, FIfNoneExist.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FIfNoneMatch.sizeInBytes(magic));
+  inc(result, FIfModifiedSince.sizeInBytes(magic));
+  inc(result, FIfMatch.sizeInBytes(magic));
+  inc(result, FIfNoneExist.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryRequestListEnumerator }
@@ -17045,10 +17045,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleEntryRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleEntryRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryRequestList }
@@ -17411,13 +17411,13 @@ begin
   FLastModified.value := value
 end;
 
-function TFhirBundleEntryResponse.sizeInBytesV : cardinal;
+function TFhirBundleEntryResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FEtag.sizeInBytes);
-  inc(result, FLastModified.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FEtag.sizeInBytes(magic));
+  inc(result, FLastModified.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryResponseListEnumerator }
@@ -17446,10 +17446,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleEntryResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleEntryResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleEntryResponseList }
@@ -17836,14 +17836,14 @@ begin
   FSignature := value;
 end;
 
-function TFhirBundle.sizeInBytesV : cardinal;
+function TFhirBundle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FTotal.sizeInBytes);
-  inc(result, Flink_List.sizeInBytes);
-  inc(result, FentryList.sizeInBytes);
-  inc(result, FSignature.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FTotal.sizeInBytes(magic));
+  inc(result, Flink_List.sizeInBytes(magic));
+  inc(result, FentryList.sizeInBytes(magic));
+  inc(result, FSignature.sizeInBytes(magic));
 end;
 
 { TFhirBundleListEnumerator }
@@ -17872,10 +17872,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBundleListEnumerator.sizeInBytesV : cardinal;
+function TFhirBundleListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBundleList }
@@ -18167,13 +18167,13 @@ begin
   FPerson := value;
 end;
 
-function TFhirClaimPayee.sizeInBytesV : cardinal;
+function TFhirClaimPayee.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FPerson.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FPerson.sizeInBytes(magic));
 end;
 
 { TFhirClaimPayeeListEnumerator }
@@ -18202,10 +18202,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimPayeeListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimPayeeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimPayeeList }
@@ -18470,11 +18470,11 @@ begin
   FDiagnosis := value;
 end;
 
-function TFhirClaimDiagnosis.sizeInBytesV : cardinal;
+function TFhirClaimDiagnosis.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FDiagnosis.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FDiagnosis.sizeInBytes(magic));
 end;
 
 { TFhirClaimDiagnosisListEnumerator }
@@ -18503,10 +18503,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimDiagnosisListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimDiagnosisListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimDiagnosisList }
@@ -18954,17 +18954,17 @@ begin
   FOriginalRuleset := value;
 end;
 
-function TFhirClaimCoverage.sizeInBytesV : cardinal;
+function TFhirClaimCoverage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FFocal.sizeInBytes);
-  inc(result, FCoverage.sizeInBytes);
-  inc(result, FBusinessArrangement.sizeInBytes);
-  inc(result, FRelationship.sizeInBytes);
-  inc(result, FpreAuthRefList.sizeInBytes);
-  inc(result, FClaimResponse.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FFocal.sizeInBytes(magic));
+  inc(result, FCoverage.sizeInBytes(magic));
+  inc(result, FBusinessArrangement.sizeInBytes(magic));
+  inc(result, FRelationship.sizeInBytes(magic));
+  inc(result, FpreAuthRefList.sizeInBytes(magic));
+  inc(result, FClaimResponse.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
 end;
 
 { TFhirClaimCoverageListEnumerator }
@@ -18993,10 +18993,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimCoverageListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimCoverageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimCoverageList }
@@ -19712,26 +19712,26 @@ begin
   FProsthesis := value;
 end;
 
-function TFhirClaimItem.sizeInBytesV : cardinal;
+function TFhirClaimItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FdiagnosisLinkIdList.sizeInBytes);
-  inc(result, FService.sizeInBytes);
-  inc(result, FServiceDate.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FUnitPrice.sizeInBytes);
-  inc(result, FFactor.sizeInBytes);
-  inc(result, FPoints.sizeInBytes);
-  inc(result, FNet.sizeInBytes);
-  inc(result, FUdi.sizeInBytes);
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FsubSiteList.sizeInBytes);
-  inc(result, FmodifierList.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
-  inc(result, FProsthesis.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FdiagnosisLinkIdList.sizeInBytes(magic));
+  inc(result, FService.sizeInBytes(magic));
+  inc(result, FServiceDate.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FUnitPrice.sizeInBytes(magic));
+  inc(result, FFactor.sizeInBytes(magic));
+  inc(result, FPoints.sizeInBytes(magic));
+  inc(result, FNet.sizeInBytes(magic));
+  inc(result, FUdi.sizeInBytes(magic));
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FsubSiteList.sizeInBytes(magic));
+  inc(result, FmodifierList.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
+  inc(result, FProsthesis.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemListEnumerator }
@@ -19760,10 +19760,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemList }
@@ -20259,19 +20259,19 @@ begin
   result := (FSubDetailList <> nil) and (FSubDetailList.count > 0);
 end;
 
-function TFhirClaimItemDetail.sizeInBytesV : cardinal;
+function TFhirClaimItemDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FService.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FUnitPrice.sizeInBytes);
-  inc(result, FFactor.sizeInBytes);
-  inc(result, FPoints.sizeInBytes);
-  inc(result, FNet.sizeInBytes);
-  inc(result, FUdi.sizeInBytes);
-  inc(result, FsubDetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FService.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FUnitPrice.sizeInBytes(magic));
+  inc(result, FFactor.sizeInBytes(magic));
+  inc(result, FPoints.sizeInBytes(magic));
+  inc(result, FNet.sizeInBytes(magic));
+  inc(result, FUdi.sizeInBytes(magic));
+  inc(result, FsubDetailList.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemDetailListEnumerator }
@@ -20300,10 +20300,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimItemDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimItemDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemDetailList }
@@ -20759,18 +20759,18 @@ begin
   FUdi := value;
 end;
 
-function TFhirClaimItemDetailSubDetail.sizeInBytesV : cardinal;
+function TFhirClaimItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FService.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FUnitPrice.sizeInBytes);
-  inc(result, FFactor.sizeInBytes);
-  inc(result, FPoints.sizeInBytes);
-  inc(result, FNet.sizeInBytes);
-  inc(result, FUdi.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FService.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FUnitPrice.sizeInBytes(magic));
+  inc(result, FFactor.sizeInBytes(magic));
+  inc(result, FPoints.sizeInBytes(magic));
+  inc(result, FNet.sizeInBytes(magic));
+  inc(result, FUdi.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemDetailSubDetailListEnumerator }
@@ -20799,10 +20799,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimItemDetailSubDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimItemDetailSubDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemDetailSubDetailList }
@@ -21099,12 +21099,12 @@ begin
   FPriorMaterial := value;
 end;
 
-function TFhirClaimItemProsthesis.sizeInBytesV : cardinal;
+function TFhirClaimItemProsthesis.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FInitial.sizeInBytes);
-  inc(result, FPriorDate.sizeInBytes);
-  inc(result, FPriorMaterial.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FInitial.sizeInBytes(magic));
+  inc(result, FPriorDate.sizeInBytes(magic));
+  inc(result, FPriorMaterial.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemProsthesisListEnumerator }
@@ -21133,10 +21133,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimItemProsthesisListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimItemProsthesisListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimItemProsthesisList }
@@ -21418,12 +21418,12 @@ begin
   FExtractionDate.value := value
 end;
 
-function TFhirClaimMissingTeeth.sizeInBytesV : cardinal;
+function TFhirClaimMissingTeeth.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTooth.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FExtractionDate.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTooth.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FExtractionDate.sizeInBytes(magic));
 end;
 
 { TFhirClaimMissingTeethListEnumerator }
@@ -21452,10 +21452,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimMissingTeethListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimMissingTeethListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimMissingTeethList }
@@ -22530,38 +22530,38 @@ begin
   result := (FMissingTeethList <> nil) and (FMissingTeethList.count > 0);
 end;
 
-function TFhirClaim.sizeInBytesV : cardinal;
+function TFhirClaim.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FUse.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FFundsReserve.sizeInBytes);
-  inc(result, FEnterer.sizeInBytes);
-  inc(result, FFacility.sizeInBytes);
-  inc(result, FPrescription.sizeInBytes);
-  inc(result, FOriginalPrescription.sizeInBytes);
-  inc(result, FPayee.sizeInBytes);
-  inc(result, FReferral.sizeInBytes);
-  inc(result, FdiagnosisList.sizeInBytes);
-  inc(result, FconditionList.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FcoverageList.sizeInBytes);
-  inc(result, FexceptionList.sizeInBytes);
-  inc(result, FSchool.sizeInBytes);
-  inc(result, FAccident.sizeInBytes);
-  inc(result, FAccidentType.sizeInBytes);
-  inc(result, FinterventionExceptionList.sizeInBytes);
-  inc(result, FitemList.sizeInBytes);
-  inc(result, FadditionalMaterialsList.sizeInBytes);
-  inc(result, FmissingTeethList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FUse.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
+  inc(result, FFundsReserve.sizeInBytes(magic));
+  inc(result, FEnterer.sizeInBytes(magic));
+  inc(result, FFacility.sizeInBytes(magic));
+  inc(result, FPrescription.sizeInBytes(magic));
+  inc(result, FOriginalPrescription.sizeInBytes(magic));
+  inc(result, FPayee.sizeInBytes(magic));
+  inc(result, FReferral.sizeInBytes(magic));
+  inc(result, FdiagnosisList.sizeInBytes(magic));
+  inc(result, FconditionList.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FcoverageList.sizeInBytes(magic));
+  inc(result, FexceptionList.sizeInBytes(magic));
+  inc(result, FSchool.sizeInBytes(magic));
+  inc(result, FAccident.sizeInBytes(magic));
+  inc(result, FAccidentType.sizeInBytes(magic));
+  inc(result, FinterventionExceptionList.sizeInBytes(magic));
+  inc(result, FitemList.sizeInBytes(magic));
+  inc(result, FadditionalMaterialsList.sizeInBytes(magic));
+  inc(result, FmissingTeethList.sizeInBytes(magic));
 end;
 
 { TFhirClaimListEnumerator }
@@ -22590,10 +22590,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimList }
@@ -22961,13 +22961,13 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirClaimResponseItem.sizeInBytesV : cardinal;
+function TFhirClaimResponseItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequenceLinkId.sizeInBytes);
-  inc(result, FnoteNumberList.sizeInBytes);
-  inc(result, FadjudicationList.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequenceLinkId.sizeInBytes(magic));
+  inc(result, FnoteNumberList.sizeInBytes(magic));
+  inc(result, FadjudicationList.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemListEnumerator }
@@ -22996,10 +22996,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemList }
@@ -23286,12 +23286,12 @@ begin
     FValue.value := '';
 end;
 
-function TFhirClaimResponseItemAdjudication.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemAdjudication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemAdjudicationListEnumerator }
@@ -23320,10 +23320,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemAdjudicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemAdjudicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemAdjudicationList }
@@ -23647,12 +23647,12 @@ begin
   result := (FSubDetailList <> nil) and (FSubDetailList.count > 0);
 end;
 
-function TFhirClaimResponseItemDetail.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequenceLinkId.sizeInBytes);
-  inc(result, FadjudicationList.sizeInBytes);
-  inc(result, FsubDetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequenceLinkId.sizeInBytes(magic));
+  inc(result, FadjudicationList.sizeInBytes(magic));
+  inc(result, FsubDetailList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailListEnumerator }
@@ -23681,10 +23681,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailList }
@@ -23971,12 +23971,12 @@ begin
     FValue.value := '';
 end;
 
-function TFhirClaimResponseItemDetailAdjudication.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailAdjudication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailAdjudicationListEnumerator }
@@ -24005,10 +24005,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemDetailAdjudicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailAdjudicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailAdjudicationList }
@@ -24293,11 +24293,11 @@ begin
   result := (FAdjudicationList <> nil) and (FAdjudicationList.count > 0);
 end;
 
-function TFhirClaimResponseItemDetailSubDetail.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequenceLinkId.sizeInBytes);
-  inc(result, FadjudicationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequenceLinkId.sizeInBytes(magic));
+  inc(result, FadjudicationList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailSubDetailListEnumerator }
@@ -24326,10 +24326,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemDetailSubDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailSubDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailSubDetailList }
@@ -24616,12 +24616,12 @@ begin
     FValue.value := '';
 end;
 
-function TFhirClaimResponseItemDetailSubDetailAdjudication.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailSubDetailAdjudication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailSubDetailAdjudicationListEnumerator }
@@ -24650,10 +24650,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseItemDetailSubDetailAdjudicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseItemDetailSubDetailAdjudicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseItemDetailSubDetailAdjudicationList }
@@ -25057,15 +25057,15 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirClaimResponseAddItem.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FsequenceLinkIdList.sizeInBytes);
-  inc(result, FService.sizeInBytes);
-  inc(result, FFee.sizeInBytes);
-  inc(result, FnoteNumberLinkIdList.sizeInBytes);
-  inc(result, FadjudicationList.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FsequenceLinkIdList.sizeInBytes(magic));
+  inc(result, FService.sizeInBytes(magic));
+  inc(result, FFee.sizeInBytes(magic));
+  inc(result, FnoteNumberLinkIdList.sizeInBytes(magic));
+  inc(result, FadjudicationList.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemListEnumerator }
@@ -25094,10 +25094,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseAddItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemList }
@@ -25384,12 +25384,12 @@ begin
     FValue.value := '';
 end;
 
-function TFhirClaimResponseAddItemAdjudication.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemAdjudication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemAdjudicationListEnumerator }
@@ -25418,10 +25418,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseAddItemAdjudicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemAdjudicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemAdjudicationList }
@@ -25707,12 +25707,12 @@ begin
   result := (FAdjudicationList <> nil) and (FAdjudicationList.count > 0);
 end;
 
-function TFhirClaimResponseAddItemDetail.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FService.sizeInBytes);
-  inc(result, FFee.sizeInBytes);
-  inc(result, FadjudicationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FService.sizeInBytes(magic));
+  inc(result, FFee.sizeInBytes(magic));
+  inc(result, FadjudicationList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemDetailListEnumerator }
@@ -25741,10 +25741,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseAddItemDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemDetailList }
@@ -26031,12 +26031,12 @@ begin
     FValue.value := '';
 end;
 
-function TFhirClaimResponseAddItemDetailAdjudication.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemDetailAdjudication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemDetailAdjudicationListEnumerator }
@@ -26065,10 +26065,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseAddItemDetailAdjudicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseAddItemDetailAdjudicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseAddItemDetailAdjudicationList }
@@ -26418,13 +26418,13 @@ begin
   FCode := value;
 end;
 
-function TFhirClaimResponseError.sizeInBytesV : cardinal;
+function TFhirClaimResponseError.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequenceLinkId.sizeInBytes);
-  inc(result, FDetailSequenceLinkId.sizeInBytes);
-  inc(result, FSubdetailSequenceLinkId.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequenceLinkId.sizeInBytes(magic));
+  inc(result, FDetailSequenceLinkId.sizeInBytes(magic));
+  inc(result, FSubdetailSequenceLinkId.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseErrorListEnumerator }
@@ -26453,10 +26453,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseErrorListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseErrorListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseErrorList }
@@ -26763,12 +26763,12 @@ begin
     FText.value := '';
 end;
 
-function TFhirClaimResponseNote.sizeInBytesV : cardinal;
+function TFhirClaimResponseNote.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FNumber.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FText.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FNumber.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseNoteListEnumerator }
@@ -26797,10 +26797,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseNoteListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseNoteListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseNoteList }
@@ -27248,17 +27248,17 @@ begin
   FOriginalRuleset := value;
 end;
 
-function TFhirClaimResponseCoverage.sizeInBytesV : cardinal;
+function TFhirClaimResponseCoverage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FFocal.sizeInBytes);
-  inc(result, FCoverage.sizeInBytes);
-  inc(result, FBusinessArrangement.sizeInBytes);
-  inc(result, FRelationship.sizeInBytes);
-  inc(result, FpreAuthRefList.sizeInBytes);
-  inc(result, FClaimResponse.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FFocal.sizeInBytes(magic));
+  inc(result, FCoverage.sizeInBytes(magic));
+  inc(result, FBusinessArrangement.sizeInBytes(magic));
+  inc(result, FRelationship.sizeInBytes(magic));
+  inc(result, FpreAuthRefList.sizeInBytes(magic));
+  inc(result, FClaimResponse.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseCoverageListEnumerator }
@@ -27287,10 +27287,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseCoverageListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseCoverageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseCoverageList }
@@ -28231,35 +28231,35 @@ begin
   result := (FCoverageList <> nil) and (FCoverageList.count > 0);
 end;
 
-function TFhirClaimResponse.sizeInBytesV : cardinal;
+function TFhirClaimResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FPayeeType.sizeInBytes);
-  inc(result, FitemList.sizeInBytes);
-  inc(result, FaddItemList.sizeInBytes);
-  inc(result, FerrorList.sizeInBytes);
-  inc(result, FTotalCost.sizeInBytes);
-  inc(result, FUnallocDeductable.sizeInBytes);
-  inc(result, FTotalBenefit.sizeInBytes);
-  inc(result, FPaymentAdjustment.sizeInBytes);
-  inc(result, FPaymentAdjustmentReason.sizeInBytes);
-  inc(result, FPaymentDate.sizeInBytes);
-  inc(result, FPaymentAmount.sizeInBytes);
-  inc(result, FPaymentRef.sizeInBytes);
-  inc(result, FReserved.sizeInBytes);
-  inc(result, FForm.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FcoverageList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FPayeeType.sizeInBytes(magic));
+  inc(result, FitemList.sizeInBytes(magic));
+  inc(result, FaddItemList.sizeInBytes(magic));
+  inc(result, FerrorList.sizeInBytes(magic));
+  inc(result, FTotalCost.sizeInBytes(magic));
+  inc(result, FUnallocDeductable.sizeInBytes(magic));
+  inc(result, FTotalBenefit.sizeInBytes(magic));
+  inc(result, FPaymentAdjustment.sizeInBytes(magic));
+  inc(result, FPaymentAdjustmentReason.sizeInBytes(magic));
+  inc(result, FPaymentDate.sizeInBytes(magic));
+  inc(result, FPaymentAmount.sizeInBytes(magic));
+  inc(result, FPaymentRef.sizeInBytes(magic));
+  inc(result, FReserved.sizeInBytes(magic));
+  inc(result, FForm.sizeInBytes(magic));
+  inc(result, FnoteList.sizeInBytes(magic));
+  inc(result, FcoverageList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseListEnumerator }
@@ -28288,10 +28288,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClaimResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirClaimResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClaimResponseList }
@@ -28559,11 +28559,11 @@ begin
   result := (FRoleList <> nil) and (FRoleList.count > 0);
 end;
 
-function TFhirContractActor.sizeInBytesV : cardinal;
+function TFhirContractActor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntity.sizeInBytes);
-  inc(result, FroleList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntity.sizeInBytes(magic));
+  inc(result, FroleList.sizeInBytes(magic));
 end;
 
 { TFhirContractActorListEnumerator }
@@ -28592,10 +28592,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractActorListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractActorListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractActorList }
@@ -29024,17 +29024,17 @@ begin
   FNet := value;
 end;
 
-function TFhirContractValuedItem.sizeInBytesV : cardinal;
+function TFhirContractValuedItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntity.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FEffectiveTime.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FUnitPrice.sizeInBytes);
-  inc(result, FFactor.sizeInBytes);
-  inc(result, FPoints.sizeInBytes);
-  inc(result, FNet.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntity.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FEffectiveTime.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FUnitPrice.sizeInBytes(magic));
+  inc(result, FFactor.sizeInBytes(magic));
+  inc(result, FPoints.sizeInBytes(magic));
+  inc(result, FNet.sizeInBytes(magic));
 end;
 
 { TFhirContractValuedItemListEnumerator }
@@ -29063,10 +29063,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractValuedItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractValuedItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractValuedItemList }
@@ -29353,12 +29353,12 @@ begin
     FSignature.value := '';
 end;
 
-function TFhirContractSigner.sizeInBytesV : cardinal;
+function TFhirContractSigner.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FParty.sizeInBytes);
-  inc(result, FSignature.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FParty.sizeInBytes(magic));
+  inc(result, FSignature.sizeInBytes(magic));
 end;
 
 { TFhirContractSignerListEnumerator }
@@ -29387,10 +29387,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractSignerListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractSignerListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractSignerList }
@@ -29976,21 +29976,21 @@ begin
   result := (FGroupList <> nil) and (FGroupList.count > 0);
 end;
 
-function TFhirContractTerm.sizeInBytesV : cardinal;
+function TFhirContractTerm.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FIssued.sizeInBytes);
-  inc(result, FApplies.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FSubType.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FactionList.sizeInBytes);
-  inc(result, FactionReasonList.sizeInBytes);
-  inc(result, FactorList.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FvaluedItemList.sizeInBytes);
-  inc(result, FgroupList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FIssued.sizeInBytes(magic));
+  inc(result, FApplies.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FSubType.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FactionList.sizeInBytes(magic));
+  inc(result, FactionReasonList.sizeInBytes(magic));
+  inc(result, FactorList.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FvaluedItemList.sizeInBytes(magic));
+  inc(result, FgroupList.sizeInBytes(magic));
 end;
 
 { TFhirContractTermListEnumerator }
@@ -30019,10 +30019,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractTermListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractTermListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractTermList }
@@ -30286,11 +30286,11 @@ begin
   result := (FRoleList <> nil) and (FRoleList.count > 0);
 end;
 
-function TFhirContractTermActor.sizeInBytesV : cardinal;
+function TFhirContractTermActor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntity.sizeInBytes);
-  inc(result, FroleList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntity.sizeInBytes(magic));
+  inc(result, FroleList.sizeInBytes(magic));
 end;
 
 { TFhirContractTermActorListEnumerator }
@@ -30319,10 +30319,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractTermActorListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractTermActorListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractTermActorList }
@@ -30751,17 +30751,17 @@ begin
   FNet := value;
 end;
 
-function TFhirContractTermValuedItem.sizeInBytesV : cardinal;
+function TFhirContractTermValuedItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntity.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FEffectiveTime.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FUnitPrice.sizeInBytes);
-  inc(result, FFactor.sizeInBytes);
-  inc(result, FPoints.sizeInBytes);
-  inc(result, FNet.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntity.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FEffectiveTime.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FUnitPrice.sizeInBytes(magic));
+  inc(result, FFactor.sizeInBytes(magic));
+  inc(result, FPoints.sizeInBytes(magic));
+  inc(result, FNet.sizeInBytes(magic));
 end;
 
 { TFhirContractTermValuedItemListEnumerator }
@@ -30790,10 +30790,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractTermValuedItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractTermValuedItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractTermValuedItemList }
@@ -31017,10 +31017,10 @@ begin
   FContent := value;
 end;
 
-function TFhirContractFriendly.sizeInBytesV : cardinal;
+function TFhirContractFriendly.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirContractFriendlyListEnumerator }
@@ -31049,10 +31049,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractFriendlyListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractFriendlyListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractFriendlyList }
@@ -31276,10 +31276,10 @@ begin
   FContent := value;
 end;
 
-function TFhirContractLegal.sizeInBytesV : cardinal;
+function TFhirContractLegal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirContractLegalListEnumerator }
@@ -31308,10 +31308,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractLegalListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractLegalListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractLegalList }
@@ -31535,10 +31535,10 @@ begin
   FContent := value;
 end;
 
-function TFhirContractRule.sizeInBytesV : cardinal;
+function TFhirContractRule.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirContractRuleListEnumerator }
@@ -31567,10 +31567,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractRuleListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractRuleListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractRuleList }
@@ -32414,27 +32414,27 @@ begin
   result := (FRuleList <> nil) and (FRuleList.count > 0);
 end;
 
-function TFhirContract.sizeInBytesV : cardinal;
+function TFhirContract.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FIssued.sizeInBytes);
-  inc(result, FApplies.sizeInBytes);
-  inc(result, FsubjectList.sizeInBytes);
-  inc(result, FauthorityList.sizeInBytes);
-  inc(result, FdomainList.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FsubTypeList.sizeInBytes);
-  inc(result, FactionList.sizeInBytes);
-  inc(result, FactionReasonList.sizeInBytes);
-  inc(result, FactorList.sizeInBytes);
-  inc(result, FvaluedItemList.sizeInBytes);
-  inc(result, FsignerList.sizeInBytes);
-  inc(result, FtermList.sizeInBytes);
-  inc(result, FBinding.sizeInBytes);
-  inc(result, FfriendlyList.sizeInBytes);
-  inc(result, FlegalList.sizeInBytes);
-  inc(result, FruleList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FIssued.sizeInBytes(magic));
+  inc(result, FApplies.sizeInBytes(magic));
+  inc(result, FsubjectList.sizeInBytes(magic));
+  inc(result, FauthorityList.sizeInBytes(magic));
+  inc(result, FdomainList.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FsubTypeList.sizeInBytes(magic));
+  inc(result, FactionList.sizeInBytes(magic));
+  inc(result, FactionReasonList.sizeInBytes(magic));
+  inc(result, FactorList.sizeInBytes(magic));
+  inc(result, FvaluedItemList.sizeInBytes(magic));
+  inc(result, FsignerList.sizeInBytes(magic));
+  inc(result, FtermList.sizeInBytes(magic));
+  inc(result, FBinding.sizeInBytes(magic));
+  inc(result, FfriendlyList.sizeInBytes(magic));
+  inc(result, FlegalList.sizeInBytes(magic));
+  inc(result, FruleList.sizeInBytes(magic));
 end;
 
 { TFhirContractListEnumerator }
@@ -32463,10 +32463,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirContractListEnumerator.sizeInBytesV : cardinal;
+function TFhirContractListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirContractList }
@@ -32862,16 +32862,16 @@ begin
   FOrganization := value;
 end;
 
-function TFhirEligibilityRequest.sizeInBytesV : cardinal;
+function TFhirEligibilityRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
 end;
 
 { TFhirEligibilityRequestListEnumerator }
@@ -32900,10 +32900,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirEligibilityRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirEligibilityRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirEligibilityRequestList }
@@ -33398,19 +33398,19 @@ begin
   FRequestOrganization := value;
 end;
 
-function TFhirEligibilityResponse.sizeInBytesV : cardinal;
+function TFhirEligibilityResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
 end;
 
 { TFhirEligibilityResponseListEnumerator }
@@ -33439,10 +33439,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirEligibilityResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirEligibilityResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirEligibilityResponseList }
@@ -33902,19 +33902,19 @@ begin
   FRelationship := value;
 end;
 
-function TFhirEnrollmentRequest.sizeInBytesV : cardinal;
+function TFhirEnrollmentRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FCoverage.sizeInBytes);
-  inc(result, FRelationship.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FCoverage.sizeInBytes(magic));
+  inc(result, FRelationship.sizeInBytes(magic));
 end;
 
 { TFhirEnrollmentRequestListEnumerator }
@@ -33943,10 +33943,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirEnrollmentRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirEnrollmentRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirEnrollmentRequestList }
@@ -34441,19 +34441,19 @@ begin
   FRequestOrganization := value;
 end;
 
-function TFhirEnrollmentResponse.sizeInBytesV : cardinal;
+function TFhirEnrollmentResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
 end;
 
 { TFhirEnrollmentResponseListEnumerator }
@@ -34482,10 +34482,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirEnrollmentResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirEnrollmentResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirEnrollmentResponseList }
@@ -34980,19 +34980,19 @@ begin
   FRequestOrganization := value;
 end;
 
-function TFhirExplanationOfBenefit.sizeInBytesV : cardinal;
+function TFhirExplanationOfBenefit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
 end;
 
 { TFhirExplanationOfBenefitListEnumerator }
@@ -35021,10 +35021,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirExplanationOfBenefitListEnumerator.sizeInBytesV : cardinal;
+function TFhirExplanationOfBenefitListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirExplanationOfBenefitList }
@@ -35346,13 +35346,13 @@ begin
   FItem := value;
 end;
 
-function TFhirListEntry.sizeInBytesV : cardinal;
+function TFhirListEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFlag.sizeInBytes);
-  inc(result, FDeleted.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FItem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFlag.sizeInBytes(magic));
+  inc(result, FDeleted.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FItem.sizeInBytes(magic));
 end;
 
 { TFhirListEntryListEnumerator }
@@ -35381,10 +35381,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirListEntryListEnumerator.sizeInBytesV : cardinal;
+function TFhirListEntryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirListEntryList }
@@ -35993,22 +35993,22 @@ begin
   FEmptyReason := value;
 end;
 
-function TFhirList.sizeInBytesV : cardinal;
+function TFhirList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FOrderedBy.sizeInBytes);
-  inc(result, FMode.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FentryList.sizeInBytes);
-  inc(result, FEmptyReason.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FOrderedBy.sizeInBytes(magic));
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FentryList.sizeInBytes(magic));
+  inc(result, FEmptyReason.sizeInBytes(magic));
 end;
 
 { TFhirListListEnumerator }
@@ -36037,10 +36037,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirListListEnumerator.sizeInBytesV : cardinal;
+function TFhirListListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirListList }
@@ -36348,12 +36348,12 @@ begin
   result := (FBatchList <> nil) and (FBatchList.count > 0);
 end;
 
-function TFhirMedicationProduct.sizeInBytesV : cardinal;
+function TFhirMedicationProduct.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FForm.sizeInBytes);
-  inc(result, FingredientList.sizeInBytes);
-  inc(result, FbatchList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FForm.sizeInBytes(magic));
+  inc(result, FingredientList.sizeInBytes(magic));
+  inc(result, FbatchList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductListEnumerator }
@@ -36382,10 +36382,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationProductListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationProductListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductList }
@@ -36630,11 +36630,11 @@ begin
   FAmount := value;
 end;
 
-function TFhirMedicationProductIngredient.sizeInBytesV : cardinal;
+function TFhirMedicationProductIngredient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductIngredientListEnumerator }
@@ -36663,10 +36663,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationProductIngredientListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationProductIngredientListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductIngredientList }
@@ -36946,11 +36946,11 @@ begin
   FExpirationDate.value := value
 end;
 
-function TFhirMedicationProductBatch.sizeInBytesV : cardinal;
+function TFhirMedicationProductBatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLotNumber.sizeInBytes);
-  inc(result, FExpirationDate.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLotNumber.sizeInBytes(magic));
+  inc(result, FExpirationDate.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductBatchListEnumerator }
@@ -36979,10 +36979,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationProductBatchListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationProductBatchListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationProductBatchList }
@@ -37246,11 +37246,11 @@ begin
   result := (FContentList <> nil) and (FContentList.count > 0);
 end;
 
-function TFhirMedicationPackage.sizeInBytesV : cardinal;
+function TFhirMedicationPackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContainer.sizeInBytes);
-  inc(result, FcontentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContainer.sizeInBytes(magic));
+  inc(result, FcontentList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationPackageListEnumerator }
@@ -37279,10 +37279,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationPackageListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationPackageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationPackageList }
@@ -37527,11 +37527,11 @@ begin
   FAmount := value;
 end;
 
-function TFhirMedicationPackageContent.sizeInBytesV : cardinal;
+function TFhirMedicationPackageContent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
 end;
 
 { TFhirMedicationPackageContentListEnumerator }
@@ -37560,10 +37560,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationPackageContentListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationPackageContentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationPackageContentList }
@@ -37893,14 +37893,14 @@ begin
   FPackage := value;
 end;
 
-function TFhirMedication.sizeInBytesV : cardinal;
+function TFhirMedication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FIsBrand.sizeInBytes);
-  inc(result, FManufacturer.sizeInBytes);
-  inc(result, FProduct.sizeInBytes);
-  inc(result, FPackage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FIsBrand.sizeInBytes(magic));
+  inc(result, FManufacturer.sizeInBytes(magic));
+  inc(result, FProduct.sizeInBytes(magic));
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 { TFhirMedicationListEnumerator }
@@ -37929,10 +37929,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationList }
@@ -38238,12 +38238,12 @@ begin
   FDetails := value;
 end;
 
-function TFhirMessageHeaderResponse.sizeInBytesV : cardinal;
+function TFhirMessageHeaderResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDetails.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDetails.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderResponseListEnumerator }
@@ -38272,10 +38272,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMessageHeaderResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirMessageHeaderResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderResponseList }
@@ -38665,14 +38665,14 @@ begin
     FEndpoint.value := '';
 end;
 
-function TFhirMessageHeaderSource.sizeInBytesV : cardinal;
+function TFhirMessageHeaderSource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FSoftware.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FContact.sizeInBytes);
-  inc(result, FEndpoint.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FSoftware.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FContact.sizeInBytes(magic));
+  inc(result, FEndpoint.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderSourceListEnumerator }
@@ -38701,10 +38701,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMessageHeaderSourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirMessageHeaderSourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderSourceList }
@@ -39011,12 +39011,12 @@ begin
     FEndpoint.value := '';
 end;
 
-function TFhirMessageHeaderDestination.sizeInBytesV : cardinal;
+function TFhirMessageHeaderDestination.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FEndpoint.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FEndpoint.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderDestinationListEnumerator }
@@ -39045,10 +39045,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMessageHeaderDestinationListEnumerator.sizeInBytesV : cardinal;
+function TFhirMessageHeaderDestinationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderDestinationList }
@@ -39544,20 +39544,20 @@ begin
   result := (FDataList <> nil) and (FDataList.count > 0);
 end;
 
-function TFhirMessageHeader.sizeInBytesV : cardinal;
+function TFhirMessageHeader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTimestamp.sizeInBytes);
-  inc(result, FEvent.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FdestinationList.sizeInBytes);
-  inc(result, FEnterer.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FReceiver.sizeInBytes);
-  inc(result, FResponsible.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FdataList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTimestamp.sizeInBytes(magic));
+  inc(result, FEvent.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FdestinationList.sizeInBytes(magic));
+  inc(result, FEnterer.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FReceiver.sizeInBytes(magic));
+  inc(result, FResponsible.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FdataList.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderListEnumerator }
@@ -39586,10 +39586,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMessageHeaderListEnumerator.sizeInBytesV : cardinal;
+function TFhirMessageHeaderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMessageHeaderList }
@@ -39972,14 +39972,14 @@ begin
   result := (FLocationList <> nil) and (FLocationList.count > 0);
 end;
 
-function TFhirOperationOutcomeIssue.sizeInBytesV : cardinal;
+function TFhirOperationOutcomeIssue.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSeverity.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDetails.sizeInBytes);
-  inc(result, FDiagnostics.sizeInBytes);
-  inc(result, FlocationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSeverity.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDetails.sizeInBytes(magic));
+  inc(result, FDiagnostics.sizeInBytes(magic));
+  inc(result, FlocationList.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeIssueListEnumerator }
@@ -40008,10 +40008,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationOutcomeIssueListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationOutcomeIssueListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeIssueList }
@@ -40259,10 +40259,10 @@ begin
   result := (FIssueList <> nil) and (FIssueList.count > 0);
 end;
 
-function TFhirOperationOutcome.sizeInBytesV : cardinal;
+function TFhirOperationOutcome.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FissueList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FissueList.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeListEnumerator }
@@ -40291,10 +40291,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationOutcomeListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationOutcomeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeList }
@@ -40543,11 +40543,11 @@ begin
   FSchedule := value;
 end;
 
-function TFhirOrderWhen.sizeInBytesV : cardinal;
+function TFhirOrderWhen.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSchedule.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSchedule.sizeInBytes(magic));
 end;
 
 { TFhirOrderWhenListEnumerator }
@@ -40576,10 +40576,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOrderWhenListEnumerator.sizeInBytesV : cardinal;
+function TFhirOrderWhenListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOrderWhenList }
@@ -41010,17 +41010,17 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirOrder.sizeInBytesV : cardinal;
+function TFhirOrder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FWhen.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FWhen.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirOrderListEnumerator }
@@ -41049,10 +41049,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOrderListEnumerator.sizeInBytesV : cardinal;
+function TFhirOrderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOrderList }
@@ -41501,16 +41501,16 @@ begin
   result := (FFulfillmentList <> nil) and (FFulfillmentList.count > 0);
 end;
 
-function TFhirOrderResponse.sizeInBytesV : cardinal;
+function TFhirOrderResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FWho.sizeInBytes);
-  inc(result, FOrderStatus.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FfulfillmentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FWho.sizeInBytes(magic));
+  inc(result, FOrderStatus.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FfulfillmentList.sizeInBytes(magic));
 end;
 
 { TFhirOrderResponseListEnumerator }
@@ -41539,10 +41539,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOrderResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirOrderResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOrderResponseList }
@@ -42002,19 +42002,19 @@ begin
   FPaymentStatus := value;
 end;
 
-function TFhirPaymentNotice.sizeInBytesV : cardinal;
+function TFhirPaymentNotice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FPaymentStatus.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FPaymentStatus.sizeInBytes(magic));
 end;
 
 { TFhirPaymentNoticeListEnumerator }
@@ -42043,10 +42043,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirPaymentNoticeListEnumerator.sizeInBytesV : cardinal;
+function TFhirPaymentNoticeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirPaymentNoticeList }
@@ -42418,16 +42418,16 @@ begin
   FAmount := value;
 end;
 
-function TFhirPaymentReconciliationDetail.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliationDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponce.sizeInBytes);
-  inc(result, FSubmitter.sizeInBytes);
-  inc(result, FPayee.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponce.sizeInBytes(magic));
+  inc(result, FSubmitter.sizeInBytes(magic));
+  inc(result, FPayee.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationDetailListEnumerator }
@@ -42456,10 +42456,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirPaymentReconciliationDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliationDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationDetailList }
@@ -42724,11 +42724,11 @@ begin
     FText.value := '';
 end;
 
-function TFhirPaymentReconciliationNote.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliationNote.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FText.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationNoteListEnumerator }
@@ -42757,10 +42757,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirPaymentReconciliationNoteListEnumerator.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliationNoteListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationNoteList }
@@ -43395,24 +43395,24 @@ begin
   result := (FNoteList <> nil) and (FNoteList.count > 0);
 end;
 
-function TFhirPaymentReconciliation.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
-  inc(result, FForm.sizeInBytes);
-  inc(result, FTotal.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
+  inc(result, FForm.sizeInBytes(magic));
+  inc(result, FTotal.sizeInBytes(magic));
+  inc(result, FnoteList.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationListEnumerator }
@@ -43441,10 +43441,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirPaymentReconciliationListEnumerator.sizeInBytesV : cardinal;
+function TFhirPaymentReconciliationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirPaymentReconciliationList }
@@ -43692,10 +43692,10 @@ begin
     FSequenceLinkId.value := '';
 end;
 
-function TFhirProcessRequestItem.sizeInBytesV : cardinal;
+function TFhirProcessRequestItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSequenceLinkId.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSequenceLinkId.sizeInBytes(magic));
 end;
 
 { TFhirProcessRequestItemListEnumerator }
@@ -43724,10 +43724,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcessRequestItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcessRequestItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcessRequestItemList }
@@ -44416,25 +44416,25 @@ begin
   FPeriod := value;
 end;
 
-function TFhirProcessRequest.sizeInBytesV : cardinal;
+function TFhirProcessRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAction.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FProvider.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FNullify.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FitemList.sizeInBytes);
-  inc(result, FincludeList.sizeInBytes);
-  inc(result, FexcludeList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAction.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FProvider.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FNullify.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FitemList.sizeInBytes(magic));
+  inc(result, FincludeList.sizeInBytes(magic));
+  inc(result, FexcludeList.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
 end;
 
 { TFhirProcessRequestListEnumerator }
@@ -44463,10 +44463,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcessRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcessRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcessRequestList }
@@ -44735,11 +44735,11 @@ begin
     FText.value := '';
 end;
 
-function TFhirProcessResponseNotes.sizeInBytesV : cardinal;
+function TFhirProcessResponseNotes.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FText.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
 end;
 
 { TFhirProcessResponseNotesListEnumerator }
@@ -44768,10 +44768,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcessResponseNotesListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcessResponseNotesListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcessResponseNotesList }
@@ -45348,22 +45348,22 @@ begin
   result := (FErrorList <> nil) and (FErrorList.count > 0);
 end;
 
-function TFhirProcessResponse.sizeInBytesV : cardinal;
+function TFhirProcessResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FDisposition.sizeInBytes);
-  inc(result, FRuleset.sizeInBytes);
-  inc(result, FOriginalRuleset.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FRequestProvider.sizeInBytes);
-  inc(result, FRequestOrganization.sizeInBytes);
-  inc(result, FForm.sizeInBytes);
-  inc(result, FnotesList.sizeInBytes);
-  inc(result, FerrorList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FDisposition.sizeInBytes(magic));
+  inc(result, FRuleset.sizeInBytes(magic));
+  inc(result, FOriginalRuleset.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FOrganization.sizeInBytes(magic));
+  inc(result, FRequestProvider.sizeInBytes(magic));
+  inc(result, FRequestOrganization.sizeInBytes(magic));
+  inc(result, FForm.sizeInBytes(magic));
+  inc(result, FnotesList.sizeInBytes(magic));
+  inc(result, FerrorList.sizeInBytes(magic));
 end;
 
 { TFhirProcessResponseListEnumerator }
@@ -45392,10 +45392,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcessResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcessResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcessResponseList }
@@ -45706,13 +45706,13 @@ begin
   result := (FRelatedAgentList <> nil) and (FRelatedAgentList.count > 0);
 end;
 
-function TFhirProvenanceAgent.sizeInBytesV : cardinal;
+function TFhirProvenanceAgent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRole.sizeInBytes);
-  inc(result, FActor.sizeInBytes);
-  inc(result, FUserId.sizeInBytes);
-  inc(result, FrelatedAgentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRole.sizeInBytes(magic));
+  inc(result, FActor.sizeInBytes(magic));
+  inc(result, FUserId.sizeInBytes(magic));
+  inc(result, FrelatedAgentList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceAgentListEnumerator }
@@ -45741,10 +45741,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProvenanceAgentListEnumerator.sizeInBytesV : cardinal;
+function TFhirProvenanceAgentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceAgentList }
@@ -46009,11 +46009,11 @@ begin
     FTarget.value := '';
 end;
 
-function TFhirProvenanceAgentRelatedAgent.sizeInBytesV : cardinal;
+function TFhirProvenanceAgentRelatedAgent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceAgentRelatedAgentListEnumerator }
@@ -46042,10 +46042,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProvenanceAgentRelatedAgentListEnumerator.sizeInBytesV : cardinal;
+function TFhirProvenanceAgentRelatedAgentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceAgentRelatedAgentList }
@@ -46410,14 +46410,14 @@ begin
   FAgent := value;
 end;
 
-function TFhirProvenanceEntity.sizeInBytesV : cardinal;
+function TFhirProvenanceEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRole.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FDisplay.sizeInBytes);
-  inc(result, FAgent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRole.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FDisplay.sizeInBytes(magic));
+  inc(result, FAgent.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceEntityListEnumerator }
@@ -46446,10 +46446,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProvenanceEntityListEnumerator.sizeInBytesV : cardinal;
+function TFhirProvenanceEntityListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceEntityList }
@@ -46995,19 +46995,19 @@ begin
   result := (FSignatureList <> nil) and (FSignatureList.count > 0);
 end;
 
-function TFhirProvenance.sizeInBytesV : cardinal;
+function TFhirProvenance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FtargetList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FRecorded.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FActivity.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FpolicyList.sizeInBytes);
-  inc(result, FagentList.sizeInBytes);
-  inc(result, FentityList.sizeInBytes);
-  inc(result, FsignatureList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FtargetList.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FRecorded.sizeInBytes(magic));
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FActivity.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FpolicyList.sizeInBytes(magic));
+  inc(result, FagentList.sizeInBytes(magic));
+  inc(result, FentityList.sizeInBytes(magic));
+  inc(result, FsignatureList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceListEnumerator }
@@ -47036,10 +47036,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProvenanceListEnumerator.sizeInBytesV : cardinal;
+function TFhirProvenanceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProvenanceList }
@@ -47406,13 +47406,13 @@ begin
     FHeader.value := '';
 end;
 
-function TFhirSubscriptionChannel.sizeInBytesV : cardinal;
+function TFhirSubscriptionChannel.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FEndpoint.sizeInBytes);
-  inc(result, FPayload.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FEndpoint.sizeInBytes(magic));
+  inc(result, FPayload.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
 end;
 
 { TFhirSubscriptionChannelListEnumerator }
@@ -47441,10 +47441,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSubscriptionChannelListEnumerator.sizeInBytesV : cardinal;
+function TFhirSubscriptionChannelListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSubscriptionChannelList }
@@ -47950,17 +47950,17 @@ begin
   result := (FTagList <> nil) and (FTagList.count > 0);
 end;
 
-function TFhirSubscription.sizeInBytesV : cardinal;
+function TFhirSubscription.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCriteria.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FError.sizeInBytes);
-  inc(result, FChannel.sizeInBytes);
-  inc(result, FEnd_.sizeInBytes);
-  inc(result, FtagList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCriteria.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FError.sizeInBytes(magic));
+  inc(result, FChannel.sizeInBytes(magic));
+  inc(result, FEnd_.sizeInBytes(magic));
+  inc(result, FtagList.sizeInBytes(magic));
 end;
 
 { TFhirSubscriptionListEnumerator }
@@ -47989,10 +47989,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSubscriptionListEnumerator.sizeInBytesV : cardinal;
+function TFhirSubscriptionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSubscriptionList }

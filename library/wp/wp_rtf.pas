@@ -48,7 +48,7 @@ Type
       Procedure EatEoln;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function PeekIsGroupStart : Boolean;
       Function PeekIsGroupClose : Boolean;
@@ -79,7 +79,7 @@ Type
       FLineCount : Integer;
       Procedure CheckNewLine;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure StartGroup; Overload; Virtual;
       Procedure CloseGroup; Overload; Virtual;
@@ -110,7 +110,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -224,7 +224,7 @@ Type
       FNumberFormat : Integer;
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -266,7 +266,7 @@ Type
       FLevels : TWPRTFListLevelDefinitions;
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -311,7 +311,7 @@ Type
       FStart : Integer;
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -352,7 +352,7 @@ Type
       FLevels : TWPRTFListLevelOverrideDefinitions;
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -514,7 +514,7 @@ Type
       Function DPIX: Integer;
       Function DPIY: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -612,7 +612,7 @@ Type
   //    Procedure WriteDocumentStart(oDocument : TWPWorkingDocument); Override;
   //    Procedure WriteDocumentStop(oDocument : TWPWorkingDocument); Override;
       Function Styled : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
       Property LineLimit : Integer Read FLineLimit Write FLineLimit;
@@ -1931,16 +1931,16 @@ Begin
 End;
 
 
-function TWPRTFReader.sizeInBytesV : cardinal;
+function TWPRTFReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FColours.sizeInBytes);
-  inc(result, FFonts.sizeInBytes);
-  inc(result, FLists.sizeInBytes);
-  inc(result, FListOverrides.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FColours.sizeInBytes(magic));
+  inc(result, FFonts.sizeInBytes(magic));
+  inc(result, FLists.sizeInBytes(magic));
+  inc(result, FListOverrides.sizeInBytes(magic));
   inc(result, (FListTextFontName.length * sizeof(char)) + 12);
   inc(result, (FListText.length * sizeof(char)) + 12);
-  inc(result, FLastPara.sizeInBytes);
+  inc(result, FLastPara.sizeInBytes(magic));
 end;
 
 Destructor TWPRTFWriter.Destroy;
@@ -2821,16 +2821,16 @@ Begin
 End;
 
 
-function TWPRTFWriter.sizeInBytesV : cardinal;
+function TWPRTFWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFonts.sizeInBytes);
-  inc(result, FContexts.sizeInBytes);
-  inc(result, FRTF.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, FColours.sizeInBytes);
-  inc(result, FLists.sizeInBytes);
-  inc(result, FListsIndexer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFonts.sizeInBytes(magic));
+  inc(result, FContexts.sizeInBytes(magic));
+  inc(result, FRTF.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FColours.sizeInBytes(magic));
+  inc(result, FLists.sizeInBytes(magic));
+  inc(result, FListsIndexer.sizeInBytes(magic));
 end;
 
 Constructor TWPRTFContext.Create;
@@ -2886,9 +2886,9 @@ Begin
 End;
 
 
-function TWPRTFContext.sizeInBytesV : cardinal;
+function TWPRTFContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFontName.length * sizeof(char)) + 12);
   inc(result, (FStyle.length * sizeof(char)) + 12);
 end;
@@ -3017,11 +3017,11 @@ Begin
 End;
 
 
-function TWPRTFListDefinition.sizeInBytesV : cardinal;
+function TWPRTFListDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FLevels.sizeInBytes);
+  inc(result, FLevels.sizeInBytes(magic));
 end;
 
 Function TWPRTFListDefinitions.Link : TWPRTFListDefinitions;
@@ -3116,9 +3116,9 @@ Begin
 End;
 
 
-function TWPRTFListLevelDefinition.sizeInBytesV : cardinal;
+function TWPRTFListLevelDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPRTFListLevelDefinitions.Link : TWPRTFListLevelDefinitions;
@@ -3198,9 +3198,9 @@ Begin
 End;
 
 
-function TWPRTFListLevelOverrideDefinition.sizeInBytesV : cardinal;
+function TWPRTFListLevelOverrideDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPRTFListLevelOverrideDefinitions.Link : TWPRTFListLevelOverrideDefinitions;
@@ -3281,10 +3281,10 @@ Begin
 End;
 
 
-function TWPRTFListOverrideDefinition.sizeInBytesV : cardinal;
+function TWPRTFListOverrideDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLevels.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLevels.sizeInBytes(magic));
 end;
 
 Function TWPRTFListOverrideDefinitions.Link : TWPRTFListOverrideDefinitions;
@@ -3524,9 +3524,9 @@ Begin
     ConsumeCharacter;
 End;
 
-function TFslRTFExtractor.sizeInBytesV : cardinal;
+function TFslRTFExtractor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FControl.length * sizeof(char)) + 12);
 end;
 
@@ -3619,9 +3619,9 @@ Begin
   End;
 End;
 
-function TFslRTFFormatter.sizeInBytesV : cardinal;
+function TFslRTFFormatter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 End.

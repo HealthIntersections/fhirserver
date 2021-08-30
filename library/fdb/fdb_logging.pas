@@ -70,7 +70,7 @@ type
     FLock : TFslLock;
     function GetLogEntry(AUsage : String) : TFDBLogEntry;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -101,7 +101,7 @@ const
 constructor TFDBLogger.create;
 begin
   inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('database.log');
   FTotal := 0;
   FList := TStringList.create;
   FList.OwnsObjects := true;
@@ -210,10 +210,10 @@ begin
   end;
 end;
 
-function TFDBLogger.sizeInBytesV : cardinal;
+function TFDBLogger.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFDBLogEntry }

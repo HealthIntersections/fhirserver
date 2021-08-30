@@ -121,8 +121,10 @@ Type
     // database maintenance
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
-    function cacheSize : UInt64; override;
-    procedure clearCache;
+    function cacheSize(magic : integer) : UInt64; override;
+    procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -335,22 +337,25 @@ begin
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
       begin
-        FLock.Lock('expandVS.2');
-        try
-          if not FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
-          begin
-            FExpansions.Add(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
-            // in addition, we trace the dependencies so we can expire the cache
-            d := '';
-            for s in dependencies do
+        if FCaching then
+        begin
+          FLock.Lock('expandVS.2');
+          try
+            if not FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
             begin
-              AddDependency(s, cacheId);
-              d := d + s+#1;
+              FExpansions.Add(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
+              // in addition, we trace the dependencies so we can expire the cache
+              d := '';
+              for s in dependencies do
+              begin
+                AddDependency(s, cacheId);
+                d := d + s+#1;
+              end;
+              result.Tags['cache'] := d;
             end;
-            result.Tags['cache'] := d;
+          finally
+            FLock.Unlock;
           end;
-        finally
-          FLock.Unlock;
         end;
       end;
     finally
@@ -574,13 +579,13 @@ begin
   result := getProvider(url, version, params, nullOk);
 end;
 
-function TTerminologyServer.cacheSize : UInt64;
+function TTerminologyServer.cacheSize(magic : integer) : UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
   FLock.Lock;
   try
-    result := result + FExpansions.sizeInBytes;
-    result := result + FDependencies.sizeInBytes;
+    result := result + FExpansions.sizeInBytes(magic);
+    result := result + FDependencies.sizeInBytes(magic);
   finally
     FLock.Unlock;
   end;
@@ -654,6 +659,7 @@ end;
 
 procedure TTerminologyServer.clearCache;
 begin
+  inherited ClearCache;
   FLock.Lock;
   try
     FExpansions.Clear;
@@ -823,6 +829,13 @@ begin
       cs.Free;
     end;
   end;
+end;
+
+procedure TTerminologyServer.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.Add('Expansions', FExpansions.sizeInBytes(ci.magic));
+  ci.Add('Dependencies', FDependencies.sizeInBytes(ci.magic));
 end;
 
 procedure TTerminologyServer.getCodeView(const lang : THTTPLanguages; coding: TFhirCodeableConceptW; response: TCDSHookResponse);
@@ -1318,6 +1331,12 @@ begin
     end;
 end;
 
+
+procedure TTerminologyServer.SetCacheStatus(status: boolean);
+begin
+  inherited;
+  FCaching := false;
+end;
 
 function TTerminologyServer.Summary: String;
 var

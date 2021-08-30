@@ -57,7 +57,7 @@ Type
     type_: TFHIRElementDefinition;
     // extension : TFHIRElementDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
@@ -83,7 +83,7 @@ Type
     FadditionalSlice : boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
     property additionalSlice : boolean read FadditionalSlice write FadditionalSlice;
@@ -106,7 +106,7 @@ Type
     cursor, lastCount: integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path: String; element: TFHIRMMElement);
     destructor Destroy; override;
@@ -122,7 +122,7 @@ Type
     FChecked : boolean;
     Fprofile : TFhirStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function uncheckedProfiles : TFhirStructureDefinitionList;
     property Checked : boolean read FChecked write FChecked;
@@ -137,7 +137,7 @@ Type
     FUncheckedProfiles : TFslList<TFhirProfileUsage>;
     function GetHasProfiles : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
@@ -251,7 +251,7 @@ Type
     function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
@@ -363,14 +363,14 @@ begin
   result := false;
 end;
 
-function TElementInfo.sizeInBytesV : cardinal;
+function TElementInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fname.length * sizeof(char)) + 12);
-  inc(result, Felement.sizeInBytes);
+  inc(result, Felement.sizeInBytes(magic));
   inc(result, (Fpath.length * sizeof(char)) + 12);
-  inc(result, Fdefinition.sizeInBytes);
-  inc(result, Fslice.sizeInBytes);
+  inc(result, Fdefinition.sizeInBytes(magic));
+  inc(result, Fslice.sizeInBytes(magic));
 end;
 
 { TNodeStack }
@@ -485,14 +485,14 @@ begin
   end;
 end;
 
-function TNodeStack.sizeInBytesV : cardinal;
+function TNodeStack.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (literalPath.length * sizeof(char)) + 12);
-  inc(result, logicalPaths.sizeInBytes);
-  inc(result, FElement.sizeInBytes);
-  inc(result, definition.sizeInBytes);
-  inc(result, type_.sizeInBytes);
+  inc(result, logicalPaths.sizeInBytes(magic));
+  inc(result, FElement.sizeInBytes(magic));
+  inc(result, definition.sizeInBytes(magic));
+  inc(result, type_.sizeInBytes(magic));
 end;
 
 { TFHIRValidator }
@@ -3615,12 +3615,12 @@ begin
   result := (inherited Context) as TFHIRWorkerContext;
 end;
 
-function TFHIRValidator4.sizeInBytesV : cardinal;
+function TFHIRValidator4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensionDomains.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FEntryElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensionDomains.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FEntryElement.sizeInBytes(magic));
 end;
 
 { TChildIterator }
@@ -3701,10 +3701,10 @@ begin
   result := basePath + '.' + name + sfx;
 end;
 
-function TChildIterator.sizeInBytesV : cardinal;
+function TChildIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, parent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, parent.sizeInBytes(magic));
   inc(result, (basePath.length * sizeof(char)) + 12);
 end;
 
@@ -3752,12 +3752,12 @@ begin
   result := false; // todo
 end;
 
-function TValidationProfileSet.sizeInBytesV : cardinal;
+function TValidationProfileSet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanonical.sizeInBytes);
-  inc(result, FDefinitions.sizeInBytes);
-  inc(result, FUncheckedProfiles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanonical.sizeInBytes(magic));
+  inc(result, FDefinitions.sizeInBytes(magic));
+  inc(result, FUncheckedProfiles.sizeInBytes(magic));
 end;
 
 { TFhirProfileUsage }
@@ -3767,10 +3767,10 @@ begin
   result := nil;
 end;
 
-function TFhirProfileUsage.sizeInBytesV : cardinal;
+function TFhirProfileUsage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fprofile.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fprofile.sizeInBytes(magic));
 end;
 
 end.

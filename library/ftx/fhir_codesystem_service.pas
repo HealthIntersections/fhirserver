@@ -50,7 +50,7 @@ type
   private
     concept : TFhirCodeSystemConceptW;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(concept : TFhirCodeSystemConceptW); overload;
     destructor Destroy; override;
@@ -61,7 +61,7 @@ type
     FItem : TFhirCodeSystemConceptW;
     FRating : double;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(item : TFhirCodeSystemConceptW; rating : double);
     destructor Destroy; override;
@@ -71,7 +71,7 @@ type
   private
     FCodeMap : TFhirCodeSystemConceptMapW;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(map : TFhirCodeSystemConceptMapW);
     destructor Destroy; override;
@@ -91,7 +91,7 @@ type
     function GetId: String;
     procedure SetId(const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(cs : TFhirCodeSystemW);
     destructor Destroy; override;
@@ -115,7 +115,7 @@ type
     {$ENDIF}
     procedure updateList(url, version: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -153,7 +153,7 @@ type
     procedure Add(item : TFhirCodeSystemConceptW; rating : double);
     procedure sort;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -183,7 +183,7 @@ type
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
@@ -238,10 +238,10 @@ begin
   inherited;
 end;
 
-function TFhirCodeSystemProviderContext.sizeInBytesV : cardinal;
+function TFhirCodeSystemProviderContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, concept.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, concept.sizeInBytes(magic));
 end;
 
 { TFhirCodeSystemConceptMatch }
@@ -259,10 +259,10 @@ begin
   inherited;
 end;
 
-function TFhirCodeSystemConceptMatch.sizeInBytesV : cardinal;
+function TFhirCodeSystemConceptMatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
 end;
 
 { TFHIRCodeSystemEntry }
@@ -323,11 +323,11 @@ begin
   FCodeSystem.id := value;
 end;
 
-function TFHIRCodeSystemEntry.sizeInBytesV : cardinal;
+function TFHIRCodeSystemEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCodeSystem.sizeInBytes);
-  inc(result, FSupplements.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCodeSystem.sizeInBytes(magic));
+  inc(result, FSupplements.sizeInBytes(magic));
 end;
 
 { TFhirCodeSystemProviderFilterSorter }
@@ -367,10 +367,10 @@ begin
   concepts.sort(TFhirCodeSystemProviderFilterSorter.Create);
 end;
 
-function TFhirCodeSystemProviderFilterContext.sizeInBytesV : cardinal;
+function TFhirCodeSystemProviderFilterContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, concepts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, concepts.sizeInBytes(magic));
 end;
 
 { TCodeSystemAdornment }
@@ -387,10 +387,10 @@ begin
   inherited;
 end;
 
-function TCodeSystemAdornment.sizeInBytesV : cardinal;
+function TCodeSystemAdornment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCodeMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCodeMap.sizeInBytes(magic));
 end;
 
 { TFhirCodeSystemProvider }
@@ -542,11 +542,11 @@ begin
   result := nil;
   ctxt := context.context as TFhirCodeSystemProviderContext;
   if context.context = nil then
-    result := TFhirCodeSystemProviderContext.create(FCs.CodeSystem.concept(context.current).link)
+    result := TFhirCodeSystemProviderContext.create(FCs.CodeSystem.concept(context.current))
   else
   begin
     if (context.current < ctxt.concept.conceptCount) then
-      result := TFhirCodeSystemProviderContext.create(ctxt.concept.concept(context.current).link)
+      result := TFhirCodeSystemProviderContext.create(ctxt.concept.concept(context.current))
     else
     begin
       raise Exception.Create('Not supported right now');
@@ -1229,12 +1229,12 @@ begin
 end;
 
 
-function TFhirCodeSystemProvider.sizeInBytesV : cardinal;
+function TFhirCodeSystemProvider.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCs.sizeInBytes);
-  inc(result, FCodeMap.sizeInBytes);
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCs.sizeInBytes(magic));
+  inc(result, FCodeMap.sizeInBytes(magic));
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 { TFHIRCodeSystemManager }
@@ -1513,11 +1513,11 @@ begin
 end;
 
 
-function TFHIRCodeSystemManager.sizeInBytesV : cardinal;
+function TFHIRCodeSystemManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 end.

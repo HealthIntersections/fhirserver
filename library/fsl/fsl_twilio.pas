@@ -48,7 +48,7 @@ Type
 
 //    procedure handleAuthentication(Sender: TObject; Authentication: TIdAuthentication; var Handled: Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -114,9 +114,9 @@ begin
 end;
 
 
-function TTwilioClient.sizeInBytesV : cardinal;
+function TTwilioClient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FBody.length * sizeof(char)) + 12);
   inc(result, (FFrom.length * sizeof(char)) + 12);
   inc(result, (FTo.length * sizeof(char)) + 12);

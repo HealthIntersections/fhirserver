@@ -54,7 +54,7 @@ type
   protected
     function getElementDefinition(sd : TFhirStructureDefinitionW; path : String) : TFhirElementDefinitionW;
     function enumify(code : String) : String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -75,7 +75,7 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -98,7 +98,7 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -280,13 +280,13 @@ begin
   lines.Add(StringPadLeft('', ' ', indent)+ s);
 end;
 
-function TFHIRCodeGenerator.sizeInBytesV : cardinal;
+function TFHIRCodeGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResource.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, lines.sizeInBytes);
-  inc(result, vars.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, lines.sizeInBytes(magic));
+  inc(result, vars.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorJavaRI }
@@ -560,10 +560,10 @@ begin
   end;
 end;
 
-function TFHIRCodeGeneratorJavaRI.sizeInBytesV : cardinal;
+function TFHIRCodeGeneratorJavaRI.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, imports.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, imports.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorJavaHapi }
@@ -844,10 +844,10 @@ procedure TFHIRCodeGeneratorPascal.test;
 begin
 end;
 
-function TFHIRCodeGeneratorPascal.sizeInBytesV : cardinal;
+function TFHIRCodeGeneratorPascal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, units.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, units.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorDotNet }

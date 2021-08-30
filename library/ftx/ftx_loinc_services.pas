@@ -90,7 +90,7 @@ type
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     procedure GetEntry(iIndex : byte; var lang, country : String);
@@ -110,7 +110,7 @@ type
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function GetEntry(iIndex : Cardinal; var lang : byte):String;
 
@@ -144,7 +144,7 @@ Type
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -162,7 +162,7 @@ Type
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
       Function Count : Integer;
@@ -181,7 +181,7 @@ Type
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function GetRefs(iIndex : Cardinal) : TCardinalArray;
     Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -200,7 +200,7 @@ Type
       FBuilder : TFslBytesBuilder;
       function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(refs : TLOINCReferences);
       Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
@@ -253,7 +253,7 @@ Type
     procedure SetCodeLength(const Value: Cardinal);
     function getForLang(langs : TLangArray;  ref : cardinal) : cardinal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(refs : TLOINCReferences);
     destructor Destroy; override;
@@ -297,7 +297,7 @@ Type
     FMaster : TBytes;
     FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, text, parents, children, concepts, descendentConcepts, stems : Cardinal);
@@ -318,7 +318,7 @@ Type
     FMaster : TBytes;
     FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, description, answers : Cardinal);
@@ -392,7 +392,7 @@ Type
     function langDesc(iLang : word) : String;
     function allLangs : TLangArray;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
@@ -475,7 +475,7 @@ Type
     function GetDefinition: TLOINCServices;
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -595,11 +595,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TLoincStrings.sizeInBytesV : cardinal;
+function TLoincStrings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLOINCReferences }
@@ -654,11 +654,11 @@ begin
   move(FMaster[iIndex], result, 4);
 end;
 
-function TLOINCReferences.sizeInBytesV : cardinal;
+function TLOINCReferences.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLOINCConcepts }
@@ -723,12 +723,12 @@ begin
 end;
 
 
-function TLOINCConcepts.sizeInBytesV : cardinal;
+function TLOINCConcepts.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRefs.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRefs.sizeInBytes(magic));
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLOINCCodeList }
@@ -917,12 +917,12 @@ begin
   Move(iValue, FMaster[offset], 4);
 end;
 
-function TLOINCCodeList.sizeInBytesV : cardinal;
+function TLOINCCodeList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRefs.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRefs.sizeInBytes(magic));
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLOINCServices }
@@ -1675,18 +1675,18 @@ end;
 *)
 
 
-function TLOINCServices.sizeInBytesV : cardinal;
+function TLOINCServices.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLang.sizeInBytes);
-  inc(result, FDesc.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FRefs.sizeInBytes);
-  inc(result, FConcepts.sizeInBytes);
-  inc(result, FWords.sizeInBytes);
-  inc(result, FStems.sizeInBytes);
-  inc(result, FEntries.sizeInBytes);
-  inc(result, FAnswerLists.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLang.sizeInBytes(magic));
+  inc(result, FDesc.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FRefs.sizeInBytes(magic));
+  inc(result, FConcepts.sizeInBytes(magic));
+  inc(result, FWords.sizeInBytes(magic));
+  inc(result, FStems.sizeInBytes(magic));
+  inc(result, FEntries.sizeInBytes(magic));
+  inc(result, FAnswerLists.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
 end;
 
@@ -1760,10 +1760,10 @@ begin
   FDefinition := Value;
 end;
 
-function TLOINCServiceList.sizeInBytesV : cardinal;
+function TLOINCServiceList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { TLoincWords }
@@ -1809,11 +1809,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TLoincWords.sizeInBytesV : cardinal;
+function TLoincWords.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLoincStems }
@@ -1855,11 +1855,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TLoincStems.sizeInBytesV : cardinal;
+function TLoincStems.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 function TLOINCServices.FindStem(s: String; var index: Integer): Boolean;
@@ -2799,11 +2799,11 @@ end;
 
 
 
-function TLOINCHeirarchyEntryList.sizeInBytesV : cardinal;
+function TLOINCHeirarchyEntryList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLOINCAnswersList }
@@ -2877,11 +2877,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TLOINCAnswersList.sizeInBytesV : cardinal;
+function TLOINCAnswersList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 function TLOINCServices.GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
@@ -2947,11 +2947,11 @@ begin
   result[0] := 0;
 end;
 
-function TLoincLanguages.sizeInBytesV : cardinal;
+function TLoincLanguages.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TLoincFilterHolder }

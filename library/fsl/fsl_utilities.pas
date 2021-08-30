@@ -1980,7 +1980,7 @@ function commandLineAsString : String;
 type
   TStringListHelper = class helper for TStringList
   public
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
   end;
 
 type
@@ -1994,6 +1994,22 @@ type
 function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
 function TryZDecompressBytes(const s: TBytes): TBytes;
+
+type
+  TCacheInformation = class (TFslObject)
+  private
+    FList : TStringList;
+    FMagic : integer;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property magic : integer read FMagic;
+
+    procedure add(name : String; bytes : int64);
+    function text(sep : String) : String;
+  end;
+
 
 Implementation
 
@@ -17208,7 +17224,7 @@ end;
 
 { TStringListHelper }
 
-function TStringListHelper.sizeInBytes: cardinal;
+function TStringListHelper.sizeInBytes(magic : integer): cardinal;
 var
   s : String;
 begin
@@ -17230,6 +17246,36 @@ begin
   result := windows.GetTickCount64;
 end;
 {$ENDIF}
+
+{ TCacheInformation }
+
+constructor TCacheInformation.Create;
+begin
+  inherited;
+  FList := TStringList.Create;
+  FMagic := TFslObject.nextMagic;
+end;
+
+destructor TCacheInformation.Destroy;
+begin
+  FList.free;
+  inherited;
+end;
+
+procedure TCacheInformation.add(name: String; bytes: int64);
+begin
+  FList.Add(name+': '+DescribeBytes(bytes));
+end;
+
+function TCacheInformation.text(sep: String): String;
+var
+  s : string;
+begin
+  result := '';
+  for s in FList do
+    result := result + sep + s;
+  result := copy(result, sep.Length, length(result) - sep.Length);
+end;
 
 Initialization
   init;

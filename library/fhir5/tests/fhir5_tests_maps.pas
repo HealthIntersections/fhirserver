@@ -70,7 +70,7 @@ type
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -95,7 +95,7 @@ type
     [MapParserTest2Case]
     procedure Test(filename : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -208,11 +208,11 @@ begin
   end;
 end;
 
-function TMapTransformTests.sizeInBytesV : cardinal;
+function TMapTransformTests.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ctxt.sizeInBytes);
-  inc(result, utils.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ctxt.sizeInBytes(magic));
+  inc(result, utils.sizeInBytes(magic));
 end;
 
 { TTestTransformerServices }
@@ -309,11 +309,11 @@ initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
   TDUnitX.RegisterTestFixture(TMapParserTests2);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests);
-function TMapParserTests2.sizeInBytesV : cardinal;
+function TMapParserTests2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ctxt.sizeInBytes);
-  inc(result, utils.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ctxt.sizeInBytes(magic));
+  inc(result, utils.sizeInBytes(magic));
 end;
 
 end.

@@ -65,7 +65,7 @@ type
     FOperationDescription : String;
     procedure SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -246,7 +246,7 @@ type
     FFactory : TFHIRFactory;
     FLoadInfo : TPackageLoadingInformation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory); overload; virtual;
     destructor Destroy; override;
@@ -459,11 +459,11 @@ begin
   end;
 end;
 
-function TFHIRWorkerContextWithFactory.sizeInBytesV : cardinal;
+function TFHIRWorkerContextWithFactory.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FLoadInfo.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FLoadInfo.sizeInBytes(magic));
 end;
 
 { TFHIRValidatorContext }
@@ -489,11 +489,11 @@ begin
 end;
 
 
-function TFHIRValidatorContext.sizeInBytesV : cardinal;
+function TFHIRValidatorContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIssues.sizeInBytes);
-  inc(result, Fowned.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIssues.sizeInBytes(magic));
+  inc(result, Fowned.sizeInBytes(magic));
   inc(result, (FOperationDescription.length * sizeof(char)) + 12);
 end;
 

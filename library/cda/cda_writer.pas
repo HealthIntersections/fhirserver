@@ -213,7 +213,7 @@ Type
     Procedure WriteSubstanceAdministration(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSubstanceAdministration; bOptional : Boolean);
     Procedure WriteSupply(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSupply; bOptional : Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure WriteCDA(oXml : TXmlBuilder; oDoc : TcdaClinicalDocument);
     Procedure WritePiece(oXml: TXmlBuilder; oPart : Tv3Base);
@@ -5063,9 +5063,9 @@ begin
 
 end;
 
-function TCDAWriter.sizeInBytesV : cardinal;
+function TCDAWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 End.

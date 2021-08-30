@@ -74,7 +74,7 @@ type
       Function MakeReader : TWPReader;
       Function MakeWriter : TWPWriter;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -583,13 +583,13 @@ End;
 
 
 
-function TWPFormatConvertor.sizeInBytesV : cardinal;
+function TWPFormatConvertor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSourceDocument.sizeInBytes);
-  inc(result, FSourceStream.sizeInBytes);
-  inc(result, FDestinationDocument.sizeInBytes);
-  inc(result, FDestinationStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSourceDocument.sizeInBytes(magic));
+  inc(result, FSourceStream.sizeInBytes(magic));
+  inc(result, FDestinationDocument.sizeInBytes(magic));
+  inc(result, FDestinationStream.sizeInBytes(magic));
 end;
 
 end.

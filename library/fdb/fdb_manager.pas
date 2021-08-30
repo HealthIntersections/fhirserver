@@ -77,7 +77,7 @@ type
     FDataType: TFDBColumnType;
     FNullable: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name : String); overload;
     function Link : TFDBColumn; overload;
@@ -94,7 +94,7 @@ type
     FName: String;
     FColumns: TFslList<TFDBColumn>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -110,7 +110,7 @@ type
     FDestTable : String;
     FDestColumn : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Property Column : String read FColumn write FColumn;
     Property DestTable : String read FDestTable write FDestTable;
@@ -130,7 +130,7 @@ type
     FOrderMatters : Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -153,7 +153,7 @@ type
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -249,7 +249,7 @@ type
     function SupportsSizingV : Boolean; virtual; abstract;
 
     procedure CheckRelease;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(AOwner: TFDBManager);
     destructor Destroy; Override;
@@ -681,7 +681,7 @@ type
     function GetDBDetails: String; Virtual; Abstract;
     function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     destructor Destroy; Override;
@@ -726,7 +726,7 @@ type
     FHook : TFDBManagerEvent;
     FName : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(Name : String; Hook : TFDBManagerEvent);
   end;
@@ -741,7 +741,7 @@ type
     function GetConnMan(i : Integer):TFDBManager;
     function GetConnManByName(s : String):TFDBManager;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -1300,13 +1300,13 @@ Begin
 End;
 
 
-function TFDBConnection.sizeInBytesV : cardinal;
+function TFDBConnection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FBoundItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOwner.sizeInBytes(magic));
+  inc(result, FBoundItems.sizeInBytes(magic));
   inc(result, (FUsage.length * sizeof(char)) + 12);
-  inc(result, FTables.sizeInBytes);
+  inc(result, FTables.sizeInBytes(magic));
   inc(result, (FSQL.length * sizeof(char)) + 12);
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
@@ -1320,7 +1320,7 @@ begin
   FName := AName;
   FMaxConnCount := AMaxConnCount;
 
-  FLock := TFslLock.create;
+  FLock := TFslLock.create('db manager: '+aName);
   FDBLogger := TFDBLogger.create;
   FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
@@ -1729,13 +1729,13 @@ begin
   end;
 end;
 
-function TFDBManager.sizeInBytesV : cardinal;
+function TFDBManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConnections.sizeInBytes);
-  inc(result, FAvail.sizeInBytes);
-  inc(result, FInUse.sizeInBytes);
-  inc(result, FDBLogger.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConnections.sizeInBytes(magic));
+  inc(result, FAvail.sizeInBytes(magic));
+  inc(result, FInUse.sizeInBytes(magic));
+  inc(result, FDBLogger.sizeInBytes(magic));
   inc(result, (FLastServerError.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
@@ -1745,7 +1745,7 @@ end;
 constructor TFDBManagerList.create;
 begin
   inherited create;
-  FLock := TFslLock.create;
+  FLock := TFslLock.create('database managers');
   FHooks := TFslList<TFDBHook>.create;
   FList := TList<TFDBManager>.create;
 end;
@@ -1842,10 +1842,10 @@ begin
       FHooks.Delete(i);
 end;
 
-function TFDBManagerList.sizeInBytesV : cardinal;
+function TFDBManagerList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHooks.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHooks.sizeInBytes(magic));
 end;
 
 { TFDBHook }
@@ -1857,9 +1857,9 @@ begin
   FHook := Hook;
 end;
 
-function TFDBHook.sizeInBytesV : cardinal;
+function TFDBHook.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -1919,9 +1919,9 @@ begin
   end;
 end;
 
-function TFDBColumn.sizeInBytesV : cardinal;
+function TFDBColumn.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -1954,11 +1954,11 @@ begin
   Result := Result + 'INDEX ' + FName + ' ON (' + CommaText(FColumns) + ')';
 end;
 
-function TFDBIndex.sizeInBytesV : cardinal;
+function TFDBIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FColumns.sizeInBytes);
+  inc(result, FColumns.sizeInBytes(magic));
 end;
 
 function TFDBRelationship.Describe : String;
@@ -1966,9 +1966,9 @@ Begin
   result := FColumn + ' -> '+FDestTable+'.'+FDestColumn;
 End;
 
-function TFDBRelationship.sizeInBytesV : cardinal;
+function TFDBRelationship.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FColumn.length * sizeof(char)) + 12);
   inc(result, (FDestTable.length * sizeof(char)) + 12);
   inc(result, (FDestColumn.length * sizeof(char)) + 12);
@@ -2006,13 +2006,13 @@ begin
   result := TFDBTable(inherited link);
 end;
 
-function TFDBTable.sizeInBytesV : cardinal;
+function TFDBTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FColumns.sizeInBytes);
-  inc(result, FIndexes.sizeInBytes);
-  inc(result, FRelationships.sizeInBytes);
+  inc(result, FColumns.sizeInBytes(magic));
+  inc(result, FIndexes.sizeInBytes(magic));
+  inc(result, FRelationships.sizeInBytes(magic));
   inc(result, (FOwner.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
@@ -2055,11 +2055,11 @@ begin
 end;
 
 
-function TFDBMetaData.sizeInBytesV : cardinal;
+function TFDBMetaData.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTables.sizeInBytes);
-  inc(result, FProcedures.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTables.sizeInBytes(magic));
+  inc(result, FProcedures.sizeInBytes(magic));
 end;
 
 function TFDBManager.ServerErrorStatus: String;

@@ -525,7 +525,7 @@ Type
       FCapitalization : TWPSCapsState;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -718,7 +718,7 @@ Type
       Procedure SetParagraph(Const Value : TWPSParagraphDetails);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -870,7 +870,7 @@ Type
 
     Function MapToPredefinedBorderStyle: TPredefinedBorderStyles;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -943,7 +943,7 @@ Type
       Procedure SetURL(Const Value: String);
       Procedure SetTitle(Const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       constructor Create(Const sURL : String); Overload; Virtual;
@@ -1015,7 +1015,7 @@ Type
       FY : Integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPCoordinate; Overload;
       Function Clone : TWPCoordinate; Overload;
@@ -1068,7 +1068,7 @@ Type
     Procedure SetSelected(Const Value: Boolean);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1109,7 +1109,7 @@ Type
     Private
       FAreas : TWPImageMapAreaList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1145,7 +1145,7 @@ Type
       FFont : TWPSFontDetails;
       FCaption : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1242,7 +1242,7 @@ Type
       Procedure SetSubject(Const Value: TFslObject);
       procedure SetAdornment(const Value: TWPDocumentImageAdornment);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1267,7 +1267,7 @@ Type
       FText : String;
       FCursor : Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Init(Const sText : String); Overload; Virtual;
       Function More : Boolean; Overload; Virtual;
@@ -1280,7 +1280,7 @@ Type
       FText : String;
       FCursor : Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Init(const sText : String); Overload; Virtual;
       Function More : Boolean; Overload; Virtual;
@@ -1303,7 +1303,7 @@ Type
     Protected
       Function ItemClass : TFslObjectClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1659,7 +1659,7 @@ Type
       Procedure SetChildren(Const Value: TWPPropertyList);
       Procedure SetKind(Const Value: TWPPropertyKind);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1708,7 +1708,7 @@ Type
       FIsAscend: Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(Const iIndex: Integer; Const bIsAscend: Boolean); Overload;
 
@@ -1754,7 +1754,7 @@ type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1802,7 +1802,7 @@ Type
       FSection : Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(Const sCode : String; Const sName : String; Const sDescription : String; Const bSection : Boolean); Overload; Virtual;
 
@@ -1830,7 +1830,7 @@ Type
     Function GetEntries : TWPFieldEntryList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2063,9 +2063,9 @@ Begin
 End;
 
 
-function TWPSFontDetails.sizeInBytesV : cardinal;
+function TWPSFontDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2635,11 +2635,11 @@ Begin
 End;
 
 
-function TWPStyle.sizeInBytesV : cardinal;
+function TWPStyle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFont.sizeInBytes);
-  inc(result, FParagraph.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFont.sizeInBytes(magic));
+  inc(result, FParagraph.sizeInBytes(magic));
 end;
 
 Constructor TWPStyles.Create;
@@ -2752,10 +2752,10 @@ Begin
 End;
 
 
-function TWPStyles.sizeInBytesV : cardinal;
+function TWPStyles.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefaultStyle.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefaultStyle.sizeInBytes(magic));
 end;
 
 Function TWPStyleStack.Empty: Boolean;
@@ -3252,10 +3252,10 @@ Begin
 End;
 
 
-function TWPBorder.sizeInBytesV : cardinal;
+function TWPBorder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBrushImage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBrushImage.sizeInBytes(magic));
 end;
 
 Destructor TWPTrackable.Destroy;
@@ -3595,9 +3595,9 @@ Begin
 End;
 
 
-function TWPHotspot.sizeInBytesV : cardinal;
+function TWPHotspot.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, (FTitle.length * sizeof(char)) + 12);
@@ -3760,10 +3760,10 @@ Begin
 End;
 
 
-function TWPImageMap.sizeInBytesV : cardinal;
+function TWPImageMap.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAreas.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAreas.sizeInBytes(magic));
 end;
 
 { TWPImageMapArea }
@@ -3801,10 +3801,10 @@ End;
 
 
 
-function TWPImageMapArea.sizeInBytesV : cardinal;
+function TWPImageMapArea.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCoordinates.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCoordinates.sizeInBytes(magic));
 end;
 
 Function TWPImageMapAreaList.Link : TWPImageMapAreaList;
@@ -3891,9 +3891,9 @@ End;
 
 
 
-function TWPCoordinate.sizeInBytesV : cardinal;
+function TWPCoordinate.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 function TWPCoordinateList.LastIs(iX, iY: Integer): Boolean;
@@ -4033,13 +4033,13 @@ begin
   inherited;
 end;
 
-function TWPDocumentImageAdornment.sizeInBytesV : cardinal;
+function TWPDocumentImageAdornment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FId.length * sizeof(char)) + 12);
-  inc(result, FCoordinates.sizeInBytes);
-  inc(result, FCaptionPoint.sizeInBytes);
-  inc(result, FFont.sizeInBytes);
+  inc(result, FCoordinates.sizeInBytes(magic));
+  inc(result, FCaptionPoint.sizeInBytes(magic));
+  inc(result, FFont.sizeInBytes(magic));
   inc(result, (FCaption.length * sizeof(char)) + 12);
 end;
 
@@ -4391,12 +4391,12 @@ begin
   result := TWPMouseInfo(Inherited Link);
 end;
 
-function TWPMouseInfo.sizeInBytesV : cardinal;
+function TWPMouseInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHotspot.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FAdornment.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHotspot.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FAdornment.sizeInBytes(magic));
   inc(result, (FHint.length * sizeof(char)) + 12);
 end;
 
@@ -4454,9 +4454,9 @@ End;
 
 
 
-function TWPWordIterator.sizeInBytesV : cardinal;
+function TWPWordIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -4508,9 +4508,9 @@ End;
 
 
 
-function TWPLineIterator.sizeInBytesV : cardinal;
+function TWPLineIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -4844,12 +4844,12 @@ Begin
     FChildren := TWPPropertyList.Create;
 End;
 
-function TWPProperty.sizeInBytesV : cardinal;
+function TWPProperty.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 { TWPPropertyList }
@@ -5136,9 +5136,9 @@ Begin
   FIsAscend := bIsAscend;
 End;
 
-function TWPSortDetail.sizeInBytesV : cardinal;
+function TWPSortDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TWPSortDetailList }
@@ -5290,11 +5290,11 @@ Begin
 End;
 
 
-function TWPRendererTableColumnMetric.sizeInBytesV : cardinal;
+function TWPRendererTableColumnMetric.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDeadLefts.sizeInBytes);
-  inc(result, FDeadRights.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDeadLefts.sizeInBytes(magic));
+  inc(result, FDeadRights.sizeInBytes(magic));
 end;
 
 Function TWPTableColumnMetrics.Link : TWPTableColumnMetrics;
@@ -5378,11 +5378,11 @@ Begin
 End;
 
 
-function TWPFieldModel.sizeInBytesV : cardinal;
+function TWPFieldModel.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTitle.length * sizeof(char)) + 12);
-  inc(result, FEntries.sizeInBytes);
+  inc(result, FEntries.sizeInBytes(magic));
 end;
 
 Function TWPFieldEntryList.GetFieldName(iIndex: Integer): TWPFieldEntry;
@@ -5408,9 +5408,9 @@ begin
   FSection := bSection;
 end;
 
-function TWPFieldEntry.sizeInBytesV : cardinal;
+function TWPFieldEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;

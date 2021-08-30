@@ -101,15 +101,17 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
 
-function TPackageServerEndPoint.cacheSize: UInt64;
+function TPackageServerEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
 end;
 
 procedure TPackageServerEndPoint.clearCache;
@@ -129,6 +131,12 @@ begin
   FPackageServer.Free;
 
   inherited;
+end;
+
+procedure TPackageServerEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+
 end;
 
 procedure TPackageServerEndPoint.Load;
@@ -209,6 +217,11 @@ begin
   WebEndPoint := FPackageServer;
   FUpdater.Start;
   result := FPackageServer.link;
+end;
+
+procedure TPackageServerEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 function TPackageServerEndPoint.summary: String;

@@ -106,7 +106,7 @@ implementation
 constructor TFHIRServerController.Create(ini: TFHIRServerConfigFile);
 begin
   inherited Create;
-  FLock := TFslLock.create;
+  FLock := TFslLock.create('GUI controller');
   FThread := nil;
   FIni := ini;
   FMessagesIn := TStringList.create;

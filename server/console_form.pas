@@ -100,6 +100,8 @@ type
 
   TMainConsoleForm = class(TForm)
     BitBtn1: TBitBtn;
+    btnCacheInfo: TButton;
+    btnLockStatus: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
     btnImportNDC: TBitBtn;
@@ -396,6 +398,7 @@ type
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
     procedure btnCACertClick(Sender: TObject);
+    procedure btnCacheInfoClick(Sender: TObject);
     procedure btnCertClick(Sender: TObject);
     procedure btnCertKeyClick(Sender: TObject);
     procedure btnClearCacheClick(Sender: TObject);
@@ -408,6 +411,7 @@ type
     procedure btnFetchObjectsClick(Sender: TObject);
     procedure btnFetchObjectsPlusClick(Sender: TObject);
     procedure btnImportNDCClick(Sender: TObject);
+    procedure btnLockStatusClick(Sender: TObject);
     procedure btnReIndexRxNormClick(Sender: TObject);
     procedure btnTestNDCClick(Sender: TObject);
     procedure btnTextRxNormClick(Sender: TObject);
@@ -880,7 +884,7 @@ begin
   if pwd <> '' then
   begin
     FAddress := server;
-    FPassword := ServerConnectionForm.edtPassword.Text;
+    FPassword := pwd;
     FIni.WriteString('console', 'address', FAddress);
     FIni.WriteString('console', 'password', FPassword);
     FIni.WriteString('servers', FAddress, FPassword);
@@ -1317,6 +1321,20 @@ begin
     edtCACert.text := dlgOpen.filename;
 end;
 
+procedure TMainConsoleForm.btnCacheInfoClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@caches'+#10)
+    else
+      ShowMessage('Not Connected');
+  except
+    on e : exception do
+      showMessage(e.message);
+  end;
+
+end;
+
 procedure TMainConsoleForm.btnCertClick(Sender: TObject);
 begin
   dlgOpen.filename := edtSSLCert.text;
@@ -1575,6 +1593,19 @@ begin
       btnImportNDCStop.Visible := false;
     end;
     MessageDlg('Successfully Imported NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
+  end;
+end;
+
+procedure TMainConsoleForm.btnLockStatusClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@locks'+#10)
+    else
+      ShowMessage('Not Connected');
+  except
+    on e : exception do
+      showMessage(e.message);
   end;
 end;
 
@@ -2298,6 +2329,16 @@ begin
     try
       FThreads.Text := line.subString(10).replace('|', #13#10).trim();
       FThreads.Sort;
+    finally
+      FLock.unLock;
+    end;
+    exit(true);
+  end;
+  if line.startsWith('$@locks') or line.startsWith('$@cache') then
+  begin
+    FLock.Lock;
+    try
+      FThreads.Text := line.subString(9).replace('|', #13#10).trim();
     finally
       FLock.unLock;
     end;

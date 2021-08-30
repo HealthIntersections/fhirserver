@@ -99,7 +99,7 @@ Type
     Procedure EncodeReleaseRequest(sPath : string; oReleaseRequest : TDicomReleaseRequestPDU);
     Procedure EncodeReleaseResponse(sPath : string; oReleaseResponse : TDicomReleaseResponsePDU);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -859,12 +859,12 @@ begin
   EncodeMessage(sPath, oMessage);
 end;
 
-function TDicomWriter.sizeInBytesV : cardinal;
+function TDicomWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOutput.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOutput.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 End.

@@ -55,7 +55,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -130,7 +130,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -208,7 +208,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -289,7 +289,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -388,7 +388,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -488,7 +488,7 @@ Type
       function getLengthDesc: String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -680,7 +680,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -757,7 +757,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Constructor Create(Const sCode : String; bOptional, bRepeating : Boolean; aType : THL7V2ModelSegmentGroupType); Overload;
@@ -832,7 +832,7 @@ Type
       Procedure SetXMLMap(Const Value: THL7V2ModelSegmentGroup);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -938,7 +938,7 @@ Type
       Procedure SetRefStructure(Const Value: THL7V2ModelMessageStructure);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1026,7 +1026,7 @@ Type
       Procedure SetMessages(Const Value: THL7V2ModelEventMessages);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1120,7 +1120,7 @@ type
     procedure SetMessageStructures(const Value: THL7V2ModelMessageStructures);
     Function isVariableTypeName(Const sName : String) : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1151,7 +1151,7 @@ Type
     FMap : THL7V2ModelSegmentGroup;
     procedure SetMap(const Value: THL7V2ModelSegmentGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
 
@@ -1202,7 +1202,7 @@ Type
     Function SaveSegmentMap(oMap : THL7V2ModelSegmentGroup) : String;
     Procedure SaveSchemaMap(oWriter : TWriter; aVersion : THL7V2Version; sName : String; oMap : THL7V2ModelSegmentGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Constructor Create(Const sFileName, sFolder : String); Overload;
@@ -1272,7 +1272,7 @@ type
     procedure AddEventMessages(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents); Overload; Virtual;
     procedure AddMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures); Overload; Virtual;
     procedure AddSegmentMaps(aVersion : THL7V2Version; oStructures : THL7V2ModelMessageStructures); Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; override;
@@ -1368,7 +1368,7 @@ type
     procedure DoneLoading(aTransferEvent: TOnDictTransferProgress); Override;
 
     function GetContents(bForWriting : Boolean) : TFslAccessStream; overload; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; overload; override;
     destructor Destroy; Override;
@@ -1382,7 +1382,7 @@ type
     FErrorsOk : Boolean;
   protected
     function GetContents(bForWriting : Boolean) : TFslAccessStream; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(const sFilename : String; bSuppressException: Boolean = False); overload;
 
@@ -1397,7 +1397,7 @@ type
     FDictionary : THL7V2Dictionary;
     Procedure SetDictionary(Const Value: THL7V2Dictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(oDictionary : THL7V2Dictionary); Overload;
     Constructor Create(oProvider : THL7V2DictionaryProvider); Overload; // copy providers setup regarding dictionary
@@ -1437,9 +1437,9 @@ Begin
   Length := THL7V2ModelDataType(oObject).Length;
 End;
 
-function THL7V2ModelDataType.sizeInBytesV : cardinal;
+function THL7V2ModelDataType.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1615,9 +1615,9 @@ Begin
   Description := THL7V2ModelTableItem(oObject).Description;
 End;
 
-function THL7V2ModelTableItem.sizeInBytesV : cardinal;
+function THL7V2ModelTableItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1827,11 +1827,11 @@ Begin
   Items.Assign(THL7V2ModelTable(oObject).Items);
 End;
 
-function THL7V2ModelTable.sizeInBytesV : cardinal;
+function THL7V2ModelTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FItems.sizeInBytes);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelTables.Link : THL7V2ModelTables;
@@ -2024,14 +2024,14 @@ Begin
   Number := THL7V2ModelComponent(oObject).Number;
 End;
 
-function THL7V2ModelComponent.sizeInBytesV : cardinal;
+function THL7V2ModelComponent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
-  inc(result, FRefTable.sizeInBytes);
-  inc(result, FRefDataType.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefTable.sizeInBytes(magic));
+  inc(result, FRefDataType.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelComponents.Link : THL7V2ModelComponents;
@@ -2297,14 +2297,14 @@ Begin
   Components.Assign(THL7V2ModelStructure(oObject).Components);
 End;
 
-function THL7V2ModelStructure.sizeInBytesV : cardinal;
+function THL7V2ModelStructure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
-  inc(result, FRefDataType.sizeInBytes);
-  inc(result, FComponents.sizeInBytes);
+  inc(result, FRefDataType.sizeInBytes(magic));
+  inc(result, FComponents.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelStructures.Link : THL7V2ModelStructures;
@@ -2574,14 +2574,14 @@ Begin
   Table := THL7V2ModelDataElement(oObject).Table;
 End;
 
-function THL7V2ModelDataElement.sizeInBytesV : cardinal;
+function THL7V2ModelDataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FLength_Conf.length * sizeof(char)) + 12);
-  inc(result, FRefTable.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefTable.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelDataElements.Link : THL7V2ModelDataElements;
@@ -3112,12 +3112,12 @@ Begin
   Fields.Assign(THL7V2ModelSegment(oObject).FFields);
 End;
 
-function THL7V2ModelSegment.sizeInBytesV : cardinal;
+function THL7V2ModelSegment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FFields.sizeInBytes);
+  inc(result, FFields.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelSegments.Link : THL7V2ModelSegments;
@@ -3299,11 +3299,11 @@ Begin
   Children := THL7V2ModelSegmentGroup(oObject).Children.Clone;
 End;
 
-function THL7V2ModelSegmentGroup.sizeInBytesV : cardinal;
+function THL7V2ModelSegmentGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelSegmentGroups.Link : THL7V2ModelSegmentGroups;
@@ -3462,16 +3462,16 @@ Begin
   XMLMap :=  THL7V2ModelMessageStructure(oObject).XMLMap.Clone;
 End;
 
-function THL7V2ModelMessageStructure.sizeInBytesV : cardinal;
+function THL7V2ModelMessageStructure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FExampleEvent.length * sizeOf(char)) + 12);
   inc(result, (FExampleMsgType.length * sizeOf(char)) + 12);
   inc(result, (FAction.length * sizeOf(char)) + 12);
-  inc(result, FSegmentMap.sizeInBytes);
-  inc(result, FXMLMap.sizeInBytes);
+  inc(result, FSegmentMap.sizeInBytes(magic));
+  inc(result, FXMLMap.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelMessageStructures.Link : THL7V2ModelMessageStructures;
@@ -3783,15 +3783,15 @@ Begin
   ReplyStructure := THL7V2ModelEventMessage(oObject).ReplyStructure;
 End;
 
-function THL7V2ModelEventMessage.sizeInBytesV : cardinal;
+function THL7V2ModelEventMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMessage.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FReply.length * sizeOf(char)) + 12);
   inc(result, (FReplyStructure.length * sizeOf(char)) + 12);
-  inc(result, FRefReplyStructure.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefReplyStructure.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelEventMessages.Link : THL7V2ModelEventMessages;
@@ -4055,12 +4055,12 @@ Begin
   Messages.Assign(THL7V2ModelEvent(oObject).Messages)
 End;
 
-function THL7V2ModelEvent.sizeInBytesV : cardinal;
+function THL7V2ModelEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FMessages.sizeInBytes);
+  inc(result, FMessages.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelEvents.Link : THL7V2ModelEvents;
@@ -4380,17 +4380,17 @@ begin
       end;
 end;
 
-function THL7V2Model.sizeInBytesV : cardinal;
+function THL7V2Model.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTables.sizeInBytes);
-  inc(result, FComponents.sizeInBytes);
-  inc(result, FDataElements.sizeInBytes);
-  inc(result, FSegments.sizeInBytes);
-  inc(result, FDataTypes.sizeInBytes);
-  inc(result, FStructures.sizeInBytes);
-  inc(result, FEvents.sizeInBytes);
-  inc(result, FMessageStructures.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTables.sizeInBytes(magic));
+  inc(result, FComponents.sizeInBytes(magic));
+  inc(result, FDataElements.sizeInBytes(magic));
+  inc(result, FSegments.sizeInBytes(magic));
+  inc(result, FDataTypes.sizeInBytes(magic));
+  inc(result, FStructures.sizeInBytes(magic));
+  inc(result, FEvents.sizeInBytes(magic));
+  inc(result, FMessageStructures.sizeInBytes(magic));
 end;
 
 { THL7V2SchemaStoreCacheEntries }
@@ -4461,16 +4461,16 @@ begin
   FMap := Value;
 end;
 
-function THL7V2SchemaStoreCacheEntry.sizeInBytesV : cardinal;
+function THL7V2SchemaStoreCacheEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 Constructor THL7V2SchemaStore.Create;
 Begin
   Inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('v2 schema');
   FCache := THL7V2SchemaStoreCacheEntries.Create;
 End;
 
@@ -4860,18 +4860,18 @@ Begin
     End;
 End;
 
-function THL7V2SchemaStore.sizeInBytesV : cardinal;
+function THL7V2SchemaStore.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FCache.sizeInBytes);
+  inc(result, FCache.sizeInBytes(magic));
 end;
 
 constructor THL7V2Dictionary.Create;
 begin
   inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('v2 dict');
 end;
 
 destructor THL7V2Dictionary.Destroy;
@@ -5259,10 +5259,10 @@ begin
   FSchemaStore := Value;
 end;
 
-function THL7V2Dictionary.sizeInBytesV : cardinal;
+function THL7V2Dictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSchemaStore.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSchemaStore.sizeInBytes(magic));
 end;
 
 { THL7V2BinaryDictionaryContext }
@@ -5283,7 +5283,7 @@ begin
     FStream.Write(oBUffer.AsText[1], length(oBUffer.AsText));
   FStream.Position := 0;
   FReader := TReader.create(FStream, 8192);
-  FReader.ReadListBegin;
+  FReader.ReadListbegin
 end;
 
 procedure THL7V2BinaryDictionaryContext.Write;
@@ -5291,7 +5291,7 @@ begin
   assert(FStream = nil, 'the context is already open');
   FStream := TMemoryStream.create;
   FWriter := TWriter.create(FStream, 8192);
-  FWriter.WriteListBegin;
+  FWriter.WriteListbegin
 end;
 
 function THL7V2BinaryDictionaryContext.CloseWriting: String;
@@ -6148,11 +6148,11 @@ begin
   LoadDictionary;
 end;
 
-function THL7V2BinaryDictionary.sizeInBytesV : cardinal;
+function THL7V2BinaryDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffers.sizeInBytes);
-  inc(result, FContexts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffers.sizeInBytes(magic));
+  inc(result, FContexts.sizeInBytes(magic));
 end;
 
 { THL7V2FileDictionary }
@@ -6187,9 +6187,9 @@ begin
     Result := 'File';
 end;
 
-function THL7V2FileDictionary.sizeInBytesV : cardinal;
+function THL7V2FileDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFileName.length * sizeof(char)) + 12);
 end;
 
@@ -6219,10 +6219,10 @@ begin
   FDictionary := Value;
 end;
 
-function THL7V2DictionaryProvider.sizeInBytesV : cardinal;
+function THL7V2DictionaryProvider.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 end.

@@ -65,7 +65,7 @@ Type
     procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -205,11 +205,11 @@ begin
   End;
 end;
 
-function TInternetFetcher.sizeInBytesV : cardinal;
+function TInternetFetcher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FURL.length * sizeof(char)) + 12);
-  inc(result, FBuffer.sizeInBytes);
+  inc(result, FBuffer.sizeInBytes(magic));
   inc(result, (FUsername.length * sizeof(char)) + 12);
   inc(result, (FPassword.length * sizeof(char)) + 12);
   inc(result, (FContentType.length * sizeof(char)) + 12);

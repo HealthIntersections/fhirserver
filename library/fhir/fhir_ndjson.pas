@@ -43,7 +43,7 @@ type
     procedure SetFactory(const Value: TFHIRFactory);
   protected
     function GetFormat: TFHIRFormat; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -129,10 +129,10 @@ begin
   FFactory := Value;
 end;
 
-function TFHIRNDJsonComposer.sizeInBytesV : cardinal;
+function TFHIRNDJsonComposer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 end.

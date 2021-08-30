@@ -49,7 +49,7 @@ type
   private
     FValue : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : String);
     function fhirType : string; override;
@@ -69,7 +69,7 @@ type
     FInstance : TFHIRObject;
   protected
     procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(instance : TFHIRObject);
     destructor Destroy; override;
@@ -93,7 +93,7 @@ type
     FResourceType : String;
     FContext : TFHIRTypeDetails;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
@@ -117,7 +117,7 @@ type
     procedure checkParameters(lexer : TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode);
     procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; count : integer); overload;
     procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; countMin, countMax : integer); overload;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     // Parse a path for later use using execute
@@ -320,7 +320,7 @@ type
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
@@ -424,9 +424,9 @@ begin
   raise EFHIRTodo.create('TFHIRConstant.setProperty');
 end;
 
-function TFHIRConstant.sizeInBytesV : cardinal;
+function TFHIRConstant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -524,10 +524,10 @@ begin
     result := FInstance.fhirType;
 end;
 
-function TFHIRClassTypeInfo.sizeInBytesV : cardinal;
+function TFHIRClassTypeInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FInstance.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FInstance.sizeInBytes(magic));
 end;
 
 { TFHIRPathParser }
@@ -1001,10 +1001,10 @@ begin
 end;
 
 
-function TFHIRPathParser.sizeInBytesV : cardinal;
+function TFHIRPathParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensions.sizeInBytes(magic));
 end;
 
 { TFHIRPathEngine }
@@ -6671,13 +6671,13 @@ begin
   result := nil;
 end;
 
-function TFHIRPathEngine.sizeInBytesV : cardinal;
+function TFHIRPathEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, worker.sizeInBytes);
-  inc(result, allTypes.sizeInBytes);
-  inc(result, primitiveTypes.sizeInBytes);
-  inc(result, FUcum.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, worker.sizeInBytes(magic));
+  inc(result, allTypes.sizeInBytes(magic));
+  inc(result, primitiveTypes.sizeInBytes(magic));
+  inc(result, FUcum.sizeInBytes(magic));
 end;
 
 { TFHIRPathExecutionTypeContext }
@@ -6702,12 +6702,12 @@ begin
   result := TFHIRPathExecutionTypeContext(inherited link);
 end;
 
-function TFHIRPathExecutionTypeContext.sizeInBytesV : cardinal;
+function TFHIRPathExecutionTypeContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAppInfo.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAppInfo.sizeInBytes(magic));
   inc(result, (FResourceType.length * sizeof(char)) + 12);
-  inc(result, FContext.sizeInBytes);
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 { TFHIRPathLexeR3 }

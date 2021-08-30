@@ -119,7 +119,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
@@ -475,21 +475,21 @@ type
   private
     FString: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundInt = class (TFDBBoundParam)
   private
     FInt: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundInt64 = class (TFDBBoundParam)
   private
     FInt64: Int64;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundDate = class (TFDBBoundParam)
@@ -506,7 +506,7 @@ type
   private
     FBytes: TManagedMemoryStream;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
   end;
@@ -957,15 +957,15 @@ begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
 end;
 
-function TFDBOdbcManager.sizeInBytesV : cardinal;
+function TFDBOdbcManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDriver.length * sizeof(char)) + 12);
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FDatabase.length * sizeof(char)) + 12);
   inc(result, (FUsername.length * sizeof(char)) + 12);
   inc(result, (FPassword.length * sizeof(char)) + 12);
-  inc(result, FAttributes.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes(magic));
 end;
 
 class function TFDBOdbcManager.IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean;
@@ -1044,26 +1044,26 @@ begin
   inherited;
 end;
 
-function TOdbcBoundBytes.sizeInBytesV : cardinal;
+function TOdbcBoundBytes.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, FBytes.Size);
 end;
 
-function TOdbcBoundString.sizeInBytesV : cardinal;
+function TOdbcBoundString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FString.length * sizeof(char)) + 12);
 end;
 
-function TOdbcBoundInt.sizeInBytesV : cardinal;
+function TOdbcBoundInt.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
-function TOdbcBoundInt64.sizeInBytesV : cardinal;
+function TOdbcBoundInt64.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, sizeof(FInt64));
 end;
 

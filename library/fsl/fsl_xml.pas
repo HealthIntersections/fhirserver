@@ -76,7 +76,7 @@ Type
   private
     FValue: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : boolean);
     property value : boolean read FValue write FValue;
@@ -87,7 +87,7 @@ Type
   private
     FValue: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : integer);
     property value : integer read FValue write FValue;
@@ -98,7 +98,7 @@ Type
   private
     FValue: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : String);
     property value : String read FValue write FValue;
@@ -119,7 +119,7 @@ Type
     FStop : TSourceLocation;
     function containsLocation(loc : TSourceLocation) : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
@@ -135,7 +135,7 @@ Type
   private
     FValue : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(); override;
     constructor Create(name, value : String); overload;
@@ -174,7 +174,7 @@ Type
     function GetAllChildrenAreText: boolean;
     function findLocation(loc : TSourceLocation; path : TFslList<TMXmlNamedNode>) : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -237,7 +237,7 @@ Type
     function GetFilters: TFslList<TMXPathExpressionNode>;
     function buildConstant : TMXmlNode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     Function Link : TMXPathExpressionNode; overload;
@@ -261,7 +261,7 @@ Type
   private
     FMap : TFslMap<TMXmlNode>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(name : String; value : TMXmlNode); overload;
@@ -324,7 +324,7 @@ Type
     function evaluateString(nodes : TFslList<TMXmlNode>): String;
     function GetDocElement: TMXmlElement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
@@ -381,7 +381,7 @@ Type
     function parseXPath : TMXPathExpressionNode; overload;
     function newGroup(next: TMXPathExpressionNode): TMXPathExpressionNode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -414,7 +414,7 @@ type
     FDefaultSet: boolean;
     procedure SetDefaultNS(const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -493,7 +493,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslXMLAttribute;
       Function Clone : TFslXMLAttribute;
@@ -582,7 +582,7 @@ Type
       Function GetValue: String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -618,7 +618,7 @@ Type
       FEntryList : TFslXMLNamespaceEntryList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -645,7 +645,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -680,7 +680,7 @@ Type
       Function UseAttributes : String;
 
       Procedure ProducePretty(sValue : String);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -723,7 +723,7 @@ Type
     function getNSRep(uri, name : String):String;
     procedure SetCanonicalEntities(const Value: boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -779,7 +779,7 @@ Type
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; override;
@@ -828,7 +828,7 @@ Type
 
       Function SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -933,9 +933,9 @@ begin
   result := FValue;
 end;
 
-function TMXmlAttribute.sizeInBytesV : cardinal;
+function TMXmlAttribute.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -957,9 +957,9 @@ begin
   result := ((other is TMXmlNamedNode) and (FNamespaceURI = TMXmlNamedNode(other).FNamespaceURI) and (FLocalName = TMXmlNamedNode(other).FLocalName));
 end;
 
-function TMXmlNamedNode.sizeInBytesV : cardinal;
+function TMXmlNamedNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FNamespaceURI.length * sizeof(char)) + 12);
   inc(result, (FLocalName.length * sizeof(char)) + 12);
@@ -980,13 +980,13 @@ begin
   FLocalName := local;
 end;
 
-function TMXmlElement.sizeInBytesV : cardinal;
+function TMXmlElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAttributes.sizeInBytes);
-  inc(result, FChildren.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAttributes.sizeInBytes(magic));
+  inc(result, FChildren.sizeInBytes(magic));
   inc(result, (FText.length * sizeof(char)) + 12);
-  inc(result, FNext.sizeInBytes);
+  inc(result, FNext.sizeInBytes(magic));
 end;
 
 class function TMXmlElement.createComment(text: String): TMXmlElement;
@@ -1540,10 +1540,10 @@ end;
 
 { TMXmlParser }
 
-function TMXmlParser.sizeInBytesV : cardinal;
+function TMXmlParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, reader.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, reader.sizeInBytes(magic));
 end;
 
 class function TMXmlParser.parse(content: TStream; options : TMXmlParserOptions): TMXmlDocument;
@@ -2619,15 +2619,15 @@ begin
   end;
 end;
 
-function TMXPathExpressionNode.sizeInBytesV : cardinal;
+function TMXPathExpressionNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
-  inc(result, FFilters.sizeInBytes);
-  inc(result, FNext.sizeInBytes);
-  inc(result, FNextOp.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FFilters.sizeInBytes(magic));
+  inc(result, FNext.sizeInBytes(magic));
+  inc(result, FNextOp.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
+  inc(result, FParams.sizeInBytes(magic));
 end;
 
 { TMXmlDocument }
@@ -3872,10 +3872,10 @@ begin
   addElementNS(ns, local);
 end;
 
-function TMXmlDocument.sizeInBytesV : cardinal;
+function TMXmlDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FNamespaceAbbreviations.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FNamespaceAbbreviations.sizeInBytes(magic));
 end;
 
 { TMXmlNode }
@@ -3903,9 +3903,9 @@ begin
   result := BooleanToString(value);
 end;
 
-function TMXmlBoolean.sizeInBytesV : cardinal;
+function TMXmlBoolean.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TMXmlNumber }
@@ -3921,9 +3921,9 @@ begin
   result := IntToStr(value);
 end;
 
-function TMXmlNumber.sizeInBytesV : cardinal;
+function TMXmlNumber.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TXPathVariables }
@@ -3971,10 +3971,10 @@ begin
   end;
 end;
 
-function TXPathVariables.sizeInBytesV : cardinal;
+function TXPathVariables.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 { TMXmlString }
@@ -3990,9 +3990,9 @@ begin
   result := FValue;
 end;
 
-function TMXmlString.sizeInBytesV : cardinal;
+function TMXmlString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -4250,12 +4250,12 @@ begin
   result := xml.FLocation;
 end;
 
-function TFslXmlBuilder.sizeInBytesV : cardinal;
+function TFslXmlBuilder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, mem.sizeInBytes);
-  inc(result, buf.sizeInBytes);
-  inc(result, xml.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, mem.sizeInBytes(magic));
+  inc(result, buf.sizeInBytes(magic));
+  inc(result, xml.sizeInBytes(magic));
 end;
 
 { TXmlBuilderNamespaceList }
@@ -4297,11 +4297,11 @@ begin
   FDefaultNS := Value;
 end;
 
-function TXmlBuilderNamespaceList.sizeInBytesV : cardinal;
+function TXmlBuilderNamespaceList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDefaultNS.length * sizeof(char)) + 12);
-  inc(result, FNew.sizeInBytes);
+  inc(result, FNew.sizeInBytes(magic));
 end;
 
 { TXmlBuilder }
@@ -4860,11 +4860,11 @@ begin
 end;
 
 
-function TFslXMLFormatter.sizeInBytesV : cardinal;
+function TFslXMLFormatter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAttributes.sizeInBytes);
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAttributes.sizeInBytes(magic));
+  inc(result, FBuilder.sizeInBytes(magic));
   inc(result, (FPending.length * sizeof(char)) + 12);
 end;
 
@@ -4897,9 +4897,9 @@ Begin
 End;
 
 
-function TFslXMLAttribute.sizeInBytesV : cardinal;
+function TFslXMLAttribute.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -5257,11 +5257,11 @@ Begin
 End;
 
 
-function TFslXMLNamespaceEntry.sizeInBytesV : cardinal;
+function TFslXMLNamespaceEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FKey.length * sizeof(char)) + 12);
-  inc(result, FValues.sizeInBytes);
+  inc(result, FValues.sizeInBytes(magic));
 end;
 
 Function TFslXMLNamespaceEntryList.CompareByKey(pA, pB: Pointer): Integer;
@@ -5320,10 +5320,10 @@ Begin
 End;
 
 
-function TFslXMLNamespaceLevel.sizeInBytesV : cardinal;
+function TFslXMLNamespaceLevel.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntryList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntryList.sizeInBytes(magic));
 end;
 
 Function TFslXMLNamespaceLevelList.ItemClass: TFslObjectClass;
@@ -5530,11 +5530,11 @@ Begin
   End;
 End;
 
-function TFslXMLNamespaceManager.sizeInBytesV : cardinal;
+function TFslXMLNamespaceManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntryList.sizeInBytes);
-  inc(result, FLevelList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntryList.sizeInBytes(magic));
+  inc(result, FLevelList.sizeInBytes(magic));
 end;
 
 { TMXmlBuilder }
@@ -5810,12 +5810,12 @@ begin
   Start(nil);
 end;
 
-function TMXmlBuilder.sizeInBytesV : cardinal;
+function TMXmlBuilder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStack.sizeInBytes);
-  inc(result, FDoc.sizeInBytes);
-  inc(result, FAttributes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStack.sizeInBytes(magic));
+  inc(result, FDoc.sizeInBytes(magic));
+  inc(result, FAttributes.sizeInBytes(magic));
 end;
 
 { TFslXMLExtractor }
@@ -6355,12 +6355,12 @@ begin
   result := PeekXml;
 end;
 
-function TFslXMLExtractor.sizeInBytesV : cardinal;
+function TFslXMLExtractor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FElement.length * sizeof(char)) + 12);
-  inc(result, FAttributes.sizeInBytes);
-  inc(result, FNamespaceManager.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes(magic));
+  inc(result, FNamespaceManager.sizeInBytes(magic));
   inc(result, (FNodeName.length * sizeof(char)) + 12);
 end;
 

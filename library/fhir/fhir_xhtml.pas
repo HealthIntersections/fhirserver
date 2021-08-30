@@ -48,7 +48,7 @@ Type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(Name : String; Value : String); Overload;
 
@@ -79,7 +79,7 @@ Type
     FList : TFHIRAttributeList;
     function GetCurrent : TFHIRAttribute;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFHIRAttributeList);
     destructor Destroy; override;
@@ -124,7 +124,7 @@ Type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     constructor Create(nodeType : TFHIRHtmlNodeType); Overload;
@@ -237,7 +237,7 @@ Type
     FList : TFHIRXhtmlNodeList;
     function GetCurrent : TFHIRXhtmlNode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFHIRXhtmlNodeList);
     destructor Destroy; override;
@@ -546,9 +546,9 @@ begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
-function TFHIRAttribute.sizeInBytesV : cardinal;
+function TFHIRAttribute.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
@@ -1036,12 +1036,12 @@ begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
-function TFhirXHtmlNode.sizeInBytesV : cardinal;
+function TFhirXHtmlNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FAttributes.sizeInBytes);
-  inc(result, FChildNodes.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes(magic));
+  inc(result, FChildNodes.sizeInBytes(magic));
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -1884,16 +1884,16 @@ begin
   xml.close('text');
 end;
 
-function TFHIRAttributeListEnumerator.sizeInBytesV : cardinal;
+function TFHIRAttributeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
-function TFHIRXhtmlNodeListEnumerator.sizeInBytesV : cardinal;
+function TFHIRXhtmlNodeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 end.

@@ -175,7 +175,7 @@ Type
       procedure SetTouchMode(const Value: TWPSettingsTouchMode);
       procedure SetDicomDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -357,7 +357,7 @@ Type
       Function GetSettings : TWPSettings;
     Protected
       Procedure SetSettings(Const Value : TWPSettings); Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1046,15 +1046,15 @@ end;
 
 
 
-function TWPSettings.sizeInBytesV : cardinal;
+function TWPSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFieldDefinitions.sizeInBytes);
-  inc(result, FAnnotationDefinitions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFieldDefinitions.sizeInBytes(magic));
+  inc(result, FAnnotationDefinitions.sizeInBytes(magic));
   inc(result, (FSnapshotEmail.length * sizeof(char)) + 12);
   inc(result, (FAutosavePath.length * sizeof(char)) + 12);
   inc(result, (FAutosaveId.length * sizeof(char)) + 12);
-  inc(result, FDicomDictionary.sizeInBytes);
+  inc(result, FDicomDictionary.sizeInBytes(magic));
 end;
 
 Constructor TWPSettable.Create;
@@ -1084,10 +1084,10 @@ Begin
 End;
 
 
-function TWPSettable.sizeInBytesV : cardinal;
+function TWPSettable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 End.

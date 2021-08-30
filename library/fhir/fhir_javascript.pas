@@ -46,7 +46,7 @@ type
     FFHIRType : String;
     function FHIRTypeNV : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TFHIRJavascript = class;
@@ -670,9 +670,9 @@ begin
   result := FFHIRType.Substring(0, FFHIRType.Length-1);
 end;
 
-function TFHIRJavascriptDefinedElement.sizeInBytesV : cardinal;
+function TFHIRJavascriptDefinedElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDefiningType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFHIRType.length * sizeof(char)) + 12);

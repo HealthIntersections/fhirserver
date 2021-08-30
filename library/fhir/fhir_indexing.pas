@@ -56,7 +56,7 @@ type
     procedure SetExpression(const Value: TFHIRPathExpressionNodeV);
     procedure SetKey(const Value: Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -87,7 +87,7 @@ type
     function GetItemN(iIndex: integer): TFhirIndex;
   protected
     function ItemClass : TFslObjectClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -109,7 +109,7 @@ type
     FName: String;
     FComponents : TFslStringDictionary;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -146,7 +146,7 @@ type
     FRelatedPersonCompartment : TFslMap<TFslStringSet>;
     FDeviceCompartment : TFslMap<TFslStringSet>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -231,17 +231,17 @@ begin
   result := name+' : '+CODES_TFHIRSearchParamType[SearchType];
 end;
 
-function TFhirIndex.sizeInBytesV : cardinal;
+function TFhirIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FURI.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, (FMapping.length * sizeof(char)) + 12);
-  inc(result, FExpression.sizeInBytes);
+  inc(result, FExpression.sizeInBytes(magic));
 end;
 
 { TFhirIndexList }
@@ -337,10 +337,10 @@ begin
   end;
 end;
 
-function TFhirIndexList.sizeInBytesV : cardinal;
+function TFhirIndexList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 { TFhirComposite }
@@ -379,12 +379,12 @@ begin
   result := TFhirComposite(inherited Link);
 end;
 
-function TFhirComposite.sizeInBytesV : cardinal;
+function TFhirComposite.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FComponents.sizeInBytes);
+  inc(result, FComponents.sizeInBytes(magic));
 end;
 
 { TFhirCompositeList }
@@ -525,14 +525,14 @@ begin
 end;
 
 
-function TFHIRCompartmentList.sizeInBytesV : cardinal;
+function TFHIRCompartmentList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatientCompartment.sizeInBytes);
-  inc(result, FPractitionerCompartment.sizeInBytes);
-  inc(result, FEncounterCompartment.sizeInBytes);
-  inc(result, FRelatedPersonCompartment.sizeInBytes);
-  inc(result, FDeviceCompartment.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatientCompartment.sizeInBytes(magic));
+  inc(result, FPractitionerCompartment.sizeInBytes(magic));
+  inc(result, FEncounterCompartment.sizeInBytes(magic));
+  inc(result, FRelatedPersonCompartment.sizeInBytes(magic));
+  inc(result, FDeviceCompartment.sizeInBytes(magic));
 end;
 
 end.

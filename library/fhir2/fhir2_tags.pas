@@ -60,7 +60,7 @@ type
     FTransactionId: String;
     FConfirmedStored: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TFHIRTag;
     property Key : integer read Fkey write FKey;
@@ -77,7 +77,7 @@ type
     function GetCount: Integer;
     function GetTag(index: integer): TFHIRTag;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -111,9 +111,9 @@ begin
   result := TFHIRTag(inherited Link);
 end;
 
-function TFHIRTag.sizeInBytesV : cardinal;
+function TFHIRTag.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
 
@@ -313,10 +313,10 @@ begin
 end;
 
 
-function TFHIRTagList.sizeInBytesV : cardinal;
+function TFHIRTagList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 end.

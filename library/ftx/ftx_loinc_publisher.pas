@@ -68,7 +68,7 @@ Type
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
     destructor Destroy; Override;
@@ -897,7 +897,7 @@ end;
 constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
 begin
   inherited Create;
-  Lock := TFslLock.Create;
+  Lock := TFslLock.Create('LOINC publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;
@@ -1061,11 +1061,11 @@ begin
       exit(true);
 end;
 
-function TloincPublisher.sizeInBytesV : cardinal;
+function TloincPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSearchCache.sizeInBytes);
-  inc(result, FLoinc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSearchCache.sizeInBytes(magic));
+  inc(result, FLoinc.sizeInBytes(magic));
   inc(result, (FFHIRPath.length * sizeof(char)) + 12);
 end;
 

@@ -591,7 +591,7 @@ type
   private
     Fsource, Ftarget : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(res : TFhirResource; source, target : String);
     function elements : TFslList<TFhirConceptMapGroupElementW>; override;
@@ -638,7 +638,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -3480,9 +3480,9 @@ begin
   result := Ftarget;
 end;
 
-function TFhirConceptMapGroup2.sizeInBytesV : cardinal;
+function TFhirConceptMapGroup2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fsource.length * sizeof(char)) + 12);
   inc(result, ( Ftarget.length * sizeof(char)) + 12);
 end;
@@ -3678,10 +3678,10 @@ begin
 end;
 
 
-function TFHIRMeta2.sizeInBytesV : cardinal;
+function TFHIRMeta2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResource.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
 { TFHIRAuditEvent2 }

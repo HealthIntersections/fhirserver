@@ -85,7 +85,7 @@ Type
     FChildren : TFslList<TFHIRElementDefinition>;
     FList : TFslList<TPropertyWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     public
     constructor Create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
     end;
@@ -101,7 +101,7 @@ Type
     FWrapped: TFHIRProperty;
     FList: TFslList<TBaseWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRProperty);
     destructor Destroy; override;
@@ -121,7 +121,7 @@ Type
   private
     FWrapped: TFHIRResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRResource);
     destructor Destroy; override;
@@ -138,7 +138,7 @@ Type
     FList: TFslList<TPropertyWrapper>;
     FOtherList: TFslList<TPropertyWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRObject);
     destructor Destroy; override;
@@ -311,11 +311,11 @@ begin
   result := nil; // FWrapped.getStructure();
 end;
 
-function TPropertyWrapperDirect.sizeInBytesV : cardinal;
+function TPropertyWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 Constructor TBaseWrapperDirect.create(wrapped: TFHIRObject);
@@ -385,12 +385,12 @@ begin
   end;
 end;
 
-function TBaseWrapperDirect.sizeInBytesV : cardinal;
+function TBaseWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
-  inc(result, FList.sizeInBytes);
-  inc(result, FOtherList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
+  inc(result, FOtherList.sizeInBytes(magic));
 end;
 
 Constructor TResourceWrapperDirect.create(wrapped: TFHIRResource);
@@ -471,10 +471,10 @@ begin
   end;
 end;
 
-function TResourceWrapperDirect.sizeInBytesV : cardinal;
+function TResourceWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
 end;
 
 { TFHIRNarrativeGenerator }
@@ -3415,11 +3415,11 @@ end;
 *)
 
 (*
-function TFHIRNarrativeGenerator.sizeInBytesV : cardinal;
+function TFHIRNarrativeGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPrefix.length * sizeof(char)) + 12);
-  inc(result, context.sizeInBytes);
+  inc(result, context.sizeInBytes(magic));
   inc(result, (FBasePath.length * sizeof(char)) + 12);
   inc(result, (FTooCostlyNote.length * sizeof(char)) + 12);
 end;

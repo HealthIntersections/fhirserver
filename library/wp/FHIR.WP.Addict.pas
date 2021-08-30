@@ -48,7 +48,7 @@ Type
     Protected
       Function Load : Boolean; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function AddIgnore(Const sWord : String) : Boolean; Override;
 
@@ -84,7 +84,7 @@ Type
       Procedure AdWordCheck(Sender:TObject; Const Word:String; Var CheckType : Ad3SpellBase.TWordCheckType; Var Replacement:String);
       Procedure AdAllowWord(Sender:TObject; Const Word:String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(bCheckUppercase : Boolean); Overload;
       constructor Create(Const sFolder : String; bCheckUppercase : Boolean); Overload; Virtual;
@@ -117,7 +117,7 @@ Type
     FDictionary : TWPAddictDictionary;
     Procedure SetDictionary(Value : TWPAddictDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oDictionary : TWPAddictDictionary); Overload; Virtual;
     destructor Destroy; Override;
@@ -140,7 +140,7 @@ Type
       FPosition : Integer;
       FEndPosition : Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Connect(oSpell : TWPAddictSpeller; oWP : TObject);
       Procedure Initialize(aEditControl : Pointer); Override;
@@ -246,10 +246,10 @@ Begin
 End;
 
 
-function TWPAddictSpeller.sizeInBytesV : cardinal;
+function TWPAddictSpeller.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TWPAddictSpell3 }
@@ -399,15 +399,15 @@ begin
   FOnAllowWord := Value;
 end;
 
-function TWPAddictDictionary.sizeInBytesV : cardinal;
+function TWPAddictDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAddict.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAddict.sizeInBytes(magic));
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FOnLoadDictionary.sizeInBytes);
-  inc(result, FOnAddWord.sizeInBytes);
-  inc(result, FOnAllowWord.sizeInBytes);
-  inc(result, FOnCheckWord.sizeInBytes);
+  inc(result, FOnLoadDictionary.sizeInBytes(magic));
+  inc(result, FOnAddWord.sizeInBytes(magic));
+  inc(result, FOnAllowWord.sizeInBytes(magic));
+  inc(result, FOnCheckWord.sizeInBytes(magic));
 end;
 
 Procedure TWPCustomAddictDictionary.Clear;
@@ -468,11 +468,11 @@ Begin
 End;
 
 
-function TWPCustomAddictDictionary.sizeInBytesV : cardinal;
+function TWPCustomAddictDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOnLoadDictionary.sizeInBytes);
-  inc(result, FOnAddWord.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOnLoadDictionary.sizeInBytes(magic));
+  inc(result, FOnAddWord.sizeInBytes(magic));
 end;
 
 Procedure TWPAddictParser.Connect(oSpell : TWPAddictSpeller; oWP : TObject);
@@ -690,11 +690,11 @@ Begin
   End;
 End;
 
-function TWPAddictParser.sizeInBytesV : cardinal;
+function TWPAddictParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSpeller.sizeInBytes);
-  inc(result, FWordProcessor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSpeller.sizeInBytes(magic));
+  inc(result, FWordProcessor.sizeInBytes(magic));
 end;
 
 End.

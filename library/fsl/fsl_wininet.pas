@@ -97,7 +97,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -750,9 +750,9 @@ Begin
 End;
 
 
-function TFslWinInetClient.sizeInBytesV : cardinal;
+function TFslWinInetClient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUserAgent.length * sizeof(char)) + 12);
   inc(result, (FRequestType.length * sizeof(char)) + 12);
   inc(result, (FResponseCode.length * sizeof(char)) + 12);
@@ -760,8 +760,8 @@ begin
   inc(result, (FResponseType.length * sizeof(char)) + 12);
   inc(result, (FSoapAction.length * sizeof(char)) + 12);
   inc(result, (FRequestMethod.length * sizeof(char)) + 12);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FPort.length * sizeof(char)) + 12);
   inc(result, (FResource.length * sizeof(char)) + 12);
@@ -770,7 +770,7 @@ begin
   inc(result, (FUsername.length * sizeof(char)) + 12);
   inc(result, (FProxyPassword.length * sizeof(char)) + 12);
   inc(result, (FProxyUsername.length * sizeof(char)) + 12);
-  inc(result, FHeaders.sizeInBytes);
+  inc(result, FHeaders.sizeInBytes(magic));
 end;
 
 

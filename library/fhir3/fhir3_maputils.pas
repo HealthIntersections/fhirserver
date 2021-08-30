@@ -52,7 +52,7 @@ type
     Fmode: TVariableMode;
     Fobj: TFHIRObject;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -68,7 +68,7 @@ type
   private
     list : TFslList<TVariable>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -134,7 +134,7 @@ type
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
@@ -1613,14 +1613,14 @@ begin
 end;
 
 
-function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
+function TFHIRStructureMapUtilities.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWorker.sizeInBytes);
-  inc(result, fpp.sizeInBytes);
-  inc(result, fpe.sizeInBytes);
-  inc(result, FLib.sizeInBytes);
-  inc(result, FServices.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWorker.sizeInBytes(magic));
+  inc(result, fpp.sizeInBytes(magic));
+  inc(result, fpe.sizeInBytes(magic));
+  inc(result, FLib.sizeInBytes(magic));
+  inc(result, FServices.sizeInBytes(magic));
 end;
 
 { TVariable }
@@ -1644,11 +1644,11 @@ begin
   result := TVariable(inherited link);
 end;
 
-function TVariable.sizeInBytesV : cardinal;
+function TVariable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fname.length * sizeof(char)) + 12);
-  inc(result, Fobj.sizeInBytes);
+  inc(result, Fobj.sizeInBytes(magic));
 end;
 
 { TVariables }
@@ -1712,10 +1712,10 @@ begin
 end;
 
 
-function TVariables.sizeInBytesV : cardinal;
+function TVariables.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, list.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, list.sizeInBytes(magic));
 end;
 
 end.

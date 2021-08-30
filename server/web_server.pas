@@ -200,6 +200,9 @@ Type
     Procedure Start; // (active, threads: boolean);
     Procedure Stop;
 
+    Procedure clearCache;
+    procedure SetCacheStatus(status : boolean);
+    procedure getCacheInfo(ci: TCacheInformation);
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
@@ -224,6 +227,11 @@ begin
     result := 'https://'+common.host+SSLPort+'/'
   else
     result := 'http://'+common.host+HTTPPort+'/'
+end;
+
+procedure TFhirWebServer.clearCache;
+begin
+  Common.cache.Clear;
 end;
 
 Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
@@ -775,6 +783,11 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.SetCacheStatus(status: boolean);
+begin
+  Common.cache.Caching := status;
+end;
+
 procedure TFhirWebServer.SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
 begin
   Password := FSSLPassword;
@@ -944,7 +957,7 @@ begin
     vars.Add('live.connections', TFHIRSystemString.Create(inttostr(GCounterWebConnections)));
     vars.Add('live.requests', TFHIRSystemString.Create(inttostr(GCounterWebRequests)));
     vars.Add('live.requests.kernel', TFHIRSystemString.Create(inttostr(GCounterFHIRRequests)));
-    vars.Add('status.locks', TFHIRSystemString.Create(FormatTextToHTML(DumpLocks)));
+    vars.Add('status.locks', TFHIRSystemString.Create(FormatTextToHTML(DumpLocks(true))));
     for ep in FEndPoints do
     begin
       if ep is TStorageWebEndpoint then
@@ -987,6 +1000,12 @@ begin
   finally
     b.free;
   end;
+end;
+
+procedure TFhirWebServer.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.Add('Common.cache', Common.cache.sizeInBytes(ci.magic));
 end;
 
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
