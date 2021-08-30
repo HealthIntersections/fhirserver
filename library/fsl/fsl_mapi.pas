@@ -63,7 +63,7 @@ Type
 
       Procedure Check(Const sMethod : String; iError : Cardinal);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -299,14 +299,14 @@ Begin
 End;
 
 
-function TFslMAPI.sizeInBytesV : cardinal;
+function TFslMAPI.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBody.sizeInBytes);
-  inc(result, FTos.sizeInBytes);
-  inc(result, FCcs.sizeInBytes);
-  inc(result, FBccs.sizeInBytes);
-  inc(result, FAttachments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBody.sizeInBytes(magic));
+  inc(result, FTos.sizeInBytes(magic));
+  inc(result, FCcs.sizeInBytes(magic));
+  inc(result, FBccs.sizeInBytes(magic));
+  inc(result, FAttachments.sizeInBytes(magic));
 end;
 
 End.

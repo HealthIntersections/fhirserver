@@ -65,7 +65,7 @@ type
   private
     FProperties : TFslMap<TFHIRSelectionList>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -202,10 +202,10 @@ begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-function TFHIRTuple3.sizeInBytesV : cardinal;
+function TFHIRTuple3.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 end.

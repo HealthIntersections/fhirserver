@@ -185,7 +185,7 @@ implementation
 constructor TFHIRWebServerStats.Create;
 begin
   inherited;
-  FLock := TFslLock.create;
+  FLock := TFslLock.create('web.stats');
   FRestCount := 0;
   FRestTime := 0;
   FStartTime := 0;
@@ -480,7 +480,7 @@ begin
   inherited Create;
   FGoogle := TGoogleAnalyticsProvider.Create;
   FStats := TFHIRWebServerStats.create;
-  FLock := TFslLock.Create('fhir-rest');
+  FLock := TFslLock.Create('web.common');
 end;
 
 destructor TFHIRWebServerCommon.Destroy;

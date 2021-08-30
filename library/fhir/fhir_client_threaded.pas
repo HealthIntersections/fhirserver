@@ -64,7 +64,7 @@ type
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetBuffer(const Value: TFslBuffer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TFhirThreadedClientPackage; overload;
@@ -181,20 +181,20 @@ begin
   FResult := Value;
 end;
 
-function TFhirThreadedClientPackage.sizeInBytesV : cardinal;
+function TFhirThreadedClientPackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FError.length * sizeof(char)) + 12);
-  inc(result, FResult.sizeInBytes);
-  inc(result, Fparams.sizeInBytes);
+  inc(result, FResult.sizeInBytes(magic));
+  inc(result, Fparams.sizeInBytes(magic));
   inc(result, (FparamString.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FId.length * sizeof(char)) + 12);
-  inc(result, FResource.sizeInBytes);
+  inc(result, FResource.sizeInBytes(magic));
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FLastURL.length * sizeof(char)) + 12);
-  inc(result, FHeaders.sizeInBytes);
-  inc(result, FBuffer.sizeInBytes);
+  inc(result, FHeaders.sizeInBytes(magic));
+  inc(result, FBuffer.sizeInBytes(magic));
   inc(result, (FVId.length * sizeof(char)) + 12);
 end;
 

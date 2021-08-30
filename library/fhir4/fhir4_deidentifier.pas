@@ -55,7 +55,7 @@ type
     procedure SetAddress(const Value: TFHIRAddress);
     procedure SetPhoto(const Value: TFhirAttachment);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -72,7 +72,7 @@ type
     FMale : TFslList<TPseudoData>;
     FFemale : TFslList<TPseudoData>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -103,7 +103,7 @@ type
     procedure processRelatedPerson(res : TFhirRelatedPerson);
     procedure SetDatabase(const Value: TFDBManager);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -450,12 +450,12 @@ begin
   FDatabase := Value;
 end;
 
-function TFHIRDeIdentifier.sizeInBytesV : cardinal;
+function TFHIRDeIdentifier.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDatabase.sizeInBytes);
-  inc(result, FDataCache.sizeInBytes);
-  inc(result, FLock.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDatabase.sizeInBytes(magic));
+  inc(result, FDataCache.sizeInBytes(magic));
+  inc(result, FLock.sizeInBytes(magic));
 end;
 
 { TPseudoData }
@@ -507,13 +507,13 @@ begin
   FTelecom := Value;
 end;
 
-function TPseudoData.sizeInBytesV : cardinal;
+function TPseudoData.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FTelecom.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FPhoto.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FTelecom.sizeInBytes(magic));
+  inc(result, FAddress.sizeInBytes(magic));
+  inc(result, FPhoto.sizeInBytes(magic));
 end;
 
 { TFakeDataRepository }
@@ -592,11 +592,11 @@ begin
   end;
 end;
 
-function TFakeDataRepository.sizeInBytesV : cardinal;
+function TFakeDataRepository.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMale.sizeInBytes);
-  inc(result, FFemale.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMale.sizeInBytes(magic));
+  inc(result, FFemale.sizeInBytes(magic));
 end;
 
 end.

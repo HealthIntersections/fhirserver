@@ -185,8 +185,10 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
@@ -434,6 +436,12 @@ begin
   builder := TFHIRBundleBuilderSimple.Create(FServerContext.factory.link, b);
 end;
 
+procedure TFullServerEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  FStore.getCacheInfo(ci);
+end;
+
 procedure TFullServerEndPoint.Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode: TOperationMode; logLevel : TOperationLoggingLevel);
 var
   req: TFHIRRequest;
@@ -556,11 +564,17 @@ begin
   FEmailThread.Start;
 end;
 
-function TFullServerEndPoint.cacheSize: UInt64;
+procedure TFullServerEndPoint.SetCacheStatus(status: boolean);
 begin
-  result := inherited CacheSize;
+  inherited;
+  FStore.SetCacheStatus(status);
+end;
+
+function TFullServerEndPoint.cacheSize(magic : integer): UInt64;
+begin
+  result := inherited CacheSize(magic);
   if FStore <> nil then
-    result := result + FStore.cacheSize;
+    result := result + FStore.cacheSize(magic);
 end;
 
 Procedure TFullServerEndPoint.checkDatabase();

@@ -45,7 +45,7 @@ Type
     FAllowedWords : TFslStringList;
     procedure SetAllowedWords(const Value: TFslStringList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -123,10 +123,10 @@ begin
   FAllowedWords := Value;
 end;
 
-function TWPSpeller.sizeInBytesV : cardinal;
+function TWPSpeller.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAllowedWords.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAllowedWords.sizeInBytes(magic));
 end;
 
 End.

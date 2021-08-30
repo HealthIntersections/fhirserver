@@ -46,7 +46,7 @@ Type
   Private
     FUID: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Clone : TDicomDictionaryEntity; Overload;
     Function Link : TDicomDictionaryEntity; Overload;
@@ -151,7 +151,7 @@ Type
 
     FProperties: TFslStringMatch;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(Const sName: String; Const sUID: String = '1.2.840.10008.1.2';
@@ -270,7 +270,7 @@ Type
 
     FTransferSyntaxList: TDicomDictionaryTransferSyntaxList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(Const sAbstractSyntaxUID: String; contextType: TDicomPresContextType = dpcProposed); Overload;
 
@@ -351,7 +351,7 @@ Type
     FType: TDicomVRType;
     FRepeatable: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(aType : TDicomVRType; sCode : String; iLength: Cardinal; bFixed, bRepeatable: Boolean; sDescription, sDoco: String); Overload; Virtual;
 
@@ -452,7 +452,7 @@ Type
     FMax: integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -639,7 +639,7 @@ Type
 
     Procedure SetElement(oValue: TDicomDictionaryElement);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -726,7 +726,7 @@ Type
     FParams : TDicomDimseParamList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -843,7 +843,7 @@ Type
 
     FComment: String; // for any text that's are not yet used
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -917,7 +917,7 @@ Type
     Procedure SetRefId(sValue: String);
     Procedure SetRefEntry(sValue: TDicomInfoGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -970,7 +970,7 @@ Type
 
     Procedure SetRefElement(oValue: TDicomDictionaryElement);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1011,7 +1011,7 @@ Type
 
     Procedure SetKey(sValue: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -1150,7 +1150,7 @@ Type
 
     Procedure SetRefEntry(sValue: TDicomModule);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1233,7 +1233,7 @@ Type
 
     FModules: TDicomModuleReferenceList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -1315,7 +1315,7 @@ Type
     FIOD: TDicomIOD;
     procedure SetIOD(const Value: TDicomIOD);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1401,7 +1401,7 @@ Type
     Procedure ResolveMacroEntry(oEntry: TDicomInfoEntry; Const sSelfId: String; oMissingRefs: TFslStringList);
     Function UnlinkCircularRefs(oEntry: TDicomInfoEntry; oPreviousRefs: TFslStringList): Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1576,7 +1576,7 @@ Type
     procedure SetSource(const Value: TFslStream);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -2265,12 +2265,12 @@ Begin
     End;
 end;
 
-function TDicomDictionaryParser.sizeInBytesV : cardinal;
+function TDicomDictionaryParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSource.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FCmdElementCache.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FCmdElementCache.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryEntity }
@@ -2291,9 +2291,9 @@ begin
   result := TDicomDictionaryEntity(Inherited Link);
 end;
 
-function TDicomDictionaryEntity.sizeInBytesV : cardinal;
+function TDicomDictionaryEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUID.length * sizeof(char)) + 12);
 end;
 
@@ -2495,11 +2495,11 @@ Begin
   End;
 End;
 
-function TDicomDictionaryTransferSyntax.sizeInBytesV : cardinal;
+function TDicomDictionaryTransferSyntax.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FProperties.sizeInBytes);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryTransferSyntaxList }
@@ -3117,20 +3117,20 @@ Begin
       RaiseError('FindMatchingElementForTag', 'The dictionary "'+Name+'" does not contain a definition for the element ('+sGroup+'/'+sElement+')');
 end;
 
-function TDicomDictionary.sizeInBytesV : cardinal;
+function TDicomDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSectionReferences.sizeInBytes);
-  inc(result, FTransferSyntaxes.sizeInBytes);
-  inc(result, FElements.sizeInBytes);
-  inc(result, FElementGroups.sizeInBytes);
-  inc(result, FWildcardElements.sizeInBytes);
-  inc(result, FDimses.sizeInBytes);
-  inc(result, FMacros.sizeInBytes);
-  inc(result, FModules.sizeInBytes);
-  inc(result, FIODs.sizeInBytes);
-  inc(result, FSOPs.sizeInBytes);
+  inc(result, FSectionReferences.sizeInBytes(magic));
+  inc(result, FTransferSyntaxes.sizeInBytes(magic));
+  inc(result, FElements.sizeInBytes(magic));
+  inc(result, FElementGroups.sizeInBytes(magic));
+  inc(result, FWildcardElements.sizeInBytes(magic));
+  inc(result, FDimses.sizeInBytes(magic));
+  inc(result, FMacros.sizeInBytes(magic));
+  inc(result, FModules.sizeInBytes(magic));
+  inc(result, FIODs.sizeInBytes(magic));
+  inc(result, FSOPs.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryVR }
@@ -3174,9 +3174,9 @@ Begin
 End;
 
 
-function TDicomDictionaryVR.sizeInBytesV : cardinal;
+function TDicomDictionaryVR.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FDoco.length * sizeof(char)) + 12);
@@ -3354,15 +3354,15 @@ Begin
     result := result + [VRs[i].VRType];
 End;
 
-function TDicomDictionaryElement.sizeInBytesV : cardinal;
+function TDicomDictionaryElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FGroupId.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);
   inc(result, (FGroupName.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
-  inc(result, FVRs.sizeInBytes);
+  inc(result, FVRs.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContext }
@@ -3404,11 +3404,11 @@ Begin
   Inherited;
 End;
 
-function TDicomPresentationContext.sizeInBytesV : cardinal;
+function TDicomPresentationContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FAbstractSyntaxUID.length * sizeof(char)) + 12);
-  inc(result, FTransferSyntaxList.sizeInBytes);
+  inc(result, FTransferSyntaxList.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContextList }
@@ -3472,11 +3472,11 @@ Begin
   Inherited;
 End;
 
-function TDicomDimseMessage.sizeInBytesV : cardinal;
+function TDicomDimseMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FParams.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryVRList }
@@ -3593,11 +3593,11 @@ Begin
   Result := TDicomInfoEntry(Inherited Link);
 End;
 
-function TDicomInfoEntry.sizeInBytesV : cardinal;
+function TDicomInfoEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -3672,11 +3672,11 @@ Begin
   FRefId := StringUpper(StringTrimWhitespace(sValue));
 End;
 
-function TDicomInfoEntryReference.sizeInBytesV : cardinal;
+function TDicomInfoEntryReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FRefId.length * sizeof(char)) + 12);
-  inc(result, FRefEntry.sizeInBytes);
+  inc(result, FRefEntry.sizeInBytes(magic));
   inc(result, (FContextId.length * sizeof(char)) + 12);
   inc(result, (FBaselineContextId.length * sizeof(char)) + 12);
   inc(result, (FDefinedTemplateId.length * sizeof(char)) + 12);
@@ -3719,11 +3719,11 @@ Begin
   FRefElement := oValue;
 End;
 
-function TDicomInfoEntryAttr.sizeInBytesV : cardinal;
+function TDicomInfoEntryAttr.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTag.length * sizeof(char)) + 12);
-  inc(result, FRefElement.sizeInBytes);
+  inc(result, FRefElement.sizeInBytes(magic));
 end;
 
 { TDicomInfoGroup }
@@ -3767,13 +3767,13 @@ Begin
   FKey := StringUpper(StringTrimWhitespace(sValue));
 End;
 
-function TDicomInfoGroup.sizeInBytesV : cardinal;
+function TDicomInfoGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FComment.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 { TDicomMacroDict }
@@ -3886,12 +3886,12 @@ Begin
   FRefEntry := sValue;
 End;
 
-function TDicomModuleReference.sizeInBytesV : cardinal;
+function TDicomModuleReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
-  inc(result, FRefEntry.sizeInBytes);
+  inc(result, FRefEntry.sizeInBytes(magic));
   inc(result, (FSectionReference.length * sizeof(char)) + 12);
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
@@ -3960,12 +3960,12 @@ Begin
   Result := TDicomIOD(Inherited Link);
 End;
 
-function TDicomIOD.sizeInBytesV : cardinal;
+function TDicomIOD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
-  inc(result, FModules.sizeInBytes);
+  inc(result, FModules.sizeInBytes(magic));
 end;
 
 { TDicomIODDict }
@@ -4070,13 +4070,13 @@ begin
 end;
 
 
-function TDicomDictionarySOP.sizeInBytesV : cardinal;
+function TDicomDictionarySOP.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FStatedIOD.length * sizeof(char)) + 12);
   inc(result, (FIODRef.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FIOD.sizeInBytes);
+  inc(result, FIOD.sizeInBytes(magic));
 end;
 
 { TDicomDictionarySOPList }
@@ -4204,13 +4204,13 @@ Begin
   FElement := oValue;
 End;
 
-function TDicomDimseParam.sizeInBytesV : cardinal;
+function TDicomDimseParam.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFixedValue.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);
-  inc(result, FElement.sizeInBytes);
+  inc(result, FElement.sizeInBytes(magic));
 end;
 
 { TDicomDimseParamList }

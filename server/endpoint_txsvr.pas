@@ -57,6 +57,8 @@ type
     FValueSets : TFslMap<TFHIRMetadataResourceW>;
     FNamingSystems : TFslMap<TFHIRMetadataResourceW>;
     FConceptMaps : TFslMap<TFHIRMetadataResourceW>;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -104,7 +106,7 @@ type
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
     FData : TTerminologyServerData;
-    FCache : TFHIRPackageManager;
+    FNpm : TFHIRPackageManager;
     FServerContext : TFHIRServerContext; // free from owner
     function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
     procedure loadResource(res: TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
@@ -157,6 +159,8 @@ type
     procedure loadUTGFolder(folder : String);
     procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
+
+    function cacheSize(magic : integer) : UInt64; override;
   end;
 
   TTerminologyFHIRUserProvider = class (TFHIRUserProvider)
@@ -214,8 +218,10 @@ type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
@@ -317,6 +323,11 @@ end;
 function TTerminologyServerData.link: TTerminologyServerData;
 begin
   result := TTerminologyServerData(inherited link);
+end;
+
+function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + FPackages.sizeInBytes(magic) + FCodeSystems.sizeInBytes(magic) + FValueSets.sizeInBytes(magic) + FNamingSystems.sizeInBytes(magic) + FConceptMaps.sizeInBytes(magic);
 end;
 
 { TTerminologyServerOperationEngine }
@@ -837,7 +848,7 @@ end;
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
   FData.Free;
-  FCache.Free;
+  FNpm.Free;
   inherited;
 end;
 
@@ -863,6 +874,11 @@ end;
 procedure TTerminologyFhirServerStorage.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
 begin
   raise EFslException.Create('Not Implemented');
+end;
+
+function TTerminologyFhirServerStorage.cacheSize(magic: integer): UInt64;
+begin
+  result := inherited cacheSize(magic) + FData.sizeInBytes(magic) + FNpm.sizeInBytes(magic) + FServerContext.sizeInBytes(magic);
 end;
 
 procedure TTerminologyFhirServerStorage.CloseFhirSession(key: integer);
@@ -971,13 +987,13 @@ var
 begin
   Logging.start('Load package '+pid);
 
-  if (FCache = nil) then
-    FCache := TFHIRPackageManager.Create(false);
+  if (FNpm = nil) then
+    FNpm := TFHIRPackageManager.Create(false);
   i := 0;
 
   p := factory.makeParser(FServerContext.ValidatorContext.Link, ffJson, THTTPLanguages.Create('en'));
   try
-    npm := FCache.loadPackage(pid);
+    npm := FNpm.loadPackage(pid);
     try
       FData.FPackages.Add(npm.name+'#'+npm.version);
       for s in npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']) do
@@ -1262,9 +1278,9 @@ end;
 
 { TTerminologyServerEndPoint }
 
-function TTerminologyServerEndPoint.cacheSize: UInt64;
+function TTerminologyServerEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic) + FStore.cacheSize(magic);
 end;
 
 procedure TTerminologyServerEndPoint.clearCache;
@@ -1282,6 +1298,12 @@ destructor TTerminologyServerEndPoint.Destroy;
 begin
   FStore.Free;
   inherited;
+end;
+
+procedure TTerminologyServerEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.add('Terminology Data', FStore.FData.sizeInBytes(ci.magic));
 end;
 
 function TTerminologyServerEndPoint.summary: String;
@@ -1312,6 +1334,11 @@ begin
   FWeb.FEndPoint := self;
   WebEndPoint := FWeb;
   result := FWeb;
+end;
+
+procedure TTerminologyServerEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 procedure TTerminologyServerEndPoint.Load;

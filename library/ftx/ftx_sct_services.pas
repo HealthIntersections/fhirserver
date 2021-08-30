@@ -133,7 +133,7 @@ type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     property isUTF16 : boolean read FIsUTF16 write FIsUTF16;
     Function GetEntry(iIndex : Cardinal):String;
@@ -157,7 +157,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
  Public
     Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
     Function Count : Integer;
@@ -176,7 +176,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
  Public
     Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
     Function Count : Integer;
@@ -196,7 +196,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function GetReferences(iIndex : Cardinal) : TCardinalArray;
     Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -242,7 +242,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     function Count : Cardinal;
     Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
@@ -263,7 +263,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
 
@@ -301,7 +301,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
     function getConceptId(iIndex : Cardinal) : UInt64;
@@ -357,7 +357,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     // for Persistence
     Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
@@ -394,7 +394,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
     Function GetMemberCount(iIndex : Cardinal) : cardinal;
@@ -412,7 +412,7 @@ Type
     FBuilder : TFslBytesBuilder;
     procedure clear;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
@@ -441,7 +441,7 @@ operations
     FStatus: TSnomedConceptStatus;
     FChildren: TFslStringList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -471,7 +471,7 @@ operations
     FExpression : TSnomedExpression;
     procedure SetExpression(value : TSnomedExpression);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(reference : cardinal); overload;
     constructor Create(source : String; reference : cardinal); overload;
@@ -495,7 +495,7 @@ operations
     FMatched : String;
     FUnmatched : TFslList<TSnomedRefinementGroup>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(match : String); overload;
     constructor Create(match : String; nonmatched : TFslList<TSnomedRefinementGroup>); overload;
@@ -600,7 +600,7 @@ operations
     function GetInActiveRoots: UInt64Array;
     function GetIs_a_Index: Cardinal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
@@ -738,7 +738,7 @@ operations
     procedure SetDefinition(const Value: TSnomedServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -861,11 +861,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedStrings.sizeInBytesV : cardinal;
+function TSnomedStrings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedReferences }
@@ -937,11 +937,11 @@ begin
   FLength := Length(FMaster);
 end;
 
-function TSnomedReferences.sizeInBytesV : cardinal;
+function TSnomedReferences.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedDescriptions }
@@ -1042,11 +1042,11 @@ begin
 end;
 
 
-function TSnomedDescriptions.sizeInBytesV : cardinal;
+function TSnomedDescriptions.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedConceptList }
@@ -1373,11 +1373,11 @@ begin
   Move(FMaster[iIndex+13], Result, 4);
 end;
 
-function TSnomedConceptList.sizeInBytesV : cardinal;
+function TSnomedConceptList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedServices }
@@ -1535,6 +1535,7 @@ begin
       s := VersionUri.split(['/']);
       FEdition := s[4];
       FVersion := s[6];
+      FLock.Name := 'SCT '+FVersion;
       ReadBytes;
       ReadBytes;
       ReadBytes;
@@ -1588,6 +1589,7 @@ begin
         s := VersionUri.split(['/']);
         FEdition := s[4];
         FVersion := s[6];
+        FLock.Name := 'SCT '+FVersion;
 
         FStrings.FMaster := ReadBytes;
         FStrings.FLength := Length(FStrings.FMaster);
@@ -2902,24 +2904,24 @@ begin
 end;
 
 
-function TSnomedServices.sizeInBytesV : cardinal;
+function TSnomedServices.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSourceFile.length * sizeof(char)) + 12);
   inc(result, (FEdition.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
-  inc(result, FStrings.sizeInBytes);
-  inc(result, FRefs.sizeInBytes);
-  inc(result, FDesc.sizeInBytes);
-  inc(result, FDescRef.sizeInBytes);
-  inc(result, FConcept.sizeInBytes);
-  inc(result, FRel.sizeInBytes);
-  inc(result, FRefSetIndex.sizeInBytes);
-  inc(result, FRefSetMembers.sizeInBytes);
+  inc(result, FStrings.sizeInBytes(magic));
+  inc(result, FRefs.sizeInBytes(magic));
+  inc(result, FDesc.sizeInBytes(magic));
+  inc(result, FDescRef.sizeInBytes(magic));
+  inc(result, FConcept.sizeInBytes(magic));
+  inc(result, FRel.sizeInBytes(magic));
+  inc(result, FRefSetIndex.sizeInBytes(magic));
+  inc(result, FRefSetMembers.sizeInBytes(magic));
   inc(result, (FVersionUri.length * sizeof(char)) + 12);
   inc(result, (FVersionDate.length * sizeof(char)) + 12);
-  inc(result, FWords.sizeInBytes);
-  inc(result, FStems.sizeInBytes);
+  inc(result, FWords.sizeInBytes(magic));
+  inc(result, FStems.sizeInBytes(magic));
   inc(result, (FEditionUri.length * sizeof(char)) + 12);
   inc(result, (FEditionId.length * sizeof(char)) + 12);
   inc(result, (FEditionName.length * sizeof(char)) + 12);
@@ -2984,11 +2986,11 @@ begin
   Move(FMaster[iIndex+32], identity, 8);
 end;
 
-function TSnomedRelationshipList.sizeInBytesV : cardinal;
+function TSnomedRelationshipList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedWords }
@@ -3040,11 +3042,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedWords.sizeInBytesV : cardinal;
+function TSnomedWords.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedStems }
@@ -3096,11 +3098,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedStems.sizeInBytesV : cardinal;
+function TSnomedStems.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedServiceList }
@@ -3151,10 +3153,10 @@ begin
   FDefinition := Value;
 end;
 
-function TSnomedServiceList.sizeInBytesV : cardinal;
+function TSnomedServiceList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { TSnomedReferenceSetIndex }
@@ -3239,11 +3241,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedReferenceSetIndex.sizeInBytesV : cardinal;
+function TSnomedReferenceSetIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedDescriptionIndex }
@@ -3299,11 +3301,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedDescriptionIndex.sizeInBytesV : cardinal;
+function TSnomedDescriptionIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 { TSnomedReferenceSetMembers }
@@ -3404,11 +3406,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedReferenceSetMembers.sizeInBytesV : cardinal;
+function TSnomedReferenceSetMembers.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FMaster));
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 function TSnomedServices.buildValueSet(factory : TFHIRFactory; url : String): TFhirValueSetW;
@@ -5393,11 +5395,11 @@ begin
   end;
 end;
 
-function TSnomedExpressionContext.sizeInBytesV : cardinal;
+function TSnomedExpressionContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSource.length * sizeof(char)) + 12);
-  inc(result, FExpression.sizeInBytes);
+  inc(result, FExpression.sizeInBytes(magic));
 end;
 
 { TMatchingConcept }
@@ -5423,11 +5425,11 @@ begin
   inherited;
 end;
 
-function TMatchingConcept.sizeInBytesV : cardinal;
+function TMatchingConcept.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMatched.length * sizeof(char)) + 12);
-  inc(result, FUnmatched.sizeInBytes);
+  inc(result, FUnmatched.sizeInBytes(magic));
 end;
 
 

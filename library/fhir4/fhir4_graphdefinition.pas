@@ -62,7 +62,7 @@ type
     procedure writeHeader(b : TStringBuilder; definition : TFhirGraphDefinition);
     procedure writeDefinition(b : TStringBuilder; definition : TFhirGraphDefinition);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -100,7 +100,7 @@ type
 
     procedure SetAppInfo(const Value: TFslObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextWithFactory); virtual;
     destructor Destroy; override;
@@ -478,10 +478,10 @@ begin
 end;
 
 
-function TFHIRGraphDefinitionParser4.sizeInBytesV : cardinal;
+function TFHIRGraphDefinitionParser4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLexer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLexer.sizeInBytes(magic));
 end;
 
 { TFHIRGraphDefinitionEngine4 }
@@ -708,16 +708,16 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionEngine4.sizeInBytesV : cardinal;
+function TFHIRGraphDefinitionEngine4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FBundle.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FBundle.sizeInBytes(magic));
+  inc(result, FStart.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
   inc(result, (FBaseUrl.length * sizeof(char)) + 12);
-  inc(result, FAppinfo.sizeInBytes);
+  inc(result, FAppinfo.sizeInBytes(magic));
 end;
 
 end.

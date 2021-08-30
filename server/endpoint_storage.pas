@@ -190,8 +190,10 @@ type
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
     property ServerContext : TFHIRServerContext read FServerContext;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
@@ -250,11 +252,11 @@ end;
 
 { TStorageEndPoint }
 
-function TStorageEndPoint.cacheSize: UInt64;
+function TStorageEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
   if WebEndPoint <> nil then
-    result := result  + (WebEndPoint as TStorageWebEndpoint).FContext.cacheSize;
+    result := result  + (WebEndPoint as TStorageWebEndpoint).FContext.cacheSize(magic);
 end;
 
 procedure TStorageEndPoint.clearCache;
@@ -273,6 +275,20 @@ destructor TStorageEndPoint.Destroy;
 begin
   FServerContext.Free;
   inherited;
+end;
+
+procedure TStorageEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  if WebEndPoint <> nil then
+    (WebEndPoint as TStorageWebEndpoint).FContext.getCacheInfo(ci);
+end;
+
+procedure TStorageEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
+  if WebEndPoint <> nil then
+    (WebEndPoint as TStorageWebEndpoint).FContext.SetCacheStatus(status);
 end;
 
 { TFHIRWebServerScriptPlugin }

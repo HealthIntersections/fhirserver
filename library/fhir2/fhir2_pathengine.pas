@@ -50,7 +50,7 @@ type
     FResourceType : String;
     FContext : TFHIRTypeDetails;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
@@ -211,7 +211,7 @@ type
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
@@ -3510,13 +3510,13 @@ begin
   result := nil;
 end;
 
-function TFHIRPathEngine.sizeInBytesV : cardinal;
+function TFHIRPathEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, worker.sizeInBytes);
-  inc(result, primitiveTypes.sizeInBytes);
-  inc(result,  allTypes.sizeInBytes);
-  inc(result, Fucum.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, worker.sizeInBytes(magic));
+  inc(result, primitiveTypes.sizeInBytes(magic));
+  inc(result,  allTypes.sizeInBytes(magic));
+  inc(result, Fucum.sizeInBytes(magic));
 end;
 
 { TFHIRPathExecutionTypeContext }
@@ -3542,12 +3542,12 @@ begin
 end;
 
 
-function TFHIRPathExecutionTypeContext.sizeInBytesV : cardinal;
+function TFHIRPathExecutionTypeContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAppInfo.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAppInfo.sizeInBytes(magic));
   inc(result, (FResourceType.length * sizeof(char)) + 12);
-  inc(result, FContext.sizeInBytes);
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 { TFHIRPathParser }

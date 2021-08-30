@@ -46,7 +46,7 @@ Type
     FVersion: String;
     FLogId: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -428,12 +428,12 @@ begin
   FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
 end;
 
-function THtmlPublisher.sizeInBytesV : cardinal;
+function THtmlPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuilder.sizeInBytes(magic));
   inc(result, (FBaseURL.length * sizeof(char)) + 12);
-  inc(result, FLang.sizeInBytes);
+  inc(result, FLang.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FLogId.length * sizeof(char)) + 12);
 end;

@@ -217,7 +217,7 @@ end;
 constructor TEventScriptRegistry.Create(factory : TFHIRFactory);
 begin
   inherited Create;
-  FLock := TFslLock.create;
+  FLock := TFslLock.create('Javascript');
   FScripts := TFslMap<TEventScript>.create('Event Script Registry');
   FFactory := factory;
 end;

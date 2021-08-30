@@ -374,8 +374,10 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; virtual; abstract;
     function fetchLoadedPackage(id : String) : TBytes; virtual; abstract;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
-    function cacheSize : UInt64; virtual;
+    function cacheSize(magic : integer) : UInt64; virtual;
     procedure clearCache; virtual;
+    procedure SetCacheStatus(status : boolean); virtual;
+    procedure getCacheInfo(ci: TCacheInformation); virtual;
   end;
 
 
@@ -386,7 +388,7 @@ uses
 
 { TFHIRStorageService }
 
-function TFHIRStorageService.cacheSize: UInt64;
+function TFHIRStorageService.cacheSize(magic : integer): UInt64;
 begin
   result := 0;
 end;
@@ -439,6 +441,11 @@ end;
 function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 begin
   raise EFHIRException.create('This server does not support Async tasks');
+end;
+
+procedure TFHIRStorageService.getCacheInfo(ci: TCacheInformation);
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.hasOAuthSession(id: String; status : integer): boolean;
@@ -499,6 +506,11 @@ end;
 procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
 begin
   raise EFHIRException.create('This server does not support Async tasks');
+end;
+
+procedure TFHIRStorageService.SetCacheStatus(status: boolean);
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.SupportsHistory: boolean;

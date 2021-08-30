@@ -53,7 +53,7 @@ type
     FFHIRVersion : String;
     FUrl: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TPackageDefinition; overload;
 
@@ -72,7 +72,7 @@ type
     FLoaded: TStringList;
     FOnLoadEvent: TPackageLoadingEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(ver : string);
     destructor Destroy; override;
@@ -104,7 +104,7 @@ type
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(user : boolean);
     destructor Destroy; override;
@@ -152,7 +152,7 @@ type
   private
     FManager: TFHIRPackageManager;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(manager : TFHIRPackageManager);
     destructor Destroy; override;
@@ -166,7 +166,7 @@ type
   private
     FPackages : TFslList<TNpmPackage>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -265,10 +265,10 @@ begin
   inherited Destroy;
 end;
 
-function TFHIRLoadPackagesTaskResponse.sizeInBytesV : cardinal;
+function TFHIRLoadPackagesTaskResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPackages.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPackages.sizeInBytes(magic));
 end;
 
 { TFHIRLoadPackagesTaskRequest }
@@ -285,10 +285,10 @@ begin
   inherited Destroy;
 end;
 
-function TFHIRLoadPackagesTaskRequest.sizeInBytesV : cardinal;
+function TFHIRLoadPackagesTaskRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FManager.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FManager.sizeInBytes(magic));
 end;
 
 { TFHIRPackageManager }
@@ -1034,11 +1034,11 @@ begin
 end;
 
 
-function TFHIRPackageManager.sizeInBytesV : cardinal;
+function TFHIRPackageManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FCache.sizeInBytes);
+  inc(result, FCache.sizeInBytes(magic));
   inc(result, (FTaskDesc.length * sizeof(char)) + 12);
 end;
 
@@ -1076,11 +1076,11 @@ begin
   FLoaded.Add(id+'#'+ver);
 end;
 
-function TPackageLoadingInformation.sizeInBytesV : cardinal;
+function TPackageLoadingInformation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersion.length * sizeof(char)) + 12);
-  inc(result, FLoaded.sizeInBytes);
+  inc(result, FLoaded.sizeInBytes(magic));
 end;
 
 { TPackageDefinition }
@@ -1090,9 +1090,9 @@ begin
   result := TPackageDefinition(inherited link);
 end;
 
-function TPackageDefinition.sizeInBytesV : cardinal;
+function TPackageDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FCanonical.length * sizeof(char)) + 12);

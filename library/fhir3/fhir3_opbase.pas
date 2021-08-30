@@ -45,7 +45,7 @@ type
     FValue : TFHIRType;
     procedure SetValue(const Value: TFHIRType);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -64,7 +64,7 @@ type
     procedure loadExtensions(params : TFhirParametersParameter); overload;
     procedure writeExtensions(params : TFHIRParameters); overload;
     procedure writeExtensions(params : TFhirParametersParameter); overload;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     property extensions : TFslList<TFHIROpExtension> read GetExtensions;
@@ -231,10 +231,10 @@ begin
       end;
 end;
 
-function TFHIROperationBaseObject.sizeInBytesV : cardinal;
+function TFHIROperationBaseObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensions.sizeInBytes(magic));
 end;
 
 { TFHIROpExtension }
@@ -251,11 +251,11 @@ begin
   FValue := Value;
 end;
 
-function TFHIROpExtension.sizeInBytesV : cardinal;
+function TFHIROpExtension.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FValue.sizeInBytes);
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 end.

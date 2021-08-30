@@ -102,6 +102,7 @@ type
     procedure loadTerminologies;
     procedure loadEndPoints;
     procedure startWebServer;
+    procedure SetCacheStatus(status : boolean);
     procedure stopWebServer;
     procedure unloadEndpoints;
     procedure unloadTerminologies;
@@ -266,6 +267,8 @@ begin
     FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
     FMaintenanceThread.Start;
 
+    SetCacheStatus(settings.Ini.web['caching'].value = 'true');
+
     // post start up time.
     getReport('|', true); // base line the object counting
     Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
@@ -310,6 +313,7 @@ begin
 end;
 
 {$IFNDEF NO_JS}
+
 procedure TFHIRServiceKernel.registerJs(sender : TObject; js : TJsHost);
 begin
   js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
@@ -318,7 +322,21 @@ begin
   js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
   js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
+
 {$ENDIF}
+
+procedure TFHIRServiceKernel.SetCacheStatus(status: boolean);
+var
+  ep : TFhirServerEndpoint;
+begin
+  if (status) then
+    Logging.log('HTTP Caching is On')
+  else
+    Logging.log('HTTP Caching is Off');
+  WebServer.setCacheStatus(status);
+  for ep in FEndPoints do
+    ep.setCacheStatus(status);
+end;
 
 // --- core functionality ------------------------------------------------------
 
@@ -358,7 +376,6 @@ var
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create;
-  FWebServer.Common.cache.Caching := settings.Ini.web['caching'].value = 'true';
 
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
@@ -432,6 +449,12 @@ begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
       ep.InstallDatabase;
+      Logging.log('  .. installed');
+      if getCommandLineParam('packages', fn) then
+      begin
+        Logging.log('  .. installing packages');
+        ep.LoadPackages(fn);
+      end;
     finally
       ep.free;
     end;

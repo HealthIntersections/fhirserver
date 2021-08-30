@@ -40,7 +40,7 @@ type
   private
     FDescription: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextV); virtual;
     procedure generate(res : TFHIRResourceV); overload; virtual; abstract;
@@ -57,9 +57,9 @@ begin
   inherited Create;
 end;
 
-function TFHIRNarrativeGeneratorBase.sizeInBytesV : cardinal;
+function TFHIRNarrativeGeneratorBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 

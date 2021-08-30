@@ -214,7 +214,7 @@ https://www.w3.org/International/articles/language-tags/index.en
     FDecimals: integer;
     FSymbol: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TIso4217Currency; overload;
 
@@ -231,7 +231,7 @@ https://www.w3.org/International/articles/language-tags/index.en
 
     procedure load;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -269,9 +269,9 @@ begin
   result := TIso4217Currency(inherited link);
 end;
 
-function TIso4217Currency.sizeInBytesV : cardinal;
+function TIso4217Currency.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FSymbol.length * sizeof(char)) + 12);
@@ -501,11 +501,11 @@ begin
   doLoad('ZWL', 2, 'Z$', 'Zimbabwean dollar A/10', 'Zimbabwe');
 end;
 
-function TIso4217CurrencySet.sizeInBytesV : cardinal;
+function TIso4217CurrencySet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCodes.sizeInBytes);
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCodes.sizeInBytes(magic));
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 { TIETFLang }

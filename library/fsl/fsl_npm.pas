@@ -45,7 +45,7 @@ Type
     index : TJsonObject;
     files : TJsonArray;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -69,7 +69,7 @@ Type
     FKind: String;
     FResourceType: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TNpmPackageResource; overload;
 
@@ -93,7 +93,7 @@ Type
     FResources : TFslList<TNpmPackageResource>;
     procedure readIndex(index : TJsonObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(); overload; override;
     constructor Create(name : String); overload; virtual;
@@ -140,7 +140,7 @@ Type
     function GetAuthor: String;
     function GetNotForPublication: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -296,11 +296,11 @@ begin
   files := nil;
 end;
 
-function TNpmPackageIndexBuilder.sizeInBytesV : cardinal;
+function TNpmPackageIndexBuilder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, index.sizeInBytes);
-  inc(result, files.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, index.sizeInBytes(magic));
+  inc(result, files.sizeInBytes(magic));
 end;
 
 { TNpmPackageFolder }
@@ -414,13 +414,13 @@ begin
   end;
 end;
 
-function TNpmPackageFolder.sizeInBytesV : cardinal;
+function TNpmPackageFolder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FContent.sizeInBytes);
-  inc(result, FResources.sizeInBytes);
+  inc(result, FContent.sizeInBytes(magic));
+  inc(result, FResources.sizeInBytes(magic));
 end;
 
 { TNpmPackage }
@@ -474,12 +474,12 @@ begin
   end;
 end;
 
-function TNpmPackage.sizeInBytesV : cardinal;
+function TNpmPackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FNpm.sizeInBytes);
-  inc(result, FFolders.sizeInBytes);
+  inc(result, FNpm.sizeInBytes(magic));
+  inc(result, FFolders.sizeInBytes(magic));
 end;
 
 class function TNpmPackage.fromFolder(path: String): TNpmPackage;
@@ -1088,9 +1088,9 @@ begin
     result := test > base;
 end;
 
-function TNpmPackageResource.sizeInBytesV : cardinal;
+function TNpmPackageResource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
   inc(result, (FId.length * sizeof(char)) + 12);

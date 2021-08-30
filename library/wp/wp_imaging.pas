@@ -61,7 +61,7 @@ Type
     Procedure WriteIcon(oIcon : TIcon; oBmp : TBitmap);
     procedure SetDicomDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -356,12 +356,12 @@ Begin
 End;
 
 
-function TWPImageLoader.sizeInBytesV : cardinal;
+function TWPImageLoader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FDicomDictionary.sizeInBytes);
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FDicomDictionary.sizeInBytes(magic));
 end;
 
 Class Function TWPImageLoader.Wrap(oImage : TFslGraphic) : TWPDocumentImage;

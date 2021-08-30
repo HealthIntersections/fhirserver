@@ -68,7 +68,7 @@ Type
       Procedure SetBackHotspot(Const Value: TWPHotspot);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -102,7 +102,7 @@ Type
 
       Function Get(Const aValue : TColour) : TWPRendererState; Reintroduce; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -178,7 +178,7 @@ Type
 
       Function MakePenHandle(oPen : TPen; aEndStyle : TFslPenEndStyle; aJoinStyle : TFslPenJoinStyle): HPEN;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -242,7 +242,7 @@ Type
     Function GetContainer : TWPMapContainer;
     procedure SetStateStack(const Value: TWPRendererStates);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oContainer : TWPMapContainer; oStateStack : TWPRendererStates); Overload; Virtual;
     destructor Destroy; Override;
@@ -433,7 +433,7 @@ Type
 
     Function Printing : Boolean; Overload; Virtual;
     Function ApplyOutputColourRules(bBackground : Boolean; aColour : TColour) : TColour; Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -623,7 +623,7 @@ Type
     Procedure DoUpdate; Overload; Override;
     Procedure BuildMetrics; Override;
     Function WantFastDrawing : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -716,7 +716,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -890,7 +890,7 @@ Type
       Function GetColumns : TWPTableColumnMetrics;
       Function GetTable : TWPWorkingDocumentTableStartPiece;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oTable : TWPWorkingDocumentTableStartPiece; oColumns : TWPTableColumnMetrics; iFPointSize, iWidth : Integer); Overload; Virtual;
       destructor Destroy; Override;
@@ -1264,11 +1264,11 @@ End;
 
 
 
-function TWPRendererTableColumnSizeCalculator.sizeInBytesV : cardinal;
+function TWPRendererTableColumnSizeCalculator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTable.sizeInBytes);
-  inc(result, FColumns.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTable.sizeInBytes(magic));
+  inc(result, FColumns.sizeInBytes(magic));
 end;
 
 Constructor TWPCanvas.Create;
@@ -1506,10 +1506,10 @@ Begin
 End;
 
 
-function TWPCanvas.sizeInBytesV : cardinal;
+function TWPCanvas.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFont.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFont.sizeInBytes(magic));
 end;
 
 Constructor TWPRendererState.Create;
@@ -1550,11 +1550,11 @@ End;
 
 
 
-function TWPRendererState.sizeInBytesV : cardinal;
+function TWPRendererState.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FForeHotspot.sizeInBytes);
-  inc(result, FBackHotspot.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FForeHotspot.sizeInBytes(magic));
+  inc(result, FBackHotspot.sizeInBytes(magic));
 end;
 
 Destructor TWPRendererStates.Destroy;
@@ -1737,10 +1737,10 @@ Begin
 End;
 
 
-function TWPRendererStates.sizeInBytesV : cardinal;
+function TWPRendererStates.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 Procedure TWPRendererState.SetForeHotspot(Const Value: TWPHotspot);
@@ -2084,13 +2084,13 @@ begin
     AddBufferToRow;
 end;
 
-function TWPRendererParagraphContext.sizeInBytesV : cardinal;
+function TWPRendererParagraphContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContainer.sizeInBytes);
-  inc(result, FStateStack.sizeInBytes);
-  inc(result, FBuffer.sizeInBytes);
-  inc(result, FRow.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContainer.sizeInBytes(magic));
+  inc(result, FStateStack.sizeInBytes(magic));
+  inc(result, FBuffer.sizeInBytes(magic));
+  inc(result, FRow.sizeInBytes(magic));
 end;
 
 { TWPRenderer }
@@ -5115,18 +5115,18 @@ begin
   end;
 end;
 
-function TWPRenderer.sizeInBytesV : cardinal;
+function TWPRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FMap.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FCanvas.sizeInBytes);
-  inc(result, FStateStack.sizeInBytes);
-  inc(result, FDefaultTableBorder.sizeInBytes);
-  inc(result, FCurrentHotspot.sizeInBytes);
-  inc(result, FCurrentButton.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FCanvas.sizeInBytes(magic));
+  inc(result, FStateStack.sizeInBytes(magic));
+  inc(result, FDefaultTableBorder.sizeInBytes(magic));
+  inc(result, FCurrentHotspot.sizeInBytes(magic));
+  inc(result, FCurrentButton.sizeInBytes(magic));
 end;
 
 Constructor TWPScreenRenderer.Create;
@@ -6406,10 +6406,10 @@ End;
 
 //-- Administration ------------------------------------------------------------
 
-function TWPScreenRenderer.sizeInBytesV : cardinal;
+function TWPScreenRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperator.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperator.sizeInBytes(magic));
 end;
 
 Constructor TWPScreenCanvas.Create;
@@ -7256,10 +7256,10 @@ Begin
 End;
 
 
-function TWPPage.sizeInBytesV : cardinal;
+function TWPPage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 Function TWPPages.Link : TWPPages;

@@ -44,7 +44,7 @@ Type
       FIsDefault : Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -83,7 +83,7 @@ Type
       FTypes : TFslFontTypeSet;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -741,7 +741,7 @@ Type
       FName : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslPrinterTray;
 
@@ -817,7 +817,7 @@ Type
       Function GetUseColour : Boolean; Virtual;
       Procedure SetUseColour(Const bValue: Boolean); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslJobSettings;
       Function Clone : TFslJobSettings;
@@ -921,7 +921,7 @@ Type
       function GetHandle: TFslGraphicHandle;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1035,7 +1035,7 @@ Type
       Function GetUseColour : Boolean; Override;
       Procedure SetUseColour(Const bValue: Boolean); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1115,7 +1115,7 @@ Type
 
       Function CanvasClass : TFslPrinterCanvasClass; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1252,7 +1252,7 @@ Type
 
       Property ActivePage : TFslPrinterPreviewPage Read GetActivePage Write SetActivePage;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1304,7 +1304,7 @@ Type
       Procedure ProduceDriverInfo2(Out aInfoPointer : PDriverInfo2; Out iInfoLength : Cardinal);
       Procedure ConsumeDriverInfo2(Var aInfoPointer : PDriverInfo2; Const iInfoLength : Cardinal);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1422,7 +1422,7 @@ Type
       Function GetDefaultDefinition: TFslPrinterDefinition;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1939,14 +1939,14 @@ Begin
 End;
 
 
-function TFslPrinter.sizeInBytesV : cardinal;
+function TFslPrinter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FFontList.sizeInBytes);
-  inc(result, FPaperSizeList.sizeInBytes);
-  inc(result, FTrayList.sizeInBytes);
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FFontList.sizeInBytes(magic));
+  inc(result, FPaperSizeList.sizeInBytes(magic));
+  inc(result, FTrayList.sizeInBytes(magic));
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 Function TFslPrinterList.GetPrinter(iIndex: Integer): TFslPrinter;
@@ -2179,9 +2179,9 @@ Begin
 End;
 
 
-function TFslPrinterDefinition.sizeInBytesV : cardinal;
+function TFslPrinterDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPort.length * sizeof(char)) + 12);
   inc(result, (FDriver.length * sizeof(char)) + 12);
 end;
@@ -2261,9 +2261,9 @@ Begin
 End;
 
 
-function TFslPrinterFont.sizeInBytesV : cardinal;
+function TFslPrinterFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslPrinterFontList.Add(Const sName : String; aPitch : TFslFontPitch; aTypes : TFslFontTypeSet);
@@ -2496,9 +2496,9 @@ Begin
 End;
 
 
-function TFslPrinterTray.sizeInBytesV : cardinal;
+function TFslPrinterTray.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -3016,10 +3016,10 @@ Begin
 End;
 
 
-function TFslPrinterSettings.sizeInBytesV : cardinal;
+function TFslPrinterSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 Procedure TFslJobSettings.Open;
@@ -3129,9 +3129,9 @@ Begin
 End;
 
 
-function TFslJobSettings.sizeInBytesV : cardinal;
+function TFslJobSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslPrinterJob.InitialiseDC;
@@ -3423,11 +3423,11 @@ End;
 
 
 
-function TFslRenderJob.sizeInBytesV : cardinal;
+function TFslRenderJob.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanvas.sizeInBytes);
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanvas.sizeInBytes(magic));
+  inc(result, FSettings.sizeInBytes(magic));
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, (FDestinationFileName.length * sizeof(char)) + 12);
 end;
@@ -4308,12 +4308,12 @@ Begin
 End;
 
 
-function TFslPrinterCanvas.sizeInBytesV : cardinal;
+function TFslPrinterCanvas.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPen.sizeInBytes);
-  inc(result, FBrush.sizeInBytes);
-  inc(result, FFont.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPen.sizeInBytes(magic));
+  inc(result, FBrush.sizeInBytes(magic));
+  inc(result, FFont.sizeInBytes(magic));
 end;
 
 Function TFslPrinterDelphiCanvas.GetOwnerCanvas: TFslPrinterCanvas;
@@ -4695,11 +4695,11 @@ Begin
   Inherited;
 End;
 
-function TFslPrinterPreviewJob.sizeInBytesV : cardinal;
+function TFslPrinterPreviewJob.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPages.sizeInBytes);
-  inc(result, FActivePage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPages.sizeInBytes(magic));
+  inc(result, FActivePage.sizeInBytes(magic));
 end;
 
 Function TFslPrinterPreviewPageList.GetPage(iIndex: Integer): TFslPrinterPreviewPage;
@@ -4922,11 +4922,11 @@ Begin
 End;
 
 
-function TFslPrinterManager.sizeInBytesV : cardinal;
+function TFslPrinterManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinitionList.sizeInBytes);
-  inc(result, FDefaultDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinitionList.sizeInBytes(magic));
+  inc(result, FDefaultDefinition.sizeInBytes(magic));
 end;
 
 Function TFslMetafile.HandleClass : TGraphicClass;

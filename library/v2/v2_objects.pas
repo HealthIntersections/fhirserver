@@ -63,7 +63,7 @@ type
     FBatchProgressEvent: THL7V2BatchLoadProgressEvent;
     FPreventOddBinaryLengths: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Function Link : THL7V2DecodingOptions;
     Function Clone : THL7V2DecodingOptions;
@@ -172,7 +172,7 @@ type
     FSubComponentDelimiter: Char;
     FComponentDelimiter: Char;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
 
@@ -294,7 +294,7 @@ Type
     Function GetModel: THL7V2Model; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Virtual;
     Function CanChangeVersion : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(oModel : THL7V2Model); Overload;
     Constructor Create(oDictionary : THL7V2Dictionary); Overload;
@@ -342,7 +342,7 @@ Type
   Private
     FText : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -358,7 +358,7 @@ Type
   Private
     FBinary : String; // but it's really a sequence of bytes
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -374,7 +374,7 @@ Type
   Private
     FEscape : String; // but it's really a sequence of bytes
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -391,7 +391,7 @@ Type
     Function GetContent(iIndex: Integer): THL7V2Content;
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sPath : String; const bComplex : Boolean);
 
@@ -457,7 +457,7 @@ Type
     Function GetFieldName: String; Virtual;
     Function GetDataType: THL7V2ModelDataType; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(aType : THL7V2CellType; iIndex: Integer); Overload; Virtual;
     Destructor Destroy; Override;
@@ -546,7 +546,7 @@ type
     function GetFieldName: String; override;
     function GetDataType: THL7V2ModelDataType; override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; override;
 
@@ -612,7 +612,7 @@ type
     function GetFieldName: String; override;
     function GetDataType: THL7V2ModelDataType; override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -684,7 +684,7 @@ type
     Function SequenceNumber : Integer;
   Protected
     Function ChildrenClass : TFslTreeListClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -768,7 +768,7 @@ type
   Protected
     Function ChildrenClass : TFslTreeListClass; override;
     Function ParentClass : TFslTreeClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -841,7 +841,7 @@ Type
     Function ChildrenClass : TFslTreeListClass; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Override;
     Function CanChangeVersion : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -915,7 +915,7 @@ Type
     procedure SetMessage(const oValue: THL7V2Message);
     procedure SetContent(const sValue: TBytes);
   Protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; override;
     function Link : THL7V2BatchMessage; overload;
@@ -965,7 +965,7 @@ type
     Function ChildrenClass : TFslTreeListClass; override;
     procedure SetVersion(aValue  : THL7V2Version); override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1021,7 +1021,7 @@ Type
     Function ChildrenClass : TFslTreeListClass; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -1064,7 +1064,7 @@ type
     function GetPosition: integer;
     procedure SetPosition(iValue: integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
     procedure Reset;
@@ -1123,7 +1123,7 @@ Type
     procedure SelectComponents(AField : THL7V2DataElement; AResults: THL7V2BaseObjectList);
     procedure SelectDataElements(ASegment : THL7V2Segment; AResults: THL7V2BaseObjectList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     procedure parse(AQuery : String);
@@ -1137,7 +1137,7 @@ Type
     FContent : String;
     FCursor : Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create(sQuery : String);
     function Peek : String;
@@ -1167,7 +1167,7 @@ Type
     FItem : THL7V2QueryItem;
     FOp : THL7V2QueryOp;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
   end;
@@ -1202,7 +1202,7 @@ Type
     function Check(oSegment : THL7V2Segment; iInstance : integer): Boolean; overload;
     function Check(oDataElement : THL7V2DataElement; iInstance : integer): Boolean; overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1228,7 +1228,7 @@ Type
     procedure CheckCondition(oParser : THL7V2QueryParser; oCond : THL7V2QueryConditional);
     procedure CheckTree(oParser : THL7V2QueryParser);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1246,7 +1246,7 @@ Type
     FSubCompId : String;
     procedure ParseQuery(oParser : THL7V2QueryParser; aContextType : THL7V2QueryContextType); overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
     procedure ParseQuery(sQuery : String; aContextType : THL7V2QueryContextType); overload;
@@ -1259,7 +1259,7 @@ Type
   private
     FValue : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor create(sToken : String);
     function Evaluate(oSegment : THL7V2Segment; iInstance : integer): String; override;
@@ -1277,7 +1277,7 @@ Type
   private
     FQuery : THL7V2Query;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor create(oParser : THL7V2QueryParser; aContextType : THL7V2QueryContextType);
     Destructor Destroy; override;
@@ -1388,7 +1388,7 @@ type
     function DecodeBatchMessage(sLine : String; oBatch : THL7V2Batch; oExtractor : TFslByteExtractor) : String;
     function DecodeBatch(sLine : String; oFile : THL7V2File; oExtractor : TFslByteExtractor) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1418,7 +1418,7 @@ type
     Procedure FormatSegment(oSegment: THL7V2Segment; oOptions: THL7V2EncodingOptions);
     procedure EncodeBatch(oBatch : THL7V2Batch; oFormatter : THL7V2ER7Formatter; oOptions: THL7V2EncodingOptions);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1450,7 +1450,7 @@ Type
     Procedure ReadDelimiters(oMessage : THL7V2Message);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; Override;
 
@@ -1473,7 +1473,7 @@ Type
     Function FormatSegment(oSegment : THL7V2Segment) : String;
     Function FormatSegments(oGroup : THL7V2SegmentGroup) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; Override;
 
@@ -1514,7 +1514,7 @@ Type
       FElement: THL7V2BaseObject;
       Procedure SetElement(Const Value: THL7V2BaseObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1845,9 +1845,9 @@ begin
   FPreventOddBinaryLengths := false;
 end;
 
-function THL7V2DecodingOptions.sizeInBytesV : cardinal;
+function THL7V2DecodingOptions.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersionOverride.length * sizeof(char)) + 12);
 end;
 
@@ -1982,9 +1982,9 @@ Begin
     RaiseError('getDelimiterEscapeChar', 'internal error in getDelimiterEscapeChar, illegal char '+ch);
 End;
 
-function THL7V2Delimiters.sizeInBytesV : cardinal;
+function THL7V2Delimiters.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { THL7V2Contents }
@@ -2021,9 +2021,9 @@ begin
   result := THL7V2Contents(inherited Link);
 end;
 
-function THL7V2Contents.sizeInBytesV : cardinal;
+function THL7V2Contents.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
 end;
 
@@ -2111,9 +2111,9 @@ begin
   Result := Text;
 end;
 
-function THL7V2ContentText.sizeInBytesV : cardinal;
+function THL7V2ContentText.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -2221,9 +2221,9 @@ begin
   Result := '\X'+HexEncode(FBinary)+'\';
 end;
 
-function THL7V2ContentBinary.sizeInBytesV : cardinal;
+function THL7V2ContentBinary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FBinary.length * sizeof(char)) + 12);
 end;
 
@@ -2256,9 +2256,9 @@ begin
   Result := '\'+FEscape+'\';
 end;
 
-function THL7V2ContentEscape.sizeInBytesV : cardinal;
+function THL7V2ContentEscape.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FEscape.length * sizeof(char)) + 12);
 end;
 
@@ -2994,10 +2994,10 @@ begin
     result := oTable.Items.getByCode(GetSimpleTextContent).Description;
 end;
 
-function THL7V2Cell.sizeInBytesV : cardinal;
+function THL7V2Cell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContents.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContents.sizeInBytes(magic));
 end;
 
 { THL7V2Cells }
@@ -3200,10 +3200,10 @@ begin
       Components[i].MapToDefinitions(THL7V2ModelStructure(Definition.RefStructure), i);
 end;
 
-function THL7V2Component.sizeInBytesV : cardinal;
+function THL7V2Component.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { THL7V2Components }
@@ -3651,12 +3651,12 @@ begin
     RaiseError('DeleteRepeat', 'Invalid reference to repeat #'+IntegerToString(iIndex));
 end;
 
-function THL7V2DataElement.sizeInBytesV : cardinal;
+function THL7V2DataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
   inc(result, (FSpecifiedDataType.length * sizeof(char)) + 12);
-  inc(result, FRepeats.sizeInBytes);
+  inc(result, FRepeats.sizeInBytes(magic));
 end;
 
 { THL7V2DataElements }
@@ -4188,11 +4188,11 @@ begin
     Fields[i].MapToDefinitions(Definition, i);
 end;
 
-function THL7V2Segment.sizeInBytesV : cardinal;
+function THL7V2Segment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
-  inc(result, FDefinition.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { THL7V2Segments }
@@ -4398,11 +4398,11 @@ begin
   end;
 end;
 
-function THL7V2SegmentGroup.sizeInBytesV : cardinal;
+function THL7V2SegmentGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSegments.sizeInBytes);
+  inc(result, FSegments.sizeInBytes(magic));
 end;
 
 { THL7V2SegmentGroups }
@@ -5344,16 +5344,16 @@ begin
         Segments[i].StripUndefinedContent;
 end;
 
-function THL7V2Message.sizeInBytesV : cardinal;
+function THL7V2Message.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FSegmentMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FSegmentMap.sizeInBytes(magic));
   inc(result, (FEvent.length * sizeof(char)) + 12);
   inc(result, (FMessageType.length * sizeof(char)) + 12);
   inc(result, (FStructID.length * sizeof(char)) + 12);
   inc(result, (FMessageID.length * sizeof(char)) + 12);
-  inc(result, FDelimiters.sizeInBytes);
+  inc(result, FDelimiters.sizeInBytes(magic));
   inc(result, length(FSource));
 end;
 
@@ -5741,11 +5741,11 @@ begin
   Result := FMessage;
 end;
 
-function THL7V2BatchMessage.sizeInBytesV : cardinal;
+function THL7V2BatchMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FContent));
-  inc(result, FMessage.sizeInBytes);
+  inc(result, FMessage.sizeInBytes(magic));
   inc(result, (FId.length * sizeof(char)) + 12);
 end;
 
@@ -5872,12 +5872,12 @@ begin
   inherited;
 end;
 
-function THL7V2Batch.sizeInBytesV : cardinal;
+function THL7V2Batch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDelimiters.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FTrailer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDelimiters.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FTrailer.sizeInBytes(magic));
 end;
 
 { THL7V2Batches }
@@ -6102,12 +6102,12 @@ begin
 
 end;
 
-function THL7V2File.sizeInBytesV : cardinal;
+function THL7V2File.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDelimiters.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FTrailer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDelimiters.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FTrailer.sizeInBytes(magic));
 end;
 
 { THL7V2BatchIterator }
@@ -6283,11 +6283,11 @@ Begin
   End;
 End;
 
-function THL7V2BatchIterator.sizeInBytesV : cardinal;
+function THL7V2BatchIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBatch.sizeInBytes);
-  inc(result, FCurrent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBatch.sizeInBytes(magic));
+  inc(result, FCurrent.sizeInBytes(magic));
 end;
 
 { THL7V2ParsedQueryRange }
@@ -6596,15 +6596,15 @@ begin
     result := THL7V2Segment;
 end;
 
-function THL7V2ParsedQuery.sizeInBytesV : cardinal;
+function THL7V2ParsedQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSegQuery.length * sizeof(char)) + 12);
-  inc(result, FSegIndex.sizeInBytes);
-  inc(result, FDE.sizeInBytes);
-  inc(result, FRep.sizeInBytes);
-  inc(result, FComp.sizeInBytes);
-  inc(result, FSubComp.sizeInBytes);
+  inc(result, FSegIndex.sizeInBytes(magic));
+  inc(result, FDE.sizeInBytes(magic));
+  inc(result, FRep.sizeInBytes(magic));
+  inc(result, FComp.sizeInBytes(magic));
+  inc(result, FSubComp.sizeInBytes(magic));
 end;
 
 { THL7V2QueryParser }
@@ -6709,9 +6709,9 @@ begin
   end;
 end;
 
-function THL7V2QueryParser.sizeInBytesV : cardinal;
+function THL7V2QueryParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -6723,10 +6723,10 @@ begin
   inherited;
 end;
 
-function THL7V2QueryNode.sizeInBytesV : cardinal;
+function THL7V2QueryNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
 end;
 
 { THL7V2QueryItem }
@@ -6759,9 +6759,9 @@ begin
   result := FValue;
 end;
 
-function THL7V2QueryStringConstant.sizeInBytesV : cardinal;
+function THL7V2QueryStringConstant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -6813,10 +6813,10 @@ begin
   result := oCell.AsString;
 end;
 
-function THL7V2QueryNestedQuery.sizeInBytesV : cardinal;
+function THL7V2QueryNestedQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FQuery.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FQuery.sizeInBytes(magic));
 end;
 
 { THL7V2QueryConditional }
@@ -7020,11 +7020,11 @@ begin
   result := oExpr.isMatch(sLeft);
 end;
 
-function THL7V2QueryConditional.sizeInBytesV : cardinal;
+function THL7V2QueryConditional.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLeft.sizeInBytes);
-  inc(result, FRight.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLeft.sizeInBytes(magic));
+  inc(result, FRight.sizeInBytes(magic));
 end;
 
 { THL7V2QueryCondition }
@@ -7286,10 +7286,10 @@ begin
     end;
 end;
 
-function THL7V2QueryCondition.sizeInBytesV : cardinal;
+function THL7V2QueryCondition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConditions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConditions.sizeInBytes(magic));
 end;
 
 { THL7V2Query }
@@ -7431,13 +7431,13 @@ begin
   inherited;
 end;
 
-function THL7V2Query.sizeInBytesV : cardinal;
+function THL7V2Query.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSegCode.length * sizeof(char)) + 12);
-  inc(result, FSegCondition.sizeInBytes);
+  inc(result, FSegCondition.sizeInBytes(magic));
   inc(result, (FFieldId.length * sizeof(char)) + 12);
-  inc(result, FRepeatCondition.sizeInBytes);
+  inc(result, FRepeatCondition.sizeInBytes(magic));
   inc(result, (FCompId.length * sizeof(char)) + 12);
   inc(result, (FSubCompId.length * sizeof(char)) + 12);
 end;
@@ -7892,11 +7892,11 @@ begin
   SetVersion(FromVersionCode(aNewVersion));
 end;
 
-function THL7V2ModelProvider.sizeInBytesV : cardinal;
+function THL7V2ModelProvider.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FModel.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FModel.sizeInBytes(magic));
 end;
 
 { THL7V2ER7Formatter }
@@ -8542,11 +8542,11 @@ begin
   ParseCellEx(oCell, iStart, BytesAsString(sContent), false, aLevelOperation);
 end;
 
-function THL7V2ER7Decoder.sizeInBytesV : cardinal;
+function THL7V2ER7Decoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDecodingOptions.sizeInBytes);
-  inc(result, FDelimiters.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDecodingOptions.sizeInBytes(magic));
+  inc(result, FDelimiters.sizeInBytes(magic));
 end;
 
 { THL7V2ER7Encoder }
@@ -8841,11 +8841,11 @@ begin
   end;
 end;
 
-function THL7V2ER7Encoder.sizeInBytesV : cardinal;
+function THL7V2ER7Encoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEncodingOptions.sizeInBytes);
-  inc(result, FDelimiters.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEncodingOptions.sizeInBytes(magic));
+  inc(result, FDelimiters.sizeInBytes(magic));
 end;
 
 { THL7V2XMLDecoder }
@@ -9149,10 +9149,10 @@ begin
   ErrorHL7Library('DecodeCellEx', 'not supported in xml');
 end;
 
-function THL7V2XMLDecoder.sizeInBytesV : cardinal;
+function THL7V2XMLDecoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOptions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 { THL7V2XMLEncoder }
@@ -9366,10 +9366,10 @@ Begin
     Result := '<'+sName+'>'+Result+'</'+sName+'>';
 End;
 
-function THL7V2XMLEncoder.sizeInBytesV : cardinal;
+function THL7V2XMLEncoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOptions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 { THL7V2ErrorCollector }
@@ -9548,10 +9548,10 @@ Begin
   Element := THL7V2ValidationError(oObject).Element.Link;
 End;
 
-function THL7V2ValidationError.sizeInBytesV : cardinal;
+function THL7V2ValidationError.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FElement.sizeInBytes(magic));
 end;
 
 Function THL7V2ValidationErrors.Link : THL7V2ValidationErrors;

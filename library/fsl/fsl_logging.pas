@@ -54,7 +54,7 @@ Type
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override; //
 
@@ -100,7 +100,7 @@ Type
     Procedure CycleFile(sName : String);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(filename : String);
     destructor Destroy; Override;
@@ -145,7 +145,7 @@ Type
     procedure checkDay;
     procedure close;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -198,9 +198,9 @@ begin
   Result.FFullPolicy := FFullPolicy;
 end;
 
-function TLoggerPolicy.sizeInBytesV : cardinal;
+function TLoggerPolicy.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FHeader.length * sizeof(char)) + 12);
 end;
@@ -414,11 +414,11 @@ begin
   End;
 end;
 
-function TLogger.sizeInBytesV : cardinal;
+function TLogger.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FPolicy.sizeInBytes);
+  inc(result, FPolicy.sizeInBytes(magic));
   inc(result, (FOpenName.length * sizeof(char)) + 12);
 end;
 
@@ -749,11 +749,11 @@ begin
   result := ' #'+inttostr(FCount);
 end;
 
-function TLogging.sizeInBytesV : cardinal;
+function TLogging.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFileLogger.sizeInBytes);
-  inc(result, FListeners.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFileLogger.sizeInBytes(magic));
+  inc(result, FListeners.sizeInBytes(magic));
   inc(result, (FWorkingLine.length * sizeof(char)) + 12);
 end;
 

@@ -107,7 +107,7 @@ Uses
     Function GetUndoCursors: TFslStringIntegerMatch;
     Function GetUndoText: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
     Function Link : TWPOperation;
@@ -177,7 +177,7 @@ Type
       FStop : Integer;
       Procedure Update(iStart, iStop : Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -204,7 +204,7 @@ Type
     Function GetWorkingSelEnd: Integer;
     Function GetWorkingSelStart: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TWPSelection; Overload;
     Function Clone : TWPSelection; Overload;
@@ -300,7 +300,7 @@ Type
       Procedure MarkTableStructureForUpdate(Const iIndex: Integer); Overload;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -482,7 +482,7 @@ Type
       FSpeechMagicDouble: Boolean;
       FIgnoreBackground: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Property SpeechMagicDouble : Boolean Read FSpeechMagicDouble Write FSpeechMagicDouble;
       Property IgnoreBackground : Boolean Read FIgnoreBackground Write FIgnoreBackground;
@@ -496,7 +496,7 @@ Type
     FOutcome: string;
     FTime: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Property Time : String read FTime write FTime;
     Property Action : string read FAction write FAction;
@@ -525,7 +525,7 @@ Type
       FCaseSensitive : Boolean;
       FWholeWords : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPSearchDetails; Overload;
       Function Clone : TWPSearchDetails; Overload;
@@ -551,7 +551,7 @@ Type
       FSelection : Boolean;
       FPrompt : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPReplaceDetails; Overload;
       Function Clone : TWPReplaceDetails; Overload;
@@ -582,7 +582,7 @@ Type
       Function GetDocument : TWPWorkingDocument;
       Procedure SetDocument(Const Value : TWPWorkingDocument);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -622,7 +622,7 @@ Type
 
       Function Search(iLimit : Integer; Out iStart, iEnd : Integer) : Boolean; Overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails); Overload; Virtual;
       destructor Destroy; Override;
@@ -802,7 +802,7 @@ Type
       Function SelCursorToChange(bSelect : Boolean) : Integer;
       Function GetWorkingWidth : Integer;  Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1085,7 +1085,7 @@ Type
     Private
       FList : TWPRangeList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1192,7 +1192,7 @@ Type
     procedure SetState(const Value: TWPMacroState);
     procedure SetLastError(const Value: Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -8631,33 +8631,33 @@ Begin
   End;
 end;
 
-function TWPRange.sizeInBytesV : cardinal;
+function TWPRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FOperator.sizeInBytes);
-  inc(result, FFont.sizeInBytes);
-  inc(result, FParagraph.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FOperator.sizeInBytes(magic));
+  inc(result, FFont.sizeInBytes(magic));
+  inc(result, FParagraph.sizeInBytes(magic));
   inc(result, (FStyle.length * sizeof(char)) + 12);
   inc(result, (FLastStyleSummary.length * sizeof(char)) + 12);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FLog.sizeInBytes);
-  inc(result, FCurrentParagraph.sizeInBytes);
-  inc(result, FCurrentImage.sizeInBytes);
-  inc(result, FCurrentLine.sizeInBytes);
-  inc(result, FCurrentSectionStart.sizeInBytes);
-  inc(result, FCurrentSectionStop.sizeInBytes);
-  inc(result, FCurrentFieldStart.sizeInBytes);
-  inc(result, FCurrentFieldStop.sizeInBytes);
-  inc(result, FCurrentTableStart.sizeInBytes);
-  inc(result, FCurrentTableStop.sizeInBytes);
-  inc(result, FCurrentTableRowStart.sizeInBytes);
-  inc(result, FCurrentTableRowStop.sizeInBytes);
-  inc(result, FCurrentTableCellStart.sizeInBytes);
-  inc(result, FCurrentTableCellStop.sizeInBytes);
-  inc(result, FSelectedTable.sizeInBytes);
-  inc(result, FSelectedRows.sizeInBytes);
-  inc(result, FSelectedCells.sizeInBytes);
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FLog.sizeInBytes(magic));
+  inc(result, FCurrentParagraph.sizeInBytes(magic));
+  inc(result, FCurrentImage.sizeInBytes(magic));
+  inc(result, FCurrentLine.sizeInBytes(magic));
+  inc(result, FCurrentSectionStart.sizeInBytes(magic));
+  inc(result, FCurrentSectionStop.sizeInBytes(magic));
+  inc(result, FCurrentFieldStart.sizeInBytes(magic));
+  inc(result, FCurrentFieldStop.sizeInBytes(magic));
+  inc(result, FCurrentTableStart.sizeInBytes(magic));
+  inc(result, FCurrentTableStop.sizeInBytes(magic));
+  inc(result, FCurrentTableRowStart.sizeInBytes(magic));
+  inc(result, FCurrentTableRowStop.sizeInBytes(magic));
+  inc(result, FCurrentTableCellStart.sizeInBytes(magic));
+  inc(result, FCurrentTableCellStop.sizeInBytes(magic));
+  inc(result, FSelectedTable.sizeInBytes(magic));
+  inc(result, FSelectedRows.sizeInBytes(magic));
+  inc(result, FSelectedCells.sizeInBytes(magic));
 end;
 
 { TWPRangeList }
@@ -9462,16 +9462,16 @@ Begin
 End;
 
 
-function TWPOperator.sizeInBytesV : cardinal;
+function TWPOperator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FSpeller.sizeInBytes);
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FUndoStack.sizeInBytes);
-  inc(result, FRedoStack.sizeInBytes);
-  inc(result, FCurrentOp.sizeInBytes);
-  inc(result, FRendererRange.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FSpeller.sizeInBytes(magic));
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FUndoStack.sizeInBytes(magic));
+  inc(result, FRedoStack.sizeInBytes(magic));
+  inc(result, FCurrentOp.sizeInBytes(magic));
+  inc(result, FRendererRange.sizeInBytes(magic));
   inc(result, (FDirectText.length * sizeof(char)) + 12);
 end;
 
@@ -9510,9 +9510,9 @@ Begin
 End;
 
 
-function TOperationRange.sizeInBytesV : cardinal;
+function TOperationRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPOperator.RedoType: TWPOperationType;
@@ -9869,17 +9869,17 @@ Begin
     Result := Result + FOriginalPieces[iLoop].LogicalText;
 End;
 
-function TWPOperation.sizeInBytesV : cardinal;
+function TWPOperation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUndoCursor.length * sizeof(char)) + 12);
   inc(result, (FRedoCursor.length * sizeof(char)) + 12);
-  inc(result, FUndoCursors.sizeInBytes);
-  inc(result, FOriginalPieces.sizeInBytes);
-  inc(result, FModifiedPieces.sizeInBytes);
-  inc(result, FInsertedPieces.sizeInBytes);
-  inc(result, FRemovedPieces.sizeInBytes);
-  inc(result, FTablePieces.sizeInBytes);
+  inc(result, FUndoCursors.sizeInBytes(magic));
+  inc(result, FOriginalPieces.sizeInBytes(magic));
+  inc(result, FModifiedPieces.sizeInBytes(magic));
+  inc(result, FInsertedPieces.sizeInBytes(magic));
+  inc(result, FRemovedPieces.sizeInBytes(magic));
+  inc(result, FTablePieces.sizeInBytes(magic));
   inc(result, (FAddedText.length * sizeof(char)) + 12);
   inc(result, (FAddedTextThisIteration.length * sizeof(char)) + 12);
 end;
@@ -10115,9 +10115,9 @@ Begin
 End;
 
 
-function TWPSelection.sizeInBytesV : cardinal;
+function TWPSelection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TWPRangeManager }
@@ -10226,10 +10226,10 @@ Const
   PROPS_SECTION_DISPLAY_TYPE : Array [TWPWorkingDocumentSectionDisplayType] Of String = ('None', 'Line', 'Name');
   PROPS_TEXT_FIELD_STATE : Array [TWPSFontState] Of String = ('Square Brackets', 'None', 'Hints', 'Invisible');
 
-function TWPRangeManager.sizeInBytesV : cardinal;
+function TWPRangeManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 Function TWPPropertyServer.GetProperties: TWPPropertyList;
@@ -11167,10 +11167,10 @@ begin
     FActions.Clear;
 end;
 
-function TWPMacro.sizeInBytesV : cardinal;
+function TWPMacro.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FActions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FActions.sizeInBytes(magic));
 end;
 
 { TWPMacroKeyAction }
@@ -11301,9 +11301,9 @@ begin
   result := 'todo';
 end;
 
-function TWPSearchDetails.sizeInBytesV : cardinal;
+function TWPSearchDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -11328,9 +11328,9 @@ Begin
 End;
 
 
-function TWPReplaceDetails.sizeInBytesV : cardinal;
+function TWPReplaceDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FReplace.length * sizeof(char)) + 12);
 end;
 
@@ -11469,11 +11469,11 @@ Begin
   Result := (FLimitStart = -1) Or ((iOffset >= FLimitStart) And (iOffset < FLimitStop));
 End;
 
-function TWPSearchIterator.sizeInBytesV : cardinal;
+function TWPSearchIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FCurrent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FCurrent.sizeInBytes(magic));
 end;
 
 Constructor TWPSearch.Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails);
@@ -11619,22 +11619,22 @@ End;
 
 
 
-function TWPSearch.sizeInBytesV : cardinal;
+function TWPSearch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FSearchDetails.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FSearchDetails.sizeInBytes(magic));
 end;
 
-function TWPSpeechMagicInsertOptions.sizeInBytesV : cardinal;
+function TWPSpeechMagicInsertOptions.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
-function TWPAction.sizeInBytesV : cardinal;
+function TWPAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSelection.length * sizeof(char)) + 12);
   inc(result, (FDetails.length * sizeof(char)) + 12);
   inc(result, (FAction.length * sizeof(char)) + 12);

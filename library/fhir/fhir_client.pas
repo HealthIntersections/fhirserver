@@ -60,7 +60,7 @@ Type
     function asString : string;
 
     procedure addToHeaders(list : TStringList);
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -74,7 +74,7 @@ Type
     FPatient: String;
     procedure SetidToken(const Value: TJWT);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -129,7 +129,7 @@ Type
     procedure notify(msg : String);
     function ProvenanceString : string;
     function opWrapper : TFhirOperationOutcomeWClass;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     // version independent API
@@ -286,7 +286,7 @@ begin
 end;
 
 
-function THTTPHeaders.sizeInBytes: cardinal;
+function THTTPHeaders.sizeInBytes(magic : integer): cardinal;
 begin
   result := sizeof(self);
   inc(result, (contentType.Length * sizeof(char))+12);
@@ -334,10 +334,10 @@ begin
   result := FClient.getResourceVersionId(res);
 end;
 
-function TFHIRClientCommunicator.sizeInBytesV : cardinal;
+function TFHIRClientCommunicator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FClient.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FClient.sizeInBytes(magic));
 end;
 
 { TFhirClientV }
@@ -577,10 +577,10 @@ begin
     result := idtoken.name
 end;
 
-function TClientAccessToken.sizeInBytesV : cardinal;
+function TClientAccessToken.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidToken.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidToken.sizeInBytes(magic));
   inc(result, (Fscopes.length * sizeof(char)) + 12);
   inc(result, (FaccessToken.length * sizeof(char)) + 12);
   inc(result, (FPatient.length * sizeof(char)) + 12);

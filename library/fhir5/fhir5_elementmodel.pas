@@ -52,7 +52,7 @@ type
 
     function GetName: string;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -91,7 +91,7 @@ type
     FDefn: TFHIRStructureDefinition;
     procedure SetDefn(const Value: TFHIRStructureDefinition);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TProfileUsage; overload;
@@ -105,7 +105,7 @@ type
     FIsProcessed: boolean;
     function GetIsEmpty: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -145,7 +145,7 @@ type
     function GetProfiles: TProfileUsages;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name : String); overload;
     constructor Create(name : String; prop : TFHIRMMProperty); overload;
@@ -215,7 +215,7 @@ type
     function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
     function getDefinition(loc : TSourceLocation;  ns, name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
     function getDefinition(loc : TSourceLocation; name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
@@ -293,7 +293,7 @@ type
     procedure composeElement(path : String; element : TFHIRMMElement); overload;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; override;
     function parse(obj : TJsonObject; noException : boolean = false) : TFHIRMMElement; overload;
@@ -318,7 +318,7 @@ type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function GetResourceType : TFhirResourceType; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(root : TFHIRMMElement);
     destructor Destroy; override;
@@ -810,12 +810,12 @@ begin
       exit(p);
 end;
 
-function TFHIRMMProperty.sizeInBytesV : cardinal;
+function TFHIRMMProperty.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FStructure.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FStructure.sizeInBytes(magic));
 end;
 
 { TFHIRMMElement }
@@ -1220,19 +1220,19 @@ begin
   FXhtml := Value;
 end;
 
-function TFHIRMMElement.sizeInBytesV : cardinal;
+function TFHIRMMElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FComments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FComments.sizeInBytes(magic));
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
   inc(result, (FExplicitType.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
-  inc(result, FProperty.sizeInBytes);
-  inc(result, FElementProperty.sizeInBytes);
-  inc(result, FXhtml.sizeInBytes);
-  inc(result, FProfiles.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
+  inc(result, FProperty.sizeInBytes(magic));
+  inc(result, FElementProperty.sizeInBytes(magic));
+  inc(result, FXhtml.sizeInBytes(magic));
+  inc(result, FProfiles.sizeInBytes(magic));
 end;
 
 { TFHIRMMParserBase }
@@ -1507,11 +1507,11 @@ begin
   end;
 end;
 
-function TFHIRMMParserBase.sizeInBytesV : cardinal;
+function TFHIRMMParserBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
-  inc(result, FErrors.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FErrors.sizeInBytes(magic));
 end;
 
 { TFHIRMMManager }
@@ -2612,10 +2612,10 @@ begin
 end;
 
 
-function TFHIRMMJsonParser.sizeInBytesV : cardinal;
+function TFHIRMMJsonParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, json.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, json.sizeInBytes(magic));
 end;
 
 { TFHIRMMResourceLoader }
@@ -2738,10 +2738,10 @@ begin
   FRoot := root;
 end;
 
-function TFHIRCustomResource.sizeInBytesV : cardinal;
+function TFHIRCustomResource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRoot.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRoot.sizeInBytes(magic));
 end;
 
 class function TFHIRCustomResource.CreateFromBase(context : TFHIRWorkerContext; base: TFHIRObject): TFHIRCustomResource;
@@ -2886,10 +2886,10 @@ begin
   result := FEntries.Count = 0;
 end;
 
-function TProfileUsages.sizeInBytesV : cardinal;
+function TProfileUsages.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntries.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEntries.sizeInBytes(magic));
 end;
 
 { TProfileUsage }
@@ -2911,10 +2911,10 @@ begin
   FDefn := Value;
 end;
 
-function TProfileUsage.sizeInBytesV : cardinal;
+function TProfileUsage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefn.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefn.sizeInBytes(magic));
 end;
 
 end.

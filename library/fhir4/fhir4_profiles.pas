@@ -56,7 +56,7 @@ Type
     function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -94,7 +94,7 @@ Type
     function GetName: String;
     Property Types : TFhirElementDefinitionTypeList read GetTypes;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(profiles : TProfileManager; profile : TFHirStructureDefinition); overload;
     destructor Destroy; override;
@@ -189,7 +189,7 @@ Type
 //    function overWriteWithCurrent(profile,
 //      usage: TFHIRElementDefinition): TFHIRElementDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
     destructor Destroy; override;
@@ -1507,11 +1507,11 @@ end;
 //  inherited;
 //end;
 
-function TProfileUtilities.sizeInBytesV : cardinal;
+function TProfileUtilities.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, context.sizeInBytes);
-  inc(result, messages.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, context.sizeInBytes(magic));
+  inc(result, messages.sizeInBytes(magic));
 end;
 
 { TBaseWorkerContextR4 }
@@ -1550,7 +1550,7 @@ end;
 constructor TBaseWorkerContextR4.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FLock := TFslLock.Create('worker-context');
+  FLock := TFslLock.Create('worker-context r4');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create('profiles.custom');
   FNamingSystems := TFslMap<fhir4_resources.TFhirNamingSystem>.create('profiles.ns');
@@ -1904,7 +1904,7 @@ end;
 constructor TProfileManager.Create;
 begin
   inherited;
-  lock := TFslLock.Create('profiles');
+  lock := TFslLock.Create('profiles r4');
   FProfilesById := TFslMap<TFhirStructureDefinition>.create('profiles.id');
   FProfilesByURL := TFslMap<TFhirStructureDefinition>.create('profiles.url');
 end;
@@ -2102,11 +2102,11 @@ begin
   end;
 end;
 
-function TProfileManager.sizeInBytesV : cardinal;
+function TProfileManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProfilesById.sizeInBytes);
-  inc(result, FProfilesByURL.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProfilesById.sizeInBytes(magic));
+  inc(result, FProfilesByURL.sizeInBytes(magic));
 end;
 
 { TProfileDefinition }
@@ -2226,14 +2226,14 @@ begin
 end;
 
 
-function TProfileDefinition.sizeInBytesV : cardinal;
+function TProfileDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProfiles.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
-  inc(result, FElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProfiles.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
+  inc(result, FElement.sizeInBytes(magic));
   inc(result, (statedPath.length * sizeof(char)) + 12);
-  inc(result, FType.sizeInBytes);
+  inc(result, FType.sizeInBytes(magic));
 end;
 
 end.

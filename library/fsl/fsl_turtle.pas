@@ -49,7 +49,7 @@ Type
     FStart : TSourceLocation;
     FStop : TSourceLocation;
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     function Link : TTurtleObject; overload;
@@ -66,7 +66,7 @@ Type
     Ftype : String;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(value : String); overload;
@@ -85,7 +85,7 @@ Type
     procedure setUri(value : String);
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(uri : String); overload;
@@ -101,7 +101,7 @@ Type
     Flist : TFslList<TTurtleObject>;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(start : TSourceLocation; obj : TTurtleObject); overload;
@@ -119,7 +119,7 @@ Type
     FNames : TStringList;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     destructor Destroy; override;
@@ -149,7 +149,7 @@ Type
     FValue : TTurtleComplex;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(url : TTurtleURL; value : TTurtleComplex);
     destructor Destroy; override;
@@ -163,7 +163,7 @@ Type
     FObjects : TFslList<TTurtlePredicate>;
     FBase : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -200,7 +200,7 @@ type
     procedure readNext(postColon : boolean);
     function unescape(s : String; isUri : boolean) : string;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(source : String);
     function done : boolean;
@@ -280,9 +280,9 @@ begin
   result := TTurtleObject(inherited Link);
 end;
 
-function TTurtleObject.sizeInBytesV : cardinal;
+function TTurtleObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TTurtleLiteral }
@@ -353,9 +353,9 @@ begin
   result := false;
 end;
 
-function TTurtleLiteral.sizeInBytesV : cardinal;
+function TTurtleLiteral.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fvalue.length * sizeof(char)) + 12);
   inc(result, (Ftype.length * sizeof(char)) + 12);
 end;
@@ -415,9 +415,9 @@ begin
   result := false;
 end;
 
-function TTurtleURL.sizeInBytesV : cardinal;
+function TTurtleURL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Furi.length * sizeof(char)) + 12);
 end;
 
@@ -498,10 +498,10 @@ begin
   end;
 end;
 
-function TTurtleList.sizeInBytesV : cardinal;
+function TTurtleList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flist.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flist.sizeInBytes(magic));
 end;
 
 { TTurtleComplex }
@@ -729,11 +729,11 @@ begin
   end;
 end;
 
-function TTurtleComplex.sizeInBytesV : cardinal;
+function TTurtleComplex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPredicates.sizeInBytes);
-  inc(result, FNames.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPredicates.sizeInBytes(magic));
+  inc(result, FNames.sizeInBytes(magic));
 end;
 
 { TTurtleLexer }
@@ -1017,9 +1017,9 @@ begin
   raise pos.exception('Syntax Error parsing Turtle : '+message);
 end;
 
-function TTurtleLexer.sizeInBytesV : cardinal;
+function TTurtleLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, (Ftoken.length * sizeof(char)) + 12);
 end;
@@ -1403,11 +1403,11 @@ begin
   b.append(#13#10);
 end;
 
-function TTurtlePredicate.sizeInBytesV : cardinal;
+function TTurtlePredicate.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FURL.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FURL.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TTurtleDocument }
@@ -1479,11 +1479,11 @@ begin
   end;
 end;
 
-function TTurtleDocument.sizeInBytesV : cardinal;
+function TTurtleDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPrefixes.sizeInBytes);
-  inc(result, FObjects.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPrefixes.sizeInBytes(magic));
+  inc(result, FObjects.sizeInBytes(magic));
   inc(result, (FBase.length * sizeof(char)) + 12);
 end;
 

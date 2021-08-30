@@ -124,7 +124,7 @@ Type
 
     procedure process;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(filter : String);  overload;
     destructor Destroy; override;
@@ -469,12 +469,12 @@ begin
   FStems.Sort;
 end;
 
-function TSearchFilterText.sizeInBytesV : cardinal;
+function TSearchFilterText.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilter.length * sizeof(char)) + 12);
-  inc(result, FStems.sizeInBytes);
-  inc(result, FStemmer.sizeInBytes);
+  inc(result, FStems.sizeInBytes(magic));
+  inc(result, FStemmer.sizeInBytes(magic));
 end;
 
 { TCodeSystemProviderContext }

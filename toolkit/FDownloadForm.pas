@@ -89,7 +89,7 @@ begin
 
   httpclient.Request.UserAgent := 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1';
   httpclient.HandleRedirects := true;
-  httpclient.OnWorkBegin := idhttp1WorkBegin;
+  httpclient.OnWorkBegin := idhttp1Workbegin
   httpclient.OnWork := idhttp1Work;
   url := aurl;
   filename := afilename;

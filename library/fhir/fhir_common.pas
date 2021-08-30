@@ -173,7 +173,7 @@ type
   protected
     FRes : TFHIRResourceV;
     function GetFhirObjectVersion: TFHIRVersion; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     function GetLanguage: String;  virtual; abstract;
     procedure SetLanguage(const Value: String); virtual; abstract;
   public
@@ -199,7 +199,7 @@ type
   TFHIRXVersionOperationObjectWrapper = class (TFslObject)
   protected
     FObj : TFslObject;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -209,7 +209,7 @@ type
   TFHIRXVersionOperationWrapper = class (TFslObject)
   protected
     FOp : TFslObject;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -502,7 +502,7 @@ type
     function getParameterParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     function getResourceParameter(name: String): TFHIRResourceV;  virtual; abstract;
     function getStringParameter(name: String): String;  virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirParametersParameterW; overload;
@@ -532,7 +532,7 @@ type
     FList : TFslList<TFhirParametersParameterW>;
     function getParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     procedure populateList; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFHIRParametersW; overload;
@@ -574,7 +574,7 @@ type
   TFhirCodeSystemConceptW = class (TFHIRXVersionElementWrapper)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
   public
@@ -658,7 +658,7 @@ type
     procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
     function getCount: integer; virtual; abstract;
     procedure setCount(Value: integer); virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirCodeSystemW; overload;
@@ -1278,7 +1278,7 @@ type
     function Compare(sender : TObject; const l, r : T) : integer;
     {$ENDIF}
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1380,10 +1380,10 @@ begin
 end;
 
 
-function TFHIRXVersionResourceWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionResourceWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRes.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeW }
@@ -1461,10 +1461,10 @@ begin
   FList.Clear;
 end;
 
-function TFhirParametersParameterW.sizeInBytesV : cardinal;
+function TFhirParametersParameterW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFHIRXVersionElementWrapper }
@@ -1595,10 +1595,10 @@ begin
   FList.Clear;
 end;
 
-function TFHIRParametersW.sizeInBytesV : cardinal;
+function TFHIRParametersW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 function TFHIRSearchParamDefinitionW.link: TFHIRSearchParamDefinitionW;
@@ -1675,10 +1675,10 @@ begin
       exit(p.code);
 end;
 
-function TFhirCodeSystemW.sizeInBytesV : cardinal;
+function TFhirCodeSystemW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConceptList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConceptList.sizeInBytes(magic));
 end;
 
 { TFhirCodeSystemConceptW }
@@ -1694,10 +1694,10 @@ begin
   result := TFhirCodeSystemConceptW(inherited link);
 end;
 
-function TFhirCodeSystemConceptW.sizeInBytesV : cardinal;
+function TFhirCodeSystemConceptW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConceptList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConceptList.sizeInBytes(magic));
 end;
 
 { TFHIRValueSetCodeSystemW }
@@ -1732,10 +1732,10 @@ begin
   inherited;
 end;
 
-function TFHIRXVersionOperationWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionOperationWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOp.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOp.sizeInBytes(magic));
 end;
 
 { TFHIRLookupOpResponseW }
@@ -2001,10 +2001,10 @@ begin
 end;
 
 
-function TFHIRXVersionOperationObjectWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionOperationObjectWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObj.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObj.sizeInBytes(magic));
 end;
 
 { TFHIRGroupW }
@@ -2187,11 +2187,11 @@ begin
   end;
 end;
 
-function TFHIRMetadataResourceManagerW<T>.sizeInBytesV: cardinal;
+function TFHIRMetadataResourceManagerW<T>.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.updateList(url, version : String);

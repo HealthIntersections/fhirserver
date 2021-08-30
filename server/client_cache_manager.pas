@@ -58,11 +58,13 @@ type
   private
     FList : TFslList<TClientCacheManagerEntry>;
     FLock : TFslLock;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
@@ -95,7 +97,9 @@ var
   i, j : TFHIRMetadataResourceW;
   remove : TFslMetadataResourceList;
   c : cardinal;
+  magic : integer;
 begin
+  magic := nextMagic;
   remove := TFslMetadataResourceList.create;
   try
     for i in list do
@@ -103,7 +107,7 @@ begin
       for j in FList do
         if (i.url = j.url) and (i.version = j.version) then
         begin
-          c := j.sizeInBytes;
+          c := j.sizeInBytes(magic);
           if (c > FSize) then
             FSize := 0
           else
@@ -114,7 +118,7 @@ begin
     FList.RemoveAll(remove);
     for i in list do
     begin
-      FSize := FSize + i.sizeInBytes;
+      FSize := FSize + i.sizeInBytes(magic);
       FList.Add(i.link);
     end;
   finally
@@ -124,7 +128,7 @@ end;
 
 { TClientCacheManager }
 
-function TClientCacheManager.cacheSize: UInt64;
+function TClientCacheManager.cacheSize(magic : integer): UInt64;
 var
   item : TClientCacheManagerEntry;
 begin
@@ -160,6 +164,11 @@ begin
   FList.Free;
   FLock.Free;
   inherited;
+end;
+
+function TClientCacheManager.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + SizeOf(FLock) + FList.sizeInBytes(magic);
 end;
 
 procedure TClientCacheManager.sweep;

@@ -210,7 +210,7 @@ Type
       slicer : TFHIRElementDefinition; unsupportedSlicing : boolean; problematicPaths : TStringList; sliceOffset, i : integer; ed : TFHIRElementDefinition;
       childUnsupportedSlicing : boolean; ei : TElementInfo) : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function getContext() : TFHIRWorkerContext; virtual;
     Property Context : TFHIRWorkerContext read GetContext;
@@ -2036,18 +2036,18 @@ begin
   result := (length(parts) > 2) and (parts[length(parts) - 1] = 'outcome') and pathEntryHasName(parts[length(parts) - 2], 'response');
 end;
 
-function TInstanceValidator.sizeInBytesV : cardinal;
+function TInstanceValidator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, extensionDomains.sizeInBytes);
-  inc(result, bpWarnings.sizeInBytes);
-  inc(result, txTime.sizeInBytes);
-  inc(result,  sdTime.sizeInBytes);
-  inc(result,  fpeTime.sizeInBytes);
-  inc(result,  overall.sizeInBytes);
-  inc(result,  loadTime.sizeInBytes);
-  inc(result, fetcher.sizeInBytes);
-  inc(result, fpe.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, extensionDomains.sizeInBytes(magic));
+  inc(result, bpWarnings.sizeInBytes(magic));
+  inc(result, txTime.sizeInBytes(magic));
+  inc(result,  sdTime.sizeInBytes(magic));
+  inc(result,  fpeTime.sizeInBytes(magic));
+  inc(result,  overall.sizeInBytes(magic));
+  inc(result,  loadTime.sizeInBytes(magic));
+  inc(result, fetcher.sizeInBytes(magic));
+  inc(result, fpe.sizeInBytes(magic));
 end;
 
 class function TInstanceValidator.pathEntryHasName(thePathEntry : String; theName : String) : boolean;

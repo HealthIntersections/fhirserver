@@ -85,7 +85,7 @@ Type
     Procedure CheckForImages(oRoot : TDicomObject; sTransferSyntax : String);
     Procedure LoadBytes(oRoot : TDicomObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -617,11 +617,11 @@ Begin
     raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
 End; }
 
-function TDicomImageExtractor.sizeInBytesV : cardinal;
+function TDicomImageExtractor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FInstance.sizeInBytes);
-  inc(result, FRoot.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FInstance.sizeInBytes(magic));
+  inc(result, FRoot.sizeInBytes(magic));
   inc(result, (FTransferSyntax.length * sizeof(char)) + 12);
   inc(result, (FInstanceId.length * sizeof(char)) + 12);
   inc(result, (FDateTime.length * sizeof(char)) + 12);

@@ -571,7 +571,7 @@ type
     FSystem: String;
     FMode: TFhirSystemVersionProcessingModeEnum;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
@@ -590,7 +590,7 @@ type
     FincludeDesignations: boolean;
     FcodeSystemList : TFslList<TFhirExpansionProfileFixedVersion>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -4249,11 +4249,11 @@ begin
   FcodeSystemList := TFslList<TFhirExpansionProfileFixedVersion>.create;
 end;
 
-function TFhirExpansionProfile.sizeInBytesV : cardinal;
+function TFhirExpansionProfile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FdisplayLanguage.length * sizeof(char)) + 12);
-  inc(result, FcodeSystemList.sizeInBytes);
+  inc(result, FcodeSystemList.sizeInBytes(magic));
 end;
 
 class function TFhirExpansionProfile.defaultProfile: TFhirExpansionProfile;
@@ -5257,9 +5257,9 @@ begin
 end;
 
 
-function TFhirExpansionProfileFixedVersion.sizeInBytesV : cardinal;
+function TFhirExpansionProfileFixedVersion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
 end;

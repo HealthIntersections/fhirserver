@@ -46,7 +46,7 @@ Type
       FTitleStyle : TWPStyle;
       procedure SetTitleStyle(const Value: TWPStyle);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -113,7 +113,7 @@ Type
     procedure SetDict(const Value: THL7V2Dictionary);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -270,11 +270,11 @@ begin
   EndParagraph;
 end;
 
-function THL7V2DocumentPublisher.sizeInBytesV : cardinal;
+function THL7V2DocumentPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTitle.length * sizeof(char)) + 12);
-  inc(result, FTitleStyle.sizeInBytes);
+  inc(result, FTitleStyle.sizeInBytes(magic));
 end;
 
 { THL7V2HTMLPublisher }
@@ -1221,10 +1221,10 @@ Begin
   End;
 End;
 
-function THL7V2HTMLPublisher.sizeInBytesV : cardinal;
+function THL7V2HTMLPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDict.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDict.sizeInBytes(magic));
 end;
 
 end.

@@ -45,7 +45,7 @@ Type
       Function GetCanvas : TFslPrinterCanvas;
       Procedure SetCanvas(Const Value : TFslPrinterCanvas);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oCanvas : TFslPrinterCanvas); Overload; Virtual;
       destructor Destroy; Override;
@@ -136,7 +136,7 @@ Type
       Function ApplyOutputColourRules(bIsBackground : Boolean; aColour : TColour) : TColour; Override;
 
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -179,7 +179,7 @@ Type
 //      Procedure DoTest;
     Protected
       Procedure Execute; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -339,14 +339,14 @@ End;
 }
 
 
-function TWPPaginator.sizeInBytesV : cardinal;
+function TWPPaginator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperator.sizeInBytes);
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FPrinter.sizeInBytes);
-  inc(result, FPageLayoutController.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperator.sizeInBytes(magic));
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FPrinter.sizeInBytes(magic));
+  inc(result, FPageLayoutController.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
 end;
 
 Constructor TWPPrintRenderer.Create;
@@ -982,12 +982,12 @@ begin
 end;
 
 
-function TWPPrintRenderer.sizeInBytesV : cardinal;
+function TWPPrintRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPrinterCanvas.sizeInBytes);
-  inc(result, FPages.sizeInBytes);
-  inc(result, FPageLayoutController.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPrinterCanvas.sizeInBytes(magic));
+  inc(result, FPages.sizeInBytes(magic));
+  inc(result, FPageLayoutController.sizeInBytes(magic));
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
@@ -1270,10 +1270,10 @@ begin
 end;
 
 
-function TWPPrintCanvas.sizeInBytesV : cardinal;
+function TWPPrintCanvas.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanvas.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanvas.sizeInBytes(magic));
 end;
 
 End.

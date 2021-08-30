@@ -278,7 +278,7 @@ Type
     FList : TFhirResourceList;
     function GetCurrent : TFhirResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirResourceList);
     destructor Destroy; override;
@@ -397,7 +397,7 @@ Type
     FList : TFhirDomainResourceList;
     function GetCurrent : TFhirDomainResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDomainResourceList);
     destructor Destroy; override;
@@ -784,10 +784,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirResourceList }
@@ -1217,10 +1217,10 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDomainResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirDomainResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDomainResourceList }

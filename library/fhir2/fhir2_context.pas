@@ -45,7 +45,7 @@ type
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(definition : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -64,7 +64,7 @@ type
     function sort(sender : TObject; const L, R: T): Integer;
     {$ENDIF}
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -427,19 +427,19 @@ begin
   FMap.clear();
 end;
 
-function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
+function TFHIRCustomResourceInformation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSearchParameters.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  inc(result, FSearchParameters.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
-function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
+function TFHIRMetadataResourceManager<T>.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 end.

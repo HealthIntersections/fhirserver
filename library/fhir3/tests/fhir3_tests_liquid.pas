@@ -59,7 +59,7 @@ type
     [LiquidTestCase]
     procedure FHIRPathTest(Name : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -167,11 +167,11 @@ begin
   end;
 end;
 
-function TLiquidEngineTest.sizeInBytesV : cardinal;
+function TLiquidEngineTest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, engine.sizeInBytes);
-  inc(result, test.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, engine.sizeInBytes(magic));
+  inc(result, test.sizeInBytes(magic));
 end;
 
 initialization

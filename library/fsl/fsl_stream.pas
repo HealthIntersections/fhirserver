@@ -165,7 +165,7 @@ type
     {$ENDIF}
       Procedure SetStream(oStream : TFslStream); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -217,7 +217,7 @@ type
       Function GetStream: TFslAccessStream; Virtual;
       Procedure SetStream(oStream : TFslAccessStream); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -249,7 +249,7 @@ type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const iValue : Int64); Override;
 
-      function sizeInBytesV : cardinal; override;
+      function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Read(Var aBuffer; iCount : Integer); Override;
       Procedure Write(Const aBuffer; iCount : Integer); Override;
@@ -278,7 +278,7 @@ type
 
     Function ErrorClass : EFslExceptionClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
     destructor Destroy; override;
@@ -319,7 +319,7 @@ type
     procedure SetAsBytes(const Value: TBytes);
     function GetHasFormat: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(bytes : TBytes); Overload;
@@ -417,7 +417,7 @@ type
 
     Procedure UpdateCurrentPointer;
 
-  function sizeInBytesV : cardinal; override;
+  function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(cnt : TBytes); Overload;
@@ -513,7 +513,7 @@ Type
       FName : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslNameBuffer;
       Function Clone : TFslNameBuffer;
@@ -819,7 +819,7 @@ Type
     FContent : String;
     FCursor : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(content : String);
     function Peek: Integer; override;
@@ -851,7 +851,7 @@ Type
     function GetEndOfStream: Boolean;
   protected
     Property Stream : TFslStream read FStream;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aStream: TFslStream); overload;
     constructor Create(aStream: TFslStream; DetectBOM: Boolean); overload;
@@ -966,7 +966,7 @@ Type
 
       Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1161,7 +1161,7 @@ type
       FComment : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslZipPart;
       Function Clone : TFslZipPart;
@@ -1201,7 +1201,7 @@ type
       Procedure SetParts(oValue : TFslZipPartList);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1700,10 +1700,10 @@ Begin
 End;  
 
 
-function TFslStreamAdapter.sizeInBytesV : cardinal;
+function TFslStreamAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
 end;
 
 Function TFslAccessStream.Link : TFslAccessStream;
@@ -1821,10 +1821,10 @@ Begin
 End;
 
 
-function TFslAccessStreamAdapter.sizeInBytesV : cardinal;
+function TFslAccessStreamAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
 end;
 
 Procedure TFslStringStream.Read(Var aBuffer; iCount : Integer);
@@ -1906,9 +1906,9 @@ End;
 
 
 
-function TFslStringStream.sizeInBytesV : cardinal;
+function TFslStringStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FData) + 12);
 end;
 
@@ -2285,9 +2285,9 @@ Begin
 End;
 
 
-function TFslBuffer.sizeInBytesV : cardinal;
+function TFslBuffer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, FCapacity);
   inc(result, sizeof(FEncoding));
   inc(result, (FFormat.length * sizeof(char)) + 12);
@@ -2359,9 +2359,9 @@ Begin
 End;
 
 
-function TFslNameBuffer.sizeInBytesV : cardinal;
+function TFslNameBuffer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2707,10 +2707,10 @@ Begin
 End;
 
 
-function TFslMemoryStream.sizeInBytesV : cardinal;
+function TFslMemoryStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffer.sizeInBytes(magic));
 end;
 
 { TFslFile }
@@ -2789,9 +2789,9 @@ begin
   result := 0; // ?
 end;
 
-function TFslFile.sizeInBytesV : cardinal;
+function TFslFile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, sizeof(FStream));
 end;
 
@@ -4228,11 +4228,11 @@ Begin
   Result := Not Inherited EndOfStream Or (Length(FCache) > 0);
 End;
 
-function TFslTextExtractor.sizeInBytesV : cardinal;
+function TFslTextExtractor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCache.length * sizeof(char)) + 12);
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 Function TFslExtractor.ErrorClass : EFslExceptionClass;
@@ -4644,11 +4644,11 @@ begin
 end;
 
 
-function TFslStreamReader.sizeInBytesV : cardinal;
+function TFslStreamReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FBufferedData));
-  inc(result, FStream.sizeInBytes);
+  inc(result, FStream.sizeInBytes(magic));
   inc(result, sizeof(FEncoding));
 end;
 
@@ -4736,9 +4736,9 @@ begin
 end;
 {$ENDIF}
 
-function TFslStringReader.sizeInBytesV : cardinal;
+function TFslStringReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -4989,11 +4989,11 @@ Begin
 End;
 
 
-function TFslZipWorker.sizeInBytesV : cardinal;
+function TFslZipWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
-  inc(result, FParts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
+  inc(result, FParts.sizeInBytes(magic));
 end;
 
 Procedure TFslZipPart.Assign(oObject : TFslObject);
@@ -5017,9 +5017,9 @@ Begin
 End;
 
 
-function TFslZipPart.sizeInBytesV : cardinal;
+function TFslZipPart.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -6718,10 +6718,10 @@ end;
 
 (*{ TMimePartList }
 
-function TMimePart.sizeInBytesV : cardinal;
+function TMimePart.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
   inc(result, (FId.length * sizeof(char)) + 12);
 end;
 

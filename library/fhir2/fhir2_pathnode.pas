@@ -76,7 +76,7 @@ type
     FTypes : TStringList;
     FCollectionStatus : TFHIRCollectionStatus;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
     constructor CreateList(status : TFHIRCollectionStatus; types : TStringList);
@@ -125,7 +125,7 @@ type
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -181,7 +181,7 @@ type
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
 
@@ -547,17 +547,17 @@ begin
 end;
 
 
-function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
+function TFHIRPathExpressionNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FConstant.length * sizeof(char)) + 12);
-  inc(result, FParameters.sizeInBytes);
-  inc(result, FInner.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
-  inc(result, FOpNext.sizeInBytes);
-  inc(result, FTypes.sizeInBytes);
-  inc(result, FOpTypes.sizeInBytes);
+  inc(result, FParameters.sizeInBytes(magic));
+  inc(result, FInner.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
+  inc(result, FOpNext.sizeInBytes(magic));
+  inc(result, FTypes.sizeInBytes(magic));
+  inc(result, FOpTypes.sizeInBytes(magic));
 end;
 
 { TFHIRTypeDetails }
@@ -661,10 +661,10 @@ begin
   result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
 end;
 
-function TFHIRTypeDetails.sizeInBytesV : cardinal;
+function TFHIRTypeDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTypes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTypes.sizeInBytes(magic));
 end;
 
 function TfhirTypeDetails.type_: String;
@@ -922,10 +922,10 @@ begin
 end;
 
 
-function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
+function TFHIRExpressionNodeComposer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLang.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLang.sizeInBytes(magic));
 end;
 
 end.

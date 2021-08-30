@@ -61,7 +61,7 @@ type
     FCount: integer;
     FError: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(resourceType, url : String);
 
@@ -101,7 +101,7 @@ type
     procedure doPing;
     procedure doDownload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(client : TFhirClientV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -387,18 +387,18 @@ begin
   result := 'Downloaded '+inttostr(FFiles.Count)+' count for '+DescribeBytes(i)+' bytes';
 end;
 
-function TFHIRClientAsyncTask.sizeInBytesV : cardinal;
+function TFHIRClientAsyncTask.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FClient.sizeInBytes);
-  inc(result, FFiles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FClient.sizeInBytes(magic));
+  inc(result, FFiles.sizeInBytes(magic));
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FTypes.sizeInBytes);
+  inc(result, FTypes.sizeInBytes(magic));
   inc(result, (FQuery.length * sizeof(char)) + 12);
   inc(result, (FLog.length * sizeof(char)) + 12);
   inc(result, (FTaskLocation.length * sizeof(char)) + 12);
   inc(result, (FError.length * sizeof(char)) + 12);
-  inc(result, FFactory.sizeInBytes);
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 { TDownloadFile }
@@ -415,9 +415,9 @@ begin
   result := TDownloadFile(inherited Link);
 end;
 
-function TDownloadFile.sizeInBytesV : cardinal;
+function TDownloadFile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FError.length * sizeof(char)) + 12);

@@ -55,7 +55,7 @@ Type
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
@@ -76,7 +76,7 @@ Type
     function locStart: TSourceLocation;
     function locEnd: TSourceLocation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
   end;
@@ -88,7 +88,7 @@ Type
     cursor, lastCount: integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path: String; element: TFHIRMMElement);
     destructor Destroy; override;
@@ -104,7 +104,7 @@ Type
     FCanonical : TStringList;
     FDefinitions : TFHIRStructureDefinitionList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
@@ -212,7 +212,7 @@ Type
     function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
@@ -324,14 +324,14 @@ begin
   result := false;
 end;
 
-function TElementInfo.sizeInBytesV : cardinal;
+function TElementInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (name.length * sizeof(char)) + 12);
-  inc(result, element.sizeInBytes);
+  inc(result, element.sizeInBytes(magic));
   inc(result, (path.length * sizeof(char)) + 12);
-  inc(result, definition.sizeInBytes);
-  inc(result, slice.sizeInBytes);
+  inc(result, definition.sizeInBytes(magic));
+  inc(result, slice.sizeInBytes(magic));
 end;
 
 { TNodeStack }
@@ -441,15 +441,15 @@ begin
   end;
 end;
 
-function TNodeStack.sizeInBytesV : cardinal;
+function TNodeStack.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, parent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, parent.sizeInBytes(magic));
   inc(result, (literalPath.length * sizeof(char)) + 12);
-  inc(result, logicalPaths.sizeInBytes);
-  inc(result, element.sizeInBytes);
-  inc(result, definition.sizeInBytes);
-  inc(result, type_.sizeInBytes);
+  inc(result, logicalPaths.sizeInBytes(magic));
+  inc(result, element.sizeInBytes(magic));
+  inc(result, definition.sizeInBytes(magic));
+  inc(result, type_.sizeInBytes(magic));
 end;
 
 { TFHIRValidator3 }
@@ -3588,12 +3588,12 @@ begin
   end;
 end;
 
-function TFHIRValidator3.sizeInBytesV : cardinal;
+function TFHIRValidator3.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensionDomains.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FEntryElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensionDomains.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FEntryElement.sizeInBytes(magic));
 end;
 
 function TFHIRValidator.GetContext : TFHIRWorkerContext;
@@ -3679,10 +3679,10 @@ begin
   result := basePath + '.' + name + sfx;
 end;
 
-function TChildIterator.sizeInBytesV : cardinal;
+function TChildIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, parent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, parent.sizeInBytes(magic));
   inc(result, (basePath.length * sizeof(char)) + 12);
 end;
 
@@ -3716,11 +3716,11 @@ begin
 end;
 
 
-function TValidationProfileSet.sizeInBytesV : cardinal;
+function TValidationProfileSet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanonical.sizeInBytes);
-  inc(result, FDefinitions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanonical.sizeInBytes(magic));
+  inc(result, FDefinitions.sizeInBytes(magic));
 end;
 
 end.

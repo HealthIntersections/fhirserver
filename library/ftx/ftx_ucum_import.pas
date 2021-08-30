@@ -71,7 +71,7 @@ Type
     Function GetPropertyIndex(const sName : String):Integer;
     Procedure LoadCommonUnits(oIni : TIniFile);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     procedure Go;                                                          Override;
     function  PreTitle:string;                                             Override;
@@ -400,17 +400,17 @@ begin
     result := FUcum.Properties.AddByName(sName);
 end;
 
-function TUcumImportAction.sizeInBytesV : cardinal;
+function TUcumImportAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FUcum.sizeInBytes);
+  inc(result, FUcum.sizeInBytes(magic));
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FDb.sizeInBytes);
-  inc(result, FConn.sizeInBytes);
+  inc(result, FDb.sizeInBytes(magic));
+  inc(result, FConn.sizeInBytes(magic));
   inc(result, (FOldSource.length * sizeof(char)) + 12);
-  inc(result, FContext.sizeInBytes);
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 End.

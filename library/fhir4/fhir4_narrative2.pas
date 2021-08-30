@@ -93,7 +93,7 @@ type
     function describeSystem(system : String) : String; overload;
     function describeSystem(system : TFHIRContactPointSystemEnum) : String;  overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
     destructor Destroy; Override;
@@ -1198,12 +1198,12 @@ end;
 
 
 
-function TNarrativeGenerator.sizeInBytesV : cardinal;
+function TNarrativeGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fprefix.length * sizeof(char)) + 12);
-  inc(result, FProfiles.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
+  inc(result, FProfiles.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 end.

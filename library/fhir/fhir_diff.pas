@@ -55,7 +55,7 @@ type
     FIndex : integer;
     FIndex2 : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -81,7 +81,7 @@ type
     FSourceIndex : integer;
     FTargetIndex : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(sourceIndex, targetIndex : integer);
   end;
@@ -98,7 +98,7 @@ type
     FInserted : boolean;
     FIndex: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     property index : integer read FIndex;
   end;
@@ -138,7 +138,7 @@ type
     function applyOperation(res : TFHIRObject; op : TFhirParametersParameterW) : boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -156,12 +156,12 @@ begin
   inherited;
 end;
 
-function TDifference.sizeInBytesV : cardinal;
+function TDifference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FValue.sizeInBytes);
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TDifferenceList }
@@ -233,9 +233,9 @@ begin
   FTargetIndex := targetIndex;
 end;
 
-function TDifferenceMatch.sizeInBytesV : cardinal;
+function TDifferenceMatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TDifferenceMatchList }
@@ -938,12 +938,12 @@ begin
   end;
 end;
 
-function TDifferenceEngine.sizeInBytesV : cardinal;
+function TDifferenceEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, fpe.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, fpe.sizeInBytes(magic));
 end;
 
 { TOffSetList }
@@ -1000,9 +1000,9 @@ begin
   o.FInserted := false;
 end;
 
-function TOffset.sizeInBytesV : cardinal;
+function TOffset.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 end.

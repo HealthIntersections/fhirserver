@@ -91,7 +91,7 @@ type
     procedure processVariables(op : TGraphQLOperation);
     function isResourceName(name, suffix: string): boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -123,7 +123,7 @@ type
     function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
     destructor Destroy; override;
@@ -148,7 +148,7 @@ type
     FEntry: TFHIRBundleEntryW;
     procedure SetEntry(const Value: TFHIRBundleEntryW);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; entry : TFHIRBundleEntryW);
     destructor Destroy; override;
@@ -998,17 +998,17 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.sizeInBytesV : cardinal;
+function TFHIRGraphQLEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FFocus.sizeInBytes);
-  inc(result, FOutput.sizeInBytes);
-  inc(result, FGraphQL.sizeInBytes);
-  inc(result, FAppinfo.sizeInBytes);
-  inc(result, FWorkingVariables.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FMagicExpression.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FFocus.sizeInBytes(magic));
+  inc(result, FOutput.sizeInBytes(magic));
+  inc(result, FGraphQL.sizeInBytes(magic));
+  inc(result, FAppinfo.sizeInBytes(magic));
+  inc(result, FWorkingVariables.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FMagicExpression.sizeInBytes(magic));
 end;
 
 { TFHIRGraphQLSearchWrapper }
@@ -1156,12 +1156,12 @@ begin
   result := nil;
 end;
 
-function TFHIRGraphQLSearchWrapper.sizeInBytesV : cardinal;
+function TFHIRGraphQLSearchWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FBundle.sizeInBytes);
-  inc(result, FParseMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FBundle.sizeInBytes(magic));
+  inc(result, FParseMap.sizeInBytes(magic));
 end;
 
 { TFHIRGraphQLSearchEdge }
@@ -1252,11 +1252,11 @@ begin
   result := nil;
 end;
 
-function TFHIRGraphQLSearchEdge.sizeInBytesV : cardinal;
+function TFHIRGraphQLSearchEdge.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FEntry.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FEntry.sizeInBytes(magic));
 end;
 
 function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;

@@ -128,7 +128,7 @@ Type
     function GetHasX: boolean;
     function GetHasY: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(obj : TJsonObject); overload;
     constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
@@ -276,7 +276,7 @@ Type
     FTransforms: TStringList;
     FContent: TBytes;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -757,10 +757,10 @@ begin
   end;
 end;
 
-function TJWK.sizeInBytesV : cardinal;
+function TJWK.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObj.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObj.sizeInBytes(magic));
 end;
 
 { TJWKList }
@@ -2031,11 +2031,11 @@ begin
   inherited;
 end;
 
-function TDigitalSignatureReference.sizeInBytesV : cardinal;
+function TDigitalSignatureReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUrl.length * sizeof(char)) + 12);
-  inc(result, FTransforms.sizeInBytes);
+  inc(result, FTransforms.sizeInBytes(magic));
 end;
 
 end.

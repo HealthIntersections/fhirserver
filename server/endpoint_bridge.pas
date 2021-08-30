@@ -206,17 +206,19 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 implementation
 
 { TBridgeEndPoint }
 
-function TBridgeEndPoint.cacheSize: UInt64;
+function TBridgeEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
 end;
 
 procedure TBridgeEndPoint.clearCache;
@@ -230,6 +232,11 @@ begin
 end;
 
 destructor TBridgeEndPoint.Destroy;
+begin
+  inherited;
+end;
+
+procedure TBridgeEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
 end;
@@ -340,6 +347,11 @@ begin
   wep.FBridge := self;
   WebEndPoint := wep;
   result := wep;
+end;
+
+procedure TBridgeEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 function TBridgeEndPoint.summary: String;

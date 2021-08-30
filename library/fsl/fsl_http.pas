@@ -56,7 +56,7 @@ type
     FSource: String;
     function getItemCount: Integer;
     function VarName(index: Integer): String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -93,7 +93,7 @@ type
     procedure SetMain(const Value: String);
     procedure SetSub(const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -130,7 +130,7 @@ type
 
     function matches(code: String): boolean;
     function prefLang : String;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
   end;
 
   //end;
@@ -375,10 +375,10 @@ end;
 
 {-----------------------------------------------------------------------------}
 
-function TMultiValList.sizeInBytesV : cardinal;
+function TMultiValList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, fItemList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, fItemList.sizeInBytes(magic));
   inc(result, (FSource.length * sizeof(char)) + 12);
 end;
 
@@ -506,11 +506,11 @@ begin
     FBase := 'application/'+Value;
 end;
 
-function TMimeContentType.sizeInBytesV : cardinal;
+function TMimeContentType.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSource.length * sizeof(char)) + 12);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FParams.sizeInBytes(magic));
   inc(result, (FBase.length * sizeof(char)) + 12);
 end;
 
@@ -569,7 +569,7 @@ type
     FCode : String;
     FValue : Double;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor create(code : String; value : Double);
   end;
@@ -589,9 +589,9 @@ type
     function Compare(const l, r: TLanguageSpec): Integer; override;
   end;
 
-function TLanguageSpec.sizeInBytesV : cardinal;
+function TLanguageSpec.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
@@ -690,7 +690,7 @@ begin
     result := FCodes[0];
 end;
 
-function THTTPLanguages.sizeInBytes: cardinal;
+function THTTPLanguages.sizeInBytes(magic : integer): cardinal;
 var
   s : String;
 begin

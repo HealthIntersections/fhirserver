@@ -1462,7 +1462,7 @@ end;
 constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
 begin
   inherited Create;
-  Lock := TFslLock.Create;
+  Lock := TFslLock.Create('SCT Publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;

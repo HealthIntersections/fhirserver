@@ -44,7 +44,7 @@ Type
       FMimeType : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPOpenDocPackagePart;
       Function Clone : TWPOpenDocPackagePart;
@@ -150,7 +150,7 @@ Type
     Procedure LoadManifest; Virtual;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -176,7 +176,7 @@ Type
     Procedure WriteManifest; Virtual;
 
     Function GetByName(Const sName, sMimeType : String) : TFslBuffer;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -303,7 +303,7 @@ Type
     Function GetCapitalization: TWPSCapsState; Overload; Virtual;
     Procedure SetCapitalization(Const oCapitalize: TWPSCapsState); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtTextFormat); Overload;
@@ -382,7 +382,7 @@ Type
     Function GetMarginBottom: Integer; Overload; Virtual;
     Procedure SetMarginBottom(Const aValue: Integer); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtParagraphFormat); Overload;
@@ -429,7 +429,7 @@ Type
     Procedure SetNumberStyle(Const oType: TWPSParagraphNumberType); Virtual;
     Procedure SetNumberFormat(Const oFormat: TWPSParagraphNumberFormat); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListLevelFormat); Overload;
@@ -467,7 +467,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListFormat); Overload;
@@ -513,7 +513,7 @@ Type
     Function GetVerticalMargin: Integer; Overload; Virtual;
     Procedure SetVerticalMargin(Const aValue: Integer); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableFormat); Overload;
@@ -593,7 +593,7 @@ Type
     Property WPBorderLeft: TWPBorder Read GetBorderLeft Write SetBorderLeft;
     Property WPBorderRight: TWPBorder Read GetBorderRight Write SetBorderRight;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableCellFormat); Overload;
@@ -644,7 +644,7 @@ Type
     Procedure SetCellFormat(oFormat: TOdtTableCellFormat);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtStyle); Overload;
@@ -829,7 +829,7 @@ Type
     Procedure ReadOdtStyleRowProperties(oFormat: TOdtTableRowFormat; oReader:TFslXMLExtractor); Overload;
     Procedure ReadOdtStyleCellProperties(oFormat: TOdtTableCellFormat; oReader:TFslXMLExtractor); Overload;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -909,7 +909,7 @@ Type
       Procedure WriteTableRowFormat(oFormatter: TFslXMLFormatter; oRowFormat: TOdtTableRowFormat);
       Procedure WriteTableCellFormat(oFormatter: TFslXMLFormatter; oCellFormat: TOdtTableCellFormat);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -2052,15 +2052,15 @@ Begin
   FCurrentListStyle.ListFormat.ApplyStyle(oParaFormat, FCurrentListLevel, iItemCount);
 End;
 
-function TWPOdtReader.sizeInBytesV : cardinal;
+function TWPOdtReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOdtAdapter.sizeInBytes);
-  inc(result, FFontDecls.sizeInBytes);
-  inc(result, FDefaultStyles.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FStyleStack.sizeInBytes);
-  inc(result, FCurrentListStyle.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOdtAdapter.sizeInBytes(magic));
+  inc(result, FFontDecls.sizeInBytes(magic));
+  inc(result, FDefaultStyles.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FStyleStack.sizeInBytes(magic));
+  inc(result, FCurrentListStyle.sizeInBytes(magic));
 end;
 
 Constructor TWPOdtWriter.Create;
@@ -2841,15 +2841,15 @@ Begin
 End;
 
 
-function TWPOdtWriter.sizeInBytesV : cardinal;
+function TWPOdtWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOdtAdapter.sizeInBytes);
-  inc(result, FFormatter.sizeInBytes);
-  inc(result, FFontDecls.sizeInBytes);
-  inc(result, FDefaultStyles.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FStyleStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOdtAdapter.sizeInBytes(magic));
+  inc(result, FFormatter.sizeInBytes(magic));
+  inc(result, FFontDecls.sizeInBytes(magic));
+  inc(result, FDefaultStyles.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FStyleStack.sizeInBytes(magic));
 end;
 
 Procedure TWPOpenDocPackagePart.Assign(oObject : TFslObject);
@@ -2872,9 +2872,9 @@ Begin
 End;
 
 
-function TWPOpenDocPackagePart.sizeInBytesV : cardinal;
+function TWPOpenDocPackagePart.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMimeType.length * sizeof(char)) + 12);
 end;
 
@@ -3063,12 +3063,12 @@ End;
 
 
 
-function TOdtReaderAdapter.sizeInBytesV : cardinal;
+function TOdtReaderAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FMediaType.length * sizeof(char)) + 12);
-  inc(result, FPackage.sizeInBytes);
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 { TOdtWriterAdapter }
@@ -3299,10 +3299,10 @@ Begin
   Result := (aVal = aVal2) Or ((aVal = fcsUnknown) And (aVal2 = fcsNormal));
 End;
 
-function TOdtWriterAdapter.sizeInBytesV : cardinal;
+function TOdtWriterAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPackage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 { TOdtTextFormat }
@@ -3656,9 +3656,9 @@ Begin
   Result := FWeight <> '';
 End;
 
-function TOdtTextFormat.sizeInBytesV : cardinal;
+function TOdtTextFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFamily.length * sizeof(char)) + 12);
   inc(result, (FSize.length * sizeof(char)) + 12);
@@ -3811,9 +3811,9 @@ Begin
 End;
 
 
-function TOdtParagraphFormat.sizeInBytesV : cardinal;
+function TOdtParagraphFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTextAlign.length * sizeof(char)) + 12);
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
@@ -4042,16 +4042,16 @@ Begin
 End;
 
 
-function TOdtStyle.sizeInBytesV : cardinal;
+function TOdtStyle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FTextFormat.sizeInBytes);
-  inc(result, FParagraphFormat.sizeInBytes);
-  inc(result, FListFormat.sizeInBytes);
-  inc(result, FTableFormat.sizeInBytes);
-  inc(result, FRowFormat.sizeInBytes);
-  inc(result, FCellFormat.sizeInBytes);
+  inc(result, FTextFormat.sizeInBytes(magic));
+  inc(result, FParagraphFormat.sizeInBytes(magic));
+  inc(result, FListFormat.sizeInBytes(magic));
+  inc(result, FTableFormat.sizeInBytes(magic));
+  inc(result, FRowFormat.sizeInBytes(magic));
+  inc(result, FCellFormat.sizeInBytes(magic));
 end;
 
 { TOdtStyleList }
@@ -4258,9 +4258,9 @@ Begin
 End;
 
 
-function TOdtListLevelFormat.sizeInBytesV : cardinal;
+function TOdtListLevelFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FNumberStyle.length * sizeof(char)) + 12);
   inc(result, (FNumberFormat.length * sizeof(char)) + 12);
   inc(result, (FStartValue.length * sizeof(char)) + 12);
@@ -4348,9 +4348,9 @@ Begin
     Result := Self[0].Matches(oFormat, iCount);
 End;
 
-function TOdtListFormat.sizeInBytesV : cardinal;
+function TOdtListFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -4486,9 +4486,9 @@ Begin
 End;
 
 
-function TOdtTableFormat.sizeInBytesV : cardinal;
+function TOdtTableFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
   inc(result, (FMarginTop.length * sizeof(char)) + 12);
@@ -4665,9 +4665,9 @@ Begin
   End;
 End;
 
-function TOdtTableCellFormat.sizeInBytesV : cardinal;
+function TOdtTableCellFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FBorderTop.length * sizeof(char)) + 12);
   inc(result, ( FBorderBottom.length * sizeof(char)) + 12);
   inc(result, (FBorderLeft.length * sizeof(char)) + 12);

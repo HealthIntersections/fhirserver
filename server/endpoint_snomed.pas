@@ -49,8 +49,10 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
 
@@ -58,9 +60,9 @@ implementation
 
 { TSnomedWebEndPoint }
 
-function TSnomedWebEndPoint.cacheSize: UInt64;
+function TSnomedWebEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic);
 end;
 
 procedure TSnomedWebEndPoint.clearCache;
@@ -78,12 +80,22 @@ begin
   inherited;
 end;
 
+procedure TSnomedWebEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+end;
+
 function TSnomedWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   FSnomedServer := TSnomedWebServer.Create(config.name, config['path'].value, common);
   FSnomedServer.FTx := Terminologies.Link;
   WebEndPoint := FSnomedServer;
   result := FSnomedServer.link;
+end;
+
+procedure TSnomedWebEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 function TSnomedWebEndPoint.summary: String;

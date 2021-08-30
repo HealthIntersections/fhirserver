@@ -447,7 +447,7 @@ Type
       FHintStringList : TFslStringList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -621,7 +621,7 @@ Type
       Function GetNativeFont : TGPFont;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -665,7 +665,7 @@ Type
     procedure SetFontSize(const Value: Double);
     procedure SetImage(const Value: TGdiPlusBitmapImage);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1591,12 +1591,12 @@ End;
 
 
 {$IFDEF VER130}
-function TGdiPlusBitmapImage.sizeInBytesV : cardinal;
+function TGdiPlusBitmapImage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBitmap.sizeInBytes);
-  inc(result, FTransparentColour.sizeInBytes);
-  inc(result, FBytes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBitmap.sizeInBytes(magic));
+  inc(result, FTransparentColour.sizeInBytes(magic));
+  inc(result, FBytes.sizeInBytes(magic));
 end;
 
 Function TFixedStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: Integer): HResult;
@@ -2202,10 +2202,10 @@ Begin
 End;
 
 
-function TGdiPlusHotSpot.sizeInBytesV : cardinal;
+function TGdiPlusHotSpot.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHintStringList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHintStringList.sizeInBytes(magic));
 end;
 
 Function TGdiPlusHotSpotList.GetRegionByIndex(Const iIndex: Integer): TGdiPlusHotSpot;
@@ -2931,9 +2931,9 @@ End;
     End;
     *)
 
-function TGdiPlusFont.sizeInBytesV : cardinal;
+function TGdiPlusFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFontFamily.length * sizeof(char)) + 12);
 end;
 
@@ -3014,11 +3014,11 @@ begin
   FTop := MARGIN * FImage.Height;
 end;
 
-function TGdiPlusImageAnnotator.sizeInBytesV : cardinal;
+function TGdiPlusImageAnnotator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFontName.length * sizeof(char)) + 12);
-  inc(result, FImage.sizeInBytes);
+  inc(result, FImage.sizeInBytes(magic));
 end;
 
 End.

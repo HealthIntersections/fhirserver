@@ -36,6 +36,8 @@ type
   private
     FLock : TFslLock;
     FMap : TDictionary<String, String>;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -110,8 +112,11 @@ type
 
     function summary : String; virtual; abstract;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;
-    function cacheSize : UInt64; virtual;
+    function cacheSize(magic : integer) : UInt64; virtual;
     procedure clearCache; virtual;
+    procedure SetCacheStatus(status : boolean); virtual;
+    procedure getCacheInfo(ci: TCacheInformation); virtual;
+
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
     procedure LoadPackages(plist : String); virtual;
@@ -182,6 +187,15 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+function TTokenRedirectManager.sizeInBytesV(magic : integer) : cardinal;
+var
+  p : TPair<String, String>;
+begin
+  result := inherited sizeInBytesV(magic) + SizeoF(FLock);
+  for p in FMap do
+    result := result + p.Key.Length + p.Value.Length + 24;
 end;
 
 { TFhirWebServerEndpoint }
@@ -320,16 +334,17 @@ end;
 
 { TFHIRServerEndPoint }
 
-function TFHIRServerEndPoint.cacheSize: UInt64;
+function TFHIRServerEndPoint.cacheSize(magic : integer): UInt64;
 begin
   if WebEndPoint <> nil then
-    result := WebEndPoint.FTokenRedirects.sizeInBytes + WebEndPoint.Common.cache.sizeInBytes
+    result := WebEndPoint.FTokenRedirects.sizeInBytes(magic) + WebEndPoint.Common.cache.sizeInBytes(magic)
   else
     result := 0;
 end;
 
 procedure TFHIRServerEndPoint.clearCache;
 begin
+  Terminologies.clearSnomed;
   if WebEndPoint <> nil then
   begin
     WebEndPoint.FTokenRedirects.clear;
@@ -355,6 +370,16 @@ begin
   inherited;
 end;
 
+procedure TFHIRServerEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  FTerminologies.getCacheInfo(ci);
+  if WebEndPoint <> nil then
+  begin
+    ci.Add('WebEndPoint.FTokenRedirects', WebEndPoint.FTokenRedirects.sizeInBytes(ci.magic));
+    ci.Add('WebEndPoint.Common.Cache', WebEndPoint.Common.Cache.sizeInBytes(ci.magic));
+  end;
+end;
+
 procedure TFHIRServerEndPoint.InstallDatabase;
 begin
  // nothing
@@ -378,6 +403,12 @@ end;
 procedure TFHIRServerEndPoint.LoadPackages(plist: String);
 begin
  // nothing
+end;
+
+procedure TFHIRServerEndPoint.SetCacheStatus(status: boolean);
+begin
+  if WebEndPoint <> nil then
+    WebEndPoint.Common.Cache.Caching := status;
 end;
 
 procedure TFHIRServerEndPoint.updateAdminPassword;

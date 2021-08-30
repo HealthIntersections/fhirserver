@@ -87,7 +87,7 @@ type
     function DatabaseSizeV : int64; Override;
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(AOwner : TFDBManager; Filename : String; autoCreate : boolean);
     destructor Destroy; override;
@@ -104,7 +104,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
@@ -161,9 +161,9 @@ begin
       raise EDBException.create('SQLite Database '+FFIlename+' not found');
 end;
 
-function TFDBSQLiteManager.sizeInBytesV : cardinal;
+function TFDBSQLiteManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 
@@ -480,10 +480,10 @@ begin
   FreeAndNil(FColNames);
 end;
 
-function TFDBSQLiteConnection.sizeInBytesV : cardinal;
+function TFDBSQLiteConnection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FColNames.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FColNames.sizeInBytes(magic));
 end;
 
 end.

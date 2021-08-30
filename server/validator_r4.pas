@@ -95,7 +95,7 @@ end;
 constructor TFHIRServerWorkerContextR4.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FLock := TFslLock.Create('Validation.questionnaire');
+  FLock := TFslLock.Create('Validation.questionnaire r4');
   FProfile := TFhirExpansionParams.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;

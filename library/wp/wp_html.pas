@@ -131,7 +131,7 @@ Type
       procedure AddParaPiece(oDocument: TWPWorkingDocument);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -233,7 +233,7 @@ Type
     Function HTMLStream : TFslStream; Overload; Virtual;
     Function CanSaveImage : Boolean; Overload; Virtual;
     Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -273,7 +273,7 @@ Type
       Function HTMLStream : TFslStream; Override;
       Function CanSaveImage : Boolean; Override;
       Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 Implementation
@@ -1672,11 +1672,11 @@ End;
 
 
 
-function TWPHTMLReader.sizeInBytesV : cardinal;
+function TWPHTMLReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDom.sizeInBytes);
-  inc(result, FContextStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDom.sizeInBytes(magic));
+  inc(result, FContextStack.sizeInBytes(magic));
 end;
 
 { TWPHTMLWriterEngine }
@@ -2433,14 +2433,14 @@ Begin
 End;
 
 
-function TWPHTMLWriterEngine.sizeInBytesV : cardinal;
+function TWPHTMLWriterEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFormatter.sizeInBytes);
-  inc(result, FCSSStyles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFormatter.sizeInBytes(magic));
+  inc(result, FCSSStyles.sizeInBytes(magic));
   inc(result, (FTitle.length * sizeof(char)) + 12);
-  inc(result, FParaFont.sizeInBytes);
-  inc(result, FSpanFont.sizeInBytes);
+  inc(result, FParaFont.sizeInBytes(magic));
+  inc(result, FSpanFont.sizeInBytes(magic));
   inc(result, (FParaStyle.length * sizeof(char)) + 12);
   inc(result, (FSpanStyle.length * sizeof(char)) + 12);
 end;
@@ -2550,11 +2550,11 @@ Begin
   end;
 End;
 
-function TWPMHTWriter.sizeInBytesV : cardinal;
+function TWPMHTWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHTMLStream.sizeInBytes);
-  inc(result, FPackage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHTMLStream.sizeInBytes(magic));
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 Procedure TWPHTMLReader.ReadAnchor(oDocument: TWPWorkingDocument; oAnchor: TFslHTMLAnchor);

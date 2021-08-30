@@ -257,7 +257,7 @@ end;
 procedure TSystemService.dump;
 begin
   Logging.log(GetThreadReport);
-  Logging.log(DumpLocks);
+  Logging.log(DumpLocks(false));
 end;
 
 function DebugCtrlC(dwCtrlType : DWORD) :BOOL;
