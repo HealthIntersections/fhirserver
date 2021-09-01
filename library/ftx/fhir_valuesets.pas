@@ -176,7 +176,7 @@ Type
     FId: String;
 
     function determineSystem(code : String) : String;
-    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message : String; var cause : TFhirIssueType) : boolean; overload;
+    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TCodeDisplays; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TCodeDisplays; var message : String) : boolean;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
@@ -571,18 +571,18 @@ end;
 function TValueSetChecker.check(system, version, code: String; abstractOk, implySystem : boolean): boolean;
 var
   list : TCodeDisplays;
-  msg : string;
+  msg, ver : string;
   it : TFhirIssueType;
 begin
   list := TCodeDisplays.Create;
   try
-    result := check(system, version, code, abstractOk, implySystem, list, msg, it);
+    result := check(system, version, code, abstractOk, implySystem, list, msg, ver, it);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message : String; var cause : TFhirIssueType) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -616,6 +616,7 @@ begin
         end
         else
         begin
+          ver := cs.version(nil);
           cause := itNull;
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
@@ -651,6 +652,7 @@ begin
         end
         else
         begin
+          ver := cs.version(nil);
           cause := itNull;
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
@@ -675,6 +677,7 @@ begin
     if ics <> nil then
     begin
       try
+        ver := FValueSet.version;
         if (system = ics.systemUri) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
           ccl := ics.concepts;
@@ -703,7 +706,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
+          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -734,7 +737,7 @@ begin
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
           if checker <> nil then
-            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause)
+            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause)
           else
             raise ETerminologyError.Create('No Match for '+s);
         end;
@@ -760,7 +763,7 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
+            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause);
           end;
           if excluded then
             exit(false);
@@ -775,14 +778,14 @@ end;
 function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   list : TCodeDisplays;
-  message : String;
+  message, ver : String;
   cause : TFhirIssueType;
 begin
   result := FFactory.makeParameters;
   try
     list := TCodeDisplays.Create;
     try
-      if check(coding.systemUri, coding.version, coding.code, abstractOk, implySystem, list, message, cause) then
+      if check(coding.systemUri, coding.version, coding.code, abstractOk, implySystem, list, message, ver, cause) then
       begin
         result.AddParamBool('result', true);
         if (coding.display <> '') and (not list.has(coding.display)) then
@@ -790,6 +793,8 @@ begin
         if list.Count > 0 then
           result.AddParamStr('display', list.preferred);
         result.addParamStr('system', coding.systemUri);
+        if (ver <> '') then
+          result.addParamStr('version', ver);
         result.addParamStr('code', coding.code);
         if cause <> itNull then
           result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
@@ -797,6 +802,8 @@ begin
       else
       begin
         result.AddParamBool('result', false);
+        if (ver <> '') then
+          result.addParamStr('version', ver);
         result.AddParamStr('message', 'The system/code "'+coding.systemUri+'"/"'+coding.code+'" is not in the value set '+FValueSet.name);
         if (message <> '') then
           result.AddParamStr('message', message);
@@ -834,7 +841,7 @@ var
   list : TCodeDisplays;
   v : boolean;
   ok, first : boolean;
-  cc, codelist, message, mt: String;
+  cc, codelist, message, mt, ver: String;
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
@@ -864,7 +871,7 @@ begin
         list.Clear;
         cc := ',{'+c.systemUri+'}'+c.code;
         codelist := codelist + cc;
-        v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, cause);
+        v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause);
         if not v and (message <> '') then
           msg(message);
         ok := ok or v;
@@ -878,6 +885,8 @@ begin
             result.AddParamStr('display', list.chooseDisplay(FLanguages, FParams.displayLanguage));
           result.addParamStr('system', c.systemUri);
           result.addParamStr('code', c.code);
+          if (ver <> '') then
+            result.addParamStr('version', ver);
         end
         else
         begin
@@ -909,7 +918,8 @@ begin
                begin
                  listDisplays(list, prov, ctxt);
                  if (c.display <> '') and (not list.has(c.display)) then
-                   msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.present+']')
+                   msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.present+']');
+                 result.addParamStr('version', prov.version(nil));
                end;
              finally
                prov.Close(ctxt);
@@ -946,14 +956,14 @@ end;
 function TValueSetChecker.check(system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
   list : TCodeDisplays;
-  message : String;
+  message, ver : String;
   cause : TFhirIssueType;
 begin
   result := FFactory.makeParameters;
   try
     list := TCodeDisplays.Create;
     try
-      if check(system, version, code, true, implySystem, list, message, cause) then
+      if check(system, version, code, true, implySystem, list, message, ver, cause) then
       begin
         result.AddParamBool('result', true);
         if list.Count > 0 then
