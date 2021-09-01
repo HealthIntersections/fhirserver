@@ -129,7 +129,7 @@ type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
+    Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -1114,7 +1114,9 @@ var
   Context: TOperationContext;
   Session: TFHIRSession;
   cache : boolean;
+  start : UInt64;
 Begin
+  start := GetTickCount64;
   result := '??';
   noErrCode := false;
   mode := opmRestful;
@@ -1321,7 +1323,7 @@ Begin
                     end;
                     cacheResponse(response, oResponse.CacheControl);
                     self.Context.Storage.RecordExchange(oRequest, oResponse, nil);
-                    ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
+                    ProcessOutput(start, oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
                     // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                     // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                     if oResponse.versionId <> '' then
@@ -1886,7 +1888,7 @@ begin
   end;
 end;
 
-Procedure TStorageWebEndpoint.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
+Procedure TStorageWebEndpoint.ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
   relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
 var
   oComp: TFHIRComposer;
@@ -2041,7 +2043,7 @@ begin
       ownsStream := false;
     end;
     if (cache) then
-      Common.Cache.recordResponse(code, request, response, summary);
+      Common.Cache.recordResponse(code, request, response, GetTickCount64 - start, summary);
   finally
     if ownsStream then
       stream.Free;

@@ -58,10 +58,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 684
-      ActivePage = tbThreads
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 1
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -562,8 +562,8 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 19
                   Top = 92
-                  Width = 114
-                  Caption = 'HTTP Caching On'
+                  Width = 295
+                  Caption = 'HTTP Caching On for requests that take longer than '
                   OnChange = chkCachingChange
                   TabOrder = 3
                 end
@@ -596,6 +596,23 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 4
                   Text = 'edtWebMaxConnections'
                   TextHint = '15'
+                end
+                object edtCacheTime: TEdit
+                  Left = 416
+                  Height = 23
+                  Top = 90
+                  Width = 46
+                  OnChange = edtCacheTimeChange
+                  TabOrder = 5
+                  Text = 'edtCacheTime'
+                end
+                object Label8: TLabel
+                  Left = 470
+                  Height = 15
+                  Top = 94
+                  Width = 16
+                  Caption = 'ms'
+                  ParentColor = False
                 end
               end
               object GroupBox2: TGroupBox

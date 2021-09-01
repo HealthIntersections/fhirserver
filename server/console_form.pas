@@ -142,6 +142,7 @@ type
     cbxNDCDriver: TComboBox;
     chkCaching: TCheckBox;
     chkWebMode: TCheckBox;
+    edtCacheTime: TEdit;
     edtCACert: TEdit;
     edtConfigFile: TEdit;
     edtBase: TEdit;
@@ -231,6 +232,7 @@ type
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
+    Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -431,6 +433,7 @@ type
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
     procedure chkCachingChange(Sender: TObject);
+    procedure edtCacheTimeChange(Sender: TObject);
     procedure chkWebModeChange(Sender: TObject);
     procedure edtAdminEmailChange(Sender: TObject);
     procedure edtAdminOrganizationChange(Sender: TObject);
@@ -937,6 +940,8 @@ begin
     edtWebPort.Enabled := true;
     edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
     edtWebMaxConnections.Enabled := true;
+    edtCacheTime.Text := IntToStr(FConfig.web['http-cache-time'].readAsInt(0));
+    edtCacheTime.Enabled := true;
     chkWebMode.Checked := FConfig.web['plain-mode'].value = 'redirect';
     chkWebMode.Enabled := true;
     chkCaching.Checked := FConfig.web['caching'].value = 'true';
@@ -997,6 +1002,8 @@ begin
     edtWebPort.Enabled := false;
     edtWebMaxConnections.Text := '';
     edtWebMaxConnections.Enabled := false;
+    edtCacheTime.Text := '';
+    edtCacheTime.Enabled := false;
     chkWebMode.checked := false;
     chkWebMode.Enabled := false;
     chkCaching.checked := false;
@@ -1101,6 +1108,8 @@ begin
     lblDoco.caption := 'The post to use for plain (unsecured) web services'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
+  else if ActiveControl = edtWebMaxConnections then
+    lblDoco.caption := 'Cache requests that take longer than this to process'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
   else if ActiveControl = edtGoogleId then
@@ -1267,6 +1276,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['http-max-conn'].value := edtWebMaxConnections.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtCacheTimeChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http-cache-time'].value := edtCacheTime.Text;
     FConfig.Save;
   end;
 end;

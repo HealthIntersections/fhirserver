@@ -29,14 +29,15 @@ type
     FCache : TFslMap<TCachedHTTPResponse>;
     FMaxSize: Cardinal;
     FCaching : boolean;
+    FMinTat : Cardinal;
     function generateKey(ep : String; req : TIdHTTPRequestInfo) : String;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; override;
+    constructor Create(minTat : cardinal);
     destructor Destroy; override;
     function respond(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; var summary : String) : boolean;
-    procedure recordResponse(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; summary : String);
+    procedure recordResponse(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; tat : UInt64; summary : String);
     procedure Clear;
     procedure Trim;
     property Caching : boolean read FCaching write FCaching;
@@ -55,13 +56,14 @@ end;
 
 { THTTPCacheManager }
 
-constructor THTTPCacheManager.Create;
+constructor THTTPCacheManager.Create(minTat : cardinal);
 begin
   inherited Create;
   FLock := TFslLock.Create('HTTP.Cache');
   FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
   FSize := 0;
   FMaxSize := 1024 * 1024 * 1024; // 1 GB
+  FMinTat := minTat;
 end;
 
 destructor THTTPCacheManager.Destroy;
@@ -84,13 +86,13 @@ begin
   end;
 end;
 
-procedure THTTPCacheManager.recordResponse(ep : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; summary : String);
+procedure THTTPCacheManager.recordResponse(ep : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; tat : UInt64; summary : String);
 var
   key : String;
   pos : integer;
   co : TCachedHTTPResponse;
 begin
-  if Caching then
+  if Caching and (tat >= FMinTat) then
   begin
     pos := response.ContentStream.Position;
     key := generateKey(ep, request);

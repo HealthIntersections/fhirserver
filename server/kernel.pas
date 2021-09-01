@@ -375,7 +375,7 @@ var
   ep : TFHIRServerEndPoint;
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
-  FWebServer.Common.cache := THTTPCacheManager.Create;
+  FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
 
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
