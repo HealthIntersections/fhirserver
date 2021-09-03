@@ -74,8 +74,7 @@ Type
 
     function workerGetDefinition(sender : TObject; url : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
-    function workerGetExpansion(sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW;
-    procedure workerCanExpand(sender : TObject; url : String; params : TFHIRExpansionParams);
+    function workerGetExpansion(sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -91,10 +90,10 @@ Type
 
     // given a value set, expand it
     function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
-    function expandVS(uri : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer) : TFhirValueSetW; overload;
+    function expandVS(uri : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFhirValueSetW; overload;
+    function expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
@@ -332,7 +331,7 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, workerGetExpansion, workerCanExpand);
+    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, workerGetExpansion);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
@@ -387,16 +386,16 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer): TFhirValueSetW;
+function TTerminologyServer.expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    vs := getValueSetByUrl(uri);
+    vs := getValueSetByUrl(uri, txResources);
     try
-      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset.MaxValue, nil);
+      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset.MaxValue, txResources);
     finally
       vs.Free;
     end;
@@ -405,15 +404,15 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer): TFhirValueSetW;
+function TTerminologyServer.expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
 begin
-  vs := getValueSetByUrl(uri);
+  vs := getValueSetByUrl(uri, txResources);
   try
     if vs = nil then
       raise ETerminologyError.create('Unable to find value set "'+uri+'"');
-    result := expandVS(vs, uri, profile, textFilter, limit, count, offset, nil);
+    result := expandVS(vs, uri, profile, textFilter, limit, count, offset, txResources);
   finally
     vs.Free;
   end;
@@ -550,28 +549,14 @@ begin
   end;
 end;
 
-
-procedure TTerminologyServer.workerCanExpand(sender: TObject; url: String; params: TFHIRExpansionParams);
-var
-  vs : TFHIRValueSetW;
-begin
-  vs := getValueSetByUrl(url);
-  try
-    if vs = nil then
-      raise ETerminologyError.create('Unable to find value set "'+url+'"');
-  finally
-    vs.Free;
-  end;
-end;
-
 function TTerminologyServer.workerGetDefinition(sender: TObject; url: String): TFHIRValueSetW;
 begin
   result := getValueSetByUrl(url);
 end;
 
-function TTerminologyServer.workerGetExpansion(sender: TObject; url, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; limit: integer): TFHIRValueSetW;
+function TTerminologyServer.workerGetExpansion(sender: TObject; url, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer): TFHIRValueSetW;
 begin
-  result := expandVS(url, params, filter, dependencies, limit, 0, 0);
+  result := expandVS(url, params, filter, dependencies, limit, 0, 0, additionalResources);
 end;
 
 function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;

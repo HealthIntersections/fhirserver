@@ -113,6 +113,7 @@ begin
   inherited;
   FCodes := TFslList<TCountryCodeConcept>.create;
   FMap := TFslMap<TCountryCodeConcept>.create('tx.countrycode');
+  FMap.defaultValue := nil;
   Load;
 end;
 

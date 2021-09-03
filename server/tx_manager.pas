@@ -199,12 +199,12 @@ Type
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider; overload;
     Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRExpansionParams) : TCodeSystemProvider; overload;
-    function getValueSetByUrl(url : String) : TFHIRValueSetW;
+    function getValueSetByUrl(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
     function getValueSetById(id : String) : TFHIRValueSetW;
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
-    function getCodeSystem(url : String) : TFHIRCodeSystemW;
-    function hasCodesystemUri(url : String) : Boolean;
+    function getCodeSystem(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRCodeSystemW;
+    function hasCodesystemUri(url : String; txResources : TFslMetadataResourceList = nil) : Boolean;
     function getConceptMapById(id : String) : TLoadedConceptMap;
     function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
 
@@ -1272,8 +1272,21 @@ begin
   FCommonTerminologies.getCacheInfo(ci);
 end;
 
-function TTerminologyServerStore.getCodeSystem(url: String): TFhirCodeSystemW;
+function TTerminologyServerStore.getCodeSystem(url: String; txResources : TFslMetadataResourceList = nil): TFhirCodeSystemW;
+var
+  r : TFHIRMetadataResourceW;
 begin
+ if txResources <> nil then
+  begin
+    for r in txResources do
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        exit(r.link as TFhirCodeSystemW);
+      end;
+  end;
+
   FLock.Lock('getValueSetByUrl');
   try
     if FCodeSystems.has(url) then
@@ -1514,10 +1527,22 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getValueSetByUrl(url : String) : TFHIRValueSetW;
+function TTerminologyServerStore.getValueSetByUrl(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
 var
   p :  TArray<String>;
+  r : TFHIRMetadataResourceW;
 begin
+ if txResources <> nil then
+  begin
+    for r in txResources do
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFHIRValueSetW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
+        exit(r.link as TFHIRValueSetW);
+      end;
+  end;
+
   FLock.Lock('getValueSetByUrl');
   try
     if url.StartsWith('ValueSet/') then
@@ -1557,8 +1582,21 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.hasCodesystemUri(url: String): Boolean;
+function TTerminologyServerStore.hasCodesystemUri(url: String; txResources : TFslMetadataResourceList = nil): Boolean;
+var
+  r : TFHIRMetadataResourceW;
 begin
+ if txResources <> nil then
+  begin
+    for r in txResources do
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      begin
+        if not (r is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        exit(true);
+      end;
+  end;
+
   FLock.Lock('getValueSetByUrl');
   try
     result := FCodeSystems.has(url);

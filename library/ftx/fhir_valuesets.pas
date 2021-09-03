@@ -145,8 +145,7 @@ Type
 
   TGetValueSetEvent = function (sender : TObject; url : String) : TFHIRValueSetW of object;
   TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider of object;
-  TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW of object;
-  TCheckCanExpandEvent = procedure (sender : TObject; url : String; params : TFHIRExpansionParams) of object;
+  TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW of object;
 
   TValueSetWorker = class (TFslObject)
   private
@@ -204,7 +203,6 @@ Type
     FCount : integer;
     FOffset : integer;
     FOnGetExpansion : TGetExpansionEvent;
-    FOnCheckCanExpand : TCheckCanExpandEvent;
     FLang : String;
 
     function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
@@ -229,7 +227,7 @@ Type
     procedure checkCanExpandValueset(uri: String);
     function isValidLang(lang: String): boolean;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion : TGetExpansionEvent; checkExpand : TCheckCanExpandEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion : TGetExpansionEvent); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -1448,11 +1446,10 @@ begin
   end;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion: TGetExpansionEvent; checkExpand : TCheckCanExpandEvent);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion: TGetExpansionEvent);
 begin
   inherited create(factory, getVS, getCS, txResources, languages);
   FOnGetExpansion := getExpansion;
-  FOnCheckCanExpand := checkExpand;
 end;
 
 procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>);
@@ -1590,8 +1587,16 @@ begin
 end;
 
 procedure TFHIRValueSetExpander.checkCanExpandValueset(uri: String);
+var
+  vs : TFHIRValueSetW;
 begin
-  FOnCheckCanExpand(self, uri, FParams);
+  vs := findValueSet(uri);
+  try
+    if vs = nil then
+      raise ETerminologyError.create('Unable to find value set "'+uri+'"');
+  finally
+    vs.Free;
+  end;
 end;
 
 function TFHIRValueSetExpander.expandValueSet(uri: String; filter : String; dependencies : TStringList;  var notClosed : boolean) : TFHIRValueSetW;
@@ -1601,7 +1606,7 @@ var
 begin
   dep := TStringList.Create;
   try
-    result := FOnGetExpansion(self, uri, filter, FParams, dep, -1);
+    result := FOnGetExpansion(self, uri, filter, FParams, dep, FAdditionalResources , -1);
     try
       dependencies.AddStrings(dep);
       if (result = nil) then

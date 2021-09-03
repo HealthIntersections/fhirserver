@@ -636,6 +636,8 @@
         <DCCReference Include="web_cache.pas"/>
         <DCCReference Include="..\library\fsl\fsl_diff.pas"/>
         <DCCReference Include="..\library\fhir\fhir_features.pas"/>
+        <DCCReference Include="tx_icd10.pas"/>
+        <DCCReference Include="tx_icd11.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

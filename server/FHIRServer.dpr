@@ -513,7 +513,9 @@ uses
   endpoint in 'endpoint.pas',
   web_cache in 'web_cache.pas',
   fsl_diff in '..\library\fsl\fsl_diff.pas',
-  fhir_features in '..\library\fhir\fhir_features.pas';
+  fhir_features in '..\library\fhir\fhir_features.pas',
+  tx_icd10 in 'tx_icd10.pas',
+  tx_icd11 in 'tx_icd11.pas';
 
 begin
   ExecuteFhirServer;
