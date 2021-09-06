@@ -648,6 +648,7 @@ type
     procedure AddParameter(name: String; value: TFhirType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
+    procedure AddParameter(name: String; value: integer); overload;
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
     procedure AddParameter(p :  TFhirParametersParameter); overload;
@@ -3417,7 +3418,7 @@ begin
   url := ref.reference;
   if url = '' then
     result := ''
-  else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
+  else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') or url.StartsWith('resource:') then
     result := url
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
     raise EFHIRException.create('The resource base of "'+base+'" is not understood')
@@ -3676,6 +3677,15 @@ end;
 procedure TFhirParametersParameterHelper.AddParameter(p: TFhirParametersParameter);
 begin
   self.partList.Add(p);
+end;
+
+procedure TFhirParametersParameterHelper.AddParameter(name: String; value: integer);
+var
+  p : TFhirParametersParameter;
+begin
+  p := self.partList.Append;
+  p.name := name;
+  p.value := TFhirInteger.Create(value);
 end;
 
 { TFHIRCodeableConceptHelper }
