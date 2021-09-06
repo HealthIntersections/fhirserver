@@ -68,6 +68,7 @@ type
     procedure TestPacking;
     procedure TestUnpacking;
     procedure TestCert;
+    procedure TestEc256;
   End;
 
   TOpenSSLTests = Class (TFslTestCase)
@@ -165,6 +166,26 @@ begin
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     assertTrue(true);
+  finally
+    jwk.Free;
+  end;
+end;
+
+procedure TJWTTests.TestEc256;
+var
+  jwk : TJWK;
+  s : String;
+  jwt : TJWT;
+begin
+  jwk := TJWK.create(TJSONParser.Parse('{"kty":"EC","crv":"P-256","x":"f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU","y":"x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0","d":"jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI"}'));
+  try
+    // this test is from the spec
+    s := TJWTUtils.pack(
+      '{"alg":"ES256"}',
+      '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
+      jwt_es256, jwk);
+    assertTrue(s = 'eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q',
+      'packing failed. expected '+#13#10+'eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q, but got '+s);
   finally
     jwk.Free;
   end;

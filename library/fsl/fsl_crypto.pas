@@ -78,7 +78,8 @@ uses
   SysUtils, Classes,
   IdGlobal, IdCTypes, IdHMAC, IdHash, IdHashSHA, IdHMACSHA1,
   IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_hmac,
-  IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_x509, IdOpenSSLHeaders_evp, IdOpenSSLX509,
+  IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_x509, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
+  IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml,
   fsl_openssl, fsl_fetcher;
 
@@ -134,6 +135,8 @@ Type
     constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
     constructor Create(pkey : PDSA; loadPrivate : Boolean); overload;
     destructor Destroy; override;
+
+    function link : TJWK; overload;
     Property obj : TJsonObject read FObj write setObj;
 
     property keyType : String read GetKeyType write SetKeyType;
@@ -168,6 +171,9 @@ Type
     procedure clearPrivateKey;
 
     function Load(privkey : boolean) : PRSA;
+    function LoadEC(privkey : boolean) : PEC_KEY;
+
+    class function loadFromFile(filename : String) : TJWK;
   end;
 
   TJWKList = class (TFslObjectList)
@@ -186,7 +192,7 @@ Type
     property Key[index : integer] : TJWK read GetKey write Setkey; default;
   end;
 
-  TJWTAlgorithm = (jwt_none, jwt_hmac_sha256, jwt_hmac_rsa256);
+  TJWTAlgorithm = (jwt_none, jwt_hmac_sha256, jwt_hmac_rsa256, jwt_es256);
 
 
 {
@@ -234,14 +240,17 @@ Type
     class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
     class procedure Verify_Hmac_SHA256(input : TBytes; sig : TBytes; key: TJWK);
     class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
+    class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
     class procedure Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
+    class function checks(method: TJWTAlgorithm; key : TJWK): String;
+
   public
     class function Sign_Hmac_RSA256(input : TBytes; pemfile, pempassword : String) : TBytes; overload;
 
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
-    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK) : String; overload;
-    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String) : String; overload;
+    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
+    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String; zip : String = '') : String; overload;
 
     // special use - use an existing PEM to sign the JWT
     class function rsa_pack(jwt : TJWT; method : TJWTAlgorithm; pem_file, pem_password : String) : String; overload;
@@ -249,6 +258,7 @@ Type
 
     // for testing only - need to control whitespace in order to reproduce signatures
     class function pack(header, payload : String; method : TJWTAlgorithm; key : TJWK) : String; overload;
+    class function pack(header : String; payload : TBytes; method : TJWTAlgorithm; key : TJWK) : String; overload;
 
     // read a JWT. if verify is true, at least one key must be provided.
     // the code will pick between multiple keys based on the key id.
@@ -421,9 +431,23 @@ begin
 end;
 
 procedure check(test: boolean; failmsg: string);
+var
+  e: integer;
+  err : Array [0..250] of ansichar;
+  m : String;
 begin
   if not test then
-    raise ELibraryException.create(failmsg);
+  begin
+    m := '';
+    e := ERR_get_error;
+    while e <> 0 do
+    begin
+      ERR_error_string(e, @err);
+      m := m + inttohex(e, 8)+' ('+String(err)+')'+#13#10;
+      e := ERR_get_error;
+    end;
+    raise ELibraryException.create(failmsg+': '+m);
+  end;
 end;
 
 { THMACUtils }
@@ -622,6 +646,11 @@ begin
   result := JWTDeBase64URL(FObj['y']);
 end;
 
+function TJWK.link: TJWK;
+begin
+  result := TJWK(inherited link);
+end;
+
 procedure TJWK.SetExponent(const Value: TBytes);
 begin
   FObj['e'] := String(BytesAsAnsiString(JWTBase64URL(Value)));
@@ -713,6 +742,52 @@ begin
   else
     pd := nil;
   RSA_set0_key(result, pn, pe, pd);
+end;
+
+function bn_decode_bin(const b : TBytes) : PBIGNUM;
+begin
+  result := BN_bin2bn(@b[0], length(b), nil);
+end;
+
+function TJWK.LoadEC(privkey: boolean): PEC_KEY;
+var
+  pd, px, py : PBIGNUM;
+  pub : PEC_POINT;
+  grp : PEC_GROUP;
+begin
+  check(keyType = 'EC', 'EC Key expected in JWK, but found '+KeyType);
+  check(hasX, 'EC Key needs an X');
+  check(hasY, 'EC Key needs an Y');
+
+  px := bn_decode_bin(x);
+  py := bn_decode_bin(y);
+  pd := bn_decode_bin(privateKey);
+
+  result := EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+  check(result <> nil, 'EC_KEY_new_by_curve_name = nil');
+  grp := EC_KEY_get0_group(result);
+  pub := EC_POINT_new(grp);
+  check(EC_POINT_set_affine_coordinates_GFp(grp, pub, px, py, nil) = 1, 'EC_POINT_set_affine_coordinates_GFp failed');
+  EC_KEY_set_public_key(result, pub);
+
+  if (privkey) then
+  begin
+    check(hasPrivateKey, 'EC Key needs an private key');
+    EC_KEY_set_private_key(result, pd)
+  end;
+end;
+
+
+class function TJWK.loadFromFile(filename: String): TJWK;
+var
+  json : TJsonObject;
+begin
+  json := TJSONParser.ParseFile(filename);
+  try
+    result := TJWK.Create(json.link);
+  finally
+    json.Free;
+  end;
 end;
 
 constructor TJWK.create(pkey: PDSA; loadPrivate : Boolean);
@@ -836,20 +911,25 @@ end;
 
 { TJWTUtils }
 
-class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK): String;
+class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; zip : String): String;
 var
   input, sig : TBytes;
 begin
+  checks(method, key);
+
   jwt.header['typ'] := 'JWT';
   case method of
     jwt_none : jwt.header['alg'] := 'none';
     jwt_hmac_sha256 : jwt.header['alg'] := 'HS256';
     jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
+    jwt_es256 : jwt.header['alg'] := 'ES256';
   else
     raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
   if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
     jwt.header['kid'] := key.id;
+  if zip <> '' then
+    jwt.header['zip'] := zip;
 
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
@@ -858,24 +938,30 @@ begin
     jwt_none: SetLength(sig, 0);
     jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
     jwt_hmac_rsa256: sig := Sign_Hmac_RSA256(input, key);
+    jwt_es256: sig := Sign_ES256(input, key);
   end;
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String): String;
+class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String; zip : String): String;
 var
   input, sig : TBytes;
 begin
+  checks(method, key);
+
   jwt.header['typ'] := 'JWT';
   case method of
     jwt_none : jwt.header['alg'] := 'none';
     jwt_hmac_sha256 : jwt.header['alg'] := 'HS256';
     jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
+    jwt_es256 : jwt.header['alg'] := 'ES256';
   else
     raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
   if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
     jwt.header['kid'] := key.id;
+  if zip <> '' then
+    jwt.header['zip'] := zip;
 
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
@@ -884,6 +970,7 @@ begin
     jwt_none: SetLength(sig, 0);
     jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
     jwt_hmac_rsa256: sig := Sign_Hmac_RSA256(input, pemfile, pempassword);
+    jwt_es256: sig := Sign_ES256(input, key);
   end;
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
@@ -1012,9 +1099,7 @@ begin
     raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 end;
 
-class function TJWTUtils.pack(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
-var
-  input, sig : TBytes;
+class function TJWTUtils.checks(method: TJWTAlgorithm; key : TJWK): String;
 begin
   case method of
     jwt_hmac_sha256 :
@@ -1027,15 +1112,42 @@ begin
       check(key <> nil, 'A Key must be provided for HMAC/SHA-256');
       check(key.keyType = 'RSA', 'An RSA Key must be provided for HMAC/SHA-256');
       end;
+    jwt_es256 :
+      begin
+      check(key <> nil, 'A Key must be provided for EC-256');
+      check(key.keyType = 'EC', 'An EC Key must be provided for EC-256');
+      end;
   else
     raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
+end;
 
+class function TJWTUtils.pack(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
+var
+  input, sig : TBytes;
+begin
+  checks(method, key);
   input := BytesAdd(JWTBase64URL(header),  Byte(Ord('.')));
   input := BytesAdd(input, JWTBase64URL(payload));
   case method of
     jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
     jwt_hmac_rsa256: sig := Sign_Hmac_RSA256(input, key);
+    jwt_es256: sig := Sign_ES256(input, key);
+  end;
+  result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
+end;
+
+class function TJWTUtils.pack(header : String; payload : TBytes; method: TJWTAlgorithm; key : TJWK): String;
+var
+  input, sig : TBytes;
+begin
+  checks(method, key);
+  input := BytesAdd(JWTBase64URL(header),  Byte(Ord('.')));
+  input := BytesAdd(input, JWTBase64URL(payload));
+  case method of
+    jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
+    jwt_hmac_rsa256: sig := Sign_Hmac_RSA256(input, key);
+    jwt_es256: sig := Sign_ES256(input, key);
   end;
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
@@ -1098,6 +1210,52 @@ begin
   finally
     h.Free;
   end;
+end;
+
+class function TJWTUtils.Sign_ES256(input: TBytes; key: TJWK): TBytes;
+var
+  ctx : PEVP_MD_CTX;
+  keysize : integer;
+  len : Cardinal;
+  pkey: PEVP_PKEY;
+  rkey: PEC_KEY;
+  keys : TJWKList;
+begin
+  check(key <> nil, 'A key must be provided for ES256');
+
+  // 1. Load the RSA private Key from FKey
+  rkey := key.LoadEC(true);
+  try
+    pkey := EVP_PKEY_new;
+    try
+      check(EVP_PKEY_set1_EC_KEY(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+
+      // 2. do the signing
+      keysize := EVP_PKEY_size(pkey);
+      SetLength(result, keysize);
+      ctx := EVP_MD_CTX_new;
+      try
+        check(EVP_DigestSignInit(ctx, nil, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
+        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
+        check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_SignFinal failed');
+        SetLength(result, len);
+      finally
+        EVP_MD_CTX_free(ctx);
+      end;
+    finally
+      EVP_PKEY_free(pKey);
+    end;
+  finally
+    EC_KEY_free(rkey);
+  end;
+
+//  keys := TJWKList.create;
+//  try
+//    keys.Add(key.Link);
+//    Verify_Hmac_RSA256(input, result, nil, keys);
+//  finally
+//    keys.Free;
+//  end;
 end;
 
 class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; pemfile, pempassword: String): TBytes;
