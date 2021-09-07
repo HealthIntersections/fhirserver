@@ -515,7 +515,8 @@ uses
   fsl_diff in '..\library\fsl\fsl_diff.pas',
   fhir_features in '..\library\fhir\fhir_features.pas',
   tx_icd10 in 'tx_icd10.pas',
-  tx_icd11 in 'tx_icd11.pas';
+  tx_icd11 in 'tx_icd11.pas',
+  healthcard_generator in 'healthcard_generator.pas';
 
 begin
   ExecuteFhirServer;
