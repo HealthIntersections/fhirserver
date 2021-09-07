@@ -188,6 +188,7 @@ type
   TFHIROperationEngine = class (TFslObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
+    FOnCreateBuilder: TCreateBundleBuilderEvent;
     FLang : THTTPLanguages;
     function GetClientCacheManager: TClientCacheManager;
   protected
@@ -225,12 +226,15 @@ type
     constructor Create(Storage : TFHIRStorageService; ServerContext : TFslObject; const lang : THTTPLanguages);
     destructor Destroy; override;
 
+    function link : TFHIROperationEngine; overload;
+
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
+    property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
     property lang : THTTPLanguages read FLang write FLang;
     property Storage : TFHIRStorageService read FStorage;
 
@@ -247,6 +251,7 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
+    function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; virtual;
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     property Operations : TFslList<TFhirOperation> read FOperations;
@@ -606,6 +611,11 @@ begin
   FStorage.Free;
   FOperations.Free;
   inherited;
+end;
+
+function TFHIROperationEngine.DoSearch(request: TFHIRRequest; requestType, params: String): TFHIRBundleW;
+begin
+  raise EFHIRException.create('This server does not implement the "DoSearch" function');
 end;
 
 procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -1438,6 +1448,11 @@ end;
 function TFHIROperationEngine.getResourcesByParam(aType: string; name, value: string; var needSecure: boolean): TFslList<TFHIRResourceV>;
 begin
   raise EFHIRException.create('This server does not implement the "getResourcesByParam" function');
+end;
+
+function TFHIROperationEngine.link: TFHIROperationEngine;
+begin
+  result := TFHIROperationEngine(inherited link);
 end;
 
 function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;

@@ -512,8 +512,10 @@ begin
       obj['token_endpoint'] := BasePath+'/token';
       obj['register_endpoint'] := BasePath+'/register';
       obj['jwks_uri'] :=  BasePath+'/auth_key';
-      obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
+      if FAdminEmail <> '' then
+        obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
       obj.arr['scopes_supported'] := TJsonArray.create.add('read').add('write').add('user');
+      obj.arr['capabilities'] := TJsonArray.create.add('health-cards').add('launch-standalone').add('context-standalone-patient').add('client-confidential-symmetric');
 
       obj['subject_types_supported'] := 'public';
       obj.arr['id_token_signing_alg_values_supported'] := TJsonArray.create.add('RS256');

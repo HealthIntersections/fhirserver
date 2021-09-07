@@ -1,0 +1,433 @@
+unit healthcard_generator;
+
+interface
+
+uses
+  SysUtils, Classes, DateUtils,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
+  fhir_objects, fhir_common,
+  fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities,
+  session, storage;
+
+type
+  TCredentialType = (ctHealthCard, ctCovidCard, ctImmunizationCard, ctLabCard);
+  TCredentialTypeSet = set of TCredentialType;
+
+  THealthcareCard = class (TFslObject)
+  private
+    FLinks: TFslStringDictionary;
+    FJws: String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : THealthcareCard; overload;
+
+    property jws : String read FJws write FJws;
+    property links : TFslStringDictionary read FLinks;
+  end;
+
+  TCardMaker = class (TFslObject)
+  private
+    FManager: TFHIROperationEngine;
+    FRequest : TFHIRRequest;
+    FCovid: boolean;
+    FPatientId: String;
+    FLinks: TFslStringDictionary;
+    FIssues : TStringList;
+    procedure linkResource(index : integer; ref : String);
+  public
+    constructor Create(manager: TFHIROperationEngine; request : TFHIRRequest; issues : TStringList);
+    destructor Destroy; override;
+
+    property links : TFslStringDictionary read FLinks;
+    property covid : boolean read FCovid write FCovid;
+    property patientId : String read FPatientId write FPatientId;
+
+    function findPatient : TFHIRPatient;
+    function makePatient(patient : TFHIRPatient) : TFHIRPatient;
+  end;
+
+  TVciImmunizationCardMaker = class (TCardMaker)
+  private
+    function isIncludedCoding(c : TFHIRCoding) : boolean;
+  public
+    function findImmunizations : TFslList<TFHIRImmunization>;
+    function isRelevantImmunization(imm : TFhirImmunization) : boolean;
+
+    function makeImmunization(imm : TFhirImmunization) : TFhirImmunization;
+
+    function makeBundle : TFHIRBundle;
+  end;
+
+  THealthCardGenerator = class (TFslObject)
+  private
+    FIssuerUrl : String;
+    FJwk : TJWK;
+
+    FManager : TFHIROperationEngine;
+    FRequest : TFHIRRequest;
+    FPatientId: String;
+    FParams: TFhirParameters;
+    FSince : TFslDateTime;
+
+//    FHealthCardJWS: string;
+    FCards: TFslList<THealthcareCard>;
+    FIssues : TStringList;
+    procedure SetParams(const Value: TFhirParameters);
+
+    function buildPayload(bundle : TFHIRBundle; types : TCredentialTypeSet) : String;
+    function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
+
+    procedure makeImmunizationCard(covid : boolean);
+    function processParams : TCredentialTypeSet;
+  public
+    constructor Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
+    destructor Destroy; override;
+
+    property patientId : String read FPatientId write FPatientId;
+    property params : TFhirParameters read FParams write SetParams;
+
+    procedure process;
+
+    property cards : TFslList<THealthcareCard> read FCards;
+    property issues : TStringList read FIssues;
+  end;
+
+implementation
+
+{ THealthCardGenerator }
+
+function THealthCardGenerator.buildPayload(bundle: TFHIRBundle; types : TCredentialTypeSet): String;
+var
+  json : TFHIRJsonComposer;
+begin
+  result := '{"iss":"'+FIssuerUrl+'",'+
+     '"nbf":'+IntToStr(SecondsBetween(now, EncodeDate(1970, 1, 1)))+','+
+     '"vc":{'+
+      '"type":["https://smarthealth.cards#health-card"';
+  if ctCovidCard in types then
+    result := result + ',"https://smarthealth.cards#covid19"';
+  if ctImmunizationCard in types then
+    result := result + ',"https://smarthealth.cards#immunization"';
+  if ctCovidCard in types then
+    result := result + ',"https://smarthealth.cards#laboratory"';
+  result := result + '],"credentialSubject":{'+
+     '"fhirVersion":"4.0.1",'+
+     '"fhirBundle":';
+  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, THTTPLanguages.Create('en'));
+  try
+    result := result + json.Compose(bundle);
+  finally
+    json.Free;
+  end;
+  result := result + '}}}';
+end;
+
+constructor THealthCardGenerator.Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
+begin
+  inherited Create;
+  FManager := manager;
+  FCards := TFslList<THealthcareCard>.create;
+  FIssues := TStringList.create;
+  FJwk := key.link;
+  FRequest := request;
+end;
+
+destructor THealthCardGenerator.Destroy;
+begin
+  FRequest.Free;
+  FJwk.Free;
+  FIssues.free;
+  FCards.free;
+  FParams.Free;
+  FManager.free;
+  inherited;
+end;
+
+procedure THealthCardGenerator.makeImmunizationCard(covid : boolean);
+var
+  engine : TVciImmunizationCardMaker;
+  bnd : TFhirBundle;
+  card : THealthcareCard;
+begin
+  engine := TVciImmunizationCardMaker.Create(FManager.link, FRequest.link, FIssues);
+  try
+    engine.covid := covid;
+    engine.patientId := FPatientId;
+    bnd := engine.makeBundle;
+    try
+      if bnd <> nil then
+      begin
+        if covid then
+          card := signCard(bnd, [ctCovidCard, ctImmunizationCard])
+        else
+          card := signCard(bnd, [ctCovidCard]);
+        card.links.assign(engine.links);
+      end;
+    finally
+      bnd.Free;
+    end;
+  finally
+    engine.Free;
+  end;
+end;
+
+function THealthCardGenerator.processParams : TCredentialTypeSet;
+var
+  p : TFhirParametersParameter;
+begin
+  result := [];
+  for p in params.parameterList do
+  begin
+    if p.name = 'credentialType' then
+    begin
+      if p.value.primitiveValue = 'https://smarthealth.cards#health-card' then
+        result := result + [ctHealthCard]
+      else if p.value.primitiveValue = 'https://smarthealth.cards#covid19' then
+        result := result + [ctCovidCard]
+      else if p.value.primitiveValue = 'https://smarthealth.cards#immunization' then
+        result := result + [ctImmunizationCard]
+      else if p.value.primitiveValue = 'https://smarthealth.cards#laboratory' then
+        result := result + [ctLabCard]
+      else
+        raise EFslException.Create('Unknown credentialType value "'+p.value.primitiveValue+'"');
+    end
+    else if p.name = '_since' then
+    begin
+      if not TFslDateTime.isValidXmlDate(p.value.primitiveValue) then
+        raise EFslException.Create('Unknown _since value "'+p.value.primitiveValue+'"');
+      FSince := TFslDateTime.fromXML(p.value.primitiveValue)
+    end
+    else
+      raise EFslException.Create('Unknown parameter "'+p.name+'"');
+  end;
+
+  if result = [] then
+    raise EFslException.Create('no credentialType parameter found');
+end;
+
+procedure THealthCardGenerator.process;
+var
+  cts : TCredentialTypeSet;
+  covid : boolean;
+begin
+  if PatientId = '' then raise EFslException.Create('No Patient ID found');
+  if params = nil then raise EFslException.Create('No Parameters found');
+  cts := processParams;
+  covid := ctCovidCard in cts;
+  if (ctHealthCard in cts) or not (ctLabCard in cts) then
+    makeImmunizationCard(covid);
+end;
+
+procedure THealthCardGenerator.SetParams(const Value: TFhirParameters);
+begin
+  FParams.Free;
+  FParams := Value;
+end;
+
+function THealthCardGenerator.signCard(bundle: TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
+var
+  payload : String;
+  bytes : TBytes;
+  jwt : TJWT;
+begin
+  payload := buildPayload(bundle, types);
+  bytes := ZCompressBytes(TEncoding.UTF8.GetBytes(payload));
+
+  result := THealthcareCard.Create;
+  try
+    result.jws := TJWTUtils.pack('{"alg":"ES256","zip":"DEF","kid":"'+FJwk.id+'"}', bytes, jwt_es256, FJwk);
+    FCards.Add(result.link);
+  finally
+    result.Free;
+  end;
+end;
+
+{ THealthcareCard }
+
+constructor THealthcareCard.Create;
+begin
+  inherited;
+  FLinks := TFslStringDictionary.Create;
+end;
+
+destructor THealthcareCard.Destroy;
+begin
+  FLinks.Free;
+  inherited;
+end;
+
+
+function THealthcareCard.link: THealthcareCard;
+begin
+  result := THealthcareCard(inherited Link);
+end;
+
+{ TCardMaker }
+
+constructor TCardMaker.Create(manager: TFHIROperationEngine; request : TFHIRRequest; issues : TStringList);
+begin
+  inherited Create;
+  FManager := manager.link;
+  FRequest := request;
+  FIssues := issues;
+  FLinks := TFslStringDictionary.create;
+end;
+
+destructor TCardMaker.Destroy;
+begin
+  FLinks.Free;
+  FRequest.Free;
+  FManager.Free;
+  inherited;
+end;
+
+function TCardMaker.findPatient: TFHIRPatient;
+var
+  ns : boolean;
+begin
+  result := FManager.GetResourceById(FRequest, 'Patient', FRequest.id, '', ns) as TFHIRPatient;
+end;
+
+procedure TCardMaker.linkResource(index: integer; ref: String);
+begin
+  links.add('resource:'+inttostr(index), ref);
+end;
+
+function TCardMaker.makePatient(patient: TFHIRPatient): TFHIRPatient;
+var
+  n, ns : TFhirHumanName;
+begin
+  result := TFHIRPatient.Create;
+  try
+    if patient.hasNameList then
+    begin
+      n := result.nameList.Append;
+      n.family := patient.nameList[0].family;
+      if patient.nameList[0].hasGivenList then
+        n.givenList.add(patient.nameList[0].givenList[0].clone);
+    end;
+    result.birthDate := patient.birthDate;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+{ TVciImmunizationCardMaker }
+
+function TVciImmunizationCardMaker.findImmunizations: TFslList<TFHIRImmunization>;
+var
+  bw : TFhirBundleW;
+  bnd : TFhirBundle;
+  be : TFhirBundleEntry;
+begin
+  result := TFslList<TFHIRImmunization>.create;
+  try
+    bw := FManager.DoSearch(FRequest, 'Immunization', 'patient='+FPatientId+'&_sort=date');
+    try
+      bnd := bw.Resource as TFhirBundle;
+      for be in bnd.entryList do
+        if (be.resource <> nil) and (be.resource is TFhirImmunization) then
+          result.Add((be.resource as TFhirImmunization).link);
+    finally
+      bw.Free;
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TVciImmunizationCardMaker.isIncludedCoding(c: TFHIRCoding): boolean;
+begin
+  result := StringArrayExists(['http://hl7.org/fhir/sid/cvx', 'https://www.gs1.org/gtin', 'http://snomed.info/sct',
+      'http://id.who.int/icd/release/11/mms','https://www.humanservices.gov.au/organisations/health-professionals/enablers/air-vaccine-code-formats','http://www.whocc.no/atc'], c.system)
+end;
+
+function TVciImmunizationCardMaker.isRelevantImmunization(imm: TFhirImmunization): boolean;
+var
+  c : TFHIRCoding;
+begin
+  result := false;
+  if imm.occurrence is TFhirDateTime then
+    for c in imm.vaccineCode.codingList do
+      if isIncludedCoding(c) then
+        exit(true);
+end;
+
+function TVciImmunizationCardMaker.makeBundle: TFHIRBundle;
+var
+  bundle : TFhirBundle;
+  pat : TFhirPatient;
+  immList : TFslList<TFhirImmunization>;
+  imm : TFhirImmunization;
+  i : integer;
+begin
+  bundle := TFhirBundle.Create(BundleTypeCollection);
+  try
+    pat := findPatient;
+    try
+      linkResource(0, 'Patient/'+pat.id);
+      bundle.entryList.Append.resource := makePatient(pat);
+    finally
+      pat.Free;
+    end;
+    i := 1;
+    immList := findImmunizations;
+    try
+      for imm in immList do
+        if isRelevantImmunization(imm) then
+        begin
+          bundle.entryList.Append.resource := makeImmunization(imm);
+          linkResource(i, 'Immunization/'+imm.id);
+          inc(i);
+        end;
+    finally
+      immList.Free;
+    end;
+    if bundle.entryList.Count >= 2 then
+      result := bundle.Link
+    else
+    begin
+      FIssues.Add('No Immunizations found');
+      result := nil;
+    end;
+  finally
+    bundle.Free;
+  end;
+end;
+
+function TVciImmunizationCardMaker.makeImmunization(imm: TFhirImmunization): TFhirImmunization;
+var
+  c, t : TFHIRCoding;
+begin
+  result := TFhirImmunization.create;
+  try
+    result.status := imm.status;
+    result.vaccineCode := TFhirCodeableConcept.Create;
+    for c in imm.vaccineCode.codingList do
+      if isIncludedCoding(c) then
+      begin
+        t := result.vaccineCode.codingList.append;
+        t.code := c.code;
+        t.system := c.system;
+      end;
+    result.patient := TFhirReference.Create(imm.patient.reference);
+    result.occurrence := imm.occurrence.Link;
+    if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
+    begin
+      result.manufacturer := TFhirReference.Create;
+      result.manufacturer.identifier := TFhirIdentifier.Create;
+      result.manufacturer.identifier.system := imm.manufacturer.identifier.system;
+      result.manufacturer.identifier.value := imm.manufacturer.identifier.value;
+    end;
+    result.lotNumber := imm.lotNumber;
+    result.isSubpotent := imm.isSubpotent;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+end.

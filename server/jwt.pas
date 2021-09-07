@@ -46,8 +46,11 @@ type
     FJWKAddress : String;
     FDatabaseId : String;
     FHost: String;
+    FCardKey: TJWK;
     function jwk : TJWK;
+    procedure SetCardKey(const Value: TJWK);
   public
+    destructor Destroy; override;
     function Link : TJWTServices; overload;
 
     property JWKAddress : String read FJWKAddress write FJWKAddress;
@@ -56,6 +59,7 @@ type
     property DatabaseId : String read FDatabaseId write FDatabaseId;
     property Host : String read FHost write FHost;
 
+    property cardKey : TJWK read FCardKey write SetCardKey;
     function jwkList : TJWKList;
     function makeJWK : String;
     function makeJWT(name : string = '') : String;
@@ -80,6 +84,12 @@ end;
 function TJWTServices.Link: TJWTServices;
 begin
   result := TJWTServices(inherited Link);
+end;
+
+destructor TJWTServices.Destroy;
+begin
+  FCardKey.Free;
+  inherited;
 end;
 
 function TJWTServices.JWK : TJWK;
@@ -139,6 +149,12 @@ end;
 function TJWTServices.pack(jwt: TJWT): String;
 begin
   result := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, ChangeFileExt(FCert, '.key'), FPassword);
+end;
+
+procedure TJWTServices.SetCardKey(const Value: TJWK);
+begin
+  FCardKey.Free;
+  FCardKey := Value;
 end;
 
 end.
