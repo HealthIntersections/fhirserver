@@ -223,6 +223,7 @@ type
     procedure doAuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patientId : String); virtual; abstract;
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
+    function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; override;
   public
     constructor Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
     destructor Destroy; Override;
@@ -1363,7 +1364,7 @@ begin
         if (not needsObject) and NO_AUDIT_ON_SEARCH then
           prsrFmt := ffUnspecified;
 
-        response.OnCreateBuilder(request, response, btHistory, bundle);
+        OnCreateBuilder(request, response, btHistory, bundle);
         try
           if response.Format <> ffUnspecified then
             base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
@@ -1914,7 +1915,7 @@ begin
 
         if ok then
         begin
-          response.OnCreateBuilder(request, response, btSearchset, bundle);
+          OnCreateBuilder(request, response, btSearchset, bundle);
           op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
           keys := TKeyList.Create;
           try
@@ -4614,31 +4615,37 @@ end;
 function TFHIRNativeOperationEngine.GraphSearch(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>) : TFHIRBundleW;
 var
   request : TFHIRRequest;
-  response : TFHIRResponse;
   b : TStringBuilder;
   p : TGraphQLArgument;
 begin
   request := TFHIRRequest(appInfo);
+  b := TStringBuilder.create;
+  try
+    for p in params do
+    begin
+      b.append(p.Name[1]+ p.Name.substring(1).replace('_', '-'));
+      b.append('=');
+      b.append(EncodeMIME(p.Values[0].toString));
+      b.Append('&');
+    end;
+    result := DoSearch(request, requestType, b.ToString);
+  finally
+    b.free;
+  end;
+end;
+
+function TFHIRNativeOperationEngine.DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW;
+var
+  response : TFHIRResponse;
+begin
   request.CommandType := fcmdSearch;
   request.loadObjects := true;
   request.ResourceName := requestType;
   request.strictSearch := true;
   response := TFHIRResponse.Create(request.Context.link);
   try
-    b := TStringBuilder.create;
-    try
-      for p in params do
-      begin
-        b.append(p.Name[1]+ p.Name.substring(1).replace('_', '-'));
-        b.append('=');
-        b.append(EncodeMIME(p.Values[0].toString));
-        b.Append('&');
-      end;
-      request.Parameters := THTTPParameters.create(b.toString);
-      ExecuteSearch(request, response);
-    finally
-      b.free;
-    end;
+    request.Parameters := THTTPParameters.create(params);
+    ExecuteSearch(request, response);
     if response.resource.fhirType = 'OperationOutcome' then
       raise EJsonException.Create(getOpException(response.resource));
     result := (FServerContext as TFHIRServerContext).ValidatorContext.factory.wrapBundle(response.resource.Link);

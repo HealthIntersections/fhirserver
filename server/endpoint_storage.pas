@@ -470,7 +470,6 @@ begin
 
       resp := TFHIRResponse.Create(FEndPoint.Context.ValidatorContext.link);
       try
-        resp.OnCreateBuilder := FEndPoint.doGetBundleBuilder;
         FEndPoint.ProcessRequest(ctxt, req, resp);
         result := resp.Resource.link;
         if resp.HTTPCode >= 300 then
@@ -551,7 +550,6 @@ begin
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);
     try
       response.format := FFormat;
-      response.OnCreateBuilder := doGetBundleBuilder;
 
       t := GetTickCount64;
       if request.Session = nil then // during OAuth only
@@ -567,6 +565,7 @@ begin
       op := FServer.Context.Storage.createOperationContext(request.lang);
       try
         op.OnPopulateConformance := FServer.PopulateConformance;
+        op.OnCreateBuilder := doGetBundleBuilder;
         ctxt := TOperationContext.create(opmRestful, ollNone);
         try
           op.Execute(ctxt, request, response);
@@ -1167,7 +1166,6 @@ Begin
         try
           oResponse := TFHIRResponse.Create(self.Context.ValidatorContext.link);
           try
-            oResponse.OnCreateBuilder := doGetBundleBuilder;
             response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
             // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
             response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
@@ -1576,6 +1574,7 @@ begin
   op := self.Context.Storage.createOperationContext(request.lang);
   try
     op.OnPopulateConformance := PopulateConformance;
+    op.OnCreateBuilder := doGetBundleBuilder;
     result := op.Execute(Context, request, response);
     self.Context.Storage.yield(op, nil);
   except

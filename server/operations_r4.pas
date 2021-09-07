@@ -44,10 +44,12 @@ uses
   tx_operations, ftx_ucum_services,
   operations,
   session, tags, storage, database, obsservation_stats, search,
-  bundlebuilder, validator_r4, security, subscriptions, server_context;
+  bundlebuilder, validator_r4, security, subscriptions, server_context, healthcard_generator;
 
 type
   TFhirNativeOperationEngineR4 = class (TFhirNativeOperationEngine)
+  private
+    function GetContext: TFHIRServerContext;
   protected
     procedure registerOperations; override;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); override;
@@ -60,6 +62,7 @@ type
   public
     Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); override;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
+    property ServerContext : TFHIRServerContext read GetContext;
   end;
 
   TFhirNativeOperationR4 = class (TFhirNativeOperation)
@@ -365,6 +368,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirHealthCardOperation = class (TFhirNativeOperationR4)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : String; override;
+  public
+    function Name : String; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
+    function formalURL : String; override;
+  end;
+
   TServerTransformerServices = class (TTransformerServices)
   private
     FServerContext : TFHIRServerContext;
@@ -377,7 +392,6 @@ type
     function createType(appInfo : TFslObject; tn : String) : TFHIRObject; override;
     procedure createResource(appInfo : TFslObject; res : TFHIRObject; atRootofTransform : boolean); override;
   end;
-
 
   TFHIRNativeStorageServiceR4 = class (TFHIRNativeStorageService)
   protected
@@ -674,6 +688,7 @@ begin
 //    FOperations.add(TFhirCodeSystemComposeOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
   FOperations.add(TFhirObservationStatsOperation.create(Factory.link));
   FOperations.add(TFhirObservationLastNOperation.create(Factory.link));
+  FOperations.add(TFhirHealthCardOperation.create(Factory.link));
 end;
 
 procedure TFhirNativeOperationEngineR4.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patientId : String);
@@ -825,6 +840,11 @@ begin
   finally
     se.Free;
   end;
+end;
+
+function TFhirNativeOperationEngineR4.GetContext: TFHIRServerContext;
+begin
+  result := FServerContext as TFHIRServerContext;
 end;
 
 { TFhirNativeOperationR4 }
@@ -1421,7 +1441,7 @@ begin
           if request.ResourceName = 'Patient' then
             patIds.seeIds([request.Id]);
         end;
-      response.OnCreateBuilder(request, response, btCollection, bundle);
+      manager.OnCreateBuilder(request, response, btCollection, bundle);
       includes := TReferenceList.create;
       keys := TKeyList.Create;
       params := THTTPParameters.Create('');
@@ -2736,7 +2756,7 @@ begin
       sp.Connection := conn.link;
       sp.build;
 
-      response.OnCreateBuilder(request, response, btSearchset, bundle);
+      manager.OnCreateBuilder(request, response, btSearchset, bundle);
       op := TFHIROperationOutcome.Create;
       keys := TKeyList.Create;
       try
@@ -3856,6 +3876,79 @@ begin
   finally
     op.Free;
   end;
+end;
+
+{ TFhirHealthCardOperation }
+
+function TFhirHealthCardOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
+begin
+  result := nil;
+end;
+
+function TFhirHealthCardOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse): String;
+var
+  gen : THealthCardGenerator;
+  p : TFhirParameters;
+  pp : TFhirParametersParameter;
+  s : String;
+  c : THealthcareCard;
+  i : integer;
+begin
+  gen := THealthCardGenerator.create(manager.link, request.Link, (manager as TFhirNativeOperationEngineR4).ServerContext.JWTServices.cardKey.link);
+  try
+    gen.patientId := request.id; // todo: compartment?
+    gen.params := makeParamsV(request);
+    gen.process;
+    i := 0;
+    p := TFhirParameters.create;
+    try
+      for c in gen.cards do
+      begin
+        p.AddParameter('verifiableCredential', c.jws);
+        for s in c.links.keys do
+        begin
+          pp := p.AddParameter('resourceLink');
+          pp.AddParameter('vcIndex', i);
+          pp.AddParameter('bundledResource', s);
+          pp.AddParameter('valueUri', c.links[s]);
+        end;
+        inc(i);
+      end;
+      for s in gen.issues do
+        p.AddParameter('issue', s);
+      response.Resource := p.Link;
+      response.HTTPCode := 200;
+    finally
+      p.Free;
+    end;
+  finally
+    gen.Free;
+  end;
+end;
+
+function TFhirHealthCardOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/uv/shc-vaccination/OperationDefinition/health-cards-issue';
+end;
+
+function TFhirHealthCardOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirHealthCardOperation.Name: String;
+begin
+  result := 'health-cards-issue';
+end;
+
+function TFhirHealthCardOperation.owningResource: String;
+begin
+  result := 'Patient';
+end;
+
+function TFhirHealthCardOperation.Types: TArray<String>;
+begin
+  result := ['Patient'];
 end;
 
 end.

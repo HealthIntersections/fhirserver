@@ -1302,7 +1302,7 @@ begin
           if request.ResourceName = 'Patient' then
             patIds.seeIds([request.Id]);
         end;
-        response.OnCreateBuilder(request, response, btCollection, bundle);
+        manager.OnCreateBuilder(request, response, btCollection, bundle);
         includes := TReferenceList.create;
         keys := TKeyList.Create;
         params := THTTPParameters.Create('');

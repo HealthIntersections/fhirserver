@@ -529,7 +529,7 @@ begin
     search := TSearchParser.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
     try
       base := TSearchParser.buildUrl(search);
-      response.OnCreateBuilder(request, response, btSearchset, bundle);
+      OnCreateBuilder(request, response, btSearchset, bundle);
       op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
       try
         bundle.setLastUpdated(TFslDateTime.makeUTC);

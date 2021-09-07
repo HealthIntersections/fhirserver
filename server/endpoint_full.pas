@@ -14,7 +14,7 @@ uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml,
+  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_xhtml, fhir_cdshooks,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
@@ -464,11 +464,11 @@ begin
       // GJSHost.registry := FContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create(FServerContext.ValidatorContext.link);
       try
-        resp.OnCreateBuilder := doGetBundleBuilder;
         t := GetTickCount64;
         req.internalRequestId := FServerContext.Globals.nextRequestId;
         op := FStore.createOperationContext(req.lang);
         try
+          op.OnCreateBuilder := doGetBundleBuilder;
           op.Execute(Context, req, resp);
           FStore.yield(op, nil);
         except
@@ -640,6 +640,7 @@ begin
   FServerContext.JWTServices.Password := Settings.Ini.web['password'].value;
   FServerContext.JWTServices.DatabaseId := FServerContext.DatabaseId;
   FServerContext.JWTServices.Host := Settings.Ini.web['host'].value;
+  FServerContext.JWTServices.cardKey := TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   //  FServerContext.JWTServices.JWKAddress := ?;
 
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, makeFactory, Terminologies.link);
@@ -1176,7 +1177,6 @@ begin
   try
     response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
     try
-      response.OnCreateBuilder := doGetBundleBuilder;
       request.Session := Session.link;
       request.ResourceName := rtype;
       request.lang := lang;
@@ -1431,7 +1431,6 @@ begin
   request := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
   try
-    response.OnCreateBuilder := doGetBundleBuilder;
     request.Session := Session.link;
     request.ResourceName := rtype;
     request.lang := lang;
