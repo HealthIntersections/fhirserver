@@ -63,6 +63,7 @@ type
 
   TPackageClientThread = class (TFslThread)
   protected
+    function compare(sender : TObject; const left, right : TFHIRPackageInfo) : integer;
     procedure Execute; override;
   end;
 
@@ -101,6 +102,7 @@ type
   TMainConsoleForm = class(TForm)
     BitBtn1: TBitBtn;
     btnCacheInfo: TButton;
+    btnCardKey: TSpeedButton;
     btnLockStatus: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
@@ -174,6 +176,7 @@ type
     edtSSLPassword: TEdit;
     edtSSLPort: TEdit;
     edtHostName: TEdit;
+    edtCardJWK: TEdit;
     edtTelnetPassword: TEdit;
     edtWebPort: TEdit;
     edtWebMaxConnections: TEdit;
@@ -195,6 +198,7 @@ type
     FileSaveAs1: TFileSaveAs;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;
     GroupBox5: TGroupBox;
     GroupBox6: TGroupBox;
@@ -232,6 +236,7 @@ type
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
+    Label60: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
@@ -401,6 +406,7 @@ type
     procedure btnBaseClick(Sender: TObject);
     procedure btnCACertClick(Sender: TObject);
     procedure btnCacheInfoClick(Sender: TObject);
+    procedure btnCardKeyClick(Sender: TObject);
     procedure btnCertClick(Sender: TObject);
     procedure btnCertKeyClick(Sender: TObject);
     procedure btnClearCacheClick(Sender: TObject);
@@ -440,6 +446,7 @@ type
     procedure edtAdminSCIMSaltChange(Sender: TObject);
     procedure edtAdminSMSChange(Sender: TObject);
     procedure edtCACertChange(Sender: TObject);
+    procedure edtCardJWKChange(Sender: TObject);
     procedure edtConfigFileChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
     procedure edtGoogleIdChange(Sender: TObject);
@@ -537,6 +544,11 @@ uses
 
 { TPackageClientThread }
 
+function TPackageClientThread.compare(sender: TObject; const left, right: TFHIRPackageInfo): integer;
+begin
+  result := StringCompare(left.id, right.id);
+end;
+
 procedure TPackageClientThread.Execute;
 var
   client : TFHIRPackageClient;
@@ -545,6 +557,7 @@ begin
   client := TFHIRPackageClient.create(PACKAGE_SERVER_BACKUP);
   try
     list := client.search('', '', '', false);
+    list.SortE(compare);
     MainConsoleForm.Flock.Lock;
     try
       MainConsoleForm.FThreadPackages := list;
@@ -962,6 +975,8 @@ begin
     edtLangFile.Enabled := true;
     edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
     edtTelnetPassword.Enabled := true;
+    edtCardJWK.Text := FConfig.web['card-key'].value;
+    edtCardJWK.Enabled := true;
 
     edtAdminEmail.Text := FConfig.admin['email'].value;
     edtAdminEmail.Enabled := true;
@@ -1018,6 +1033,8 @@ begin
     edtPrivateKey.Enabled := false;
     edtSSLPassword.Text := '';
     edtSSLPassword.Enabled := false;
+    edtCardJWK.Text := '';
+    edtCardJWK.Enabled := false;
     edtGoogleId.Text := '';
     edtGoogleId.Enabled := false;
     edtLangFile.Text := '';
@@ -1110,6 +1127,8 @@ begin
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'Cache requests that take longer than this to process'
+  else if ActiveControl = edtCardJWK then
+    lblDoco.caption := 'The JWK to use for signing health cards (ECDSA P-256 SHA-256)'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
   else if ActiveControl = edtGoogleId then
@@ -1351,6 +1370,13 @@ begin
       showMessage(e.message);
   end;
 
+end;
+
+procedure TMainConsoleForm.btnCardKeyClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtCardJWK.text;
+  if dlgOpen.Execute then;
+    edtCardJWK.text := dlgOpen.filename;
 end;
 
 procedure TMainConsoleForm.btnCertClick(Sender: TObject);
@@ -2087,6 +2113,15 @@ begin
   if not FLoading and (FConfig <> nil) then
   begin
     FConfig.web['cacertname'].value := edtCACert.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtCardJWKChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['card-key'].value := edtCardJWK.Text;
     FConfig.Save;
   end;
 end;

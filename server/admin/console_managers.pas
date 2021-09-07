@@ -483,8 +483,8 @@ begin
     4: result := item['path'].value;
     5: if hasDatabase(item['type'].value) then
          result := describeDatabase(item)
-       else
-         result := '';
+       else if hasSrcFolder(item['type'].value) then
+         result := item['folder'].value;
     6: result := status(item);
   end;
 end;

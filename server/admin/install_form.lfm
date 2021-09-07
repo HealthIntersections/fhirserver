@@ -268,14 +268,43 @@ object EndpointInstallForm: TEndpointInstallForm
       TabOrder = 0
       object lvPackages: TListView
         Left = 10
-        Height = 268
+        Height = 238
         Top = 10
         Width = 841
         Align = alClient
         Checkboxes = True
         Columns = <>
         ParentFont = False
+        ReadOnly = True
         TabOrder = 0
+        OnItemChecked = lvPackagesItemChecked
+      end
+      object Panel4: TPanel
+        Left = 10
+        Height = 30
+        Top = 248
+        Width = 841
+        Align = alBottom
+        BevelOuter = bvNone
+        ClientHeight = 30
+        ClientWidth = 841
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 6
+          Height = 15
+          Top = 8
+          Width = 29
+          Caption = 'Filter:'
+          ParentColor = False
+        end
+        object edtFilter: TEdit
+          Left = 40
+          Height = 23
+          Top = 4
+          Width = 216
+          OnChange = edtFilterChange
+          TabOrder = 0
+        end
       end
     end
   end

@@ -27,12 +27,14 @@ type
     edtDBName: TEdit;
     edtIdentity: TEdit;
     edtPassword: TEdit;
+    edtFolder: TEdit;
     edtPath: TEdit;
     edtServer: TEdit;
     edtUsername: TEdit;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
+    Label12: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -70,6 +72,7 @@ function hasVersion(typ : String) : boolean;
 function hasFixedVersion(typ : String) : boolean;
 function hasVersions(typ : String) : boolean;
 function hasDatabase(typ : String) : boolean;
+function hasSrcFolder(typ : String) : boolean;
 
 implementation
 
@@ -92,7 +95,12 @@ end;
 
 function hasDatabase(typ : String) : boolean;
 begin
-  result := not ((typ = 'snomed') or (typ = 'loinc'));
+  result := not ((typ = 'snomed') or (typ = 'loinc') or (typ = 'folder'));
+end;
+
+function hasSrcFolder(typ : String) : boolean;
+begin
+  result := (typ = 'folder');
 end;
 
 { TEditEPForm }
@@ -177,6 +185,7 @@ begin
     edtDBName.Text := EP['db-database'].value;
     edtUsername.Text := EP['db-username'].value;
     edtPassword.Text := EP['db-password'].value;
+    edtFolder.Text := EP['db-folder'].value;
   end;
 end;
 
@@ -213,6 +222,18 @@ begin
     edtDBName.enabled := true;
     edtUsername.enabled := true;
     edtPassword.enabled := true;
+    edtFolder.enabled := false;
+  end
+  else if (hasSrcFolder(cbxType.items[cbxType.ItemIndex])) then
+  begin
+    rbMSSQL.enabled := false;
+    rbMySQL.enabled := false;
+    cbxDriver.enabled := false;
+    edtServer.enabled := false;
+    edtDBName.enabled := false;
+    edtUsername.enabled := false;
+    edtPassword.enabled := false;
+    edtFolder.enabled := true;
   end
   else
   begin
@@ -223,6 +244,7 @@ begin
     edtDBName.enabled := false;
     edtUsername.enabled := false;
     edtPassword.enabled := false;
+    edtFolder.enabled := false;
   end;
 end;
 
@@ -277,6 +299,7 @@ begin
   EP['db-database'].value := edtDBName.Text;
   EP['db-username'].value := edtUsername.Text;
   EP['db-password'].value := edtPassword.Text;
+  EP['folder'].value := edtFolder.Text;
 end;
 
 end.
