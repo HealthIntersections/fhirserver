@@ -640,7 +640,7 @@ function TDicomWriter.MeasureAssociateRequest(oAssociate: TDicomAssociateRequest
 var
   i : integer;
 begin
-  result :=
+  result := 
     2 + // protocol version
     2 + // reserved
     16 + // called AE
@@ -656,7 +656,7 @@ function TDicomWriter.MeasureAssociateAccept(oAssociate: TDicomAssociateAcceptPD
 var
   i : integer;
 begin
-  result :=
+  result := 
     2 + // protocol version
     2 + // reserved
     16 + // called AE
@@ -673,7 +673,7 @@ var
   i : integer;
   r : integer;
 begin
-  r :=
+  r := 
     4 + // id + reserved
     4 + length(oPresentationContext.AbstractSyntax.Value);
   for i := 0 to oPresentationContext.TransferSyntaxes.Count - 1 Do
@@ -703,7 +703,7 @@ end;
 
 function TDicomWriter.MeasurePresentationAcceptContext(oPresentationContext: TDicomPresentationAcceptContextInfo): Cardinal;
 begin
-  result :=
+  result := 
     4 + // id + reserved
     4 + length(oPresentationContext.TransferSyntax.Value);
 end;

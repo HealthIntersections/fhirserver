@@ -18,7 +18,7 @@ changes:
 {$h+}
 
 // define ODBC version 3.52 by default
-{$define ODBCVER:=$0352}
+{$define ODBCVER := $0352}
 
 {$if ODBCVER >= $0300}
   {$define ODBCVER3}
@@ -44,12 +44,12 @@ uses
      sysutils;
 
 {$IFDEF Unix}
-  {$DEFINE extdecl:=cdecl}
+  {$DEFINE extdecl := cdecl}
   const
     odbclib = 'libodbc.'+sharedsuffix;
 {$ENDIF}
 {$IFDEF Windows}
-  {$DEFINE extdecl:=stdcall}
+  {$DEFINE extdecl := stdcall}
   const
     odbclib = 'odbc32.dll';
 {$ENDIF}
@@ -1938,9 +1938,9 @@ begin
   if RefCount = 1 then
     begin
     if OverrideName='' then
-       libname:=odbclib
+       libname := odbclib
      else
-       libname:=OverrideName;
+       libname := OverrideName;
     ODBCLibraryHandle := loadlibrary(libname);
     if ODBCLibraryHandle = nilhandle then
       begin
@@ -2080,9 +2080,9 @@ begin
     SQLRowCount := GetProcedureAddress(ODBCLibraryHandle,'SQLRowCount');
     SQLBindParameter := GetProcedureAddress(ODBCLibraryHandle,'SQLBindParameter');
     SQLGetFunctions := GetProcedureAddress(ODBCLibraryHandle,'SQLGetFunctions');
-    SQLDescribeParam :=GetProcedureAddress(ODBCLibraryHandle,'SQLDescribeParam');
-    SQLForeignKeys :=GetProcedureAddress(ODBCLibraryHandle,'SQLForeignKeys');
-    SQLForeignKeysA :=GetProcedureAddress(ODBCLibraryHandle,'SQLForeignKeys');
+    SQLDescribeParam := GetProcedureAddress(ODBCLibraryHandle,'SQLDescribeParam');
+    SQLForeignKeys := GetProcedureAddress(ODBCLibraryHandle,'SQLForeignKeys');
+    SQLForeignKeysA := GetProcedureAddress(ODBCLibraryHandle,'SQLForeignKeys');
     SQLFreeStmt := GetProcedureAddress(ODBCLibraryHandle,'SQLFreeStmt');
     SQLColAttribute := GetProcedureAddress(ODBCLibraryHandle,'SQLColAttribute');
     SQLEndTran := GetProcedureAddress(ODBCLibraryHandle,'SQLEndTran');
@@ -2108,7 +2108,7 @@ end;
 
 function DateStructToDateTime( b:PSQL_DATE_STRUCT):TDateTime;
 begin
-  Result:=EncodeDate( b^.Year, b^.Month, b^.Day);
+  Result := EncodeDate( b^.Year, b^.Month, b^.Day);
 end;
 
 function DateTimeToDateStruct( b:TDateTime):SQL_DATE_STRUCT;
@@ -2118,7 +2118,7 @@ begin
   DecodeDate( b, y, m, d);
   with Result do
   begin
-    Year:=y; Month:=m; Day:=d;
+    Year := y; Month := m; Day := d;
   end;
 end;
 
@@ -2152,7 +2152,7 @@ Function TimeStampStructToDateTime( B :  PSQL_TIMESTAMP_STRUCT) : TDateTime;
 
 begin
  With B^ do
-   Result:=ComposeDateTime(EncodeDate(Year,Month,Day), EncodeTime(Hour,Minute,Second,Fraction div 1000000));
+   Result := ComposeDateTime(EncodeDate(Year,Month,Day), EncodeTime(Hour,Minute,Second,Fraction div 1000000));
 end;
 
 Function TimeStructToDateTime (B : PSQL_TIME_STRUCT) : TDateTime;
@@ -2160,7 +2160,7 @@ begin
   With B^ do
     begin
       // TryEncodeTime can not be used, because it doesn't supports times with more then 24 hours.
-      Result:=TDateTime(cardinal(Hour)*3600000+cardinal(Minute)*60000+cardinal(Second)*1000)/MSecsPerDay;
+      Result := TDateTime(cardinal(Hour)*3600000+cardinal(Minute)*60000+cardinal(Second)*1000)/MSecsPerDay;
     end;
 end;
 
@@ -2169,24 +2169,24 @@ var
   w1, w2, w3, w4: Word;
 begin
   DecodeTime(b, w1, w2, w3, w4);
-  Result.Hour:=w1 + Trunc(b)*24;
-  Result.Minute:=w2;
-  Result.Second:=w3;
+  Result.Hour := w1 + Trunc(b)*24;
+  Result.Minute := w2;
+  Result.Second := w3;
 end;
 
 function CurrToNumericStruct(c: currency): SQL_NUMERIC_STRUCT;
 var n: int64; i: integer;
 begin
-  Result.precision:=18;
-  Result.scale:=4;
+  Result.precision := 18;
+  Result.scale := 4;
   if c >= 0 then
-    Result.sign:=1
+    Result.sign := 1
   else begin
-    Result.sign:=0;
+    Result.sign := 0;
     c := -c;
   end;
   n := NtoLE(Trunc(c)*10000 + Round(Frac(c)*10000));
-  for i:=0 to high(Result.val) do begin
+  for i := 0 to high(Result.val) do begin
     Result.val[i] := n and $ff;
     n := n shr 8;
   end;

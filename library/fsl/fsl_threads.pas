@@ -929,7 +929,7 @@ var
     result := StringPadRight(result, ' ', width);
   end;
 begin
-  Result :=
+  Result := 
     Col(IntToStr(FOwnID), 3)+
     Col(FName, 26)+
     Col(IntToStr(FUseCount), 7)+

@@ -1953,7 +1953,7 @@ End;
 
 Function TWPSFontDetails.Matches(oOther: TWPSFontDetails): Boolean;
 Begin
-  Result :=
+  Result := 
     (Assigned(oOther)) And
     (FState = oOther.FState) And
     (FBold = oOther.FBold) And
@@ -2100,7 +2100,7 @@ End;
 
 Function TWPSParagraphDetails.HasValues : Boolean;
 Begin
-  Result :=
+  Result := 
      HasAlign Or HasLeftIndent Or HasRightIndent Or HasMarginBottom Or
      HasBulletType Or HasListType Or HasNumberType Or HasNumberFormat Or
      HasFixedNumber;
@@ -2213,7 +2213,7 @@ End;
 
 Function TWPSParagraphDetails.Matches(oOther: TWPSParagraphDetails): Boolean;
 Begin
-  Result :=
+  Result := 
     (FAlign = oOther.FAlign) And
     (FMarginBottom = oOther.FMarginBottom) And
     (FBulletType = oOther.FBulletType) And
@@ -4419,7 +4419,7 @@ Begin
   If Not More Then
     RaiseError('Next', 'Next called when no more exists');
 
-  iC:= FCursor + 1;
+  iC := FCursor + 1;
   If CharInSet(FText[iC], CHAR_WORD_BREAK) or (FText[iC] = #11) Then
   Begin
     Result := FText[iC];
@@ -4479,7 +4479,7 @@ Begin
   if not More then
     RaiseError('Next', 'Next called when no more exists');
 
-  iC:= FCursor + 1;
+  iC := FCursor + 1;
   if CharInSet(FText[iC], [#13, #10]) Then
   Begin
     Result := FText[iC];

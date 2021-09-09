@@ -279,7 +279,7 @@ function SetThreadUILanguage; external kernel32 name 'SetThreadUILanguage'; // 5
 {$ELSE}
 function RGB(r,g,b : longint) : DWORD;
   begin
-     RGB:=DWORD(((DWORD(BYTE(r))) or ((DWORD(WORD(g))) shl 8)) or ((DWORD(BYTE(b))) shl 16));
+     RGB := DWORD(((DWORD(BYTE(r))) or ((DWORD(WORD(g))) shl 8)) or ((DWORD(BYTE(b))) shl 16));
   end;
 
 procedure setCurrentDirectory(dir : String);

@@ -783,5 +783,5 @@ end;
 Initialization
 Finalization
   gWPIconModule.Free;
-  gWPIconModule:= Nil;
+  gWPIconModule := Nil;
 End.

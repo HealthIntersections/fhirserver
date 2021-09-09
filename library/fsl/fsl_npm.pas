@@ -966,7 +966,7 @@ var
   n : TNpmPackageResource;
   i : integer;
 begin
-  result :=
+  result := 
     'id: '+name+'#'+Version+#13#10+
     'canonical: '+Canonical+#13#10+
     'size: '+DescribeBytes(FSize)+#13#10+

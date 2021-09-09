@@ -1462,7 +1462,7 @@ End;
 
 Function ColourDifference(Const iColourA, iColourB : TArgbColour) : Integer;
 Begin
-  Result :=
+  Result := 
     (IntegerMax(ColourRedValue(iColourA), ColourRedValue(iColourB)) - IntegerMin(ColourRedValue(iColourA), ColourRedValue(iColourB))) +
     (IntegerMax(ColourGreenValue(iColourA), ColourGreenValue(iColourB)) - IntegerMin(ColourGreenValue(iColourA), ColourGreenValue(iColourB))) +
     (IntegerMax(ColourBlueValue(iColourA), ColourBlueValue(iColourB)) - IntegerMin(ColourBlueValue(iColourA), ColourBlueValue(iColourB)))

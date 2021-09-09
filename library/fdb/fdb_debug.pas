@@ -115,7 +115,7 @@ begin
   LConnMan := KDBManagers[GetStringCell(AURL, 2, '/')];
   if ACommand = '' then
     begin
-    VResult :=
+    VResult := 
        'fdb_manager: '+LConnMan.DBDetails+':<br>'+
        '<a href="'+AURL+'/use">Current Use</a><br>'+
        '<a href="'+AURL+'/stats">Stats</a><br>'+

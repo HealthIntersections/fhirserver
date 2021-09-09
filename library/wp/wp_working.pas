@@ -4419,7 +4419,7 @@ End;
 
 function TWPWorkingDocumentLineBreakPiece.DescribeV: String;
 begin
-  result:= inherited describeV;
+  result := inherited describeV;
   prop(result, 'speechmagic', FIsSpeechMagicParagraph);
 end;
 
@@ -4779,7 +4779,7 @@ Function TWPWorkingDocumentImagePiece.GetWorkingImage(aWidth, aHeight : Integer;
 var
   bGen : boolean;
 Begin
-  bGen :=
+  bGen := 
     (FAdornments.Count > 0) or // if we have adornments, we cannot use the underlying image
     (not (FImage Is TFslVCLGraphic) and (aWidth <> 0) and bFast) or // if it's not a VCL bitmap, we'll generate one and use it as a cache (unless width = 0, or not bfast, in which case, we want the source)
     (bHotspots And HasImageMap And ImageMap.HasSelection And HasSelectionImage And (FImage Is TFslBitmapGraphic)); // or we have image map and hotspots (phasing it)

@@ -182,12 +182,12 @@ Begin
   FPlanarConfiguration := ReadValue('0028,0006', 0);
 
   FInstanceId := ReadStringValue('0008,0018', ' ');
-  FDateTime:= ReadStringValue('0008,0020', ' ') + ' ' + ReadStringValue('0008,0030', ' ');
+  FDateTime := ReadStringValue('0008,0020', ' ') + ' ' + ReadStringValue('0008,0030', ' ');
   FAccessionNumber := ReadStringValue('0008,0050', ' ');
-  FModality:= ReadStringValue('0080,0060', ' ');
-  FPatientName:= ReadStringValue('0010,0010', ' ');
-  FPatientDOB:= ReadStringValue('0010,0030', ' ');
-  FPatientSex:= ReadStringValue('0010,0040', ' ');
+  FModality := ReadStringValue('0080,0060', ' ');
+  FPatientName := ReadStringValue('0010,0010', ' ');
+  FPatientDOB := ReadStringValue('0010,0030', ' ');
+  FPatientSex := ReadStringValue('0010,0040', ' ');
 
   //if FPixelRepresentation > 0 then
   //  raise EDicomException.create('Pixel Representation '+inttostr(FPixelRepresentation)+' is not yet handled');

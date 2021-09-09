@@ -390,17 +390,17 @@ begin
   //  IsHMACMD5Avail := OpenSSLIsHMACMD5Avail;
 //  GetHMACMD5HashInst := OpenSSLGetHMACMD5Inst;
 //  IsHMACSHA1Avail  := OpenSSLIsHMACSHA1Avail;
-//  GetHMACSHA1HashInst:= OpenSSLGetHMACSHA1Inst;
+//  GetHMACSHA1HashInst := OpenSSLGetHMACSHA1Inst;
 //  IsHMACSHA224Avail := OpenSSLIsHMACSHA224Avail;
-//  GetHMACSHA224HashInst:= OpenSSLGetHMACSHA224Inst;
+//  GetHMACSHA224HashInst := OpenSSLGetHMACSHA224Inst;
 
   IsHMACSHA256Avail := OpenSSLIsHMACSHA256Avail;
-  GetHMACSHA256HashInst:= OpenSSLGetHMACSHA256Inst;
+  GetHMACSHA256HashInst := OpenSSLGetHMACSHA256Inst;
 
 //  IsHMACSHA384Avail := OpenSSLIsHMACSHA384Avail;
-//  GetHMACSHA384HashInst:= OpenSSLGetHMACSHA384Inst;
+//  GetHMACSHA384HashInst := OpenSSLGetHMACSHA384Inst;
 //  IsHMACSHA512Avail := OpenSSLIsHMACSHA512Avail;
-//  GetHMACSHA512HashInst:= OpenSSLGetHMACSHA512Inst;
+//  GetHMACSHA512HashInst := OpenSSLGetHMACSHA512Inst;
 
   UpdateHMACInst := OpenSSLUpdateHMACInst;
   FinalHMACInst := OpenSSLFinalHMACInst;

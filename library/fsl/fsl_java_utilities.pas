@@ -95,7 +95,7 @@ qualified Class names.}
   var
     I: Integer;
   begin
-    Result:= s;
+    Result := s;
     for I := 1 to length(Result) do
       if Result[I] = '.' then
         Result[I] := '/';
@@ -116,7 +116,7 @@ qualified Class names.}
   var
     I: Integer;
   begin
-    Result:= S;
+    Result := S;
     for I := 1 to length(S) do
       if (Result[I] = '.') or (Result[I] = '/') then
         Result[I] := '\';
@@ -162,7 +162,7 @@ qualified Class names.}
   function getEnvironmentString(S : String) : String;
   begin
    {$IFDEF FPC}
-   result:=getEnvironmentVariable(S)
+   result := getEnvironmentVariable(S)
    {$ELSE}
    if getEnvironmentVariable(Pchar(S), @Buf, 1023) >0 then
       result := String(Buf);

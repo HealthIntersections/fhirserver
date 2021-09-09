@@ -8081,7 +8081,7 @@ end;
 
 function TFslDateTime.equal(other: TFslDateTime; precision: TFslDateTimePrecision): Boolean;
 begin
-  result :=
+  result := 
     (FPrecision >= precision) and (other.Precision >= precision) and
     (year = other.year) and
     ((precision < dtpMonth) or (month = other.month)) and

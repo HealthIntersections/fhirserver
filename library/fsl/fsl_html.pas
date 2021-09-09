@@ -1641,7 +1641,7 @@ Var
 Begin
   If FNextTagOpen = '' Then
   Begin
-    // <TagOpen> ::= '<' <Identifier> { <Attributes> } { '>' | '/>' }
+    // <TagOpen> : := '<' <Identifier> { <Attributes> } { '>' | '/>' }
 
     ReduceToken(ahtOpenTag);
 
@@ -1742,7 +1742,7 @@ Function TFslHTMLParser.NextTagClose : String;
 Begin
   If FNextTagClose = '' Then
   Begin
-    // <TagClose> ::= '</' <Identifier> '>'
+    // <TagClose> : := '</' <Identifier> '>'
 
     ReduceToken(ahtOpenTagForwardSlash);
 
@@ -2123,11 +2123,11 @@ End;
 
 Procedure TFslHTMLParser.ConsumeImage(oImage: TFslHTMLImage);
 Begin
-  // <Image> ::= '<IMG' {<ImageAttributes>} '>'
+  // <Image> : := '<IMG' {<ImageAttributes>} '>'
   //
-  // <ImageAttributes> ::= { 'src' '=' <URL> } { 'alt' '=' <String> } { 'longdesc' = <String> } { 'align' '=' <Align> }
+  // <ImageAttributes> : := { 'src' '=' <URL> } { 'alt' '=' <String> } { 'longdesc' = <String> } { 'align' '=' <Align> }
   //
-  // <Align> ::= 'left' | 'top' | 'right' | 'bottom' | 'middle'
+  // <Align> : := 'left' | 'top' | 'right' | 'bottom' | 'middle'
 
   ConsumeTagOpen('IMG');
 
@@ -2152,9 +2152,9 @@ Procedure TFslHTMLParser.ConsumeTableCell(oTableCell: TFslHTMLTableCell);
 Var
   sTag : String;
 Begin
-  // <TableCell> ::= <TableDataCell> | <TableHeaderCell>
-  // <TableDataCell> ::= '<TD>' <TableCell>* '</TD>'
-  // <TableHeaderCell> ::= '<TH>' <TableCell>* '</TH>'
+  // <TableCell> : := <TableDataCell> | <TableHeaderCell>
+  // <TableDataCell> : := '<TD>' <TableCell>* '</TD>'
+  // <TableHeaderCell> : := '<TH>' <TableCell>* '</TH>'
 
   sTag := ConsumeTagOpen;
 
@@ -2173,7 +2173,7 @@ Procedure TFslHTMLParser.ConsumeTableRow(oTableRow: TFslHTMLTableRow);
 Var
   oCell : TFslHTMLTableCell;
 Begin
-  // <TableRow> ::= '<TR>' <TableCell>* '</TR>'
+  // <TableRow> : := '<TR>' <TableCell>* '</TR>'
 
   ConsumeTagOpen('TR');
   ReadItem(oTableRow);
@@ -2208,7 +2208,7 @@ Var
   oRow : TFslHTMLTableRow;
   sInnerTag : String;
 Begin
-  // <Table> ::= '<TABLE>' <TableRow>* '</TABLE>'
+  // <Table> : := '<TABLE>' <TableRow>* '</TABLE>'
 
   // TODO: COLGROUPS, THEAD/TFOOT/TBODY
 
@@ -2255,9 +2255,9 @@ Var
   sTag : String;
   iLevel : Integer;
 Begin
-  // <Heading> ::= '<' <HeadingLevel> '>' <Item>* '</' <HeadingLevel '>'
+  // <Heading> : := '<' <HeadingLevel> '>' <Item>* '</' <HeadingLevel '>'
   //
-  // <HeadingLevel> ::= 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
+  // <HeadingLevel> : := 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
 
   sTag := ConsumeTagOpen;
 
@@ -2278,7 +2278,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeAnchor(oAnchor : TFslHTMLAnchor);
 Begin
-  // <Anchor> ::= '<A>' <Item>* '</A>'
+  // <Anchor> : := '<A>' <Item>* '</A>'
 
   ConsumeTagOpen('A');
 
@@ -2296,7 +2296,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeFont(oFont: TFslHTMLFont);
 Begin
-  // <Font> ::= '<FONT>' <Item>* '</FONT>'
+  // <Font> : := '<FONT>' <Item>* '</FONT>'
 
   oFont.Color := FAttributes['color'];
   ConsumeSection('FONT', oFont);
@@ -2305,7 +2305,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeSpan(oSpan: TFslHTMLSpan);
 Begin
-  // <Span> ::= '<Span>' <Item>* '</Span>'
+  // <Span> : := '<Span>' <Item>* '</Span>'
 
   ConsumeSection('SPAN', oSpan);
 End;
@@ -2313,7 +2313,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeUnorderedList(oList: TFslHTMLUnorderedList);
 Begin
-  // <UnorderedList> ::= '<UL>' <Item>* '</UL>'
+  // <UnorderedList> : := '<UL>' <Item>* '</UL>'
 
   ConsumeSection('UL', oList);
 End;
@@ -2321,7 +2321,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeOrderedList(oList: TFslHTMLOrderedList);
 Begin
-  // <OrderedList> ::= '<OL>' <Item>* '</OL>'
+  // <OrderedList> : := '<OL>' <Item>* '</OL>'
 
   ConsumeSection('OL', oList);
 End;
@@ -2329,7 +2329,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeListItem(oItem: TFslHTMLListItem);
 Begin
-  // <ListItem> ::= '<LI value="">' <Item>* '</LI>'
+  // <ListItem> : := '<LI value="">' <Item>* '</LI>'
 
   oItem.Value := StrToIntDef(FAttributes['value'], 0);
   oItem.HasValue := FAttributes['value'] <> '';
@@ -2351,7 +2351,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeBreak(oBreak: TFslHTMLBreak);
 Begin
-  // <Break> ::= '<BR>' Or '<BR />' Or '<BR></BR>'
+  // <Break> : := '<BR>' Or '<BR />' Or '<BR></BR>'
 
   ConsumeTagOpen('BR');
   ReadItem(oBreak);
@@ -2363,7 +2363,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeHorizontalRule(oHorizontalRule: TFslHTMLHorizontalRule);
 Begin
-  // <HorizontalRule> ::= '<HR>' Or '<HR />' Or '<HR></HR>'
+  // <HorizontalRule> : := '<HR>' Or '<HR />' Or '<HR></HR>'
 
   ConsumeTagOpen('HR');
   ReadItem(oHorizontalRule);
@@ -2375,7 +2375,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeInput(oInput: TFslHTMLInput);
 Begin
-  // <Input> ::= '<INPUT' <InputAttributes> '>'
+  // <Input> : := '<INPUT' <InputAttributes> '>'
 
   ConsumeTagOpen('INPUT');
 End;
@@ -2407,7 +2407,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeParagraph(oParagraph: TFslHTMLParagraph);
 Begin
-  // <Paragraph> ::= '<P>' <Item>* '</P>'
+  // <Paragraph> : := '<P>' <Item>* '</P>'
 
   ConsumeSection('P', oParagraph);
 End;
@@ -2427,7 +2427,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeBody(oBody: TFslHTMLBody);
 Begin
-  // <Body> ::= '<BODY>' <Item>* '</BODY>'
+  // <Body> : := '<BODY>' <Item>* '</BODY>'
 
   ConsumeSection('BODY', oBody);
 End;
@@ -2439,8 +2439,8 @@ Var
   sKey   : String;
   sValue : String;
 Begin
-  // <Styles> ::= '<STYLE>' <Style>* '</STYLE>
-  // <Style> ::= <StyleName> '{' ( <StyleKey> ':' <StyleValue> ';' ) * '}'
+  // <Styles> : := '<STYLE>' <Style>* '</STYLE>
+  // <Style> : := <StyleName> '{' ( <StyleKey> ':' <StyleValue> ';' ) * '}'
 
   ConsumeTagOpen('STYLE');
 
@@ -2522,7 +2522,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeHead(oHead: TFslHTMLHead);
 Begin
-  // <Head> ::= '<HEAD>' { '<TITLE>' <Body> '</TITLE>' } { '<' 'META' <Attributes> '>' }
+  // <Head> : := '<HEAD>' { '<TITLE>' <Body> '</TITLE>' } { '<' 'META' <Attributes> '>' }
 
   ConsumeTagOpen('HEAD');
   ConsumeWhitespace;
@@ -2570,7 +2570,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeDocumentType(oDocument: TFslHTMLDocument);
 Begin
-  // <DocumentType> ::= { '<' !DOCTYPE' 'HTML' 'PUBLIC' <Version> <DTD> '>' }
+  // <DocumentType> : := { '<' !DOCTYPE' 'HTML' 'PUBLIC' <Version> <DTD> '>' }
 
   If PeekToken = ahtOpenTagQuery Then
   Begin
@@ -2616,7 +2616,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeDocument(oDocument: TFslHTMLDocument);
 Begin
-  // <Document> ::= <DocumentType> '<HTML>' { <Head> } { <Body> } | '</HTML>'
+  // <Document> : := <DocumentType> '<HTML>' { <Head> } { <Body> } | '</HTML>'
 
   oDocument.Clear;
 

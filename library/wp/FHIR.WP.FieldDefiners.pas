@@ -441,7 +441,7 @@ begin
   if StringIsInteger32(sContent) And (Trim(sContent) = sContent) Then
   Begin
     iValue := StringToInteger32(sContent);
-    result :=
+    result := 
       ((oField.DataValue[FIELD_DATA_NAME_INT_MIN] = '') or ((length(sContent) < length(oField.DataValue[FIELD_DATA_NAME_INT_MIN])) or (StringToInteger32(oField.DataValue[FIELD_DATA_NAME_INT_MIN]) <= iValue))) And
       ((oField.DataValue[FIELD_DATA_NAME_INT_MAX] = '') or (StringToInteger32(oField.DataValue[FIELD_DATA_NAME_INT_MAX]) >= iValue));
   End

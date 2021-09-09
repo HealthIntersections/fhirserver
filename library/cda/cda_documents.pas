@@ -460,7 +460,7 @@ Begin
   End
   Else if oId.extension <> '' Then
   Begin
-    result.Space:= oId.root;
+    result.Space := oId.root;
     result.Value := oId.extension;
   End
   Else

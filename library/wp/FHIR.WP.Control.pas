@@ -6755,7 +6755,7 @@ function flagsToString(flags: TInteractiveGestureFlags):String;
 var
   a : TInteractiveGestureFlag;
 begin
-  result:= '';
+  result := '';
   for a := Low(TInteractiveGestureFlag) to High(TInteractiveGestureFlag) do
     if (a in flags)then
       result := result + ',' + FLAGNAMES[a];

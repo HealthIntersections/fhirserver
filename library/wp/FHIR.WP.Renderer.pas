@@ -3141,7 +3141,7 @@ Begin
     End
     Else
     Begin
-      oCurrent:= oParagraph.Next;
+      oCurrent := oParagraph.Next;
       iLine := oParagraph.Container.Rows.Last.Line + 1;
     End;
     If aState.VerticalOffset <> 0 Then
