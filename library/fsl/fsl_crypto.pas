@@ -242,6 +242,7 @@ Type
     class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
     class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
     class procedure Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
+    class procedure Verify_Hmac_ES256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
     class function checks(method: TJWTAlgorithm; key : TJWK): String;
 
   public
@@ -265,7 +266,9 @@ Type
     // if no key id is provided in the JWT, there can only be one key
     //
     // todo: what if you don't know?
-    class function unpack(token : string; verify : boolean; keys : TJWKList) : TJWT;
+    class function unpack(token : string) : TJWT; overload;
+    class function unpack(token : string; verify : boolean; keys : TJWKList) : TJWT; overload;
+    class function unpack(token : string; verify : boolean; key : TJWK) : TJWT; overload;
 
     // load the publi key details from the provided filename
     class function loadKeyFromDSACert(filename, password : AnsiString) : TJWK;
@@ -459,7 +462,7 @@ begin
   _alg := alg.Create;
   try
     _alg.Key := idb(aKey);
-    Result:= idb(_alg.HashValue(idb(aMessage)));
+    Result := idb(_alg.HashValue(idb(aMessage)));
   finally
     _alg.Free;
   end;
@@ -469,9 +472,9 @@ class function THMACUtils.HMAC_HexStr(alg : TIdHMACClass; aKey, aMessage: TBytes
 var
   I: Byte;
 begin
-  Result:= AnsiStringAsBytes('0x');
+  Result := AnsiStringAsBytes('0x');
   for I in HMAC(alg, aKey, aMessage) do
-    Result:= BytesAdd(Result, AnsiStringAsBytes(AnsiString(IntToHex(I, 2))));
+    Result := BytesAdd(Result, AnsiStringAsBytes(AnsiString(IntToHex(I, 2))));
 end;
 
 class function THMACUtils.HMAC_Base64(alg : TIdHMACClass; aKey, aMessage: TBytes): AnsiString;
@@ -766,14 +769,16 @@ begin
   result := EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
   check(result <> nil, 'EC_KEY_new_by_curve_name = nil');
   grp := EC_KEY_get0_group(result);
+  check(grp <> nil, 'EC_KEY_get0_group = nil');
   pub := EC_POINT_new(grp);
+  check(pub <> nil, 'EC_POINT_new = nil');
   check(EC_POINT_set_affine_coordinates_GFp(grp, pub, px, py, nil) = 1, 'EC_POINT_set_affine_coordinates_GFp failed');
-  EC_KEY_set_public_key(result, pub);
+  check(EC_KEY_set_public_key(result, pub) = 1, 'EC_KEY_set_public_key');
 
   if (privkey) then
   begin
     check(hasPrivateKey, 'EC Key needs an private key');
-    EC_KEY_set_private_key(result, pd)
+    check(EC_KEY_set_private_key(result, pd) = 1, 'EC_KEY_set_private_key');
   end;
 end;
 
@@ -1197,6 +1202,8 @@ begin
         end
         else if (h['alg'] = 'RS256') then
           verify_hmac_RSA256(AnsiStringAsBytes(AnsiString(header+'.'+payload)), JWTDeBase64URL(sig), h, keys)
+        else if (h['alg'] = 'ES256') then
+          verify_hmac_ES256(AnsiStringAsBytes(AnsiString(header+'.'+payload)), JWTDeBase64URL(sig), h, keys)
         else if (h['alg'] = 'none') then
           check(sig = '', 'There cannot be a sig when there is no algorithm')
         else
@@ -1212,16 +1219,30 @@ begin
   end;
 end;
 
+{.$.DEFINE ALT}
 class function TJWTUtils.Sign_ES256(input: TBytes; key: TJWK): TBytes;
 var
   ctx : PEVP_MD_CTX;
   keysize : integer;
-  len : Cardinal;
+  len, l : Cardinal;
+  p : System.PByte;
   pkey: PEVP_PKEY;
+  PkeyCtx: PEVP_PKEY_CTX;
   rkey: PEC_KEY;
   keys : TJWKList;
+  keytype : integer;
+  {$IFDEF ALT}
+  Signature: array [0..8000] of byte;
+  {$ENDIF}
 begin
   check(key <> nil, 'A key must be provided for ES256');
+  len := 0;
+  p := @input[0];
+  l := length(input);
+  {$IFDEF ALT}
+  for keysize := 0 to 8000 do
+    Signature[keysize] := 0;
+  {$ENDIF}
 
   // 1. Load the RSA private Key from FKey
   rkey := key.LoadEC(true);
@@ -1235,27 +1256,24 @@ begin
       SetLength(result, keysize);
       ctx := EVP_MD_CTX_new;
       try
-        check(EVP_DigestSignInit(ctx, nil, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
-        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
-        check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_SignFinal failed');
+        check(EVP_DigestSignInit(ctx, @PkeyCtx, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
+  {$IFNDEF ALT}
+        check(EVP_DigestUpdate(ctx, p, l) = 1, 'openSSL EVP_DigestUpdate failed');
+        check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_DigestSignFinal failed');
+  {$ELSE}
+        check(EVP_DigestSign(ctx, @result[0], @len, p, l) = 1, 'openSSL EVP_DigestSign failed');
+  {$ENDIF}
         SetLength(result, len);
       finally
         EVP_MD_CTX_free(ctx);
       end;
+
     finally
       EVP_PKEY_free(pKey);
     end;
   finally
     EC_KEY_free(rkey);
   end;
-
-//  keys := TJWKList.create;
-//  try
-//    keys.Add(key.Link);
-//    Verify_Hmac_RSA256(input, result, nil, keys);
-//  finally
-//    keys.Free;
-//  end;
 end;
 
 class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; pemfile, pempassword: String): TBytes;
@@ -1272,6 +1290,31 @@ begin
   result := THMACUtils.HMAC(TIdHMACSHA256, Key.key, input);
 
   Verify_Hmac_SHA256(input, result, key);
+end;
+
+class function TJWTUtils.unpack(token: string; verify: boolean; key: TJWK): TJWT;
+var
+  keys : TJWKList;
+begin
+  keys := TJWKList.Create;
+  try
+    keys.Add(key.link);
+    result := unpack(token, verify, keys);
+  finally
+    keys.Free;
+  end;
+end;
+
+class function TJWTUtils.unpack(token: string): TJWT;
+var
+  keys : TJWKList;
+begin
+  keys := TJWKList.Create;
+  try
+    result := unpack(token, false, keys);
+  finally
+    keys.Free;
+  end;
 end;
 
 class procedure TJWTUtils.Verify_Hmac_SHA256(input, sig: TBytes; key: TJWK);
@@ -1331,6 +1374,58 @@ begin
   finally
     keys.Free;
   end;
+end;
+
+class procedure TJWTUtils.Verify_Hmac_ES256(input, sig: TBytes; header: TJsonObject; keys: TJWKList);
+var
+  ctx : PEVP_MD_CTX;
+  e: integer;
+  pkey: PEVP_PKEY;
+  rkey: PEC_KEY;
+  key : TJWK;
+  i : integer;
+begin
+  check((keys <> nil) and (keys.Count > 0), 'No keys provided for EC/SHA-256 verification');
+
+  key := nil;
+  if (header <> nil) and (header['kid'] <> '') then
+  begin
+    for i := 0 to keys.count - 1 do
+      if keys[i].id = header['kid'] then
+        key := keys[i];
+    check(key <> nil, 'No matching key found for key '+header['kid']);
+  end
+  else
+  begin
+    check(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified');
+    key := keys[0];
+  end;
+
+  // 1. Load the RSA private Key from FKey
+  rkey := key.LoadEC(false);
+  try
+    pkey := EVP_PKEY_new;
+    try
+      check(EVP_PKEY_set1_EC_KEY(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+
+      // 2. check the signature
+      ctx := EVP_MD_CTX_new;
+      try
+        check(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed');
+        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed');
+        e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
+        check(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')');
+      finally
+        EVP_MD_CTX_free(ctx);
+      end;
+
+    finally
+      EVP_PKEY_free(pKey);
+    end;
+  finally
+    EC_KEY_free(rkey);
+  end;
+
 end;
 
 class procedure TJWTUtils.Verify_Hmac_RSA256(input, sig: TBytes; header : TJsonObject; keys: TJWKList);

@@ -190,7 +190,7 @@ begin
     end;
     if (jwtsrc <>'') and ((email = '') or (id = '') or (name = '')) then
     begin
-      jwt := TJWTUtils.unpack(jwtsrc, false, nil);
+      jwt := TJWTUtils.unpack(jwtsrc);
       try
         if (email = '') then
           email := jwt.email;

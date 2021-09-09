@@ -34,6 +34,7 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
+  {$IFDEF FPC}LazUTF8, {$ENDIF}
   Classes, Generics.Collections, Generics.Defaults,
   fsl_base, fsl_utilities;
 
@@ -115,6 +116,8 @@ type
   end;
 
 
+  { THTTPLanguages }
+
   THTTPLanguages = record
   private
     FSource: String;
@@ -133,7 +136,7 @@ type
     function sizeInBytes(magic : integer) : cardinal;
   end;
 
-  //end;
+function defLang : THTTPLanguages;
 
 implementation
 
@@ -636,6 +639,23 @@ begin
   finally
     list.Free;
   end;
+end;
+
+function defLang : THTTPLanguages;
+{$IFDEF FPC}
+var
+  Lang, FallbackLang: String;
+begin
+  LazGetLanguageIDs(Lang, FallbackLang);
+{$ELSE}
+var
+  szLang: Array [0..254] of Char;
+  Lang : String;
+begin
+  VerLanguageName(GetSystemDefaultLCID, szLang, SizeOf(szLang));
+  Lang := StrPas(szLang);
+{$ENDIF}
+  result := THTTPLanguages.create(Lang);
 end;
 
 function THTTPLanguages.GetCodes: TArray<String>;
