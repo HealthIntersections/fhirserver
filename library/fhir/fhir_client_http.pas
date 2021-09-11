@@ -128,8 +128,8 @@ type
     function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
     procedure terminate; override;
 
     // special functions
@@ -420,7 +420,7 @@ begin
 
   if password <> '' then
   begin
-    indy.Request.BasicAuthentication:= true;
+    indy.Request.BasicAuthentication := true;
     indy.Request.UserName := UserName;
     indy.Request.Password := Password;
   end;
@@ -458,6 +458,9 @@ begin
       FHeaders.LastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
       FHeaders.Progress := indy.Response.RawHeaders.Values['X-Progress'];
       FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];
+      FHeaders.Timestamp := indy.Response.LastModified;
+      if FHeaders.Timestamp = 0 then
+        FHeaders.Timestamp := indy.Response.Date;
       FClient.LastStatus := indy.ResponseCode;
       FClient.LastStatusMsg := indy.ResponseText;
     except
@@ -1016,7 +1019,7 @@ begin
     FClient.OnProgress(FClient, 'Downloaded', 100, true);
 end;
 
-function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 var
   ret : TStream;
 begin
@@ -1025,9 +1028,11 @@ begin
   else
     ret := exchange(URLPath([Furl, path]), httpGet, nil, headers);
   try
-    result := TFslBuffer.Create;
+    result := TFslHTTPBuffer.Create;
     try
       result.LoadFromStream(ret);
+      result.timestamp := FHeaders.Timestamp;
+      result.mimeType := FHeaders.contentType;
       result.link;
     finally
       result.Free;
@@ -1037,7 +1042,7 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+function TFHIRHTTPCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslHTTPBuffer): TFslHTTPBuffer;
 var
   req : TMemoryStream;
   ret : TStream;
@@ -1046,11 +1051,15 @@ begin
   try
     body.SaveToStream(req);
     req.Position := 0;
+    if (body.mimeType <> '') then
+      headers.contentType := body.mimeType;
     ret := exchange(Furl+'/'+path, httpPost, req, headers);
     try
-      result := TFslBuffer.Create;
+      result := TFslHTTPBuffer.Create;
       try
         result.LoadFromStream(ret);
+        result.timestamp := FHeaders.Timestamp;
+        result.mimeType := FHeaders.contentType;
         result.link;
       finally
         result.Free;
