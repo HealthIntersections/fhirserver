@@ -1258,7 +1258,7 @@ end;
 
 function template(fragment : String) : String;
 begin
-result :=
+result := 
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
 '<head>'+#13#10+
 '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+

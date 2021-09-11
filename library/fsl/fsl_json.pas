@@ -533,13 +533,24 @@ function JsonBoolToString(b : boolean) : String;
 function JsonStringToBool(s : String; def : boolean = false) : boolean;
 
 type
+
+ { TJWT }
+
  TJWT = class (TFslObject)
   private
     FHeader : TJsonObject;
+    FHeaderSource: String;
     FPayLoad : TJsonObject;
     FOriginalSource: String;
+    FPayloadSource: String;
+    FSig: String;
+    FValid: boolean;
+    FValidated: boolean;
+    FValidationMessage: String;
 
+    function GetKid: String;
     procedure setHeader(const Value: TJsonObject);
+    procedure SetKid(AValue: String);
     procedure setPayload(const Value: TJsonObject);
 
     function GetaddressCountry: string;
@@ -615,6 +626,9 @@ type
     destructor Destroy; override;
 
     property originalSource : String read FOriginalSource write FOriginalSource;
+    property headerSource : String read FHeaderSource write FHeaderSource;
+    property payloadSource : String read FPayloadSource write FPayloadSource;
+    property sig : String read FSig write FSig;
 
     // the header is provided to get/set extra properties beyond those used in packing/unpacking.
     // you don't need to do anything with it if you don't use extra properties
@@ -630,6 +644,7 @@ type
     property notBefore : TDateTime read GetnotBefore write SetnotBefore; // 'nbf'
     property issuedAt : TDateTime read GetissuedAt write SetissuedAt; // 'ist'
     property id : string read Getid write Setid; // 'jti'
+    property kid : String read GetKid write SetKid;
 
     function desc : String;
 
@@ -659,6 +674,11 @@ type
     property addressRegion : string read GetaddressRegion write SetaddressRegion; // 'address.region'  State, province, prefecture, or region component.
     property addressPostCode : string read GetaddressPostCode write SetaddressPostCode; // 'address.postal_code'  Zip code or postal code component.
     property addressCountry : string read GetaddressCountry write SetaddressCountry; // 'address.country'  Country name component.
+
+    // validation outcomes
+    property validated : boolean read FValidated write FValidated;
+    property valid : boolean read FValid write FValid;
+    property validationMessage : String read FValidationMessage write FValidationMessage;
 
     function userName : String;
   end;
@@ -3371,7 +3391,7 @@ end;
 
 { TJWT }
 
-constructor TJWT.create(header, payload: TJsonObject);
+constructor TJWT.Create(header, payload: TJsonObject);
 begin
   Create;
   self.Header := header;
@@ -3390,7 +3410,7 @@ begin
     result := '??';
 end;
 
-constructor TJWT.create;
+constructor TJWT.Create;
 begin
   inherited create;
   FHeader := TJsonObject.Create('header');
@@ -3411,6 +3431,16 @@ begin
   FHeader := value;
 end;
 
+function TJWT.GetKid: String;
+begin
+  result := header['kid'];
+end;
+
+procedure TJWT.SetKid(AValue: String);
+begin
+  header['kid'] := Avalue;
+end;
+
 procedure TJWT.setPayload(const Value: TJsonObject);
 begin
   assert(value <> nil);
@@ -3418,32 +3448,32 @@ begin
   FPayload := value;
 end;
 
-function TJWT.Getissuer : String;
+function TJWT.Getissuer: string;
 begin
   result := payload['iss'];
 end;
 
-procedure TJWT.Setissuer(value : String);
+procedure TJWT.Setissuer(Value: string);
 begin
   payload['iss'] := value;
 end;
 
-function TJWT.Getsubject : String;
+function TJWT.Getsubject: string;
 begin
   result := payload['sub'];
 end;
 
-procedure TJWT.Setsubject(value : String);
+procedure TJWT.Setsubject(Value: string);
 begin
   payload['sub'] := value;
 end;
 
-function TJWT.Getaudience : String;
+function TJWT.Getaudience: string;
 begin
   result := payload['aud'];
 end;
 
-procedure TJWT.Setaudience(value : String);
+procedure TJWT.Setaudience(Value: string);
 begin
   payload['aud'] := value;
 end;
@@ -3453,7 +3483,7 @@ begin
   result := UnixToDateTime(trunc(StrToFloat(payload.num['exp'])));
 end;
 
-procedure TJWT.Setexpires(value : TDateTime);
+procedure TJWT.Setexpires(Value: TDateTime);
 begin
   payload.num['exp'] := IntToStr(DateTimeToUnix(value));
 end;
@@ -3463,7 +3493,7 @@ begin
   result := UnixToDateTime(StrToIntDef(payload['nbf'], 0));
 end;
 
-procedure TJWT.SetnotBefore(value : TDateTime);
+procedure TJWT.SetnotBefore(Value: TDateTime);
 begin
   payload['nbf'] := IntToStr(DateTimeToUnix(value));
 end;
@@ -3473,17 +3503,17 @@ begin
   result := UnixToDateTime(StrToIntDef(payload['iat'], 0));
 end;
 
-procedure TJWT.SetissuedAt(value : TDateTime);
+procedure TJWT.SetissuedAt(Value: TDateTime);
 begin
   payload['iat'] := IntToStr(DateTimeToUnix(value));
 end;
 
-function TJWT.Getid : String;
+function TJWT.Getid: string;
 begin
   result := payload['jti'];
 end;
 
-procedure TJWT.Setid(value : String);
+procedure TJWT.Setid(Value: string);
 begin
   if payload = nil then
     payload := TJsonObject.Create('payload');
@@ -3496,7 +3526,7 @@ begin
   result := payload['name'];
 end;
 
-procedure TJWT.Setname(value : string);
+procedure TJWT.Setname(Value: string);
 begin
   payload['name'] := value;
 end;
@@ -3506,7 +3536,7 @@ begin
   result := payload['given_name'];
 end;
 
-procedure TJWT.SetgivenName(value : string);
+procedure TJWT.SetgivenName(Value: string);
 begin
   payload['given_name'] := value;
 end;
@@ -3516,7 +3546,7 @@ begin
   result := payload['family_name'];
 end;
 
-procedure TJWT.SetfamilyName(value : string);
+procedure TJWT.SetfamilyName(Value: string);
 begin
   payload['family_name'] := value;
 end;
@@ -3526,7 +3556,7 @@ begin
   result := payload['middle_name'];
 end;
 
-procedure TJWT.SetmiddleName(value : string);
+procedure TJWT.SetmiddleName(Value: string);
 begin
   payload['middle_name'] := value;
 end;
@@ -3536,7 +3566,7 @@ begin
   result := payload['nickname'];
 end;
 
-procedure TJWT.SetnickName(value : string);
+procedure TJWT.SetnickName(Value: string);
 begin
   payload['nickname'] := value;
 end;
@@ -3546,7 +3576,7 @@ begin
   result := payload['preferred_username'];
 end;
 
-procedure TJWT.SetpreferredName(value : string);
+procedure TJWT.SetpreferredName(Value: string);
 begin
     payload['preferred_username'] := value;
   end;
@@ -3556,7 +3586,7 @@ begin
   result := payload['profile'];
 end;
 
-procedure TJWT.Setprofile(value : string);
+procedure TJWT.Setprofile(Value: string);
 begin
   payload['profile'] := value;
 end;
@@ -3566,7 +3596,7 @@ begin
   result := payload['picture'];
 end;
 
-procedure TJWT.Setpicture(value : string);
+procedure TJWT.Setpicture(Value: string);
 begin
   payload['picture'] := value;
 end;
@@ -3581,7 +3611,7 @@ begin
   result := TJWT(inherited Link);
 end;
 
-procedure TJWT.Setwebsite(value : string);
+procedure TJWT.Setwebsite(Value: string);
 begin
   payload['website'] := value;
 end;
@@ -3601,7 +3631,7 @@ begin
   result := payload['email'];
 end;
 
-procedure TJWT.Setemail(value : string);
+procedure TJWT.Setemail(Value: string);
 begin
   payload['email'] := value;
 end;
@@ -3611,7 +3641,7 @@ begin
   result := payload.bool['email_verified'];
 end;
 
-procedure TJWT.SetemailVerified(value : boolean );
+procedure TJWT.SetemailVerified(Value: boolean);
 begin
   payload.bool['email_verified'] := value;
 end;
@@ -3621,7 +3651,7 @@ begin
   result := payload['gender'];
 end;
 
-procedure TJWT.Setgender(value : string);
+procedure TJWT.Setgender(Value: string);
 begin
   payload['gender'] := value;
 end;
@@ -3631,7 +3661,7 @@ begin
   result := payload['birthdate'];
 end;
 
-procedure TJWT.Setbirthdate(value : string);
+procedure TJWT.Setbirthdate(Value: string);
 begin
   payload['birthdate'] := value;
 end;
@@ -3641,7 +3671,7 @@ begin
   result := payload['zoneinfo'];
 end;
 
-procedure TJWT.SettimeZone(value : string);
+procedure TJWT.SettimeZone(Value: string);
 begin
   payload['zoneinfo'] := value;
 end;
@@ -3651,7 +3681,7 @@ begin
   result := payload['locale'];
 end;
 
-procedure TJWT.Setlocale(value : string);
+procedure TJWT.Setlocale(Value: string);
 begin
   payload['locale'] := value;
 end;
@@ -3661,7 +3691,7 @@ begin
   result := payload['phone_number'];
 end;
 
-procedure TJWT.Setphone(value : string);
+procedure TJWT.Setphone(Value: string);
 begin
   payload['phone_number'] := value;
 end;
@@ -3671,7 +3701,7 @@ begin
   result := payload.bool['phone_number_verified'];
 end;
 
-procedure TJWT.Setphone_verified(value : boolean );
+procedure TJWT.Setphone_verified(Value: boolean);
 begin
   payload.bool['phone_number_verified'] := value;
 end;
@@ -3681,7 +3711,7 @@ begin
   result := UnixToDateTime(StrToIntDef(payload['updated_at'], 0));
 end;
 
-procedure TJWT.SetupdatedAt(value : TDateTime);
+procedure TJWT.SetUpdatedAt(Value: TDateTime);
 begin
   payload['updated_at'] := IntToStr(DateTimeToUnix(value));
 end;
@@ -3691,7 +3721,7 @@ begin
   result := payload.forceObj['address']['formatted'];
 end;
 
-procedure TJWT.SetaddressFormatted(value : string);
+procedure TJWT.SetaddressFormatted(Value: string);
 begin
   payload.forceObj['address']['formatted'] := value;
 end;
@@ -3701,7 +3731,7 @@ begin
   result := payload.forceObj['address']['street_address'];
 end;
 
-procedure TJWT.SetaddressStreet(value : string);
+procedure TJWT.SetaddressStreet(Value: string);
 begin
   payload.forceObj['address']['street_address'] := value;
 end;
@@ -3711,7 +3741,7 @@ begin
   result := payload.forceObj['address']['locality'];
 end;
 
-procedure TJWT.SetaddressLocality(value : string);
+procedure TJWT.SetaddressLocality(Value: string);
 begin
   payload.forceObj['address']['locality'] := value;
 end;
@@ -3721,7 +3751,7 @@ begin
   result := payload.forceObj['address']['region'];
 end;
 
-procedure TJWT.SetaddressRegion(value : string);
+procedure TJWT.SetaddressRegion(Value: string);
 begin
   payload.forceObj['address']['region'] := value;
 end;
@@ -3731,7 +3761,7 @@ begin
   result := payload.forceObj['address']['postal_code'];
 end;
 
-procedure TJWT.SetaddressPostCode(value : string);
+procedure TJWT.SetaddressPostCode(Value: string);
 begin
   payload.forceObj['address']['postal_code'] := value;
 end;
@@ -3741,7 +3771,7 @@ begin
   result := payload.forceObj['address']['country'];
 end;
 
-procedure TJWT.SetaddressCountry(value : string);
+procedure TJWT.SetaddressCountry(Value: string);
 begin
   payload.forceObj['address']['country'] := value;
 end;

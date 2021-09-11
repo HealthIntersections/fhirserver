@@ -78,6 +78,8 @@ function HumanNameAsText(name : TFhirHumanName):String;
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 function ResourceTypeByName(name : String) : TFhirResourceType;
 function isResourceName(name : String; canbeLower : boolean = false) : boolean;
+function IdentifiersAsText(ids : TFhirIdentifierList):String;
+function ContactsAsText(cps : TFhirContactPointList):String;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
@@ -1667,6 +1669,42 @@ begin
   end;
 end;
 
+function IdentifierAsText(id : TFhirIdentifier):String;
+var
+  i : integer;
+begin
+  if id = nil then
+    result := ''
+  else
+    result := id.value;
+end;
+
+function IdentifiersAsText(ids : TFhirIdentifierList):String;
+begin
+  if (ids = nil) or (ids.Count = 0) then
+    result := '??'
+  else
+    result := IdentifierAsText(ids[0]);
+end;
+
+function ContactAsText(cp : TFHIRContactPoint):String;
+var
+  i : integer;
+begin
+  if cp = nil then
+    result := ''
+  else
+    result := cp.value;
+end;
+
+function ContactsAsText(cps : TFHIRContactPointList):String;
+begin
+  if (cps = nil) or (cps.Count = 0) then
+    result := '??'
+  else
+    result := ContactAsText(cps[0]);
+end;
+
 function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   ct : String;
@@ -1800,7 +1838,7 @@ end;
     li := ul.addTag('li');
     AtomEntry e := codeSystems.(inc.System.toString);
     
-    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then
+    if (inc.Code.size := := 0 && inc.Filter.size := := 0) begin then
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
     end; else begin 
@@ -1851,10 +1889,10 @@ end;
   end;
 
   private ValueSetDefineConceptComponent getConceptForCode(AtomEntry e, String code) begin
-    if (e :=:= nil) then
+    if (e := := nil) then
       return nil;
     vs : TFHIRValueSet := (ValueSet) e.Resource;
-    if (vs.CodeSystem :=:= nil) then
+    if (vs.CodeSystem := := nil) then
       return nil;
     for (ValueSetDefineConceptComponent c : vs.CodeSystem.Concept) begin
       ValueSetDefineConceptComponent v := getConceptForCode(c, code);

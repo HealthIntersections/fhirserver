@@ -641,6 +641,7 @@ begin
   FServerContext.JWTServices.DatabaseId := FServerContext.DatabaseId;
   FServerContext.JWTServices.Host := Settings.Ini.web['host'].value;
   FServerContext.JWTServices.cardKey := TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
+  FServerContext.JWTServices.cardJWKSFile := Settings.Ini.web['card-jwks'].value;
   //  FServerContext.JWTServices.JWKAddress := ?;
 
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, makeFactory, Terminologies.link);

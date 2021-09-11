@@ -1,30 +1,17 @@
 unit healthcard_generator;
 
+{$i fhir.inc}
+
 interface
 
 uses
   SysUtils, Classes, DateUtils,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
-  fhir_objects, fhir_common,
-  fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities,
+  fhir_objects, fhir_common, fhir_healthcard,
+  fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
   session, storage;
 
 type
-  TCredentialType = (ctHealthCard, ctCovidCard, ctImmunizationCard, ctLabCard);
-  TCredentialTypeSet = set of TCredentialType;
-
-  THealthcareCard = class (TFslObject)
-  private
-    FLinks: TFslStringDictionary;
-    FJws: String;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function link : THealthcareCard; overload;
-
-    property jws : String read FJws write FJws;
-    property links : TFslStringDictionary read FLinks;
-  end;
 
   TCardMaker = class (TFslObject)
   private
@@ -75,7 +62,6 @@ type
     FIssues : TStringList;
     procedure SetParams(const Value: TFhirParameters);
 
-    function buildPayload(bundle : TFHIRBundle; types : TCredentialTypeSet) : String;
     function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 
     procedure makeImmunizationCard(covid : boolean);
@@ -91,37 +77,38 @@ type
 
     property cards : TFslList<THealthcareCard> read FCards;
     property issues : TStringList read FIssues;
+    property IssuerURL : String read FIssuerUrl write FIssuerUrl;
   end;
 
 implementation
 
 { THealthCardGenerator }
 
-function THealthCardGenerator.buildPayload(bundle: TFHIRBundle; types : TCredentialTypeSet): String;
-var
-  json : TFHIRJsonComposer;
-begin
-  result := '{"iss":"'+FIssuerUrl+'",'+
-     '"nbf":'+IntToStr(SecondsBetween(now, EncodeDate(1970, 1, 1)))+','+
-     '"vc":{'+
-      '"type":["https://smarthealth.cards#health-card"';
-  if ctCovidCard in types then
-    result := result + ',"https://smarthealth.cards#covid19"';
-  if ctImmunizationCard in types then
-    result := result + ',"https://smarthealth.cards#immunization"';
-  if ctCovidCard in types then
-    result := result + ',"https://smarthealth.cards#laboratory"';
-  result := result + '],"credentialSubject":{'+
-     '"fhirVersion":"4.0.1",'+
-     '"fhirBundle":';
-  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, THTTPLanguages.Create('en'));
-  try
-    result := result + json.Compose(bundle);
-  finally
-    json.Free;
-  end;
-  result := result + '}}}';
-end;
+//function THealthCardGenerator.buildPayload(bundle: TFHIRBundle; types : TCredentialTypeSet): String;
+//var
+//  json : TFHIRJsonComposer;
+//begin
+//  result := '{"iss":"'+FIssuerUrl+'",'+
+//     '"nbf":'+IntToStr(SecondsBetween(now, EncodeDate(1970, 1, 1)))+','+
+//     '"vc":{'+
+//      '"type":["https://smarthealth.cards#health-card"';
+//  if ctCovidCard in types then
+//    result := result + ',"https://smarthealth.cards#covid19"';
+//  if ctImmunizationCard in types then
+//    result := result + ',"https://smarthealth.cards#immunization"';
+//  if ctCovidCard in types then
+//    result := result + ',"https://smarthealth.cards#laboratory"';
+//  result := result + '],"credentialSubject":{'+
+//     '"fhirVersion":"4.0.1",'+
+//     '"fhirBundle":';
+//  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, THTTPLanguages.Create('en'));
+//  try
+//    result := result + json.Compose(bundle);
+//  finally
+//    json.Free;
+//  end;
+//  result := result + '}}}';
+//end;
 
 constructor THealthCardGenerator.Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
 begin
@@ -227,40 +214,25 @@ end;
 
 function THealthCardGenerator.signCard(bundle: TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 var
-  payload : String;
-  bytes : TBytes;
-  jwt : TJWT;
+  util : THealthcareCardUtilities;
 begin
-  payload := buildPayload(bundle, types);
-  bytes := ZCompressBytes(TEncoding.UTF8.GetBytes(payload));
-
-  result := THealthcareCard.Create;
+  result := TFHIRHealthcareCardR4.Create;
   try
-    result.jws := TJWTUtils.pack('{"alg":"ES256","zip":"DEF","kid":"'+FJwk.id+'"}', bytes, jwt_es256, FJwk);
-    FCards.Add(result.link);
+    result.Bundle := bundle.Link;
+    result.issueDate := TFslDateTime.makeUTC;
+    result.issuer := FIssuerUrl;
+    result.types := types;
+    util := THealthcareCardUtilities.create;
+    try
+      util.Factory := TFHIRFactoryR4.Create;
+      util.sign(result, FJwk);
+    finally
+      util.Free;
+    end;
+    FCards.add(result.link);
   finally
     result.Free;
   end;
-end;
-
-{ THealthcareCard }
-
-constructor THealthcareCard.Create;
-begin
-  inherited;
-  FLinks := TFslStringDictionary.Create;
-end;
-
-destructor THealthcareCard.Destroy;
-begin
-  FLinks.Free;
-  inherited;
-end;
-
-
-function THealthcareCard.link: THealthcareCard;
-begin
-  result := THealthcareCard(inherited Link);
 end;
 
 { TCardMaker }
@@ -413,7 +385,7 @@ begin
         t.code := c.code;
         t.system := c.system;
       end;
-    result.patient := TFhirReference.Create(imm.patient.reference);
+    result.patient := TFhirReference.Create('resource:0');
     result.occurrence := imm.occurrence.Link;
     if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
     begin

@@ -40,8 +40,8 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
 fstring:TFHIRString;
 begin
- res:=TFHIRExampleScenario(FiletoResource('c:\temp\sss.xml'));
- res.nameElement:=FHIRStringEdit1.associate(res.nameElement);
+ res := TFHIRExampleScenario(FiletoResource('c:\temp\sss.xml'));
+ res.nameElement := FHIRStringEdit1.associate(res.nameElement);
 
 
 end;

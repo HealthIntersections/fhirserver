@@ -117,7 +117,10 @@ function TFHIRWebServerSourceFolderProvider.getSource(filename: String): String;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  if FileExists(filename) then
+    fn := filename
+  else
+    fn := path([FSourcePath, filename]);
   result := fsl_stream.FileToString(fn, TEncoding.UTF8);
 end;
 

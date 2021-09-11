@@ -113,6 +113,7 @@ type
     procedure SetEnabled(AValue: boolean);
     procedure SetFilter(AValue: TEdit);
     procedure SetList(AValue: TListView);
+    procedure SetSettings(AValue: TIniFile);
     procedure updateStatus;
     procedure updateControls(op : TControlOperation; allowed : boolean);
     procedure doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
@@ -135,9 +136,13 @@ type
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
     procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation);
     Property Enabled : boolean read FEnabled write SetEnabled;
-    property Settings : TIniFile read FSettings write FSettings;
+    property Settings : TIniFile read FSettings write SetSettings;
 
     property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
+
+    // control
+    function doLoad : boolean; // call this when something changes the data to load
+    procedure saveStatus;
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
@@ -146,26 +151,26 @@ type
     procedure doUp;
     procedure doDown;
     procedure doExecute(mode : String);
-    function doLoad : boolean;
     procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
 
     // to override:
     function canSort : boolean; virtual;
+    function doubleClickEdit : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
     function loadList : boolean; virtual; abstract; // return false if not loaded ok
 
     procedure buildMenu; virtual;
-    function getImageIndex(item : T) : integer; virtual; abstract;
+    function getImageIndex(item : T) : integer; virtual;
     function getCellText(item : T; col : integer) : String; virtual; abstract;
     function getCellColors(item : T; col : integer; var fore, back : TColor) : boolean; virtual;
     function getSummaryText(item : T) : String; virtual;
     function compareItem(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
     function filterItem(item : T; s : String) : boolean; virtual;
 
-    function AddItem(mode : String) : T; virtual;
-    function EditItem(item : T; mode : String) : boolean; virtual;
-    procedure DeleteItem(item : T); virtual;
-    function ExecuteItem(item : T; mode : String) : boolean; virtual;
+    function addItem(mode : String) : T; virtual;
+    function editItem(item : T; mode : String) : boolean; virtual;
+    procedure deleteItem(item : T); virtual;
+    function executeItem(item : T; mode : String) : boolean; virtual;
   end;
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
@@ -257,6 +262,8 @@ type
     public
       destructor Destroy; override;
 
+      function link : TFHIRSynEditSynchroniser; overload;
+
       // set up
       property SynEdit : TSynEdit read FEdit write FEdit;
       property Factory : TFHIRFactory read FFactory write SetFactory;
@@ -326,7 +333,7 @@ end;
 procedure TObjectManager.SetFocus(AValue: TFHIRObject);
 begin
   if FFocus=AValue then Exit;
-  FFocus:=AValue;
+  FFocus := AValue;
 end;
 
 procedure TObjectManager.populateControls;
@@ -432,13 +439,7 @@ begin
 end;
 
 destructor TListManager<T>.Destroy;
-var
-  i : integer;
 begin
-  if FSettings <> nil then
-    for i := 0 to List.columns.count - 1 do
-      FSettings.WriteInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
-
   FControls.Free;
   FFiltered.free;
   FData.free;
@@ -529,7 +530,7 @@ end;
 
 function TListManager<T>.GetFocus: T;
 begin
-  if FList.itemindex = -1 then
+  if (FList.itemindex = -1) or (FList.ItemIndex >= FFiltered.count) then
     result := nil
   else
     result := FFiltered[FList.itemIndex];
@@ -561,6 +562,8 @@ var
   i : integer;
 begin
   FList := AValue;
+  List.AutoWidthLastColumn := true;
+  List.RowSelect := true;
   List.OnCompare := doListCompare;
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
@@ -587,6 +590,16 @@ begin
     List.AutoSortIndicator := false;
     List.SortType := stNone;
   end;
+end;
+
+procedure TListManager<T>.SetSettings(AValue: TIniFile);
+var
+  i : integer;
+begin
+  FSettings := AValue;
+  if (FSettings <> nil) and (FList <> nil) then
+    for i := 0 to List.columns.count - 1 do
+      list.columns[i].width := FSettings.ReadInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
 end;
 
 procedure TListManager<T>.updateStatus;
@@ -650,11 +663,18 @@ var
   entry : TListItem;
 begin
   item := GetFocus;
-  if FCanEdit and hasFocus and EditItem(item, '') then
+  if doubleClickEdit then
   begin
-    entry := FList.items[FList.itemindex];
-    entry.SubItems.Clear;
-    populateEntry(entry, item);
+    if FCanEdit and hasFocus and EditItem(item, '') then
+    begin
+      entry := FList.items[FList.itemindex];
+      entry.SubItems.Clear;
+      populateEntry(entry, item);
+    end;
+  end
+  else if hasFocus then
+  begin
+    doExecute('');
   end;
 end;
 
@@ -743,6 +763,7 @@ var
   c : integer;
 begin
   entry.caption := getCellText(item, 0);
+  entry.imageIndex := getImageIndex(item);
   entry.subItems.Clear;
   for c := 1 to FList.columnCount - 1 do
     entry.subItems.add(getCellText(item, c));
@@ -750,6 +771,11 @@ end;
 
 procedure TListManager<T>.buildMenu;
 begin
+end;
+
+function TListManager<T>.getImageIndex(item: T): integer;
+begin
+  result := -1;
 end;
 
 procedure TListManager<T>.doEdit(mode : String);
@@ -831,6 +857,15 @@ begin
   end;
 end;
 
+procedure TListManager<T>.saveStatus;
+var
+  i : integer;
+begin
+  if FSettings <> nil then
+    for i := 0 to List.columns.count - 1 do
+      FSettings.WriteInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
+end;
+
 procedure TListManager<T>.refresh(item : T);
 var
   ti : T;
@@ -855,6 +890,11 @@ begin
   result := false;
 end;
 
+function TListManager<T>.doubleClickEdit: boolean;
+begin
+  result := true;
+end;
+
 function TListManager<T>.getCellColors(item: T; col: integer; var fore, back: TColor): boolean;
 begin
   result := false;
@@ -875,22 +915,22 @@ begin
   result := true;
 end;
 
-function TListManager<T>.AddItem(mode : String): T;
+function TListManager<T>.addItem(mode: String): T;
 begin
   result := nil;
 end;
 
-function TListManager<T>.EditItem(item : T; mode: String): boolean;
+function TListManager<T>.editItem(item: T; mode: String): boolean;
 begin
   result := false;
 end;
 
-procedure TListManager<T>.DeleteItem(item: T);
+procedure TListManager<T>.deleteItem(item: T);
 begin
   raise Exception.create('Delete is not supported here');
 end;
 
-function TListManager<T>.ExecuteItem(item: T; mode: String) : boolean;
+function TListManager<T>.executeItem(item: T; mode: String): boolean;
 begin
   raise Exception.create('Execute is not supported here');
 end;
@@ -913,9 +953,15 @@ end;
 
 destructor TFHIRSynEditSynchroniser.Destroy;
 begin
-  FFocus.Free;  // though we really expect it to nil
+  FFocus.Free;  // though we really expect it to be nil
   FFactory.free;
+  FResource.Free;
   inherited Destroy;
+end;
+
+function TFHIRSynEditSynchroniser.link: TFHIRSynEditSynchroniser;
+begin
+  result := TFHIRSynEditSynchroniser(inherited link);
 end;
 
 procedure TFHIRSynEditSynchroniser.SetFactory(AValue: TFHIRFactory);

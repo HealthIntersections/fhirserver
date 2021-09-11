@@ -135,7 +135,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg -testinsightzx</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg -testinsightx</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -638,7 +638,9 @@
         <DCCReference Include="..\library\fhir\fhir_features.pas"/>
         <DCCReference Include="tx_icd10.pas"/>
         <DCCReference Include="tx_icd11.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_healthcard.pas"/>
         <DCCReference Include="healthcard_generator.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_html.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

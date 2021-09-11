@@ -36,8 +36,8 @@ begin
 
   if ok then
   begin
-    RequireDerivedFormResource:=True;
-    Application.Scaled:=True;
+    RequireDerivedFormResource := True;
+    Application.Scaled := True;
 
     Application.Initialize;
     Application.CreateForm(TMainConsoleForm, MainConsoleForm);

@@ -1911,7 +1911,7 @@ begin
         break;
 
       sModule := memU8toString(s, iActive+1, iModule - (iActive + 1));
-      sDate:= memU8toString(s, iDate+1, iTime - (iDate + 1));
+      sDate := memU8toString(s, iDate+1, iTime - (iDate + 1));
       sActive := memU8toString(s, iTime+1, iActive - (iTime + 1));
       sRefSetId := memU8toString(s, iModule+1, iRefSetId - (iModule + 1));
       sRefComp := memU8toString(s, iRefSetId+1, iRefComp - (iRefSetId + 1));

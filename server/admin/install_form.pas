@@ -133,7 +133,7 @@ end;
 
 procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
 begin
-  btnInstall.enabled :=
+  btnInstall.enabled := 
    (not edtUserName.enabled or ((edtUserName.text <> '') and IsValidIdent(edtUserName.text))) and
    (not edtPassword.enabled or ((edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0))) and
    (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));

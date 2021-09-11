@@ -617,7 +617,7 @@ end;
 
 class function TFHIRXhtmlComposer.Footer(factory : TFHIRFactory; base : string; const lang : THTTPLanguages; logId : String; tail : boolean = true): string;
 begin
-  result :=
+  result := 
     '</div>'+#13#10+
     ''+#13#10+
     ''+#13#10+
@@ -680,7 +680,7 @@ var
    id : TFHIRCompartmentId;
    f : boolean;
 begin
-  result :=
+  result := 
     '  <div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
     '    <div id="stripe"> </div>'+#13#10+
     '    <div class="container">  <!-- container -->'+#13#10+
@@ -753,7 +753,7 @@ end;
 
 class function TFHIRXhtmlComposer.PageLinks: String;
 begin
-  result :=
+  result := 
     '  <meta charset="utf-8"/>'+#13#10+
     '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
     '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+

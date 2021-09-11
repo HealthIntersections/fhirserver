@@ -368,7 +368,7 @@ begin
                   result.expires := now + StrToInt(s) * DATETIME_SECOND_ONE;
                 end;
                 if json.vStr['id_token'] <> '' then
-                  result.idToken := TJWTUtils.unpack(json.vStr['id_token'], false, nil);
+                  result.idToken := TJWTUtils.decodeJWT(json.vStr['id_token']);
                 result.patient := json.vStr['patient'];
                 result.Link;
               finally
@@ -675,7 +675,7 @@ end;
 
 function templateSource : String;
 begin
-  result :=
+  result := 
 '<!DOCTYPE HTML>'+#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
 '<head>'+#13#10+
@@ -890,7 +890,7 @@ begin
     jwt.expires := now + 1 * DATETIME_MINUTE_ONE;
     jwt.audience := server.tokenEndpoint;
     jwt.id := NewGuidId;
-    jwt_header := TJWTUtils.pack(jwt, jwt_hmac_rsa256, nil, server.privatekey, server.passphrase);
+    jwt_header := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, nil, server.privatekey, server.passphrase);
   finally
     jwt.Free;
   end;

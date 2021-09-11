@@ -316,7 +316,7 @@ Begin
     psSolid:gridstyle.itemindex := 0;
     psDot:gridstyle.itemindex := 1;
     psDash:gridstyle.itemindex := 2;
-    psDashDot:gridstyle.itemindex :=3 ;
+    psDashDot:gridstyle.itemindex := 3 ;
     psDashDotDot:gridstyle.itemindex := 4;
   End;
   Spinedit2.value := FGraph.Dimensions.printscalepct;

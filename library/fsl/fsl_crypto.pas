@@ -176,20 +176,13 @@ Type
     class function loadFromFile(filename : String) : TJWK;
   end;
 
-  TJWKList = class (TFslObjectList)
-  private
-    function GetKey(index: integer): TJWK;
-    procedure Setkey(index: integer; const Value: TJWK);
-  protected
-    function ItemClass : TFslObjectClass; override;
+  TJWKList = class (TFslList<TJWK>)
   public
     constructor Create(obj : TJsonObject); overload;
     constructor Create(source : String); overload;
-    destructor Destroy; override;
+
     procedure readFromJson(obj : TJsonObject);
     procedure writeToJson(obj : TJsonObject);
-
-    property Key[index : integer] : TJWK read GetKey write Setkey; default;
   end;
 
   TJWTAlgorithm = (jwt_none, jwt_hmac_sha256, jwt_hmac_rsa256, jwt_es256);
@@ -238,11 +231,11 @@ Type
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
     class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
-    class procedure Verify_Hmac_SHA256(input : TBytes; sig : TBytes; key: TJWK);
+    class function Verify_Hmac_SHA256(input : TBytes; sig : TBytes; key: TJWK) : string;
     class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
     class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
-    class procedure Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
-    class procedure Verify_Hmac_ES256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
+    class function Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String;
+    class function Verify_Hmac_ES256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String;
     class function checks(method: TJWTAlgorithm; key : TJWK): String;
 
   public
@@ -250,25 +243,25 @@ Type
 
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
-    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
-    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String; zip : String = '') : String; overload;
+    class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
+    class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String; zip : String = '') : String; overload;
 
     // special use - use an existing PEM to sign the JWT
-    class function rsa_pack(jwt : TJWT; method : TJWTAlgorithm; pem_file, pem_password : String) : String; overload;
+    class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; pem_file, pem_password : String) : String; overload;
 
 
     // for testing only - need to control whitespace in order to reproduce signatures
-    class function pack(header, payload : String; method : TJWTAlgorithm; key : TJWK) : String; overload;
-    class function pack(header : String; payload : TBytes; method : TJWTAlgorithm; key : TJWK) : String; overload;
+    class function encodeJWT(header, payload : String; method : TJWTAlgorithm; key : TJWK) : String; overload;
+    class function encodeJWT(header : String; payload : TBytes; method : TJWTAlgorithm; key : TJWK) : String; overload;
 
     // read a JWT. if verify is true, at least one key must be provided.
     // the code will pick between multiple keys based on the key id.
     // if no key id is provided in the JWT, there can only be one key
     //
-    // todo: what if you don't know?
-    class function unpack(token : string) : TJWT; overload;
-    class function unpack(token : string; verify : boolean; keys : TJWKList) : TJWT; overload;
-    class function unpack(token : string; verify : boolean; key : TJWK) : TJWT; overload;
+    class function decodeJWT(token : string) : TJWT; overload;
+    // having got a JWT, and examined it for key information, and sourced the keys, verify
+    class function verifyJWT(jwt : TJWT; keys : TJWKList; exception : boolean) : boolean; overload;
+    class function verifyJWT(jwt : TJWT; key : TJWK; exception : boolean) : boolean; overload;
 
     // load the publi key details from the provided filename
     class function loadKeyFromDSACert(filename, password : AnsiString) : TJWK;
@@ -450,6 +443,28 @@ begin
       e := ERR_get_error;
     end;
     raise ELibraryException.create(failmsg+': '+m);
+  end;
+end;
+
+
+function checkRes(test: boolean; failmsg: string; var res : String) : boolean;
+var
+  //e: integer;
+  //err : Array [0..250] of ansichar;
+  m : String;
+begin
+  result := test;
+  if not test then
+  begin
+    m := failMsg;
+    //e := ERR_get_error;
+    //while e <> 0 do
+    //begin
+    //  ERR_error_string(e, @err);
+    //  m := m + inttohex(e, 8)+' ('+String(err)+')'+' | ';
+    //  e := ERR_get_error;
+    //end;
+    res := m;
   end;
 end;
 
@@ -864,26 +879,6 @@ begin
   end;
 end;
 
-destructor TJWKList.Destroy;
-begin
-  inherited;
-end;
-
-function TJWKList.GetKey(index: integer): TJWK;
-begin
-  result := TJWK(ObjectByIndex[index]);
-end;
-
-function TJWKList.ItemClass: TFslObjectClass;
-begin
-  result := TJWK;
-end;
-
-procedure TJWKList.Setkey(index: integer; const Value: TJWK);
-begin
-  ObjectByIndex[index] := value;
-end;
-
 procedure TJWKList.readFromJson(obj : TJsonObject);
 var
   arr : TJsonArray;
@@ -911,12 +906,12 @@ begin
   arr := obj.forceArr['keys'];
   arr.clear;
   for i := 0 to count - 1 do
-    arr.add(Key[i].obj.Link);
+    arr.add(Items[i].obj.Link);
 end;
 
 { TJWTUtils }
 
-class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; zip : String): String;
+class function TJWTUtils.encodeJWT(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; zip : String): String;
 var
   input, sig : TBytes;
 begin
@@ -948,7 +943,7 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String; zip : String): String;
+class function TJWTUtils.encodeJWT(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String; zip : String): String;
 var
   input, sig : TBytes;
 begin
@@ -1127,7 +1122,7 @@ begin
   end;
 end;
 
-class function TJWTUtils.pack(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
+class function TJWTUtils.encodeJWT(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
 var
   input, sig : TBytes;
 begin
@@ -1142,7 +1137,7 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.pack(header : String; payload : TBytes; method: TJWTAlgorithm; key : TJWK): String;
+class function TJWTUtils.encodeJWT(header : String; payload : TBytes; method: TJWTAlgorithm; key : TJWK): String;
 var
   input, sig : TBytes;
 begin
@@ -1157,7 +1152,7 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.rsa_pack(jwt: TJWT; method: TJWTAlgorithm; pem_file, pem_password: String): String;
+class function TJWTUtils.encodeJWT(jwt: TJWT; method: TJWTAlgorithm; pem_file, pem_password: String): String;
 var
   input, sig : TBytes;
 begin
@@ -1175,48 +1170,61 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.unpack(token: string; verify: boolean; keys: TJWKList): TJWT;
+class function TJWTUtils.decodeJWT(token: string): TJWT;
 var
   header, payload, sig : String;
   hb, pb : TBytes;
-  h, p : TJsonObject;
 begin
-  StringSplit(token, '.', header, payload);
-  StringSplit(payload, '.', payload, sig);
-  check(header <> '', 'Header not found reading JWT');
-  check(payload <> '', 'payload not found reading JWT');
-
-  hb := JWTDeBase64URL(header);
-  pb := JWTDeBase64URL(payload);
-
-  h := TJSONParser.Parse(hb);
+  result := TJWT.create;
   try
-    p := TJSONParser.Parse(pb);
-    try
-      if verify then
-      begin
-        if (h['alg'] = 'HS256') then
-        begin
-          check(keys.count = 1, 'There can only be a single key for HMA/SHA-256');
-          verify_hmac_SHA256(AnsiStringAsBytes(AnsiString(header+'.'+payload)), JWTDeBase64URL(sig), keys[0])
-        end
-        else if (h['alg'] = 'RS256') then
-          verify_hmac_RSA256(AnsiStringAsBytes(AnsiString(header+'.'+payload)), JWTDeBase64URL(sig), h, keys)
-        else if (h['alg'] = 'ES256') then
-          verify_hmac_ES256(AnsiStringAsBytes(AnsiString(header+'.'+payload)), JWTDeBase64URL(sig), h, keys)
-        else if (h['alg'] = 'none') then
-          check(sig = '', 'There cannot be a sig when there is no algorithm')
-        else
-          raise ELibraryException.create('Unknown Algorithm '+h['alg']);
-      end;
-      result := TJWT.create(h.Link, p.Link);
-      result.originalSource := token;
-    finally
-      p.free;
+    // 1. split up the jwt
+    StringSplit(token, '.', header, payload);
+    StringSplit(payload, '.', payload, sig);
+    check(header <> '', 'Header not found reading JWT');
+    check(payload <> '', 'payload not found reading JWT');
+    result.originalSource := token;
+    result.headerSource := header;
+    result.payloadSource := payload;
+    result.sig := sig;
+
+    // 2. read the json
+    hb := JWTDeBase64URL(header);
+    pb := JWTDeBase64URL(payload);
+    result.header := TJSONParser.Parse(hb);
+
+    if result.header['zip'] = 'DEF' then
+    begin
+      pb := ZDecompressBytes(pb);
+      BytesToFile(pb, 'c:\temp\payload.json');
     end;
+    result.payload := TJSONParser.Parse(pb);
+    result.link;
   finally
-    h.Free;
+    result.free;
   end;
+end;
+
+class function TJWTUtils.verifyJWT(jwt : TJWT; keys : TJWKList; exception : boolean) : boolean;
+begin
+  jwt.validated := true;
+
+  if (jwt.header['alg'] = 'HS256') then
+  begin
+    check(keys.count = 1, 'There can only be a single key for HMA/SHA-256');
+    jwt.validationMessage := verify_hmac_SHA256(AnsiStringAsBytes(AnsiString(jwt.headerSource+'.'+jwt.payloadSource)), JWTDeBase64URL(jwt.sig), keys[0])
+  end
+  else if (jwt.header['alg'] = 'RS256') then
+    jwt.validationMessage := verify_hmac_RSA256(AnsiStringAsBytes(AnsiString(jwt.headerSource+'.'+jwt.payloadSource)), JWTDeBase64URL(jwt.sig), jwt.header, keys)
+  else if (jwt.header['alg'] = 'ES256') then
+    jwt.validationMessage := verify_hmac_ES256(AnsiStringAsBytes(AnsiString(jwt.headerSource+'.'+jwt.payloadSource)), JWTDeBase64URL(jwt.sig), jwt.header, keys)
+  else if (jwt.header['alg'] = 'none') then
+    jwt.validationMessage := 'There cannot be a sig when there is no algorithm'
+  else
+    jwt.validationMessage := 'Unknown Algorithm '+jwt.header['alg'];
+  jwt.valid := jwt.validationMessage = '';
+  result := jwt.valid;
+  if not jwt.valid and exception then
+    raise ELibraryException.Create(jwt.validationMessage);
 end;
 
 {.$.DEFINE ALT}
@@ -1292,32 +1300,21 @@ begin
   Verify_Hmac_SHA256(input, result, key);
 end;
 
-class function TJWTUtils.unpack(token: string; verify: boolean; key: TJWK): TJWT;
+class function TJWTUtils.verifyJWT(jwt: TJWT; key: TJWK; exception : boolean): boolean;
 var
   keys : TJWKList;
 begin
   keys := TJWKList.Create;
   try
     keys.Add(key.link);
-    result := unpack(token, verify, keys);
+    result := verifyJWT(jwt, keys, exception);
   finally
     keys.Free;
   end;
 end;
 
-class function TJWTUtils.unpack(token: string): TJWT;
-var
-  keys : TJWKList;
-begin
-  keys := TJWKList.Create;
-  try
-    result := unpack(token, false, keys);
-  finally
-    keys.Free;
-  end;
-end;
 
-class procedure TJWTUtils.Verify_Hmac_SHA256(input, sig: TBytes; key: TJWK);
+class function TJWTUtils.Verify_Hmac_SHA256(input, sig: TBytes; key: TJWK) : String;
 var
   expected : TBytes;
 begin
@@ -1327,7 +1324,10 @@ begin
   check(Length(key.Key) > 0, 'A valid Symmetric Key Value must be provided for HMAC/SHA-256');
 
   expected := THMACUtils.HMAC(TIdHMACSHA256, key.key, input);
-  check(SameBytes(expected, sig),'Signature is not valid (HMAC/SHA-256)');
+  if SameBytes(expected, sig) then
+    result := ''
+  else
+    result := 'Signature is not valid (HMAC/SHA-256)';
 end;
 
 class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; key: TJWK): TBytes;
@@ -1376,7 +1376,7 @@ begin
   end;
 end;
 
-class procedure TJWTUtils.Verify_Hmac_ES256(input, sig: TBytes; header: TJsonObject; keys: TJWKList);
+class function TJWTUtils.Verify_Hmac_ES256(input, sig: TBytes; header: TJsonObject; keys: TJWKList) : String;
 var
   ctx : PEVP_MD_CTX;
   e: integer;
@@ -1385,7 +1385,9 @@ var
   key : TJWK;
   i : integer;
 begin
-  check((keys <> nil) and (keys.Count > 0), 'No keys provided for EC/SHA-256 verification');
+  result := '';
+  if not checkRes((keys <> nil) and (keys.Count > 0), 'No keys provided for EC/SHA-256 verification', result) then
+    exit;
 
   key := nil;
   if (header <> nil) and (header['kid'] <> '') then
@@ -1393,11 +1395,13 @@ begin
     for i := 0 to keys.count - 1 do
       if keys[i].id = header['kid'] then
         key := keys[i];
-    check(key <> nil, 'No matching key found for key '+header['kid']);
+    if not checkRes(key <> nil, 'No matching key found for key '+header['kid'], result) then
+      exit;
   end
   else
   begin
-    check(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified');
+    if not checkRes(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified', result) then
+      exit;
     key := keys[0];
   end;
 
@@ -1406,15 +1410,19 @@ begin
   try
     pkey := EVP_PKEY_new;
     try
-      check(EVP_PKEY_set1_EC_KEY(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+      if not checkRes(EVP_PKEY_set1_EC_KEY(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed', result) then
+        exit;
 
       // 2. check the signature
       ctx := EVP_MD_CTX_new;
       try
-        check(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed');
-        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed');
+        if not checkRes(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed', result) then
+          exit;
+        if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
+          exit;
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
-        check(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')');
+        if not checkRes(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')', result) then
+          exit;
       finally
         EVP_MD_CTX_free(ctx);
       end;
@@ -1425,10 +1433,9 @@ begin
   finally
     EC_KEY_free(rkey);
   end;
-
 end;
 
-class procedure TJWTUtils.Verify_Hmac_RSA256(input, sig: TBytes; header : TJsonObject; keys: TJWKList);
+class function TJWTUtils.Verify_Hmac_RSA256(input, sig: TBytes; header : TJsonObject; keys: TJWKList) : String;
 var
   ctx : PEVP_MD_CTX;
   e: integer;
@@ -1437,7 +1444,9 @@ var
   key : TJWK;
   i : integer;
 begin
-  check((keys <> nil) and (keys.Count > 0), 'No keys provided for RSA/SHA-256 verification');
+  result := '';
+  if not checkRes((keys <> nil) and (keys.Count > 0), 'No keys provided for RSA/SHA-256 verification', result) then
+    exit;
 
   key := nil;
   if (header <> nil) and (header['kid'] <> '') then
@@ -1445,11 +1454,13 @@ begin
     for i := 0 to keys.count - 1 do
       if keys[i].id = header['kid'] then
         key := keys[i];
-    check(key <> nil, 'No matching key found for key '+header['kid']);
+    if not checkRes(key <> nil, 'No matching key found for key '+header['kid'], result) then
+      exit;
   end
   else
   begin
-    check(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified');
+    if not checkRes(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified', result) then
+      exit;
     key := keys[0];
   end;
 
@@ -1458,19 +1469,22 @@ begin
   try
     pkey := EVP_PKEY_new;
     try
-      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+      if not checkRes(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed', result) then
+        exit;
 
       // 2. check the signature
       ctx := EVP_MD_CTX_new;
       try
-        check(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed');
-        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed');
+        if not checkRes(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed', result) then
+          exit;
+        if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
+          exit;
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
-        check(e = 1, 'Signature is not valid (RSA) (e = '+inttostr(e)+')');
+        if not checkRes(e = 1, 'Signature is not valid (RSA) (e = '+inttostr(e)+')', result) then
+          exit;
       finally
         EVP_MD_CTX_free(ctx);
       end;
-
     finally
       EVP_PKEY_free(pKey);
     end;

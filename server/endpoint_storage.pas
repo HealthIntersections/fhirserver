@@ -70,8 +70,8 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function address : String; override;
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
     procedure terminate; override;
   end;
 
@@ -329,12 +329,12 @@ begin
   id := result.id;
 end;
 
-function TFHIRWebServerCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRWebServerCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFHIRWebServerCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
+function TFHIRWebServerCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
   raise Exception.Create('Not done yet');
 end;
@@ -796,6 +796,11 @@ begin
       result := 'Smart Configuration';
       FAuthServer.HandleDiscovery(AContext, request, response)
     end
+    else if (request.Document = PathWithSlash+'.well-known/jwks.json') then
+    begin
+      result := 'Health card JKWS';
+      returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
+    end
     else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestVersion(request.Document) then
     begin
       result := TerminologyWebServer.ProcessVersion(AContext, request, Session, response, false)
@@ -889,7 +894,7 @@ begin
         Context.SessionManager.GetSession(request.AuthPassword, Session, check)
       else
       begin
-        JWT := TJWTUtils.unpack(request.AuthPassword, false, nil);
+        JWT := TJWTUtils.decodeJWT(request.AuthPassword);
         // todo: change this to true, and validate the JWT, under the right conditions
         try
           if cert = nil then
@@ -953,6 +958,11 @@ begin
     begin
       result := 'OAuth Discovery';
       FAuthServer.HandleDiscovery(AContext, request, response)
+    end
+    else if (request.Document = PathWithSlash+'.well-known/jwks.json') then
+    begin
+      result := 'Health card JKWS';
+      returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
       result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, session, cert)
@@ -1904,6 +1914,9 @@ begin
   gzip := false;
   response.ResponseNo := oResponse.HTTPCode;
   response.contentType := oResponse.contentType;
+  if oResponse.lastModifiedDate > 0 then
+    response.LastModified := oResponse.lastModifiedDate;
+
   res := oResponse.resource;
   if (res = nil) and (oResponse.outcome <> nil) then
     res := oResponse.outcome.Resource;

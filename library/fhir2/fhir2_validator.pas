@@ -1528,7 +1528,7 @@ begin
     for ei in children do
     begin
       if (ei.path.endsWith('.extension')) then
-        rule(ctxt, IssueTypeINVALID, ei.locStart, ei.locEnd, ei.path, ei.definition <> nil, 'Element is unknown or does not match any slice (url:="' + ei.element.getNamedChildValue('url') + '")')
+        rule(ctxt, IssueTypeINVALID, ei.locStart, ei.locEnd, ei.path, ei.definition <> nil, 'Element is unknown or does not match any slice (url := "' + ei.element.getNamedChildValue('url') + '")')
       else
         rule(ctxt, IssueTypeINVALID, ei.locStart, ei.locEnd, ei.path, (ei.definition <> nil), 'Element is unknown or does not match any slice');
        rule(ctxt, IssueTypeINVALID, ei.locStart, ei.locEnd, ei.path, (ei.definition = nil) or (ei.index >= last), 'Element is out of order');
@@ -2133,21 +2133,21 @@ begin
   begin
     ctxt.Owned.add(ex);
     if (def.isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url := "' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is labelled as a modifier, but the underlying extension is not')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url := "' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is not labelled as a modifier, but the underlying extension is');
 
     // two questions
     // 1. can this extension be used here?
-    checkExtensionContext(ctxt, element, { path+'[url:="'+url+'"]', } ex, stack, ex.url);
+    checkExtensionContext(ctxt, element, { path+'[url := "'+url+'"]', } ex, stack, ex.url);
 
     if (isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url := "' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must be used as a modifierExtension')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url := "' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must not be used as an extension (it"s a modifierExtension)');
 
     // 2. is the content of the extension valid?
@@ -2226,7 +2226,7 @@ begin
         ok := true;
     end;
     result := rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, ok,
-      'The extension ' + extUrl + ' is not allowed to be used on the logical path set [' + p + '] (allowed: datatype:=' + b + ')');
+      'The extension ' + extUrl + ' is not allowed to be used on the logical path set [' + p + '] (allowed: datatype := ' + b + ')');
   end
   else if (definition.ContextType = ExtensionContextEXTENSION) then
   begin
@@ -2258,7 +2258,7 @@ begin
         ok := true;
     end;
     result := rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, ok,
-      'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource:=' + b + ')');
+      'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource := ' + b + ')');
   end
   else
     raise EDefinitionException.create('Unknown context type');

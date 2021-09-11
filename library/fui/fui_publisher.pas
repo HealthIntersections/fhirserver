@@ -178,9 +178,9 @@ var
 begin
 //  raise Exception.Create('Not done yet');
 //    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar' then
-//      FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
+//      FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
 //    else if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//      then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
   thread := TPublishThread.create(self, 'java -jar '+FJarFile+' -ig '+folder);
   try
     thread.Open;

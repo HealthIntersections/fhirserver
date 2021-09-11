@@ -1467,8 +1467,8 @@ begin
 
 {
 // Opening the publisher from code
-        PublisherForm:=TPublisherForm.create(self);
-        PublisherForm.IGtoPublish:=IGRootFolder;
+        PublisherForm := TPublisherForm.create(self);
+        PublisherForm.IGtoPublish := IGRootFolder;
         PublisherForm.ShowModal;
         PublisherForm.Destroy;
 }

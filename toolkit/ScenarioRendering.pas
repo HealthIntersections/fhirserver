@@ -84,12 +84,12 @@ var
 {$ENDIF}
 begin
 
-//  if edit1.text='' then edit1.Text:=extractfilepath(appDir)+'\Rendering\ExampleScenario';
+//  if edit1.text='' then edit1.Text := extractfilepath(appDir)+'\Rendering\ExampleScenario';
 {$IFDEF WINDOWS}
-  appDir:=GetCurrentDir;
-if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
+  appDir := GetCurrentDir;
+if directoryexists(edit1.text) then ESPublisherFolder := edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
   SetCurrentDir(ESPublisherFolder+'');
-  resource:=filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
+  resource := filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
   resourceToFile(resource, ESPublisherFolder+'\current.xml', ffXml, OutputStylePretty);
   ExecuteFile := 'BUILD.bat';
 
@@ -224,7 +224,7 @@ begin
     DownloadForm.Destroy;
 
 //    createFolders(igRootFolder);
-    edit1.Text:=ESPublisherFolder;
+    edit1.Text := ESPublisherFolder;
 
 
   end;

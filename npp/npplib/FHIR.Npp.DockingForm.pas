@@ -154,13 +154,13 @@ begin
   GetModuleFileNameW(HInstance, self.ToolbarData.ModuleName, 1000);
   StringToWideChar(ExtractFileName(self.ToolbarData.ModuleName), self.ToolbarData.ModuleName, 1000);
   StringToWideChar('', self.ToolbarData.AdditionalInfo, 1);
-  r:=SendMessageW(self.Npp.NppData.NppHandle, NPPM_DMMREGASDCKDLG, 0, NativeInt(@self.ToolbarData));
+  r := SendMessageW(self.Npp.NppData.NppHandle, NPPM_DMMREGASDCKDLG, 0, NativeInt(@self.ToolbarData));
 {$ELSE}
   StrCopy(self.ToolbarData.Title, PChar(self.Caption));
   GetModuleFileNameA(HInstance, self.ToolbarData.ModuleName, 1000);
   StrLCopy(self.ToolbarData.ModuleName, PChar(ExtractFileName(self.ToolbarData.ModuleName)), 1000);
   StrCopy(self.ToolbarData.AdditionalInfo, PChar(''));
-  r:=SendMessageA(self.Npp.NppData.NppHandle, NPPM_DMMREGASDCKDLG, 0, NativeInt(@self.ToolbarData));
+  r := SendMessageA(self.Npp.NppData.NppHandle, NPPM_DMMREGASDCKDLG, 0, NativeInt(@self.ToolbarData));
 {$ENDIF}
 
   self.Visible := true;
@@ -198,7 +198,7 @@ begin
       Windows.SetWindowLong(wincontrol.Handle, GWL_EXSTYLE, r and not WS_EX_CONTROLPARENT);
     end;
   end;
-  for i:=control.ComponentCount-1 downto 0 do
+  for i := control.ComponentCount-1 downto 0 do
   begin
     if (control.Components[i] is TControl) then self.RemoveControlParent(control.Components[i] as TControl);
   end;

@@ -2055,7 +2055,7 @@ Begin
     oCell := oBuilder.StartTableCell;
     oCell.Background := clYellow;
     oCell.VerticalAlignment := VerticalAlignmentCentered;
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddImage(DocRoot + 'Test Docs\button-up-example.jpg')
       .VerticalAlignment := ImageVerticalAlignmentBottom;
@@ -2065,7 +2065,7 @@ Begin
     oBuilder.EndTableCell;
     oBuilder.StartTableCell { .Width := 0.2 };
     // oBuilder.DefineHotspot('any_link:cell', clAqua, clSilver).Key := 'C';
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddTextPlain('1,1');
     oBuilder.StartField(NS_FIELD_INPUT, 'test').ReadOnly := ReadOnlyFalse;
@@ -2073,7 +2073,7 @@ Begin
     oBuilder.AddTextPlain('sssssssssssssssssssssssssssssssssssssssss');
     oBuilder.EndField;
     oBuilder.EndParagraph;
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddTextPlain
       ('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
@@ -2273,12 +2273,12 @@ procedure TWordProcessorForm.EditCDAHeader(Sender: TObject);
 begin
   CdaHeaderDialog := TCdaHeaderDialog.Create(Self);
   try
-    CdaHeaderDialog.CDADocument :=
+    CdaHeaderDialog.CDADocument := 
       (wrdEditor.Document.SourceObjectModel as TCDADocument)
       .root.Clone as TcdaClinicalDocument;
     if CdaHeaderDialog.ShowModal = mrOK then
     begin
-      (wrdEditor.Document.SourceObjectModel as TCDADocument).root :=
+      (wrdEditor.Document.SourceObjectModel as TCDADocument).root := 
         CdaHeaderDialog.CDADocument.Link;
       ContentChange(Self);
     end;

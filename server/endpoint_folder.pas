@@ -10,7 +10,7 @@ interface
 uses
   Sysutils, Classes, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_fpc,
   fdb_manager,
   fhir_objects,
   server_config, utilities, server_constants,

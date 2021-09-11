@@ -272,7 +272,7 @@ begin
           end, Exception, error.text)
       else
       begin
-        // ok :=
+        // ok := 
         Assert.IsTrue(ok, s);
       end;
     end;

@@ -40,7 +40,7 @@ uses
   fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
   fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_constants, fhir4_utilities, fhir4_opbase, fhir4_operations, fhir4_pathengine,
   fhir4_pathnode, fhir4_common, fhir4_questionnaire, fhir4_validator, fhir4_context, fhir4_profiles, fhir4_narrative, fhir4_graphdefinition, fhir4_maputils,
-  fhir_codegen, fhir_diff,
+  fhir_codegen, fhir_diff, fhir_healthcard,
   tx_operations, ftx_ucum_services,
   operations,
   session, tags, storage, database, obsservation_stats, search,
@@ -2772,7 +2772,7 @@ begin
         if (not needsObject) then
           prsrFmt := ffUnspecified;
 
-        conn.SQL :=
+        conn.SQL := 
           'Select '+#14#10+
           '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#14#10+
           'from ( '+#14#10+
@@ -3894,8 +3894,10 @@ var
   c : THealthcareCard;
   i : integer;
 begin
+  result := 'Generate Health Cards';
   gen := THealthCardGenerator.create(manager.link, request.Link, (manager as TFhirNativeOperationEngineR4).ServerContext.JWTServices.cardKey.link);
   try
+    gen.IssuerURL := request.baseUrl;
     gen.patientId := request.id; // todo: compartment?
     gen.params := makeParamsV(request);
     gen.process;

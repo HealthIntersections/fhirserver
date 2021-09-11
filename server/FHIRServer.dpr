@@ -516,7 +516,9 @@ uses
   fhir_features in '..\library\fhir\fhir_features.pas',
   tx_icd10 in 'tx_icd10.pas',
   tx_icd11 in 'tx_icd11.pas',
-  healthcard_generator in 'healthcard_generator.pas';
+  fhir_healthcard in '..\library\fhir\fhir_healthcard.pas',
+  healthcard_generator in 'healthcard_generator.pas',
+  fsl_html in '..\library\fsl\fsl_html.pas';
 
 begin
   ExecuteFhirServer;

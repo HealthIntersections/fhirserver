@@ -1312,7 +1312,7 @@ end;
 
 function TFHIRValueSetExpander.key(system, code : String): string;
 begin
-  result:= '{'+system+'}'+code;
+  result := '{'+system+'}'+code;
 end;
 
 function TFHIRValueSetExpander.key(c: TFhirValueSetExpansionContainsW): string;

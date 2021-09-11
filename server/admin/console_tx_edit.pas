@@ -199,7 +199,7 @@ end;
 procedure TEditTxForm.SetTx(AValue: TFHIRServerConfigSection);
 begin
   FTx.Free;
-  FTx:=AValue;
+  FTx := AValue;
 
   if FTx <> nil then
   begin

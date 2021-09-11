@@ -56,9 +56,13 @@ function fullResourceUri(base: String; url : String) : String; overload;
 function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
 
 type
+
+  { TFHIRVersions }
+
   TFHIRVersions = class (TSemVer)
   public
     class function getMajMin(v : TFHIRVersion) : String; overload;
+    class function readVersion(s : String) : TFHIRVersion;
   end;
 
   TResourceWithReference = class (TFslObject)
@@ -434,21 +438,77 @@ begin
   result := getMajMin(FHIR_VERSIONS[v])
 end;
 
+class function TFHIRVersions.readVersion(s: String): TFHIRVersion;
+begin
+  if (s.contains('(')) then
+    s := s.substring(0, s.indexof('(')).trim;
+  s := s.ToLower;
+  if (s = 'r5') or (getMajMin(s) > '4.0') then
+    result := fhirVersionRelease5
+  else if (s = 'r4') or (getMajMin(s) = '4.0') then
+    result := fhirVersionRelease4
+  else if (s = 'r3') or (getMajMin(s) = '3.0') then
+    result := fhirVersionRelease3
+  else if (s = 'r2') or (getMajMin(s) = '1.0') then
+    result := fhirVersionRelease2
+  else
+    result := fhirVersionUnknown;
+end;
+
 
 function csName(url : string) : String;
 begin
-  if url.StartsWith('http://hl7.org/fhir/v2') then
-    result := 'V2-'+url.Substring(22)
-  else if url.StartsWith('http://hl7.org/fhir/v3') then
-    result := 'V3-'+url.Substring(22)
-  else if url.StartsWith('http://hl7.org/fhir') then
-    result := 'FHIR'+url.Substring(19)
+  if url = '' then
+    result := '[not stated]'
   else if url = 'http://snomed.info/sct' then
     result := 'SNOMED CT'
   else if url = 'http://loinc.org' then
     result := 'LOINC'
+  else if url = 'http://www.nlm.nih.gov/research/umls/rxnorm"))' then
+    result := 'RxNorm'
+  else if url = 'http://hl7.org/fhir/sid/icd-9' then
+    result := 'ICD-9'
+  else if url = 'http://hl7.org/fhir/sid/icd-10' then
+    result := 'ICD-10'
+  else if url = 'http://id.who.int/icd/release/11/mms' then
+    result := 'ICD-11'
+  else if url = 'http://dicom.nema.org/resources/ontology/DCM' then
+    result := 'DICOM'
+  else if url = 'http://unitsofmeasure.org' then
+    result := 'UCUM'
+  else if url = 'urn:ietf:bcp:47' then
+    result := 'lang'
+  else if url = 'urn:ietf:bcp:13' then
+    result := 'mimetypes'
+  else if url = 'urn:iso:std:iso:11073:10101' then
+    result := '11073'
+  else if url = 'http://dicom.nema.org/resources/ontology/DCM' then
+    result := 'dicom'
+  else if url = 'http://hl7.org/fhir/sid/cvx' then
+    result := 'CVX'
+  else if url = 'https://www.gs1.org/gtin' then
+    result := 'GTIN'
+  else if url = 'https://www.humanservices.gov.au/organisations/health-professionals/enablers/air-vaccine-code-formats' then
+    result := 'AIR'
+  else if url = 'http://www.whocc.no/atc' then
+    result := 'ATC/DDD'
+
+  else if url.StartsWith('http://hl7.org/fhir/v2') then
+    result := 'V2-'+url.Substring(22)
+  else if url.StartsWith('http://hl7.org/fhir/v3') then
+    result := 'V3-'+url.Substring(22)
+  else if url.StartsWith('http://hl7.org/fhir') then
+    result := 'FHIR-'+url.Substring(19)
+  else if url.StartsWith('urn:iso:std:iso:') then
+    result := 'iso'+url.substring(16).replace(':', '')
+  else if url.StartsWith('http://terminology.hl7.org/CodeSystem/') then
+    result := url.substring(38).replace('/', '')
+  else if url.StartsWith('http://hl7.org/fhir/') then
+    result := url.substring(20).replace('/', '')
+
   else
     result := url;
+
 end;
 
 

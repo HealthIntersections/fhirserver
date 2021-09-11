@@ -1049,7 +1049,7 @@ begin
     if not (request.AuthUsername = INTERNAL_SECRET) then
       raise EAuthClientException.create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
     try
-      jwt := TJWTUtils.unpack(request.AuthPassword, false, nil); // todo:
+      jwt := TJWTUtils.decodeJWT(request.AuthPassword); // todo:
     except
       on e : exception do
         raise EAuthClientException.create('Error reading JWT: '+e.message);
@@ -1115,7 +1115,7 @@ var
 //  jwtStored,
   errCode, domain : string;
   json : TJsonWriter;
-  jwt : TJWT;
+  jwt, jwt2 : TJWT;
   jwk : TJWKList;
 //  expiry : TDateTime;
 //  PatientId : String;
@@ -1131,7 +1131,7 @@ begin
   try
     errCode := 'invalid_request';
     try
-      jwt := TJWTUtils.unpack(params['client_assertion'], false, nil); // todo:
+      jwt := TJWTUtils.decodeJWT(params['client_assertion']); // todo:
     except
       on e : exception do
         raise EAuthClientException.create('Error reading JWT: '+e.message);
@@ -1156,7 +1156,12 @@ begin
 
         jwk := TJWKList.create(client.publicKey);
         try
-          TJWTUtils.unpack(params['client_assertion'], true, jwk).Free;
+          jwt2 := TJWTUtils.decodeJWT(params['client_assertion']);
+          try
+            TJWTUtils.verifyJWT(jwt2, jwk, true);
+          finally
+            jwt2.Free;
+          end;
         finally
           jwk.Free;
         end;

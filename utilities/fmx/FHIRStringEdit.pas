@@ -40,13 +40,13 @@ end;
 procedure TFHIRStringEdit.MyOnChange(Sender : TObject);
 begin
   if fFHIRString <> nil then
-    fFHIRstring.value:=text;
+    fFHIRstring.value := text;
 end;
 
 procedure TFHIRStringEdit.load;
 begin
   if fFHIRString<>nil then
-  text:=fFHIRString.value;
+  text := fFHIRString.value;
 end;
 
 
@@ -76,7 +76,7 @@ function TFHIRStringEdit.GeTFHIRString: TFHIRString;
 begin
   result := fFHIRString;
   if fFHIRString <> nil then
-    text:=fFHIRString.value;
+    text := fFHIRString.value;
 end;
 
 procedure TFHIRStringEdit.SeTFHIRString(AValue: TFHIRString);
@@ -84,11 +84,11 @@ begin
   if fFHIRString = nil then
   begin
     fFHIRString := TFHIRString.Create;
-    text:='';
+    text := '';
   end
   else begin
     fFHIRString := AValue;
-    text:=fFHIRString.value;
+    text := fFHIRString.value;
   end;
 
 end;
@@ -98,19 +98,19 @@ begin
   if fFHIRString = nil then
   begin
     fFHIRString := TFHIRString.Create;
-    text:='';
+    text := '';
   end
   else begin
     fFHIRString := AValue;
-    text:=fFHIRString.value;
+    text := fFHIRString.value;
   end;
-  result:=fFhirString;
+  result := fFhirString;
 end;
 
 
 procedure TFHIRStringEdit.useObject(var AValue: TFHIRString);
 begin
-aValue:= associate(aValue);
+aValue := associate(aValue);
 end;
 
 end.

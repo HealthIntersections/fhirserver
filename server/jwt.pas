@@ -47,6 +47,7 @@ type
     FDatabaseId : String;
     FHost: String;
     FCardKey: TJWK;
+    FCardJWKSFile: String;
     function jwk : TJWK;
     procedure SetCardKey(const Value: TJWK);
   public
@@ -64,6 +65,7 @@ type
     function makeJWK : String;
     function makeJWT(name : string = '') : String;
     function pack(jwt : TJWT) : String;
+    property cardJWKSFile : String read FCardJWKSFile write FCardJWKSFile;
   end;
 
 implementation
@@ -137,7 +139,7 @@ begin
       jwt.issuer := FDatabaseId;
       jwt.issuedAt := now;
 
-      result := TJWTUtils.pack(jwt, jwt_hmac_rsa256, jwk, ChangeFileExt(FCert, '.key'), FPassword);
+      result := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, jwk, ChangeFileExt(FCert, '.key'), FPassword);
     finally
       jwt.free;
     end;
@@ -148,7 +150,7 @@ end;
 
 function TJWTServices.pack(jwt: TJWT): String;
 begin
-  result := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, ChangeFileExt(FCert, '.key'), FPassword);
+  result := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, ChangeFileExt(FCert, '.key'), FPassword);
 end;
 
 procedure TJWTServices.SetCardKey(const Value: TJWK);

@@ -292,8 +292,8 @@ type
     function operationV(atype : string; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : string; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function historyInstanceV(atype : string; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
     function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; override;
     procedure terminate; override;
@@ -1181,7 +1181,7 @@ var
 begin
   response.HTTPCode := 200;
   response.ContentType := 'text/html';
-  s :=
+  s := 
 '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
 '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
 '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
@@ -1581,12 +1581,12 @@ begin
   end;
 end;
 
-function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
   raise EFHIRTodo.create('TFHIRInternalCommunicator.customGet');
 end;
 
-function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
+function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
   raise EFHIRTodo.create('TFHIRInternalCommunicator.customPost');
 end;

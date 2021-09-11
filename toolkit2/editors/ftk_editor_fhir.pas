@@ -15,6 +15,9 @@ uses
   fhir4_resources_canonical,
   fui_lcl_managers,
   ftk_context, ftk_store,
+
+  ftk_frame_resource, ftk_frame_codesystem, ftk_frame_resource_tree, ftk_frame_patient,
+
   ftk_editor_base;
 
 type
@@ -27,19 +30,18 @@ type
     FVersion : TFHIRVersion;
     FFactory : TFHIRFactory;
     FResource : TFHIRResourceV;
+    FDesigner : TResourceDesignerFrame;
     actTestEditing : TContentAction;
-    FTree : TTreeView;
-    FMemo : TMemo;
     FSync : TFHIRSynEditSynchroniser;
     actSwitch : TContentSubAction;
     function parseResource(source : String) : TFHirResourceV;
     procedure DoTestEditing(sender : TObject);
-    procedure DoTreeClick(sender : TObject);
-    procedure LoadObject(item : TTreeNode; obj : TFHIRObject);
     procedure DoMnuPretty(sender : TObject);
     procedure DoMnuCondense(sender : TObject);
     procedure DoMnuSwitch(sender : TObject);
     function getCurrentFormat : TFHIRFormat;
+    procedure doSelectSourceRange(sender : TObject; start, stop : TPoint);
+    function frameFactory(rType : String) : TResourceDesignerFrame;
   protected
     function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
@@ -55,6 +57,7 @@ type
     procedure newContent(); override;
     function FileExtension : String; override;
     procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
+    procedure saveStatus; override;
 
     function hasDesigner : boolean; override;
     procedure makeDesigner; override;
@@ -68,12 +71,13 @@ constructor TFHIREditor.Create(context: TToolkitContext; session: TToolkitEditSe
 begin
   inherited Create(context, session, store);
   FFormat := TFHIRFormat(ord(StringArrayIndexOf(CODES_TFHIRFormat, session.info.Values['Format'])));
-  FFactory := TFHIRFactoryR4.create;
+  FFactory := context.factory(fhirVersionRelease4);
 end;
 
 destructor TFHIREditor.Destroy;
 begin
   FResource.Free;
+  FFactory.Free;
   FSync.Free;
   inherited Destroy;
 end;
@@ -95,53 +99,21 @@ procedure TFHIREditor.DoTestEditing(sender: TObject);
 var
   cs : TFHIRCodeSystem;
 begin
-  if FSync.resource <> nil then
-  begin
-    FSync.Format := getCurrentFormat;
-    FSync.load;
-  end;
-  cs := FSync.resource as TFHIRCodeSystem;
-  Fsync.changeProperty(cs, cs.nameElement);
-  cs.name := 'My Test';
-  Fsync.commit;
-end;
-
-procedure TFHIREditor.DoTreeClick(sender: TObject);
-var
-  loc : TFHIRObjectLocationData;
-  c : TFHIRComposer;
-begin
-  if FTree.Selected <> nil then
-  begin
-    if (TObject(FTree.Selected.Data) is TFHIRObjectList) then
-      loc := TFHIRObjectList(FTree.Selected.Data).LocationData
-    else
-      loc := TFhirObject(FTree.Selected.Data).LocationData;
-
-    if loc.hasLocation2 then
-    begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart2.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish2.toPoint);
-    end
-    else
-    begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish.toPoint);
-    end;
-  end;
-
-  //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
-  //try
-  //  FMemo.text := c.composeBase(o);
-  //finally
-  //  sync.free;
+  //if FSync.resource <> nil then
+  //begin
+  //  FSync.Format := getCurrentFormat;
+  //  FSync.load;
   //end;
+  //cs := FSync.resource as TFHIRCodeSystem;
+  //Fsync.changeProperty(cs, cs.nameElement);
+  //cs.name := 'My Test';
+  //Fsync.commit;
 end;
 
 function TFHIREditor.AddActions(tb : TToolBar): boolean;
 begin
   actTestEditing := makeAction(tb, 'Test Editing', 11, 0, DoTestEditing);
-  Result:= true;
+  Result := true;
 end;
 
 function TFHIREditor.makeHighlighter: TSynCustomHighlighter;
@@ -331,52 +303,44 @@ begin
   end;
 end;
 
+procedure TFHIREditor.saveStatus;
+begin
+  inherited saveStatus;
+  if FDesigner <> nil then
+    FDesigner.saveStatus;
+end;
+
 function TFHIREditor.hasDesigner: boolean;
 begin
   Result := true;
 end;
+
+function TFHIREditor.frameFactory(rType : String) : TResourceDesignerFrame;
+begin
+  if rType = 'Patient' then
+    result := TPatientFrame.create(FDesignerPanelWork)
+  else
+    result := TResourceTreeFrame.create(FDesignerPanelWork);
+end;
+
 
 procedure TFHIREditor.makeDesigner;
 begin
   inherited makeDesigner;
   FSync := TFHIRSynEditSynchroniser.create;
   FSync.SynEdit := TextEditor;
-  FSync.Factory := TFHIRFactoryR4.create;
+  FSync.Factory := context.factory(fhirVersionRelease4);
   FSync.Format := FFormat;
 
-  FMemo := TMemo.create(FDesignerPanelWork);
-  FMemo.parent := FDesignerPanelWork;
-  FMemo.align := alBottom;
-  FMemo.ReadOnly := true;
-  FMemo.Height := 300;
-
-  FTree := TTreeView.create(FDesignerPanelWork);
-  FTree.parent := FDesignerPanelWork;
-  FTree.align := alClient;
-  FTree.ReadOnly := true;
-  FTree.OnClick := DoTreeClick;
-end;
-
-procedure TFHIREditor.LoadObject(item : TTreeNode; obj : TFHIRObject);
-var
-  prop : TFHIRNamedValue;
-  child : TTreeNode;
-begin
-  for prop in obj.getNamedChildren.forEnum do
+  if (FResource <> nil) then
   begin
-    if prop.value.isPrimitive then
-    begin
-      child := FTree.items.AddChildObject(item, prop.Name +': '+prop.value.fhirType+' = '+prop.value.primitiveValue, prop.value);
-    end
-    else
-    begin
-      child := FTree.Items.AddChildObject(item, prop.Name +': '+prop.value.fhirType, prop.value);
-      if prop.list <> nil then
-        FTree.Items.AddChildObject(child, '(list)', prop.list);
-      LoadObject(child, prop.value);
-    end;
+    FDesigner := frameFactory(FResource.fhirType);
+    FDesigner.parent := FDesignerPanelWork;
+    FDesigner.Align := alClient;
+    FDesigner.context := Context.link;
+    FDesigner.sync := FSync.link;
+    FDesigner.initialize;
   end;
-
 end;
 
 procedure TFHIREditor.DoMnuPretty(sender: TObject);
@@ -469,21 +433,32 @@ begin
 end;
 
 procedure TFHIREditor.updateDesigner;
-var
-  root : TTreeNode;
 begin
   FResource.Free;
   FResource := nil;
   FSync.Format := getCurrentFormat;
   FSync.load;
   FResource := FSync.Resource.link;
-  FTree.items.Clear;
-  root := FTree.Items.Add (nil, 'Resource '+FResource.fhirType);
-  root.Data := FResource;
-  loadObject(root, FResource);
+  if (FDesigner = nil) then
+  begin
+    FDesigner := frameFactory(FResource.fhirType);
+    FDesigner.parent := FDesignerPanelWork;
+    FDesigner.Align := alClient;
+    FDesigner.OnSelectSourceRange := doSelectSourceRange;
+    FDesigner.context := Context.link;
+    FDesigner.sync := FSync.link;
+    FDesigner.initialize;
+  end;
+  FDesigner.Client := Store.clientForAddress(Session.Address).Link;
+  FDesigner.resource := FResource.link;
 end;
 
 
+procedure TFHIREditor.doSelectSourceRange(sender : TObject; start, stop : TPoint);
+begin
+  TextEditor.SelStart := TextEditor.RowColToCharIndex(start);
+  TextEditor.SelEnd := TextEditor.RowColToCharIndex(stop);
+end;
 
 end.
 

@@ -2763,7 +2763,7 @@ begin
         if (not needsObject) then
           prsrFmt := ffUnspecified;
 
-        conn.SQL :=
+        conn.SQL := 
           'Select '+#14#10+
           '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#14#10+
           'from ( '+#14#10+

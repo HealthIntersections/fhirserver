@@ -21,7 +21,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
     Top = 0
     Width = 449
     Height = 404
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

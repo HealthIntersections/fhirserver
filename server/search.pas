@@ -225,7 +225,7 @@ begin
     ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
     if (ix = nil) then
       raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+    sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
     link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
   end
   else if params.has(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
@@ -233,7 +233,7 @@ begin
     ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
     if (ix = nil) then
       raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+    sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
     link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
   end
   else if params.has(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
@@ -241,7 +241,7 @@ begin
     ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
     if (ix = nil) then
       raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+    sort := '(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
     link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
     FReverse := true;
   end
@@ -980,7 +980,7 @@ begin
   else if (name = '_filter') and not nested then
   begin
     bHandled := true;
-    result:= processSearchFilter(value);
+    result := processSearchFilter(value);
   end
   else if (name = '_type') then
   begin
@@ -996,7 +996,7 @@ begin
   begin
     result := result + '(IndexKey = '+inttostr(FIndexes.ListItemIndex)+' /*'+left+'*/ and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['List'].key)+' and Id = '''+SQLWrapString(value)+'''))';
     bHandled := true;
-    isReverse :=true;
+    isReverse := true;
   end
   else if (name = '_group') then
   begin

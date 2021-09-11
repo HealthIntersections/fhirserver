@@ -1384,7 +1384,7 @@ begin
               bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           end;
 
-          FConnection.SQL :=
+          FConnection.SQL := 
             'Select '+
             '  Ids.ResourceKey, ResourceName, Ids.Id, v.ResourceVersionKey, Audits.Id as AuditId, Ids.MostRecent, VersionId, Secure, StatedDate, Name, v.Status, Secure, Tags, '+field+' '+
             'from '+
@@ -3110,7 +3110,7 @@ begin
     end;
   // extra conditions
   if result and not secure then
-    secure :=
+    secure := 
       hasActCodeSecurityLabel(request.Resource, ['ETH', 'GDIS', 'HIV', 'PSY', 'SCA', 'SDV', 'SEX', 'STD', 'TBOO', 'SICKLE', 'DEMO', 'DOB', 'GENDER', 'LIVARG',
                   'MARST', 'RACE', 'REL', 'B', 'EMPL', 'LOCIS', 'SSP', 'ADOL', 'CEL', 'DIA', 'DRGIS', 'EMP', 'PDS', 'PRS']) or
       hasConfidentialitySecurityLabel(request.Resource, ['R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T']);
@@ -3200,7 +3200,7 @@ begin
     begin
       response.HTTPCode := 200;
       response.Message := 'OK';
-      response.Body :=
+      response.Body := 
     '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
     '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
@@ -3239,7 +3239,7 @@ begin
     '</body>'#13#10+
     '</html>'#13#10+
     ''#13#10;
-      response.ContentType:= 'text/html';
+      response.ContentType := 'text/html';
     end;
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
   except
@@ -4162,7 +4162,7 @@ begin
   for a in ServerContext.ValidatorContext.allResourceNames do
     if id.startsWith(a + '/') then
     begin
-      aType:= a;
+      aType := a;
       id := id.Substring(length(aType)+1);
     end;
 
@@ -5673,7 +5673,7 @@ var
 begin
   conn := FDB.GetConnection('fhir');
   try
-    conn.SQL :=
+    conn.SQL := 
       'insert into Sessions (SessionKey, UserKey, Created, Provider, Id, Name, Email, Expiry) values (:sk, :uk, :d, :p, :i, :n, :e, :ex)';
     conn.Prepare;
     conn.BindInteger('sk', session.key);
@@ -6098,7 +6098,7 @@ var
 begin
   conn := FDB.GetConnection('FetchResource');
   try
-    conn.SQL :=
+    conn.SQL := 
       'select Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '+
       'Versions.ResourceVersionKey = Ids.MostRecent and Ids.ResourceTypeKey = Types.ResourceTypeKey and Ids.ResourceKey = ' +inttostr(key);
     conn.Prepare;
@@ -6316,7 +6316,7 @@ end;
 
 procedure TFHIRNativeStorageService.doRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
 begin
-  conn.SQL :=
+  conn.SQL := 
     'insert into Tags (Tagkey, Kind, Uri, Code, Display) values (:k, :tk, :s, :c, :d)';
   conn.Prepare;
   conn.BindInteger('k', tag.key);
@@ -7494,7 +7494,7 @@ var
   cback: TFDBConnection;
   p : TFHIRResourceV;
 begin
-  conn.SQL :=
+  conn.SQL := 
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Types.ResourceName, Secure, XmlContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
@@ -7596,7 +7596,7 @@ var
   parser: TFHIRParser;
   mem: TBytes;
 begin
-  conn.SQL :=
+  conn.SQL := 
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and Ids.ResourceKey = '+inttostr(key)+' and Versions.Status < 2';

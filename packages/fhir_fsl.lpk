@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library;..\dependencies\jcl;..\dependencies\Indy10"/>
-        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl"/>
+        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\barcode"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -687,6 +687,10 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_diff.pas"/>
         <UnitName Value="fsl_diff"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\barcode\DelphiZXIngQRCode.pas"/>
+        <UnitName Value="DelphiZXingQRCode"/>
       </Item>
     </Files>
     <RequiredPkgs>

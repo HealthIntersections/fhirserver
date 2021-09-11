@@ -2438,7 +2438,7 @@ begin
         else if (criteriaElement.maxElement <> nil) and (criteriaElement.max = '0') then
           expression.append(' and (' + discriminator + '.exists().not())')
         else
-          raise EDefinitionException.create('Discriminator (' + discriminator + ') is based on element existence, but slice ' + ed.id + ' neither sets min>:=1 or max:=0');
+          raise EDefinitionException.create('Discriminator (' + discriminator + ') is based on element existence, but slice ' + ed.id + ' neither sets min> := 1 or max := 0');
       end
       else if (criteriaElement.fixed <> nil) then
         buildFixedExpression(ed, expression, discriminator, criteriaElement)
@@ -2831,7 +2831,7 @@ begin
 //                 rule(errors, itNOTFOUND, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index > -1, 'LinkId \''' + linkId + '\' not found in questionnaire');
 //
 //else
-//               rule(errors, itSTRUCTURE, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index >:= lastIndex, 'Structural Error: items are out of order');
+//               rule(errors, itSTRUCTURE, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index > := lastIndex, 'Structural Error: items are out of order');
 //              lastIndex := index;
 //              mapItem :=  map.get(linkId);
 //              if (mapItem = nil) then

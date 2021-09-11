@@ -360,6 +360,7 @@ type
     procedure addEntry(url : String; bnd : TFhirResourceV); overload; virtual; abstract;
     function addEntry : TFhirBundleEntryW; overload; virtual; abstract;
     function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; virtual; abstract;
+    function count(rtype : String = '') : Integer; virtual; abstract;
     procedure clearLinks; virtual; abstract;
     function entries : TFslList<TFhirBundleEntryW>; virtual; abstract;
     procedure listLinks(links : TFslStringDictionary); virtual; abstract;
@@ -852,6 +853,11 @@ type
   public
     function Link : TFhirPatientW; overload;
     function nameSummary : String; virtual; abstract;
+    function active : String; virtual; abstract;
+    function gender : String; virtual; abstract;
+    function dob : String; virtual; abstract;
+    function identifierSummary : String; virtual; abstract;
+    function contactSummary : String; virtual; abstract;
   end;
 
   TFhirEncounterW = class (TFHIRXVersionResourceWrapper)

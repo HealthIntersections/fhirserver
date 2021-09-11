@@ -1556,6 +1556,12 @@ Const
       'hellip', 'oline', 'weierp', 'image', 'real');
 
 
+type
+  TFslHtmlBuilder = class (TFslStringBuilder)
+  private
+  public
+  end;
+
 Implementation
 
 

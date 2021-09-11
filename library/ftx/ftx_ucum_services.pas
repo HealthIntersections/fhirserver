@@ -999,7 +999,7 @@ function TUcumServices.locate(code: String; var message : String): TCodeSystemPr
 var
   s : String;
 begin
-  s:= validate(code);
+  s := validate(code);
   if s = '' then
     result := TUCUMContext.Create(code)
   else

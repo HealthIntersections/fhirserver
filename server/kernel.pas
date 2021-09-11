@@ -563,8 +563,8 @@ begin
   {$ENDIF}
 
   {$IFDEF FPC}
-  RequireDerivedFormResource:=True;
-  Application.Scaled:=True;
+  RequireDerivedFormResource := True;
+  Application.Scaled := True;
   {$ENDIF}
 
   Application.Initialize;
