@@ -67,6 +67,7 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
     function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
+    function makeHealthcareCard : THealthcareCard; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -82,6 +83,7 @@ type
     function makeBoolean(b : boolean): TFHIRObject; override;
     function makeCode(s : string) : TFHIRObject; override;
     function makeString(s : string) : TFHIRObject; override;
+    function makeUri(s : string) : TFHIRObject; override;
     function makeInteger(s : string) : TFHIRObject; override;
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
@@ -328,6 +330,11 @@ begin
   result := TFHIRNarrativeGenerator.create(worker);
 end;
 
+function TFHIRFactoryR3.makeHealthcareCard: THealthcareCard;
+begin
+  raise Exception.Create('Healthcare Cards are not supported in version '+versionString);
+end;
+
 function TFHIRFactoryR3.makeInteger(s: string): TFHIRObject;
 begin
   result := TFhirInteger.Create(s);
@@ -398,6 +405,11 @@ end;
 function TFHIRFactoryR3.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
   result := TFhirTerminologyCapabilities3.create(TFHIRParameters.create);
+end;
+
+function TFHIRFactoryR3.makeUri(s: string): TFHIRObject;
+begin
+  result := TFhirUri.Create(s);
 end;
 
 function TFHIRFactoryR3.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;

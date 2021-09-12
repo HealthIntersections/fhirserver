@@ -533,7 +533,7 @@ var
   end;
 
 begin
-  // S:=S1;
+  // S := S1;
   L := LowerCase(S);
   if (L = '-v') or (L = 'verbose') then
     Verbose := True

@@ -48,7 +48,7 @@ function DoBackgroundTask(owner : TComponent; taskid : integer; request : TBackg
 begin
   ProgressForm := TProgressForm.create(owner);
   try
-    ProgressForm.taskId:= taskId;
+    ProgressForm.taskId := taskId;
     GBackgroundTasks.queueTask(taskId, request, response, ProgressForm.done);
     ProgressForm.showModal;
     result := ProgressForm.finished;
@@ -80,7 +80,7 @@ begin
     info := GBackgroundTasks.report(taskId);
     try
       Caption := info.name;
-      Label1.Caption:= info.message;
+      Label1.Caption := info.message;
       if info.pct < 0 then
         ProgressBar1.Enabled := false
       else

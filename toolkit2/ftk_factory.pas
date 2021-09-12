@@ -14,7 +14,8 @@ uses
   ftk_context, ftk_store,
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
   ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir,
-  ftk_frame_resource, ftk_frame_codesystem;
+
+  ftk_worker_server;
 
 type
 
@@ -28,10 +29,9 @@ type
     constructor Create(context : TToolkitContext; handle: TComponent);
     destructor Destroy; override;
     function makeNewSession(kind : TSourceEditorKind) : TToolkitEditSession;
-    function examineFile(filename : String; const bytes : TBytes) : TToolkitEditSession;
+    function examineFile(filename, mimeType : String; const bytes : TBytes) : TToolkitEditSession;
 
     function makeEditor(session : TToolkitEditSession) : TToolkitEditor;
-    function makeResourceFrame(name : String) : TResourceEditorFrame;
   end;
 
 implementation
@@ -127,55 +127,96 @@ begin
     result := TToolkitEditSession.create(sekJson);
 end;
 
-function TToolkitFactory.examineFile(filename: String; const bytes: TBytes): TToolkitEditSession;
+function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes): TToolkitEditSession;
 var
   ext : String;
   xml : TMXmlDocument;
   json : TJsonObject;
 begin
   result := nil;
-  ext := Lowercase(ExtractFileExt(filename));
-  if (ext = '.ini') then
-    result := TToolkitEditSession.create(sekIni)
-  else if (ext = '.html') then
-    result := TToolkitEditSession.create(sekHTML)
-  else if (ext = '.md') then
-    result := TToolkitEditSession.create(sekMD)
-  else if (ext = '.js') then
-    result := TToolkitEditSession.create(sekJS)
-  else if (ext = '.hl7') or (ext = '.msg') then
-    result := TToolkitEditSession.create(sekv2)
-  else if (ext = '.txt') then
-    result := TToolkitEditSession.create(sekText)
-  else if (ext = '.xml') then
+  if mimeType <> '' Then
   begin
-    try
-      xml := loadXml(bytes);
+    if (mimeType.StartsWith('text/html')) then
+      result := TToolkitEditSession.create(sekHTML)
+    else if (mimeType.StartsWith('text/plain')) then
+      result := TToolkitEditSession.create(sekHTML)
+    else if mimeType.contains('json') then
+    begin
       try
-        exit(examineXml(xml));
-      finally
-        xml.free;
+        json := loadJson(bytes);
+        try
+          exit(examineJson(json));
+        finally
+          json.free;
+        end;
+      except
+        // right, we'll just treat it as plain JSON
       end;
-    except
-      // right, we'll just treat it as plain XML
-    end;
-    result := TToolkitEditSession.create(sekXml);
-  end
-  else if (ext = '.json') then
-  begin
-    try
-      json := loadJson(bytes);
+      result := TToolkitEditSession.create(sekJson);
+    end
+    else if mimeType.contains('xml') then
+    begin
       try
-        exit(examineJson(json));
-      finally
-        json.free;
+        xml := loadXml(bytes);
+        try
+          exit(examineXml(xml));
+        finally
+          xml.free;
+        end;
+      except
+        // right, we'll just treat it as plain XML
       end;
-    except
-      // right, we'll just treat it as plain JSON
-    end;
-    result := TToolkitEditSession.create(sekJson);
+      result := TToolkitEditSession.create(sekXml);
+    end
+    else
+
   end
   else
+  begin
+    ext := Lowercase(ExtractFileExt(filename));
+    if (ext = '.ini') then
+      result := TToolkitEditSession.create(sekIni)
+    else if (ext = '.html') then
+      result := TToolkitEditSession.create(sekHTML)
+    else if (ext = '.md') then
+      result := TToolkitEditSession.create(sekMD)
+    else if (ext = '.js') then
+      result := TToolkitEditSession.create(sekJS)
+    else if (ext = '.hl7') or (ext = '.msg') then
+      result := TToolkitEditSession.create(sekv2)
+    else if (ext = '.txt') then
+      result := TToolkitEditSession.create(sekText)
+    else if (ext = '.xml') then
+    begin
+      try
+        xml := loadXml(bytes);
+        try
+          exit(examineXml(xml));
+        finally
+          xml.free;
+        end;
+      except
+        // right, we'll just treat it as plain XML
+      end;
+      result := TToolkitEditSession.create(sekXml);
+    end
+    else if (ext = '.json') then
+    begin
+      try
+        json := loadJson(bytes);
+        try
+          exit(examineJson(json));
+        finally
+          json.free;
+        end;
+      except
+        // right, we'll just treat it as plain JSON
+      end;
+      result := TToolkitEditSession.create(sekJson);
+    end
+  end;
+
+  if (result = nil) then
   begin
     try
       xml := loadXml(bytes);
@@ -214,15 +255,12 @@ begin
   sekMD : result := TMarkdownEditor.create(FContext{.link}, session, store.link);
   sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
   sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
+  sekServer : result := TServerWorker.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;
 end;
 
-function TToolkitFactory.makeResourceFrame(name: String): TResourceEditorFrame;
-begin
-  result := nil;
-end;
 
 
 end.

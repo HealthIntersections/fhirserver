@@ -5597,7 +5597,7 @@ begin
       try
         oComponent.Name := oContext.Reader.ReadString;
         oComponent.Table := oContext.Reader.ReadInteger;
-        oComponent.DataType:= oContext.Reader.ReadString;
+        oComponent.DataType := oContext.Reader.ReadString;
         oComponent.Number := oContext.Reader.ReadInteger;
         oComponents.Add(oComponent.Link);
       finally

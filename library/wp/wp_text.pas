@@ -2021,7 +2021,7 @@ Const
 
 Function ColourDifference(aColour1, aColour2 : TColour):Integer;
 Begin
-  Result :=
+  Result := 
     (TColourParts(aColour1).Red - TColourParts(aColour2).Red) * (TColourParts(aColour1).Red - TColourParts(aColour2).Red) +
     (TColourParts(aColour1).Green - TColourParts(aColour2).Green) * (TColourParts(aColour1).Green - TColourParts(aColour2).Green) +
     (TColourParts(aColour1).Blue - TColourParts(aColour2).Blue) * (TColourParts(aColour1).Blue - TColourParts(aColour2).Blue);

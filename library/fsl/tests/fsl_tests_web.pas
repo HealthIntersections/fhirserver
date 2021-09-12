@@ -43,7 +43,7 @@ uses
   fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/ig-feeds.json';
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
 
 type
   TIdUriParserTests = Class (TFslTestCase)
@@ -68,6 +68,7 @@ type
     procedure TestPacking;
     procedure TestUnpacking;
     procedure TestCert;
+    procedure TestEc256;
   End;
 
   TOpenSSLTests = Class (TFslTestCase)
@@ -170,6 +171,34 @@ begin
   end;
 end;
 
+procedure TJWTTests.TestEc256;
+var
+  jwk : TJWK;
+  s : String;
+  jwt : TJWT;
+begin
+  jwk := TJWK.create(TJSONParser.Parse('{"kty":"EC","crv":"P-256","x":"f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU","y":"x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0","d":"jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI"}'));
+  try
+    // this test is from the spec
+    s := TJWTUtils.encodeJWT(
+      '{"alg":"ES256"}',
+      '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
+      jwt_es256, jwk);
+//    assertTrue(s = 'eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q',
+//      'found '+#13#10+'  '+s+#13#10+'expecting'+#13#10+'  eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q');
+
+    jwt := TJWTUtils.decodeJWT(s);
+    try
+      TJWTUtils.verifyJWT(jwt, jwk, true);
+      assertTrue(jwt.valid, 'couildn''t verify');
+    finally
+      jwt.Free;
+    end;
+  finally
+    jwk.Free;
+  end;
+end;
+
 var
   gs : String;
 
@@ -182,7 +211,7 @@ begin
   jwk := TJWK.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
   try
     // this test is from the spec
-    s := TJWTUtils.pack(
+    s := TJWTUtils.encodeJWT(
       '{"typ":"JWT",'+#13#10+' "alg":"HS256"}',
       '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
       jwt_hmac_sha256, jwk);
@@ -201,7 +230,7 @@ begin
      ' } '+#13#10
    ));
   try
-    gs := TJWTUtils.pack(
+    gs := TJWTUtils.encodeJWT(
       '{"alg":"RS256"}',
       '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
       jwt_hmac_rsa256, jwk);
@@ -213,7 +242,7 @@ begin
   jwt := TJWT.create;
   try
     jwt.id := GUIDToString(CreateGUID);
-    s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.key']), 'fhirserver');
+    s := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.key']), 'fhirserver');
     assertTrue(true);
   finally
     jwt.Free;
@@ -230,8 +259,9 @@ begin
   // HS256 test from the spec
   jwk := TJWKList.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
   try
-    jwt := TJWTUtils.unpack('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk', true, jwk);
+    jwt := TJWTUtils.decodeJWT('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk');
     try
+      TJWTUtils.verifyJWT(jwt, jwk, true);
       // inspect
       assertTrue(true);
     finally

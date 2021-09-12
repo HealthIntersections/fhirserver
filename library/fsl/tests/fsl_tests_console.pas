@@ -130,7 +130,7 @@ Type
 
 destructor TDecoratorTestSuite.Destroy;
 begin
-  OwnsTests:=False;
+  OwnsTests := False;
   inherited Destroy;
 end;
 
@@ -146,7 +146,7 @@ end;
 constructor TProgressWriter.Create(AQuiet: Boolean);
 
 begin
-  FQuiet:=AQuiet;
+  FQuiet := AQuiet;
 end;
 
 destructor TProgressWriter.Destroy;
@@ -159,14 +159,14 @@ end;
 function TProgressWriter.GetExitCode: Integer;
 
 begin
-  Result:=Ord(Failed<>0); // Bit 0 indicates fails
+  Result := Ord(Failed<>0); // Bit 0 indicates fails
   if Errors<>0 then
-    Result:=Result or 2;  // Bit 1 indicates errors.
+    Result := Result or 2;  // Bit 1 indicates errors.
 end;
 
 procedure TProgressWriter.AddFailure(ATest: TTest; AFailure: TTestFailure);
 begin
-  FSuccess:=False;
+  FSuccess := False;
   If AFailure.IsIgnoredTest then
     Inc(FIgnored)
   else
@@ -177,7 +177,7 @@ end;
 
 procedure TProgressWriter.AddError(ATest: TTest; AError: TTestFailure);
 begin
-  FSuccess:=False;
+  FSuccess := False;
   Inc(FErrors);
   if not Quiet then
     writechar('E');
@@ -232,20 +232,20 @@ var
   TestResult: TTestResult;
 
 begin
-  ProgressWriter:=Nil;
-  ResultsWriter:=Nil;
+  ProgressWriter := Nil;
+  ResultsWriter := Nil;
   TestResult := TTestResult.Create;
   try
-    ProgressWriter:=TProgressWriter.Create(Not ShowProgress);
+    ProgressWriter := TProgressWriter.Create(Not ShowProgress);
     TestResult.AddListener(ProgressWriter);
-    ResultsWriter:=GetResultsWriter;
+    ResultsWriter := GetResultsWriter;
     ResultsWriter.Filename := FileName;
     TestResult.AddListener(ResultsWriter);
     ATest.Run(TestResult);
     ResultsWriter.WriteResult(TestResult);
   finally
     if Assigned(ProgressWriter) then
-      ExitCode:=ProgressWriter.GetExitCode;
+      ExitCode := ProgressWriter.GetExitCode;
     TestResult.Free;
     ResultsWriter.Free;
     ProgressWriter.Free;
@@ -266,18 +266,18 @@ begin
       writeln(GetTestRegistry[i].TestName)
   else
     begin
-      TS:=TDecoratorTestSuite.Create('SuiteList');
+      TS := TDecoratorTestSuite.Create('SuiteList');
       try
       while Not(S = '') Do
         begin
-        P:=Pos(',',S);
+        P := Pos(',',S);
         If P=0 then
-          P:=Length(S)+1;
-        TN:=Copy(S,1,P-1);
+          P := Length(S)+1;
+        TN := Copy(S,1,P-1);
         Delete(S,1,P);
         if (TN<>'') then
           begin
-          T:=GetTestRegistry.FindTest(TN);
+          T := GetTestRegistry.FindTest(TN);
           if Assigned(T) then
             TS.AddTest(T);
           end;
@@ -306,8 +306,8 @@ begin
       ExtendXmlDocument(TXMLResultsWriter(Result).Document);
     end;
   end;
-  Result.SkipTiming:= FSkipTiming or (format=fPlainNoTiming);
-  Result.Sparse:= FSparse;
+  Result.SkipTiming := FSkipTiming or (format=fPlainNoTiming);
+  Result.Sparse := FSparse;
   Result.SkipAddressInfo := FSkipAddressInfo;
 end;
 

@@ -25,7 +25,7 @@ type
     procedure SetFile(value : TFHIRServerConfigFile);
   public
     destructor Destroy; override;
-    property ConfigFile : TFHIRServerConfigFile read FFile write SetFile;
+    property configFile : TFHIRServerConfigFile read FFile write SetFile;
   end;
 
   { TTXStatusCheckRequest }
@@ -83,10 +83,10 @@ type
 
     procedure buildMenu; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    procedure deleteItem(item : TFHIRServerConfigSection); override;
+    function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
   { TEPStatusCheckRequest }
@@ -141,10 +141,10 @@ type
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    procedure deleteItem(item : TFHIRServerConfigSection); override;
+    function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
   { TIdentityProviderManager }
@@ -159,9 +159,9 @@ type
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    procedure deleteItem(item : TFHIRServerConfigSection); override;
   end;
 
 
@@ -370,7 +370,7 @@ begin
   end;
 end;
 
-function TIdentityProviderManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TIdentityProviderManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditIdForm;
 begin
@@ -386,7 +386,7 @@ begin
   end;
 end;
 
-function TIdentityProviderManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TIdentityProviderManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditIdForm;
 begin
@@ -405,7 +405,7 @@ begin
   end;
 end;
 
-procedure TIdentityProviderManager.DeleteItem(item: TFHIRServerConfigSection);
+procedure TIdentityProviderManager.deleteItem(item: TFHIRServerConfigSection);
 begin
   FFile['identity-providers'].remove(item.name);
   FFile.Save;
@@ -483,8 +483,8 @@ begin
     4: result := item['path'].value;
     5: if hasDatabase(item['type'].value) then
          result := describeDatabase(item)
-       else
-         result := '';
+       else if hasSrcFolder(item['type'].value) then
+         result := item['folder'].value;
     6: result := status(item);
   end;
 end;
@@ -522,7 +522,7 @@ begin
   end;
 end;
 
-function TEndPointManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TEndPointManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditEPForm;
 begin
@@ -539,7 +539,7 @@ begin
   end;
 end;
 
-function TEndPointManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TEndPointManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditEPForm;
 begin
@@ -560,13 +560,13 @@ begin
   end;
 end;
 
-procedure TEndPointManager.DeleteItem(item: TFHIRServerConfigSection);
+procedure TEndPointManager.deleteItem(item: TFHIRServerConfigSection);
 begin
   FFile['endpoints'].remove(item.name);
   FFile.Save;
 end;
 
-function TEndPointManager.ExecuteItem(item: TFHIRServerConfigSection; mode : String) : boolean;
+function TEndPointManager.executeItem(item: TFHIRServerConfigSection; mode : String) : boolean;
 begin
   result := InstallEndPoint(list.Owner, FFile, item);
   if result then
@@ -771,7 +771,7 @@ begin
   registerMenuEntry('Import', 13, copExecute);
 end;
 
-function TTXManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TTXManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditTxForm;
 begin
@@ -787,7 +787,7 @@ begin
   end;
 end;
 
-function TTXManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TTXManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditTxForm;
 begin
@@ -807,13 +807,13 @@ begin
 end;
 
 
-procedure TTXManager.DeleteItem(item: TFHIRServerConfigSection);
+procedure TTXManager.deleteItem(item: TFHIRServerConfigSection);
 begin
   FFile['terminologies'].remove(item.name);
   FFile.Save;
 end;
 
-function TTXManager.ExecuteItem(item: TFHIRServerConfigSection; mode: String) : boolean;
+function TTXManager.executeItem(item: TFHIRServerConfigSection; mode: String) : boolean;
 begin
   result := true;
   if (item['type'].value = 'ndc') then

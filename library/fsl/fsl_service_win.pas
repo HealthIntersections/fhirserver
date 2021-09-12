@@ -846,7 +846,7 @@ end;
 
 (*
 
-      ServiceHandle :=
+      ServiceHandle := 
       Write('.');
       if ServiceHandle = 0 then
         writeln(MakeWinError(GetLastError, 'stopping the service'))

@@ -1679,7 +1679,7 @@ begin
       pp2 := Data.getPoint(i+11);
       sig := (pp.x - pp1.x) / (pp2.x - pp1.x);
       pn := sig * FRegressionValues[i-1] + 2;
-      FRegressionValues[i]:= (sig - 1) / pn;
+      FRegressionValues[i] := (sig - 1) / pn;
       u.y := (pp2.y - pp.y) / (pp2.x - pp.x) - (pp.y - pp1.y) / (pp.x - pp1.x);
       u.y := (6 * u.y / (pp2.x - pp1.x) - sig * FRegressionValues[i-1]) / pn;
     end;
@@ -3777,11 +3777,11 @@ begin
        begin
          FCanvas.Line(FLeft+FXOffset,Y, -FRight+FCurrWidth+FXOffset,Y);
          FCanvas.Line(X,FTop+FYOffset, X,-FBottom+FCurrHeight+FYOffset);
-         cwx :=X;
-         cwy :=Y;
-         CVisible :=true;
+         cwx := X;
+         cwy := Y;
+         CVisible := true;
        end;
-     FCanvas.PenMode :=pmCopy;
+     FCanvas.PenMode := pmCopy;
    end;
    inherited mousemove(shift, x, y);
 end;
@@ -4037,7 +4037,7 @@ begin
     if FLogging then
       w := (Ln(v) - Ln(FMin)) * FM
     else
-      w :=(v - FMin) * FM;
+      w := (v - FMin) * FM;
   // fix thanks to Wolfgang Gross <ce4@ix.urz.uni-heidelberg.de>
   if abs(w) > 20000 then
     if w < 0 then

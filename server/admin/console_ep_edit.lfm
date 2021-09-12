@@ -1,10 +1,10 @@
 object EditEPForm: TEditEPForm
   Left = 1139
-  Height = 372
+  Height = 396
   Top = -712
   Width = 626
   Caption = 'Edit EndPoint'
-  ClientHeight = 372
+  ClientHeight = 396
   ClientWidth = 626
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
@@ -32,7 +32,7 @@ object EditEPForm: TEditEPForm
   object Panel1: TPanel
     Left = 0
     Height = 44
-    Top = 328
+    Top = 352
     Width = 626
     Align = alBottom
     ClientHeight = 44
@@ -252,6 +252,7 @@ object EditEPForm: TEditEPForm
       'package'
       'snomed'
       'loinc'
+      'folder'
     )
     OnChange = cbxTypeChange
     ParentFont = False
@@ -456,5 +457,24 @@ object EditEPForm: TEditEPForm
     Caption = 'Load this when starting the Server'
     ParentFont = False
     TabOrder = 12
+  end
+  object Label12: TLabel
+    Left = 16
+    Height = 15
+    Top = 322
+    Width = 33
+    Caption = 'Folder'
+    ParentColor = False
+    ParentFont = False
+  end
+  object edtFolder: TEdit
+    Left = 80
+    Height = 23
+    Top = 320
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    ParentFont = False
+    TabOrder = 13
+    Text = 'edtFolder'
   end
 end

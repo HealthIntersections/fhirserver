@@ -8081,7 +8081,7 @@ end;
 
 function TFslDateTime.equal(other: TFslDateTime; precision: TFslDateTimePrecision): Boolean;
 begin
-  result :=
+  result := 
     (FPrecision >= precision) and (other.Precision >= precision) and
     (year = other.year) and
     ((precision < dtpMonth) or (month = other.month)) and
@@ -17199,8 +17199,28 @@ end;
 
 function ZDecompressBytes(const s: TBytes): TBytes;
 {$IFDEF FPC}
+var
+  b1, b2 : TBytesStream;
+  z : TZDecompressionStream;
 begin
-  raise ETodo.create('Not done yet');
+  b1 := TBytesStream.create(s);
+  try
+    z := TZDecompressionStream.create(b1);
+    try
+      b2  := TBytesStream.create;
+      try
+        b2.CopyFrom(z, z.Size);
+        result := b2.Bytes;
+        setLength(result, b2.size);
+      finally
+        b2.free;
+      end;
+    finally
+      z.free;
+    end;
+  finally
+    b1.free;
+  end;
 end;
 
 {$ELSE}

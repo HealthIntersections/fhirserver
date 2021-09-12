@@ -265,7 +265,7 @@ begin
       on e : Exception do
       begin
         ok := false;
-        msg:= e.Message;
+        msg := e.Message;
       end;
     end;
     if ok then

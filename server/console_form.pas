@@ -63,6 +63,7 @@ type
 
   TPackageClientThread = class (TFslThread)
   protected
+    function compare(sender : TObject; const left, right : TFHIRPackageInfo) : integer;
     procedure Execute; override;
   end;
 
@@ -101,6 +102,8 @@ type
   TMainConsoleForm = class(TForm)
     BitBtn1: TBitBtn;
     btnCacheInfo: TButton;
+    btnCardKey: TSpeedButton;
+    btnCardKey1: TSpeedButton;
     btnLockStatus: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
@@ -142,7 +145,9 @@ type
     cbxNDCDriver: TComboBox;
     chkCaching: TCheckBox;
     chkWebMode: TCheckBox;
+    edtCacheTime: TEdit;
     edtCACert: TEdit;
+    edtCardPublic: TEdit;
     edtConfigFile: TEdit;
     edtBase: TEdit;
     edtCombinedDestination: TEdit;
@@ -173,6 +178,7 @@ type
     edtSSLPassword: TEdit;
     edtSSLPort: TEdit;
     edtHostName: TEdit;
+    edtCardPrivate: TEdit;
     edtTelnetPassword: TEdit;
     edtWebPort: TEdit;
     edtWebMaxConnections: TEdit;
@@ -194,6 +200,7 @@ type
     FileSaveAs1: TFileSaveAs;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;
     GroupBox5: TGroupBox;
     GroupBox6: TGroupBox;
@@ -231,6 +238,9 @@ type
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
+    Label60: TLabel;
+    Label61: TLabel;
+    Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -399,6 +409,8 @@ type
     procedure btnBaseClick(Sender: TObject);
     procedure btnCACertClick(Sender: TObject);
     procedure btnCacheInfoClick(Sender: TObject);
+    procedure btnCardKey1Click(Sender: TObject);
+    procedure btnCardKeyClick(Sender: TObject);
     procedure btnCertClick(Sender: TObject);
     procedure btnCertKeyClick(Sender: TObject);
     procedure btnClearCacheClick(Sender: TObject);
@@ -431,12 +443,15 @@ type
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
     procedure chkCachingChange(Sender: TObject);
+    procedure edtCacheTimeChange(Sender: TObject);
     procedure chkWebModeChange(Sender: TObject);
     procedure edtAdminEmailChange(Sender: TObject);
     procedure edtAdminOrganizationChange(Sender: TObject);
     procedure edtAdminSCIMSaltChange(Sender: TObject);
     procedure edtAdminSMSChange(Sender: TObject);
     procedure edtCACertChange(Sender: TObject);
+    procedure edtCardPrivateChange(Sender: TObject);
+    procedure edtCardPublicChange(Sender: TObject);
     procedure edtConfigFileChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
     procedure edtGoogleIdChange(Sender: TObject);
@@ -534,6 +549,11 @@ uses
 
 { TPackageClientThread }
 
+function TPackageClientThread.compare(sender: TObject; const left, right: TFHIRPackageInfo): integer;
+begin
+  result := StringCompare(left.id, right.id);
+end;
+
 procedure TPackageClientThread.Execute;
 var
   client : TFHIRPackageClient;
@@ -542,6 +562,7 @@ begin
   client := TFHIRPackageClient.create(PACKAGE_SERVER_BACKUP);
   try
     list := client.search('', '', '', false);
+    list.SortE(compare);
     MainConsoleForm.Flock.Lock;
     try
       MainConsoleForm.FThreadPackages := list;
@@ -722,6 +743,10 @@ end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);
 begin
+  FTxManager.saveStatus;
+  FEPManager.saveStatus;
+  FIDManager.saveStatus;
+
   GBackgroundTasks.stopAll;
   FThread.StopAndWait(40);
   FThread.Free;
@@ -836,7 +861,7 @@ end;
 procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
 begin
   ServerConnectionForm.edtServer.Text := FAddress;
-  ServerConnectionForm.edtServer.ReadOnly:= false;
+  ServerConnectionForm.edtServer.ReadOnly := false;
   ServerConnectionForm.edtPassword.Text := FPassword;
   if ServerConnectionForm.ShowModal = mrOk then
   begin
@@ -873,7 +898,7 @@ begin
     ServerConnectionForm := TServerConnectionForm.create(self);
     try
       ServerConnectionForm.edtServer.Text := server;
-      ServerConnectionForm.edtServer.ReadOnly:= true;
+      ServerConnectionForm.edtServer.ReadOnly := true;
       ServerConnectionForm.edtPassword.Text := pwd;
       if ServerConnectionForm.ShowModal = mrOk then
         pwd := ServerConnectionForm.edtPassword.Text
@@ -901,11 +926,11 @@ var
   aStringlist   : TStringlist;
   aRegistry   : TRegistry;
 Begin
-  aStringlist:= Tstringlist.Create;
+  aStringlist := Tstringlist.Create;
   try
-    aRegistry:= TRegistry.Create;
+    aRegistry := TRegistry.Create;
     try
-      aRegistry.rootkey:= HKEY_LOCAL_MACHINE;
+      aRegistry.rootkey := HKEY_LOCAL_MACHINE;
       aRegistry.OpenKeyReadOnly('SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers');
       aRegistry.GetValueNames(aStringlist);
 
@@ -937,6 +962,8 @@ begin
     edtWebPort.Enabled := true;
     edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
     edtWebMaxConnections.Enabled := true;
+    edtCacheTime.Text := IntToStr(FConfig.web['http-cache-time'].readAsInt(0));
+    edtCacheTime.Enabled := true;
     chkWebMode.Checked := FConfig.web['plain-mode'].value = 'redirect';
     chkWebMode.Enabled := true;
     chkCaching.Checked := FConfig.web['caching'].value = 'true';
@@ -957,6 +984,10 @@ begin
     edtLangFile.Enabled := true;
     edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
     edtTelnetPassword.Enabled := true;
+    edtCardPrivate.Text := FConfig.web['card-key'].value;
+    edtCardPrivate.Enabled := true;
+    edtCardPublic.Text := FConfig.web['card-jwks'].value;
+    edtCardPublic.Enabled := true;
 
     edtAdminEmail.Text := FConfig.admin['email'].value;
     edtAdminEmail.Enabled := true;
@@ -997,6 +1028,8 @@ begin
     edtWebPort.Enabled := false;
     edtWebMaxConnections.Text := '';
     edtWebMaxConnections.Enabled := false;
+    edtCacheTime.Text := '';
+    edtCacheTime.Enabled := false;
     chkWebMode.checked := false;
     chkWebMode.Enabled := false;
     chkCaching.checked := false;
@@ -1011,6 +1044,10 @@ begin
     edtPrivateKey.Enabled := false;
     edtSSLPassword.Text := '';
     edtSSLPassword.Enabled := false;
+    edtCardPrivate.Text := '';
+    edtCardPrivate.Enabled := false;
+    edtCardPublic.Text := '';
+    edtCardPublic.Enabled := false;
     edtGoogleId.Text := '';
     edtGoogleId.Enabled := false;
     edtLangFile.Text := '';
@@ -1101,6 +1138,12 @@ begin
     lblDoco.caption := 'The post to use for plain (unsecured) web services'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
+  else if ActiveControl = edtWebMaxConnections then
+    lblDoco.caption := 'Cache requests that take longer than this to process'
+  else if ActiveControl = edtCardPrivate then
+    lblDoco.caption := 'The JWK to use for signing health cards (ECDSA P-256 SHA-256). Must have a "d" value'
+  else if ActiveControl = edtCardPublic then
+    lblDoco.caption := 'The public JWK to use for signing health cards (ECDSA P-256 SHA-256) - available at .well-known/jwks.json. No "d" value, and may be a list of previously used JWKs.'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
   else if ActiveControl = edtGoogleId then
@@ -1271,6 +1314,15 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.edtCacheTimeChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http-cache-time'].value := edtCacheTime.Text;
+    FConfig.Save;
+  end;
+end;
+
 procedure TMainConsoleForm.btnSourceClick(Sender: TObject);
 begin
    if (edtSource.text <> '') then
@@ -1333,6 +1385,20 @@ begin
       showMessage(e.message);
   end;
 
+end;
+
+procedure TMainConsoleForm.btnCardKey1Click(Sender: TObject);
+begin
+  dlgOpen.filename := edtCardPublic.text;
+  if dlgOpen.Execute then;
+    edtCardPublic.text := dlgOpen.filename;
+end;
+
+procedure TMainConsoleForm.btnCardKeyClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtCardPrivate.text;
+  if dlgOpen.Execute then;
+    edtCardPrivate.text := dlgOpen.filename;
 end;
 
 procedure TMainConsoleForm.btnCertClick(Sender: TObject);
@@ -2071,6 +2137,25 @@ begin
     FConfig.web['cacertname'].value := edtCACert.Text;
     FConfig.Save;
   end;
+end;
+
+procedure TMainConsoleForm.edtCardPrivateChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['card-key'].value := edtCardPrivate.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtCardPublicChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['card-jwks'].value := edtCardPublic.Text;
+    FConfig.Save;
+  end;
+
 end;
 
 procedure TMainConsoleForm.edtConfigFileChange(Sender: TObject);

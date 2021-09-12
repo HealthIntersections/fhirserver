@@ -188,6 +188,7 @@ type
     procedure addEntry(url : String; bnd : TFhirResourceV); overload; override;
     function addEntry : TFhirBundleEntryW; overload; override;
     function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; override;
+    function count(rtype : String = '') : Integer; override;
     procedure clearLinks; override;
     function entries : TFslList<TFhirBundleEntryW>; override;
     procedure listLinks(links : TFslStringDictionary); override;
@@ -867,11 +868,18 @@ type
     function characteristics : TFslList<TFHIRGroupCharacteristicW>; override;
   end;
 
+  { TFhirPatient4 }
+
   TFhirPatient4 = class (TFhirPatientW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function nameSummary : String; override;
+    function active : String; override;
+    function gender : String; override;
+    function dob : String; override;
+    function identifierSummary : String; override;
+    function contactSummary : String; override;
   end;
 
   TFhirEncounter4 = class (TFhirEncounterW)
@@ -1148,6 +1156,16 @@ begin
   bundle.link_List.Clear;
 end;
 
+function TFHIRBundle4.count(rtype: String): Integer;
+var
+  be : TFhirBundleEntry;
+begin
+  result := 0;
+  for be in bundle.entryList do
+    if (be.resource <> nil) and ((rtype = '') or (rtype = be.resource.fhirType)) then
+      inc(result);
+end;
+
 function TFHIRBundle4.entries: TFslList<TFhirBundleEntryW>;
 var
   be : TFHIRBundleEntry;
@@ -1252,7 +1270,12 @@ end;
 
 function TFHIRBundle4.GetTimestamp: TFslDateTime;
 begin
-  result := bundle.timestamp;
+  if bundle.timestampElement <> nil then
+    result := bundle.timestamp
+  else if bundle.meta <> nil then
+    result := bundle.meta.lastUpdated
+  else
+    result := TFslDateTime.makeNull;
 end;
 
 function TFHIRBundle4.gettotal: integer;
@@ -2104,7 +2127,7 @@ end;
 
 function TFHIRBundleEntry4.getResource: TFHIRResourceV;
 begin
-  result :=  entry.resource;
+  result := entry.resource;
 end;
 
 function TFHIRBundleEntry4.GetResponseDate: TFslDateTime;
@@ -4687,7 +4710,7 @@ end;
 
 function TFHIRSubsumesOpRequest4.version: String;
 begin
-  result :=(op as TFHIRSubsumesOpRequest).version;
+  result := (op as TFHIRSubsumesOpRequest).version;
 end;
 
 procedure TFHIRSubsumesOpRequest4.load(params: THTTPParameters);
@@ -5049,6 +5072,36 @@ end;
 function TFhirPatient4.nameSummary: String;
 begin
   result := HumanNamesAsText((resource as TFhirPatient).nameList);
+end;
+
+function TFhirPatient4.active: String;
+begin
+  if (resource as TFhirPatient).activeElement = nil then
+    result := ''
+  else if (resource as TFhirPatient).active then
+    result := 'true'
+  else
+    result := 'false';
+end;
+
+function TFhirPatient4.gender: String;
+begin
+  result := CODES_TFhirAdministrativeGenderEnum[(resource as TFhirPatient).gender];
+end;
+
+function TFhirPatient4.dob: String;
+begin
+  result := (resource as TFhirPatient).birthDate.toXML;
+end;
+
+function TFhirPatient4.identifierSummary: String;
+begin
+  result := IdentifiersAsText((resource as TFhirPatient).identifierList);
+end;
+
+function TFhirPatient4.contactSummary: String;
+begin
+  result := ContactsAsText((resource as TFhirPatient).telecomList);
 end;
 
 procedure TFhirPatient4.SetLanguage(const Value: String);

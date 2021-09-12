@@ -1,5 +1,5 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 263
+  Left = 229
   Height = 693
   Top = -945
   Width = 691
@@ -58,10 +58,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 684
-      ActivePage = tbThreads
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 1
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -562,8 +562,8 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 19
                   Top = 92
-                  Width = 114
-                  Caption = 'HTTP Caching On'
+                  Width = 295
+                  Caption = 'HTTP Caching On for requests that take longer than '
                   OnChange = chkCachingChange
                   TabOrder = 3
                 end
@@ -596,6 +596,23 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 4
                   Text = 'edtWebMaxConnections'
                   TextHint = '15'
+                end
+                object edtCacheTime: TEdit
+                  Left = 416
+                  Height = 23
+                  Top = 90
+                  Width = 46
+                  OnChange = edtCacheTimeChange
+                  TabOrder = 5
+                  Text = 'edtCacheTime'
+                end
+                object Label8: TLabel
+                  Left = 470
+                  Height = 15
+                  Top = 94
+                  Width = 16
+                  Caption = 'ms'
+                  ParentColor = False
                 end
               end
               object GroupBox2: TGroupBox
@@ -845,6 +862,147 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
               end
+              object GroupBox3: TGroupBox
+                Left = 0
+                Height = 85
+                Top = 362
+                Width = 666
+                Align = alTop
+                Caption = ' Health Card Certificates '
+                ClientHeight = 65
+                ClientWidth = 662
+                TabOrder = 2
+                object Label60: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 4
+                  Width = 91
+                  Caption = 'Private Key (JWK)'
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object edtCardPrivate: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 0
+                  Width = 508
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtCardPrivateChange
+                  ParentFont = False
+                  TabOrder = 0
+                  Text = 'edtCardPrivate'
+                end
+                object btnCardKey: TSpeedButton
+                  Left = 629
+                  Height = 22
+                  Top = 0
+                  Width = 23
+                  Anchors = [akTop, akRight]
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000003591
+                    DBFA439FDDFA439FDDFA429FDDFA429EDDFA419EDCFA419EDCFA419EDCFA419E
+                    DCFA419EDCFA419EDCFA419EDCFA3792DAFB3080DF100000000000000000429C
+                    DEF76EC7EBFF6DC7EAFF6BC6EAFF6AC5E9FF68C4E9FF67C3E8FF65C2E8FF64C1
+                    E7FF63C0E7FF61BFE6FF60BEE5FF51AFE3FE308CD6450000000000000000409A
+                    DDF47CD0F1FF7BD0F0FF7ACFEFFF79CEEFFF77CDEEFF76CCEEFF74CBEDFF73CA
+                    EDFF71C9ECFF70C8ECFF6EC7EBFF6AC3E9FF3993DB8E00000000000000003E99
+                    DCEC7ECEF1FF8AD9F6FF89D8F5FF87D7F4FF86D6F4FF84D5F3FF83D5F3FF81D4
+                    F2FF80D3F2FF7ED2F1FF7DD1F1FF7BD0F0FF439ADEB40000000000000000409B
+                    DDE470C1EDFF99E2FBFF97E2FBFF96E1FAFF94E0F9FF93DFF9FF91DEF8FF90DD
+                    F8FF8EDCF7FF8DDBF7FF8CDAF6FF8AD9F6FF4EA4E2CD00000000000000004AA5
+                    E0DF61B3E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA2E8FEFFA0E7FEFF9FE6
+                    FDFF9DE5FDFF9CE4FCFF9AE3FCFF99E2FBFF5FB3E9E33080DF100000000051A8
+                    E2DF5EB2E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9
+                    FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFF84CFF5FB348CDA450000000058AD
+                    E5DF60B3E8FF61B3E9FF61B3E9FF60B2E9FF60B2E8FF60B2E8FF5FB1E8FF5FB1
+                    E8FF5EB1E8FF5EB1E8FF5EB1E7FF59ADE7FB55A9E5E33B94DC85000000005FB0
+                    E8DF9DE4FBFF9AE3FAFF97E1F9FF94DFF8FF91DDF7FF8EDBF5FF8BD9F4FF88D8
+                    F3FF85D6F2FF82D4F1FF7FD2F0FF4FA7E1DF00000000000000000000000061B1
+                    E8DFA6EAFFFFA6EAFFFFA6EAFFFFA3E8FEFF7AC6F1ED59ACE6DF58AAE5DF57AA
+                    E5DF56AAE5DF53A9E4DF53A8E4DF3C94DCE20000000000000000000000004096
+                    DEE25DAEE7DF5DAEE7DF5DAEE7DF57A9E6DF4399DF6E00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = btnCardKeyClick
+                  ParentFont = False
+                end
+                object edtCardPublic: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 30
+                  Width = 508
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtCardPublicChange
+                  ParentFont = False
+                  TabOrder = 1
+                  Text = 'edtCardPublic'
+                end
+                object Label61: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 34
+                  Width = 88
+                  Caption = 'Public Key (JWK)'
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object btnCardKey1: TSpeedButton
+                  Left = 629
+                  Height = 22
+                  Top = 30
+                  Width = 23
+                  Anchors = [akTop, akRight]
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000003591
+                    DBFA439FDDFA439FDDFA429FDDFA429EDDFA419EDCFA419EDCFA419EDCFA419E
+                    DCFA419EDCFA419EDCFA419EDCFA3792DAFB3080DF100000000000000000429C
+                    DEF76EC7EBFF6DC7EAFF6BC6EAFF6AC5E9FF68C4E9FF67C3E8FF65C2E8FF64C1
+                    E7FF63C0E7FF61BFE6FF60BEE5FF51AFE3FE308CD6450000000000000000409A
+                    DDF47CD0F1FF7BD0F0FF7ACFEFFF79CEEFFF77CDEEFF76CCEEFF74CBEDFF73CA
+                    EDFF71C9ECFF70C8ECFF6EC7EBFF6AC3E9FF3993DB8E00000000000000003E99
+                    DCEC7ECEF1FF8AD9F6FF89D8F5FF87D7F4FF86D6F4FF84D5F3FF83D5F3FF81D4
+                    F2FF80D3F2FF7ED2F1FF7DD1F1FF7BD0F0FF439ADEB40000000000000000409B
+                    DDE470C1EDFF99E2FBFF97E2FBFF96E1FAFF94E0F9FF93DFF9FF91DEF8FF90DD
+                    F8FF8EDCF7FF8DDBF7FF8CDAF6FF8AD9F6FF4EA4E2CD00000000000000004AA5
+                    E0DF61B3E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA2E8FEFFA0E7FEFF9FE6
+                    FDFF9DE5FDFF9CE4FCFF9AE3FCFF99E2FBFF5FB3E9E33080DF100000000051A8
+                    E2DF5EB2E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9
+                    FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFF84CFF5FB348CDA450000000058AD
+                    E5DF60B3E8FF61B3E9FF61B3E9FF60B2E9FF60B2E8FF60B2E8FF5FB1E8FF5FB1
+                    E8FF5EB1E8FF5EB1E8FF5EB1E7FF59ADE7FB55A9E5E33B94DC85000000005FB0
+                    E8DF9DE4FBFF9AE3FAFF97E1F9FF94DFF8FF91DDF7FF8EDBF5FF8BD9F4FF88D8
+                    F3FF85D6F2FF82D4F1FF7FD2F0FF4FA7E1DF00000000000000000000000061B1
+                    E8DFA6EAFFFFA6EAFFFFA6EAFFFFA3E8FEFF7AC6F1ED59ACE6DF58AAE5DF57AA
+                    E5DF56AAE5DF53A9E4DF53A8E4DF3C94DCE20000000000000000000000004096
+                    DEE25DAEE7DF5DAEE7DF5DAEE7DF57A9E6DF4399DF6E00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = btnCardKey1Click
+                  ParentFont = False
+                end
+              end
             end
             object tbUserAdmin: TTabSheet
               Caption = 'User Admin'
@@ -1089,17 +1247,17 @@ object MainConsoleForm: TMainConsoleForm
             object tbTermload: TTabSheet
               Caption = 'Terminologies'
               ClientHeight = 481
-              ClientWidth = 874
+              ClientWidth = 666
               ImageIndex = 7
               ParentFont = False
               object Panel33: TPanel
                 Left = 0
                 Height = 34
                 Top = 0
-                Width = 874
+                Width = 666
                 Align = alTop
                 ClientHeight = 34
-                ClientWidth = 874
+                ClientWidth = 666
                 ParentFont = False
                 TabOrder = 0
                 object btnTxAdd: TBitBtn
@@ -1242,7 +1400,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 0
                 Height = 447
                 Top = 34
-                Width = 874
+                Width = 666
                 Align = alClient
                 AutoWidthLastColumn = True
                 Columns = <                
@@ -1270,7 +1428,7 @@ object MainConsoleForm: TMainConsoleForm
                   end                
                   item
                     Caption = 'Status'
-                    Width = 280
+                    Width = 72
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1461,7 +1619,7 @@ object MainConsoleForm: TMainConsoleForm
                     Width = 60
                   end                
                   item
-                    Caption = 'Database'
+                    Caption = 'Details'
                     Width = 150
                   end                
                   item

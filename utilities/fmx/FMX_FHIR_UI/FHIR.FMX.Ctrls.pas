@@ -88,24 +88,24 @@ begin
   Align := TAlignLayout.Top;
   FOnChange := nil;
   FOnClick := nil;
-  flabelTExt:='Label';
-  height:=37;
+  flabelTExt := 'Label';
+  height := 37;
   width := 230;
   pGroup := TScrollBox.Create(Self);
   pGroup.Parent := self;
   pGroup.Height := 31;
   pGroup.Margins.Top := 5;
   pGroup.Margins.bottom := 5;
-  pgroup.Stored:=false;
-  pgroup.ShowScrollBars:=false;
+  pgroup.Stored := false;
+  pgroup.ShowScrollBars := false;
   pGroup.Align := tAlignLayout.Client;
 
   pLabel := TScrollBox.Create(pGroup);
   pLabel.Parent := pGroup;
   pLabel.Height := 17;
   pLabel.Align := tAlignLayout.Left;
-  pLabel.Stored:=false;
-  plabel.ShowScrollBars:=false;
+  pLabel.Stored := false;
+  plabel.ShowScrollBars := false;
   pLabel.Margins.Left := 7;
 
   lbl := TLabel.Create(self);
@@ -115,7 +115,7 @@ begin
   lbl.Align := tAlignLayout.Left;
   lbl.position.x := 7;
   lbl.text := flabeltext;
-  lbl.Stored:=false;
+  lbl.Stored := false;
 
   pContent := TScrollBox.Create(pGroup);
   pContent.Parent := pGroup;
@@ -123,9 +123,9 @@ begin
   pContent.Margins.Top := 2;
   pContent.Margins.Left := 7;
   pContent.Margins.Right := 7;
-  pContent.ShowScrollBars:=false;
+  pContent.ShowScrollBars := false;
   pContent.Margins.bottom := 2;
-  pContent.Stored:=false;
+  pContent.Stored := false;
 
   pBtn := TScrollBox.Create(pGroup);
   pBtn.Parent := pContent;
@@ -136,26 +136,26 @@ begin
   pBtn.Margins.Left := 7;
   pBtn.Margins.Right := 2;
   pBtn.Margins.bottom := 0;
-  pBtn.ShowScrollBars:=false;
-  pBtn.Stored:=false;
+  pBtn.ShowScrollBars := false;
+  pBtn.Stored := false;
 
-  Btn:=TButton.create(pBtn);
+  Btn := TButton.create(pBtn);
 
   Btn.Parent := pBtn;
-  Btn.text:='+';
+  Btn.text := '+';
   Btn.Align := tAlignLayout.Client;
-  Btn.Stored:=false;
+  Btn.Stored := false;
   Btn.Onclick := onBtnClick;
 
   edt := TEdit.Create(pContent);
   edt.Parent := pContent;
-  edt.Stored:=false;
+  edt.Stored := false;
   edt.Align := tAlignLayout.Client;
   edt.OnChange := onEditChange;
 {$IFDEF USEFHIROBJ}
-  fFHIRString:=TFHIRString.CREATE('');
+  fFHIRString := TFHIRString.CREATE('');
 {$ELSE}
-  FFHIRStringList:=TStringList.Create;
+  FFHIRStringList := TStringList.Create;
   FFHIRStringList.add('');
 {$ENDIF}
 
@@ -185,9 +185,9 @@ procedure TFHIRStringEdit.OnEditChange(Sender : TObject);
 begin
 {$IFDEF USEFHIROBJ}
   if fFHIRString <> nil then
-    fFHIRstring.value:=edt.text;
+    fFHIRstring.value := edt.text;
 {$ELSE}
-  fFHIRStringList[0]:=edt.Text;
+  fFHIRStringList[0] := edt.Text;
 {$ENDIF}
   if(Assigned(FOnChange))then FOnChange(Self);
 
@@ -202,18 +202,18 @@ end;
 
 procedure TFHIRStringEdit.SetPropertyName(propName : String);
 begin
-  fPropertyName:=propName;
-  btn.Hint:= 'Add a new ' + fpropertyName +'.';
-  if fPropertyName <> '' then btn.ShowHint:=true else btn.ShowHint:=false;
-  lbl.text:= PropName;
+  fPropertyName := propName;
+  btn.Hint := 'Add a new ' + fpropertyName +'.';
+  if fPropertyName <> '' then btn.ShowHint := true else btn.ShowHint := false;
+  lbl.text := PropName;
   pLabel.Width := lbl.Canvas.TextWidth(lbl.Text) ;
 
 end;
 
 procedure TFHIRStringEdit.setMultiple(mult:boolean);
 begin
-  fmultiple:=mult;
-  if fmultiple then pBtn.Visible:=true else pBtn.Visible:=false;
+  fmultiple := mult;
+  if fmultiple then pBtn.Visible := true else pBtn.Visible := false;
   pBtn.Repaint;
 end;
 
@@ -222,10 +222,10 @@ procedure TFHIRStringEdit.load;
 begin
 {$IFDEF USEFHIROBJ}
   if fFHIRString <>nil then
-  edt.text:= fFHIRString.value;
+  edt.text := fFHIRString.value;
 {$ELSE}
   if fFHIRStringList<>nil then
-  edt.text:=fFHIRStringList[0];
+  edt.text := fFHIRStringList[0];
 {$ENDIF}
 
 end;
@@ -234,7 +234,7 @@ end;
 function TFHIRStringEdit.GetFHIRString: TFHIRString;
 begin
   if fFHIRString <> nil then
-  edt.text:=fFHIRString.value;
+  edt.text := fFHIRString.value;
   result := fFHIRString;
 end;
 {$ELSE}
@@ -242,7 +242,7 @@ end;
 function TFHIRStringEdit.GetFHIRString: TStringList;
 begin
   if fFHIRStringList <> nil then
-  edt.text:=fFHIRStringList[0];
+  edt.text := fFHIRStringList[0];
   result := fFHIRStringList;
 end;
 {$ENDIF}
@@ -254,11 +254,11 @@ begin
     if AValue = nil then
     begin
       fFHIRString := TFHIRString.Create;
-      edt.text:='';
+      edt.text := '';
     end;
     fFHIRString.Assign(AValue);
     fFHIRString := AValue;
-    edt.text:=fFHIRString.value;
+    edt.text := fFHIRString.value;
 end;
 
 
@@ -268,11 +268,11 @@ begin
   if aValue = nil then
   begin
     fFHIRStringList := TStringList.Create;
-    edt.text:='';
+    edt.text := '';
   end
   else begin
     fFHIRStringList := AValue;
-    edt.text:=fFHIRStringList[0];
+    edt.text := fFHIRStringList[0];
   end;
 end;
 {$ENDIF}
@@ -281,16 +281,16 @@ end;
 function TFHIRStringEdit.associate(AValue: TFHIRString): TFHIRString;
 begin
   if aValue <> nil then FHIRProperty.Assign(AValue);
-  edt.text:=fFHIRString.value;
-  result:=fFHIRString;
+  edt.text := fFHIRString.value;
+  result := fFHIRString;
 end;
 
 {$ELSE}
 function TFHIRStringEdit.associate(AValue: TStringList): TStringList;
 begin
   if aValue <> nil then FHIRProperty.Assign(AValue);
-  edt.text:=fFHIRStringList[0];
-  result:=fFhirStringList;
+  edt.text := fFHIRStringList[0];
+  result := fFhirStringList;
 end;
 {$ENDIF}
 

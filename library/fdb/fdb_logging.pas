@@ -286,7 +286,7 @@ end;
 
 class function TFDBLogEntry.HTMLDoco : String;
 begin
-  result :=
+  result := 
   '<p><b>In use</b></p>'+#13#10+
   ''+#13#10+
   '<p>Lists the actual current usage of connections. Typically, a few connections'+#13#10+
@@ -339,7 +339,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogEntry.Header';
 begin
   case AFormat of
     krfText :
-        result :=
+        result := 
           MakeLength('Usage', 20)+
           MakeLength('Count', 8)+
           MakeLength('Error', 6)+
@@ -394,7 +394,7 @@ begin
     case AFormat of
       krfText :
         begin
-        result :=
+        result := 
             MakeLength(FUsage, 20)+
             MakeLength(inttostr(FTotalCount), 8)+
             MakeLength(inttostr(FErrorCount), 8)+
@@ -436,7 +436,7 @@ begin
         end;
       krfXML  :
         begin
-        result :=
+        result := 
             '<Usage id="'+FUsage+'">'+
             '<TotalCount>'+inttostr(FTotalCount)+'</TotalCount>'+
             '<ErrorCount>'+inttostr(FErrorCount)+'</ErrorCount>'+

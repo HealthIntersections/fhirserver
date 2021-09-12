@@ -149,6 +149,8 @@ type
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual; abstract;
     function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
 
+    function makeHealthcareCard : THealthcareCard; virtual; abstract;
+
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); virtual; abstract;
     function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
@@ -167,6 +169,7 @@ type
     function makeCoding(systemUri, code, display : String) : TFHIRObject; overload;
     function makeCoding(systemUri, version, code, display : String) : TFHIRObject; overload; virtual; abstract;
     function makeString(s : string) : TFHIRObject; virtual; abstract;
+    function makeUri(s : string) : TFHIRObject; virtual; abstract;
     function makeInteger(s : string) : TFHIRObject; virtual; abstract;
     function makeDecimal(s : string) : TFHIRObject; virtual; abstract;
     function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64

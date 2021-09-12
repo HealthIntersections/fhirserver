@@ -383,6 +383,10 @@
         <Filename Value="..\library\ftx\ftx_lang.pas"/>
         <UnitName Value="ftx_lang"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_healthcard.pas"/>
+        <UnitName Value="fhir_healthcard"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

@@ -35,8 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_json, 
-  fhir_objects, 
-  fhir_oauth, fhir_cdshooks;
+  fhir_objects, fhir_client, fhir_oauth, fhir_cdshooks;
 
 type
   TFHIRClientRegistry = class (TFslObject)

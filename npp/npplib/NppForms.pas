@@ -84,7 +84,7 @@ procedure TNppForm.RegisterForm();
 var
   r: Integer;
 begin
-  r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGADD, self.Handle);
+  r := SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGADD, self.Handle);
 {
   if (r = 0) then
   begin
@@ -99,7 +99,7 @@ var
   r: Integer;
 begin
   if (not self.HandleAllocated) then exit;
-  r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, self.Handle);
+  r := SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, self.Handle);
 {
   if (r = 0) then
   begin

@@ -768,7 +768,7 @@ Begin
 
   FBackColourComponentEntity := oAdvancedToolbarSectionEntity.AddNewComponentEntity;
   FBackColourComponentEntity.Caption := WordProcessorToolbarWidgetCaptionArray[tbwBackColor];
-  FBackColourComponentEntity.HasControlEntity:= True;
+  FBackColourComponentEntity.HasControlEntity := True;
   FBackColourComboBox := TUixAdvancedColourComboBox.Create(Self);
   FBackColourComboBox.Parent := Self;
   FBackColourComboBox.OnChange := BackColourChangeHandler;

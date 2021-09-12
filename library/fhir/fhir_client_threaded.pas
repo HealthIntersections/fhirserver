@@ -58,11 +58,11 @@ type
     FLastURL: String;
     FLastStatus : integer;
     FHeaders : THTTPHeaders;
-    FBuffer : TFslBuffer;
+    FBuffer : TFslHTTPBuffer;
     FVId: String;
     procedure SetResult(const Value: TFhirResourceV);
     procedure SetResource(const Value: TFhirResourceV);
-    procedure SetBuffer(const Value: TFslBuffer);
+    procedure SetBuffer(const Value: TFslHTTPBuffer);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -83,7 +83,7 @@ type
     property vid : String read FVId write FVId;
     property name : String read FName write FName;
     property resource : TFhirResourceV read FResource write SetResource;
-    property buffer : TFslBuffer read FBuffer write SetBuffer;
+    property buffer : TFslHTTPBuffer read FBuffer write SetBuffer;
     property headers : THTTPHeaders read FHeaders;
 
     property result : TFhirResourceV read FResult write SetResult;
@@ -130,8 +130,8 @@ type
     function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
   end;
 
   TFhirThreadedCommunicator = class (TFhirFacadeCommunicator)
@@ -163,7 +163,7 @@ begin
   result := TFhirThreadedClientPackage(inherited Link);
 end;
 
-procedure TFhirThreadedClientPackage.SetBuffer(const Value: TFslBuffer);
+procedure TFhirThreadedClientPackage.SetBuffer(const Value: TFslHTTPBuffer);
 begin
   FBuffer.Free;
   FBuffer := Value;
@@ -331,7 +331,7 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFhirFacadeCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -352,7 +352,7 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+function TFhirFacadeCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslHTTPBuffer): TFslHTTPBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin

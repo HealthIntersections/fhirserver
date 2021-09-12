@@ -6,13 +6,15 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  fsl_base;
+  fsl_base,
+  fhir_client;
 
 type
 
   TLoadedBytes = record
     content : TBytes;
     timestamp : TDateTime;
+    mimeType : String;
   end;
 
   { TStorageService }
@@ -29,7 +31,7 @@ type
 
      property Handle : TComponent read FHandle;
 
-     function scheme : String; virtual; abstract;
+     function schemes : TArray<String>; virtual; abstract;
      function CheckTimes : boolean; virtual; abstract;
      function openDlg(out newName : String) : boolean; virtual; abstract;
      function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; virtual; abstract;
@@ -37,6 +39,7 @@ type
      function CaptionForAddress(address : String) : String; virtual; abstract;
      function describe(address : String) : String; virtual; abstract;
      function MakeFilename(address : String) : String; virtual; abstract;
+     function clientForAddress(address : String) : TFHIRClientV; virtual;
 
      function load(address : String) : TLoadedBytes; virtual; abstract;
      function save(address : String; bytes : TBytes) : TDateTime; virtual; abstract;
@@ -58,6 +61,11 @@ end;
 function TStorageService.link: TStorageService;
 begin
   result := TStorageService(inherited link);
+end;
+
+function TStorageService.clientForAddress(address: String): TFHIRClientV;
+begin
+  result := nil;
 end;
 
 end.

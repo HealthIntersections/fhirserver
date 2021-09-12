@@ -1,6 +1,6 @@
 unit ftk_frame_codesystem;
 
-{$mode objfpc}{$H+}
+{$i fhir.inc}
 
 interface
 
@@ -10,7 +10,7 @@ uses
   ftk_frame_resource;
 
 type
-  TFrame = TResourceEditorFrame;
+  TFrame = TResourceDesignerFrame;
 
   { TCodeSystemFrame }
 

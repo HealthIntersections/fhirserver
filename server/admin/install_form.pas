@@ -20,6 +20,7 @@ type
     btnInstall: TBitBtn;
     btnDBTest3: TBitBtn;
     cbxSecurity: TComboBox;
+    edtFilter: TEdit;
     edtUserName: TEdit;
     edtPassword: TEdit;
     edtAnonymousRights: TEdit;
@@ -29,21 +30,26 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     lblCurrentStatus: TLabel;
     lblMode: TLabel;
     lvPackages: TListView;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    Panel4: TPanel;
     procedure btnInstallClick(Sender: TObject);
+    procedure edtFilterChange(Sender: TObject);
     procedure edtUserNameChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
   private
     FConnection: TFDBConnection;
     FEndPoint: String;
     FFilename: String;
     FPackages : TFslList<TFHIRPackageInfo>;
+    FSelectedPackages : TStringList;
     FType: String;
     FVersion: String;
     function isAutomatic(pi: TFHIRPackageInfo): boolean;
@@ -51,6 +57,7 @@ type
     procedure SetConnection(AValue: TFDBConnection);
     procedure SetPackages(AValue: TFslList<TFHIRPackageInfo>);
     procedure loadPackages;
+    function passesFilter(id : String) : boolean;
     function command : String;
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages write SetPackages;
@@ -119,13 +126,14 @@ end;
 
 procedure TEndpointInstallForm.FormDestroy(Sender: TObject);
 begin
+  FSelectedPackages.Free;
   FPackages.Free;
   FConnection.Free;
 end;
 
 procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
 begin
-  btnInstall.enabled :=
+  btnInstall.enabled := 
    (not edtUserName.enabled or ((edtUserName.text <> '') and IsValidIdent(edtUserName.text))) and
    (not edtPassword.enabled or ((edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0))) and
    (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));
@@ -143,6 +151,11 @@ begin
   finally
     form.free;
   end;
+end;
+
+procedure TEndpointInstallForm.edtFilterChange(Sender: TObject);
+begin
+  loadPackages;
 end;
 
 function TEndpointInstallForm.matchesVersion(pi, piv : String):boolean;
@@ -173,6 +186,9 @@ end;
 
 procedure TEndpointInstallForm.FormShow(Sender: TObject);
 begin
+  FSelectedPackages := TStringList.create;
+  FSelectedPackages.Duplicates := dupIgnore;
+  FSelectedPackages.sorted := true;
   lblMode.caption := 'Install '+type_+' for version '+version;
   if type_ = 'terminology' then
   begin
@@ -217,6 +233,14 @@ begin
   end;
 end;
 
+procedure TEndpointInstallForm.lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+begin
+  if item.Checked then
+    FSelectedPackages.add(item.caption)
+  else if (FSelectedPackages.IndexOf(item.caption) > -1) then
+    FSelectedPackages.delete(FSelectedPackages.IndexOf(item.caption));
+end;
+
 procedure TEndpointInstallForm.SetPackages(AValue: TFslList<TFHIRPackageInfo>);
 begin
   FPackages.Free;
@@ -231,15 +255,20 @@ begin
   lvPackages.Items.clear;
   for pi in FPackages do
   begin
-    if matchesversion(pi.fhirVersion, pi.version) and not isAutomatic(pi) then
+    if matchesversion(pi.fhirVersion, pi.version) and not isAutomatic(pi) and passesFilter(pi.id) then
     begin
       li := lvPackages.items.Add;
       li.Caption := pi.id+'#'+pi.version;
-      li.Checked := false;
+      li.Checked := FSelectedPackages.IndexOf(li.caption) > -1;
     end;
   end;
   lvPackages.ViewStyle := vsIcon;
   lvPackages.ViewStyle := vsList;
+end;
+
+function TEndpointInstallForm.passesFilter(id: String): boolean;
+begin
+  result := (edtFilter.Text = '') or id.contains(edtFilter.text);
 end;
 
 function TEndpointInstallForm.command: String;

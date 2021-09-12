@@ -138,7 +138,7 @@ end;
 procedure TEditChangeReviewForm.SetEditor(AValue: TToolkitEditor);
 begin
   FEditor.Free;
-  FEditor:=AValue;
+  FEditor := AValue;
 end;
 
 procedure TEditChangeReviewForm.buildTextDiff;

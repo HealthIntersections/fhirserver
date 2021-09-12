@@ -939,7 +939,7 @@ begin
       begin
         part.Body.Text := 'The receiving server has accepted your message and will attempt to process it.';
         att.ContentType := 'message/disposition-notification';
-        s :=
+        s := 
           'Reporting-UA: '+settings.DirectUsername+'; ('+TFHIRServerContext(ServerContext).Globals.OwnerName+')'+#13#10+
           'Final-Recipient: '+settings.DirectUsername+#13#10+
           'Original-Message-ID: '+id+#13#10+
@@ -1764,7 +1764,7 @@ begin
   if (direct) then
     result := settings.DirectPort
   else
-    result:= settings.SMTPPort;
+    result := settings.SMTPPort;
 end;
 
 function TSubscriptionManager.chooseSMTPPassword(direct : boolean): String;
@@ -1772,7 +1772,7 @@ begin
   if (direct) then
     result := settings.DirectPassword
   else
-    result:= settings.SMTPPassword;
+    result := settings.SMTPPassword;
 end;
 
 function TSubscriptionManager.chooseSMTPHost(direct : boolean): String;
@@ -1780,7 +1780,7 @@ begin
   if (direct) then
     result := settings.DirectHost
   else
-    result:= settings.SMTPHost;
+    result := settings.SMTPHost;
 end;
 
 function TSubscriptionManager.chooseSMTPSender(direct : boolean): String;
@@ -1788,7 +1788,7 @@ begin
   if (direct) then
     result := settings.DirectSender
   else
-    result:= settings.SMTPSender;
+    result := settings.SMTPSender;
 end;
 
 function TSubscriptionManager.chooseSMTPUsername(direct : boolean): String;
@@ -1796,7 +1796,7 @@ begin
   if (direct) then
     result := settings.DirectUsername
   else
-    result:= settings.SMTPUsername;
+    result := settings.SMTPUsername;
 end;
 
 

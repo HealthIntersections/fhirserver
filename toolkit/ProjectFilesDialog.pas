@@ -88,7 +88,7 @@ var str:string;
 
 
 begin
-str:='git pull';
+str := 'git pull';
 
 {$IF defined(MSWINDOWS)}
 //  runandwait(Edit4.text, 'cmd.exe', '/K '+str)
@@ -101,8 +101,8 @@ end;
 procedure TProjectDialog.Button14Click(Sender: TObject);
 var str1, str2:string;
 begin
-str1:='git add --all';
-str2:='git commit';
+str1 := 'git add --all';
+str2 := 'git commit';
 {$IF defined(MSWINDOWS)}
   runandwait(Edit4.text, 'cmd.exe', '/K '+str1)
 {$ENDIF}  ;

@@ -202,7 +202,7 @@ end;
 
 function TPackageFinderForm.matchesFilter(pck: TPackageDefinition): boolean;
 begin
-  result :=
+  result := 
     pck.id.Contains(edtFilter.Text) or
     pck.Version.Contains(edtFilter.Text) or
     pck.Description.Contains(edtFilter.Text) or

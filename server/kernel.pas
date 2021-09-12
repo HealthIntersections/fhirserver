@@ -50,7 +50,7 @@ Uses
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, web_server, web_cache,
   server_testing,
-  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
+  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder;
 
 
 // how the kernel works:
@@ -375,7 +375,7 @@ var
   ep : TFHIRServerEndPoint;
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
-  FWebServer.Common.cache := THTTPCacheManager.Create;
+  FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
 
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
@@ -524,6 +524,8 @@ begin
   // we generate by type and mode
   if config['type'].value = 'package' then
     result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+  else if config['type'].value = 'folder' then
+    result := TFolderWebEndPoint.Create(config.link, FSettings.Link)
   else if config['type'].value = 'loinc' then
     result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link)
   else if config['type'].value = 'snomed' then
@@ -561,8 +563,8 @@ begin
   {$ENDIF}
 
   {$IFDEF FPC}
-  RequireDerivedFormResource:=True;
-  Application.Scaled:=True;
+  RequireDerivedFormResource := True;
+  Application.Scaled := True;
   {$ENDIF}
 
   Application.Initialize;

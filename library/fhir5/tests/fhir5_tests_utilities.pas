@@ -130,7 +130,7 @@ var
 begin
   dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
   try
-    s:= dr.asZip(fn);
+    s := dr.asZip(fn);
     try
       s.Position := 0;
       f := TFIleStream.create('c:\temp\test.zip', fmCreate);

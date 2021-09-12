@@ -31,7 +31,7 @@ type
     function compareItem(left, right : TNpmPackage; col : integer) : integer; override;
 
     function addItem(mode : String) : TNpmPackage; override;
-    procedure DeleteItem(item : TNpmPackage); override;
+    procedure deleteItem(item : TNpmPackage); override;
   end;
 
 
@@ -81,8 +81,9 @@ type
     FManager : TPackageListManager;
     FStop : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
+    procedure SetIni(AValue: TIniFile);
   public
-    property Ini : TIniFile read FIni write FIni;
+    property Ini : TIniFile read FIni write SetIni;
   end;
 
 var
@@ -108,7 +109,7 @@ end;
 
 function TPackageListManager.canSort: boolean;
 begin
-  Result:= true;
+  Result := true;
 end;
 
 function TPackageListManager.allowedOperations(item : TNpmPackage): TNodeOperationSet;
@@ -193,7 +194,7 @@ begin
   end;
 end;
 
-procedure TPackageListManager.DeleteItem(item: TNpmPackage);
+procedure TPackageListManager.deleteItem(item: TNpmPackage);
 begin
   FCache.remove(item.name, item.version);
 end;
@@ -338,6 +339,12 @@ begin
     end;
   end;
   Application.ProcessMessages;
+end;
+
+procedure TPackageCacheForm.SetIni(AValue: TIniFile);
+begin
+  FIni := AValue;
+  FManager.Settings := FIni;
 end;
 
 end.

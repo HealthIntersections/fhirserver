@@ -59,8 +59,9 @@ type
     FManager : TPackageRegistryManager;
     FStop : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
+    procedure SetIni(AValue: TIniFile);
   public
-    property Ini : TIniFile read FIni write FIni;
+    property Ini : TIniFile read FIni write SetIni;
   end;
 
 var
@@ -157,6 +158,7 @@ end;
 procedure TPackageRegistryForm.FormCreate(Sender: TObject);
 begin
   FManager := TPackageRegistryManager.create;
+  FManager.Settings := ini;
   FManager.List := ListView1;
   FManager.Filter := edtFilter;
   FManager.registerControl(btnInstall, copExecute, 'install');
@@ -213,6 +215,12 @@ end;
 procedure TPackageRegistryForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
 begin
 
+end;
+
+procedure TPackageRegistryForm.SetIni(AValue: TIniFile);
+begin
+  FIni := AValue;
+  FManager.Settings := FIni;
 end;
 
 end.

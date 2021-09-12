@@ -320,31 +320,31 @@ end;
 procedure TV2Location.SetComponent(AValue: TV2Cell);
 begin
   FComponent.Free;
-  FComponent:=AValue;
+  FComponent := AValue;
 end;
 
 procedure TV2Location.SetElement(AValue: TV2Cell);
 begin
   FElement.Free;
-  FElement:=AValue;
+  FElement := AValue;
 end;
 
 procedure TV2Location.SetField(AValue: TV2Field);
 begin
   FField.Free;
-  FField:=AValue;
+  FField := AValue;
 end;
 
 procedure TV2Location.SetSegment(AValue: TV2Segment);
 begin
   FSegment.Free;
-  FSegment:=AValue;
+  FSegment := AValue;
 end;
 
 procedure TV2Location.SetSubComponent(AValue: TV2Cell);
 begin
   FSubComponent.Free;
-  FSubComponent:=AValue;
+  FSubComponent := AValue;
 end;
 
 function TV2Location.sizeInBytesV(magic : integer) : cardinal;

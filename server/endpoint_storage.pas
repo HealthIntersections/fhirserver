@@ -70,8 +70,8 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function address : String; override;
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
     procedure terminate; override;
   end;
 
@@ -129,7 +129,7 @@ type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
+    Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -329,12 +329,12 @@ begin
   id := result.id;
 end;
 
-function TFHIRWebServerCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRWebServerCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFHIRWebServerCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
+function TFHIRWebServerCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
   raise Exception.Create('Not done yet');
 end;
@@ -470,7 +470,6 @@ begin
 
       resp := TFHIRResponse.Create(FEndPoint.Context.ValidatorContext.link);
       try
-        resp.OnCreateBuilder := FEndPoint.doGetBundleBuilder;
         FEndPoint.ProcessRequest(ctxt, req, resp);
         result := resp.Resource.link;
         if resp.HTTPCode >= 300 then
@@ -551,7 +550,6 @@ begin
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);
     try
       response.format := FFormat;
-      response.OnCreateBuilder := doGetBundleBuilder;
 
       t := GetTickCount64;
       if request.Session = nil then // during OAuth only
@@ -567,6 +565,7 @@ begin
       op := FServer.Context.Storage.createOperationContext(request.lang);
       try
         op.OnPopulateConformance := FServer.PopulateConformance;
+        op.OnCreateBuilder := doGetBundleBuilder;
         ctxt := TOperationContext.create(opmRestful, ollNone);
         try
           op.Execute(ctxt, request, response);
@@ -797,6 +796,11 @@ begin
       result := 'Smart Configuration';
       FAuthServer.HandleDiscovery(AContext, request, response)
     end
+    else if (request.Document = PathWithSlash+'.well-known/jwks.json') then
+    begin
+      result := 'Health card JKWS';
+      returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
+    end
     else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestVersion(request.Document) then
     begin
       result := TerminologyWebServer.ProcessVersion(AContext, request, Session, response, false)
@@ -890,7 +894,7 @@ begin
         Context.SessionManager.GetSession(request.AuthPassword, Session, check)
       else
       begin
-        JWT := TJWTUtils.unpack(request.AuthPassword, false, nil);
+        JWT := TJWTUtils.decodeJWT(request.AuthPassword);
         // todo: change this to true, and validate the JWT, under the right conditions
         try
           if cert = nil then
@@ -954,6 +958,11 @@ begin
     begin
       result := 'OAuth Discovery';
       FAuthServer.HandleDiscovery(AContext, request, response)
+    end
+    else if (request.Document = PathWithSlash+'.well-known/jwks.json') then
+    begin
+      result := 'Health card JKWS';
+      returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
       result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, session, cert)
@@ -1114,7 +1123,9 @@ var
   Context: TOperationContext;
   Session: TFHIRSession;
   cache : boolean;
+  start : UInt64;
 Begin
+  start := GetTickCount64;
   result := '??';
   noErrCode := false;
   mode := opmRestful;
@@ -1165,7 +1176,6 @@ Begin
         try
           oResponse := TFHIRResponse.Create(self.Context.ValidatorContext.link);
           try
-            oResponse.OnCreateBuilder := doGetBundleBuilder;
             response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
             // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
             response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
@@ -1321,7 +1331,7 @@ Begin
                     end;
                     cacheResponse(response, oResponse.CacheControl);
                     self.Context.Storage.RecordExchange(oRequest, oResponse, nil);
-                    ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
+                    ProcessOutput(start, oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
                     // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                     // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                     if oResponse.versionId <> '' then
@@ -1574,6 +1584,7 @@ begin
   op := self.Context.Storage.createOperationContext(request.lang);
   try
     op.OnPopulateConformance := PopulateConformance;
+    op.OnCreateBuilder := doGetBundleBuilder;
     result := op.Execute(Context, request, response);
     self.Context.Storage.yield(op, nil);
   except
@@ -1886,7 +1897,7 @@ begin
   end;
 end;
 
-Procedure TStorageWebEndpoint.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
+Procedure TStorageWebEndpoint.ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
   relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
 var
   oComp: TFHIRComposer;
@@ -1903,6 +1914,9 @@ begin
   gzip := false;
   response.ResponseNo := oResponse.HTTPCode;
   response.contentType := oResponse.contentType;
+  if oResponse.lastModifiedDate > 0 then
+    response.LastModified := oResponse.lastModifiedDate;
+
   res := oResponse.resource;
   if (res = nil) and (oResponse.outcome <> nil) then
     res := oResponse.outcome.Resource;
@@ -2041,7 +2055,7 @@ begin
       ownsStream := false;
     end;
     if (cache) then
-      Common.Cache.recordResponse(code, request, response, summary);
+      Common.Cache.recordResponse(code, request, response, GetTickCount64 - start, summary);
   finally
     if ownsStream then
       stream.Free;

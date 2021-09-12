@@ -297,6 +297,8 @@ type
     A list of bytes
   }
 
+  { TFslBuffer }
+
   TFslBuffer = Class(TFslObject)
   Private
     FData : Pointer;
@@ -377,7 +379,6 @@ type
     Property Size : Cardinal Read FCapacity Write SetCapacity;
     Property Format : String read FFormat write FFormat;
     property HasFormat : boolean read GetHasFormat;
-
   End;
 
   TFslBufferClass = Class Of TFslBuffer;
@@ -2039,7 +2040,7 @@ Begin
 End;
 
 
-Constructor TFslBuffer.Create;
+constructor TFslBuffer.Create;
 Begin
   Inherited;
   {$IFNDEF VER130}
@@ -2049,7 +2050,7 @@ Begin
 End;
 
 
-Destructor TFslBuffer.Destroy;
+destructor TFslBuffer.Destroy;
 Begin
   If FOwned Then
     MemoryDestroy(FData, FCapacity);
@@ -2058,19 +2059,19 @@ Begin
 End;
 
 
-Function TFslBuffer.Clone : TFslBuffer;
+function TFslBuffer.Clone: TFslBuffer;
 Begin
   Result := TFslBuffer(Inherited Clone);
 End;
 
 
-Function TFslBuffer.Link : TFslBuffer;
+function TFslBuffer.Link: TFslBuffer;
 Begin
   Result := TFslBuffer(Inherited Link);
 End;
 
 
-Procedure TFslBuffer.Assign(oObject : TFslObject);
+procedure TFslBuffer.Assign(oObject: TFslObject);
 Begin 
   Inherited;
 
@@ -2080,7 +2081,7 @@ End;
 
 
 
-Procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
+procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
 Begin
   Assert(Invariants('LoadFromStream', oStream, TFslStream, 'oStream'));
 
@@ -2088,7 +2089,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.LoadFromStream(oStream: TStream);
+procedure TFslBuffer.LoadFromStream(oStream: TStream);
 Begin
 //  Assert(Invariants('LoadFromStream', oStream, TStream, 'oStream'));
 
@@ -2097,7 +2098,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToStream(oStream: TFslStream);
+procedure TFslBuffer.SaveToStream(oStream: TFslStream);
 Begin
   Assert(Invariants('SaveToStream', oStream, TFslStream, 'oStream'));
 
@@ -2105,7 +2106,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToStream(oStream: TStream);
+procedure TFslBuffer.SaveToStream(oStream: TStream);
 var
   i : integer;
 Begin
@@ -2117,7 +2118,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
+procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
 Begin
   Assert(Invariants('LoadFromFile', oFile, TFslFile, 'oFile'));
 
@@ -2127,7 +2128,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToFile(oFile: TFslFile);
+procedure TFslBuffer.SaveToFile(oFile: TFslFile);
 Begin
   Assert(Invariants('SaveToFile', oFile, TFslFile, 'oFile'));
 
@@ -2135,7 +2136,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.LoadFromFileName(Const sFilename: String);
+procedure TFslBuffer.LoadFromFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
@@ -2148,7 +2149,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToFileName(Const sFilename: String);
+procedure TFslBuffer.SaveToFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
@@ -2161,14 +2162,14 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Clear;
+procedure TFslBuffer.Clear;
 Begin 
 
   Capacity := 0;
 End;  
 
 
-Function TFslBuffer.Equal(oBuffer: TFslBuffer): Boolean;
+function TFslBuffer.Equal(oBuffer: TFslBuffer): Boolean;
 Begin
   Assert(Invariants('Equal', oBuffer, TFslBuffer, 'oBuffer'));
 
@@ -2176,7 +2177,7 @@ Begin
 End;
 
 
-Function TFslBuffer.Compare(oBuffer: TFslBuffer): Integer;
+function TFslBuffer.Compare(oBuffer: TFslBuffer): Integer;
 Begin
   Assert(Invariants('Compare', oBuffer, TFslBuffer, 'oBuffer'));
 
@@ -2187,7 +2188,7 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetCapacity(Const Value: cardinal);
+procedure TFslBuffer.SetCapacity(const Value: cardinal);
 Begin 
   If (Value <> Capacity) Then
   Begin
@@ -2199,7 +2200,7 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetData(Const Value: Pointer);
+procedure TFslBuffer.SetData(const Value: Pointer);
 Begin 
 
   If FData <> Value Then
@@ -2212,14 +2213,14 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetOwned(Const Value: Boolean);
+procedure TFslBuffer.SetOwned(const Value: Boolean);
 Begin 
 
   FOwned := Value;
 End;
 
 
-Function TFslBuffer.GetAsText : AnsiString;
+function TFslBuffer.GetAsText: AnsiString;
 Begin
   Result := ExtractAscii(Capacity);
 End;
@@ -2243,7 +2244,7 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslBuffer.SetAsText(Const Value: AnsiString);
+procedure TFslBuffer.SetAsText(const Value: AnsiString);
 Begin
 
   Capacity := Length(Value);
@@ -2251,13 +2252,14 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Copy(oBuffer: TFslBuffer);
+procedure TFslBuffer.Copy(oBuffer: TFslBuffer);
 Begin
   CopyRange(oBuffer, 0, oBuffer.Capacity);
 End;
 
 
-Procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; Const iIndex, iLength : cardinal);
+procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; const iIndex,
+  iLength: cardinal);
 Begin
   Assert(Invariants('CopyRange', oBuffer, TFslBuffer, 'oBuffer'));
   Assert(CheckCondition((iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
@@ -2268,7 +2270,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Move(Const iSource, iTarget, iLength : cardinal);
+procedure TFslBuffer.Move(const iSource, iTarget, iLength: cardinal);
 Begin
   Assert(CheckCondition((iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
   Assert(CheckCondition((iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
@@ -2277,7 +2279,7 @@ Begin
 End;
 
 
-Function TFslBuffer.Offset(iIndex: cardinal): Pointer;
+function TFslBuffer.Offset(iIndex: cardinal): Pointer;
 Begin 
   Assert(CheckCondition((iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
 
@@ -2305,7 +2307,7 @@ Begin
 End;
 
 
-Function TFslBuffer.ExtractAscii(Const iLength: Integer): AnsiString;
+function TFslBuffer.ExtractAscii(const iLength: Integer): AnsiString;
 Begin
   Result := MemoryToString(Data, iLength);
 End;

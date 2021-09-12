@@ -469,7 +469,7 @@ procedure TFHIRDatabaseInstaller.CreateConcepts;
 begin
   FConn.ExecSQL('CREATE TABLE Concepts ( '+#13#10+
        ' ConceptKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' URL nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' URL nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' Code nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Concepts', 'ConceptKey')+') '+CreateTableInfo(FConn.owner.platform));

@@ -369,7 +369,7 @@ begin
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
     raise EFHIRException.create('Unexpected Name "'+s+'" at '+inttostr(cursor));
 
-  logical:= TFSFilterLogical.Create;
+  logical := TFSFilterLogical.Create;
   try
     logical.FFilter1 := filter.Link as TFSFilter;
     if s = 'or' then

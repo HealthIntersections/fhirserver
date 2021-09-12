@@ -512,7 +512,7 @@ begin
 {
   Reverses the byte order of a 32-bit register.
 }
-  Result :=
+  Result := 
       ( X shr 24) or
       ((X shr  8) and $00FF00) or
       ((X shl  8) and $FF0000) or
@@ -2474,7 +2474,7 @@ begin
   begin
     s0 := RRot32(W[t-15],  7) xor RRot32(W[t-15], 18) xor (W[t-15] shr  3); //s0(W[t-15]);
     s1 := RRot32(W[t- 2], 17) xor RRot32(W[t- 2], 19) xor (W[t- 2] shr 10); //s1(W[t-2]);
-    W[t]:= W[t-16] + s0 + W[t-7] + s1;
+    W[t] := W[t-16] + s0 + W[t-7] + s1;
   end;
 
   {2.  Initialize working variables a..h by copying CurrentHash into working variables }
@@ -2653,14 +2653,14 @@ begin
 
   {Finalize the hash value into CurrentHash}
   SetLength(Result, Self.GetDigestSize);
-  PLongWordArray(Result)[0]:= ByteSwap(FCurrentHash[0]);
-  PLongWordArray(Result)[1]:= ByteSwap(FCurrentHash[1]);
-  PLongWordArray(Result)[2]:= ByteSwap(FCurrentHash[2]);
-  PLongWordArray(Result)[3]:= ByteSwap(FCurrentHash[3]);
-  PLongWordArray(Result)[4]:= ByteSwap(FCurrentHash[4]);
-  PLongWordArray(Result)[5]:= ByteSwap(FCurrentHash[5]);
-  PLongWordArray(Result)[6]:= ByteSwap(FCurrentHash[6]);
-  PLongWordArray(Result)[7]:= ByteSwap(FCurrentHash[7]);
+  PLongWordArray(Result)[0] := ByteSwap(FCurrentHash[0]);
+  PLongWordArray(Result)[1] := ByteSwap(FCurrentHash[1]);
+  PLongWordArray(Result)[2] := ByteSwap(FCurrentHash[2]);
+  PLongWordArray(Result)[3] := ByteSwap(FCurrentHash[3]);
+  PLongWordArray(Result)[4] := ByteSwap(FCurrentHash[4]);
+  PLongWordArray(Result)[5] := ByteSwap(FCurrentHash[5]);
+  PLongWordArray(Result)[6] := ByteSwap(FCurrentHash[6]);
+  PLongWordArray(Result)[7] := ByteSwap(FCurrentHash[7]);
 
   {Burn all the temporary areas}
   Burn;
@@ -3064,7 +3064,7 @@ begin
   digestSize := Self.GetDigestSize;
   SetLength(Result, digestSize);
 
-  hr :=_BCryptFinishHash(Hash, @Result[0], digestSize, 0);
+  hr := _BCryptFinishHash(Hash, @Result[0], digestSize, 0);
   NTStatusCheck(hr);
 end;
 

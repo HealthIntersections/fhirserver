@@ -6,10 +6,11 @@ interface
 
 uses
   Classes, SysUtils,
-  Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList, IniFiles,
   fsl_base, fsl_utilities, fsl_stream, fsl_logging,
-  fhir_objects,
-  ftk_store, ftk_console;
+  fhir_objects, fhir_client, fhir_factory,
+  fhir4_factory, fhir3_factory,
+  ftk_store, ftk_console, ftk_utilities;
 
 // supported formats:
 // ini
@@ -25,7 +26,7 @@ uses
 // resource
 
 type
-  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom);
+  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer);
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
   TToolkitMessageLevel = (msgError, msgWarning, msgHint);
@@ -37,7 +38,7 @@ const
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
 
-  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom');
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
@@ -184,6 +185,7 @@ type
     procedure updateFont; virtual; abstract;
     function getSource : String; virtual; abstract;
     procedure resizeControls; virtual; abstract;
+    procedure saveStatus; virtual; // called before shut down because shut down order isn't always predictable
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -204,6 +206,9 @@ type
   end;
 
   TLocateEvent = procedure(sender : TObject; x, y: integer; var point : TPoint) of Object;
+  TFetchServerEvent = function(sender : TObject; name : String) : TFHIRServerEntry of Object;
+  TOpenResourceEvent = procedure(sender : TObject; url : String) of Object;
+  TConnectToServerEvent = procedure (sender : TObject; server : TFHIRServerEntry) of object;
 
   { TToolkitMessagesView }
 
@@ -253,15 +258,19 @@ type
     FInspector: TToolkitEditorInspectorView;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
+    FOnConnectToServer: TConnectToServerEvent;
+    FOnFetchServer: TFetchServerEvent;
     FOnLocate : TLocateEvent;
     FImages : TImageList;
     FEditorSessions : TFslList<TToolkitEditSession>;
     FEditors : TFslList<TToolkitEditor>;
     FFocus: TToolkitEditor;
+    FOnOpenResource: TOpenResourceEvent;
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
     FToolBarHeight: integer;
+    FSettings : TiniFile;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
     procedure SetFocus(AValue: TToolkitEditor);
@@ -283,9 +292,10 @@ type
     property hasFocus : boolean read GetHasFocus;
     property focus : TToolkitEditor read FFocus write SetFocus;
 
+    property Settings : TIniFile read FSettings write FSettings;
     property editorSessions : TFslList<TToolkitEditSession> read FEditorSessions;
     property storages : TFslList<TStorageService> read FStorages;
-    function StorageForAddress(address : String) : TStorageService;
+    function StorageForAddress(address : String; server : TFHIRServerEntry = nil) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
 
     // global settings
@@ -309,9 +319,16 @@ type
     function EditorForAddress(address : String) : TToolkitEditor;
     function anyDirtyEditors : boolean;
 
+    function factory(version : TFHIRVersion) : TFHIRFactory;
+    procedure OpenResource(url : String);
+
+
     property OnUpdateActions : TNotifyEvent read FOnUpdateActions write FOnUpdateActions;
     property OnChangeFocus : TNotifyEvent read FOnChangeFocus write FOnChangeFocus;
     property OnLocate : TLocateEvent read FOnLocate write FOnLocate;
+    property OnFetchServer : TFetchServerEvent read FOnFetchServer write FOnFetchServer;
+    property OnOpenResource : TOpenResourceEvent read FOnOpenResource write FOnOpenResource;
+    property OnConnectToServer : TConnectToServerEvent read FOnConnectToServer write FOnConnectToServer;
   end;
 
 implementation
@@ -320,7 +337,7 @@ implementation
 
 procedure TToolkitEditorInspectorView.SetActive(AValue: boolean);
 begin
-  FActive:=AValue;
+  FActive := AValue;
   OnChange(self);
 end;
 
@@ -474,7 +491,7 @@ end;
 procedure TToolkitEditor.SetStore(AValue: TStorageService);
 begin
   FStore.Free;
-  FStore:=AValue;
+  FStore := AValue;
 end;
 
 function TToolkitEditor.StartValidating : QWord;
@@ -564,6 +581,11 @@ begin
   tab.Caption := FSession.Caption;
 end;
 
+procedure TToolkitEditor.saveStatus;
+begin
+  FContext := nil; // we're cut off after this executes
+end;
+
 { TToolkitContextObject }
 
 constructor TToolkitContextObject.create(context: TToolkitContext);
@@ -607,7 +629,7 @@ var
  editor : TToolkitEditor;
 begin
   if FToolBarHeight=AValue then Exit;
-  FToolBarHeight:=AValue;
+  FToolBarHeight := AValue;
   for editor in FEditors do
     editor.resizeControls;
 end;
@@ -654,7 +676,7 @@ begin
     editor.updateFont;
 end;
 
-function TToolkitContext.StorageForAddress(address: String): TStorageService;
+function TToolkitContext.StorageForAddress(address: String; server : TFHIRServerEntry = nil): TStorageService;
 var
   scheme : String;
   storage : TStorageService;
@@ -662,7 +684,7 @@ begin
   scheme := address.Substring(0, address.IndexOf(':'));
   result := nil;
   for storage in storages do
-    if storage.scheme = scheme then
+    if StringArrayExists(storage.schemes, scheme) then
       exit(storage);
 end;
 
@@ -681,7 +703,7 @@ begin
     FFocus := nil;
   end;
   FMessageView.removeMessagesForEditor(editor);
-  FEditorSessions.remove(editor.Session.link);
+  FEditorSessions.remove(editor.Session);
   FEditors.remove(editor);
 end;
 
@@ -717,6 +739,21 @@ begin
   for editor in FEditors do
     if editor.Session.NeedsSaving then
       exit(true);
+end;
+
+function TToolkitContext.factory(version: TFHIRVersion): TFHIRFactory;
+begin
+  case version of
+    fhirVersionRelease3 : result := TFHIRFactoryR3.create;
+    fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+  else
+    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported by the FHI Toolkit');
+  end;
+end;
+
+procedure TToolkitContext.OpenResource(url: String);
+begin
+  OnOpenResource(self, url);
 end;
 
 end.

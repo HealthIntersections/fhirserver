@@ -128,7 +128,7 @@ begin
     ///
 
 
-    imagefiles:= TDirectory.GetFiles(pandocfolder + '\media');
+    imagefiles := TDirectory.GetFiles(pandocfolder + '\media');
     for imgfile in imageFiles do
       TFile.copy(imgfile, tempfolder + '\'+edit1.text+'-'+extractfilename(imgfile));
 

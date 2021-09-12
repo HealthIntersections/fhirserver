@@ -5344,7 +5344,7 @@ begin
   result := TFHIRQuantity.Create;
   try
     result.value := p.value.AsString;
-    result.system :='http://unitsofmeasure.org';
+    result.system := 'http://unitsofmeasure.org';
     result.code := p.UnitCode;
     result.noExtensions;
     result.link;

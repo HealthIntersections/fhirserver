@@ -34,9 +34,15 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities,
+  fsl_base, fsl_utilities, fsl_logging,
   fsl_stream, fsl_json, fsl_http,
   fhir_objects,  fhir_parser, fhir_common;
+
+type
+  TSmartAppLaunchMode = (salmNone, salmOAuthClient, salmBackendClient);
+
+const
+  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('No Security', 'OAuth Client', 'Backend Services');
 
 Type
   EFHIRClientException = class (EFHIRException)
@@ -55,12 +61,62 @@ Type
     prefer : String;
     location : String;
     contentLocation : String;
+    Timestamp : TDateTime;
     lastOperationId : String; // some servers return an id that links to their own internal log for debugging
     progress : String; // X-Progress fgrom bulk data
     function asString : string;
 
     procedure addToHeaders(list : TStringList);
     function sizeInBytes(magic : integer) : cardinal;
+  end;
+
+  { TFslHTTPBuffer }
+
+  TFslHTTPBuffer = class (TFslBuffer)
+  private
+    FTimestamp : TDateTime;
+    FMimeType : String;
+  public
+    function link : TFslHTTPBuffer; overload;
+    property timestamp : TDateTime read FTimestamp write FTimestamp;
+    property mimeType : String read FMimeType write FMimeType;
+  end;
+
+  { TFHIRServerDetails }
+
+  TFHIRServerDetails = class (TFslObject)
+  private
+    FClientId: String;
+    FClientSecret: String;
+    FFormat: TFHIRFormat;
+    FJson: boolean;
+    FName: String;
+    FRedirect: String;
+    FSmartMode: TSmartAppLaunchMode;
+    FURL: String;
+    FSmartConfig : TJsonObject;
+    FVersion: TFHIRVersion;
+    FXml: boolean;
+    procedure SetSmartConfig(AValue: TJsonObject);
+  public
+    destructor Destroy; override;
+
+    function link : TFHIRServerDetails; overload;
+    function clone : TFHIRServerDetails; overload;
+    procedure assign(other : TFslObject); override;
+
+    property name : String read FName write FName;
+    property URL : String read FURL write FURL;
+
+    property version : TFHIRVersion read FVersion write FVersion;
+    property xml: boolean read FXml write FXml;
+    property json : boolean read FJson write FJson;
+    property format : TFHIRFormat read FFormat write FFormat;
+    property smartConfig : TJsonObject read FSmartConfig write SetSmartConfig;
+    property smartMode : TSmartAppLaunchMode read FSmartMode write FSmartMode;
+    property ClientId : String read FClientId write FClientId;
+    property ClientSecret : String read FClientSecret write FClientSecret;
+    property Redirect : String read FRedirect write FRedirect;
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -111,6 +167,19 @@ Type
     procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TBytes);  override;
   end;
 
+  { TTextFileLogger }
+
+  TTextFileLogger = class(TFHIRClientLogger)
+  private
+    FLog: TLogger;
+    function toChars(b: TBytes): string;
+  public
+    constructor Create(filename : String = '');
+    destructor Destroy; override;
+
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes); override;
+  end;
+
   // client architecture:
   //
   // the base client is TFhirClientV. There is a subclass for each version.
@@ -151,8 +220,8 @@ Type
     function historyInstanceV(atype : TFHIRResourceTypeV; id : string; allRecords : boolean; params : string) : TFHIRResourceV; virtual; abstract;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual; abstract;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual; abstract;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; virtual; abstract;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; virtual; abstract;
     procedure terminate; virtual;  abstract; // only works for some communicators
   end;
 
@@ -232,13 +301,102 @@ Type
     function historyinstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; virtual;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; virtual;
 
     procedure terminate; virtual; // only works for some communicators
   end;
 
 implementation
+
+{ TTextFileLogger }
+
+constructor TTextFileLogger.Create(filename: String);
+begin
+  inherited Create;
+  if Filename <> '' then
+    FLog := TLogger.Create(Filename)
+  else if DirectoryExists('c:\temp') then
+    FLog := TLogger.Create('c:\temp\'+PathTitle(ParamStr(0))+'.fhir.log')
+  else
+    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp) + ''+PathTitle(ParamStr(0))+'.fhir.log')
+end;
+
+destructor TTextFileLogger.Destroy;
+begin
+  FLog.free;
+  inherited Destroy;
+end;
+
+function TTextFileLogger.toChars(b: TBytes): string;
+begin
+  result := TEncoding.ANSI.GetString(b);
+end;
+
+procedure TTextFileLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes);
+begin
+  FLog.WriteToLog('=================================='#13#10);
+  FLog.WriteToLog(verb + ' ' + url + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(requestHeaders + #13#10);
+  if request <> nil then
+    FLog.WriteToLog(toChars(request) + #13#10);
+  FLog.WriteToLog('----------------------------------'#13#10);
+  FLog.WriteToLog(status + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(responseHeaders + #13#10);
+  if response <> nil then
+    FLog.WriteToLog(toChars(response) + #13#10);
+end;
+
+{ TFslHTTPBuffer }
+
+function TFslHTTPBuffer.link: TFslHTTPBuffer;
+begin
+  result := TFslHTTPBuffer(inherited link);
+end;
+
+{ TFHIRServerDetails }
+
+destructor TFHIRServerDetails.Destroy;
+begin
+  FSmartConfig.free;
+  inherited Destroy;
+end;
+
+function TFHIRServerDetails.link: TFHIRServerDetails;
+begin
+  result := TFHIRServerDetails(inherited Link);
+end;
+
+function TFHIRServerDetails.clone: TFHIRServerDetails;
+begin
+  result := TFHIRServerDetails(inherited Clone);
+end;
+
+procedure TFHIRServerDetails.assign(other: TFslObject);
+var
+  o : TFHIRServerDetails;
+begin
+  inherited assign(other);
+  o := other as TFHIRServerDetails;
+  Format := o.Format;
+  Json := o.Json;
+  Name := o.Name;
+  URL := o.URL;
+  if o.smartConfig <> nil then
+    SmartConfig := TJSONParser.Parse(TJSONWriter.WriteObject(o.smartConfig));
+  Version := o.Version;
+  Xml := o.Xml;
+  SmartMode := o.SmartMode;
+  ClientId := o.ClientId;
+  ClientSecret := o.ClientSecret;
+  Redirect := o.Redirect;
+end;
+
+procedure TFHIRServerDetails.SetSmartConfig(AValue: TJsonObject);
+begin
+  FSmartConfig.free;
+  FSmartConfig := AValue;
+end;
 
 { EFHIRClientException }
 
@@ -511,12 +669,12 @@ begin
   result := FCommunicator.historyinstanceV(aType, id, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslBuffer;
+function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer;
 begin
   result := FCommunicator.customGet(path, headers);
 end;
 
-function TFhirClientV.customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer;
+function TFhirClientV.customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer;
 begin
   result := FCommunicator.customPost(path, headers, body);
 end;

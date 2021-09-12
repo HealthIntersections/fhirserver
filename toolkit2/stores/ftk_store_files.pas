@@ -15,7 +15,7 @@ type
 
   TFileStorageService = class (TStorageService)
   public
-    function scheme : String; override;
+    function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
     function load(address : String) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
@@ -31,9 +31,9 @@ implementation
 
 { TFileStorageService }
 
-function TFileStorageService.scheme: String;
+function TFileStorageService.schemes : TArray<String>;
 begin
-  result := 'file';
+  result := ['file'];
 end;
 
 function TFileStorageService.CheckTimes: boolean;

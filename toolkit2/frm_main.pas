@@ -10,11 +10,13 @@ uses
   lclintf, ValEdit,
 
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging,
-  ftk_context, ftk_store_temp,
-  ftk_store, ftk_store_files,
-  ftk_factory, ftk_search,
+  fhir_client, fhir_factory, fhir_oauth,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes;
+  ftk_context, ftk_store_temp, ftk_utilities,
+  ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
+  ftk_factory, ftk_search, ftk_serverlist,ftk_worker_server,
+
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth;
 
 type
   { TMainToolkitForm }
@@ -28,6 +30,7 @@ type
     actExecuteStepInto: TAction;
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
+    actConnectToServer: TAction;
     actionEditReview: TAction;
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
@@ -102,6 +105,7 @@ type
     imgMain: TImageList;
     Label1: TLabel;
     Label2: TLabel;
+    lvServers: TListView;
     lvSearch: TListView;
     lvTasks: TListView;
     lvMessages: TListView;
@@ -153,6 +157,8 @@ type
     MenuItem91: TMenuItem;
     MenuItem92: TMenuItem;
     MenuItem93: TMenuItem;
+    MenuItem96: TMenuItem;
+    MenuItem97: TMenuItem;
     mnuApple: TMenuItem;
     MenuItem95: TMenuItem;
     N12: TMenuItem;
@@ -263,6 +269,7 @@ type
     tbTasks: TTabSheet;
     Timer1: TTimer;
     ToolBar1: TToolBar;
+    ToolBar2: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -287,6 +294,8 @@ type
     ToolButton29: TToolButton;
     ToolButton3: TToolButton;
     ToolButton30: TToolButton;
+    ToolButton31: TToolButton;
+    ToolButton32: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
@@ -294,6 +303,7 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
+    procedure actConnectToServerExecute(Sender: TObject);
     procedure actionEditBeginEndExecute(Sender: TObject);
     procedure actionEditCopyExecute(Sender: TObject);
     procedure actionEditFindExecute(Sender: TObject);
@@ -382,9 +392,11 @@ type
     FIni : TIniFile;
     FTempStore : TFHIRToolkitTemporaryStorage;
     FFileSystem : TStorageService;
+    FInternalStorage : TStorageService;
     FSourceMaximised : boolean;
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
+    FServerView : TFHIRServersView;
     FFinishedLoading : boolean;
     FScale : integer;
     FSearchTask : integer;
@@ -424,6 +436,12 @@ type
     procedure doSearch;
     procedure doProcessSearchResults(id : integer; response : TBackgroundTaskResponsePackage);
     procedure processSearchResults(results : TFslList<TToolkitSearchMatch>; goFirst : boolean);
+    procedure openServer(sender : TObject; server : TFHIRServerEntry);
+    procedure editServer(sender : TObject; server : TFHIRServerEntry);
+    procedure doOpenResource(sender : TObject; url : String);
+    procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
+    function DoSmartLogin(server : TFHIRServerEntry) : boolean;
+
   public
     property Context : TToolkitContext read FContext;
   end;
@@ -438,6 +456,8 @@ implementation
 { TMainToolkitForm }
 
 procedure TMainToolkitForm.FormCreate(Sender: TObject);
+var
+  http : THTTPStorageService;
 begin
   Application.OnActivate := DoAppActivate;
   Application.OnException := DoAppException;
@@ -460,27 +480,49 @@ begin
   FContext.OnUpdateActions := updateActionStatus;
   FContext.OnLocate := locateOnTab;
   FContext.OnChangeFocus := onChangeFocus;
+  FContext.OnOpenResource := doOpenResource;
   FContext.MessageView.OnChange := updateMessages;
-  FContext.Inspector.OnChange := updateInspector;
+  FContext.Inspector.OnChange:=updateInspector;
   FContext.Font := SynEdit1.Font;
+  FContext.OnConnectToServer := DoConnectToServer;
+  FContext.Settings := FIni;
+  FServerView := TFHIRServersView.create(FIni);
+  FServerView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'servers.json']);
+  FServerView.List := lvServers;
+  FServerView.OnOpenServer := OpenServer;
+  FServerView.OnEditServer := EditServer;
+  FServerView.load;
+  FContext.OnFetchServer := FServerView.FetchServer;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
   FFileSystem := TFileStorageService.create(self, FIni);
   FContext.storages.add(FFileSystem.link);
+  FInternalStorage := TInternalStorageService.create(self, FIni);
+  FContext.storages.add(FInternalStorage.link);
+  http := THTTPStorageService.create(FServerView.ServerList.link);
+  FContext.storages.add(http);
+  http.OnConnectToServer := DoConnectToServer;
   FSearch := TFslList<TToolkitSearchMatch>.create;
   FFactory := TToolkitFactory.create(FContext.link, self);
   updateActionStatus(nil);
 end;
 
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
+var
+  editor : TToolkitEditor;
 begin
+  for editor in FContext.Editors do
+    editor.saveStatus;
+  FServerView.saveStatus;
   FShuttingDown := true;
   Timer1.Enabled := false;
+  FServerView.Free;
   FSearch.Free;
   FFactory.free;
   FFileSystem.Free;
+  FInternalStorage.Free;
   FTempStore.Free;
   FContext.Free;
   saveLayout;
@@ -531,6 +573,7 @@ begin
     updateActionStatus(editor);
   end;
   FContext.ToolBarHeight := ToolBar1.Height;
+  FServerView.refresh;
 end;
 
 procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
@@ -932,7 +975,7 @@ begin
   begin
     store := Context.StorageForAddress(address);
     loaded := store.load(address);
-    session := FFactory.examineFile(address, loaded.content);
+    session := FFactory.examineFile(address, loaded.mimeType, loaded.content);
     if session <> nil then
     begin
       session.address := address;
@@ -1015,6 +1058,7 @@ begin
   editor := Context.EditorForTab(tab);
   if (editor.CanBeSaved) then
     checkDoSave(editor);
+  editor.saveStatus; // internal save, and then unhook
   if editor.session.Address <> '' then
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
@@ -1176,6 +1220,140 @@ begin
     actionEditFindNextExecute(self);
 end;
 
+procedure TMainToolkitForm.openServer(sender: TObject; server: TFHIRServerEntry);
+var
+  worker : TServerWorker;
+  session : TToolkitEditSession;
+  tab : TTabSheet;
+begin
+  if server.client = nil then
+    DoConnectToServer(self, server);
+  worker := server.workerObject as TServerWorker;
+  if (worker <> nil) then
+    pgEditors.ActivePage := worker.tab
+  else
+  begin
+    session := FFactory.makeNewSession(sekServer);
+    session.caption := 'Server '+server.Name;
+    session.address := 'internal:server.'+server.name;
+    worker := FFactory.makeEditor(session) as TServerWorker;
+    FContext.addEditor(worker);
+    tab := pgEditors.AddTabSheet;
+    worker.bindToTab(tab);
+    worker.newContent;
+    worker.session.NeedsSaving := false;
+    worker.lastChangeChecked := true;
+    pgEditors.ActivePage := tab;
+    FTempStore.storeOpenFileList(FContext.EditorSessions);
+    FTempStore.storeContent(worker.session.Guid, true, worker.getBytes);
+    FContext.Focus := worker;
+    FContext.Focus.getFocus(mnuContent);
+    FServerView.refresh;
+    updateActionStatus(worker);
+  end;
+end;
+
+procedure TMainToolkitForm.editServer(sender: TObject; server: TFHIRServerEntry);
+var
+  srvr : TFHIRServerEntry;
+begin
+  srvr := server.clone;
+  try
+    ServerSettingsForm := TServerSettingsForm.create(self);
+    try
+      ServerSettingsForm.Server := srvr.link;
+      ServerSettingsForm.ServerList := FServerView.ServerList.link;
+      if ServerSettingsForm.ShowModal = mrOk then
+      begin
+        FServerView.updateServer(server, srvr);
+      end;
+    finally
+      FreeAndNil(ServerSettingsForm);
+    end;
+  finally
+    srvr.free;
+  end;
+end;
+
+procedure TMainToolkitForm.doOpenResource(sender: TObject; url: String);
+var
+  loaded : TLoadedBytes;
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  store : TStorageService;
+  session : TToolkitEditSession;
+begin
+  editor := Context.EditorForAddress(url);
+  if (editor <> nil) then
+    pgEditors.ActivePage := editor.tab
+  else
+  begin
+    store := Context.StorageForAddress(url);
+    loaded := store.load(url);
+    session := FFactory.examineFile(url, loaded.mimeType, loaded.content);
+    if session <> nil then
+    begin
+      session.address := url;
+      session.Timestamp := loaded.timestamp;
+      editor := FFactory.makeEditor(session);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      editor.LoadBytes(loaded.content);
+      editor.session.NeedsSaving := false;
+      pgEditors.ActivePage := tab;
+      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      FTempStore.removeFromMRU(editor.session.address);
+      editor.lastChangeChecked := true;
+      FContext.Focus := editor;
+      FContext.Focus.getFocus(mnuContent);
+      editor.lastChangeChecked := true;
+      editor.lastMoveChecked := true;
+      editor.editPause;
+      updateActionStatus(editor);
+    end;
+  end;
+end;
+
+procedure TMainToolkitForm.DoConnectToServer(sender: TObject; server: TFHIRServerEntry);
+var
+  factory : TFHIRFactory;
+begin
+  case server.smartMode of
+    salmNone : {nothing} ;
+    salmOAuthClient : if not DoSmartLogin(server) then
+      Abort;
+    salmBackendClient : raise ETodo.create('ConnectToServer/salmBackendClient');
+  end;
+  factory := Context.factory(server.version);
+  try
+    server.client := factory.makeClient(nil, server.URL, fctCrossPlatform, server.format);
+    server.client.smartToken := server.token.link;
+    if server.logFileName <> '' then
+      server.client.Logger := TTextFileLogger.create(server.logFileName);
+  finally
+    factory.free;
+  end;
+end;
+
+function TMainToolkitForm.DoSmartLogin(server: TFHIRServerEntry): boolean;
+var
+  form : TOAuthForm;
+begin
+  form := TOAuthForm.create(self);
+  try
+    form.server := server.makeOAuthDetails;
+    form.scopes := server.scopes.split([' ']);
+    result := form.ShowModal = mrOk;
+    if result then
+      server.Token := form.token.link;
+  finally
+    form.free;
+  end;
+end;
+
+
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
   if context.hasFocus then
@@ -1260,6 +1438,8 @@ begin
   actionZoomIn.enabled := true;
   actionZoomOut.enabled := true;
   actionFilePrint.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
+
+  FServerView.refresh;
 end;
 
 procedure TMainToolkitForm.DoAppActivate(Sender: TObject);
@@ -1494,6 +1674,28 @@ end;
 procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
 begin
   Context.Focus.BeginEndSelect;
+end;
+
+procedure TMainToolkitForm.actConnectToServerExecute(Sender: TObject);
+var
+  server : TFHIRServerEntry;
+begin
+  server := TFHIRServerEntry.create;
+  try
+    ServerSettingsForm := TServerSettingsForm.create(self);
+    try
+      ServerSettingsForm.Server := server.link;
+      ServerSettingsForm.ServerList := FServerView.ServerList.link;
+      if ServerSettingsForm.ShowModal = mrOk then
+      begin
+        FServerView.addServer(server);
+      end;
+    finally
+      FreeAndNil(ServerSettingsForm);
+    end;
+  finally
+    server.free;
+  end;
 end;
 
 procedure TMainToolkitForm.actionEditCopyExecute(Sender: TObject);

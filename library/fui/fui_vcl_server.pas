@@ -334,7 +334,7 @@ begin
 //    2: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId1.Text <> '') and (edtIssuerURL.Text <> '');
 //  end;
 //  if (edtAuthorize.Text <> '') then
-//    btnOk.Enabled :=
+//    btnOk.Enabled := 
 //  else
 
   btnOk.Enabled := edtServer.text <> '';

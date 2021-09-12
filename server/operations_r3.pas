@@ -1376,7 +1376,7 @@ begin
           if request.ResourceName = 'Patient' then
             patIds.seeIds([request.Id]);
         end;
-      response.OnCreateBuilder(request, response, btCollection, bundle);
+      manager.OnCreateBuilder(request, response, btCollection, bundle);
       includes := TReferenceList.create;
       keys := TKeyList.Create;
       params := THTTPParameters.Create('');
@@ -2691,7 +2691,7 @@ begin
         sp.Connection := conn.link;
         sp.build;
 
-        response.OnCreateBuilder(request, response, btSearchset, bundle);
+        manager.OnCreateBuilder(request, response, btSearchset, bundle);
         op := TFHIROperationOutcome.Create;
         keys := TKeyList.Create;
         try
@@ -2707,7 +2707,7 @@ begin
           if (not needsObject) then
             prsrFmt := ffUnspecified;
 
-          conn.SQL :=
+          conn.SQL := 
             'Select '+#13#10+
             '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#13#10+
             'from ( '+#13#10+

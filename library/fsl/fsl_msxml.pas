@@ -7756,7 +7756,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -7907,7 +7907,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8058,7 +8058,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8209,7 +8209,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8360,7 +8360,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8511,7 +8511,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8662,7 +8662,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8813,7 +8813,7 @@ begin
   begin
     punk := GetServer;
     ConnectEvents(punk);
-    Fintf:= punk as IXMLDOMDocument2;
+    Fintf := punk as IXMLDOMDocument2;
   end;
 end;
 
@@ -8963,7 +8963,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLDOMSchemaCollection;
+    Fintf := punk as IXMLDOMSchemaCollection;
   end;
 end;
 
@@ -9095,7 +9095,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLDOMSchemaCollection;
+    Fintf := punk as IXMLDOMSchemaCollection;
   end;
 end;
 
@@ -9227,7 +9227,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLDOMSchemaCollection;
+    Fintf := punk as IXMLDOMSchemaCollection;
   end;
 end;
 
@@ -9359,7 +9359,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLDOMSchemaCollection2;
+    Fintf := punk as IXMLDOMSchemaCollection2;
   end;
 end;
 
@@ -9486,7 +9486,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXSLTemplate;
+    Fintf := punk as IXSLTemplate;
   end;
 end;
 
@@ -9603,7 +9603,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXSLTemplate;
+    Fintf := punk as IXSLTemplate;
   end;
 end;
 
@@ -9720,7 +9720,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXSLTemplate;
+    Fintf := punk as IXSLTemplate;
   end;
 end;
 
@@ -9837,7 +9837,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXSLTemplate;
+    Fintf := punk as IXSLTemplate;
   end;
 end;
 
@@ -9954,7 +9954,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IDSOControl;
+    Fintf := punk as IDSOControl;
   end;
 end;
 
@@ -10096,7 +10096,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IDSOControl;
+    Fintf := punk as IDSOControl;
   end;
 end;
 
@@ -10238,7 +10238,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IDSOControl;
+    Fintf := punk as IDSOControl;
   end;
 end;
 
@@ -10380,7 +10380,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IDSOControl;
+    Fintf := punk as IDSOControl;
   end;
 end;
 
@@ -10522,7 +10522,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLHTTPRequest;
+    Fintf := punk as IXMLHTTPRequest;
   end;
 end;
 
@@ -10747,7 +10747,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLHTTPRequest;
+    Fintf := punk as IXMLHTTPRequest;
   end;
 end;
 
@@ -10972,7 +10972,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLHTTPRequest;
+    Fintf := punk as IXMLHTTPRequest;
   end;
 end;
 
@@ -11197,7 +11197,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IXMLHTTPRequest;
+    Fintf := punk as IXMLHTTPRequest;
   end;
 end;
 
@@ -11422,7 +11422,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IServerXMLHTTPRequest2;
+    Fintf := punk as IServerXMLHTTPRequest2;
   end;
 end;
 
@@ -11695,7 +11695,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IServerXMLHTTPRequest2;
+    Fintf := punk as IServerXMLHTTPRequest2;
   end;
 end;
 
@@ -11969,7 +11969,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IServerXMLHTTPRequest2;
+    Fintf := punk as IServerXMLHTTPRequest2;
   end;
 end;
 
@@ -12243,7 +12243,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IVBSAXXMLReader;
+    Fintf := punk as IVBSAXXMLReader;
   end;
 end;
 
@@ -12485,7 +12485,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IVBSAXXMLReader;
+    Fintf := punk as IVBSAXXMLReader;
   end;
 end;
 
@@ -12727,7 +12727,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IVBSAXXMLReader;
+    Fintf := punk as IVBSAXXMLReader;
   end;
 end;
 
@@ -12969,7 +12969,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -13226,7 +13226,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -13483,7 +13483,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -13740,7 +13740,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -13997,7 +13997,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -14254,7 +14254,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXWriter;
+    Fintf := punk as IMXWriter;
   end;
 end;
 
@@ -14511,7 +14511,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXAttributes;
+    Fintf := punk as IMXAttributes;
   end;
 end;
 
@@ -14662,7 +14662,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXAttributes;
+    Fintf := punk as IMXAttributes;
   end;
 end;
 
@@ -14813,7 +14813,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IMXAttributes;
+    Fintf := punk as IMXAttributes;
   end;
 end;
 
@@ -14964,7 +14964,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IVBMXNamespaceManager;
+    Fintf := punk as IVBMXNamespaceManager;
   end;
 end;
 
@@ -15122,7 +15122,7 @@ begin
   if FIntf = nil then
   begin
     punk := GetServer;
-    Fintf:= punk as IVBMXNamespaceManager;
+    Fintf := punk as IVBMXNamespaceManager;
   end;
 end;
 

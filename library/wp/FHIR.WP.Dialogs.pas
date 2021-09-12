@@ -8258,7 +8258,7 @@ Begin
   If AllowNative Then
   Begin
     DefaultExt := DEFAULT_EXTENSION;
-    Filter :=
+    Filter := 
       FILTER_ALL_DOCUMENTS + '|'+
       FILTER_WORD_DOCUMENT + '|' +
       FILTER_ODT_DOCUMENT + '|' +
@@ -8280,7 +8280,7 @@ Begin
   Else
   Begin
     DefaultExt := DEFAULT_EXTENSION;
-    Filter :=
+    Filter := 
       FILTER_ALL_DOCUMENTS + '|'+
       FILTER_WORD_DOCUMENT + '|' +
       FILTER_ODT_DOCUMENT + '|' +
@@ -8365,7 +8365,7 @@ Begin
       SetFilterFormats([wpfRtf, wpfODT, wpfHTML, wpfMht, wpfText, wpfUnknown]);
 
   If AllowNative Then
-    Filter :=
+    Filter := 
       s+
       FILTER_WP_DOCUMENT + '|' +
       FILTER_RICHTEXTFILE + '|' +
@@ -8376,7 +8376,7 @@ Begin
       FILTER_CONSOLEDOCUMENT + '|' +
       FILTER_ANYFILE
   Else
-    Filter :=
+    Filter := 
       s +
       FILTER_RICHTEXTFILE + '|' +
       FILTER_ODT_DOCUMENT + '|' +
@@ -8837,7 +8837,7 @@ Begin
   FcbxListMode.Items.Add(FIELD_DATA_NAME_LIST_MODE_Buttons);
 
   FmemLstListLabel := AddLabel(FDetailsBox, 42, 110, 'List Values:');
-  FmemLstList:= TUixMemo.Create(self);
+  FmemLstList := TUixMemo.Create(self);
   FmemLstList.Parent := FDetailsBox;
   FmemLstList.Top := 42;
   FmemLstList.Left := 225;

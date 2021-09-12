@@ -178,6 +178,7 @@ type
     procedure addEntry(url : String; bnd : TFhirResourceV); overload; override;
     function addEntry : TFhirBundleEntryW; overload; override;
     function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; override;
+    function count(rtype : String = '') : Integer; override;
     procedure clearLinks; override;
     function entries : TFslList<TFhirBundleEntryW>; override;
     procedure listLinks(links : TFslStringDictionary); override;
@@ -819,6 +820,11 @@ type
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function nameSummary : String; override;
+    function active : String; override;
+    function gender : String; override;
+    function dob : String; override;
+    function identifierSummary : String; override;
+    function contactSummary : String; override;
   end;
 
   TFhirEncounter2 = class (TFhirEncounterW)
@@ -1059,6 +1065,16 @@ end;
 procedure TFHIRBundle2.clearLinks;
 begin
   bundle.link_List.Clear;
+end;
+
+function TFHIRBundle2.count(rtype: String): Integer;
+var
+  be : TFhirBundleEntry;
+begin
+  result := 0;
+  for be in bundle.entryList do
+    if (be.resource <> nil) and ((rtype = '') or (rtype = be.resource.fhirType)) then
+      inc(result);
 end;
 
 function TFHIRBundle2.entries: TFslList<TFhirBundleEntryW>;
@@ -4732,6 +4748,36 @@ end;
 function TFhirPatient2.nameSummary: String;
 begin
   result := HumanNamesAsText((resource as TFhirPatient).nameList);
+end;
+
+function TFhirPatient2.active: String;
+begin
+  if (resource as TFhirPatient).activeElement = nil then
+    result := ''
+  else if (resource as TFhirPatient).active then
+    result := 'true'
+  else
+    result := 'false';
+end;
+
+function TFhirPatient2.gender: String;
+begin
+  result := CODES_TFhirAdministrativeGenderEnum[(resource as TFhirPatient).gender];
+end;
+
+function TFhirPatient2.dob: String;
+begin
+  result := (resource as TFhirPatient).birthDate.toXML;
+end;
+
+function TFhirPatient2.identifierSummary: String;
+begin
+  result := IdentifiersAsText((resource as TFhirPatient).identifierList);
+end;
+
+function TFhirPatient2.contactSummary: String;
+begin
+  result := ContactsAsText((resource as TFhirPatient).telecomList);
 end;
 
 procedure TFhirPatient2.SetLanguage(const Value: String);

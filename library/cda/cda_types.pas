@@ -3088,7 +3088,7 @@ end;
 function Tv3ST.EqualsV(oOther: Tv3Base): Boolean;
 begin
   // TODO: access data by reference
-  result :=
+  result := 
     (
       (oOther is Tv3ED) and
       (

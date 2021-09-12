@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json;
 
 Const
   ID_LENGTH = 64;
@@ -770,6 +770,52 @@ type
     class function fromParams(pm : THTTPParameters) : TFHIRSystemTuple;
   end;
 
+  TCredentialType = (ctUnknown, ctHealthCard, ctCovidCard, ctImmunizationCard, ctLabCard);
+  TCredentialTypeSet = set of TCredentialType;
+
+const
+  NAMES_TCredentialType : array [TCredentialType] of String = ('??', 'Health Card', 'Covid Card', 'Vaccine Card', 'Lab Card');
+
+type
+  { THealthcareCard }
+
+  THealthcareCard = class (TFslObject)
+  private
+    FTypes: TCredentialTypeSet;
+    FIssueDate: TFslDateTime;
+    FIssuer: String;
+    FIsValid: boolean;
+    FLinks: TFslStringDictionary;
+    FJws: String;
+    FBundle: TFHIRResourceV;
+    FValidationMessage: String;
+    procedure SetBundle(const Value: TFHIRResourceV);
+  protected
+    FSummary: String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : THealthcareCard; overload;
+
+    property issueDate : TFslDateTime read FIssueDate write FIssueDate;
+    property issuer : String read FIssuer write FIssuer;
+    property types : TCredentialTypeSet read FTypes write FTypes;
+    property isValid : boolean read FIsValid write FIsValid;
+    property validationMessage : String read FValidationMessage write FValidationMessage;
+    property summary : String read FSummary write FSummary;
+
+    property bundle : TFHIRResourceV read FBundle write SetBundle;
+
+    function cardTypesSummary : String;
+    procedure makeSummary; virtual; abstract;
+
+    function htmlReport : String; virtual; abstract;
+
+    function qrSource : String;
+
+    property jws : String read FJws write FJws;
+    property links : TFslStringDictionary read FLinks;
+  end;
 
 function noList(e : TFHIRObjectList) : boolean; overload;
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
@@ -2678,6 +2724,66 @@ end;
 constructor EFHIRPathTodo.Create(place: String);
 begin
   inherited create('Not done yet @ '+place);
+end;
+
+
+{ THealthcareCard }
+
+constructor THealthcareCard.Create;
+begin
+  inherited;
+  FLinks := TFslStringDictionary.Create;
+end;
+
+destructor THealthcareCard.Destroy;
+begin
+  FBundle.Free;
+  FLinks.Free;
+  inherited;
+end;
+
+function THealthcareCard.link: THealthcareCard;
+begin
+  result := THealthcareCard(inherited Link);
+end;
+
+procedure THealthcareCard.SetBundle(const Value: TFHIRResourceV);
+begin
+  FBundle.Free;
+  FBundle := Value;
+end;
+
+function THealthcareCard.cardTypesSummary: String;
+var
+  first : boolean;
+  a : TCredentialType;
+begin
+  result := '';
+  first := true;
+  for a in types do
+  begin
+    if first then first := false else result := result + ', ';
+    result := result + NAMES_TCredentialType[a];
+  end;
+end;
+
+function THealthcareCard.qrSource: String;
+var
+  b : TFslStringBuilder;
+  ch : Char;
+  i : byte;
+begin
+  b := TFslStringBuilder.create;
+  try
+    for ch in jws do
+    begin
+      i := ord(ch) - 45;
+      b.append(StringPadLeft(inttostr(i), '0', 2));
+    end;
+    result := 'shc:/'+b.ToString;
+  finally
+    b.free;
+  end;
 end;
 
 initialization

@@ -189,7 +189,7 @@ begin
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
       addFolder(paramStr(i), true);
-  firstShow:=true;
+  firstShow := true;
 
 end;
 
@@ -212,13 +212,13 @@ procedure TPublisherForm.FormShow(Sender: TObject);
 begin
   if FirstShow then
   begin
-    FirstShow:=False;
+    FirstShow := False;
     if (IGtoPublish <>'') and (directoryexists(IGtoPublish)) then
       addFolder(IGtoPublish, true);
 
 //  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
 //  if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//    then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//    then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
 //  if (not FileExists(FJarFile)) then
 //  begin
 //    if not (od.Execute) then
@@ -296,7 +296,7 @@ begin
   s := lbFolders.Items[lbFolders.ItemIndex];
   s := s.Substring(s.IndexOf(':')+1).trim;
 //  Clipboard.AsText := 'java -jar '+FPublisher.Location+' -ig '+s;
-  IGtoPublish:=s;
+  IGtoPublish := s;
 end;
 
 procedure TPublisherForm.ToolButton5Click(Sender: TObject);
@@ -355,11 +355,11 @@ begin
 //    sf := sl.Substring(sl.IndexOf(':')+1).trim;
 //    addFolder(sf, false);
 //
-//    IGtoPublish:=sf;
+//    IGtoPublish := sf;
 //    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
+//      then FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
 //    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//      then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
 //
 //    FRecord.FPrevious := FRecord.FLast;
 //    start(sf);

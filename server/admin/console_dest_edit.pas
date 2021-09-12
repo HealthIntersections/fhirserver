@@ -82,7 +82,7 @@ var
   s : String;
 begin
   FIni.Free;
-  FIni:=AValue;
+  FIni := AValue;
   if (FIni <> nil) then
   begin
     cbxSource.items.clear;
@@ -134,7 +134,7 @@ end;
 procedure TEditDestForm.SetTx(AValue: TFHIRServerIniComplex);
 begin
   FTx.Free;
-  FTx:=AValue;
+  FTx := AValue;
 
   if FTx <> nil then
   begin

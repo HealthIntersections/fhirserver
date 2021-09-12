@@ -47,7 +47,7 @@ STU3 draft:
  - check conditional delete flag.
  - search on multiple resource types
  - check over transaction handling
- - dateTIme parameter on history
+ - dateTime parameter on history
  - check use of 401 instead of 403
  - check handling of unsupported parameters
  - check implementations of sa and be prefixes in search
@@ -65,11 +65,6 @@ STU3 draft:
  - update FHIR.Version.PathEngine
  - string validation rules
  - Both _include and _revInclude use the wild card "*" for the search parameter name, indicating that any search parameter of type=reference be included.
-
-
-
-
-
 
 Add reverse chaining
 Grahame, I see you don't respond to either of the following:
@@ -518,7 +513,12 @@ uses
   endpoint in 'endpoint.pas',
   web_cache in 'web_cache.pas',
   fsl_diff in '..\library\fsl\fsl_diff.pas',
-  fhir_features in '..\library\fhir\fhir_features.pas';
+  fhir_features in '..\library\fhir\fhir_features.pas',
+  tx_icd10 in 'tx_icd10.pas',
+  tx_icd11 in 'tx_icd11.pas',
+  fhir_healthcard in '..\library\fhir\fhir_healthcard.pas',
+  healthcard_generator in 'healthcard_generator.pas',
+  fsl_html in '..\library\fsl\fsl_html.pas';
 
 begin
   ExecuteFhirServer;

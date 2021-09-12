@@ -81,11 +81,11 @@ implementation
 constructor TDownload.Create(CreateSuspended: boolean; aurl, afilename, aunzipLocation: string; aLinkedForm:TDownloadForm);
 begin
   inherited Create(CreateSuspended);
-  linkedForm:=aLinkedForm;
-  unzipLocation:= aunzipLocation;
+  linkedForm := aLinkedForm;
+  unzipLocation := aunzipLocation;
   httpclient := TIdHTTP.Create(nil);
   httpclient.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(httpclient);
-  TIdSSLIOHandlerSocketOpenSSL(httpclient.IOHandler).SSLOptions.SSLVersions:=[sslvTLSv1_1,sslvTLSv1_2];
+  TIdSSLIOHandlerSocketOpenSSL(httpclient.IOHandler).SSLOptions.SSLVersions := [sslvTLSv1_1,sslvTLSv1_2];
 
   httpclient.Request.UserAgent := 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1';
   httpclient.HandleRedirects := true;
@@ -103,7 +103,7 @@ begin
   begin
     linkedForm.FCancel := False;
     httpclient.Disconnect;
-    linkedForm.busy:=false;
+    linkedForm.busy := false;
   end;
 
   Queue(UpdateProgressBar);
@@ -120,10 +120,10 @@ var
   Stream: TMemoryStream;
   unzip:Boolean;
 begin
-unzip:=true;
+unzip := true;
   Stream := TMemoryStream.Create;
   try
-    linkedForm.busy:=true;
+    linkedForm.busy := true;
     httpclient.Get(linkedForm.sourceURL, Stream);
     Stream.SaveToFile(filename);
     if unzip then begin
@@ -134,9 +134,9 @@ unzip:=true;
     end;
   finally
     Stream.Free;
-    linkedForm.busy:=false;
+    linkedForm.busy := false;
   end;
-  downloadform.modalresult:=mrOK;
+  downloadform.modalresult := mrOK;
   downloadform.Close;
 end;
 
@@ -146,7 +146,7 @@ var
 begin
   linkedForm.ProgressBar1.value := progressbarstatus;
   linkedForm.Button1.text := 'Downloading...';
-  linkedform.Label1.Text:= inttostr(progressbarstatus div 1024) + ' of ' + inttostr(maxprogressbar div 1024) ;
+  linkedform.Label1.Text := inttostr(progressbarstatus div 1024) + ' of ' + inttostr(maxprogressbar div 1024) ;
 end;
 
 procedure TDownload.SetMaxProgressBar;
@@ -170,7 +170,7 @@ begin
       linkedForm.Caption := 'Done.';
       linkedForm.Button1.Enabled := true;
       sleep(300);
-      linkedForm.modalResult:=mrOK;
+      linkedForm.modalResult := mrOK;
       linkedForm.close;
 
     except
@@ -189,15 +189,15 @@ end;
 
 procedure TDownloadForm.Button2Click(Sender: TObject);
 begin
-fcancel:=true;
-//busy:=false;
+fcancel := true;
+//busy := false;
 close;
 end;
 
 procedure TDownloadForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
- if busy then canClose:=false else canclose:=true;
- if assigned(DownloadThread) then fcancel:=true;
+ if busy then canClose := false else canclose := true;
+ if assigned(DownloadThread) then fcancel := true;
 end;
 
 procedure TDownloadForm.FormShow(Sender: TObject);

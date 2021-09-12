@@ -1,0 +1,171 @@
+object PatientFrame: TPatientFrame
+  Left = 0
+  Height = 508
+  Top = 0
+  Width = 880
+  ClientHeight = 508
+  ClientWidth = 880
+  TabOrder = 0
+  DesignLeft = 643
+  DesignTop = -608
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 508
+    Top = 0
+    Width = 880
+    ActivePage = TabSheet2
+    Align = alClient
+    TabIndex = 1
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Patient Details'
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Health Cards'
+      ClientHeight = 480
+      ClientWidth = 872
+      object Panel1: TPanel
+        Left = 0
+        Height = 38
+        Top = 0
+        Width = 872
+        Align = alTop
+        ClientHeight = 38
+        ClientWidth = 872
+        ParentColor = False
+        TabOrder = 0
+        object btnFetchHealthCards: TButton
+          Left = 8
+          Height = 25
+          Top = 6
+          Width = 75
+          Caption = 'Fetch'
+          OnClick = btnFetchHealthCardsClick
+          TabOrder = 0
+        end
+      end
+      object lvCards: TListView
+        Left = 0
+        Height = 178
+        Top = 38
+        Width = 872
+        Align = alClient
+        AutoWidthLastColumn = True
+        Columns = <        
+          item
+            Caption = 'Issue Date'
+            Width = 110
+          end        
+          item
+            Caption = 'Issuer'
+            Width = 150
+          end        
+          item
+            Caption = 'Card Types'
+            Width = 120
+          end        
+          item
+            Caption = 'Valid'
+            Width = 40
+          end        
+          item
+            Caption = 'Summary'
+            Width = 448
+          end>
+        TabOrder = 1
+        ViewStyle = vsReport
+      end
+      object Panel2: TPanel
+        Left = 0
+        Height = 227
+        Top = 223
+        Width = 872
+        Align = alBottom
+        Caption = 'Panel2'
+        ClientHeight = 227
+        ClientWidth = 872
+        TabOrder = 2
+        object Panel4: TPanel
+          Left = 1
+          Height = 225
+          Top = 1
+          Width = 186
+          Align = alLeft
+          BevelOuter = bvNone
+          Caption = 'Panel4'
+          ClientHeight = 225
+          ClientWidth = 186
+          TabOrder = 0
+          object Panel6: TPanel
+            Left = 0
+            Height = 24
+            Top = 0
+            Width = 186
+            Align = alTop
+            Alignment = taLeftJustify
+            BevelOuter = bvNone
+            Caption = '  QR Code'
+            TabOrder = 0
+          end
+          object pbCard: TPaintBox
+            Left = 0
+            Height = 201
+            Top = 24
+            Width = 186
+            Align = alClient
+            OnPaint = pbCardPaint
+          end
+        end
+        object Panel5: TPanel
+          Left = 187
+          Height = 225
+          Top = 1
+          Width = 684
+          Align = alClient
+          BorderWidth = 4
+          Caption = 'Panel5'
+          ClientHeight = 225
+          ClientWidth = 684
+          TabOrder = 1
+          object htmlCard: THtmlViewer
+            Left = 5
+            Height = 215
+            Top = 5
+            Width = 674
+            BorderStyle = htNone
+            DefBackground = clWhite
+            DefFontSize = 10
+            HistoryMaxCount = 0
+            NoSelect = False
+            PrintMarginBottom = 2
+            PrintMarginLeft = 2
+            PrintMarginRight = 2
+            PrintMarginTop = 2
+            PrintScale = 1
+            Align = alClient
+            TabOrder = 0
+          end
+        end
+      end
+      object pnlHealthcardsOutome: TPanel
+        Left = 0
+        Height = 30
+        Top = 450
+        Width = 872
+        Align = alBottom
+        Alignment = taLeftJustify
+        Caption = '  Not queried'
+        TabOrder = 3
+      end
+      object Splitter1: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 7
+        Top = 216
+        Width = 872
+        Align = alBottom
+        ResizeAnchor = akBottom
+      end
+    end
+  end
+end

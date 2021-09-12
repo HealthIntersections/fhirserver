@@ -537,7 +537,6 @@ Type
     FCacheControl : TFHIRCacheControl;
     FProgress: String;
     FStream : TFslStream;
-    FOnCreateBuilder: TCreateBundleBuilderEvent;
     FVersion: TFHIRVersion;
 
     procedure SetResource(const Value: TFhirResourceV);
@@ -654,7 +653,6 @@ Type
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
 
     property Progress : String read FProgress write FProgress;
-    property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
   end;
 
 

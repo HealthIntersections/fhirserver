@@ -159,8 +159,8 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 begin
 //TFHIRObject.Create;
-ffactory:=TfhirfactoryR4.Create;
-resource:=ffactory.makeByName(edit1.text);
+ffactory := TfhirfactoryR4.Create;
+resource := ffactory.makeByName(edit1.text);
 ffactory.Assign(resource);
   createObjUIGroup(resource, edit1.text, TabItem1);
 
@@ -175,8 +175,8 @@ end;
 function TForm1.objectcount(obj:TFHIRObject): integer;
 var PL:TFHIRPropertyList;
 begin
-  PL:= ffactory.createPropertyList(obj.ClassName,true)     ;
-  result:=PL.Count;
+  PL := ffactory.createPropertyList(obj.ClassName,true)     ;
+  result := PL.Count;
   PL.Destroy
 end;
 
@@ -217,14 +217,14 @@ begin
   Fr.Padding.bottom := 7;
   Fr.ShowScrollBars := true;
   Fr.Parent := T;
-  btns:=0;
-  ffactory:=TfhirfactoryR4.Create;
+  btns := 0;
+  ffactory := TfhirfactoryR4.Create;
   ffactory.Assign(obj);
 
-  st:=obj.fhirType;
-//  st:='ExampleScenario';
+  st := obj.fhirType;
+//  st := 'ExampleScenario';
 
-  PL:= ffactory.createPropertyList(st,true)     ;
+  PL := ffactory.createPropertyList(st,true)     ;
 
   for i := 0 to PL.Count-1 do
   begin
@@ -243,7 +243,7 @@ begin
       begin
 //        obj.createPropertyValue(PL.Properties[i].Name);
 obj.
-        childProperty:=TFHIRProperty(obj.createPropertyValue(PL.Properties[i].Name));
+        childProperty := TFHIRProperty(obj.createPropertyValue(PL.Properties[i].Name));
         createEntry(tAlignLayout.left, childProperty , PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
       end;
     end;
@@ -289,13 +289,13 @@ begin
   Fr.Padding.bottom := 7;
   Fr.ShowScrollBars := true;
   Fr.Parent := T;
-  btns:=0;
-  ffactory:=TfhirfactoryR4.Create;
+  btns := 0;
+  ffactory := TfhirfactoryR4.Create;
   ffactory.Assign(obj);
 
-  st:=parentPrefix+'.'+obj.Name;
+  st := parentPrefix+'.'+obj.Name;
 
-  PL:= ffactory.createPropertyList(st,true)     ;
+  PL := ffactory.createPropertyList(st,true)     ;
 
   for i := 0 to PL.Count-1 do
   begin
@@ -324,9 +324,9 @@ begin
   if datatype = 'string' then
   begin
     edt := TFHIRStringEdit.Create(parentframe);
-    edt.Parent:=parentframe;
-    FHIRProp:= TFHIRProperty(edt.associate(TFHIRString(FHIRProp)));
-    edt.FHIRPropertyName:=propname;
+    edt.Parent := parentframe;
+    FHIRProp := TFHIRProperty(edt.associate(TFHIRString(FHIRProp)));
+    edt.FHIRPropertyName := propname;
   end;
 
   if datatype = 'memo' then
@@ -359,7 +359,7 @@ begin
   B.position.x := 27 + ((bNumber-1) mod ButtonColumns) * 121;
   B.position.y := 10  + ((bNumber-1) div ButtonColumns) * 27;
   B.OnClick := Button1Click;
-  parentframe.Height:= 41 + ((bNumber-1) div ButtonColumns) * 25;
+  parentframe.Height := 41 + ((bNumber-1) div ButtonColumns) * 25;
 
 end;
 
@@ -408,12 +408,12 @@ begin
     for fmxctrl in tabcontrol.ActiveTab.Controls[1].Controls[1].Controls[1].Controls do begin
       if fmxctrl is TScrollBox then
       if fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0] is TFHIRStringEdit then begin
-         fmxeditor:=fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0];
-         st:=TFHIRStringEdit(FMXEditor).FHIRPropertyName;
-//         TFHIRExampleScenario(obj).nameElement:=TFHIRStringEdit(FMXEditor).associate(TFHIRString(TFHIRExampleScenario(obj).nameElement));
+         fmxeditor := fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0];
+         st := TFHIRStringEdit(FMXEditor).FHIRPropertyName;
+//         TFHIRExampleScenario(obj).nameElement := TFHIRStringEdit(FMXEditor).associate(TFHIRString(TFHIRExampleScenario(obj).nameElement));
       end;
     end;
-// working code before (for ref)     TFHIRExampleScenario(obj).nameElement:= edit5.associate(TFHIRExampleScenario(obj).nameElement);
+// working code before (for ref)     TFHIRExampleScenario(obj).nameElement := edit5.associate(TFHIRExampleScenario(obj).nameElement);
 
   end;
 

@@ -428,7 +428,7 @@ begin
     s := ConsumeName;
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
     raise ELibraryException.create('Unexpected Name at '+inttostr(cursor));
-  criteria:= TSCIMSearchFilterCriteria.Create;
+  criteria := TSCIMSearchFilterCriteria.Create;
   try
     criteria.FCriterion1 := test.Link as TSCIMSearchFilter;
     if s = 'or' then

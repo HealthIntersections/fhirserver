@@ -751,9 +751,9 @@ end;
 procedure TForm4.cbUMLSDriverChange(Sender: TObject);
 begin
 //
-cbUMLSType.itemindex:=-1;
-if (pos('MySQL',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=1;
-if (pos('SQL Server',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=0;
+cbUMLSType.itemindex := -1;
+if (pos('MySQL',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex := 1;
+if (pos('SQL Server',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex := 0;
 
 end;
 
@@ -769,13 +769,13 @@ var
   aStringlist   : TStringlist;
   aRegistry   : TRegistry;
 Begin
-  aStringlist:= Tstringlist.Create;
-  aRegistry:= TRegistry.Create;
-  Result:= Tstringlist.Create;
+  aStringlist := Tstringlist.Create;
+  aRegistry := TRegistry.Create;
+  Result := Tstringlist.Create;
 
   with aRegistry do
   Begin
-    rootkey:= HKEY_LOCAL_MACHINE;
+    rootkey := HKEY_LOCAL_MACHINE;
     OpenKey('Software\ODBC\ODBCINST.INI\ODBC Drivers',False);
     GetValueNames(aStringlist);
   End;

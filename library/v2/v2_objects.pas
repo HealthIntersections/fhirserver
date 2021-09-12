@@ -9238,7 +9238,7 @@ Begin
 
   XMLCheck(Assigned(oMessage.SegmentMap), 'EncodeMessage', 'Unable to encode to XML (no XML Segment Map) - check for XML support and message details: version (' + oMessage.VersionCode + '), message type (' + oMessage.MessageType + '), and event ID (' + oMessage.Event + ')');
 
-  R :=
+  R := 
     '<?xml version="1.0" encoding="UTF-8"?>' + #10 +
     '<' + oMessage.StructName + ' xmlns="'+V2_XML_NS+'" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="'+V2_XML_NS+' '+oMessage.StructName+'.xsd">'+
     FormatSegments(oMessage.SegmentMap) +

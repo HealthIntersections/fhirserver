@@ -2434,7 +2434,7 @@ end;
   try begin
   ValueSetExpansionOutcome vse := context.expandVS(vs, true);
   count := 0;
-  count +:= conceptCount(vse.getValueset().getExpansion().getContains());
+  count + := conceptCount(vse.getValueset().getExpansion().getContains());
   return count;
   end; catch (Exception e) begin
   return nil;
@@ -2890,7 +2890,7 @@ end;
   if (!mapping.hasEquivalence()) then
   return '';
   switch (mapping.getEquivalence()) begin
-  case EQUAL : return ':=';
+  case EQUAL : return ' := ';
   case EQUIVALENT : return '~';
   case WIDER : return '<';
   case NARROWER : return '>';
