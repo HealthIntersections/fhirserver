@@ -46,9 +46,9 @@ object ServerSettingsForm: TServerSettingsForm
     Height = 377
     Top = 0
     Width = 737
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Server Identity'
@@ -172,268 +172,106 @@ object ServerSettingsForm: TServerSettingsForm
         end
         object mInfo: TMemo
           Left = 62
-          Height = 148
+          Height = 125
           Top = 189
           Width = 652
           Anchors = [akLeft, akRight, akBottom]
           TabOrder = 5
         end
+        object Label21: TLabel
+          Left = 14
+          Height = 15
+          Top = 325
+          Width = 44
+          Caption = 'Log File:'
+          ParentColor = False
+        end
+        object edtLogFile: TEdit
+          Left = 61
+          Height = 23
+          Top = 322
+          Width = 623
+          Anchors = [akTop, akLeft, akRight]
+          OnChange = edtUrlChange
+          TabOrder = 6
+        end
+        object btnCert: TSpeedButton
+          Left = 689
+          Height = 24
+          Top = 322
+          Width = 23
+          Anchors = [akTop, akRight]
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000064000000640000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000003591
+            DBFA439FDDFA439FDDFA429FDDFA429EDDFA419EDCFA419EDCFA419EDCFA419E
+            DCFA419EDCFA419EDCFA419EDCFA3792DAFB3080DF100000000000000000429C
+            DEF76EC7EBFF6DC7EAFF6BC6EAFF6AC5E9FF68C4E9FF67C3E8FF65C2E8FF64C1
+            E7FF63C0E7FF61BFE6FF60BEE5FF51AFE3FE308CD6450000000000000000409A
+            DDF47CD0F1FF7BD0F0FF7ACFEFFF79CEEFFF77CDEEFF76CCEEFF74CBEDFF73CA
+            EDFF71C9ECFF70C8ECFF6EC7EBFF6AC3E9FF3993DB8E00000000000000003E99
+            DCEC7ECEF1FF8AD9F6FF89D8F5FF87D7F4FF86D6F4FF84D5F3FF83D5F3FF81D4
+            F2FF80D3F2FF7ED2F1FF7DD1F1FF7BD0F0FF439ADEB40000000000000000409B
+            DDE470C1EDFF99E2FBFF97E2FBFF96E1FAFF94E0F9FF93DFF9FF91DEF8FF90DD
+            F8FF8EDCF7FF8DDBF7FF8CDAF6FF8AD9F6FF4EA4E2CD00000000000000004AA5
+            E0DF61B3E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA2E8FEFFA0E7FEFF9FE6
+            FDFF9DE5FDFF9CE4FCFF9AE3FCFF99E2FBFF5FB3E9E33080DF100000000051A8
+            E2DF5EB2E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9
+            FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFF84CFF5FB348CDA450000000058AD
+            E5DF60B3E8FF61B3E9FF61B3E9FF60B2E9FF60B2E8FF60B2E8FF5FB1E8FF5FB1
+            E8FF5EB1E8FF5EB1E8FF5EB1E7FF59ADE7FB55A9E5E33B94DC85000000005FB0
+            E8DF9DE4FBFF9AE3FAFF97E1F9FF94DFF8FF91DDF7FF8EDBF5FF8BD9F4FF88D8
+            F3FF85D6F2FF82D4F1FF7FD2F0FF4FA7E1DF00000000000000000000000061B1
+            E8DFA6EAFFFFA6EAFFFFA6EAFFFFA3E8FEFF7AC6F1ED59ACE6DF58AAE5DF57AA
+            E5DF56AAE5DF53A9E4DF53A8E4DF3C94DCE20000000000000000000000004096
+            DEE25DAEE7DF5DAEE7DF5DAEE7DF57A9E6DF4399DF6E00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000
+          }
+          OnClick = btnCertClick
+          ParentFont = False
+        end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Smart App Launch'
-      ClientHeight = 501
+      ClientHeight = 349
       ClientWidth = 729
       ImageIndex = 1
-      object Panel2: TPanel
+      object Panel5: TPanel
         Left = 0
-        Height = 501
+        Height = 38
         Top = 0
         Width = 729
-        Align = alClient
+        Align = alTop
         BevelOuter = bvNone
-        ClientHeight = 501
+        Caption = 'Panel5'
+        ClientHeight = 38
         ClientWidth = 729
-        ParentBackground = False
         TabOrder = 0
-        object Label13: TLabel
-          Left = 16
-          Height = 29
-          Top = 209
-          Width = 407
-          AutoSize = False
-          Caption = 'Note: You must register the [client] with each Smart App Launch Server yourself'
-          ParentColor = False
-          WordWrap = True
-        end
-        object Label11: TLabel
-          Left = 10
-          Height = 15
-          Top = 272
-          Width = 54
-          Caption = 'Authorize:'
-          ParentColor = False
-        end
-        object Label12: TLabel
-          Left = 10
-          Height = 15
-          Top = 299
-          Width = 34
-          Caption = 'Token:'
-          ParentColor = False
-        end
-        object Label10: TLabel
-          Left = 12
-          Height = 15
-          Top = 250
-          Width = 181
-          Caption = 'From the conformance statement:'
-          ParentColor = False
-        end
-        object Bevel1: TBevel
-          Left = 10
-          Height = 11
-          Top = 244
-          Width = 377
-          Shape = bsTopLine
-        end
         object Label15: TLabel
-          Left = 12
+          Left = 8
           Height = 15
-          Top = 6
-          Width = 113
-          Caption = 'Smart on FHIR Mode:'
+          Top = 8
+          Width = 110
+          Caption = 'Smart Launch Mode:'
           ParentColor = False
-        end
-        object btnFetch: TButton
-          Left = 4
-          Height = 25
-          Top = 470
-          Width = 105
-          Anchors = [akLeft, akBottom]
-          Caption = 'Fetch Endpoints'
-          TabOrder = 0
-        end
-        object edtToken: TEdit
-          Left = 84
-          Height = 23
-          Top = 296
-          Width = 627
-          Anchors = [akTop, akLeft, akRight]
-          TabOrder = 1
-        end
-        object edtAuthorize: TEdit
-          Left = 84
-          Height = 23
-          Top = 269
-          Width = 627
-          Anchors = [akTop, akLeft, akRight]
-          TabOrder = 2
-        end
-        object Notebook1: TNotebook
-          Left = 12
-          Height = 160
-          Top = 25
-          Width = 423
-          PageIndex = 0
-          TabOrder = 3
-          object Page1: TPage
-          end
-          object Page2: TPage
-          end
-          object Page3: TPage
-            object Notebook2: TNotebook
-              Left = 0
-              Height = 160
-              Top = 0
-              Width = 423
-              PageIndex = 0
-              TabOrder = 0
-              object Page4: TPage
-              end
-              object Page5: TPage
-                object Label4: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 15
-                  Width = 41
-                  Caption = 'Client ID'
-                  ParentColor = False
-                end
-                object Label5: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 45
-                  Width = 61
-                  Caption = 'Client Secret'
-                  ParentColor = False
-                end
-                object Label6: TLabel
-                  Left = 88
-                  Height = 26
-                  Top = 72
-                  Width = 304
-                  Caption = 'Note: this app ([client]) is not a confidential app, but the client secret can be provided to help test SMART App Launch Servers'
-                  ParentColor = False
-                  WordWrap = True
-                end
-                object Label7: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 109
-                  Width = 67
-                  Caption = 'Redirect Port:'
-                  ParentColor = False
-                end
-                object Label8: TLabel
-                  Left = 88
-                  Height = 13
-                  Top = 136
-                  Width = 258
-                  Caption = 'The redirect URL must be http://localhost:[port]/done'
-                  ParentColor = False
-                end
-                object edtClientId: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 15
-                  Width = 313
-                  TabOrder = 0
-                end
-                object edtClientSecret: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 42
-                  Width = 313
-                  TabOrder = 1
-                end
-                object edtRedirect: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 109
-                  Width = 313
-                  TabOrder = 2
-                end
-              end
-              object Page6: TPage
-                object Label9: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 44
-                  Width = 56
-                  Caption = 'Issuer URL:'
-                  ParentColor = False
-                end
-                object Label16: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 67
-                  Width = 59
-                  Caption = 'Private Key:'
-                  ParentColor = False
-                end
-                object Label17: TLabel
-                  Left = 88
-                  Height = 26
-                  Top = 96
-                  Width = 315
-                  Caption = 'Choose a generated key (e.g. using OpenSSL that is an RSA-256 private Key paired with the registered public key'
-                  ParentColor = False
-                  WordWrap = True
-                end
-                object Label18: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 129
-                  Width = 59
-                  Caption = 'Passphrase:'
-                  ParentColor = False
-                end
-                object Label19: TLabel
-                  Left = 13
-                  Height = 13
-                  Top = 15
-                  Width = 41
-                  Caption = 'Client ID'
-                  ParentColor = False
-                end
-                object edtIssuerURL: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 42
-                  Width = 321
-                  TabOrder = 0
-                end
-                object edtPrivateKey: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 69
-                  Width = 321
-                  TabOrder = 1
-                end
-                object edtPassphrase: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 128
-                  Width = 315
-                  TabOrder = 2
-                end
-                object edtClientId1: TEdit
-                  Left = 88
-                  Height = 21
-                  Top = 15
-                  Width = 321
-                  TabOrder = 3
-                end
-              end
-            end
-          end
         end
         object cbxSmartMode: TComboBox
-          Left = 182
+          Left = 128
           Height = 23
-          Top = 12
-          Width = 304
+          Top = 6
+          Width = 590
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 15
           Items.Strings = (
             'No Smart App Launch'
@@ -441,17 +279,119 @@ object ServerSettingsForm: TServerSettingsForm
             'Backend Services Client'
           )
           Style = csDropDownList
-          TabOrder = 4
+          TabOrder = 0
         end
-        object Button4: TButton
-          Left = 120
-          Height = 25
-          Top = 344
-          Width = 75
-          Caption = 'Button4'
-          TabOrder = 5
+      end
+      object Panel4: TPanel
+        Left = 0
+        Height = 47
+        Top = 302
+        Width = 729
+        Align = alBottom
+        BevelOuter = bvNone
+        BorderWidth = 5
+        ClientHeight = 47
+        ClientWidth = 729
+        TabOrder = 1
+        object Label13: TLabel
+          Left = 5
+          Height = 37
+          Top = 5
+          Width = 719
+          Align = alClient
+          AutoSize = False
+          Caption = 'Note: You must register the toolkit as a client with each Smart App Launch Server yourself'
+          ParentColor = False
+          WordWrap = True
+        end
+      end
+      object Notebook2: TNotebook
+        Left = 0
+        Height = 264
+        Top = 38
+        Width = 729
+        PageIndex = 2
+        Align = alClient
+        TabOrder = 2
+        object pgNoSmart: TPage
+        end
+        object pgSmart: TPage
+          object Label4: TLabel
+            Left = 10
+            Height = 15
+            Top = 12
+            Width = 45
+            Caption = 'Client ID'
+            ParentColor = False
+          end
+          object Label5: TLabel
+            Left = 8
+            Height = 15
+            Top = 45
+            Width = 66
+            Caption = 'Client Secret'
+            ParentColor = False
+          end
+          object Label6: TLabel
+            Left = 88
+            Height = 39
+            Top = 72
+            Width = 576
+            AutoSize = False
+            Caption = 'Note: this toolkit is not actually confidential app, but the client secret can be provided to help test SMART App Launch Servers'
+            ParentColor = False
+            WordWrap = True
+          end
+          object Label7: TLabel
+            Left = 8
+            Height = 15
+            Top = 126
+            Width = 71
+            Caption = 'Redirect Port:'
+            ParentColor = False
+          end
+          object Label8: TLabel
+            Left = 86
+            Height = 15
+            Top = 156
+            Width = 283
+            Caption = 'The redirect URL must be http://localhost:[port]/done'
+            ParentColor = False
+          end
+          object edtClientId: TEdit
+            Left = 84
+            Height = 23
+            Top = 8
+            Width = 632
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 0
+          end
+          object edtClientSecret: TEdit
+            Left = 84
+            Height = 23
+            Top = 42
+            Width = 632
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 1
+          end
+          object edtRedirect: TEdit
+            Left = 84
+            Height = 23
+            Top = 122
+            Width = 631
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 2
+          end
+        end
+        object pgBackend: TPage
         end
       end
     end
+  end
+  object dlgLog: TOpenDialog
+    Title = 'Choose Log File'
+    Filter = 'Test Files|*.txt|All Files|*.*'
+    Left = 10
+    Top = 382
   end
 end

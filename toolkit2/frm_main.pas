@@ -437,6 +437,7 @@ type
     procedure doProcessSearchResults(id : integer; response : TBackgroundTaskResponsePackage);
     procedure processSearchResults(results : TFslList<TToolkitSearchMatch>; goFirst : boolean);
     procedure openServer(sender : TObject; server : TFHIRServerEntry);
+    procedure editServer(sender : TObject; server : TFHIRServerEntry);
     procedure doOpenResource(sender : TObject; url : String);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
 
@@ -488,6 +489,7 @@ begin
   FServerView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'servers.json']);
   FServerView.List := lvServers;
   FServerView.OnOpenServer := OpenServer;
+  FServerView.OnEditServer := EditServer;
   FServerView.load;
   FContext.OnFetchServer := FServerView.FetchServer;
 
@@ -1247,6 +1249,28 @@ begin
   end;
 end;
 
+procedure TMainToolkitForm.editServer(sender: TObject; server: TFHIRServerEntry);
+var
+  srvr : TFHIRServerEntry;
+begin
+  srvr := server.clone;
+  try
+    ServerSettingsForm := TServerSettingsForm.create(self);
+    try
+      ServerSettingsForm.Server := srvr.link;
+      ServerSettingsForm.ServerList := FServerView.ServerList.link;
+      if ServerSettingsForm.ShowModal = mrOk then
+      begin
+        FServerView.updateServer(server, srvr);
+      end;
+    finally
+      FreeAndNil(ServerSettingsForm);
+    end;
+  finally
+    srvr.free;
+  end;
+end;
+
 procedure TMainToolkitForm.doOpenResource(sender: TObject; url: String);
 var
   loaded : TLoadedBytes;
@@ -1295,7 +1319,8 @@ begin
   factory := Context.factory(server.version);
   try
     server.client := factory.makeClient(nil, server.URL, fctCrossPlatform, server.format);
-    server.client.Logger := TTextFileLogger.create;
+    if server.logFileName <> '' then
+      server.client.Logger := TTextFileLogger.create(server.logFileName);
   finally
     factory.free;
   end;

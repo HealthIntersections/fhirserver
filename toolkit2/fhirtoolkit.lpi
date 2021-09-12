@@ -29,9 +29,6 @@
         <PackageName Value="fhir_fsl"/>
       </Item>
       <Item>
-        <PackageName Value="lazbarcodes"/>
-      </Item>
-      <Item>
         <PackageName Value="fhir3"/>
       </Item>
       <Item>

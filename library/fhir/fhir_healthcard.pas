@@ -30,6 +30,8 @@ type
     { unpacks, and verifies, and sets isValid to true }
     function verify(token : String) : THealthcareCard;
 
+    function readQR(src : String) : String; // returns a JWS
+
     property Factory : TFHIRFactory read FFactory write SetFactory;
     property JWKList : TJWKList read FJWKList write SetJWKList;
   end;
@@ -133,7 +135,7 @@ var
   jwt : TJWT;
 begin
   payload := buildPayload(card);
-  bytes := ZCompressBytes(TEncoding.UTF8.GetBytes(payload));
+  bytes := DeflateRfc1951(TEncoding.UTF8.GetBytes(payload));
   card.jws := TJWTUtils.encodeJWT('{"alg":"ES256","zip":"DEF","kid":"'+jwk.id+'"}', bytes, jwt_es256, jwk);
 end;
 
@@ -165,6 +167,7 @@ begin
       for i := 0 to vc.forceArr['type'].Count - 1 do
         result.types := result.types + [readCredential(vc.arr['type'].Value[i])];
       result.IsValid := jwt.valid;
+      result.validationMessage := jwt.validationMessage;
       result.jws := token;
       cs := vc.obj['credentialSubject'];
       if (cs = nil) then
@@ -188,5 +191,28 @@ begin
     jwt.Free;
   end;
 end;
+
+function THealthcareCardUtilities.readQR(src: String): String;
+var
+  b : TFslStringBuilder;
+  i, v : integer;
+  c : char;
+begin
+  if not src.StartsWith('shc:/') then
+    raise Exception.create('Unable to process smart health card (didn''t start with shc:/)');
+  b := TFslStringBuilder.create;
+  try
+    for i := 0 to ((length(src)-5) div 2) - 1 do
+    begin
+      v := StrToInt(copy(src, 6+(i*2), 2));
+      c := chr(45+v);
+      b.append(c);
+    end;
+    result := b.toString;
+  finally
+    b.free;
+  end;
+end;
+
 
 end.

@@ -10,7 +10,7 @@ uses
   fsl_utilities, fsl_json, fsl_crypto,
   fhir_objects, fhir_parser, fhir_healthcard, fhir_common,
   fui_lcl_managers,
-  ftk_constants, ubarcodes, HtmlView,
+  ftk_constants, HtmlView,
   ftk_frame_resource;
 
 type

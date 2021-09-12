@@ -780,7 +780,8 @@ end;
 
 procedure TListManager<T>.doEdit(mode : String);
 begin
-  raise Exception.create('not done yet');
+  if focus <> nil then
+    editItem(focus, mode);
 end;
 
 procedure TListManager<T>.doDelete(mode : String);

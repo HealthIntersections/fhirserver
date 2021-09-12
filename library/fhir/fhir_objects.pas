@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json;
 
 Const
   ID_LENGTH = 64;
@@ -788,6 +788,7 @@ type
     FLinks: TFslStringDictionary;
     FJws: String;
     FBundle: TFHIRResourceV;
+    FValidationMessage: String;
     procedure SetBundle(const Value: TFHIRResourceV);
   protected
     FSummary: String;
@@ -800,6 +801,7 @@ type
     property issuer : String read FIssuer write FIssuer;
     property types : TCredentialTypeSet read FTypes write FTypes;
     property isValid : boolean read FIsValid write FIsValid;
+    property validationMessage : String read FValidationMessage write FValidationMessage;
     property summary : String read FSummary write FSummary;
 
     property bundle : TFHIRResourceV read FBundle write SetBundle;
@@ -808,6 +810,7 @@ type
     procedure makeSummary; virtual; abstract;
 
     function htmlReport : String; virtual; abstract;
+
     function qrSource : String;
 
     property jws : String read FJws write FJws;
@@ -2774,7 +2777,7 @@ begin
   try
     for ch in jws do
     begin
-      i := ord(ch) - 43;
+      i := ord(ch) - 45;
       b.append(StringPadLeft(inttostr(i), '0', 2));
     end;
     result := 'shc:/'+b.ToString;

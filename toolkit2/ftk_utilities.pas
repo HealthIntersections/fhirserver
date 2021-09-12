@@ -15,29 +15,40 @@ type
 
   TFHIRServerEntry = class (TFHIRServerDetails)
   private
+    FId : String;
     FClient: TFHIRClientV;
+    FInstantiates: TStringList;
+    FLogFileName: String;
     FWorkerObject: TObject;
     FPinned: boolean;
     procedure SetClient(AValue: TFHIRClientV);
-
+    function hasCapability(s : string) : boolean;
   public
+    constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRServerEntry; overload;
+    function clone : TFHIRServerEntry; overload;
+    procedure assign(other : TFslObject); override;
 
     class function fromJson(json : TJsonObject) : TFHIRServerEntry;
     function toJson : TJsonObject;
 
+    procedure getInformation(list : TStrings);
+
+    property id : String read FId write FId;
     property pinned : boolean read FPinned write FPinned;
     property workerObject : TObject read FWorkerObject write FWorkerObject;
     property client : TFHIRClientV read FClient write SetClient;
+    property logFileName : String read FLogFileName write FLogFileName;
+    property instantiates : TStringList read FInstantiates;
 
   end;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
 //function makeClient(version : TFHIRVersion; url : String) : TFhirClientV;
 
-function checkWellKnown(url : String; server : TFHIRServerDetails; var msg : String) : boolean;
-function checkMetadata(url : String; server : TFHIRServerDetails; var msg : String) : boolean;
+function checkWellKnown(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
+function checkMetadata(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 
 implementation
 
@@ -54,7 +65,7 @@ begin
   end;
 end;
 
-function checkWellKnown(url : String; server : TFHIRServerDetails; var msg : String) : boolean;
+function checkWellKnown(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 begin
   msg := '';
   try
@@ -75,7 +86,7 @@ begin
     raise EFHIRClientException.create(message);
 end;
 
-procedure checkJsonMetadata(server : TFHIRServerDetails; bytes : TBytes);
+procedure checkJsonMetadata(server : TFHIRServerEntry; bytes : TBytes);
 var
   json : TJsonObject;
   fmts : TJsonArray;
@@ -97,12 +108,15 @@ begin
       if (fmt.contains('json')) then
         server.json := true;
     end;
+    server.instantiates.clear;
+    for i := 0 to json.forceArr['instantiates'].Count - 1 do
+      server.instantiates.add(json.forceArr['instantiates'].Value[i]);
   finally
     json.free;
   end;
 end;
 
-procedure checkXmlMetadata(server : TFHIRServerDetails; bytes : TBytes);
+procedure checkXmlMetadata(server : TFHIRServerEntry; bytes : TBytes);
 var
   xml : TMXmlDocument;
   e, fv, r, f : TMXmlElement;
@@ -135,7 +149,7 @@ begin
   end;
 end;
 
-function checkMetadata(url : String; server : TFHIRServerDetails; var msg : String) : boolean;
+function checkMetadata(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 var
   fetcher : TInternetFetcher;
 begin
@@ -177,9 +191,27 @@ begin
   FClient := AValue;
 end;
 
+function TFHIRServerEntry.hasCapability(s: string): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  if smartConfig <> nil then
+    for i := 0 to smartConfig.forceArr['capabilities'].Count - 1 do
+      if (smartConfig.forceArr['capabilities'].Value[i] = s) then
+          exit(true);
+end;
+
+constructor TFHIRServerEntry.Create;
+begin
+  inherited Create;
+  FInstantiates := TStringList.create;
+end;
+
 destructor TFHIRServerEntry.Destroy;
 begin
   FClient.Free;
+  FInstantiates.Free;
   inherited Destroy;
 end;
 
@@ -188,17 +220,42 @@ begin
   result := TFHIRServerEntry(inherited link);
 end;
 
+function TFHIRServerEntry.clone: TFHIRServerEntry;
+begin
+  result := TFHIRServerEntry(inherited clone);
+end;
+
+procedure TFHIRServerEntry.assign(other: TFslObject);
+var
+  o : TFHIRServerEntry;
+begin
+  inherited assign(other);
+  o := other as TFHIRServerEntry;
+  client := nil;
+  id := o.id;
+  LogFileName := o.logFileName;
+//  FWorkerObject don't change
+  Pinned := o.pinned;
+end;
+
 class function TFHIRServerEntry.fromJson(json: TJsonObject): TFHIRServerEntry;
+var
+  i : integer;
 begin
   result := TFHIRServerEntry.create;
   try
+    result.id := json.str['id'];
     result.pinned := json.bool['pinned'];
     result.name := json.str['name'];
     result.URL := json.str['url'];
     result.version := TFHIRVersions.readVersion(json.str['fhir-version']);
     result.json := json.bool['json'];
     result.xml := json.bool['xml'];
+    result.logFileName := json.str['logFileName'];
     result.format := TFHIRFormat(StringArrayIndexOf(CODES_TFHIRFormat, json.str['format']));
+    result.smartConfig := json.obj['smart'].link;
+    for i := 0 to json.forceArr['instantiates'].Count - 1 do
+      result.instantiates.add(json.forceArr['instantiates'].Value[i]);
     result.link;
   finally
     result.free;
@@ -206,20 +263,71 @@ begin
 end;
 
 function TFHIRServerEntry.toJson: TJsonObject;
+var
+  s : String;
 begin
   result := TJsonObject.create;
   try
     result.bool['pinned'] := pinned;
+    result.str['id'] := id;
     result.str['name'] := name;
     result.str['url'] := URL;
     result.str['fhir-version'] := CODES_TFHIRVersion[version];
     result.bool['json'] := json;
     result.bool['xml'] := xml;
     result.str['format'] := CODES_TFHIRFormat[format];
+    result.str['logFileName'] := logFileName;
+    result.obj['smart'] := smartConfig.link;
+    for s in instantiates do
+      result.forceArr['instantiates'].add(s);
     result.link;
   finally
     result.free;
   end;
+end;
+
+procedure TFHIRServerEntry.getInformation(list : TStrings);
+begin
+  if smartConfig <> nil then
+  begin
+    list.add('This server is a Smart-App-Launch server');
+    if hasCapability('launch-ehr') and hasCapability('launch-standalone') then
+      list.add('Good to go: Server supports standalone and ehr modes')
+    else if hasCapability('launch-standalone') then
+      list.add('Good to go: Server supports standalone mode')
+    else if hasCapability('launch-ehr') then
+      list.add('No go: Server does not support standalone mode (ehr only)')
+    else
+      list.add('No go: No launch modes found');
+
+    if hasCapability('client-public') and hasCapability('client-confidential-symmetric') then
+      list.add('Server supports both public and confidential clients')
+    else if hasCapability('client-public') then
+      list.add('Server supports ony public clients')
+    else if hasCapability('client-confidential-symmetric') then
+      list.add('Server supports ony Confidential clients')
+    else
+      list.add('Server doesn''t support either public or confidential clients');
+
+    if hasCapability('sso-openid-connect') then
+      list.add('Server supports OpenIDConnect');
+
+    if hasCapability('context-standalone-patient') and hasCapability('context-standalone-encounter') then
+      list.add('Server supports Patient and Encounter Launch mode')
+    else if hasCapability('context-standalone-patient') then
+      list.add('Server supports Patient Launch mode')
+    else if hasCapability('context-standalone-encounter') then
+      list.add('Server supports Encounter Launch mode');
+
+    if hasCapability('permission-patient') then
+      list.add('Server supports Patient Level scopes');
+    if hasCapability('permission-user') then
+      list.add('Server supports User Level Scopes');
+  end
+  else
+    list.add('This server does not support Smart-App-Launch');
+  if instantiates.indexOf('http://hl7.org/fhir/CapabilityStatement/terminology-server') > -1 then
+    list.add('This server is a terminology server');
 end;
 
 

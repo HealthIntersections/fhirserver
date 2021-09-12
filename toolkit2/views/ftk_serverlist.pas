@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Graphics, IniFiles,
   ComCtrls,
-  fsl_base, fsl_json,
+  fsl_base, fsl_utilities, fsl_json,
   fui_lcl_managers,
   fhir_client,
   ftk_utilities, ftk_constants;
@@ -49,6 +49,7 @@ type
   private
     FControlFile: String;
     FManager : TServerListManager;
+    FOnEditServer: TOpenServerEvent;
     FOnOpenServer : TOpenServerEvent;
     function GetList: TListView;
     function GetServerList: TFslList<TFHIRServerEntry>;
@@ -61,6 +62,7 @@ type
     property List : TListView read GetList write SetList;
     property ServerList : TFslList<TFHIRServerEntry> read GetServerList;
     property OnOpenServer : TOpenServerEvent read FOnOpenServer write FOnOpenServer;
+    property OnEditServer : TOpenServerEvent read FOnEditServer write FOnEditServer;
 
     procedure load;
     procedure save;
@@ -70,6 +72,7 @@ type
     function FetchServer(sender : TObject; name : String) : TFHIRServerEntry;
 
     procedure addServer(server : TFHIRServerEntry);
+    procedure updateServer(server, newDetails : TFHIRServerEntry);
   end;
 
 implementation
@@ -163,7 +166,7 @@ end;
 
 function TServerListManager.editItem(item: TFHIRServerEntry; mode: String): boolean;
 begin
-  Result := inherited EditItem(item, mode);
+  FView.OnEditServer(FView, item);
 end;
 
 procedure TServerListManager.deleteItem(item: TFHIRServerEntry);
@@ -258,9 +261,15 @@ end;
 
 procedure TFHIRServersView.addServer(server: TFHIRServerEntry);
 begin
+  server.id := NewGuidId;
   FManager.Data.Insert(0, server.link);
-  FManager.doLoad();
   save;
+  FManager.doLoad();
+end;
+
+procedure TFHIRServersView.updateServer(server, newDetails: TFHIRServerEntry);
+begin
+  raise ETodo.create('updateServer');
 end;
 
 end.

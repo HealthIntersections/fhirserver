@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, CheckLst, ComCtrls,
-  ExtCtrls, StdCtrls,
+  ExtCtrls, StdCtrls, Buttons,
   fsl_base, fsl_utilities,
   fhir_objects, fhir_utilities, fhir_client, fhir_oauth, fhir_common, fhir_factory,
   ftk_utilities;
@@ -15,62 +15,47 @@ type
 
   { TServerSettingsForm }
   TServerSettingsForm = class(TForm)
-    Bevel1: TBevel;
-    btnFetch: TButton;
+    btnCert: TSpeedButton;
     btnOk: TButton;
     Button2: TButton;
     Button3: TButton;
-    Button4: TButton;
     cbxFormat: TComboBox;
     cbxSmartMode: TComboBox;
     cbxVersion: TComboBox;
-    edtAuthorize: TEdit;
+    dlgLog: TOpenDialog;
     edtClientId: TEdit;
-    edtClientId1: TEdit;
     edtClientSecret: TEdit;
-    edtIssuerURL: TEdit;
     edtName: TEdit;
-    edtPassphrase: TEdit;
-    edtPrivateKey: TEdit;
     edtRedirect: TEdit;
     edtUrl: TEdit;
-    edtToken: TEdit;
+    edtLogFile: TEdit;
     Formt: TLabel;
     Label1: TLabel;
-    Label10: TLabel;
-    Label11: TLabel;
-    Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
-    Label16: TLabel;
-    Label17: TLabel;
-    Label18: TLabel;
-    Label19: TLabel;
     Label2: TLabel;
     Label20: TLabel;
+    Label21: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    Label9: TLabel;
     mInfo: TMemo;
-    Notebook1: TNotebook;
     Notebook2: TNotebook;
-    Page1: TPage;
-    Page2: TPage;
-    Page3: TPage;
-    Page4: TPage;
-    Page5: TPage;
-    Page6: TPage;
+    pgBackend: TPage;
+    pgNoSmart: TPage;
+    pgSmart: TPage;
     PageControl1: TPageControl;
     Panel1: TPanel;
-    Panel2: TPanel;
     Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    procedure btnCertClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure edtUrlChange(Sender: TObject);
@@ -177,10 +162,12 @@ begin
         cbxVersion.Enabled := false;
         cbxFormat.Enabled := false;
       end;
+      mInfo.lines.Clear;
       if msg1 <> '' then
-        mInfo.text := msg1 + #13#10+msg2
-      else
-        mInfo.text := msg2;
+        mInfo.lines.Add(msg1);
+      if msg2 <> '' then
+        mInfo.lines.Add(msg2);
+      FServer.getInformation(mInfo.lines);
     finally
       cursor := crDefault;
     end;
@@ -208,11 +195,19 @@ begin
   checkInput(edtUrl, isAbsoluteUrl(url) and (url.startsWith('http://') or url.startsWith('https://')), 'A valid web URL is required');
   FServer.name := edtName.Text;
   FServer.URL := edtUrl.text;
+  FServer.logFileName := edtLogFile.text;
   if cbxFormat.ItemIndex = 0 then
     FServer.format := ffJson
   else
     FServer.format := ffXml;
   FServer.version := TFHIRVersions.readVersion(cbxVersion.text);
+end;
+
+procedure TServerSettingsForm.btnCertClick(Sender: TObject);
+begin
+  dlgLog.FileName := edtLogFile.text;
+  if dlgLog.Execute then
+    edtLogFile.text := dlgLog.FileName;
 end;
 
 procedure TServerSettingsForm.SetServer(AValue: TFHIRServerEntry);
@@ -225,6 +220,7 @@ begin
     edtUrl.text := '';
     edtName.enabled := false;
     edtUrl.enabled := false;
+    edtLogFile.text := '';
   end
   else
   begin
@@ -232,6 +228,30 @@ begin
     edtUrl.text := FServer.URL;
     edtName.enabled := true;
     edtUrl.enabled := true;
+    edtLogFile.text := FServer.logFileName;
+    if FServer.id <> '' then
+    begin
+      cbxFormat.Enabled := FServer.xml and FServer.json;
+      if FServer.format = ffXml then
+        cbxFormat.ItemIndex := 1
+      else
+        cbxFormat.ItemIndex := 0;
+      case FServer.version of
+        fhirVersionRelease2 : cbxVersion.ItemIndex := 0;
+        fhirVersionRelease3 : cbxVersion.ItemIndex := 1;
+        fhirVersionRelease4 : cbxVersion.ItemIndex := 2;
+      else
+        cbxVersion.ItemIndex := -1;
+      end;
+      cbxVersion.enabled := false;
+    end
+    else
+    begin
+      cbxFormat.Enabled := false;
+      cbxFormat.itemIndex := -1;
+      cbxVersion.Enabled := false;
+      cbxVersion.itemIndex := -1;
+    end;
   end;
 end;
 
@@ -253,11 +273,11 @@ end;
 
 function TServerSettingsForm.nameOk(s: String): boolean;
 var
-  sd : TFHIRServerDetails;
+  sd : TFHIRServerEntry;
 begin
   result := true;
   for sd in ServerList do
-    if (s = sd.name) and (sd <> FServer) then
+    if (s = sd.name) and (sd.id <> FServer.id) then
       exit(false);
 end;
 

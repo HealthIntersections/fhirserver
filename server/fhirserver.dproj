@@ -135,7 +135,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg -testinsightx</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg -testinsight</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -156,7 +156,6 @@
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <Debugger_CWD>C:\work\fhirserver\exec\64</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
-        <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_RangeChecking>true</DCC_RangeChecking>
     </PropertyGroup>

@@ -75,12 +75,12 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes,
+  SysUtils, Classes, ZLib,
   IdGlobal, IdCTypes, IdHMAC, IdHash, IdHashSHA, IdHMACSHA1,
   IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_hmac,
   IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_x509, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
   IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc,
   fsl_openssl, fsl_fetcher;
 
 Type
@@ -375,6 +375,8 @@ Type
     function verifySignature(xml : TBytes) : boolean;
   end;
 
+function InflateRfc1951(b : TBytes) : TBytes;
+function DeflateRfc1951(b : TBytes) : TBytes;
 
 implementation
 
@@ -449,21 +451,21 @@ end;
 
 function checkRes(test: boolean; failmsg: string; var res : String) : boolean;
 var
-  //e: integer;
-  //err : Array [0..250] of ansichar;
+  e: integer;
+  err : Array [0..250] of ansichar;
   m : String;
 begin
   result := test;
   if not test then
   begin
     m := failMsg;
-    //e := ERR_get_error;
-    //while e <> 0 do
-    //begin
-    //  ERR_error_string(e, @err);
-    //  m := m + inttohex(e, 8)+' ('+String(err)+')'+' | ';
-    //  e := ERR_get_error;
-    //end;
+    e := ERR_get_error;
+    while e <> 0 do
+    begin
+      ERR_error_string(e, @err);
+      m := m + inttohex(e, 8)+' ('+String(err)+')'+' | ';
+      e := ERR_get_error;
+    end;
     res := m;
   end;
 end;
@@ -779,7 +781,6 @@ begin
 
   px := bn_decode_bin(x);
   py := bn_decode_bin(y);
-  pd := bn_decode_bin(privateKey);
 
   result := EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
   check(result <> nil, 'EC_KEY_new_by_curve_name = nil');
@@ -793,6 +794,7 @@ begin
   if (privkey) then
   begin
     check(hasPrivateKey, 'EC Key needs an private key');
+    pd := bn_decode_bin(privateKey);
     check(EC_KEY_set_private_key(result, pd) = 1, 'EC_KEY_set_private_key');
   end;
 end;
@@ -1170,6 +1172,56 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
+function InflateRfc1951(b : TBytes) : TBytes;
+var
+  b1, b2 : TBytesStream;
+  z : TZDecompressionStream;
+begin
+  b1 := TBytesStream.create(b);
+  try
+    z := TZDecompressionStream.create(b1, -15);
+    try
+      b2  := TBytesStream.create;
+      try
+        b2.CopyFrom(z, z.Size);
+        result := b2.Bytes;
+        setLength(result, b2.size);
+      finally
+        b2.free;
+      end;
+    finally
+      z.free;
+    end;
+  finally
+    b1.free;
+  end;
+end;
+
+function DeflateRfc1951(b : TBytes) : TBytes;
+var
+  b1, b2 : TBytesStream;
+  z : TZCompressionStream;
+begin
+  b1 := TBytesStream.create(b);
+  try
+    z := TZCompressionStream.create(b1);
+    try
+      b2  := TBytesStream.create;
+      try
+        b2.CopyFrom(z, z.Size);
+        result := b2.Bytes;
+        setLength(result, b2.size);
+      finally
+        b2.free;
+      end;
+    finally
+      z.free;
+    end;
+  finally
+    b1.free;
+  end;
+end;
+
 class function TJWTUtils.decodeJWT(token: string): TJWT;
 var
   header, payload, sig : String;
@@ -1189,12 +1241,14 @@ begin
 
     // 2. read the json
     hb := JWTDeBase64URL(header);
+    BytesToFile(hb, 'C:\temp\header.json');
     pb := JWTDeBase64URL(payload);
+    BytesToFile(pb, 'C:\temp\payload.json');
     result.header := TJSONParser.Parse(hb);
 
     if result.header['zip'] = 'DEF' then
     begin
-      pb := ZDecompressBytes(pb);
+      pb := InflateRfc1951(pb);
       BytesToFile(pb, 'c:\temp\payload.json');
     end;
     result.payload := TJSONParser.Parse(pb);
@@ -1225,6 +1279,48 @@ begin
   result := jwt.valid;
   if not jwt.valid and exception then
     raise ELibraryException.Create(jwt.validationMessage);
+end;
+
+// https://stackoverflow.com/questions/59904522/asn1-encoding-routines-errors-when-verifying-ecdsa-signature-type-with-openssl
+
+function DERToBase(b : TBytes) : TBytes;
+var
+  l1, l2 : integer;
+  b1, b2 : TBytes;
+begin
+  l1 := b[3];
+  l2 := b[3+l1+2];
+
+  b1 := copy(b, 4, l1);
+  b2 := copy(b, 4+l1+2, l2);
+
+  while Length(b1) < 32 do
+    insert([0], b1, 0);
+
+  while Length(b2) < 32 do
+    insert([0], b2, 0);
+
+  result := b1+b2;
+end;
+
+function BaseToDER(b : TBytes) : TBytes;
+var
+  bb : TFslBytesBuilder;
+begin
+  bb := TFslBytesBuilder.Create;
+  try
+    bb.Append($30); // sequence
+    bb.Append($44); // length of sequence
+    bb.Append($02); // integer
+    bb.Append($20); // integer length
+    bb.Append(copy(b, 0, 32));
+    bb.Append($02); // integer
+    bb.Append($20); // integer length
+    bb.Append(copy(b, 32, 32));
+    result := bb.AsBytes;
+  finally
+    bb.free;
+  end;
 end;
 
 {.$.DEFINE ALT}
@@ -1275,7 +1371,7 @@ begin
       finally
         EVP_MD_CTX_free(ctx);
       end;
-
+      result := DERTobase(result);
     finally
       EVP_PKEY_free(pKey);
     end;
@@ -1420,6 +1516,7 @@ begin
           exit;
         if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
           exit;
+        sig := baseToDER(sig);
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
         if not checkRes(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')', result) then
           exit;

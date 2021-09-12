@@ -92,6 +92,8 @@ Type
     destructor Destroy; override;
 
     function link : TFHIRServerDetails; overload;
+    function clone : TFHIRServerDetails; overload;
+    procedure assign(other : TFslObject); override;
 
     property name : String read FName write FName;
     property URL : String read FURL write FURL;
@@ -349,6 +351,27 @@ end;
 function TFHIRServerDetails.link: TFHIRServerDetails;
 begin
   result := TFHIRServerDetails(inherited Link);
+end;
+
+function TFHIRServerDetails.clone: TFHIRServerDetails;
+begin
+  result := TFHIRServerDetails(inherited Clone);
+end;
+
+procedure TFHIRServerDetails.assign(other: TFslObject);
+var
+  o : TFHIRServerDetails;
+begin
+  inherited assign(other);
+  o := other as TFHIRServerDetails;
+  Format := o.Format;
+  Json := o.Json;
+  Name := o.Name;
+  URL := o.URL;
+  if o.smartConfig <> nil then
+    SmartConfig := TJSONParser.Parse(TJSONWriter.WriteObject(o.smartConfig));
+  Version := o.Version;
+  Xml := o.Xml;
 end;
 
 procedure TFHIRServerDetails.SetSmartConfig(AValue: TJsonObject);
