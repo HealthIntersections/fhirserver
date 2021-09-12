@@ -77,6 +77,9 @@ type
 
 implementation
 
+uses
+  ftk_worker_server;
+
 { TServerListManager }
 
 function TServerListManager.canSort: boolean;
@@ -269,7 +272,11 @@ end;
 
 procedure TFHIRServersView.updateServer(server, newDetails: TFHIRServerEntry);
 begin
-  raise ETodo.create('updateServer');
+  server.assign(newDetails);
+  save;
+  FManager.doLoad();
+  if (server.workerObject <> nil) then
+    (server.workerObject as TServerWorker).serverChanged;
 end;
 
 end.

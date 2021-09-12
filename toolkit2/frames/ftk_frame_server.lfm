@@ -215,7 +215,18 @@ object ServerWorkerFrame: TServerWorkerFrame
             Align = alBottom
             Alignment = taLeftJustify
             Caption = '  No search performed'
+            ClientHeight = 28
+            ClientWidth = 1161
             TabOrder = 2
+            object cbAll: TCheckBox
+              Left = 968
+              Height = 19
+              Top = 4
+              Width = 165
+              Anchors = [akTop, akRight]
+              Caption = 'Iterate and load all matches'
+              TabOrder = 0
+            end
           end
         end
       end

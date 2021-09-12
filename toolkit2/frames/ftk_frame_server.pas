@@ -42,6 +42,7 @@ type
     btnSearch: TButton;
     cbxSearchType: TComboBox;
     cbxGender: TComboBox;
+    cbAll: TCheckBox;
     edtId: TEdit;
     edtName: TEdit;
     edtDob: TEdit;
@@ -214,6 +215,7 @@ procedure TServerWorkerFrame.doPatientSearch;
 var
   params : TStringList;
   t : UInt64;
+  s : String;
 begin
   cursor := crHourGlass;
   try
@@ -232,10 +234,18 @@ begin
       if edtId.Text <> '' then
         params.add('identifier='+edtDoB.text);
       t := GetTickCount64;
-      FSearch := FFactory.wrapBundle(FServer.client.searchV('Patient', true, params));
+      FSearch := FFactory.wrapBundle(FServer.client.searchV('Patient', cbAll.checked, params));
       t := GetTickCount64 - t;
       FPatientManager.doLoad;
-      pnlSearchOutcome.caption := '  Search: '+inttostr(FSearch.count('Patient'))+' of '+inttostr(FSearch.total)+' as of '+FSearch.timestamp.toXML+' ('+inttostr(t)+'ms)';
+      s := '  Search: '+inttostr(FSearch.count('Patient'))+' matches';
+      if FSearch.Total > 0 then
+        s := s + ' of '+inttostr(FSearch.total);
+      if FSearch.timestamp.notNull then
+        s := s + ' as of '+FSearch.timestamp.toXML+' (server)'
+      else
+        s := s + ' as of '+TFslDateTime.makeLocal.toXML+' (local)';
+      s := s + ' ('+inttostr(t)+'ms)';
+      pnlSearchOutcome.caption := s;
     finally
       params.free;
     end;

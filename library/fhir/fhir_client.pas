@@ -38,6 +38,12 @@ uses
   fsl_stream, fsl_json, fsl_http,
   fhir_objects,  fhir_parser, fhir_common;
 
+type
+  TSmartAppLaunchMode = (salmNone, salmOAuthClient, salmBackendClient);
+
+const
+  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('No Security', 'OAuth Client', 'Backend Services');
+
 Type
   EFHIRClientException = class (EFHIRException)
   private
@@ -80,9 +86,13 @@ Type
 
   TFHIRServerDetails = class (TFslObject)
   private
+    FClientId: String;
+    FClientSecret: String;
     FFormat: TFHIRFormat;
     FJson: boolean;
     FName: String;
+    FRedirect: String;
+    FSmartMode: TSmartAppLaunchMode;
     FURL: String;
     FSmartConfig : TJsonObject;
     FVersion: TFHIRVersion;
@@ -103,6 +113,10 @@ Type
     property json : boolean read FJson write FJson;
     property format : TFHIRFormat read FFormat write FFormat;
     property smartConfig : TJsonObject read FSmartConfig write SetSmartConfig;
+    property smartMode : TSmartAppLaunchMode read FSmartMode write FSmartMode;
+    property ClientId : String read FClientId write FClientId;
+    property ClientSecret : String read FClientSecret write FClientSecret;
+    property Redirect : String read FRedirect write FRedirect;
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -372,6 +386,10 @@ begin
     SmartConfig := TJSONParser.Parse(TJSONWriter.WriteObject(o.smartConfig));
   Version := o.Version;
   Xml := o.Xml;
+  SmartMode := o.SmartMode;
+  ClientId := o.ClientId;
+  ClientSecret := o.ClientSecret;
+  Redirect := o.Redirect;
 end;
 
 procedure TFHIRServerDetails.SetSmartConfig(AValue: TJsonObject);

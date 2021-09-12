@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils,
+  IdUri,
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_http, fsl_fetcher,
-  fhir_objects, fhir_factory, fhir_client, fhir_utilities, fhir_client_http;
+  fhir_objects, fhir_factory, fhir_client, fhir_utilities, fhir_client_http, fhir_oauth;
 
 type
 
@@ -19,10 +20,13 @@ type
     FClient: TFHIRClientV;
     FInstantiates: TStringList;
     FLogFileName: String;
+    FScopes: String;
+    FToken: TClientAccessToken;
     FWorkerObject: TObject;
     FPinned: boolean;
     procedure SetClient(AValue: TFHIRClientV);
     function hasCapability(s : string) : boolean;
+    procedure SetToken(AValue: TClientAccessToken);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -33,15 +37,19 @@ type
     class function fromJson(json : TJsonObject) : TFHIRServerEntry;
     function toJson : TJsonObject;
 
+    function makeOAuthDetails : TRegisteredFHIRServer;
+
     procedure getInformation(list : TStrings);
 
     property id : String read FId write FId;
     property pinned : boolean read FPinned write FPinned;
-    property workerObject : TObject read FWorkerObject write FWorkerObject;
     property client : TFHIRClientV read FClient write SetClient;
     property logFileName : String read FLogFileName write FLogFileName;
     property instantiates : TStringList read FInstantiates;
+    property scopes : String read FScopes write FScopes;
 
+    property workerObject : TObject read FWorkerObject write FWorkerObject;
+    property token : TClientAccessToken read FToken write SetToken;
   end;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -202,6 +210,12 @@ begin
           exit(true);
 end;
 
+procedure TFHIRServerEntry.SetToken(AValue: TClientAccessToken);
+begin
+  FToken.Free;
+  FToken := AValue;
+end;
+
 constructor TFHIRServerEntry.Create;
 begin
   inherited Create;
@@ -210,6 +224,7 @@ end;
 
 destructor TFHIRServerEntry.Destroy;
 begin
+  FToken.Free;
   FClient.Free;
   FInstantiates.Free;
   inherited Destroy;
@@ -232,10 +247,13 @@ begin
   inherited assign(other);
   o := other as TFHIRServerEntry;
   client := nil;
+  token := nil;
   id := o.id;
   LogFileName := o.logFileName;
 //  FWorkerObject don't change
   Pinned := o.pinned;
+  Scopes := o.Scopes;
+  instantiates.Assign(o.instantiates);
 end;
 
 class function TFHIRServerEntry.fromJson(json: TJsonObject): TFHIRServerEntry;
@@ -254,6 +272,13 @@ begin
     result.logFileName := json.str['logFileName'];
     result.format := TFHIRFormat(StringArrayIndexOf(CODES_TFHIRFormat, json.str['format']));
     result.smartConfig := json.obj['smart'].link;
+    result.ClientId := json.str['client-id'];
+    result.ClientSecret := json.str['client-secret'];
+    result.Redirect := json.str['redirect'];
+    result.Scopes := json.str['scopes'];
+
+    if (json.has('smart-mode')) then
+      result.smartMode := TSmartAppLaunchMode(StringArrayIndexOf(CODES_TSmartAppLaunchMode, json.str['smart-mode']));
     for i := 0 to json.forceArr['instantiates'].Count - 1 do
       result.instantiates.add(json.forceArr['instantiates'].Value[i]);
     result.link;
@@ -278,8 +303,42 @@ begin
     result.str['format'] := CODES_TFHIRFormat[format];
     result.str['logFileName'] := logFileName;
     result.obj['smart'] := smartConfig.link;
+    result.str['smart-mode'] := CODES_TSmartAppLaunchMode[smartMode];
+    result.str['client-id'] := ClientId;
+    result.str['client-secret'] := ClientSecret;
+    result.str['redirect'] := Redirect;
+    result.str['scopes'] := Scopes;
+
     for s in instantiates do
       result.forceArr['instantiates'].add(s);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRServerEntry.makeOAuthDetails: TRegisteredFHIRServer;
+var
+  uri : TIdUri;
+begin
+  result := TRegisteredFHIRServer.create;
+  try
+    result.name := name;
+    result.fhirEndpoint := URL;
+    result.version := version;
+    result.format := format;
+    result.SmartAppLaunchMode := smartMode;
+    result.authorizeEndpoint := smartConfig.str['authorization_endpoint'];
+    result.tokenEndpoint := smartConfig.str['token_endpoint'];
+    result.clientid := ClientId;
+    result.clientsecret := ClientSecret;
+    uri := TIdURI.create(Redirect);
+    try
+      result.thisHost := uri.Host;
+      result.redirectport := StrToIntDef(uri.Port, 80);
+    finally
+      uri.free;
+    end;
     result.link;
   finally
     result.free;
@@ -290,7 +349,7 @@ procedure TFHIRServerEntry.getInformation(list : TStrings);
 begin
   if smartConfig <> nil then
   begin
-    list.add('This server is a Smart-App-Launch server');
+    list.add('This server is a Smart-App-Launch server (you need to fill in Smart App Launch details)');
     if hasCapability('launch-ehr') and hasCapability('launch-standalone') then
       list.add('Good to go: Server supports standalone and ehr modes')
     else if hasCapability('launch-standalone') then

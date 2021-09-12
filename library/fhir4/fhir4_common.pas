@@ -1270,10 +1270,12 @@ end;
 
 function TFHIRBundle4.GetTimestamp: TFslDateTime;
 begin
-  if bundle.timestampElement = nil then
+  if bundle.timestampElement <> nil then
+    result := bundle.timestamp
+  else if bundle.meta <> nil then
     result := bundle.meta.lastUpdated
   else
-    result := bundle.timestamp;
+    result := TFslDateTime.makeNull;
 end;
 
 function TFHIRBundle4.gettotal: integer;

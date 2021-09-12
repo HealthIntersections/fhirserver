@@ -1,7 +1,7 @@
 object ServerSettingsForm: TServerSettingsForm
-  Left = 695
+  Left = 1111
   Height = 418
-  Top = -733
+  Top = 234
   Width = 737
   Caption = 'Server Details'
   ClientHeight = 418
@@ -41,7 +41,7 @@ object ServerSettingsForm: TServerSettingsForm
       TabOrder = 1
     end
   end
-  object PageControl1: TPageControl
+  object pgSettings: TPageControl
     Left = 0
     Height = 377
     Top = 0
@@ -176,6 +176,7 @@ object ServerSettingsForm: TServerSettingsForm
           Top = 189
           Width = 652
           Anchors = [akLeft, akRight, akBottom]
+          ReadOnly = True
           TabOrder = 5
         end
         object Label21: TLabel
@@ -278,6 +279,7 @@ object ServerSettingsForm: TServerSettingsForm
             'OAuth Client'
             'Backend Services Client'
           )
+          OnChange = cbxSmartModeChange
           Style = csDropDownList
           TabOrder = 0
         end
@@ -305,12 +307,12 @@ object ServerSettingsForm: TServerSettingsForm
           WordWrap = True
         end
       end
-      object Notebook2: TNotebook
+      object nbSmartDetails: TNotebook
         Left = 0
         Height = 264
         Top = 38
         Width = 729
-        PageIndex = 2
+        PageIndex = 1
         Align = alClient
         TabOrder = 2
         object pgNoSmart: TPage
@@ -338,7 +340,7 @@ object ServerSettingsForm: TServerSettingsForm
             Top = 72
             Width = 576
             AutoSize = False
-            Caption = 'Note: this toolkit is not actually confidential app, but the client secret can be provided to help test SMART App Launch Servers'
+            Caption = 'The client secret is optional. Note: this toolkit is not actually a confidential app, but the client secret can be provided to help test SMART App Launch Servers'
             ParentColor = False
             WordWrap = True
           end
@@ -381,6 +383,46 @@ object ServerSettingsForm: TServerSettingsForm
             Width = 631
             Anchors = [akTop, akLeft, akRight]
             TabOrder = 2
+          end
+          object Label9: TLabel
+            Left = 8
+            Height = 15
+            Top = 202
+            Width = 40
+            Caption = 'Scopes:'
+            ParentColor = False
+          end
+          object edtScopes: TEdit
+            Left = 84
+            Height = 23
+            Top = 198
+            Width = 583
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 3
+          end
+          object btnAddAll: TButton
+            Left = 84
+            Height = 25
+            Hint = 'Add all Patient scopes server claims to support'
+            Top = 224
+            Width = 66
+            Caption = 'Patient'
+            OnClick = btnAddAllClick
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+          end
+          object btnAddAll1: TButton
+            Left = 152
+            Height = 25
+            Hint = 'Add all User scopes server claims to support'
+            Top = 224
+            Width = 66
+            Caption = 'User'
+            OnClick = btnAddAll1Click
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
           end
         end
         object pgBackend: TPage

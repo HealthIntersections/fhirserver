@@ -47,7 +47,7 @@ type
     pbCard: TPaintBox;
     Panel1: TPanel;
     Panel2: TPanel;
-    Panel3: TPanel;
+    pnlHealthcardsOutome: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
@@ -193,19 +193,27 @@ procedure TPatientFrame.btnFetchHealthCardsClick(Sender: TObject);
 var
   p : TFHIRParametersW;
   r : TFHIRResourceV;
+  s : String;
+  t : UInt64;
 begin
   cursor := crHourGlass;
   try
     p := sync.Factory.makeParameters;
     try
-      p.addParam('credentialType', sync.Factory.makeString('https://smarthealth.cards#health-card'));
+      p.addParam('credentialType', sync.Factory.makeUri('https://smarthealth.cards#health-card'));
+      t := GetTickCount64;
       r := client.operationV('Patient', FPatient.id, 'health-cards-issue', p.Resource);
       try
         FCards := sync.Factory.wrapParams(r.link);
       finally
         r.free;
       end;
+      t := GetTickCount64 - t;
       FCardManager.doLoad;
+      s := '  Health Cards: '+inttostr(FCardManager.Data.count)+' found';
+      s := s + ' as of '+TFslDateTime.makeLocal.toXML+' (local)';
+      s := s + ' ('+inttostr(t)+'ms)';
+      pnlHealthcardsOutome.caption := s;
     finally
       p.free;
     end;

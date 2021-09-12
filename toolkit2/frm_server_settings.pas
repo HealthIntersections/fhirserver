@@ -15,8 +15,10 @@ type
 
   { TServerSettingsForm }
   TServerSettingsForm = class(TForm)
+    btnAddAll1: TButton;
     btnCert: TSpeedButton;
     btnOk: TButton;
+    btnAddAll: TButton;
     Button2: TButton;
     Button3: TButton;
     cbxFormat: TComboBox;
@@ -27,6 +29,7 @@ type
     edtClientSecret: TEdit;
     edtName: TEdit;
     edtRedirect: TEdit;
+    edtScopes: TEdit;
     edtUrl: TEdit;
     edtLogFile: TEdit;
     Formt: TLabel;
@@ -43,21 +46,25 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     mInfo: TMemo;
-    Notebook2: TNotebook;
+    nbSmartDetails: TNotebook;
     pgBackend: TPage;
     pgNoSmart: TPage;
     pgSmart: TPage;
-    PageControl1: TPageControl;
+    pgSettings: TPageControl;
     Panel1: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    procedure btnAddAll1Click(Sender: TObject);
+    procedure btnAddAllClick(Sender: TObject);
     procedure btnCertClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure cbxSmartModeChange(Sender: TObject);
     procedure edtUrlChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -177,6 +184,11 @@ begin
   end;
 end;
 
+procedure TServerSettingsForm.cbxSmartModeChange(Sender: TObject);
+begin
+  nbSmartDetails.PageIndex := cbxSmartMode.ItemIndex;
+end;
+
 procedure TServerSettingsForm.edtUrlChange(Sender: TObject);
 begin
   if FLastUrl <> edtUrl.Text then
@@ -201,6 +213,11 @@ begin
   else
     FServer.format := ffXml;
   FServer.version := TFHIRVersions.readVersion(cbxVersion.text);
+  FServer.smartMode := TSmartAppLaunchMode(cbxSmartMode.ItemIndex);
+  FServer.ClientId := edtClientId.text;
+  FServer.ClientSecret := edtClientSecret.text;
+  FServer.Redirect := edtRedirect.text;
+  FServer.scopes := edtScopes.text;
 end;
 
 procedure TServerSettingsForm.btnCertClick(Sender: TObject);
@@ -210,8 +227,39 @@ begin
     edtLogFile.text := dlgLog.FileName;
 end;
 
+procedure TServerSettingsForm.btnAddAllClick(Sender: TObject);
+var
+  s, t : String;
+  i : integer;
+begin
+  s := '';
+  for i := 0 to FServer.smartConfig.forceArr['scopes_supported'].Count - 1 do
+  begin
+    t := FServer.smartConfig.forceArr['scopes_supported'].Value[i];
+    if (t.StartsWith('patient/')) then
+      s := s + ' ' +t;
+  end;
+  edtScopes.text := s.trim;
+end;
+
+procedure TServerSettingsForm.btnAddAll1Click(Sender: TObject);
+var
+  s, t : String;
+  i : integer;
+begin
+  s := '';
+  for i := 0 to FServer.smartConfig.forceArr['scopes_supported'].Count - 1 do
+  begin
+    t := FServer.smartConfig.forceArr['scopes_supported'].Value[i];
+    if (t.StartsWith('user/')) then
+      s := s + ' ' +t;
+  end;
+  edtScopes.text := s.trim;
+end;
+
 procedure TServerSettingsForm.SetServer(AValue: TFHIRServerEntry);
 begin
+  pgSettings.PageIndex := 0;
   FServer.Free;
   FServer := AValue;
   if FServer = nil then
@@ -220,7 +268,21 @@ begin
     edtUrl.text := '';
     edtName.enabled := false;
     edtUrl.enabled := false;
+    cbxVersion.ItemIndex := -1;
+    cbxVersion.enabled := false;
+    cbxFormat.ItemIndex := -1;
+    cbxFormat.enabled := false;
     edtLogFile.text := '';
+    cbxSmartMode.ItemIndex := -1;
+    cbxSmartMode.enabled := false;
+    edtClientId.text := '';
+    edtClientId.enabled := false;
+    edtClientSecret.text := '';
+    edtClientSecret.enabled := false;
+    edtRedirect.text := '';
+    edtRedirect.enabled := false;
+    edtScopes.text := '';
+    edtScopes.enabled := false;
   end
   else
   begin
@@ -252,6 +314,14 @@ begin
       cbxVersion.Enabled := false;
       cbxVersion.itemIndex := -1;
     end;
+    if FServer.smartConfig <> nil then
+      FServer.getInformation(mInfo.lines);
+    cbxSmartMode.ItemIndex := Ord(server.smartMode);
+    cbxSmartModeChange(self);
+    edtClientId.text := FServer.ClientId;
+    edtClientSecret.text := FServer.ClientSecret;
+    edtRedirect.text := FServer.Redirect;
+    edtScopes.text := FServer.scopes;
   end;
 end;
 

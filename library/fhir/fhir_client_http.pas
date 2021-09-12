@@ -349,6 +349,7 @@ begin
       ssl := TIdOpenSSLIOHandlerClient.Create(nil);
       indy.IOHandler := ssl;
       ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+      ssl.Options.VerifyServerCertificate := false;
 
       if certFile <> '' then
       begin
@@ -403,13 +404,19 @@ var
   op : TFHIROperationOutcomeW;
   iss : TFhirOperationOutcomeIssueW;
 begin
+  if verb in [httpPost, httpPut] then
+  begin
+    if mtStated <> '' then
+      indy.Request.ContentType := mtStated
+    else
+      indy.Request.ContentType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
+    if headers.contentType <> '' then
+      indy.Request.ContentType := headers.contentType;
+  end;
   if mtStated <> '' then
-    indy.Request.ContentType := mtStated
-  else
-    indy.Request.ContentType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
-  indy.Request.Accept := indy.Request.ContentType;
-  if headers.contentType <> '' then
-    indy.Request.ContentType := headers.contentType;
+      indy.Request.Accept := mtStated
+    else
+      indy.Request.Accept := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
   if headers.accept <> '' then
     indy.Request.Accept := headers.accept;
   if headers.prefer <> '' then
@@ -466,10 +473,10 @@ begin
     except
       on E:EIdHTTPProtocolException do
       begin
-        FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, streamToBytes(source), streamToBytes(result));
         cnt := e.ErrorMessage;
         if cnt = '' then
           cnt := e.message;
+        FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, streamToBytes(source), StringAsBytes(cnt));
         FHeaders.contentType := indy.Response.ContentType;
         FHeaders.location := indy.Response.Location;
         FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];

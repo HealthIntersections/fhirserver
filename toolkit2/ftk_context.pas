@@ -583,7 +583,7 @@ end;
 
 procedure TToolkitEditor.saveStatus;
 begin
-  // nothing
+  FContext := nil; // we're cut off after this executes
 end;
 
 { TToolkitContextObject }
@@ -703,7 +703,7 @@ begin
     FFocus := nil;
   end;
   FMessageView.removeMessagesForEditor(editor);
-  FEditorSessions.remove(editor.Session.link);
+  FEditorSessions.remove(editor.Session);
   FEditors.remove(editor);
 end;
 

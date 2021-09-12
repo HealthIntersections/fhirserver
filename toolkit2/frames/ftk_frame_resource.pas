@@ -48,7 +48,6 @@ implementation
 
 destructor TResourceDesignerFrame.Destroy;
 begin
-  FContext.Free;
   FResource.Free;
   FSync.Free;
   FClient.Free;
@@ -92,7 +91,8 @@ end;
 
 procedure TResourceDesignerFrame.saveStatus;
 begin
-  // nothing here
+  FContext.Free;
+  FContext := nil;
 end;
 
 

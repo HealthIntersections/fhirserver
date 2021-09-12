@@ -10,13 +10,13 @@ uses
   lclintf, ValEdit,
 
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging,
-  fhir_client, fhir_factory,
+  fhir_client, fhir_factory, fhir_oauth,
 
   ftk_context, ftk_store_temp, ftk_utilities,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
   ftk_factory, ftk_search, ftk_serverlist,ftk_worker_server,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings;
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth;
 
 type
   { TMainToolkitForm }
@@ -440,6 +440,7 @@ type
     procedure editServer(sender : TObject; server : TFHIRServerEntry);
     procedure doOpenResource(sender : TObject; url : String);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
+    function DoSmartLogin(server : TFHIRServerEntry) : boolean;
 
   public
     property Context : TToolkitContext read FContext;
@@ -1057,6 +1058,7 @@ begin
   editor := Context.EditorForTab(tab);
   if (editor.CanBeSaved) then
     checkDoSave(editor);
+  editor.saveStatus; // internal save, and then unhook
   if editor.session.Address <> '' then
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
@@ -1224,6 +1226,8 @@ var
   session : TToolkitEditSession;
   tab : TTabSheet;
 begin
+  if server.client = nil then
+    DoConnectToServer(self, server);
   worker := server.workerObject as TServerWorker;
   if (worker <> nil) then
     pgEditors.ActivePage := worker.tab
@@ -1316,15 +1320,39 @@ procedure TMainToolkitForm.DoConnectToServer(sender: TObject; server: TFHIRServe
 var
   factory : TFHIRFactory;
 begin
+  case server.smartMode of
+    salmNone : {nothing} ;
+    salmOAuthClient : if not DoSmartLogin(server) then
+      Abort;
+    salmBackendClient : raise ETodo.create('ConnectToServer/salmBackendClient');
+  end;
   factory := Context.factory(server.version);
   try
     server.client := factory.makeClient(nil, server.URL, fctCrossPlatform, server.format);
+    server.client.smartToken := server.token.link;
     if server.logFileName <> '' then
       server.client.Logger := TTextFileLogger.create(server.logFileName);
   finally
     factory.free;
   end;
 end;
+
+function TMainToolkitForm.DoSmartLogin(server: TFHIRServerEntry): boolean;
+var
+  form : TOAuthForm;
+begin
+  form := TOAuthForm.create(self);
+  try
+    form.server := server.makeOAuthDetails;
+    form.scopes := server.scopes.split([' ']);
+    result := form.ShowModal = mrOk;
+    if result then
+      server.Token := form.token.link;
+  finally
+    form.free;
+  end;
+end;
+
 
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
@@ -1410,6 +1438,8 @@ begin
   actionZoomIn.enabled := true;
   actionZoomOut.enabled := true;
   actionFilePrint.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
+
+  FServerView.refresh;
 end;
 
 procedure TMainToolkitForm.DoAppActivate(Sender: TObject);

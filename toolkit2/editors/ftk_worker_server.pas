@@ -25,6 +25,7 @@ type
     destructor Destroy; override;
 
     property server : TFHIRServerEntry read FServer write SetServer;
+    procedure serverChanged;
   end;
 
 implementation
@@ -40,8 +41,16 @@ end;
 
 destructor TServerWorker.Destroy;
 begin
+  FServer.workerObject := nil;
   FServer.Free;
+  if (Context <> nil) then
+    Context.OnUpdateActions(self);
   inherited Destroy;
+end;
+
+procedure TServerWorker.serverChanged;
+begin
+  // nothing
 end;
 
 procedure TServerWorker.SetServer(AValue: TFHIRServerEntry);

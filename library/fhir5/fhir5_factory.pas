@@ -83,6 +83,7 @@ type
     function makeBoolean(b : boolean): TFHIRObject; override;
     function makeCode(s : string) : TFHIRObject; override;
     function makeString(s : string) : TFHIRObject; override;
+    function makeUri(s : string) : TFHIRObject; override;
     function makeInteger(s : string) : TFHIRObject; override;
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
@@ -410,6 +411,11 @@ end;
 function TFHIRFactoryR5.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
   result := TFhirTerminologyCapabilities5.create(TFhirTerminologyCapabilities.create);
+end;
+
+function TFHIRFactoryR5.makeUri(s: string): TFHIRObject;
+begin
+  result := TFhirUri.Create(s);
 end;
 
 function TFHIRFactoryR5.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;

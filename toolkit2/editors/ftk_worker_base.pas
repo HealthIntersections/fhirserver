@@ -79,13 +79,13 @@ implementation
 
 destructor TBaseWorkerFrame.Destroy;
 begin
-  FContext.Free;
   inherited Destroy;
 end;
 
 procedure TBaseWorkerFrame.saveStatus;
 begin
-  // nothing
+  FContext.Free;
+  FContext := nil;
 end;
 
 procedure TBaseWorkerFrame.finalise();

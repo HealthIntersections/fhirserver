@@ -147,7 +147,7 @@ object PatientFrame: TPatientFrame
           end
         end
       end
-      object Panel3: TPanel
+      object pnlHealthcardsOutome: TPanel
         Left = 0
         Height = 30
         Top = 450

@@ -169,6 +169,7 @@ type
     function makeCoding(systemUri, code, display : String) : TFHIRObject; overload;
     function makeCoding(systemUri, version, code, display : String) : TFHIRObject; overload; virtual; abstract;
     function makeString(s : string) : TFHIRObject; virtual; abstract;
+    function makeUri(s : string) : TFHIRObject; virtual; abstract;
     function makeInteger(s : string) : TFHIRObject; virtual; abstract;
     function makeDecimal(s : string) : TFHIRObject; virtual; abstract;
     function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
