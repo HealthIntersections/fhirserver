@@ -743,6 +743,10 @@ end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);
 begin
+  FTxManager.saveStatus;
+  FEPManager.saveStatus;
+  FIDManager.saveStatus;
+
   GBackgroundTasks.stopAll;
   FThread.StopAndWait(40);
   FThread.Free;

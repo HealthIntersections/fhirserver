@@ -19,7 +19,7 @@ type
 
   { TAdminManager }
 
-  !TAdminManager = class abstract (TListManager<TFHIRServerConfigSection>)
+  TAdminManager = class abstract (TListManager<TFHIRServerConfigSection>)
   private
     FFile : TFHIRServerConfigFile;
     procedure SetFile(value : TFHIRServerConfigFile);
