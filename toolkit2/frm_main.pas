@@ -9,7 +9,9 @@ uses
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
   lclintf, ValEdit,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http,
+  IdOpenSSLLoader,
+
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl,
   fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
@@ -159,6 +161,7 @@ type
     MenuItem93: TMenuItem;
     MenuItem96: TMenuItem;
     MenuItem97: TMenuItem;
+    MenuItem98: TMenuItem;
     mnuApple: TMenuItem;
     MenuItem95: TMenuItem;
     N12: TMenuItem;
@@ -368,6 +371,7 @@ type
     procedure lvSearchDblClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
     procedure MenuItem60Click(Sender: TObject);
+    procedure MenuItem98Click(Sender: TObject);
     procedure mnuLVCopyAllClick(Sender: TObject);
     procedure mnuLVCopyClick(Sender: TObject);
     procedure mnuLVGoClick(Sender: TObject);
@@ -470,6 +474,11 @@ begin
   mnuApple.Visible := false;
   {$ENDIF}
   initialiseTZData(partnerFile('tzdata.tar.gz'));
+  {$IFDEF WINDOWS}
+
+  GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  {$ENDIF}
+  InitOpenSSL;
 
   GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
@@ -2049,6 +2058,11 @@ end;
 procedure TMainToolkitForm.MenuItem60Click(Sender: TObject);
 begin
   openFile('file:'+FIni.FileName);
+end;
+
+procedure TMainToolkitForm.MenuItem98Click(Sender: TObject);
+begin
+
 end;
 
 procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);

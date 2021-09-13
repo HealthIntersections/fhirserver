@@ -113,6 +113,7 @@ object PatientFrame: TPatientFrame
             Top = 24
             Width = 186
             Align = alClient
+            PopupMenu = pmImage
             OnPaint = pbCardPaint
           end
         end
@@ -167,5 +168,19 @@ object PatientFrame: TPatientFrame
         ResizeAnchor = akBottom
       end
     end
+  end
+  object pmImage: TPopupMenu
+    Left = 56
+    Top = 294
+    object mnuSaveQR: TMenuItem
+      Caption = '&Save Image'
+      OnClick = mnuSaveQRClick
+    end
+  end
+  object sd: TSavePictureDialog
+    Title = 'Save QR Code as'
+    DefaultExt = '.bmp'
+    Left = 94
+    Top = 296
   end
 end

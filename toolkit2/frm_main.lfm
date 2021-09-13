@@ -6791,6 +6791,11 @@ object MainToolkitForm: TMainToolkitForm
       Caption = 'Java&script'
       OnClick = NewFromFormatClick
     end
+    object MenuItem98: TMenuItem
+      Tag = 15
+      Caption = 'J&WT'
+      OnClick = NewFromFormatClick
+    end
     object MenuItem78: TMenuItem
       Tag = 12
       Caption = '&HTML'

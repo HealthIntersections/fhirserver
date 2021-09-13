@@ -413,6 +413,9 @@ type
 
 implementation
 
+procedure breakpoint;
+begin
+end;
 
 { TFhirNativeOperationEngineR4 }
 
@@ -430,6 +433,8 @@ var
 begin
   if entry.resource = nil then
     exit;
+  if entry.resource.fhirType = 'Immunization' then
+    breakpoint;
   refs := TFhirReferenceList.create;
   try
     listReferences(entry.resource as TFhirResource, refs);

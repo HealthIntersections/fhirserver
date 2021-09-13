@@ -1171,6 +1171,7 @@ begin
   else if (e is TFHIRResource) then
   else if (e is TFHIRContactDetail) then
   else if (e is TFHIRUsageContext) then
+  else if (e is TFHIRDosage) then
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then
@@ -1704,6 +1705,7 @@ end;
 procedure TFHIRNarrativeGenerator.renderQuantity(q: TFHIRQuantity; x: TFHIRXhtmlNode; showCodeDetails: boolean);
 var
   sp: TFHIRXhtmlNode;
+  s : String;
 begin
   if (q.comparator <> QuantityComparatorNull) then
     x.addText(q.comparatorElement.value);
@@ -1716,7 +1718,13 @@ begin
   begin
     sp := x.addTag('span');
     sp.setAttribute('style', 'background: LightGoldenRodYellow ');
-    sp.addText(' (Details: ' + describeSystem(q.system) + ' code ' + q.code + ' := "' + lookupCode(q.system, '', q.code) + '")');
+    try
+      s := lookupCode(q.system, '', q.code);
+    except
+      on e : Exception do
+        s := '(Error: '+e.message+')';
+    end;
+    sp.addText(' (Details: ' + describeSystem(q.system) + ' code ' + q.code + ' := "' + s + '")');
   end;
 end;
 

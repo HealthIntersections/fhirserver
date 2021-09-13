@@ -1,6 +1,6 @@
 program fhirtoolkit;
 
-{$mode objfpc}{$H+}
+{$I fhir.inc}
 
 uses
   {$IFDEF UNIX}
@@ -20,20 +20,29 @@ uses
   frm_server_settings, ftk_utilities, ftk_serverlist, ftk_constants,
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
   ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth, 
-ftk_terminology_service;
+  ftk_terminology_service, ftk_editor_jwt;
 
 {$R *.res}
+
+var
+  frm : TToolkitAboutForm;
 
 begin
   RequireDerivedFormResource:=True;
   Application.Title:='FHIRToolkit';
   Application.Scaled:=True;
   Application.Initialize;
-  Application.CreateForm(TMainToolkitForm, MainToolkitForm);
-  Application.CreateForm(TToolkitAboutForm, ToolkitAboutForm);
-  Application.CreateForm(TEditChangeReviewForm, EditChangeReviewForm);
-  Application.CreateForm(TServerSettingsForm, ServerSettingsForm);
-  Application.CreateForm(TOAuthForm, OAuthForm);
+
+  frm := TToolkitAboutForm.create(Application);
+  try
+    frm.Button1.Visible := false;
+    frm.Show;
+    frm.Update;
+    Application.CreateForm(TMainToolkitForm, MainToolkitForm);
+    frm.Close;
+  finally
+    frm.Free;
+  end;
   Application.Run;
 end.
 
