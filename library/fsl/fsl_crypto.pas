@@ -890,7 +890,7 @@ begin
 
   if obj.has('kty') then
   begin
-    Add(TJWK.create(obj))
+    Add(TJWK.create(obj.link))
   end
   else if obj.has('keys') then
   begin
@@ -935,7 +935,10 @@ begin
 
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
-  input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
+  if zip = 'DEF' then
+    input := BytesAdd(input, JWTBase64URL(DeflateRfc1951(TJSONWriter.writeObject(jwt.payload))))
+  else
+    input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
   case method of
     jwt_none: SetLength(sig, 0);
     jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
@@ -1220,7 +1223,6 @@ end;
 class function TJWTUtils.decodeJWT(token: string): TJWT;
 var
   header, payload, sig : String;
-  hb, pb : TBytes;
 begin
   result := TJWT.create;
   try
@@ -1235,15 +1237,14 @@ begin
     result.sig := sig;
 
     // 2. read the json
-    hb := JWTDeBase64URL(header);
-    pb := JWTDeBase64URL(payload);
-    result.header := TJSONParser.Parse(hb);
+    result.headerBytes := JWTDeBase64URL(header);
+    result.header := TJSONParser.Parse(result.headerBytes);
 
+    result.payloadBytes := JWTDeBase64URL(payload);
     if result.header['zip'] = 'DEF' then
-    begin
-      pb := InflateRfc1951(pb);
-    end;
-    result.payload := TJSONParser.Parse(pb);
+      result.payloadBytes := InflateRfc1951(result.payloadBytes);
+    result.payload := TJSONParser.Parse(result.payloadBytes);
+
     result.link;
   finally
     result.free;

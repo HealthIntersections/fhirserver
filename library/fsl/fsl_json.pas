@@ -539,9 +539,11 @@ type
  TJWT = class (TFslObject)
   private
     FHeader : TJsonObject;
+    FHeaderBytes: TBytes;
     FHeaderSource: String;
     FPayLoad : TJsonObject;
     FOriginalSource: String;
+    FPayloadBytes: TBytes;
     FPayloadSource: String;
     FSig: String;
     FValid: boolean;
@@ -627,7 +629,10 @@ type
 
     property originalSource : String read FOriginalSource write FOriginalSource;
     property headerSource : String read FHeaderSource write FHeaderSource;
+    property headerBytes : TBytes read FHeaderBytes write FHeaderBytes;
     property payloadSource : String read FPayloadSource write FPayloadSource;
+    property payloadBytes : TBytes read FPayloadBytes write FPayloadBytes;
+
     property sig : String read FSig write FSig;
 
     // the header is provided to get/set extra properties beyond those used in packing/unpacking.

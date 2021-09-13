@@ -84,32 +84,6 @@ implementation
 
 { THealthCardGenerator }
 
-//function THealthCardGenerator.buildPayload(bundle: TFHIRBundle; types : TCredentialTypeSet): String;
-//var
-//  json : TFHIRJsonComposer;
-//begin
-//  result := '{"iss":"'+FIssuerUrl+'",'+
-//     '"nbf":'+IntToStr(SecondsBetween(now, EncodeDate(1970, 1, 1)))+','+
-//     '"vc":{'+
-//      '"type":["https://smarthealth.cards#health-card"';
-//  if ctCovidCard in types then
-//    result := result + ',"https://smarthealth.cards#covid19"';
-//  if ctImmunizationCard in types then
-//    result := result + ',"https://smarthealth.cards#immunization"';
-//  if ctCovidCard in types then
-//    result := result + ',"https://smarthealth.cards#laboratory"';
-//  result := result + '],"credentialSubject":{'+
-//     '"fhirVersion":"4.0.1",'+
-//     '"fhirBundle":';
-//  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, THTTPLanguages.Create('en'));
-//  try
-//    result := result + json.Compose(bundle);
-//  finally
-//    json.Free;
-//  end;
-//  result := result + '}}}';
-//end;
-
 constructor THealthCardGenerator.Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
 begin
   inherited Create;
@@ -323,9 +297,10 @@ var
 begin
   result := false;
   if imm.occurrence is TFhirDateTime then
-    for c in imm.vaccineCode.codingList do
-      if isIncludedCoding(c) then
-        exit(true);
+    if imm.vaccineCode <> nil then
+      for c in imm.vaccineCode.codingList do
+        if isIncludedCoding(c) then
+          exit(true);
 end;
 
 function TVciImmunizationCardMaker.makeBundle: TFHIRBundle;
@@ -395,7 +370,7 @@ begin
       result.manufacturer.identifier.value := imm.manufacturer.identifier.value;
     end;
     result.lotNumber := imm.lotNumber;
-    result.isSubpotent := imm.isSubpotent;
+    result.isSubpotentElement := imm.isSubpotentElement.link;
     result.Link;
   finally
     result.Free;

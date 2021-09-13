@@ -6,12 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Graphics,
-  DelphiZXingQRCode,
-  fsl_utilities, fsl_json, fsl_crypto,
-  fhir_objects, fhir_parser, fhir_healthcard, fhir_common,
-  fui_lcl_managers,
-  ftk_constants, HtmlView,
-  ftk_frame_resource;
+  Menus, ExtDlgs, DelphiZXingQRCode, fsl_utilities, fsl_json, fsl_crypto,
+  fhir_objects, fhir_parser, fhir_healthcard, fhir_common, fui_lcl_managers,
+  ftk_constants, HtmlView, ftk_frame_resource;
 
 type
   TFrame = TResourceDesignerFrame;
@@ -43,6 +40,7 @@ type
     btnFetchHealthCards: TButton;
     htmlCard: THtmlViewer;
     lvCards: TListView;
+    mnuSaveQR: TMenuItem;
     PageControl1: TPageControl;
     pbCard: TPaintBox;
     Panel1: TPanel;
@@ -51,10 +49,13 @@ type
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
+    pmImage: TPopupMenu;
+    sd: TSavePictureDialog;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     procedure btnFetchHealthCardsClick(Sender: TObject);
+    procedure mnuSaveQRClick(Sender: TObject);
     procedure Panel4Resize(Sender: TObject);
     procedure pbCardPaint(Sender: TObject);
   private
@@ -238,6 +239,22 @@ begin
   end;
 end;
 
+procedure TPatientFrame.mnuSaveQRClick(Sender: TObject);
+var
+  bmp : TBitmap;
+begin
+  if sd.execute then
+  begin
+    bmp := TBitmap.create;
+    try
+      makeQRCode(bmp, qrNumeric, FCardManager.Focus.qrSource);
+      bmp.SaveToFile(sd.filename);
+    finally
+      bmp.free;
+    end;
+  end;
+end;
+
 procedure TPatientFrame.Panel4Resize(Sender: TObject);
 begin
 end;
@@ -270,10 +287,12 @@ begin
   if FCardManager.Focus = nil then
   begin
     htmlCard.Clear;
+    mnuSaveQR.Enabled := false;
   end
   else
   begin
     htmlCard.LoadFromString(FCardManager.Focus.htmlReport(context.TerminologyService));
+    mnuSaveQR.Enabled := true;
   end;
   pbCard.Invalidate;
 end;

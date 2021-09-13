@@ -3732,6 +3732,7 @@ var
   be, ne : TFHIRBundleEntryW;
   entry : TFHIRTransactionEntry;
   lpct : integer;
+  base : String;
   procedure log(s : String);
   begin
     if context.Logging <> ollNone then
@@ -3795,8 +3796,11 @@ begin
               be := bl[i];
               entry := be.Tag as TFHIRTransactionEntry;
               progress(10+trunc(100 * (i / (bl.count * 10))));
+              base := request.baseURL;
+              if (be.resource <> nil) and be.url.EndsWith('/'+be.resource.fhirType+'/'+be.resource.id) then
+                base := be.url.Substring(0, be.url.Length-('/'+be.resource.fhirType+'/'+be.resource.id).length);
               if not entry.ignore and not entry.deleted then
-                adjustReferences(request, response, be.Tag as TFHIRTransactionEntry, request.baseUrl, be, ids);
+                adjustReferences(request, response, be.Tag as TFHIRTransactionEntry, base, be, ids);
             end;
 
             // thrid pass: commit resources

@@ -783,28 +783,32 @@ begin
   end;
 
   // ok, if there's a ucum code:
-  if (value.code <> '') and (value.system = 'http://unitsofmeasure.org') and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
-  begin
-    specified := TUcumPair.create;
-    try
-      specified.Value := TFslDecimal.ValueOf(value.value);
-      specified.UnitCode := value.code;
-      canonical := FTerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(specified);
+  try
+    if (value.code <> '') and (value.system = 'http://unitsofmeasure.org') and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
+    begin
+      specified := TUcumPair.create;
       try
-        GetBoundaries(canonical.Value.AsString, value.comparator, v1, v2);
-        if (length(v1) > INDEX_ENTRY_LENGTH) then
-          raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        if (length(v2) > INDEX_ENTRY_LENGTH) then
-          raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
-          recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
-        FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        specified.Value := TFslDecimal.ValueOf(value.value);
+        specified.UnitCode := value.code;
+        canonical := FTerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(specified);
+        try
+          GetBoundaries(canonical.Value.AsString, value.comparator, v1, v2);
+          if (length(v1) > INDEX_ENTRY_LENGTH) then
+            raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+          if (length(v2) > INDEX_ENTRY_LENGTH) then
+            raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+          if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
+            recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
+          FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        finally
+          canonical.free;
+        end;
       finally
-        canonical.free;
+        specified.free;
       end;
-    finally
-      specified.free;
     end;
+  Except
+    // nothing; we just don't index by invalid UCUM codes
   end;
 end;
 

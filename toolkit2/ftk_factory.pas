@@ -8,12 +8,12 @@ uses
   SysUtils, Classes,
   Dialogs,
 
-  fsl_base, fsl_utilities, fsl_xml, fsl_json,
+  fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_crypto,
   fhir_objects,
 
   ftk_context, ftk_store,
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
-  ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir,
+  ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir, ftk_editor_jwt,
 
   ftk_worker_server;
 
@@ -129,9 +129,10 @@ end;
 
 function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes): TToolkitEditSession;
 var
-  ext : String;
+  ext, s : String;
   xml : TMXmlDocument;
   json : TJsonObject;
+  jwt : TJWT;
 begin
   result := nil;
   if mimeType <> '' Then
@@ -185,7 +186,15 @@ begin
     else if (ext = '.hl7') or (ext = '.msg') then
       result := TToolkitEditSession.create(sekv2)
     else if (ext = '.txt') then
-      result := TToolkitEditSession.create(sekText)
+    begin
+      s := TEncoding.ANSI.GetString(bytes);
+      if (s.StartsWith('shc:/')) then
+        result :=  TToolkitEditSession.create(sekJWT)
+      else
+        result := TToolkitEditSession.create(sekText)
+    end
+    else if (ext = 'jwt') or (ext = '.jws') then
+      result := TToolkitEditSession.create(sekJWT)
     else if (ext = '.xml') then
     begin
       try
@@ -236,6 +245,18 @@ begin
       end;
     except
     end;
+    s := TEncoding.ANSI.GetString(bytes);
+    if (s.StartsWith('shc:/')) then
+      exit(TToolkitEditSession.create(sekJWT));
+    try
+      jwt := TJWTUtils.decodeJWT(s);
+      try
+        exit(TToolkitEditSession.create(sekJWT));
+      finally
+        jwt.free;
+      end;
+    except
+    end;
     ShowMessage('The file '+filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
   end;
 end;
@@ -256,6 +277,7 @@ begin
   sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
   sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
   sekServer : result := TServerWorker.create(FContext{.link}, session, store.link);
+  sekJWT : result := TJWTEditor.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;
