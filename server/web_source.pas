@@ -44,6 +44,7 @@ type
     function getSource(filename : String) : String; virtual; abstract;
     function exists(filename : String) : boolean; virtual; abstract;
     function asStream(filename : String) : TStream; virtual; abstract;
+    function asBytes(filename : String) : TBytes; virtual; abstract;
   end;
 
   TFHIRWebServerSourceFolderProvider = class (TFHIRWebServerSourceProvider)
@@ -55,6 +56,7 @@ type
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;
     function asStream(filename : String) : TStream; override;
+    function asBytes(filename : String) : TBytes; override;
   end;
 
   TFHIRWebServerSourceZipProvider = class (TFHIRWebServerSourceProvider)
@@ -67,6 +69,7 @@ type
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;
     function asStream(filename : String) : TStream; override;
+    function asBytes(filename : String) : TBytes; override;
   end;
 
 implementation
@@ -90,6 +93,14 @@ begin
 end;
 
 { TFHIRWebServerSourceFolderProvider }
+
+function TFHIRWebServerSourceFolderProvider.asBytes(filename: String): TBytes;
+var
+  fn : String;
+begin
+  fn := path([FSourcePath, filename]);
+  result := FileToBytes(fn);
+end;
 
 function TFHIRWebServerSourceFolderProvider.asStream(filename: String): TStream;
 var
@@ -125,6 +136,15 @@ begin
 end;
 
 { TFHIRWebServerSourceZipProvider }
+
+function TFHIRWebServerSourceZipProvider.asBytes(filename: String): TBytes;
+var
+  src : TFslBuffer;
+begin
+  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
+    raise EIOException.create('Unable to find '+filename);
+  result := src.AsBytes;
+end;
 
 function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
 var

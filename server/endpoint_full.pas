@@ -348,7 +348,8 @@ procedure TFhirServerSubscriptionThread.Finalise;
 begin
   Logging.log('Close TFhirServerSubscriptionThread');
   try
-    FServer.FSubscriptionThread := nil;
+    if not FServer.FStopping then
+      FServer.FSubscriptionThread := nil;
   except
   end;
   {$IFNDEF NO_JS}
@@ -384,7 +385,8 @@ end;
 procedure TFhirServerEmailThread.Finalise;
 begin
   try
-    FServer.FEmailThread := nil;
+    if not FServer.FStopping then
+      FServer.FEmailThread := nil;
   except
   end;
   {$IFNDEF NO_JS}
