@@ -1557,12 +1557,35 @@ Const
 
 
 type
+
+  { TFslHtmlBuilder }
+
   TFslHtmlBuilder = class (TFslStringBuilder)
   private
   public
+    procedure text(s : String);
+    procedure start(s : String);
+    procedure finish(s : String);
   end;
 
 Implementation
+
+{ TFslHtmlBuilder }
+
+procedure TFslHtmlBuilder.text(s: String);
+begin
+  append(EncodeXML(s));
+end;
+
+procedure TFslHtmlBuilder.start(s: String);
+begin
+  append('<'+s+'>');
+end;
+
+procedure TFslHtmlBuilder.finish(s: String);
+begin
+  append('</'+s+'>');
+end;
 
 
 Constructor TFslHTMLParser.Create;

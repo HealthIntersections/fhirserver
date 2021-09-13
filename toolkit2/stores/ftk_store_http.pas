@@ -24,6 +24,7 @@ type
 
     function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
+    function CurrencyCheckFrequency : integer; override;
     function load(address : String) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
@@ -84,6 +85,11 @@ end;
 function THTTPStorageService.CheckTimes: boolean;
 begin
   result := true;
+end;
+
+function THTTPStorageService.CurrencyCheckFrequency: integer;
+begin
+  result := 5 * 60;
 end;
 
 function THTTPStorageService.load(address: String): TLoadedBytes;

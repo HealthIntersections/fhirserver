@@ -17,6 +17,7 @@ type
   public
     function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
+    function CurrencyCheckFrequency : integer; override;
     function load(address : String) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
@@ -39,6 +40,11 @@ end;
 function TFileStorageService.CheckTimes: boolean;
 begin
   result := true;
+end;
+
+function TFileStorageService.CurrencyCheckFrequency: integer;
+begin
+  result := 1;
 end;
 
 function TFileStorageService.load(address: String): TLoadedBytes;

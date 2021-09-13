@@ -33,6 +33,7 @@ type
 
      function schemes : TArray<String>; virtual; abstract;
      function CheckTimes : boolean; virtual; abstract;
+     function CurrencyCheckFrequency : integer; virtual; abstract; // number of seconds
      function openDlg(out newName : String) : boolean; virtual; abstract;
      function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; virtual; abstract;
 

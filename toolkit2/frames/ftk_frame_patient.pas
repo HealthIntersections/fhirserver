@@ -97,15 +97,18 @@ var
   p, pp : TFhirParametersParameterW;
   utils : THealthcareCardUtilities;
 begin
-  utils := THealthcareCardUtilities.create;
-  try
-    utils.JWKList := TJWKList.create;
-    utils.Factory := FFrame.sync.Factory.link;
-    for p in FFrame.FCards.parameterList do
-      if p.name = 'verifiableCredential' then
-        Data.add(utils.verify(p.valueString));
-  finally
-    utils.free;
+  if FFrame.FCards <> nil then
+  begin
+    utils := THealthcareCardUtilities.create;
+    try
+      utils.JWKList := TJWKList.create;
+      utils.Factory := FFrame.sync.Factory.link;
+      for p in FFrame.FCards.parameterList do
+        if p.name = 'verifiableCredential' then
+          Data.add(utils.verify(p.valueString));
+    finally
+      utils.free;
+    end;
   end;
 end;
 
@@ -151,7 +154,7 @@ end;
 
 function THealthcardManager.executeItem(item: THealthcareCard; mode: String): boolean;
 begin
-  Result := false;
+  FFrame.context.OnOpenResourceObj(self, item.bundle);
 end;
 
 { TPatientFrame }
@@ -198,24 +201,37 @@ var
 begin
   cursor := crHourGlass;
   try
-    p := sync.Factory.makeParameters;
+    pnlHealthcardsOutome.caption := '  Fetching Healthcare Cards';
+    Application.ProcessMessages;
     try
-      p.addParam('credentialType', sync.Factory.makeUri('https://smarthealth.cards#health-card'));
-      t := GetTickCount64;
-      r := client.operationV('Patient', FPatient.id, 'health-cards-issue', p.Resource);
-      try
-        FCards := sync.Factory.wrapParams(r.link);
-      finally
-        r.free;
-      end;
-      t := GetTickCount64 - t;
+      FCards.Free;
+      FCards := nil;
       FCardManager.doLoad;
-      s := '  Health Cards: '+inttostr(FCardManager.Data.count)+' found';
-      s := s + ' as of '+TFslDateTime.makeLocal.toXML+' (local)';
-      s := s + ' ('+inttostr(t)+'ms)';
-      pnlHealthcardsOutome.caption := s;
-    finally
-      p.free;
+      p := sync.Factory.makeParameters;
+      try
+        p.addParam('credentialType', sync.Factory.makeUri('https://smarthealth.cards#health-card'));
+        t := GetTickCount64;
+        r := client.operationV('Patient', FPatient.id, 'health-cards-issue', p.Resource);
+        try
+          FCards := sync.Factory.wrapParams(r.link);
+        finally
+          r.free;
+        end;
+        t := GetTickCount64 - t;
+        FCardManager.doLoad;
+        s := '  Health Cards: '+inttostr(FCardManager.Data.count)+' found';
+        s := s + ' as of '+TFslDateTime.makeLocal.toXML+' (local)';
+        s := s + ' ('+inttostr(t)+'ms)';
+        pnlHealthcardsOutome.caption := s;
+      finally
+        p.free;
+      end;
+    except
+      on e : Exception do
+      begin
+        pnlHealthcardsOutome.caption := '  Error: '+e.message;
+        raise;
+      end;
     end;
   finally
     Cursor := crDefault;
@@ -257,7 +273,7 @@ begin
   end
   else
   begin
-    htmlCard.LoadFromString(FCardManager.Focus.htmlReport);
+    htmlCard.LoadFromString(FCardManager.Focus.htmlReport(context.TerminologyService));
   end;
   pbCard.Invalidate;
 end;

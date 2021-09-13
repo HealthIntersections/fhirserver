@@ -770,6 +770,15 @@ type
     class function fromParams(pm : THTTPParameters) : TFHIRSystemTuple;
   end;
 
+  { TFHIRTerminologyService }
+
+  TFHIRTerminologyService = class abstract (TFslObject)
+  private
+  public
+    function lookupCode(system_, code : String) : String; virtual; abstract;
+  end;
+
+
   TCredentialType = (ctUnknown, ctHealthCard, ctCovidCard, ctImmunizationCard, ctLabCard);
   TCredentialTypeSet = set of TCredentialType;
 
@@ -809,7 +818,7 @@ type
     function cardTypesSummary : String;
     procedure makeSummary; virtual; abstract;
 
-    function htmlReport : String; virtual; abstract;
+    function htmlReport(tx : TFHIRTerminologyService) : String; virtual; abstract;
 
     function qrSource : String;
 
@@ -2785,6 +2794,7 @@ begin
     b.free;
   end;
 end;
+
 
 initialization
   GMessages := nil;
