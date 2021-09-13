@@ -69,8 +69,8 @@ implementation
 
 constructor TFHIREditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
-  inherited Create(context, session, store);
   FFormat := TFHIRFormat(ord(StringArrayIndexOf(CODES_TFHIRFormat, session.info.Values['Format'])));
+  inherited Create(context, session, store);
   FFactory := context.factory(fhirVersionRelease4);
 end;
 

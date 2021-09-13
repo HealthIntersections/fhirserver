@@ -19,14 +19,22 @@ type
     btnEditorFont: TButton;
     btnLogFont: TButton;
     btnViewFont: TButton;
+    btnClearCache: TButton;
     Button6: TButton;
     chkSideBySide: TCheckBox;
     dlgFont: TFontDialog;
+    edtCache: TEdit;
+    edtTxServer: TEdit;
+    edtTxLog: TEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
+    GroupBox4: TGroupBox;
+    Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label5: TLabel;
+    Label7: TLabel;
     lblEditorFont: TLabel;
     Label4: TLabel;
     lblDiff: TLabel;
@@ -36,6 +44,7 @@ type
     dlgExe: TOpenDialog;
     Panel1: TPanel;
     Panel2: TPanel;
+    procedure btnClearCacheClick(Sender: TObject);
     procedure btnEditorFontClick(Sender: TObject);
     procedure btnLogFontClick(Sender: TObject);
     procedure btnViewFontClick(Sender: TObject);
@@ -91,6 +100,11 @@ begin
     lblEditorFont.Font.assign(dlgFont.Font);
     lblEditorFont.caption := describeFont(lblEditorFont.Font);
   end;
+end;
+
+procedure TToolkitSettingsForm.btnClearCacheClick(Sender: TObject);
+begin
+  DeleteFile(edtCache.text);
 end;
 
 procedure TToolkitSettingsForm.btnLogFontClick(Sender: TObject);

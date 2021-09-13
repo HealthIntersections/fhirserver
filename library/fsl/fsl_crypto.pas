@@ -1199,26 +1199,21 @@ end;
 
 function DeflateRfc1951(b : TBytes) : TBytes;
 var
-  b1, b2 : TBytesStream;
+  s : TBytesStream;
   z : TZCompressionStream;
 begin
-  b1 := TBytesStream.create(b);
+  s := TBytesStream.create();
   try
-    z := TZCompressionStream.create(b1);
+    z := TZCompressionStream.create(s, zcMax, -15);
     try
-      b2  := TBytesStream.create;
-      try
-        b2.CopyFrom(z, z.Size);
-        result := b2.Bytes;
-        setLength(result, b2.size);
-      finally
-        b2.free;
-      end;
+      z.Write(b, length(b));
     finally
       z.free;
     end;
+    result := s.Bytes;
+    setLength(result, s.size);
   finally
-    b1.free;
+    s.free;
   end;
 end;
 
@@ -1296,9 +1291,13 @@ begin
 
   while Length(b1) < 32 do
     insert([0], b1, 0);
+  while (Length(b1) > 32) do
+    delete(b1, 0, 1);
 
   while Length(b2) < 32 do
     insert([0], b2, 0);
+  while (Length(b2) > 32) do
+    delete(b2, 0, 1);
 
   result := b1+b2;
 end;
@@ -1306,17 +1305,45 @@ end;
 function BaseToDER(b : TBytes) : TBytes;
 var
   bb : TFslBytesBuilder;
+  t1, t2 : TBytes;
+  l : byte;
 begin
+  t1 := copy(b, 0, 32);
+  t2 := copy(b, 32, 32);
+  l := $44;
+  if t1[0] > $7F then
+    inc(l);
+  if t2[0] > $7F then
+    inc(l);
+
   bb := TFslBytesBuilder.Create;
   try
     bb.Append($30); // sequence
-    bb.Append($44); // length of sequence
+    bb.Append(l); // length of sequence
     bb.Append($02); // integer
-    bb.Append($20); // integer length
-    bb.Append(copy(b, 0, 32));
+    if t1[0] > $7F then
+    begin
+      bb.Append($21); // integer length
+      bb.Append($0); // padding zero
+      bb.Append(t1);
+    end
+    else
+    begin
+      bb.Append($20); // integer length
+      bb.Append(t1);
+    end;
     bb.Append($02); // integer
-    bb.Append($20); // integer length
-    bb.Append(copy(b, 32, 32));
+    if t2[0] > $7F then
+    begin
+      bb.Append($21); // integer length
+      bb.Append($0); // padding zero
+      bb.Append(t2);
+    end
+    else
+    begin
+      bb.Append($20); // integer length
+      bb.Append(t2);
+    end;
     result := bb.AsBytes;
   finally
     bb.free;
@@ -1517,6 +1544,7 @@ begin
         if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
           exit;
         sig := baseToDER(sig);
+        BytesToFile(sig, 'c:\temp\sig.bin');
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
         if not checkRes(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')', result) then
           exit;

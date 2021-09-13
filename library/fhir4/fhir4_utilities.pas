@@ -802,11 +802,11 @@ type
     function summariseImmunization(imm : TFHIRImmunization) : String;
     function summariseObservation(obs : TFHIRObservation) : String;
     procedure htmlPatient(b : TFslHtmlBuilder; pat : TFHIRPatient);
-    procedure htmlImmunization(b : TFslHtmlBuilder; imm : TFHIRImmunization);
-    procedure htmlObservation(b : TFslHtmlBuilder; obs : TFHIRObservation);
+    procedure htmlImmunization(b : TFslHtmlBuilder; imm : TFHIRImmunization; tx : TFHIRTerminologyService);
+    procedure htmlObservation(b : TFslHtmlBuilder; obs : TFHIRObservation; tx : TFHIRTerminologyService);
   public
     procedure makeSummary; override;
-    function htmlReport : String; override;
+    function htmlReport(tx : TFHIRTerminologyService) : String; override;
   end;
 
 function summarise(coding : TFHIRCoding):String; overload;
@@ -836,7 +836,9 @@ function gen(t : TFhirType):String; overload;
 procedure genHtml(b : TFslHtmlBuilder; name : TFhirHumanName); overload;
 procedure genHtml(b : TFslHtmlBuilder; id : TFhirIdentifier); overload;
 procedure genHtml(b : TFslHtmlBuilder; p : TFhirPeriod); overload;
-procedure genHtml(b : TFslHtmlBuilder; c : TFhirCoding); overload;
+procedure genHtml(b : TFslHtmlBuilder; q : TFhirQuantity); overload;
+procedure genHtml(b : TFslHtmlBuilder; c : TFhirCoding; tx : TFHIRTerminologyService); overload;
+procedure genHtml(b : TFslHtmlBuilder; c : TFhirCodeableConcept; tx : TFHIRTerminologyService); overload;
 
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
@@ -6685,7 +6687,9 @@ begin
   end;
   b.append('</td></tr>');
 
-  b.append('<tr><td>Birth Date</td><td>'+pat.birthDate.toString+'</td></tr>');
+  b.append('<tr><td>Birth Date</td><td>');
+  b.text(pat.birthDate.toString);
+  b.append('</td></tr>');
 
   if pat.hasIdentifierList then
   begin
@@ -6700,7 +6704,7 @@ begin
   b.append('</table>');
 end;
 
-procedure TFHIRHealthcareCardR4.htmlImmunization(b : TFslHtmlBuilder; imm: TFHIRImmunization);
+procedure TFHIRHealthcareCardR4.htmlImmunization(b : TFslHtmlBuilder; imm: TFHIRImmunization; tx : TFHIRTerminologyService);
 var
   i : integer;
 begin
@@ -6710,7 +6714,7 @@ begin
   for i := 0 to imm.vaccineCode.codingList.count - 1 do
   begin
     if (i > 0) then b.append('<br/>');
-    genHtml(b, imm.vaccineCode.codingList[i]);
+    genHtml(b, imm.vaccineCode.codingList[i], tx);
   end;
   b.append('</td></tr>');
 
@@ -6723,17 +6727,95 @@ begin
     b.append('</td></tr>');
   end;
   if (imm.lotNumber <> '') then
-    b.append('<tr><td>Lot Number</td><td>'+imm.lotNumber+'</td></tr>');
-  if (imm.hasPerformerList) and (imm.performerList[1].actor <> nil) and (imm.performerList[1].actor.display <> '') then
-    b.append('<tr><td>Performer</td><td>'+imm.performerList[1].actor.display+'</td></tr>');
+  begin
+    b.append('<tr><td>Lot Number</td><td>');
+    b.text(imm.lotNumber);
+    b.append('</td></tr>');
+  end;
+  if (imm.hasPerformerList) and (imm.performerList[0].actor <> nil) and (imm.performerList[0].actor.display <> '') then
+  begin
+    b.append('<tr><td>Performer</td><td>');
+    b.text(imm.performerList[0].actor.display);
+    b.append('</td></tr>');
+  end;
   if (imm.isSubpotentElement <> nil) then
     b.append('<tr><td>Sub Potent</td><td>'+BooleanToString(imm.isSubpotent)+'</td></tr>');
   b.append('</table>');
 end;
 
-procedure TFHIRHealthcareCardR4.htmlObservation(b : TFslHtmlBuilder; obs: TFHIRObservation);
+procedure TFHIRHealthcareCardR4.htmlObservation(b : TFslHtmlBuilder; obs: TFHIRObservation; tx : TFHIRTerminologyService);
+var
+  i : integer;
+  vc : TFHIRCodeableConcept;
+  vq : TFHIRQuantity;
 begin
-  b.append('<p>Observation details</p>');
+  b.append('<table>');
+
+  b.append('<tr><td>'+StringPlural('Code', obs.code.codingList.count)+'</td><td>');
+  for i := 0 to obs.code.codingList.count - 1 do
+  begin
+    if (i > 0) then b.append('<br/>');
+    genHtml(b, obs.code.codingList[i], tx);
+  end;
+  b.append('</td></tr>');
+
+  if (obs.value is TFHIRCodeableConcept) then
+  begin
+    vc := obs.value as TFHIRCodeableConcept;
+    b.append('<tr><td>'+StringPlural('Value Code', vc.codingList.count)+'</td><td>');
+    for i := 0 to vc.codingList.count - 1 do
+    begin
+      if (i > 0) then b.append('<br/>');
+      genHtml(b, vc.codingList[i], tx);
+    end;
+    b.append('</td></tr>');
+  end
+  else  if (obs.value is TFHIRQuantity) then
+  begin
+    b.append('<tr><td>Value</td><td>');
+    genHtml(b, obs.value as TFHIRQuantity);
+    b.append('</td></tr>');
+  end
+  else
+  begin
+    b.append('<tr><td>Value</td><td>');
+    b.text(obs.value.primitiveValue);
+    b.append('</td></tr>');
+  end;
+
+  b.append('<tr><td>Status</td><td>');
+  b.text(CODES_TFhirObservationStatusEnum[obs.status]);
+  b.append('</td></tr>');
+
+  b.append('<tr><td>Date</td><td>');
+  b.text((obs.effective as TFhirDateTime).toString);
+  b.append('</td></tr>');
+
+  if (obs.hasReferenceRangeList) then
+  begin
+    b.append('<tr><td>'+StringPlural('Ref. Range', obs.ReferenceRangeList.count)+'</td><td>');
+    for i := 0 to obs.ReferenceRangeList.count - 1 do
+    begin
+      if (i > 0) then b.append('<br/>');
+      if obs.referenceRangeList[i].type_ <> nil then
+      begin
+        genHtml(b, obs.referenceRangeList[i].type_, tx);
+        b.text(':');
+      end;
+      if (obs.referenceRangeList[i].low <> nil) or (obs.referenceRangeList[i].high <> nil) then
+      begin
+        genHtml(b, obs.referenceRangeList[i].low);
+        b.text(' - ');
+        genHtml(b, obs.referenceRangeList[i].high);
+      end
+      else if obs.referenceRangeList[i].text <> '' then
+      begin
+        b.text(obs.referenceRangeList[i].text);
+      end;
+    end;
+    b.append('</td></tr>');
+  end;
+  b.append('</table>');
 end;
 
 procedure TFHIRHealthcareCardR4.makeSummary;
@@ -6756,14 +6838,14 @@ begin
       if b.entryList[i].resource is TFHIRImmunization then
         FSummary := FSummary + summariseImmunization(b.entryList[i].resource as TFHIRImmunization)
       else if b.entryList[i].resource is TFHIRObservation then
-       FSummary := FSummary + summariseObservation(b.entryList[0].resource as TFHIRObservation)
+       FSummary := FSummary + summariseObservation(b.entryList[i].resource as TFHIRObservation)
       else
        FSummary := FSummary + '?? Unknown';
     end;
   end;
 end;
 
-function TFHIRHealthcareCardR4.htmlReport: String;
+function TFHIRHealthcareCardR4.htmlReport(tx : TFHIRTerminologyService): String;
 var
   b : TFhirBundle;
   i : integer;
@@ -6773,6 +6855,8 @@ begin
   bldr := TFslHtmlBuilder.create;
   try
     bldr.append('<html><body style="font-family: sans-serif">');
+    if not isValid then
+      bldr.append('<p style="font-color: maroon">This card is not valid: '+EncodeXML(validationMessage)+'</p>');
     for i := 0 to b.entryList.count - 1 do
     begin
       if b.entryList[i].resource = nil then
@@ -6783,9 +6867,9 @@ begin
         if b.entryList[i].resource is TFHIRPatient then
           htmlPatient(bldr, b.entryList[i].resource as TFHIRPatient)
         else if b.entryList[i].resource is TFHIRImmunization then
-          htmlImmunization(bldr, b.entryList[i].resource as TFHIRImmunization)
+          htmlImmunization(bldr, b.entryList[i].resource as TFHIRImmunization, tx)
         else if b.entryList[i].resource is TFHIRObservation then
-          htmlObservation(bldr, b.entryList[0].resource as TFHIRObservation)
+          htmlObservation(bldr, b.entryList[i].resource as TFHIRObservation, tx)
         else
          bldr.append('<p>Not supported</p>');
       end;
@@ -6801,38 +6885,40 @@ procedure genHtml(b : TFslHtmlBuilder; name : TFhirHumanName);
 var
   i : integer;
 begin
+  if (name = nil) then
+    exit;
   for i := 0 to name.prefixList.count - 1 do
   begin
-    b.Append(name.prefixList[i].value);
-    b.Append(' ');
+    b.text(name.prefixList[i].value);
+    b.text(' ');
   end;
-  b.Append('<b>');
+  b.start('b');
   for i := 0 to name.givenList.count - 1 do
   begin
-    b.Append(name.givenList[i].value);
-    b.Append(' ');
+    b.text(name.givenList[i].value);
+    b.text(' ');
   end;
   b.Append(name.family);
-  b.Append('</b>');
+  b.finish('b');
   for i := 0 to name.suffixList.count - 1 do
   begin
-    b.Append(' ');
-    b.Append(name.suffixList[i].value);
+    b.text(' ');
+    b.text(name.suffixList[i].value);
   end;
   if (name.use <> NameUseNull) or (name.period <> nil) then
   begin
-    b.Append(' ');
-    b.Append('(');
+    b.text(' ');
+    b.text('(');
     if (name.use <> NameUseNull) then
     begin
-      b.Append('use = ');
-      b.Append(CODES_TFhirNameUseEnum[name.use]);
+      b.text('use = ');
+      b.text(CODES_TFhirNameUseEnum[name.use]);
     end;
     if (name.period <> nil) then
     begin
       if (name.use <> NameUseNull) then
-        b.Append(', ');
-      b.Append('period = ');
+        b.text(', ');
+      b.text('period = ');
       genHtml(b, name.period);
     end;
     b.Append(')');
@@ -6841,6 +6927,8 @@ end;
 
 procedure genHtml(b : TFslHtmlBuilder; id : TFhirIdentifier);
 begin
+  if (id = nil) then
+    exit;
   b.append(id.value);
   if (id.system <> '') then
     b.append(' in '+id.system);
@@ -6848,12 +6936,62 @@ end;
 
 procedure genHtml(b : TFslHtmlBuilder; p : TFhirPeriod); overload;
 begin
+  if (p = nil) then
+    exit;
   b.append(gen(p));
 end;
 
-procedure genHtml(b : TFslHtmlBuilder; c : TFhirCoding); overload;
+procedure genHtml(b : TFslHtmlBuilder; c : TFhirCoding; tx : TFHIRTerminologyService); overload;
+var
+  d : String;
 begin
-  b.append(gen(c));
+  if (c = nil) then
+    exit;
+  if c.display = '' then
+    d := tx.lookupCode(c.system, c.code)
+  else
+    d := c.display;
+
+  if (d = '') then
+  begin
+    b.text(csName(c.system));
+    b.text('#');
+    b.text(c.code);
+  end
+  else
+  begin
+    b.text(d);
+    b.text( '(');
+    b.text(csName(c.system));
+    b.text('#');
+    b.text(c.code);
+    b.text(')');
+  end;
+end;
+
+procedure genHtml(b: TFslHtmlBuilder; c: TFhirCodeableConcept; tx: TFHIRTerminologyService);
+begin
+  if (c.text <> '') then
+    b.text(c.text)
+  else if c.hasCoding then
+    genHtml(b, c.codingList[0], tx)
+  else
+    b.text('??');
+end;
+
+procedure genHtml(b : TFslHtmlBuilder; q : TFhirQuantity); overload;
+begin
+  if (q = nil) then
+    exit;
+  if (q.comparator <> QuantityComparatorNull) then
+    b.text(CODES_TFhirQuantityComparatorEnum[q.comparator]);
+  b.text(q.value+' '+q.unit_);
+  if (q.code <> '') then
+  begin
+    b.append(' (');
+    b.text(csName(q.system)+'#'+q.code);
+    b.append(')');
+  end;
 end;
 
 end.

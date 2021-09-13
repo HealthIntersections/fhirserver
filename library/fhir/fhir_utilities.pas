@@ -321,7 +321,6 @@ begin
     result := StringArrayExistsSensitive(props, name);
 end;
 
-
 { TResourceWithReference }
 
 constructor TResourceWithReference.Create(reference: String; resource: TFHIRResourceV);

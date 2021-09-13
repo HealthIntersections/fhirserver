@@ -90,7 +90,9 @@ type
     FInfo: TStringList;
     FKind: TSourceEditorKind;
     FNeedsSaving: boolean;
+    FNextCurrencyCheck: TDateTime;
     FTimestamp: TDateTime;
+    procedure SetCaption(AValue: String);
   public
     constructor Create; override;
     constructor Create(kind : TSourceEditorKind); overload;
@@ -101,13 +103,14 @@ type
     property Guid : String read FGuid write FGuid;
     property Address : String read FAddress write FAddress;
     function hasAddress : boolean;
-    property Caption : String read FCaption write FCaption;
+    property Caption : String read FCaption write SetCaption;
     property kind : TSourceEditorKind read FKind write FKind;
     property Encoding : TSourceEncoding read FEncoding write FEncoding;
     property EndOfLines : TSourceLineMarker read FEndOfLines write FEndOfLines;
     property HasBOM : boolean read FHasBOM write FHasBOM;
     property NeedsSaving : boolean read FNeedsSaving write FNeedsSaving;
     property Timestamp : TDateTime read FTimestamp write FTimestamp;
+    property nextCurrencyCheck : TDateTime read FNextCurrencyCheck write FNextCurrencyCheck;
 
     property Info : TStringList read FInfo;
   end;
@@ -207,7 +210,9 @@ type
 
   TLocateEvent = procedure(sender : TObject; x, y: integer; var point : TPoint) of Object;
   TFetchServerEvent = function(sender : TObject; name : String) : TFHIRServerEntry of Object;
-  TOpenResourceEvent = procedure(sender : TObject; url : String) of Object;
+  TOpenResourceUrlEvent = procedure(sender : TObject; url : String) of Object;
+  TOpenResourceObjEvent = procedure(sender : TObject; obj : TFHIRResourceV) of Object;
+  TOpenResourceSrcEvent = procedure(sender : TObject; src : TBytes; format : TFHIRFormat; version : TFHIRVersion) of Object;
   TConnectToServerEvent = procedure (sender : TObject; server : TFHIRServerEntry) of object;
 
   { TToolkitMessagesView }
@@ -265,16 +270,20 @@ type
     FEditorSessions : TFslList<TToolkitEditSession>;
     FEditors : TFslList<TToolkitEditor>;
     FFocus: TToolkitEditor;
-    FOnOpenResource: TOpenResourceEvent;
+    FOnOpenResourceUrl: TOpenResourceUrlEvent;
+    FOnOpenResourceObj: TOpenResourceObjEvent;
+    FOnOpenResourceSrc: TOpenResourceSrcEvent;
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
+    FTerminologyService: TFHIRTerminologyService;
     FToolBarHeight: integer;
     FSettings : TiniFile;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
     procedure SetFocus(AValue: TToolkitEditor);
     procedure SetSideBySide(AValue: boolean);
+    procedure SetTerminologyService(AValue: TFHIRTerminologyService);
     procedure SetToolBarHeight(AValue: integer);
   public
     constructor Create(images : TImageList; actions : TActionList);
@@ -297,6 +306,7 @@ type
     property storages : TFslList<TStorageService> read FStorages;
     function StorageForAddress(address : String; server : TFHIRServerEntry = nil) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
+    property TerminologyService : TFHIRTerminologyService read FTerminologyService write SetTerminologyService;
 
     // global settings
     property SideBySide : boolean read FSideBySide write SetSideBySide;
@@ -327,7 +337,9 @@ type
     property OnChangeFocus : TNotifyEvent read FOnChangeFocus write FOnChangeFocus;
     property OnLocate : TLocateEvent read FOnLocate write FOnLocate;
     property OnFetchServer : TFetchServerEvent read FOnFetchServer write FOnFetchServer;
-    property OnOpenResource : TOpenResourceEvent read FOnOpenResource write FOnOpenResource;
+    property OnOpenResourceUrl : TOpenResourceUrlEvent read FOnOpenResourceUrl write FOnOpenResourceUrl;
+    property OnOpenResourceObj : TOpenResourceObjEvent read FOnOpenResourceObj write FOnOpenResourceObj;
+    property OnOpenResourceSrc : TOpenResourceSrcEvent read FOnOpenResourceSrc write FOnOpenResourceSrc;
     property OnConnectToServer : TConnectToServerEvent read FOnConnectToServer write FOnConnectToServer;
   end;
 
@@ -429,6 +441,12 @@ begin
 end;
 
 { TToolkitEditSession }
+
+procedure TToolkitEditSession.SetCaption(AValue: String);
+begin
+  if FCaption=AValue then Exit;
+  FCaption:=AValue;
+end;
 
 constructor TToolkitEditSession.Create;
 begin
@@ -624,6 +642,12 @@ begin
   end;
 end;
 
+procedure TToolkitContext.SetTerminologyService(AValue: TFHIRTerminologyService);
+begin
+  FTerminologyService.Free;
+  FTerminologyService := AValue;
+end;
+
 procedure TToolkitContext.SetToolBarHeight(AValue: integer);
 var
  editor : TToolkitEditor;
@@ -649,6 +673,7 @@ end;
 
 destructor TToolkitContext.Destroy;
 begin
+  FTerminologyService.Free;
   FInspector.Free;
   FMessageView.Free;
   FConsole.Free;
@@ -753,7 +778,7 @@ end;
 
 procedure TToolkitContext.OpenResource(url: String);
 begin
-  OnOpenResource(self, url);
+  OnOpenResourceUrl(self, url);
 end;
 
 end.

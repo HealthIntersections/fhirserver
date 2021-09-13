@@ -9,10 +9,10 @@ uses
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
   lclintf, ValEdit,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging,
-  fhir_client, fhir_factory, fhir_oauth,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http,
+  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser,
 
-  ftk_context, ftk_store_temp, ftk_utilities,
+  ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
   ftk_factory, ftk_search, ftk_serverlist,ftk_worker_server,
 
@@ -438,7 +438,9 @@ type
     procedure processSearchResults(results : TFslList<TToolkitSearchMatch>; goFirst : boolean);
     procedure openServer(sender : TObject; server : TFHIRServerEntry);
     procedure editServer(sender : TObject; server : TFHIRServerEntry);
-    procedure doOpenResource(sender : TObject; url : String);
+    procedure doOpenResourceUrl(sender : TObject; url : String);
+    procedure doOpenResourceObj(sender : TObject; obj : TFHIRResourceV);
+    procedure doOpenResourceSrc(sender : TObject; src : TBytes; format : TFHIRFormat; version : TFHIRVersion);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
 
@@ -480,12 +482,18 @@ begin
   FContext.OnUpdateActions := updateActionStatus;
   FContext.OnLocate := locateOnTab;
   FContext.OnChangeFocus := onChangeFocus;
-  FContext.OnOpenResource := doOpenResource;
+  FContext.OnOpenResourceUrl := doOpenResourceUrl;
+  FContext.OnOpenResourceObj := doOpenResourceObj;
+  FContext.OnOpenResourceSrc := doOpenResourceSrc;
   FContext.MessageView.OnChange := updateMessages;
   FContext.Inspector.OnChange:=updateInspector;
   FContext.Font := SynEdit1.Font;
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
+  FContext.TerminologyService := TToolkitTerminologyService.create(
+      FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'),
+      FIni.ReadString('tx', 'log', ''),
+      IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache');
   FServerView := TFHIRServersView.create(FIni);
   FServerView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'servers.json']);
   FServerView.List := lvServers;
@@ -850,8 +858,10 @@ procedure TMainToolkitForm.checkActiveTabCurrency;
 var
   loaded : TLoadedBytes;
 begin
-  if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes then
+  if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
+    (Context.focus.session.nextCurrencyCheck < now) then
   begin
+    Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
     loaded := Context.focus.Store.load(Context.focus.session.address);
     if loaded.timestamp <> Context.focus.session.Timestamp then
     begin
@@ -1275,7 +1285,7 @@ begin
   end;
 end;
 
-procedure TMainToolkitForm.doOpenResource(sender: TObject; url: String);
+procedure TMainToolkitForm.doOpenResourceUrl(sender: TObject; url: String);
 var
   loaded : TLoadedBytes;
   editor : TToolkitEditor;
@@ -1313,6 +1323,48 @@ begin
       editor.editPause;
       updateActionStatus(editor);
     end;
+  end;
+end;
+
+procedure TMainToolkitForm.doOpenResourceSrc(sender: TObject; src : TBytes; format : TFHIRFormat; version : TFHIRVersion);
+var
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  store : TStorageService;
+  session : TToolkitEditSession;
+begin
+  session := FFactory.makeNewSession(sekFHIR);
+  session.info.Values['Format'] := CODES_TFHIRFormat[format];
+  editor := FFactory.makeEditor(session);
+  FContext.addEditor(editor);
+  tab := pgEditors.AddTabSheet;
+  editor.bindToTab(tab);
+  editor.loadBytes(src);
+  editor.session.NeedsSaving := false;
+  editor.lastChangeChecked := true;
+  pgEditors.ActivePage := tab;
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+  FContext.Focus := editor;
+  FContext.Focus.getFocus(mnuContent);
+  updateActionStatus(editor);
+end;
+
+procedure TMainToolkitForm.doOpenResourceObj(sender: TObject; obj : TFHIRResourceV);
+var
+  fact : TFHIRFactory;
+  json : TFHIRComposer;
+begin
+  fact := FContext.factory(obj.fhirObjectVersion);
+  try
+    json := fact.makeComposer(nil, ffJson, defLang, OutputStylePretty);
+    try
+      doOpenResourceSrc(sender, json.ComposeBytes(obj), ffJson, obj.fhirObjectVersion);
+    finally
+      json.free;
+    end;
+  finally
+    fact.free;
   end;
 end;
 
@@ -1948,6 +2000,9 @@ begin
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
     ToolkitSettingsForm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
+    ToolkitSettingsForm.edtTxServer.Text := FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4');
+    ToolkitSettingsForm.edtTxLog.Text := FIni.ReadString('tx', 'log', '');
+    ToolkitSettingsForm.edtCache.Text := IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache';
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
       SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
@@ -1958,6 +2013,8 @@ begin
       Context.SideBySide := actionToolsSideBySideMode.Checked;
       FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
       FIni.WriteString('Tools', 'Diff', ToolkitSettingsForm.DiffTool);
+      FIni.WriteString('tx', 'server', ToolkitSettingsForm.edtTxServer.Text);
+      FIni.WriteString('tx', 'log', ToolkitSettingsForm.edtTxLog.Text);
       copyFonts;
       saveLayout;
     end;

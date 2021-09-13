@@ -821,7 +821,8 @@ begin
   if FFocusCount = 1 then
     bindToContentMenu(content);
   EditPause;
-  TextEditor.SetFocus;
+  if not IsShowingDesigner then
+    TextEditor.SetFocus;
 end;
 
 procedure TBaseEditor.loseFocus();

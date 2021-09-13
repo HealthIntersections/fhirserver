@@ -19,7 +19,8 @@ uses
   ftk_frame_resource, frm_about, ftk_version, frm_edit_changes,
   frm_server_settings, ftk_utilities, ftk_serverlist, ftk_constants,
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
-  ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth;
+  ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth, 
+ftk_terminology_service;
 
 {$R *.res}
 
