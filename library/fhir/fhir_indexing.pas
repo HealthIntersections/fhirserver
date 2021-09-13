@@ -269,7 +269,7 @@ begin
     ndx.description := description;
     ndx.FPath := path;
     ndx.FUsage := usage;
-    inherited add(ndx.Link);
+    add(ndx.Link);
     result := ndx;
   finally
     ndx.free;

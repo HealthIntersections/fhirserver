@@ -3187,7 +3187,6 @@ begin
       begin
       signature.contentType := 'application/jose';
       src := resourceToBytes(self, ffJson, OutputStyleCanonical);
-      BytesToFile(src, 'c:\temp\can.json');
       signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
       end
   else
@@ -3234,7 +3233,6 @@ begin
         begin
         sig.contentType := 'application/jose';
         src := resourceToBytes(self, ffJson, OutputStyleCanonical);
-        BytesToFile(src, 'c:\temp\can.json');
         sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
         end
     else

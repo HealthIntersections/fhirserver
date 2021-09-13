@@ -116,7 +116,7 @@ begin
   FManager := manager;
   FCards := TFslList<THealthcareCard>.create;
   FIssues := TStringList.create;
-  FJwk := key.link;
+  FJwk := key;
   FRequest := request;
 end;
 
@@ -240,7 +240,7 @@ end;
 constructor TCardMaker.Create(manager: TFHIROperationEngine; request : TFHIRRequest; issues : TStringList);
 begin
   inherited Create;
-  FManager := manager.link;
+  FManager := manager;
   FRequest := request;
   FIssues := issues;
   FLinks := TFslStringDictionary.create;

@@ -1236,15 +1236,12 @@ begin
 
     // 2. read the json
     hb := JWTDeBase64URL(header);
-    BytesToFile(hb, 'C:\temp\header.json');
     pb := JWTDeBase64URL(payload);
-    BytesToFile(pb, 'C:\temp\payload.json');
     result.header := TJSONParser.Parse(hb);
 
     if result.header['zip'] = 'DEF' then
     begin
       pb := InflateRfc1951(pb);
-      BytesToFile(pb, 'c:\temp\payload.json');
     end;
     result.payload := TJSONParser.Parse(pb);
     result.link;
@@ -1544,7 +1541,6 @@ begin
         if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
           exit;
         sig := baseToDER(sig);
-        BytesToFile(sig, 'c:\temp\sig.bin');
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
         if not checkRes(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')', result) then
           exit;
@@ -1777,7 +1773,6 @@ begin
     bytes := canonicaliseXml([xcmCanonicalise], doc.docElement)
   else
     bytes := resolveReference(ref.attribute['URI']);
-  BytesToFile(bytes, 'c:\temp\cand.xml');
 
   // check the transforms
   bEnv := false;
@@ -1848,7 +1843,6 @@ begin
     si.LocalName := 'SignedInfo';
     si.NamespaceURI := NS_DS;
     can := canonicaliseXml(canoncalizationSet(si.elementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm']), si);
-    BytesToFile(can, 'c:\temp\can.xml');
 
     // 2. For each Reference in SignedInfo:
     for i := 0 to si.children.Count - 1 do

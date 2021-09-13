@@ -5447,11 +5447,15 @@ begin
       FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.upsert', cfg.IdClient);
       FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.version-updates', cfg.versionUpdates);
       il := FServerContext.Indexes.Indexes.listByType(cfg.name);
-      if (il <> nil) then
-      begin
-        for ii in il do
-          if ii.SearchType = sptReference then
-            FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.searchInclude', ii.Name);
+      try
+        if (il <> nil) then
+        begin
+          for ii in il do
+            if ii.SearchType = sptReference then
+              FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.searchInclude', ii.Name);
+        end;
+      finally
+        il.free;
       end;
     end;
 

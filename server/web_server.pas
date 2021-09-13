@@ -180,6 +180,7 @@ Type
 
     procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
     procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
+    procedure ReturnFileSource(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
     Procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     function  ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
@@ -698,6 +699,7 @@ begin
   wep := endPoint.makeWebEndPoint(Common.link);
   FEndPoints.add(wep);
   wep.OnReturnFile := ReturnProcessedFile;
+  wep.OnReturnFileSource := ReturnFileSource;
   wep.OnProcessFile := ProcessFile;
 end;
 
@@ -979,6 +981,20 @@ begin
     vars.Free;
   end;
   result := 'Diagnostics';
+end;
+
+procedure TFhirWebServer.ReturnFileSource(sender: TObject; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String);
+var
+  b : TBytes;
+begin
+  if FileExists(path) then
+    b := FileToBytes(path)
+  else
+    b := SourceProvider.asBytes(path);
+  response.Expires := Now + 1;
+  response.ContentStream := TBytesStream.Create(b);
+  response.FreeContentStream := true;
+  response.contentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;
 
 function TFhirWebServer.endpointList : String;

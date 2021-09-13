@@ -59,6 +59,7 @@ end;
 
 destructor TFolderWebEndPoint.Destroy;
 begin
+  FFolderServer.free;
   inherited;
 end;
 

@@ -914,6 +914,8 @@ Begin
     inc(t.count);
     inc(t.dcount);
     inc(t.serial);
+//    if (FNamedClass = 'TFHIRFactoryR4') then
+//      writeln('Create TFHIRFactoryR4 '+inttostr(t.serial));
     FSerial := t.serial;
     if t.first = nil then
     begin
@@ -945,6 +947,8 @@ Begin
       begin
         dec(t.Count);
         dec(t.dCount);
+//        if (FNamedClass = 'TFHIRFactoryR4') then
+//          writeln('Destroy TFHIRFactoryR4 '+inttostr(FSerial));
         if FTracked then
         begin
           if FPrev = nil then

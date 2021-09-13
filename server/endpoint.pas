@@ -51,6 +51,7 @@ type
     FCode : String;
     FPathWithSlash : String;
     FPathNoSlash : String;
+    FOnReturnFileSource : TWebReturnDirectFileEvent;
     FOnReturnFile : TWebReturnProcessedFileEvent;
     FOnProcessFile : TWebProcessFileEvent;
 //    function EndPointDesc(secure: boolean): String;
@@ -75,6 +76,7 @@ type
     function ClientAddress(secure: boolean): String;
 
     property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
+    property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;
     property OnProcessFile : TWebProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; virtual; abstract;
@@ -252,15 +254,8 @@ begin
 end;
 
 procedure TFhirWebServerEndpoint.returnFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; secure: boolean);
-var
-  variables : TFslMap<TFHIRObject>;
 begin
-  variables := TFslMap<TFHIRObject>.create;
-  try
-    FOnReturnFile(self, request, response, session, named, path, secure, variables);
-  finally
-    variables.free;
-  end;
+  FOnReturnFileSource(self, request, response, session, named, path);
 end;
 
 procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>);

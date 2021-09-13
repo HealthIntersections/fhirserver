@@ -12,6 +12,7 @@ uses
 
 type
   TWebReturnProcessedFileEvent = procedure (sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) of Object;
+  TWebReturnDirectFileEvent = procedure (sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String) of Object;
   TWebProcessFileEvent = procedure (sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String) of Object;
 
 implementation
