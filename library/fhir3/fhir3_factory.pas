@@ -73,6 +73,7 @@ type
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
+    function describe(r : TFHIRResourceV) : String; override;
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); override;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
@@ -197,6 +198,11 @@ begin
   finally
     pu.Free;
   end;
+end;
+
+function TFHIRFactoryR3.describe(r: TFHIRResourceV): String;
+begin
+  result := describeResource(r as TFHIRResource);
 end;
 
 function TFHIRFactoryR3.description: String;

@@ -13,7 +13,7 @@ const
   ICON_OPEN = 108;
   ICON_EXECUTE = 109;
   ICON_DELETE = 110;
-
+  ICON_SIG = 111;
 
 implementation
 

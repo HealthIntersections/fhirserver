@@ -213,6 +213,7 @@ type
   TOpenResourceUrlEvent = procedure(sender : TObject; url : String) of Object;
   TOpenResourceObjEvent = procedure(sender : TObject; obj : TFHIRResourceV) of Object;
   TOpenResourceSrcEvent = procedure(sender : TObject; src : TBytes; format : TFHIRFormat; version : TFHIRVersion) of Object;
+  TOpenSourceEvent = procedure(sender : TObject; src : TBytes; kind : TSourceEditorKind) of Object;
   TConnectToServerEvent = procedure (sender : TObject; server : TFHIRServerEntry) of object;
 
   { TToolkitMessagesView }
@@ -273,6 +274,7 @@ type
     FOnOpenResourceUrl: TOpenResourceUrlEvent;
     FOnOpenResourceObj: TOpenResourceObjEvent;
     FOnOpenResourceSrc: TOpenResourceSrcEvent;
+    FOnOpenSource: TOpenSourceEvent;
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
@@ -340,6 +342,7 @@ type
     property OnOpenResourceUrl : TOpenResourceUrlEvent read FOnOpenResourceUrl write FOnOpenResourceUrl;
     property OnOpenResourceObj : TOpenResourceObjEvent read FOnOpenResourceObj write FOnOpenResourceObj;
     property OnOpenResourceSrc : TOpenResourceSrcEvent read FOnOpenResourceSrc write FOnOpenResourceSrc;
+    property OnOpenSource : TOpenSourceEvent read FOnOpenSource write FOnOpenSource;
     property OnConnectToServer : TConnectToServerEvent read FOnConnectToServer write FOnConnectToServer;
   end;
 

@@ -257,6 +257,7 @@ type
     property Operations : TFslList<TFhirOperation> read FOperations;
     function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); overload;
+    property ServerContextObject : TFslObject read FServerContext;
   end;
 
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)

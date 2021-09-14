@@ -658,3 +658,4 @@ ALERT_jedi_inc_incompatible
   {$DEFINE DEBUG_NO_TD32}
 {$ENDIF FPC}
 
+{$DEFINE HAS_UNIT_PNGIMAGE}

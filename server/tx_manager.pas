@@ -1462,9 +1462,9 @@ begin
   end
   else if system = ALL_CODE_CS then
     if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
-      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil))
+      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil, true))
     else
-      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://terminology.hl7.org/CodeSystem/v3-ActCode', '', nil))
+      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://terminology.hl7.org/CodeSystem/v3-ActCode', '', nil, true))
   else
   begin
     FLock.Lock('getProvider');

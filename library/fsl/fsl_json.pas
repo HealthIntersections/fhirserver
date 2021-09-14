@@ -2617,9 +2617,12 @@ end;
 
 procedure TJsonObject.SetString(name: String; const Value: String);
 var
-  v : TJsonString;
+  v : TJsonNode;
 begin
-  v := TJsonString.Create(path+'/'+name, Value);
+  if value = '' then
+    v := TJsonNull.Create(path+'/'+name)
+  else
+    v := TJsonString.Create(path+'/'+name, Value);
   try
     properties.AddOrSetValue(name, v.Link);
   finally

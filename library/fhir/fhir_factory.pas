@@ -155,6 +155,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); virtual; abstract;
     function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; virtual; abstract;
+    function describe(r : TFHIRResourceV) : String; virtual; abstract;
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); virtual; abstract;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
