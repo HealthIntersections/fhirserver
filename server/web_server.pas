@@ -455,8 +455,9 @@ Begin
   if Common.ActualPort > 0 then
   begin
     FPlainServer := TIdHTTPServer.Create(Nil);
-    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
-    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).PoolSize := 20;
+//    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+//    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).PoolSize := 20;
+//    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).RetainThreads := false;
     FPlainServer.ServerSoftware := 'Health Intersections FHIR Server';
     FPlainServer.ParseParams := false;
     FPlainServer.DefaultPort := Common.ActualPort;
@@ -479,8 +480,8 @@ Begin
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
       raise EIOException.create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TIdHTTPServer.Create(Nil);
-    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
-    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
+//    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+//    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
     FSSLServer.ServerSoftware := 'Health Intersections FHIR Server';
     FSSLServer.ParseParams := false;
     FSSLServer.DefaultPort := Common.ActualSSLPort;
