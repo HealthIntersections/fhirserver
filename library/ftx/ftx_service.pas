@@ -645,10 +645,20 @@ end;
 function TCodeDisplays.present: String;
 var
   cd : TCodeDisplay;
+  wrap : boolean;
 begin
   result := '';
+  wrap := false;
   for cd in self do
-    CommaAdd(result, cd.value);
+    wrap := wrap or cd.value.contains(',') or (cd.language <> '');
+
+  for cd in self do
+    if not wrap then
+      CommaAdd(result, ''''+cd.value+'''')
+    else if cd.FLanguage <> '' then
+      CommaAdd(result, ''''+cd.value+''' ('+cd.FLanguage+')')
+    else
+      CommaAdd(result, ''''+cd.value+'''')
 end;
 
 { TCodeDisplay }

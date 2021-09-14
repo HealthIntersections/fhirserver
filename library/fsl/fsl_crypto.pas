@@ -93,15 +93,20 @@ Type
   end;
 
   // 1st, JWK
+
+  { TJWK }
+
   TJWK = class (TFslObject)
   private
     FObj : TJsonObject;
+    function GetAlg: String;
     function GetExponent: TBytes;
     function GetId: String;
     function GetKey: TBytes;
     function GetKeyType: String;
     function GetPrivateKey: TBytes;
     function GetPublicKey: TBytes;
+    procedure SetAlg(AValue: String);
     procedure SetExponent(const Value: TBytes);
     procedure SetId(const Value: String);
     procedure SetKey(const Value: TBytes);
@@ -141,6 +146,7 @@ Type
 
     property keyType : String read GetKeyType write SetKeyType;
     property id : String read GetId write SetId;
+    property alg : String read GetAlg write SetAlg;
 
     // RSA
     property key : TBytes read GetKey write SetKey; // k
@@ -222,6 +228,8 @@ Type
 
 
 
+  { TJWTUtils }
+
   TJWTUtils = class (TFslObject)
   private
 //    class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
@@ -244,6 +252,7 @@ Type
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
     class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
+    class function encodeJWT(jwt : TJWT; key : TJWK) : String; overload;
     class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String; zip : String = '') : String; overload;
 
     // special use - use an existing PEM to sign the JWT
@@ -504,7 +513,7 @@ end;
 
 { TJWK }
 
-constructor TJWK.create(obj: TJsonObject);
+constructor TJWK.Create(obj: TJsonObject);
 begin
   create;
   FObj := obj;
@@ -530,7 +539,7 @@ begin
   FObj.clear('n');
 end;
 
-constructor TJWK.create(pkey: PRSA; loadPrivate : Boolean);
+constructor TJWK.Create(pkey: PRSA; loadPrivate: Boolean);
 var
   b : TBytes;
   pe, pn, pd : PBIGNUM;
@@ -569,6 +578,11 @@ end;
 function TJWK.GetExponent: TBytes;
 begin
   result := JWTDeBase64URL(FObj['e']);
+end;
+
+function TJWK.GetAlg: String;
+begin
+  result := FObj['alg'];
 end;
 
 function TJWK.GetG: TBytes;
@@ -649,6 +663,11 @@ end;
 function TJWK.GetPublicKey: TBytes;
 begin
   result := JWTDeBase64URL(FObj['n']);
+end;
+
+procedure TJWK.SetAlg(AValue: String);
+begin
+  FObj['alg'] := AValue;
 end;
 
 function TJWK.GetQ: TBytes;
@@ -732,7 +751,7 @@ begin
   FObj['y'] := String(BytesAsAnsiString(JWTBase64URL(Value)));
 end;
 
-function TJWK.Load(privKey : boolean): PRSA;
+function TJWK.Load(privkey: boolean): PRSA;
 var
   b : TBytes;
   pe, pn, pd : PBIGNUM;
@@ -812,7 +831,7 @@ begin
   end;
 end;
 
-constructor TJWK.create(pkey: PDSA; loadPrivate : Boolean);
+constructor TJWK.Create(pkey: PDSA; loadPrivate: Boolean);
 var
   b : TBytes;
   pp, pq, pg, pPub, pPriv : PBIGNUM;
@@ -931,7 +950,9 @@ begin
   if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
     jwt.header['kid'] := key.id;
   if zip <> '' then
-    jwt.header['zip'] := zip;
+    jwt.header['zip'] := zip
+  else
+    zip := jwt.header['zip'];
 
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
@@ -946,6 +967,25 @@ begin
     jwt_es256: sig := Sign_ES256(input, key);
   end;
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
+end;
+
+class function TJWTUtils.encodeJWT(jwt: TJWT; key: TJWK): String;
+var
+  alg : String;
+begin
+  alg := jwt.header['alg'];
+  if (alg = '') then
+    alg := key.alg;
+  if (alg = 'HS256') then
+    result := encodeJWT(jwt, jwt_hmac_sha256, key)
+  else if (alg = 'RS256') then
+  result := encodeJWT(jwt, jwt_hmac_rsa256, key)
+  else if (alg = 'ES256') then
+  result := encodeJWT(jwt, jwt_es256, key)
+  else if (alg = '') then
+    raise Exception.create('No algorithm specified in either header or key')
+  else
+    raise Exception.create('Algorithm "'+alg+'" not understood')
 end;
 
 class function TJWTUtils.encodeJWT(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String; zip : String): String;
@@ -1435,7 +1475,8 @@ begin
 end;
 
 
-class function TJWTUtils.Verify_Hmac_SHA256(input, sig: TBytes; key: TJWK) : String;
+class function TJWTUtils.Verify_Hmac_SHA256(input: TBytes; sig: TBytes;
+  key: TJWK): string;
 var
   expected : TBytes;
 begin
@@ -1497,7 +1538,8 @@ begin
   end;
 end;
 
-class function TJWTUtils.Verify_Hmac_ES256(input, sig: TBytes; header: TJsonObject; keys: TJWKList) : String;
+class function TJWTUtils.Verify_Hmac_ES256(input: TBytes; sig: TBytes;
+  header: TJsonObject; keys: TJWKList): String;
 var
   ctx : PEVP_MD_CTX;
   e: integer;
@@ -1557,7 +1599,8 @@ begin
   end;
 end;
 
-class function TJWTUtils.Verify_Hmac_RSA256(input, sig: TBytes; header : TJsonObject; keys: TJWKList) : String;
+class function TJWTUtils.Verify_Hmac_RSA256(input: TBytes; sig: TBytes;
+  header: TJsonObject; keys: TJWKList): String;
 var
   ctx : PEVP_MD_CTX;
   e: integer;

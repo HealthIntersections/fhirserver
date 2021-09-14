@@ -7,9 +7,9 @@ interface
 uses
   SysUtils, Classes, DateUtils,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
-  fhir_objects, fhir_common, fhir_healthcard,
+  fhir_objects, fhir_common, fhir_healthcard, fhir_utilities,
   fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
-  session, storage;
+  session, storage, server_context;
 
 type
 
@@ -60,6 +60,7 @@ type
 //    FHealthCardJWS: string;
     FCards: TFslList<THealthcareCard>;
     FIssues : TStringList;
+
     procedure SetParams(const Value: TFhirParameters);
 
     function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
@@ -348,6 +349,10 @@ end;
 function TVciImmunizationCardMaker.makeImmunization(imm: TFhirImmunization): TFhirImmunization;
 var
   c, t : TFHIRCoding;
+  i : integer;
+  actor, a : TFhirReference;
+  p : TResourceWithReference;
+  s : String;
 begin
   result := TFhirImmunization.create;
   try
@@ -370,6 +375,35 @@ begin
       result.manufacturer.identifier.value := imm.manufacturer.identifier.value;
     end;
     result.lotNumber := imm.lotNumber;
+    for i := 0 to imm.performerList.Count - 1 do
+    begin
+      actor := imm.performerList[i].actor;
+      if actor <> nil then
+      begin
+        if actor.display <> '' then
+        begin
+          a := TFhirReference.create;
+          result.performerList.Append.actor := a;
+          a.display := actor.display;
+          break;
+        end
+        else if actor.reference <> '' then
+        begin
+          p := FManager.LookupReference(FRequest, actor.reference);
+          if (p <> nil) then
+          begin
+            s := (FManager.ServerContextObject as TFHIRServerContext).Factory.describe(p.Resource);
+            if (s <> '') then
+            begin
+              a := TFhirReference.create;
+              result.performerList.Append.actor := a;
+              a.display := s;
+              break;
+            end;
+          end;
+        end;
+      end;
+    end;
     result.isSubpotentElement := imm.isSubpotentElement.link;
     result.Link;
   finally

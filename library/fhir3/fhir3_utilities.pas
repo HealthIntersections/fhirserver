@@ -700,6 +700,7 @@ type
   TFHIRPractitionerHelper = class helper for TFHIRPractitioner
   public
     function display : string;
+    function summary : String;
   end;
 
   TFhirReferenceHelper = class helper for TFhirReference
@@ -730,6 +731,77 @@ type
     function isEmail : boolean;
     class function fromEdit(n : String) : TFhirContactPoint;
   end;
+
+  TFhirEncounterHelper = class helper for TFhirEncounter
+  public
+    function summary : String;
+  end;
+
+  TFhirEpisodeOfCareHelper = class helper for TFhirEpisodeOfCare
+  public
+    function summary : String;
+  end;
+
+  TFhirGroupHelper = class helper for TFhirGroup
+  public
+    function summary : String;
+  end;
+
+  TFhirHealthcareServiceHelper = class helper for TFhirHealthcareService
+  public
+    function summary : String;
+  end;
+
+  TFhirLocationHelper = class helper for TFhirLocation
+  public
+  function summary : String;
+  end;
+
+  TFhirMedicationHelper = class helper for TFhirMedication
+  public
+    function summary : String;
+  end;
+
+  TFhirOrganizationHelper = class helper for TFhirOrganization
+  public
+    function summary : String;
+  end;
+
+  TFhirPatientHelper = class helper for TFhirPatient
+  public
+    function summary : String;
+  end;
+
+  TFhirPersonHelper = class helper for TFhirPerson
+  public
+    function summary : String;
+  end;
+
+  TFhirRelatedPersonHelper = class helper for TFhirRelatedPerson
+  public
+    function summary : String;
+  end;
+
+  TFhirSubstanceHelper = class helper for TFhirSubstance
+  public
+    function summary : String;
+  end;
+
+  TFHIRDeviceHelper = class helper for TFHIRDevice
+  public
+    function summary : String;
+  end;
+
+  TFhirEndpointHelper = class helper for TFhirEndpoint
+  public
+    function summary : String;
+  end;
+
+  TFHIRPractitionerRoleHelper = class helper for TFHIRPractitionerRole
+  public
+    function summary : String;
+  end;
+
 
 function summarise(coding : TFHIRCoding):String; overload;
 function summarise(code : TFhirCodeableConcept):String; overload;
@@ -766,6 +838,8 @@ type
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
 {$ENDIF}
+
+function describeResource(r: TFHIRResource): String;
 
 implementation
 
@@ -6423,6 +6497,186 @@ end;
 function makeMarkdownOrString : TFhirString;
 begin
   result := TFhirString.Create;
+end;
+
+function describeResource(r: TFHIRResource): String;
+begin
+   if r is TFhirMetadataResource then
+     result := (r as TFhirMetadataResource).url
+   else
+   begin
+     case r.ResourceType of
+      {$IFDEF FHIR_DEVICE}frtDevice : result := (r as TFhirDevice).summary;{$ENDIF}
+      {$IFDEF FHIR_ENCOUNTER}frtEncounter : result := (r as TFhirEncounter).summary;{$ENDIF}
+      {$IFDEF FHIR_ENDPOINT}frtEndpoint : result := (r as TFhirEndpoint).summary;{$ENDIF}
+      {$IFDEF FHIR_EPISODEOFCARE}frtEpisodeOfCare : result := (r as TFhirEpisodeOfCare).summary;{$ENDIF}
+      {$IFDEF FHIR_GROUP}frtGroup : result := (r as TFhirGroup).summary;{$ENDIF}
+      {$IFDEF FHIR_HEALTHCARESERVICE}frtHealthcareService : result := (r as TFhirHealthcareService).summary;{$ENDIF}
+      {$IFDEF FHIR_LOCATION}frtLocation : result := (r as TFhirLocation).summary;{$ENDIF}
+      {$IFDEF FHIR_MEDICATION}frtMedication : result := (r as TFhirMedication).summary;{$ENDIF}
+      {$IFDEF FHIR_ORGANIZATION}frtOrganization : result := (r as TFhirOrganization).summary;{$ENDIF}
+      {$IFDEF FHIR_PATIENT}frtPatient : result := (r as TFhirPatient).summary;{$ENDIF}
+      {$IFDEF FHIR_PERSON}frtPerson : result := (r as TFhirPerson).summary;{$ENDIF}
+      {$IFDEF FHIR_PRACTITIONER}frtPractitioner : result := (r as TFhirPractitioner).summary;{$ENDIF}
+      {$IFDEF FHIR_PRACTITIONERROLE}frtPractitionerRole : result := (r as TFhirPractitionerRole).summary;{$ENDIF}
+      {$IFDEF FHIR_RELATEDPERSON}frtRelatedPerson : result := (r as TFhirRelatedPerson).summary;{$ENDIF}
+      {$IFDEF FHIR_SUBSTANCE}frtSubstance : result := (r as TFhirSubstance).summary;{$ENDIF}
+     end;
+   end;
+end;
+
+{ TFhirEncounterHelper }
+
+function TFhirEncounterHelper.summary: String;
+begin
+  if hasIdentifierList then
+    result := gen(identifierList[0]);
+  if period <> nil then
+    result := result +' ['+gen(period)+']';
+  result := result.Trim;
+end;
+
+{ TFhirEpisodeOfCareHelper }
+
+function TFhirEpisodeOfCareHelper.summary: String;
+begin
+  if hasIdentifierList then
+    result := gen(identifierList[0]);
+  if period <> nil then
+    result := result +' ['+gen(period)+']';
+  result := result.Trim;
+end;
+
+{ TFhirGroupHelper }
+
+function TFhirGroupHelper.summary: String;
+begin
+  if name <> '' then
+    result := name
+  else
+    result := CODES_TFhirGroupTypeEnum[type_] + ' Group';
+end;
+
+{ TFhirHealthcareServiceHelper }
+
+function TFhirHealthcareServiceHelper.summary: String;
+begin
+  if name <> '' then
+    result := name
+  else if category <> nil then
+    result := gen(category) + ' Service'
+  else
+    result := '??';
+end;
+
+{ TFhirLocationHelper }
+
+function TFhirLocationHelper.summary: String;
+begin
+  if name <> '' then
+    result := name
+  else if description <> '' then
+    result := description
+  else
+    result := '??';
+end;
+
+{ TFhirMedicationHelper }
+
+function TFhirMedicationHelper.summary: String;
+begin
+  result := gen(code);
+end;
+
+{ TFhirOrganizationHelper }
+
+function TFhirOrganizationHelper.summary: String;
+begin
+  if name <> '' then
+    result := name
+  else
+    result := '??';
+end;
+
+{ TFhirPatientHelper }
+
+function TFhirPatientHelper.summary: String;
+begin
+  if hasNameList then
+    result := gen(nameList[0])
+  else
+    result := '??';
+end;
+
+{ TFhirPersonHelper }
+
+function TFhirPersonHelper.summary: String;
+begin
+  if hasNameList then
+    result := gen(nameList[0])
+  else
+    result := '??';
+end;
+
+{ TFhirPractitionerHelper }
+
+function TFhirPractitionerHelper.summary: String;
+begin
+  if hasNameList then
+    result := gen(nameList[0])
+  else
+    result := '??';
+end;
+
+{ TFhirRelatedPersonHelper }
+
+function TFhirRelatedPersonHelper.summary: String;
+begin
+  if hasNameList then
+    result := gen(nameList[0])
+  else
+    result := '??';
+end;
+
+{ TFhirSubstanceHelper }
+
+function TFhirSubstanceHelper.summary: String;
+begin
+  if code <> nil then
+    result := gen(code)
+  else
+    result := '??';
+end;
+
+{ TFHIRDeviceHelper }
+
+function TFHIRDeviceHelper.summary: String;
+begin
+  if model <> '' then
+    result := model
+  else if url <> '' then
+    result := url
+  else
+    result := '??';
+end;
+
+{ TFhirEndpointHelper }
+
+function TFhirEndpointHelper.summary: String;
+begin
+  if name <> '' then
+    result := name
+  else if address <> '' then
+    result := address
+  else
+    result := '??';
+end;
+
+{ TFHIRPractitionerRoleHelper }
+
+function TFHIRPractitionerRoleHelper.summary: String;
+begin
+  result := '??';
 end;
 
 end.

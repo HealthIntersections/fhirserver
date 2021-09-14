@@ -18,9 +18,8 @@ type
     Image1: TImage;
     Label1: TLabel;
     lblVersion: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
     lblAge: TLabel;
+    Panel1: TPanel;
     procedure FormShow(Sender: TObject);
     procedure Image1Click(Sender: TObject);
   private

@@ -445,6 +445,7 @@ type
     procedure doOpenResourceUrl(sender : TObject; url : String);
     procedure doOpenResourceObj(sender : TObject; obj : TFHIRResourceV);
     procedure doOpenResourceSrc(sender : TObject; src : TBytes; format : TFHIRFormat; version : TFHIRVersion);
+    procedure doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
 
@@ -494,6 +495,7 @@ begin
   FContext.OnOpenResourceUrl := doOpenResourceUrl;
   FContext.OnOpenResourceObj := doOpenResourceObj;
   FContext.OnOpenResourceSrc := doOpenResourceSrc;
+  FContext.OnOpenSource := doOpenSource;
   FContext.MessageView.OnChange := updateMessages;
   FContext.Inspector.OnChange:=updateInspector;
   FContext.Font := SynEdit1.Font;
@@ -1344,6 +1346,29 @@ var
 begin
   session := FFactory.makeNewSession(sekFHIR);
   session.info.Values['Format'] := CODES_TFHIRFormat[format];
+  editor := FFactory.makeEditor(session);
+  FContext.addEditor(editor);
+  tab := pgEditors.AddTabSheet;
+  editor.bindToTab(tab);
+  editor.loadBytes(src);
+  editor.session.NeedsSaving := false;
+  editor.lastChangeChecked := true;
+  pgEditors.ActivePage := tab;
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+  FContext.Focus := editor;
+  FContext.Focus.getFocus(mnuContent);
+  updateActionStatus(editor);
+end;
+
+procedure TMainToolkitForm.doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
+var
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  store : TStorageService;
+  session : TToolkitEditSession;
+begin
+  session := FFactory.makeNewSession(kind);
   editor := FFactory.makeEditor(session);
   FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;

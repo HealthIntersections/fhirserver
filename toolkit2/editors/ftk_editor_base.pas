@@ -168,6 +168,7 @@ type
     procedure doResize(sender : TObject); virtual;
 
     function hasFormatCommands : boolean; virtual;
+    function getFixedEncoding : TSourceEncoding; virtual;
     procedure updateFormatMenu; virtual;
     procedure makeDesigner; virtual;
     procedure updateDesigner; virtual;
@@ -552,6 +553,7 @@ procedure TBaseEditor.updateFromContent;
 begin
   if HasTextTab then
     TextEditor.lines.assign(FContent);
+  ContentChanged;
 end;
 
 { TBaseEditor }
@@ -561,6 +563,7 @@ var
   b : TStringBuilder;
   s : String;
   first : boolean;
+  encoding : TSourceEncoding;
 begin
   updateToContent;
   b := TStringBuilder.create;
@@ -579,7 +582,10 @@ begin
       b.append(s);
     end;
     s := b.toString;
-    case Session.Encoding of
+    encoding := getFixedEncoding;
+    if encoding = senUnknown then
+      encoding := Session.Encoding;
+    case encoding of
       senASCII : result := TEncoding.ASCII.GetBytes(s);
       senUTF16BE : result := TEncoding.BigEndianUnicode.GetBytes(s);
       senUTF16LE : result := TEncoding.Unicode.GetBytes(s);
@@ -792,26 +798,29 @@ begin
     slLF : actLineMarkers.ImageIndex := 53;
     slCR : actLineMarkers.ImageIndex := 54;
   end;
-  case Session.Encoding of
-    senUnknown: actEncoding.ImageIndex := 55;
-    senBinary: actEncoding.ImageIndex := 56;
-    senUTF8: actEncoding.ImageIndex := 58;
-    senASCII: actEncoding.ImageIndex := 57;
-    senUTF16BE: actEncoding.ImageIndex := 59;
-    senUTF16LE: actEncoding.ImageIndex := 60;
-  end;
-  if Session.Encoding in [senUnknown, senBinary, senASCII] then
+  if getFixedEncoding = senUnknown then
   begin
-    actBOM.Enabled := false;
-    actBOM.ImageIndex := 61;
-  end
-  else
-  begin
-    actBOM.Enabled := true;
-    if Session.HasBOM then
-      actBOM.ImageIndex := 62
-    else
+    case Session.Encoding of
+      senUnknown: actEncoding.ImageIndex := 55;
+      senBinary: actEncoding.ImageIndex := 56;
+      senUTF8: actEncoding.ImageIndex := 58;
+      senASCII: actEncoding.ImageIndex := 57;
+      senUTF16BE: actEncoding.ImageIndex := 59;
+      senUTF16LE: actEncoding.ImageIndex := 60;
+    end;
+    if Session.Encoding in [senUnknown, senBinary, senASCII] then
+    begin
+      actBOM.Enabled := false;
       actBOM.ImageIndex := 61;
+    end
+    else
+    begin
+      actBOM.Enabled := true;
+      if Session.HasBOM then
+        actBOM.ImageIndex := 62
+      else
+        actBOM.ImageIndex := 61;
+    end;
   end;
 end;
 
@@ -1113,20 +1122,23 @@ begin
     actFormat.OnShow := DoMnuFormat;
   end;
 
-  actEncoding := makeAction(TextToolbar, 'Encoding', 0);
-  makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
+  if getFixedEncoding = senUnknown then
+  begin
+    actEncoding := makeAction(TextToolbar, 'Encoding', 0);
+    makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
+    makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
+    makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
+    makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
+
+    actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
+    makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
+    makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
+  end;
 
   actLineMarkers := makeAction(TextToolbar, 'End of Lines', 4);
   makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
   makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
   makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
-
-  actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
-  makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
-  makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
@@ -1187,6 +1199,11 @@ end;
 function TBaseEditor.hasFormatCommands: boolean;
 begin
   result := false;
+end;
+
+function TBaseEditor.getFixedEncoding: TSourceEncoding;
+begin
+  result := senUnknown;
 end;
 
 procedure TBaseEditor.updateFormatMenu;

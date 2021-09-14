@@ -6,9 +6,13 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Graphics,
-  Menus, ExtDlgs, DelphiZXingQRCode, fsl_utilities, fsl_json, fsl_crypto,
+  Menus, ExtDlgs, IntfGraphics, FPImage, FPWritePNG,
+  DelphiZXingQRCode, HtmlView,
+  fsl_utilities, fsl_json, fsl_crypto,
+
   fhir_objects, fhir_parser, fhir_healthcard, fhir_common, fui_lcl_managers,
-  ftk_constants, HtmlView, ftk_frame_resource;
+  ftk_context, ftk_constants,
+  ftk_frame_resource;
 
 type
   TFrame = TResourceDesignerFrame;
@@ -116,7 +120,8 @@ end;
 procedure THealthcardManager.buildMenu;
 begin
   inherited buildMenu;
-  registerMenuEntry('Open', ICON_OPEN, copExecute);
+  registerMenuEntry('Open as Bundle', ICON_OPEN, copExecute);
+  registerMenuEntry('Open as JWT', ICON_SIG, copExecute, 'jwt');
 end;
 
 function THealthcardManager.getCellText(item: THealthcareCard; col: integer): String;
@@ -155,7 +160,10 @@ end;
 
 function THealthcardManager.executeItem(item: THealthcareCard; mode: String): boolean;
 begin
-  FFrame.context.OnOpenResourceObj(self, item.bundle);
+  if mode = 'jwt' then
+    FFrame.context.OnOpenSource(self, TEncoding.ASCII.getBytes(item.jws), sekJWT)
+  else
+    FFrame.context.OnOpenResourceObj(self, item.bundle);
 end;
 
 { TPatientFrame }
@@ -170,9 +178,11 @@ end;
 
 procedure TPatientFrame.initialize;
 begin
+  lvCards.SmallImages := Context.images;
   FCardManager := THealthcardManager.create;
   FCardManager.Settings := Context.Settings;
   FCardManager.FFrame := self;
+  FCardManager.Images := Context.images;
   FCardManager.List := lvCards;
   FCardManager.OnSetFocus := DoSelectCard;
 end;
@@ -242,15 +252,30 @@ end;
 procedure TPatientFrame.mnuSaveQRClick(Sender: TObject);
 var
   bmp : TBitmap;
+  mem : TMemoryStream;
+  picture : TPicture;
 begin
   if sd.execute then
   begin
-    bmp := TBitmap.create;
+    mem := TMemoryStream.create;
     try
-      makeQRCode(bmp, qrNumeric, FCardManager.Focus.qrSource);
-      bmp.SaveToFile(sd.filename);
+      bmp := TBitmap.create;
+      try
+        makeQRCode(bmp, qrNumeric, FCardManager.Focus.qrSource);
+        bmp.SaveToStream(mem);
+      finally
+        bmp.free;
+      end;
+      mem.position := 0;
+      picture := TPicture.create;
+      try
+        picture.LoadFromStreamWithFileExt(mem, '.bmp');
+        picture.SaveToFile(sd.FileName);
+      finally
+        picture.Free;
+      end;
     finally
-      bmp.free;
+      mem.free;
     end;
   end;
 end;

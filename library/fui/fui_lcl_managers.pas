@@ -134,7 +134,7 @@ type
     property Images : TImagelist read FImages write FImages;
     property Filter : TEdit read FFilter write SetFilter;
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
-    procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation);
+    procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '');
     Property Enabled : boolean read FEnabled write SetEnabled;
     property Settings : TIniFile read FSettings write SetSettings;
 
@@ -463,7 +463,7 @@ begin
   end;
 end;
 
-procedure TListManager<T>.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation);
+procedure TListManager<T>.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation; mode : String = '');
 var
   item : TMenuItem;
 begin
@@ -472,6 +472,8 @@ begin
   item.caption := caption;
   item.imageIndex := imageIndex;
   item.Tag := Integer(op);
+  if mode <> '' then
+    item.name := 'mnuMode'+mode;
   item.OnClick := doMnuClick;
 end;
 
@@ -692,15 +694,24 @@ begin
 end;
 
 procedure TListManager<T>.doMnuClick(Sender: TObject);
+var
+  mnu : TMenuItem;
+  mode : String;
 begin
-  case TControlOperation((Sender as TMenuItem).Tag) of
-    copAdd : doAdd('');
-    copEdit : doEdit('');
-    copDelete : doDelete('');
+  mnu := (Sender as TMenuItem);
+  if mnu.Name.StartsWith('mnuMode') then
+    mode := mnu.Name.Substring(7)
+  else
+    mode := '';
+
+  case TControlOperation(mnu.Tag) of
+    copAdd : doAdd(mode);
+    copEdit : doEdit(mode);
+    copDelete : doDelete(mode);
     copUp : doUp;
     copDown : doDown;
     copReload : doLoad;
-    copExecute : doExecute('');
+    copExecute : doExecute(mode);
   end;
 end;
 
