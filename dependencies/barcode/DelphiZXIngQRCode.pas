@@ -69,9 +69,9 @@ var
 begin
   QRCode := TDelphiZXingQRCode.Create;
   try
-    QRCode.Data := Data;
     QRCode.Encoding := Encoding;
     QRCode.QuietZone := 4;
+    QRCode.Data := Data;
     bmp.SetSize(QRCode.Rows, QRCode.Columns);
     for Row := 0 to QRCode.Rows - 1 do
     begin
