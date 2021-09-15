@@ -261,7 +261,7 @@ begin
     try
       bmp := TBitmap.create;
       try
-        makeQRCode(bmp, qrNumeric, FCardManager.Focus.qrSource);
+        makeQRCode(bmp, qrAlphanumeric, FCardManager.Focus.qrSource);
         bmp.SaveToStream(mem);
       finally
         bmp.free;
@@ -295,7 +295,7 @@ begin
   begin
     bmp := TBitmap.create;
     try
-      makeQRCode(bmp, qrNumeric, FCardManager.Focus.qrSource);
+      makeQRCode(bmp, qrAlphanumeric, FCardManager.Focus.qrSource);
       if (pbCard.Width < pbCard.Height) then
         scale := pbCard.Width / bmp.Width
       else
