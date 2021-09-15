@@ -577,6 +577,11 @@ type
     property Links[s : string] : String read GetLinks write SetLinks;
   end;
 
+  TFhirBundleEntryListHelper = class helper for TFhirBundleEntryList
+  public
+    function append(url : String) : TFHIRBundleEntry; overload;
+  end;
+
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
     function GetLinks(s: string): String;
@@ -7235,6 +7240,14 @@ end;
 function TFHIRPractitionerRoleHelper.summary: String;
 begin
   result := '??';
+end;
+
+{ TFhirBundleEntryListHelper }
+
+function TFhirBundleEntryListHelper.append(url: String): TFHIRBundleEntry;
+begin
+  result := append;
+  result.fullUrl := url;
 end;
 
 end.

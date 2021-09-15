@@ -20,6 +20,7 @@ type
     lblVersion: TLabel;
     lblAge: TLabel;
     Panel1: TPanel;
+    pnlBase: TPanel;
     procedure FormShow(Sender: TObject);
     procedure Image1Click(Sender: TObject);
   private

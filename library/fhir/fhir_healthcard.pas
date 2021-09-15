@@ -65,7 +65,7 @@ begin
     result := result + ',"https://smarthealth.cards#covid19"';
   if ctImmunizationCard in card.types then
     result := result + ',"https://smarthealth.cards#immunization"';
-  if ctCovidCard in card.types then
+  if ctLabCard in card.types then
     result := result + ',"https://smarthealth.cards#laboratory"';
   result := result + '],"credentialSubject":{'+
      '"fhirVersion":"4.0.1",'+

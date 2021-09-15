@@ -123,7 +123,7 @@ begin
         if covid then
           card := signCard(bnd, [ctCovidCard, ctImmunizationCard])
         else
-          card := signCard(bnd, [ctCovidCard]);
+          card := signCard(bnd, [ctImmunizationCard]);
         card.links.assign(engine.links);
       end;
     finally
@@ -178,7 +178,7 @@ begin
   cts := processParams;
   covid := ctCovidCard in cts;
   if (ctHealthCard in cts) or not (ctLabCard in cts) then
-    makeImmunizationCard(covid);
+    makeImmunizationCard(true);
 end;
 
 procedure THealthCardGenerator.SetParams(const Value: TFhirParameters);
@@ -317,7 +317,7 @@ begin
     pat := findPatient;
     try
       linkResource(0, 'Patient/'+pat.id);
-      bundle.entryList.Append.resource := makePatient(pat);
+      bundle.entryList.Append('resource:0').resource := makePatient(pat);
     finally
       pat.Free;
     end;
@@ -327,7 +327,7 @@ begin
       for imm in immList do
         if isRelevantImmunization(imm) then
         begin
-          bundle.entryList.Append.resource := makeImmunization(imm);
+          bundle.entryList.Append('resource:'+inttostr(i)).resource := makeImmunization(imm);
           linkResource(i, 'Immunization/'+imm.id);
           inc(i);
         end;

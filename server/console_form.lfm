@@ -58,10 +58,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 684
-      ActivePage = tbManage
+      ActivePage = tbTerminologies
       Align = alClient
       ParentFont = False
-      TabIndex = 3
+      TabIndex = 4
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -2403,18 +2403,157 @@ object MainConsoleForm: TMainConsoleForm
               OnClick = pnlProcessNDCClick
             end
           end
+          object pnlProcessUNII: TPanel
+            Left = 3
+            Height = 86
+            Top = 433
+            Width = 109
+            Align = alTop
+            BevelOuter = bvNone
+            BorderWidth = 10
+            ClientHeight = 86
+            ClientWidth = 109
+            Color = clWhite
+            ParentBackground = False
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 5
+            OnClick = pnlProcessUNIIClick
+            object Image7: TImage
+              Left = 30
+              Height = 48
+              Top = 10
+              Width = 48
+              AutoSize = True
+              OnClick = pnlProcessUNIIClick
+              Picture.Data = {
+                07544269746D6170AE0C0000424DAE0C000000000000AE030000280000003000
+                000030000000010008000000000000000000C40E0000C40E0000DE000000DE00
+                0000FFFFFFFFF8F8F8FFF3F3F3FFFDFDFDFFE9E9E9FF6F6F6FFF2F2F2FFF1B1B
+                1BFF070707FF000000FF050505FF191919FF424242FF8F8F8FFF6C6C6CFF2525
+                25FF060606FF020202FF131313FF4C4C4CFFE5E5E5FFBABABAFF4D4D4DFF3939
+                39FFC0C0C0FF848484FF1C1C1CFF101010FF444444FFCBCBCBFF686868FFC3C3
+                C3FFC8C8C8FF858585FF3E3E3EFF9C9C9CFF111111FF636363FF9A9A9AFF0303
+                03FF979797FF0F0F0FFF737373FFA8A8A8FF0D0D0DFF9D9D9DFF040404FF1A1A
+                1AFFB7B7B7FFB1B1B1FF676767FF474747FFD9D9D9FF0C0C0CFF6D6D6DFFAFAF
+                AFFF272727FFFBFBFBFF969696FFDCDCDCFF232323FF5F5F5FFF555555FFEEEE
+                EEFF5E5E5EFFE4E4E4FF818181FFE6E6E6FFFEFEFEFF747474FFEDEDEDFF2626
+                26FFCECECEFFEAEAEAFF7F7F7FFFA3A3A3FF0B0B0BFF383838FF828282FFF6F6
+                F6FFAAAAAAFFABABABFFEFEFEFFFF2F2F2FFF4F4F4FF646464FF616161FF9494
+                94FF080808FF8B8B8BFF010101FF1F1F1FFF464646FF7A7A7AFFA1A1A1FF8989
+                89FF171717FF575757FFB2B2B2FF181818FF767676FFD6D6D6FF2D2D2DFFA6A6
+                A6FF3A3A3AFF757575FF202020FF525252FF404040FFECECECFF434343FFADAD
+                ADFF606060FF595959FF808080FF0A0A0AFFA4A4A4FF797979FF333333FFEBEB
+                EBFFF5F5F5FF888888FFD1D1D1FFC9C9C9FFBCBCBCFFE7E7E7FFD7D7D7FFE2E2
+                E2FFFCFCFDFFFBFBFCFF9A9ACBFF6262AFFF3C3C9CFF21218FFF050580FF0000
+                7FFF161689FF2E2E95FF7272B7FFE9E9F3FF9C9CCCFF6363B0FF3D3D9CFF2222
+                8FFF060681FF151589FF2D2D94FF7070B6FFE3E3F0FF7171B6FF6D6DB5FF7878
+                BAFF6666B1FF9E9ECDFFACACD4FFA4A4D1FF2B2B93FFA7A7D2FFA8A8D2FF0303
+                80FFE5E5F1FFAEAED5FFD9D9EBFF4E4EA5FF39399BFF5555A9FF323297FF6565
+                B1FF4949A3FF42429FFF5353A8FF4B4BA3FF7171B7FF5C5CACFF5454A8FF7C7C
+                BCFF8282BFFF5A5AABFF7A7ABBFF6060AEFF8181BFFF5858AAFF7474B8FF5F5F
+                AEFF4545A1FF6767B2FF3D3D9DFF4F4FA6FF343498FF5757AAFF2C2C94FF3333
+                98FF0B0B83FFF8F8FAFF3A3A9BFF050581FFF0F0F8FF6F6FB6FF242490FFB8B8
+                DAFF7575B9FF20208EFFB4B4D8FFA6A6D1FF5E5EADFFADADD5FFE6E6F1FF4C4C
+                A4FF141488FFD1D1E7FFEDEDF5FF131388FF5D5DACFFCBCBE4FFF1F1F7FFCCCC
+                E5FFC0C0DEFFC1C1DFFFDFDFEEFFF3F3F8FFCDCDE5FFDEDEEEFF000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00D6D7D8D9D5DA0000000000DBDCD9D9D5DD0000000000000000000000000000
+                000000000000000000000000000000CECF878787878787D0B3D1D2BB87878787
+                8787D3D4D50000000000000000000000000000000000000000000000000000CB
+                878787878787878787CCCD878787878787878787BD0000000000000000000000
+                00000000000000000000000000000000C587878787878787C6C700C887878787
+                878787C9CA000000000000000000000000000000000000000000000000000000
+                00BF8787878787C0C1000000C28787878787C3C4000000000000000000000000
+                0000000000000000000000000000000000BB8787878787BC00000000BD878787
+                8787BE0000000000000000000000000000000000000000000000000000000000
+                00B78787878787B800000000B98787878787BA00000000000000000000000000
+                0000000000000000000000000000000000968787878787AA00000000B6878787
+                8787AB0000000000000000000000000000000000000000000000000000000000
+                00B28787878787B300000000B48787878787B500000000000000000000000000
+                0000000000000000000000000000000000AF87878787878300000000B0878787
+                8787B10000000000000000000000000000000000000000000000000000000000
+                00AF87878787878300000000B08787878787B100000000000000000000000000
+                0000000000000000000000000000000000AC8787878787AD0000000097878787
+                8787AE0000000000000000000000000000000000000000000000000000000000
+                00A78787878787AA00000000968787878787AB00000000000000000000000000
+                0000000000000000000000000000000000A78787878787A80000000096878787
+                8787A90000000000000000000000000000000000000000000000000000000000
+                00A38787878787A400000000A58787878787A600000000000000000000000000
+                000000000000000000000000000000009E8787878787879FA00000A187878787
+                878787A200000000000000000000000000000000000000000000000000000099
+                8787878787878787899A9B87878787878787879C9D0000000000000000000000
+                0000000000000000000000000000009587878787878787878796978787878787
+                8787878798000000000000000000000000000000000000000000000000000000
+                82838485868788898A8B008C8D8E8F9087919293940000000000000000000000
+                0000000000000000000000000000000000000000008000000000000000000000
+                8100000000000000000000000000000000000000004444000000000000000000
+                0000000000000000000000000000000000000000440000000000000000000000
+                00000000787E50371F0400000000000000000000497B7C7B7D00000000000000
+                0000007E430000000000000000000000003F751A090909090909761949000000
+                00000025090909090913780000000000000079095A5300000000000000000000
+                72730909090909090909095A1250000000001809090909090909740000000000
+                0005090909500000000000000000003E09090909090909090909090909095000
+                0000006409090909097000000000000071090909094E00000000000000006709
+                090909090909680E6468090909096A00000000006B0909096C00000000006D1C
+                09090909094E0000000000000000610909090909091300000000626309090962
+                0000000059090909640000000065660909090909094E00000000000000005B09
+                090909095C00000000000028095A5A75000000005E0909095F00000018600909
+                09090909094E00000000000000005809090909090D000000000000340909090E
+                0000000037090909590000505A09090909090909094E00000000000000530909
+                0909090931000000000000540909095500000000370909095600570909090909
+                09090909094E000000000000005209090909090930000000000000390909093D
+                00000000502E5A09090909090909090909090909094E000000000000004F0909
+                0909090950000000000000390909093D00000000500909090909090909095A5A
+                09090909094E00000000000000002E09090909092B000000000000392E5A093D
+                000000004B090909090909090909090973170909094E00000000000000000809
+                090909092B000000000000040909093D000000002309090909090909095A5A0F
+                48490909094A00000000000000000809090909092B000000000000410909093D
+                0000000042090909090909090909227D00440909094500000000000000000809
+                090909093A0000000000003B0909093C000000003D09090909095A5A093E3900
+                003F090909400000000000000031090909090909320000000000002809090933
+                44000034732E0909090909090E000000003709090938390000000000262E0909
+                0909090909170000000028290909090964005073090909090909092100000000
+                2D2E090909092F30000000001E09095A2E5A090909091F000020090909090909
+                092122090909090909092300000000002409090909090925000000004905060B
+                08090A0B1C0D000000000E0F10092E1213431516100909091718000000000000
+                191A5A5A091B1C1D000000000000000000010000000000000000000000010000
+                0000000000020202000000000000000000000202390000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000
+              }
+            end
+            object Label62: TLabel
+              Left = 22
+              Height = 15
+              Top = 66
+              Width = 62
+              Caption = 'UNII Import'
+              ParentColor = False
+              ParentFont = False
+              OnClick = pnlProcessNDCClick
+            end
+          end
         end
         object pgTerminologies: TPageControl
           Left = 115
           Height = 615
           Top = 0
           Width = 561
-          ActivePage = tbNDC
+          ActivePage = tbUnii
           Align = alClient
           ParentFont = False
           ShowTabs = False
           Style = tsButtons
-          TabIndex = 4
+          TabIndex = 5
           TabOrder = 1
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
@@ -4101,6 +4240,7 @@ object MainConsoleForm: TMainConsoleForm
             Caption = 'tbNDC'
             ClientHeight = 607
             ClientWidth = 553
+            OnContextPopup = tbNDCContextPopup
             object Panel36: TPanel
               Left = 0
               Height = 41
@@ -4460,6 +4600,435 @@ object MainConsoleForm: TMainConsoleForm
                 ParentColor = False
               end
               object btnTestNDC: TBitBtn
+                Left = 80
+                Height = 25
+                Top = 208
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Test'
+                Glyph.Data = {
+                  36040000424D3604000000000000360000002800000010000000100000000100
+                  2000000000000004000064000000640000000000000000000000000000000000
+                  000000000018060D064810230E69142D1375112710710913085B000000330000
+                  00046A605902897C712B83766D2883776E00887A6F008A7B6F0001030206132A
+                  115D408C37D74EBF4DFE56D957FF5CE75CFF58DF59FF50C750FF419D3BEE3149
+                  29AF967A67C0C3AA87F8C0A787F79F8872BA85786F2A8A7B6F000A190B29469D
+                  40D467E65BFF5ADB57FF54DB59FF54DF59FF53DC58FF55DC56FF61CF58FFAFA3
+                  78FFE1B788FFE1624FFFE26452FFDCB684FFA3886BDA85786F150D1E0D2E4194
+                  3ED549A743FF42953CFF40963DFF419A3FFF3F953CFF388C34FF709161FFEED0
+                  BEFFEEDEBCFFDE4C40FFDD4E42FFE4CB9DFFD0A573FF8D7D6F74091408263477
+                  30CA51B346FF52C950FF57DD58FF5CE85DFF58E25AFF4ACB4AFF8EA87FFFFFF8
+                  FBFFFDFCF2FFDF4B42FFDF5246FFEEDBB6FFE6C395FF958573A30B180B2B459B
+                  40D062DE57FF58D655FF54D858FF54DD5AFF53D958FF51D850FF7DB26FFFF8ED
+                  F3FFFFFFFFFFE76F6BFFE6736DFFFFF9E5FFDED3B6FF8A7C70700C1B0B2E4093
+                  3DD44AA944FF44973CFF42993EFF419C3FFF40973DFF3E9138FF408337FFACA7
+                  9EFFFFFFFFFFF5A09FFFF49593FFF8FBFCFFA79F97D48474681310250F223375
+                  2FC451B246FF51C74FFF55DA57FF5AE65BFF57DF59FF51CD52FF4CB443FF437B
+                  37F88A827CD1CFC9C5EFC9C2BDF39F948CB28271652688786C000C1D0D2A449B
+                  3FCE62DD57FF59D856FF55DB58FF56E05AFF55DD59FF57D957FF61DC57FF50C0
+                  49FD142211507E6B621D85756821837265008575690088786C000C1B0B2E4196
+                  3ED54CAE46FF469A3DFF429A3EFF419C40FF40983DFF41923AFF43993DFF49A9
+                  45FF081B0950261E1D008F7E70008E7D700087776A008A7A6E000F240E213374
+                  2FC249AD45FF57C24CFF65D654FF6AE158FF67DB55FF5CC84EFF49AD45FF387D
+                  32FB050D053C000000003E36310062574D0081716600807165000D1C0C284798
+                  3ECD5EDA56FF69D853FF70DF55FF71E458FF71E156FF6CDA53FF5ED855FF57BE
+                  4CFE0C190A5100000000000000000000000009080700080707000B180B30439C
+                  40D955CB4EFF5ACE4EFF5ADA56FF59E35AFF5ADD57FF5BD250FF55C94CFF50BD
+                  4CFF0F220E570000000000000000000000000000000000000000132E111E4191
+                  40BA7EED78FF75E86BFF69EC64FF65F265FF67EE64FF71E867FF80F079FF57B8
+                  55F3071306340000000000000000000000000000000000000000204A1D00224E
+                  201B4A7F447F72B168BE7DCA7AE580D481EF7FCE7CEA76B86ECD54894D972043
+                  1E39000000000000000000000000000000000000000000000000204A1D001F47
+                  1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
+                  1400010201000000000000000000000000000000000000000000
+                }
+                OnClick = btnTestNDCClick
+                ParentFont = False
+                TabOrder = 7
+              end
+            end
+          end
+          object tbUnii: TTabSheet
+            Caption = 'tbUnii'
+            ClientHeight = 607
+            ClientWidth = 553
+            OnContextPopup = tbUniiContextPopup
+            object Panel46: TPanel
+              Left = 0
+              Height = 41
+              Top = 0
+              Width = 553
+              Align = alTop
+              Alignment = taLeftJustify
+              BevelOuter = bvNone
+              Caption = '  UNII Import'
+              Font.Color = clWindowText
+              Font.Height = -19
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+              OnClick = Panel46Click
+            end
+            object Panel47: TPanel
+              Left = 0
+              Height = 104
+              Top = 41
+              Width = 553
+              Align = alTop
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 104
+              ClientWidth = 553
+              ParentBackground = False
+              ParentFont = False
+              TabOrder = 1
+              object Panel48: TPanel
+                Left = 5
+                Height = 94
+                Top = 5
+                Width = 543
+                Align = alClient
+                BevelOuter = bvNone
+                BorderWidth = 4
+                ClientHeight = 94
+                ClientWidth = 543
+                Color = clWhite
+                ParentBackground = False
+                ParentColor = False
+                ParentFont = False
+                TabOrder = 0
+                object Label63: TLabel
+                  Left = 4
+                  Height = 86
+                  Top = 4
+                  Width = 535
+                  Align = alClient
+                  AutoSize = False
+                  Caption = 'This pane allows you to import UNII from the distribution file'
+                  ParentColor = False
+                  ParentFont = False
+                  WordWrap = True
+                end
+              end
+            end
+            object Panel49: TPanel
+              Left = 0
+              Height = 51
+              Top = 515
+              Width = 553
+              Align = alBottom
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 51
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 2
+              object lblUNIIAmount: TLabel
+                Left = 516
+                Height = 15
+                Top = 10
+                Width = 28
+                Anchors = [akTop, akRight]
+                Caption = '100%'
+                ParentColor = False
+                ParentFont = False
+              end
+              object lblUNIIAction: TLabel
+                Left = 10
+                Height = 1
+                Top = 32
+                Width = 1
+                ParentColor = False
+                ParentFont = False
+              end
+              object prgUNIIImport: TProgressBar
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 500
+                Anchors = [akTop, akLeft, akRight]
+                ParentFont = False
+                Step = 1
+                TabOrder = 0
+              end
+            end
+            object Panel50: TPanel
+              Left = 0
+              Height = 41
+              Top = 566
+              Width = 553
+              Align = alBottom
+              BevelOuter = bvNone
+              ClientHeight = 41
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 3
+              object btnImportUNII: TBitBtn
+                Left = 462
+                Height = 25
+                Top = 9
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Import'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F06386F06386F02D9F209
+                  8BF81DB6B743672E43672EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F2B8CFF18ADF700DDFF0388FF3AC69D6982412C351743672E0397
+                  F0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F267DE705C5E603A5FF06
+                  A3F25AA9582B321417150B3797700397F0FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F0993C900ACFF0C69DC2D805443672E2956732227221C7B780398
+                  F2FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C91D5DB65D8A544D
+                  732D22678C228FFF315767206B5D0195C6FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF43672E1F4E580B3B770A3F900939891F475543672EFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF3A748F06386F0F57CA12
+                  51AA1457B81353BA06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FF3B748F8390A6165CAD1B6BC42082F31E7EF71869E306386FFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C90993C95497AB2B7BC729
+                  91FA2A95FF268EFC2083FF06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90ACBFF0993C90993C93195D82D8AE22A8CF02688FB06386F4367
+                  2E43672EFF00FFFF00FFFF00FFFF00FFFF00FF0993C911CFFF00BBEF0DB1D309
+                  93C90993C90993C90993C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90DC6FE00CBFF00CFFA00EBFF00FEFF04E7EE0ABBD31CDCEB0993
+                  C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C900BFF200DCFF00
+                  EEFF00FFFF00CBD001C7D70993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF0993C90993C90993C90993C90993C90993C9FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+                  00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnImportUNIIClick
+                ParentFont = False
+                TabOrder = 0
+              end
+              object btnImportUNIIStop: TBitBtn
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
+                Caption = 'Stop'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FF01079F0313A90418AE0419AE0313A90108A0FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF01049D041CB10730C00734C407
+                  35C50735C50734C30731C1041FB301069EFF00FFFF00FFFF00FFFF00FFFF00FF
+                  0109A1052BC30735C70733C20732C20732C20732C20732C20733C30735C4062D
+                  BE020CA4FF00FFFF00FFFF00FF01049B052BCA0636D80431CD0027C4032EC107
+                  32C20732C20430C10027BF042FC10735C4072EBE01069EFF00FFFF00FF031ABA
+                  0537E70331DD123DD86480E01840CB002CC1022DC00F38C46580D91B43C7052F
+                  C10735C5051FB3FF00FF01049E0430E40436F1002AE45070E9FFFFFFB7C4F10D
+                  36CA042DC3A2B2E8FFFFFF6984DA0026BE0733C30731C10108A0020FAF0336FA
+                  0335F80232EE0A35E88CA2F2FFFFFFB4C2F1A9B8EDFFFFFFA7B7E9133AC4052F
+                  C10732C20734C40313AA0619BC1747FE093AFC0435F80131F0002BE891A5F4FF
+                  FFFFFFFFFFABBAEF062FC5022DC00732C20732C20736C50419AE0B1DBE4168FE
+                  1C49FC0335FB0031F90531F2A4B5F7FFFFFFFFFFFFB9C6F20D36D0002CC60732
+                  C20732C20736C50418AD0613B45B7CFC486CFD0133FB113CFBA1B4FEFFFFFFA4
+                  B6F892A7F5FFFFFFB6C4F21A41D3042FC80732C40734C30212A90003A04A6AF3
+                  8FA6FF1F46FB4C6FFCFFFFFFA7B8FE0733F6002AED8CA2F6FFFFFF627FE70028
+                  D00734CC0730C300069FFF00FF1A2FCB99AFFF8BA2FE214DFB4D71FC0E3DFB00
+                  30FB0031F70636F14C6EF1103CE30432DB0636D7041CB5FF00FFFF00FF0004A0
+                  415EECB8C7FF9CAFFD3A5CFC0A3AFB0335FB0335FB0133F9052FF20635EB0537
+                  E9052CCD00049CFF00FFFF00FFFF00FF0309A54260ECA9BBFFBDCAFF8EA5FE64
+                  83FD5073FC4A6EFD3961FD1444F9042CD70109A2FF00FFFF00FFFF00FFFF00FF
+                  FF00FF0004A01E32CD5876F6859EFE8BA3FF7994FE5376FC234AF0051EC50104
+                  9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
+                  22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnLoincImportStopClick
+                ParentFont = False
+                TabOrder = 1
+                Visible = False
+              end
+            end
+            object Panel51: TPanel
+              Left = 0
+              Height = 97
+              Top = 145
+              Width = 553
+              Align = alTop
+              ClientHeight = 97
+              ClientWidth = 553
+              TabOrder = 4
+              object Label64: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 39
+                Caption = 'Source'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object edtUNIIFile: TEdit
+                Left = 73
+                Height = 23
+                Top = 34
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 0
+              end
+              object Label65: TLabel
+                Left = 16
+                Height = 15
+                Top = 36
+                Width = 18
+                Caption = 'File'
+                ParentColor = False
+              end
+              object Label73: TLabel
+                Left = 16
+                Height = 15
+                Top = 66
+                Width = 38
+                Caption = 'Version'
+                ParentColor = False
+              end
+              object edtUNIIVersion: TEdit
+                Left = 73
+                Height = 23
+                Top = 64
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 1
+                TextHint = 'YYYY-MM-DD'
+              end
+            end
+            object Panel52: TPanel
+              Left = 0
+              Height = 240
+              Top = 242
+              Width = 553
+              Align = alTop
+              ClientHeight = 240
+              ClientWidth = 553
+              TabOrder = 5
+              object cbxUNIIDriver: TComboBox
+                Left = 80
+                Height = 23
+                Top = 64
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                ItemHeight = 15
+                TabOrder = 0
+              end
+              object edtUNIIServer: TEdit
+                Left = 80
+                Height = 23
+                Top = 94
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 1
+                Text = 'edtRXNServer'
+              end
+              object edtUNIIDBName: TEdit
+                Left = 80
+                Height = 23
+                Top = 122
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 2
+                Text = 'edtRXNDBName'
+              end
+              object edtUNIIUsername: TEdit
+                Left = 80
+                Height = 23
+                Top = 150
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 3
+                Text = 'edtRXNUsername'
+              end
+              object edtUNIIPassword: TEdit
+                Left = 80
+                Height = 23
+                Top = 178
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 4
+                Text = 'edtRXNPassword'
+              end
+              object Label66: TLabel
+                Left = 16
+                Height = 15
+                Top = 180
+                Width = 50
+                Caption = 'Password'
+                ParentColor = False
+              end
+              object Label67: TLabel
+                Left = 16
+                Height = 15
+                Top = 154
+                Width = 53
+                Caption = 'Username'
+                ParentColor = False
+              end
+              object Label68: TLabel
+                Left = 16
+                Height = 15
+                Top = 124
+                Width = 50
+                Caption = 'DB Name'
+                ParentColor = False
+              end
+              object Label69: TLabel
+                Left = 18
+                Height = 15
+                Top = 98
+                Width = 32
+                Caption = 'Server'
+                ParentColor = False
+              end
+              object Label70: TLabel
+                Left = 18
+                Height = 15
+                Top = 68
+                Width = 31
+                Caption = 'Driver'
+                ParentColor = False
+              end
+              object rbUNIIMySQL: TRadioButton
+                Left = 219
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'MySQL'
+                TabOrder = 5
+              end
+              object rbUNIIMSSQL: TRadioButton
+                Left = 80
+                Height = 19
+                Top = 38
+                Width = 130
+                AutoSize = False
+                Caption = 'Microsoft SQL Server'
+                TabOrder = 6
+              end
+              object Label71: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 64
+                Caption = 'Destination'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object Label72: TLabel
+                Left = 16
+                Height = 15
+                Top = 42
+                Width = 24
+                Caption = 'Type'
+                ParentColor = False
+              end
+              object btnTestUNII: TBitBtn
                 Left = 80
                 Height = 25
                 Top = 208
