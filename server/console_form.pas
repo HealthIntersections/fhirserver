@@ -40,7 +40,7 @@ uses
   IdTelnet, IdGlobal,
   fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
   fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects,
-  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
+  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii,
   fui_lcl_managers,
   server_config, server_constants,
   console_managers;
@@ -104,12 +104,15 @@ type
     btnCacheInfo: TButton;
     btnCardKey: TSpeedButton;
     btnCardKey1: TSpeedButton;
+    btnImportUNII: TBitBtn;
+    btnImportUNIIStop: TBitBtn;
     btnLockStatus: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
     btnImportNDC: TBitBtn;
     btnReindexRxNormStop: TBitBtn;
     btnImportNDCStop: TBitBtn;
+    btnTestUNII: TBitBtn;
     btnTextRxNorm: TBitBtn;
     btnTestNDC: TBitBtn;
     btnTxImport: TBitBtn;
@@ -141,6 +144,7 @@ type
     btnFetchThreads: TButton;
     btnClearCache: TButton;
     cbxEdition: TComboBox;
+    cbxUNIIDriver: TComboBox;
     cbxRXNDriver: TComboBox;
     cbxNDCDriver: TComboBox;
     chkCaching: TCheckBox;
@@ -162,6 +166,12 @@ type
     edtLoincDest: TEdit;
     edtLoincSource: TEdit;
     edtLoincVersion: TEdit;
+    edtUNIIDBName: TEdit;
+    edtUNIIFile: TEdit;
+    edtUNIIVersion: TEdit;
+    edtUNIIPassword: TEdit;
+    edtUNIIServer: TEdit;
+    edtUNIIUsername: TEdit;
     edtPrivateKey: TEdit;
     edtRXNDBName: TEdit;
     edtNDCDBName: TEdit;
@@ -211,6 +221,7 @@ type
     Image4: TImage;
     Image5: TImage;
     Image6: TImage;
+    Image7: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
     Label11: TLabel;
@@ -240,6 +251,18 @@ type
     Label59: TLabel;
     Label60: TLabel;
     Label61: TLabel;
+    Label62: TLabel;
+    Label63: TLabel;
+    Label64: TLabel;
+    Label65: TLabel;
+    Label66: TLabel;
+    Label67: TLabel;
+    Label68: TLabel;
+    Label69: TLabel;
+    Label70: TLabel;
+    Label71: TLabel;
+    Label72: TLabel;
+    Label73: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
@@ -271,6 +294,8 @@ type
     Label4: TLabel;
     Label40: TLabel;
     Label41: TLabel;
+    lblUNIIAction: TLabel;
+    lblUNIIAmount: TLabel;
     lblRxNormAction: TLabel;
     lblNDCAction: TLabel;
     lblRxNormAmount: TLabel;
@@ -326,6 +351,13 @@ type
     Panel43: TPanel;
     Panel44: TPanel;
     Panel45: TPanel;
+    Panel46: TPanel;
+    Panel47: TPanel;
+    Panel48: TPanel;
+    Panel49: TPanel;
+    Panel50: TPanel;
+    Panel51: TPanel;
+    Panel52: TPanel;
     pgMain: TPageControl;
     pgManage: TPageControl;
     Panel1: TPanel;
@@ -362,16 +394,20 @@ type
     Panel9: TPanel;
     pnlCombineSnomed: TPanel;
     pnlLoincImport: TPanel;
+    pnlProcessUNII: TPanel;
     pnlProcessRXN: TPanel;
     pnlProcessNDC: TPanel;
     pnlSnomedImport: TPanel;
     prgCombine: TProgressBar;
     prgLoincImport: TProgressBar;
+    prgUNIIImport: TProgressBar;
     prgRxNormImport: TProgressBar;
     prgNDCImport: TProgressBar;
     prgSnomedImport: TProgressBar;
     dlgFolder: TSelectDirectoryDialog;
     dlgSave: TSaveDialog;
+    rbUNIIMSSQL: TRadioButton;
+    rbUNIIMySQL: TRadioButton;
     rbRXNMSSQL: TRadioButton;
     rbNDCMSSQL: TRadioButton;
     rbRXNMySQL: TRadioButton;
@@ -385,6 +421,7 @@ type
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
+    tbUnii: TTabSheet;
     tbNDC: TTabSheet;
     tbRxNorm: TTabSheet;
     tbGeneral: TTabSheet;
@@ -423,6 +460,7 @@ type
     procedure btnFetchObjectsClick(Sender: TObject);
     procedure btnFetchObjectsPlusClick(Sender: TObject);
     procedure btnImportNDCClick(Sender: TObject);
+    procedure btnImportUNIIClick(Sender: TObject);
     procedure btnLockStatusClick(Sender: TObject);
     procedure btnReIndexRxNormClick(Sender: TObject);
     procedure btnTestNDCClick(Sender: TObject);
@@ -477,10 +515,16 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
+    procedure Panel46Click(Sender: TObject);
     procedure pnlProcessNDCClick(Sender: TObject);
+    procedure pnlProcessUNIIClick(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
     procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure tbUniiContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton3Click(Sender: TObject);
@@ -525,6 +569,7 @@ type
     procedure loincCallback(pct: Integer; action: String);
     procedure rxNormCallback(sender : TObject; pct : integer; done : boolean; desc : String);
     procedure ndcCallback(sender : TObject; pct : integer; done : boolean; desc : String);
+    procedure uniiCallback(sender : TObject; pct : integer; done : boolean; desc : String);
     Procedure SetUpTerminologyPage;
     function getSnomedModule: String;
     procedure connectToServer(server : String);
@@ -738,6 +783,7 @@ begin
   edtConfigFile.text := FIni.ReadString('config', 'filename', '');
   edtConfigFileChange(self);
 
+  pgTerminologies.ActivePage := tbSnomed;
   Timer1.enabled := true;
 end;
 
@@ -793,6 +839,7 @@ begin
   pnlCombineSnomed.color := clWhite;
   pnlProcessRXN.color := clWhite;
   pnlProcessNDC.Color := clWhite;
+  pnlProcessUNII.Color := clWhite;
   pgTerminologies.ActivePageIndex := 2;
 end;
 
@@ -805,6 +852,7 @@ begin
   pnlSnomedImport.color := clWhite;
   pnlProcessRXN.color := clWhite;
   pnlProcessNDC.Color := clWhite;
+  pnlProcessUNII.Color := clWhite;
   pgTerminologies.ActivePageIndex := 1;
 end;
 
@@ -817,6 +865,7 @@ begin
   pnlCombineSnomed.color := clWhite;
   pnlProcessRXN.color := clWhite;
   pnlProcessNDC.Color := clWhite;
+  pnlProcessUNII.Color := clWhite;
   pgTerminologies.ActivePageIndex := 0;
 end;
 
@@ -826,6 +875,7 @@ begin
     exit;
   pnlProcessRXN.Color := rgb(217, 240, 247);
   pnlProcessNDC.Color := clWhite;
+  pnlProcessUNII.Color := clWhite;
   pnlLoincImport.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlSnomedImport.color := clWhite;
@@ -1177,16 +1227,35 @@ begin
 
 end;
 
+procedure TMainConsoleForm.Panel46Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainConsoleForm.pnlProcessNDCClick(Sender: TObject);
 begin
   if FRunning then
     exit;
   pnlProcessNDC.Color := rgb(217, 240, 247);
+  pnlProcessUNII.Color := clWhite;
   pnlProcessRXN.Color := clWhite;
   pnlLoincImport.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlSnomedImport.color := clWhite;
   pgTerminologies.ActivePageIndex := 4;
+end;
+
+procedure TMainConsoleForm.pnlProcessUNIIClick(Sender: TObject);
+begin
+  if FRunning then
+    exit;
+  pnlProcessUNII.Color := rgb(217, 240, 247);
+  pnlProcessNDC.Color := clWhite;
+  pnlProcessRXN.Color := clWhite;
+  pnlLoincImport.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  pnlSnomedImport.color := clWhite;
+  pgTerminologies.ActivePageIndex := 5;
 end;
 
 procedure TMainConsoleForm.pnlSnomedImportClick(Sender: TObject);
@@ -1200,7 +1269,19 @@ begin
 
 end;
 
+procedure TMainConsoleForm.tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+
+end;
+
 procedure TMainConsoleForm.tbTerminologiesContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+
+end;
+
+procedure TMainConsoleForm.tbUniiContextPopup(Sender: TObject;
   MousePos: TPoint; var Handled: Boolean);
 begin
 
@@ -1662,6 +1743,73 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.btnImportUNIIClick(Sender: TObject);
+var
+  start : TDateTime;
+  db : TFDBManager;
+  c : TFDBConnection;
+begin
+  FIni.WriteString('unii-import', 'source', edtUNIIFile.text);
+  FIni.WriteString('unii-import', 'version', edtUNIIVersion.text);
+  if rbUNIIMSSQL.checked then
+     FIni.WriteString('unii-import', 'type', 'mssql')
+   else
+     FIni.WriteString('unii-import', 'type', 'mysql');
+   FIni.WriteInteger('unii-import', 'driver', cbxUNIIDriver.ItemIndex);
+   FIni.WriteString('unii-import', 'server', edtUNIIServer.text);
+   FIni.WriteString('unii-import', 'database', edtUNIIDBName.text);
+   FIni.WriteString('unii-import', 'password', edtUNIIPassword.text);
+   FIni.WriteString('unii-import', 'username', edtUNIIUsername.text);
+
+   if not FileExists(edtUNIIFile.text) then
+   begin
+     ShowMessage('Folder '+edtUNIIFile.text+' not found')
+   end
+   else
+   begin
+    start := now;
+    FWantStop := false;
+    btnImportUNIIStop.Visible := true;
+    cursor := crHourGlass;
+    FRunning := true;
+    edtUNIIFile.enabled := false;
+    edtUNIIVersion.enabled := false;
+    rbUNIIMSSQL.enabled := false;
+    rbUNIIMySQL.enabled := false;
+    cbxUNIIDriver.enabled := false;
+    edtUNIIServer.enabled := false;
+    edtUNIIDBName.enabled := false;
+    edtUNIIPassword.enabled := false;
+    edtUNIIUsername.enabled := false;
+    try
+       if rbUNIIMSSQL.checked then
+         db := TFDBOdbcManager.create('UNII', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
+       else
+         db := TFDBOdbcManager.create('UNII', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
+       try
+         ImportUnii(edtUNIIFile.text, edtUNIIVersion.text, db, uniiCallback);
+       finally
+         db.free;
+       end;
+    finally
+      cursor := crDefault;
+      FRunning := false;
+      edtUNIIFile.enabled := true;
+      edtUNIIVersion.enabled := true;
+      rbUNIIMSSQL.enabled := true;
+      rbUNIIMySQL.enabled := true;
+      cbxUNIIDriver.enabled := true;
+      edtUNIIServer.enabled := true;
+      edtUNIIDBName.enabled := true;
+      edtUNIIPassword.enabled := true;
+      edtUNIIUsername.enabled := true;
+      uniiCallback(self, 0, false, '');
+      btnImportUNIIStop.Visible := false;
+    end;
+    MessageDlg('Successfully Imported UNII in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
+  end;
+end;
+
 procedure TMainConsoleForm.btnLockStatusClick(Sender: TObject);
 begin
   try
@@ -1756,6 +1904,8 @@ var
   db : TFDBManager;
   c : TFDBConnection;
 begin
+  FIni.WriteString('unii-import', 'source', edtUNIIFile.text);
+  FIni.WriteString('unii-import', 'version', edtUNIIVersion.text);
   if rbNDCMSSQL.checked then
     FIni.WriteString('ndc-import', 'type', 'mssql')
   else
@@ -2505,6 +2655,19 @@ begin
     abort;
 end;
 
+procedure TMainConsoleForm.uniiCallback(sender: TObject; pct: integer; done: boolean; desc: String);
+begin
+  prgUNIIImport.Position := pct;
+  lblUNIIAction.Caption := desc;
+  lblUNIIAmount.Caption := inttostr(pct)+'%';
+  prgUNIIImport.Update;
+  lblUNIIAction.Update;
+  lblUNIIAmount.Update;
+  Application.ProcessMessages;
+  if (FWantStop) then
+    abort;
+end;
+
 procedure TMainConsoleForm.SetUpTerminologyPage;
 var
   env : TOdbcEnv;
@@ -2535,6 +2698,7 @@ begin
     try
       cbxRXNDriver.items.assign(adm.Drivers);
       cbxNDCDriver.items.assign(adm.Drivers);
+      cbxUNIIDriver.items.assign(adm.Drivers);
     finally
       adm.Free;
     end;
@@ -2560,11 +2724,22 @@ begin
   edtNDCPassword.text := FIni.ReadString('ndc-import', 'password', '');
   edtNDCUsername.text := FIni.ReadString('ndc-import', 'username', '');
 
+  edtUNIIFile.text := FIni.ReadString('unii-import', 'source', '');
+  edtUNIIVersion.text := FIni.ReadString('unii-import', 'version', '');
+  rbUNIIMSSQL.checked := FIni.ReadString('unii-import', 'type', '') = 'mssql';
+  rbUNIIMySQL.checked := FIni.ReadString('unii-import', 'type', '') <> 'mssql';
+  cbxUNIIDriver.ItemIndex := FIni.ReadInteger('unii-import', 'driver', -1);
+  edtUNIIServer.text := FIni.ReadString('unii-import', 'server', '');
+  edtUNIIDBName.text := FIni.ReadString('unii-import', 'database', '');
+  edtUNIIPassword.text := FIni.ReadString('unii-import', 'password', '');
+  edtUNIIUsername.text := FIni.ReadString('unii-import', 'username', '');
+
   pnlSnomedImport.Color := rgb(217, 240, 247);
   pnlLoincImport.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlProcessRXN.color := clWhite;
   pnlProcessNDC.color := clWhite;
+  pnlProcessUNII.color := clWhite;
 
   pgMain.ActivePageIndex := 0;
   lbEditionsClick(self);

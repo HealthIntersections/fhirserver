@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang,
+  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads,
   fdb_manager,
   fhir_features,
   ftx_service;
@@ -66,9 +66,10 @@ type
   { TUniiServices }
 
   TUniiServices = class (TCodeSystemProvider)
-  public
+  private
     db : TFDBManager;
-
+    FVersion : String;
+  public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
@@ -109,7 +110,7 @@ type
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
-Procedure ImportUnii(filename : String; dbm : TFDBManager);
+Procedure ImportUnii(filename, version : String; dbm : TFDBManager; callback : TWorkProgressEvent);
 
 implementation
 
@@ -119,10 +120,26 @@ uses
 { TUniiServices }
 
 constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+var
+  conn : TFDBConnection;
 begin
   inherited Create(languages);
 
   self.db := db;
+  conn := db.GetConnection('version');
+  try
+    conn.SQL := 'Select Version from UniiVersion';
+    conn.prepare;
+    conn.execute;
+    conn.fetchnext;
+    FVersion := conn.colStringByname['Version'];
+    conn.terminate;
+
+    conn.release;
+  except
+    on e : exception do
+      conn.Error(e);
+  end;
 end;
 
 
@@ -159,7 +176,7 @@ end;
 
 function TUniiServices.version(context: TCodeSystemProviderContext): String;
 begin
-  result := '';
+  result := FVersion;
 end;
 
 function TUniiServices.systemUri(context : TCodeSystemProviderContext) : String;
@@ -201,42 +218,62 @@ begin
   raise ETerminologyTodo.create('TUniiServices.getPrepContext');
 end;
 
-Procedure ImportUnii(filename : String; dbm : TFDBManager);
+Procedure ImportUnii(filename, version : String; dbm : TFDBManager; callback : TWorkProgressEvent);
 var
   tab : TFslTextExtractor;
   f : TFslFile;
   s : String;
   cols : TArray<String>;
   map : TFslStringIntegerMatch;
-  key, last, lastDesc : integer;
+  key, last, lastDesc, size, t : integer;
   db : TFDBConnection;
+  meta : TFDBMetaData;
+
 begin
-  Logging.log('Inport UNII from '+filename);
+  callback(nil, 0, false, 'Preparing');
   db := dbm.GetConnection('unii');
   try
+    callback(nil, 0, false, 'Cleaning up');
+    meta := db.FetchMetaData;
+    try
+      if meta.hasTable('UniiDesc', true) then
+        db.DropTable('UniiDesc');
+      if meta.hasTable('Unii', true) then
+        db.DropTable('Unii');
+      if meta.hasTable('UniiVersion', true) then
+        db.DropTable('UniiVersion');
+    finally
+      meta.free;
+    end;
+    db.ExecSQL('CREATE TABLE Unii (UniiKey int NOT NULL, Code nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_Unii PRIMARY KEY CLUSTERED ( UniiKey ASC))');
+    db.ExecSQL('CREATE TABLE UniiDesc ( UniiDescKey int NOT NULL, UniiKey int NOT NULL, Type nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_UniiDesc PRIMARY KEY CLUSTERED (UniiDescKey ASC))');
+    db.ExecSQL('CREATE TABLE UniiVersion ( Version nchar(20) NOT NULL)');
+    db.ExecSQL('Insert into UniiVersion (Version) values ('''+SQLWrapString(version)+''')');
+
     last := 0;
     lastDesc := 0;
-    db.ExecSQL('Delete from UNIIDesc');
-    db.ExecSQL('Delete from UNII');
-
     map := TFslStringIntegerMatch.create;
     try
       map.forced := true;
       f := TFslFile.Create(filename, fmOpenRead);
       try
+        size := f.Size;
+        t := 0;
+        callback(nil, 0, false, 'Loading');
         tab := TFslTextExtractor.Create(f.Link, TEncoding.UTF8);
         try
           s := tab.ConsumeLine;
+          inc(t, length(s) + 2); // ascii so works ok
           while tab.More do
           begin
+            callback(nil, trunc((t / size) * 100), false, 'Loading');
             s := tab.ConsumeLine;
+            inc(t, length(s) + 2); // ascii so works ok
             cols := s.Split([#9]);
             key := map[cols[2]];
             if key = 0 then
             begin
               inc(last);
-              if last mod 1000 = 0 then
-                write('.');
               key := last;
               db.ExecSQL('insert into UNII (UniiKey, Code)  values ('+inttostr(key)+', '''+SQLWrapString(cols[2])+''')');
               map[cols[2]] := key;
@@ -249,6 +286,7 @@ begin
               db.ExecSQL('insert into UNIIDesc (UniiDescKey, UniiKey, Type, Display)  values ('+inttostr(lastDesc)+', '+inttostr(key)+', '''+SQLWrapString(cols[1])+''', '''+SQLWrapString(cols[0])+''')');
             end;
           end;
+          callback(nil, 100, true, 'Loading');
         finally
           tab.Free;
         end;

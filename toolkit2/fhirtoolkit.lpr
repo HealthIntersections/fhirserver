@@ -36,6 +36,7 @@ begin
   frm := TToolkitAboutForm.create(Application);
   try
     frm.Button1.Visible := false;
+    frm.height := frm.pnlBase.height;
     frm.Show;
     frm.Update;
     Application.CreateForm(TMainToolkitForm, MainToolkitForm);
