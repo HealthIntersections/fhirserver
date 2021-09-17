@@ -27,6 +27,7 @@ type
     FNextRun : TDateTime;
     FLastEmail : TDateTime;
     procedure RunUpdater;
+    procedure doSendEmail(dest, subj, body : String);
   protected
     function ThreadName : String; override;
     procedure Initialise; override;
@@ -302,6 +303,12 @@ begin
   TimePeriod := 60 * 60 * 1000;
 end;
 
+procedure TPackageUpdaterThread.doSendEmail(dest, subj, body : String);
+begin
+  sendEmail(FEndPoint.Settings, dest, subj, body);
+end;
+
+
 procedure TPackageUpdaterThread.RunUpdater;
 var
   conn : TFDBConnection;
@@ -311,6 +318,7 @@ begin
   try
     upd := TPackageUpdater.create;
     try
+      upd.OnSendEmail := doSendEmail;
       try
         upd.update(conn);
         if (TFslDateTime.makeToday.DateTime <> FLastEmail) then

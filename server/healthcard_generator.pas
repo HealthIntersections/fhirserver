@@ -46,6 +46,19 @@ type
     function makeBundle : TFHIRBundle;
   end;
 
+  TVciLaboratoryCardMaker = class (TCardMaker)
+  private
+    function loincCode(obs : TFHIRObservation) : String;
+    function DoSortObservations(sender : TObject; const L, R: TFHIRObservation): Integer;
+  public
+    function findObservations : TFslList<TFHIRObservation>;
+    function isRelevantObservation(obs : TFHIRObservation) : boolean;
+
+    function makeObservation(obs : TFHIRObservation) : TFHIRObservation;
+
+    function makeBundle : TFHIRBundle;
+  end;
+
   THealthCardGenerator = class (TFslObject)
   private
     FIssuerUrl : String;
@@ -66,6 +79,8 @@ type
     function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 
     procedure makeImmunizationCard(covid : boolean);
+    procedure makeLaboratoryCard(covid : boolean);
+
     function processParams : TCredentialTypeSet;
   public
     constructor Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
@@ -134,6 +149,34 @@ begin
   end;
 end;
 
+procedure THealthCardGenerator.makeLaboratoryCard(covid: boolean);
+var
+  engine : TVciLaboratoryCardMaker;
+  bnd : TFhirBundle;
+  card : THealthcareCard;
+begin
+  engine := TVciLaboratoryCardMaker.Create(FManager.link, FRequest.link, FIssues);
+  try
+    engine.covid := covid;
+    engine.patientId := FPatientId;
+    bnd := engine.makeBundle;
+    try
+      if bnd <> nil then
+      begin
+        if covid then
+          card := signCard(bnd, [ctCovidCard, ctLabCard])
+        else
+          card := signCard(bnd, [ctLabCard]);
+        card.links.assign(engine.links);
+      end;
+    finally
+      bnd.Free;
+    end;
+  finally
+    engine.Free;
+  end;
+end;
+
 function THealthCardGenerator.processParams : TCredentialTypeSet;
 var
   p : TFhirParametersParameter;
@@ -178,7 +221,9 @@ begin
   cts := processParams;
   covid := ctCovidCard in cts;
   if (ctHealthCard in cts) or not (ctLabCard in cts) then
-    makeImmunizationCard(true);
+    makeImmunizationCard(covid);
+  if (ctHealthCard in cts) or not (ctImmunizationCard in cts) then
+    makeLaboratoryCard(covid);
 end;
 
 procedure THealthCardGenerator.SetParams(const Value: TFhirParameters);
@@ -405,6 +450,187 @@ begin
       end;
     end;
     result.isSubpotentElement := imm.isSubpotentElement.link;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+{ TVciLaboratoryCardMaker }
+
+function TVciLaboratoryCardMaker.DoSortObservations(sender: TObject; const L, R: TFHIRObservation): Integer;
+var
+  ld, rd : TFslDateTime;
+begin
+  ld := (l.effective as TFhirDateTime).value;
+  rd := (r.effective as TFhirDateTime).value;
+  result := ld.compare(rd);
+end;
+
+function TVciLaboratoryCardMaker.loincCode(obs: TFHIRObservation): String;
+var
+  c : TFHIRCoding;
+begin
+  result := '';
+  for c in obs.code.codingList do
+    if c.system = 'http://loinc.org' then
+      exit(c.code);
+end;
+
+function TVciLaboratoryCardMaker.findObservations: TFslList<TFHIRObservation>;
+var
+  bw : TFhirBundleW;
+  bnd : TFhirBundle;
+  be : TFhirBundleEntry;
+begin
+  result := TFslList<TFHIRObservation>.create;
+  try
+    bw := FManager.DoSearch(FRequest, 'Observation', 'patient='+FPatientId+'&_sort=date');
+    try
+      bnd := bw.Resource as TFhirBundle;
+      for be in bnd.entryList do
+        if (be.resource <> nil) and (be.resource is TFHIRObservation) then
+          result.Add((be.resource as TFHIRObservation).link);
+    finally
+      bw.Free;
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TVciLaboratoryCardMaker.isRelevantObservation(obs: TFHIRObservation): boolean;
+var
+  code : String;
+  c : TFHIRCodingW;
+  ctxt : TFHIRServerContext;
+begin
+  // it's relevant if it's a LOINC observation for a genetic material, antibodies, or antigens
+  code := loincCode(obs);
+  if (code = '') then
+    exit(false);
+
+  if (obs.subject = nil) or (obs.subject.reference = '') or (obs.effectiveElement = nil) then
+    exit(false);
+  if (obs.value = nil) or not StringArrayExistsSensitive(['CodeableConcept', 'Quantity', 'string'], obs.value.fhirType) then
+    exit(false);
+
+  ctxt := (FManager.ServerContextObject as TFHIRServerContext);
+  c := ctxt.Factory.wrapCoding(ctxt.Factory.makeCoding('http://loinc.org', code));
+  try
+    if covid then
+      result := ctxt.TerminologyServer.codeInValueSet(c, 'http://test.fhir.org/r4/ValueSet/Covid19Labs')
+    else
+      result := ctxt.TerminologyServer.codeInValueSet(c, 'http://test.fhir.org/r4/ValueSet/InfectiousDiseaseLabsLabs');
+  finally
+    c.Free;
+  end;
+end;
+
+function TVciLaboratoryCardMaker.makeBundle: TFHIRBundle;
+var
+  bundle : TFhirBundle;
+  pat : TFhirPatient;
+  obsList : TFslList<TFhirObservation>;
+  map : TFslMap<TFhirObservation>;
+  obs : TFhirObservation;
+  i : integer;
+begin
+  bundle := TFhirBundle.Create(BundleTypeCollection);
+  try
+    pat := findPatient;
+    try
+      linkResource(0, 'Patient/'+pat.id);
+      bundle.entryList.Append('resource:0').resource := makePatient(pat);
+    finally
+      pat.Free;
+    end;
+    obsList := findObservations;
+    try
+      map := TFslMap<TFhirObservation>.create;
+      try
+        for obs in obsList do
+          if isRelevantObservation(obs) then
+            map.AddOrSetValue(loincCode(obs), obs.Link);
+        obsList.Clear;
+        for obs in map.Values do
+          obsList.Add(obs.link);
+      finally
+        map.Free;
+      end;
+      obsList.SortE(DoSortObservations);
+      i := 1;
+      for obs in obsList do
+      begin
+        bundle.entryList.Append('resource:'+inttostr(i)).resource := makeObservation(obs);
+        linkResource(i, 'Observation/'+obs.id);
+        inc(i);
+      end;
+    finally
+      obsList.Free;
+    end;
+    if bundle.entryList.Count >= 2 then
+      result := bundle.Link
+    else
+    begin
+      FIssues.Add('No Observations found');
+      result := nil;
+    end;
+  finally
+    bundle.Free;
+  end;
+end;
+
+function TVciLaboratoryCardMaker.makeObservation(obs: TFHIRObservation): TFHIRObservation;
+var
+  p : TResourceWithReference;
+  s : String;
+  i : integer;
+  rs, rt : TFhirObservationReferenceRange;
+begin
+  result := TFHIRObservation.Create;
+  try
+    result.status := obs.status;
+    result.code := TFhirCodeableConcept.Create('http://loinc.org', loincCode(obs));
+    result.subject := TFhirReference.Create('resource:0');
+    result.effective := obs.effective.Link;
+
+    for i := 0 to obs.performerList.Count - 1 do
+    begin
+      if obs.performerList[0].display <> '' then
+      begin
+        result.performerList.Append.display := obs.performerList[0].display;
+        break;
+      end
+      else if obs.performerList[0].reference <> '' then
+      begin
+        p := FManager.LookupReference(FRequest, obs.performerList[0].reference);
+        if (p <> nil) then
+        begin
+          s := (FManager.ServerContextObject as TFHIRServerContext).Factory.describe(p.Resource);
+          if (s <> '') then
+          begin
+            result.performerList.Append.display := s;
+            break;
+          end;
+        end;
+      end;
+    end;
+
+    result.value := obs.value.Link;
+    for rs in obs.referenceRangeList do
+    begin
+      rt := result.referenceRangeList.Append;
+      rt.low := rs.low.Link;
+      rt.high := rs.high.Link;
+      rt.text := rs.text;
+      if (rs.type_ <> nil) and (rs.type_.text <> '') then
+      begin
+        rt.type_ := TFhirCodeableConcept.Create;
+        rt.text := rs.type_.text;
+      end;
+    end;
     result.Link;
   finally
     result.Free;

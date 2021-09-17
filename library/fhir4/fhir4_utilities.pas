@@ -7029,7 +7029,7 @@ begin
   else
   begin
     b.text(d);
-    b.text( '(');
+    b.text(' (');
     b.text(csName(c.system));
     b.text('#');
     b.text(c.code);

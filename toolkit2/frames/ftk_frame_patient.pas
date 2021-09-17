@@ -42,6 +42,7 @@ type
 
   TPatientFrame = class(TFrame)
     btnFetchHealthCards: TButton;
+    cbCovidOnly: TCheckBox;
     htmlCard: THtmlViewer;
     lvCards: TListView;
     mnuSaveQR: TMenuItem;
@@ -221,6 +222,8 @@ begin
       p := sync.Factory.makeParameters;
       try
         p.addParam('credentialType', sync.Factory.makeUri('https://smarthealth.cards#health-card'));
+        if cbCovidOnly.checked then
+          p.addParam('credentialType', sync.Factory.makeUri('https://smarthealth.cards#covid19'));
         t := GetTickCount64;
         r := client.operationV('Patient', FPatient.id, 'health-cards-issue', p.Resource);
         try

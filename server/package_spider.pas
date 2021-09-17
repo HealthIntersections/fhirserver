@@ -40,7 +40,7 @@ uses
   fsl_npm;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/ig-feeds.json';
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
 
 Type
   TPackageRestrictions = class (TFslObject)
@@ -54,7 +54,7 @@ Type
     function isOk(package, feed : String; var list : String) : boolean;
   end;
 
-  TSendEmailEvent = procedure (dest, subj, body : String);
+  TSendEmailEvent = procedure (dest, subj, body : String) of object;
 
   TPackageUpdater = class (TFslObject)
   private
@@ -258,7 +258,7 @@ begin
       try
         arr := json.arr['feeds'];
         for i := 0 to arr.Count - 1 do
-          updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['email'], pr);
+          updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
       finally
         pr.Free;
       end;

@@ -303,6 +303,9 @@
       <Item>
         <Name Value="EJsonParserException"/>
       </Item>
+      <Item>
+        <Name Value="EIdConnClosedGracefully"/>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>
