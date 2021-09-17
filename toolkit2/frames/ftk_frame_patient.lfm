@@ -43,6 +43,14 @@ object PatientFrame: TPatientFrame
           OnClick = btnFetchHealthCardsClick
           TabOrder = 0
         end
+        object cbCovidOnly: TCheckBox
+          Left = 90
+          Height = 19
+          Top = 10
+          Width = 115
+          Caption = 'Covid Details only'
+          TabOrder = 1
+        end
       end
       object lvCards: TListView
         Left = 0

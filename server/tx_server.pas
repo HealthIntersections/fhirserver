@@ -99,6 +99,7 @@ Type
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
     function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
     function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
+    function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
     function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -651,6 +652,33 @@ begin
     FDependencies.Clear;
   finally
     FLock.UnLock;
+  end;
+end;
+
+function TTerminologyServer.codeInValueSet(c : TFHIRCodingW; valueSet: String): boolean;
+var
+  vs : TFHIRValueSetW;
+  p : TFhirParametersW;
+  profile : TFHIRExpansionParams;
+begin
+  vs := getValueSetByUrl(valueSet, nil);
+  try
+    if (vs = nil) then
+      exit(false);
+    profile := TFHIRExpansionParams.create;
+    try
+      profile.valueSetMode := vsvmMembershipOnly;
+      p := validate(vs, c, profile, true, false, nil);
+      try
+        result := p.bool('result');
+      finally
+        p.Free;
+      end;
+    finally
+      profile.Free;
+    end;
+  finally
+    vs.Free;
   end;
 end;
 
