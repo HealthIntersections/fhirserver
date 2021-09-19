@@ -313,6 +313,7 @@ type
     Timer1: TTimer;
     ToolBar1: TToolBar;
     ToolBar2: TToolBar;
+    ToolBar3: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -345,6 +346,7 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    TreeView1: TTreeView;
     vlInspector: TValueListEditor;
     procedure actConnectToServerExecute(Sender: TObject);
     procedure actionCopyFilePathExecute(Sender: TObject);
