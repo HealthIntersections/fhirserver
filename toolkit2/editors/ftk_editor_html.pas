@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
-  fsl_base, fsl_xml, fsl_logging, fsl_stream, fsl_http,
+  fsl_base, fsl_utilities, fsl_xml, fsl_logging, fsl_stream, fsl_http,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -24,6 +24,8 @@ type
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
     procedure ContentChanged; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -161,6 +163,16 @@ procedure THtmlEditor.ContentChanged;
 begin
   FXml.Free;
   FXml := nil;
+end;
+
+function THtmlEditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function THtmlEditor.escapeText(text: String): String;
+begin
+  Result := FormatTextToXML(text, xmlText);
 end;
 
 end.

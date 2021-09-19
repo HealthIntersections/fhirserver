@@ -25,7 +25,7 @@ type
     function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
-    function load(address : String) : TLoadedBytes; override;
+    function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
     function describe(address : String) : String; override;
@@ -34,6 +34,8 @@ type
     function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; override;
     function MakeFilename(address : String) : String; override;
     function clientForAddress(address : String) : TFHIRClientV; override;
+    procedure forceLocation(address : String); override;
+    function getName(address : String; mode : TNameMode) : String; override;
 
     property OnConnectToServer : TConnectToServerEvent read FOnConnectToServer write FOnConnectToServer;
   end;
@@ -92,7 +94,7 @@ begin
   result := 5 * 60;
 end;
 
-function THTTPStorageService.load(address: String): TLoadedBytes;
+function THTTPStorageService.load(address: String; doException : boolean): TLoadedBytes;
 var
   server : TFHIRServerEntry;
   rtype, id : String;
@@ -100,13 +102,32 @@ var
   headers : THTTPHeaders;
 begin
   resolve(address, server, rtype, id);
-  buffer := server.client.customGet(rtype+'/'+id, headers);
   try
-    result.content := buffer.AsBytes;
-    result.timestamp := buffer.timestamp;
-    result.mimeType := buffer.mimeType;
-  finally
-    buffer.free;
+    buffer := server.client.customGet(rtype+'/'+id, headers);
+    try
+      result.content := buffer.AsBytes;
+      result.timestamp := buffer.timestamp;
+      result.mimeType := buffer.mimeType;
+    finally
+      buffer.free;
+    end;
+  except
+    on e : EFHIRClientException do
+    begin
+      if doException then
+        raise
+      else if e.errorCode = 404 then
+        result.timestamp := -1
+      else
+        result.timestamp := 0;
+    end;
+    on e : Exception do
+    begin
+      if doException then
+        raise
+      else
+        result.timestamp := 0;
+    end;
   end;
 end;
 
@@ -214,6 +235,21 @@ begin
   if server.client = nil then
     OnConnectToServer(self, server);
   result := server.client;
+end;
+
+procedure THTTPStorageService.forceLocation(address: String);
+begin
+  // nothing
+end;
+
+function THTTPStorageService.getName(address: String; mode: TNameMode): String;
+begin
+  case mode of
+    nameModeFullPath : result := address;
+    nameModeFolder : result := address.Substring(0, address.LastIndexOf('/'));
+    nameModeName : result := address.Substring(address.LastIndexOf('/')+1);
+  else result := '';
+  end;
 end;
 
 end.

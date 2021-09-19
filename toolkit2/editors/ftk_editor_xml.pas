@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
-  fsl_base, fsl_xml, fsl_logging, fsl_stream,
+  fsl_base, fsl_utilities, fsl_xml, fsl_logging, fsl_stream,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -25,6 +25,8 @@ type
     procedure getNavigationList(navpoints : TStringList); override;
     function hasFormatCommands: boolean; override;
     procedure makeTextTab; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -115,6 +117,16 @@ begin
   inherited makeTextTab;
   makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
   makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
+end;
+
+function TXmlEditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TXmlEditor.escapeText(text: String): String;
+begin
+  Result := FormatTextToXML(text, xmlText);
 end;
 
 constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);

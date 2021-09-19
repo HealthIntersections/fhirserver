@@ -27,6 +27,7 @@ uses
 
 type
   TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT);
+  TSourceEditorKindSet = set of TSourceEditorKind;
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
   TToolkitMessageLevel = (msgError, msgWarning, msgHint);
@@ -39,10 +40,13 @@ const
   {$ENDIF}
 
   CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
+  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
 
+
+function onlySourceKind(kinds : TSourceEditorKindSet) : TSourceEditorKind;
 
 type
   TToolkitContext = class;
@@ -89,8 +93,10 @@ type
     FHasBOM: boolean;
     FInfo: TStringList;
     FKind: TSourceEditorKind;
+    FKnownToBeDeleted: Boolean;
     FNeedsSaving: boolean;
     FNextCurrencyCheck: TDateTime;
+    FNoCheckCurrency: Boolean;
     FTimestamp: TDateTime;
     procedure SetCaption(AValue: String);
   public
@@ -103,6 +109,7 @@ type
     property Guid : String read FGuid write FGuid;
     property Address : String read FAddress write FAddress;
     function hasAddress : boolean;
+    function presentedAddress : String;
     property Caption : String read FCaption write SetCaption;
     property kind : TSourceEditorKind read FKind write FKind;
     property Encoding : TSourceEncoding read FEncoding write FEncoding;
@@ -110,6 +117,8 @@ type
     property HasBOM : boolean read FHasBOM write FHasBOM;
     property NeedsSaving : boolean read FNeedsSaving write FNeedsSaving;
     property Timestamp : TDateTime read FTimestamp write FTimestamp;
+    property KnownToBeDeleted : Boolean read FKnownToBeDeleted write FKnownToBeDeleted;
+    property NoCheckCurrency : Boolean read FNoCheckCurrency write FNoCheckCurrency;
     property nextCurrencyCheck : TDateTime read FNextCurrencyCheck write FNextCurrencyCheck;
 
     property Info : TStringList read FInfo;
@@ -144,6 +153,7 @@ type
     FTab: TTabSheet;
 
     function GetCanBeSaved: boolean; virtual; abstract;
+    function GetCanEscape : boolean; virtual;
 
     function StartValidating : QWord;
     procedure validationError(loc : TSourceLocation; msg: String);
@@ -189,6 +199,7 @@ type
     function getSource : String; virtual; abstract;
     procedure resizeControls; virtual; abstract;
     procedure saveStatus; virtual; // called before shut down because shut down order isn't always predictable
+    procedure insertText(text : String; escape : boolean); virtual; abstract;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -197,6 +208,7 @@ type
     property canRedo : boolean read FCanRedo write FCanRedo;
     property canCut : boolean read FCanCut write FCanCut;
     property canPaste : boolean read FCanPaste write FCanPaste;
+    property canEscape : boolean read GetCanEscape;
     property isFile : boolean read getIsFile;
     property hasAddress : boolean read GetHasAddress;
 
@@ -489,6 +501,14 @@ begin
   result := FAddress <> '';
 end;
 
+function TToolkitEditSession.presentedAddress: String;
+begin
+  if Address.StartsWith('file:') then
+    result := Address.Substring(5)
+  else
+    result := Address;
+end;
+
 { TToolkitEditor }
 
 function TToolkitEditor.GetHasAddress: boolean;
@@ -513,6 +533,11 @@ procedure TToolkitEditor.SetStore(AValue: TStorageService);
 begin
   FStore.Free;
   FStore := AValue;
+end;
+
+function TToolkitEditor.GetCanEscape: boolean;
+begin
+  result := false;
 end;
 
 function TToolkitEditor.StartValidating : QWord;
@@ -782,6 +807,22 @@ end;
 procedure TToolkitContext.OpenResource(url: String);
 begin
   OnOpenResourceUrl(self, url);
+end;
+
+function onlySourceKind(kinds : TSourceEditorKindSet) : TSourceEditorKind;
+var
+  a : TSourceEditorKind;
+  c : integer;
+begin
+  result := sekNull;
+  c := 0;
+  for a in TSourceEditorKindSet do
+    if a in kinds then
+      inc(c);
+  if c = 1 then
+    for a in TSourceEditorKindSet do
+      if a in kinds then
+        exit(a);
 end;
 
 end.

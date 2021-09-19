@@ -1,0 +1,122 @@
+object DeletedFileActionForm: TDeletedFileActionForm
+  Left = 1258
+  Height = 131
+  Top = 109
+  Width = 574
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Deleted File'
+  ClientHeight = 131
+  ClientWidth = 574
+  Position = poOwnerFormCenter
+  LCLVersion = '2.1.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 37
+    Top = 94
+    Width = 574
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = ' '
+    ClientHeight = 37
+    ClientWidth = 574
+    TabOrder = 0
+    object Panel4: TPanel
+      Left = 0
+      Height = 35
+      Top = 2
+      Width = 574
+      Align = alBottom
+      BevelOuter = bvNone
+      Caption = ' '
+      ClientHeight = 35
+      ClientWidth = 574
+      TabOrder = 0
+      object Button3: TButton
+        Left = 372
+        Height = 25
+        Top = -2
+        Width = 75
+        Cancel = True
+        Caption = '&Ignore'
+        OnClick = Button3Click
+        TabOrder = 0
+      end
+      object Button4: TButton
+        Left = 290
+        Height = 25
+        Top = -2
+        Width = 75
+        Caption = '&Discard'
+        OnClick = Button4Click
+        TabOrder = 1
+      end
+      object Button5: TButton
+        Left = 208
+        Height = 25
+        Top = -2
+        Width = 75
+        Caption = 'Save &As'
+        OnClick = Button5Click
+        TabOrder = 2
+      end
+      object Button6: TButton
+        Left = 126
+        Height = 25
+        Top = -2
+        Width = 75
+        Caption = '&Save'
+        OnClick = Button6Click
+        TabOrder = 3
+      end
+      object Button7: TButton
+        Left = 452
+        Height = 25
+        Top = -2
+        Width = 114
+        Caption = 'Stop &Checking'
+        OnClick = Button7Click
+        TabOrder = 4
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 94
+    Top = 0
+    Width = 574
+    Align = alClient
+    BevelInner = bvLowered
+    BevelOuter = bvNone
+    BorderWidth = 8
+    Caption = ' '
+    ClientHeight = 94
+    ClientWidth = 574
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 9
+      Height = 76
+      Top = 9
+      Width = 556
+      Align = alClient
+      BevelOuter = bvNone
+      BorderWidth = 10
+      Caption = ' '
+      ClientHeight = 76
+      ClientWidth = 556
+      Color = clWhite
+      ParentColor = False
+      TabOrder = 0
+      object lblDetails: TLabel
+        Left = 10
+        Height = 56
+        Top = 10
+        Width = 536
+        Align = alClient
+        Caption = 'sasd'
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+  end
+end

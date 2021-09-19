@@ -18,7 +18,7 @@ type
     function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
-    function load(address : String) : TLoadedBytes; override;
+    function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
     function describe(address : String) : String; override;
@@ -26,6 +26,8 @@ type
     function openDlg(out newName : String) : boolean; override;
     function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; override;
     function MakeFilename(address : String) : String; override;
+    procedure forceLocation(address : String); override;
+    function getName(address : String; mode : TNameMode) : String; override;
   end;
 
 implementation
@@ -52,7 +54,7 @@ begin
   result := 1;
 end;
 
-function TInternalStorageService.load(address: String): TLoadedBytes;
+function TInternalStorageService.load(address: String; doException : boolean): TLoadedBytes;
 var
   fn : String;
 begin
@@ -61,7 +63,9 @@ begin
   begin
     result.content := FileToBytes(fn);
     result.timestamp := FileGetModified(fn);
-  end;
+  end
+  else
+    result.timestamp := 0;
 end;
 
 function TInternalStorageService.save(address: String; bytes: TBytes): TDateTime;
@@ -104,6 +108,21 @@ end;
 function TInternalStorageService.MakeFilename(address: String): String;
 begin
   abort; // we don't want to get here?
+end;
+
+procedure TInternalStorageService.forceLocation(address: String);
+begin
+  // nothing
+end;
+
+function TInternalStorageService.getName(address: String; mode: TNameMode): String;
+begin
+  case mode of
+    nameModeFullPath : result := path([folder, address.Substring(9)]);
+    nameModeFolder : result := folder;
+    nameModeName : result := address.Substring(9);
+  else result := '';
+  end;
 end;
 
 end.

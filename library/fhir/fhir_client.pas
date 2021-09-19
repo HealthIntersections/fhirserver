@@ -48,10 +48,13 @@ Type
   EFHIRClientException = class (EFHIRException)
   private
     FIssue : TFhirOperationOutcomeW;
+    FCode : integer;
   public
-    constructor Create(message : String; issue : TFhirOperationOutcomeW);
+    constructor Create(code : integer; message : String; issue : TFhirOperationOutcomeW);
+    constructor Create(code : integer; message : String);
     destructor Destroy; override;
 
+    property errorCode : Integer read FCode;
     property issue : TFhirOperationOutcomeW read FIssue;
   end;
 
@@ -400,11 +403,18 @@ end;
 
 { EFHIRClientException }
 
-constructor EFHIRClientException.create(message: String; issue: TFhirOperationOutcomeW);
+constructor EFHIRClientException.create(code : integer; message: String; issue: TFhirOperationOutcomeW);
 begin
   inherited create(message);
+  FCode := code;
   FIssue := issue;
-  end;
+end;
+
+constructor EFHIRClientException.create(code : integer; message: String);
+begin
+  inherited create(message);
+  FCode := code;
+end;
 
 destructor EFHIRClientException.destroy;
 begin

@@ -49,6 +49,8 @@ type
     function hasFormatCommands: boolean; override;
     procedure makeTextTab; override;
     procedure updateFormatMenu; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -204,6 +206,19 @@ begin
     actSwitch.caption := 'To Json';
     actSwitch.imageIndex := 91;
   end;
+end;
+
+function TFHIREditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TFHIREditor.escapeText(text: String): String;
+begin
+  if FFormat = ffJson then
+    result := jsonEscape(text, false)
+  else
+    result := FormatTextToXML(text, xmlText);
 end;
 
 procedure TFHIREditor.ContentChanged;

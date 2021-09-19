@@ -17,6 +17,8 @@ type
     mimeType : String;
   end;
 
+  TNameMode = (nameModeFullPath, nameModeFolder, nameModeName);
+
   { TStorageService }
 
    TStorageService = class abstract (TFslObject)
@@ -34,6 +36,7 @@ type
      function schemes : TArray<String>; virtual; abstract;
      function CheckTimes : boolean; virtual; abstract;
      function CurrencyCheckFrequency : integer; virtual; abstract; // number of seconds
+     procedure forceLocation(address : String); virtual; abstract;
      function openDlg(out newName : String) : boolean; virtual; abstract;
      function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; virtual; abstract;
 
@@ -41,8 +44,9 @@ type
      function describe(address : String) : String; virtual; abstract;
      function MakeFilename(address : String) : String; virtual; abstract;
      function clientForAddress(address : String) : TFHIRClientV; virtual;
+     function getName(address : String; mode : TNameMode) : String; virtual; abstract;
 
-     function load(address : String) : TLoadedBytes; virtual; abstract;
+     function load(address : String; doException : boolean) : TLoadedBytes; virtual; abstract;
      function save(address : String; bytes : TBytes) : TDateTime; virtual; abstract;
      procedure delete(address : String); virtual; abstract;
    end;

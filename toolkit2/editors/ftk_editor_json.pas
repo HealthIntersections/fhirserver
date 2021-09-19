@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJson,
-  fsl_base, fsl_json, fsl_logging, fsl_stream,
+  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_stream,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -27,6 +27,8 @@ type
     procedure getNavigationList(navpoints : TStringList); override;
     procedure ContentChanged; override;
     function hasFormatCommands: boolean; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
     procedure makeTextTab; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
@@ -191,6 +193,16 @@ end;
 function TJsonEditor.hasFormatCommands: boolean;
 begin
   Result := true;
+end;
+
+function TJsonEditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TJsonEditor.escapeText(text: String): String;
+begin
+  Result := jsonEscape(text, false);
 end;
 
 procedure TJsonEditor.makeTextTab;

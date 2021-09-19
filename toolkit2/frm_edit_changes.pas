@@ -146,7 +146,7 @@ var
   base, curr : TStringList;
   diff : TFslTextComparer;
 begin
-  baseBytes := editor.Store.load(editor.session.address).content;
+  baseBytes := editor.Store.load(editor.session.address, true).content;
   currBytes := editor.GetBytes;
   mSource.text := TEncoding.UTF8.GetAnsiString(currBytes);
   btnReplace.Enabled := false;

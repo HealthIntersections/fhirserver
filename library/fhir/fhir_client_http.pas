@@ -497,25 +497,25 @@ begin
               op := opWrapper.create(comp.resource.Link);
               try
                 if (op.hasText) then
-                  Raise EFHIRClientException.create(op.text, op.link)
+                  Raise EFHIRClientException.create(e.ErrorCode, op.text, op.link)
                 else if (op.issueCount > 0) then
                   for iss in op.issues.forEnum do
-                    Raise EFHIRClientException.create(iss.display, op.link)
+                    Raise EFHIRClientException.create(e.ErrorCode, iss.display, op.link)
                 else
-                  raise EFHIRException.create(cnt)
+                  raise EFHIRClientException.create(e.ErrorCode, cnt)
               finally
                 op.Free;
               end;
             end
             else
-              raise EFHIRException.create(cnt)
+              raise EFHIRClientException.create(e.ErrorCode, cnt)
           finally
             comp.source.free;
             comp.Free;
           end;
         end
         else
-          raise EFHIRException.create(cnt)
+          raise EFHIRClientException.create(e.ErrorCode, cnt)
       end;
       on e : exception do
         raise;

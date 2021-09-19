@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Graphics,
-  Menus, ExtDlgs, IntfGraphics, FPImage, FPWritePNG,
-  DelphiZXingQRCode, HtmlView,
+  Menus, ExtDlgs, IntfGraphics, FPImage, FPWriteBMP,
+  HtmlView,
+  QlpQRCodeGenLibTypes, QlpQrSegment, QlpQrCode, QlpIQrSegment, QlpIQrCode,
   fsl_utilities, fsl_json, fsl_crypto,
 
   fhir_objects, fhir_parser, fhir_healthcard, fhir_common, fui_lcl_managers,
@@ -254,31 +255,22 @@ end;
 
 procedure TPatientFrame.mnuSaveQRClick(Sender: TObject);
 var
-  bmp : TBitmap;
-  mem : TMemoryStream;
+  bmp : TQRCodeGenLibBitmap;
   picture : TPicture;
+  segs : TQRCodeGenLibGenericArray<IQrSegment>;
+  qr : IQrCode;
 begin
   if sd.execute then
   begin
-    mem := TMemoryStream.create;
+    segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
+       TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
+       TQrSegment.MakeNumeric(FCardManager.Focus.qrSource(false)));
+    qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
+    bmp := qr.ToBitmapImage(10, 4);
     try
-      bmp := TBitmap.create;
-      try
-        makeQRCode(bmp, qrAlphanumeric, FCardManager.Focus.qrSource);
-        bmp.SaveToStream(mem);
-      finally
-        bmp.free;
-      end;
-      mem.position := 0;
-      picture := TPicture.create;
-      try
-        picture.LoadFromStreamWithFileExt(mem, '.bmp');
-        picture.SaveToFile(sd.FileName);
-      finally
-        picture.Free;
-      end;
+      bmp.SaveToFile(sd.filename);
     finally
-      mem.free;
+      bmp.free;
     end;
   end;
 end;
@@ -289,23 +281,43 @@ end;
 
 procedure TPatientFrame.pbCardPaint(Sender: TObject);
 var
-  bmp : TBitmap;
+  bmp : TBitMap;
+  bq : TQRCodeGenLibBitmap;
   scale : double;
+  segs : TQRCodeGenLibGenericArray<IQrSegment>;
+  qr : IQrCode;
+  mem : TMemoryStream;
 begin
   pbCard.Canvas.Brush.Color := clWhite;
   pbCard.Canvas.FillRect(Rect(0, 0, pbCard.Width, pbCard.Height));
   if FCardManager.Focus <> nil then
   begin
-    bmp := TBitmap.create;
+    mem := TMemoryStream.create;
     try
-      makeQRCode(bmp, qrAlphanumeric, FCardManager.Focus.qrSource);
-      if (pbCard.Width < pbCard.Height) then
-        scale := pbCard.Width / bmp.Width
-      else
-        scale := pbCard.Height / bmp.Height;
-      pbCard.Canvas.StretchDraw(Rect(0, 0, Trunc(scale * bmp.Width), Trunc(scale * bmp.Height)), bmp);
+      segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
+         TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
+         TQrSegment.MakeNumeric(FCardManager.Focus.qrSource(false)));
+      qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
+      bq := qr.ToBitmapImage(10, 4);
+      try
+        bq.SaveToStream(mem, TFPWriterBMP.create);
+      finally
+        bq.free;
+      end;
+      mem.position := 0;
+      bmp := TBitmap.create;
+      try
+        bmp.LoadFromStream(mem);
+        if (pbCard.Width < pbCard.Height) then
+          scale := pbCard.Width / bmp.Width
+        else
+          scale := pbCard.Height / bmp.Height;
+        pbCard.Canvas.StretchDraw(Rect(0, 0, Trunc(scale * bmp.Width), Trunc(scale * bmp.Height)), bmp);
+      finally
+        bmp.free;
+      end;
     finally
-      bmp.free;
+      mem.free;
     end;
   end;
 end;

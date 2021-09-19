@@ -820,7 +820,7 @@ type
 
     function htmlReport(tx : TFHIRTerminologyService) : String; virtual; abstract;
 
-    function qrSource : String;
+    function qrSource(prefix : boolean) : String; // prefix = include the shc:/ at the start
 
     property jws : String read FJws write FJws;
     property links : TFslStringDictionary read FLinks;
@@ -2776,7 +2776,7 @@ begin
   end;
 end;
 
-function THealthcareCard.qrSource: String;
+function THealthcareCard.qrSource(prefix : boolean): String;
 var
   b : TFslStringBuilder;
   ch : Char;
@@ -2789,7 +2789,10 @@ begin
       i := ord(ch) - 45;
       b.append(StringPadLeft(inttostr(i), '0', 2));
     end;
-    result := 'shc:/'+b.ToString;
+    if (prefix) then
+      result := 'shc:/'+b.ToString
+    else
+      result := b.ToString;
   finally
     b.free;
   end;
