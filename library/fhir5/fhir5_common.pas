@@ -901,6 +901,15 @@ type
     function renderText : String; override;
   end;
 
+  TFHIRAttachment5 = class (TFHIRAttachmentW)
+  private
+    function att : TFhirAttachment;
+  protected
+    function GetContentType: String; override;
+    function GetData: TBytes; override;
+  public
+    function renderText : String; override;
+  end;
 
   TFHIRSubsumesOpRequest5 = class (TFHIRSubsumesOpRequestW)
   public
@@ -6058,6 +6067,28 @@ end;
 procedure TFHIRSubscriptionTopic5.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
+end;
+
+{ TFHIRAttachment5 }
+
+function TFHIRAttachment5.att: TFhirAttachment;
+begin
+  result := Element as TFhirAttachment;
+end;
+
+function TFHIRAttachment5.GetContentType: String;
+begin
+  result := att.contentType;
+end;
+
+function TFHIRAttachment5.GetData: TBytes;
+begin
+  result := att.data;
+end;
+
+function TFHIRAttachment5.renderText: String;
+begin
+  result := '??';
 end;
 
 end.

@@ -132,6 +132,7 @@ type
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
+    function wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW; override;
     function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
   end;
@@ -543,6 +544,14 @@ end;
 function TFHIRFactoryR5.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
+end;
+
+function TFHIRFactoryR5.wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirAttachment5.Create(r);
 end;
 
 function TFHIRFactoryR5.wrapAuditEvent(r: TFHIRResourceV): TFhirAuditEventW;

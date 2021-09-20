@@ -798,6 +798,7 @@ type
     FJws: String;
     FBundle: TFHIRResourceV;
     FValidationMessage: String;
+    FImage: TBytes;
     procedure SetBundle(const Value: TFHIRResourceV);
   protected
     FSummary: String;
@@ -824,6 +825,7 @@ type
 
     property jws : String read FJws write FJws;
     property links : TFslStringDictionary read FLinks;
+    property image : TBytes read FImage write FImage;
   end;
 
 function noList(e : TFHIRObjectList) : boolean; overload;

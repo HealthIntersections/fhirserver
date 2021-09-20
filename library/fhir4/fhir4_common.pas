@@ -827,6 +827,16 @@ type
     function renderText : String; override;
   end;
 
+  TFHIRAttachment4 = class (TFHIRAttachmentW)
+  private
+    function att : TFhirAttachment;
+  protected
+    function GetContentType: String; override;
+    function GetData: TBytes; override;
+  public
+    function renderText : String; override;
+  end;
+
 
   TFHIRSubsumesOpRequest4 = class (TFHIRSubsumesOpRequestW)
   public
@@ -5490,5 +5500,27 @@ begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).code;
 end;
 
+
+{ TFHIRAttachment4 }
+
+function TFHIRAttachment4.att: TFhirAttachment;
+begin
+  result := Element as TFhirAttachment;
+end;
+
+function TFHIRAttachment4.GetContentType: String;
+begin
+  result := att.contentType;
+end;
+
+function TFHIRAttachment4.GetData: TBytes;
+begin
+  result := att.data;
+end;
+
+function TFHIRAttachment4.renderText: String;
+begin
+  result := '??';
+end;
 
 end.

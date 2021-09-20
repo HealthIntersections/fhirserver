@@ -3619,16 +3619,18 @@ begin
   v := NamedParameter[name];
   if (v = nil) then
     result := false
-  else if not (v is TFhirBoolean) then
+  else if (v is TFhirBoolean) then
+    result := (v as TFhirBoolean).value
+  else if (v is TFHIRPrimitiveType) then
+    result := StrToBoolDef(v.primitiveValue, false)
+  else
   begin
     try
       raise EFHIRException.create('Attempt to read "'+name+'" as a boolean, when it is a '+NamedParameter[name].FhirType);
     finally
       v.free;
     end;
-  end
-  else
-    result := (v as TFhirBoolean).value;
+  end;
 end;
 
 function TFhirParametersHelper.GetNamedParameter(name: String): TFHIRObject;

@@ -3898,6 +3898,7 @@ var
   s : String;
   c : THealthcareCard;
   i : integer;
+  att : TFhirAttachment;
 begin
   result := 'Generate Health Cards';
   gen := THealthCardGenerator.create(manager.link, request.Link, (manager as TFhirNativeOperationEngineR4).ServerContext.JWTServices.cardKey.link);
@@ -3909,9 +3910,19 @@ begin
     i := 0;
     p := TFhirParameters.create;
     try
+      p.Tags['rendering-profile'] := 'health-cards-issue';
       for c in gen.cards do
       begin
         p.AddParameter('verifiableCredential', c.jws);
+        if gen.params.bool['images'] then
+        begin
+          att := TFhirAttachment.Create;
+          p.AddParameter('image', att);
+          att.data := c.image;
+          att.contentType := 'image/png';
+          att.title := 'QR Code';
+        end;
+
         for s in c.links.keys do
         begin
           pp := p.AddParameter('resourceLink');

@@ -65,6 +65,8 @@ type
     procedure SetLinks(const Value: TFslStringDictionary);
 
 
+    function renderHealthCards(s : TFslStringBuilder; res : TFHIRResourceV) : boolean;
+
   protected
     function ResourceMediaType: String; override;
     function GetFormat: TFHIRFormat; override;
@@ -228,6 +230,13 @@ Header(FFactory, Session, FBaseURL, lang, version)+
         if (res.fhirType <> 'Provenance') and (res.fhirType <> 'AuditEvent') then
           s.append('. <a href="'+FBaseURL+'Provenance?target='+res.fhirType+'/'+res.id+'">provenance for this resource</a>');
         s.append('</p>'#13#10);
+      end;
+
+      if res.Tags['rendering-profile'] <> '' then
+      begin
+        if res.Tags['rendering-profile'] = 'health-cards-issue' then
+          if renderHealthCards(s, res) then
+            s.append('<hr/>'+#13#10);
       end;
 
 
@@ -834,6 +843,31 @@ begin
   end;
   if target <> '' then
     result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
+end;
+
+function TFHIRXhtmlComposer.renderHealthCards(s: TFslStringBuilder; res: TFHIRResourceV) : boolean;
+var
+  p : TFHIRParametersW;
+  pp : TFhirParametersParameterW;
+  att : TFHIRAttachmentW;
+begin
+  result := false;
+  p := FFactory.wrapParams(res.link);
+  try
+    for pp in p.parameterList do
+      if pp.name = 'image' then
+      begin
+        result := true;
+        att := FFactory.wrapAttachment(pp.value.link);
+        try
+          s.Append('<img height="250px" width="250px" src="data:'+att.contentType+';base64,'+EncodeBase64(att.data)+'"/>');
+        finally
+          att.free;
+        end;
+      end;
+  finally
+    p.Free;
+  end;
 end;
 
 class function TFHIRXhtmlComposer.ResourceLinks(a : String; const lang : THTTPLanguages; base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
