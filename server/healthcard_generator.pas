@@ -5,7 +5,7 @@ unit healthcard_generator;
 interface
 
 uses
-  SysUtils, Classes, DateUtils, PNGImage,
+  SysUtils, Classes, DateUtils, {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
   QlpQRCodeGenLibTypes, QlpQrSegment, QlpQrCode, QlpIQrSegment, QlpIQrCode,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
   fhir_objects, fhir_common, fhir_healthcard, fhir_utilities,
@@ -134,7 +134,9 @@ var
   segs : TQRCodeGenLibGenericArray<IQrSegment>;
   qr : IQrCode;
   mem : TBytesStream;
+  {$IFDEF DELPHI}
   png : TPngImage;
+  {$ENDIF}
 begin
   mem := TBytesStream.create;
   try
@@ -144,6 +146,9 @@ begin
     qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
     bq := qr.ToBitmapImage(10, 4);
     try
+      {$IFDEF FPC}
+      bq.SaveToStream(mem, TFPWriterPNG.create);
+      {$ELSE}
       png := TPngImage.Create;
       try
         png.Assign(bq);
@@ -151,6 +156,7 @@ begin
       finally
         png.Free;
       end;
+    {$ENDIF}
     finally
       bq.free;
     end;
