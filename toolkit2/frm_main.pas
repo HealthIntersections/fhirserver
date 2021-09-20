@@ -16,10 +16,10 @@ uses
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
-  ftk_factory, ftk_search, ftk_serverlist, ftk_worker_server,
+  ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
-  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed;
+  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor;
 
 type
   { TMainToolkitForm }
@@ -34,6 +34,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionCreateNewProject: TAction;
     actionEditPasteEscaped: TAction;
     actionNewEditorJWT: TAction;
     actionNewEditorDicom: TAction;
@@ -340,17 +341,19 @@ type
     ToolButton30: TToolButton;
     ToolButton31: TToolButton;
     ToolButton32: TToolButton;
+    ToolButton33: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
-    TreeView1: TTreeView;
+    tvProjects: TTreeView;
     vlInspector: TValueListEditor;
     procedure actConnectToServerExecute(Sender: TObject);
     procedure actionCopyFilePathExecute(Sender: TObject);
     procedure actionCopyFileTitleExecute(Sender: TObject);
+    procedure actionCreateNewProjectExecute(Sender: TObject);
     procedure actionEditBeginEndExecute(Sender: TObject);
     procedure actionEditCopyExecute(Sender: TObject);
     procedure actionEditCopyFilenameExecute(Sender: TObject);
@@ -455,6 +458,7 @@ type
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
     FServerView : TFHIRServersView;
+    FProjectsView : TFHIRProjectsView;
     FFinishedLoading : boolean;
     FScale : integer;
     FSearchTask : integer;
@@ -569,6 +573,11 @@ begin
   FServerView.load;
   FContext.OnFetchServer := FServerView.FetchServer;
 
+  FProjectsView := TFHIRProjectsView.create(FIni);
+  FProjectsView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'projects.json']);
+  FProjectsView.Tree := tvProjects;
+  FProjectsView.load;
+
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
@@ -591,9 +600,11 @@ begin
   for editor in FContext.Editors do
     editor.saveStatus;
   FServerView.saveStatus;
+  FProjectsView.saveStatus;
   FShuttingDown := true;
   Timer1.Enabled := false;
   FServerView.Free;
+  FProjectsView.Free;
   FSearch.Free;
   FFactory.free;
   FFileSystem.Free;
@@ -1925,6 +1936,27 @@ begin
     Clipboard.Open;
     Clipboard.AsText := context.focus.store.getName(context.focus.Session.Address, nameModeName);
     Clipboard.Close;
+  end;
+end;
+
+procedure TMainToolkitForm.actionCreateNewProjectExecute(Sender: TObject);
+var
+  proj : TFHIRProjectNode;
+begin
+  proj := TFHIRProjectNode.create;
+  try
+    proj.id := NewGuidId;
+    ProjectSettingsForm := TProjectSettingsForm.create(self);
+    try
+      ProjectSettingsForm.Project := proj.link;
+      ProjectSettingsForm.Projects := FProjectsView.Projects.link;
+      if ProjectSettingsForm.ShowModal = mrOk then
+        FProjectsView.addProject(proj);
+    finally
+      ProjectSettingsForm.Free;
+    end;
+  finally
+    proj.free;
   end;
 end;
 

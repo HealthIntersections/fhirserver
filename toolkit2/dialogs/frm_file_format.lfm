@@ -3,6 +3,7 @@ object FileFormatChooser: TFileFormatChooser
   Height = 449
   Top = 350
   Width = 425
+  BorderIcons = [biSystemMenu]
   Caption = 'Choose File Format'
   ClientHeight = 449
   ClientWidth = 425

@@ -3,7 +3,7 @@ object ClipboardChooserForm: TClipboardChooserForm
   Height = 549
   Top = 118
   Width = 728
-  BorderIcons = [biSystemMenu, biMaximize]
+  BorderIcons = [biSystemMenu]
   Caption = 'Choose Clipboard Format'
   ClientHeight = 549
   ClientWidth = 728

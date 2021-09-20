@@ -549,7 +549,7 @@ var
           op := opWrapper.create(p.resource.link);
           try
             if (op.hasText) then
-              Raise EFHIRClientException.create(op.text, op.link)
+              Raise EFHIRClientException.create(code, op.text, op.link)
             else
               raise EFHIRException.create(cnt)
           finally

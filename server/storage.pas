@@ -1520,13 +1520,13 @@ begin
     begin
       oow := FContext.factory.wrapOperationOutcome(resp.Resource.Link);
       try
-        raise EFHIRClientException.Create(oow.text, oow.link);
+        raise EFHIRClientException.Create(resp.HTTPCode, oow.text, oow.link);
       finally
         oow.Free;
       end;
     end
     else
-      raise EFHIRClientException.Create(resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome(THTTPLanguages.create('en'), resp.Body)));
+      raise EFHIRClientException.Create(resp.HTTPCode, resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome(THTTPLanguages.create('en'), resp.Body)));
 end;
 
 function TFHIRInternalCommunicator.conformanceV(summary: boolean): TFHIRResourceV;

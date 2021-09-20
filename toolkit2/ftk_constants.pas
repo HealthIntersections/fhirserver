@@ -15,6 +15,11 @@ const
   ICON_DELETE = 110;
   ICON_SIG = 111;
 
+  ICON_PACKAGE = 38;
+  ICON_FOLDER = 127;
+  ICON_FILE = 130;
+
+
 implementation
 
 end.
