@@ -3,7 +3,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
   Height = 441
   Top = 25
   Width = 418
-  BorderIcons = [biSystemMenu, biMaximize]
+  BorderIcons = [biSystemMenu]
   Caption = 'FHIRToolkit Settings'
   ClientHeight = 441
   ClientWidth = 418

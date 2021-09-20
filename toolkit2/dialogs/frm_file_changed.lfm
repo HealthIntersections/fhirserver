@@ -3,9 +3,11 @@ object ModifiedFileActionForm: TModifiedFileActionForm
   Height = 147
   Top = 354
   Width = 576
+  BorderIcons = [biSystemMenu]
   Caption = 'File Modified'
   ClientHeight = 147
   ClientWidth = 576
+  Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel4: TPanel
     Left = 0

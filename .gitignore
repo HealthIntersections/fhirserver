@@ -278,3 +278,4 @@ packages/lib/aarch64-darwin/
 toolkit2/lib/aarch64-darwin/
 /library/copy_r5_files.bat
 /library/fhir/backup
+/toolkit2/dialogs/backup

@@ -54,19 +54,6 @@ type
   TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy);
   TNodeOperationSet = set of TNodeOperation;
 
-//
-//  TTreeManager = class abstract (TFslObject)
-//  public
-//    constructor Create(tree : TTreeView);
-//    destructor Destroy; override;
-//
-//    function getChildcount : integer; virtual; abstract;
-//    procedure getChild(var kind : integer; var item : TFslObject); virtual; abstract;
-//    function getDisplay(kind : integer; obj : TFslObject) : String; virtual; abstract;
-//    function getImageIndex(kind : integer; obj : TFslObject) : integer; virtual; abstract;
-//    function getOperations(kind : integer; obj : TFslObject) : TOperationSet; virtual; abstract;
-//  end;
-
   { TControlEntry }
 
   TControlOperation = (copAdd, copEdit, copDelete, copUp, copDown, copReload, copExecute);
@@ -86,27 +73,42 @@ type
 
   { TListManager }
 
-  TListManagerBase = class (TFslObject)
-  end;
+  { TListOrTreeManagerBase }
 
-  TListManager<T : TFslObject> = class abstract (TListManagerBase)
-  private
-    FData : TFslList<T>;
-    FFiltered : TFslList<T>;
+  TListOrTreeManagerBase = class abstract (TFslObject)
+  protected
     FImages: TImagelist;
-    FList : TListView;
-    FFilter : TEdit;
+    FOnSetFocus: TNotifyEvent;
     FControls : TFslList<TControlEntry>;
     FEnabled : boolean;
     FCanEdit : boolean;
-    FOnSetFocus: TNotifyEvent;
     FSettings: TIniFile;
     FPopup : TPopupMenu;
+
+    procedure doControl(sender : TObject); virtual; abstract;
+    procedure doMnuClick(Sender: TObject); virtual; abstract;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
+
+    function doubleClickEdit : boolean; virtual;
+
+    procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
+    procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '');
+  end;
+
+  TListManager<T : TFslObject> = class abstract (TListOrTreeManagerBase)
+  private
+    FData : TFslList<T>;
+    FFiltered : TFslList<T>;
+    FList : TListView;
+    FFilter : TEdit;
 
     procedure doFilter;
     function GetHasFocus: boolean;
     procedure rebuild(focus : T);
-    procedure doControl(sender : TObject);
     procedure FilterChange(sender : TObject);
     function Filtered : boolean;
     function GetFocus: T;
@@ -120,8 +122,11 @@ type
     procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure doListDoubleClick(Sender: TObject);
     procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
-    procedure doMnuClick(Sender: TObject);
     procedure populateEntry(entry : TListItem; item : T);
+  protected
+    procedure doControl(sender : TObject); override;
+    procedure doMnuClick(Sender: TObject); override;
+    function doubleClickEdit : boolean; virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -133,12 +138,9 @@ type
     property List : TListView read FList write SetList;
     property Images : TImagelist read FImages write FImages;
     property Filter : TEdit read FFilter write SetFilter;
-    procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
-    procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '');
     Property Enabled : boolean read FEnabled write SetEnabled;
     property Settings : TIniFile read FSettings write SetSettings;
 
-    property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
 
     // control
     function doLoad : boolean; // call this when something changes the data to load
@@ -155,7 +157,6 @@ type
 
     // to override:
     function canSort : boolean; virtual;
-    function doubleClickEdit : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
     function loadList : boolean; virtual; abstract; // return false if not loaded ok
 
@@ -173,6 +174,73 @@ type
     function executeItem(item : T; mode : String) : boolean; virtual;
   end;
 
+  TFslTreeNode = class abstract (TFslObject)
+  protected
+    function getChildCount : integer; virtual; abstract;
+    function getChild(index : integer) : TFslTreeNode; virtual; abstract;
+  end;
+
+  { TTreeManager }
+
+  TTreeManager<T : TFslTreeNode> = class abstract (TListOrTreeManagerBase)
+  private
+    FTree : TTreeView;
+
+    procedure setTree(value : TTreeView);
+    function getFocus : T;
+    function GetHasFocus : boolean;
+    procedure SetSettings(AValue: TIniFile);
+    procedure SetEnabled(AValue: boolean);
+
+    procedure buildTreeNode(parent : TTreenode; item : T);
+    procedure LoadTreeNodes;
+  protected
+    FData : TFslList<T>; // hidden root
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property Tree : TTreeView read FTree write SetTree;
+    property Data : TFslList<T> read FData;
+    property Focus : T read GetFocus;
+    property hasFocus : boolean read GetHasFocus;
+    Property Enabled : boolean read FEnabled write SetEnabled;
+    property Settings : TIniFile read FSettings write SetSettings;
+
+    // control
+    function doLoad : boolean; // call this when something changes the data to load
+    procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
+    procedure saveStatus;
+
+    // to override:
+    function LoadData : boolean; virtual; abstract;
+    function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
+
+    procedure buildMenu; virtual;
+    function getImageIndex(item : T) : integer; virtual;
+    function getCellText(item : T) : String; virtual; abstract;
+    function getCellColors(item : T; var fore, back : TColor) : boolean; virtual;
+    function getSummaryText(item : T) : String; virtual;
+
+    function addItem(mode : String) : T; virtual;
+    function editItem(item : T; mode : String) : boolean; virtual;
+    procedure deleteItem(item : T); virtual;
+    function executeItem(item : T; mode : String) : boolean; virtual;
+  end;
+
+//  public
+//    constructor Create(tree : TTreeView);
+//    destructor Destroy; override;
+//
+//    function getChildcount : integer; virtual; abstract;
+//    procedure getChild(var kind : integer; var item : TFslObject); virtual; abstract;
+//    function getDisplay(kind : integer; obj : TFslObject) : String; virtual; abstract;
+//    function getImageIndex(kind : integer; obj : TFslObject) : integer; virtual; abstract;
+//    function getOperations(kind : integer; obj : TFslObject) : TOperationSet; virtual; abstract;
+//  end;
+
+
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
   TFillListManagerEvent = procedure (sender : TObject; propName : String; propValues : TFHIRObjectList) of object;
 
@@ -185,18 +253,18 @@ type
     FButton: TSpeedButton;
     FControl: TControl;
     FKind: TObjectManagerControlKind;
-    FList: TListManagerBase;
+    FList: TListOrTreeManagerBase;
     FName: String;
     FOnFillList: TObjectManagerControl;
     FOnLookup: TLookupValueEvent;
-    procedure SetList(AValue: TListManagerBase);
+    procedure SetList(AValue: TListOrTreeManagerBase);
   public
     constructor Create(kind : TObjectManagerControlKind); overload;
     destructor Destroy; override;
 
     property name : String read FName write FName;
     property kind : TObjectManagerControlKind read FKind write FKind;
-    property list : TListManagerBase read FList write SetList;
+    property list : TListOrTreeManagerBase read FList write SetList;
     property control : TControl read FControl write FControl;
     property button : TSpeedButton read FButton write FButton;
     property OnLookup : TLookupValueEvent read FOnLookup write FOnLookup;
@@ -218,7 +286,7 @@ type
 
     procedure registerControl(propName : String; control : TEdit); overload;
     procedure registerControl(propName : String; control : TEdit; button : TSpeedButton); overload;
-    procedure registerManager(propName : String; manager : TListManagerBase; fillManager : TFillListManagerEvent); overload;
+    procedure registerManager(propName : String; manager : TListOrTreeManagerBase; fillManager : TFillListManagerEvent); overload;
     procedure registerControl(propName : String; control : TDateEdit); overload;
     procedure registerControl(propName : String; control : TCombobox; lookupEvent : TLookupValueEvent); overload;
     procedure registerControl(propName : String; control : TCheckBox); overload;
@@ -322,7 +390,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TObjectManagerControl.SetList(AValue: TListManagerBase);
+procedure TObjectManagerControl.SetList(AValue: TListOrTreeManagerBase);
 begin
   FList.Free;
   FList := AValue;
@@ -383,7 +451,7 @@ begin
   ctrl.button := button;
 end;
 
-procedure TObjectManager.registerManager(propName: String; manager: TListManagerBase; fillManager: TFillListManagerEvent);
+procedure TObjectManager.registerManager(propName: String; manager: TListOrTreeManagerBase; fillManager: TFillListManagerEvent);
 var
   ctrl : TObjectManagerControl;
 begin
@@ -427,26 +495,26 @@ begin
   result := TControlEntry(inherited link);
 end;
 
-{ TListManager }
+{ TListOrTreeManagerBase }
 
-constructor TListManager<T>.Create;
+constructor TListOrTreeManagerBase.Create;
 begin
   inherited Create;
-  FData := TFslList<T>.create;
-  FFiltered := TFslList<T>.create;
-  FControls := TFslList<TControlEntry>.create;
   FPopup := TPopupMenu.create(nil);
 end;
 
-destructor TListManager<T>.Destroy;
+destructor TListOrTreeManagerBase.Destroy;
 begin
-  FControls.Free;
-  FFiltered.free;
-  FData.free;
+  FPopUp.Free;
   inherited Destroy;
 end;
 
-procedure TListManager<T>.registerControl(c : TControl; op : TControlOperation; mode : String = '');
+function TListOrTreeManagerBase.doubleClickEdit: boolean;
+begin
+  result := true;
+end;
+
+procedure TListOrTreeManagerBase.registerControl(c : TControl; op : TControlOperation; mode : String = '');
 var
   entry : TControlEntry;
 begin
@@ -463,7 +531,7 @@ begin
   end;
 end;
 
-procedure TListManager<T>.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation; mode : String = '');
+procedure TListOrTreeManagerBase.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation; mode : String = '');
 var
   item : TMenuItem;
 begin
@@ -475,6 +543,24 @@ begin
   if mode <> '' then
     item.name := 'mnuMode'+mode;
   item.OnClick := doMnuClick;
+end;
+
+{ TListManager }
+
+constructor TListManager<T>.Create;
+begin
+  inherited Create;
+  FData := TFslList<T>.create;
+  FFiltered := TFslList<T>.create;
+  FControls := TFslList<TControlEntry>.create;
+end;
+
+destructor TListManager<T>.Destroy;
+begin
+  FControls.Free;
+  FFiltered.free;
+  FData.free;
+  inherited Destroy;
 end;
 
 procedure TListManager<T>.doFilter;
@@ -1198,6 +1284,166 @@ procedure TFHIRSynEditSynchroniser.abandon;
 begin
   FOpInProgress := opNone;
   FFocus.Free;
+end;
+
+{ TTreeManager }
+
+constructor TTreeManager<T>.Create;
+begin
+  inherited Create;
+  FData := TFslList<T>.create;
+end;
+
+destructor TTreeManager<T>.Destroy;
+begin
+  FData.Free;
+  Inherited Destroy;
+end;
+
+function TTreeManager<T>.doLoad: boolean;
+var
+  f : T;
+begin
+  f := Focus.link;
+  try
+    FTree.Items.Clear;
+    FData.Clear;
+    result := LoadData;
+    LoadTreeNodes;
+  finally
+    f.free;
+  end;
+end;
+
+procedure TTreeManager<T>.refresh(item: T);
+begin
+
+end;
+
+procedure TTreeManager<T>.saveStatus;
+begin
+
+end;
+
+procedure TTreeManager<T>.setTree(value: TTreeView);
+var
+  i : integer;
+begin
+  FTree := value;
+  //List.AutoWidthLastColumn := true;
+  //List.RowSelect := true;
+  //List.OnCompare := doListCompare;
+  //List.OnSelectItem := doListChange;
+  //List.OnDblClick := doListDoubleClick;
+  //List.OnCustomDrawSubItem := doListDrawSubItem;
+  FPopup.Images := FImages;
+  buildMenu;
+  if FPopup.Items.Count > 0 then
+    FTree.PopupMenu := FPopup;
+  //if FSettings <> nil then
+  //  for i := 0 to List.columns.count - 1 do
+  //    list.columns[i].width := FSettings.ReadInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
+  FTree.ReadOnly := true;
+  //FTree.AutoSort := false;
+  //FTree.AutoSortIndicator := false;
+  FTree.SortType := stNone;
+end;
+
+procedure TTreeManager<T>.SetSettings(AValue: TIniFile);
+begin
+  FSettings := AValue;
+  //  nothing to remember at this time
+  //  if (FSettings <> nil) and (FTree <> nil) then
+end;
+
+function TTreeManager<T>.getFocus : T;
+begin
+  //if (FList.itemindex = -1) or (FList.ItemIndex >= FFiltered.count) then
+  //  result := nil
+  //else
+  //  result := FFiltered[FList.itemIndex];
+  result := nil;
+end;
+
+function TTreeManager<T>.GetHasFocus : boolean;
+begin
+  result := GetFocus <> nil;
+
+end;
+
+procedure TTreeManager<T>.SetEnabled(AValue: boolean);
+//var
+//  ce : TControlEntry;
+begin
+  //FEnabled := AValue;
+  //FData.Clear;
+  //FFiltered.Clear;
+  ////if (FFilter <> nil) then
+  ////  FFilter.ReadOnly := not Enabled;
+  //for ce in FControls do
+  //  ce.control.Enabled := Enabled;
+  //if enabled then
+  //  doLoad;
+end;
+
+procedure TTreeManager<T>.buildTreeNode(parent : TTreenode; item : T);
+var
+  n : TTreeNode;
+  i : integer;
+begin
+  n := FTree.Items.add(nil, getCellText(item));
+  i := getImageIndex(item);
+  n.ImageIndex := i;
+  n.SelectedIndex := i;
+  for i := 0 to item.getchildCount - 1 do
+    buildTreeNode(n, item.getChild(i) as T);
+end;
+
+procedure TTreeManager<T>.LoadTreeNodes;
+var
+  i : T;
+begin
+  for i in FData do
+    buildTreeNode(nil, i);
+end;
+
+procedure TTreeManager<T>.buildMenu;
+begin
+end;
+
+function TTreeManager<T>.getImageIndex(item : T) : integer;
+begin
+  result := -1;
+end;
+
+function TTreeManager<T>.getCellColors(item : T; var fore, back : TColor) : boolean;
+begin
+  result := false;
+end;
+
+function TTreeManager<T>.getSummaryText(item : T) : String;
+begin
+  result := getCellText(item);
+end;
+
+function TTreeManager<T>.addItem(mode : String) : T;
+begin
+  result := nil;
+end;
+
+function TTreeManager<T>.editItem(item : T; mode : String) : boolean;
+begin
+  result := false;
+end;
+
+procedure TTreeManager<T>.deleteItem(item : T);
+begin
+  raise Exception.create('Delete is not supported here');
+end;
+
+function TTreeManager<T>.executeItem(item : T; mode : String) : boolean;
+begin
+  raise Exception.create('Execute is not supported here');
 end;
 
 End.

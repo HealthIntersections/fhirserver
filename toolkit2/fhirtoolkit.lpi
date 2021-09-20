@@ -75,20 +75,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_file_format.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FileFormatChooser"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="frm_settings.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ToolkitSettingsForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
         <Filename Value="editors\ftk_editor_md.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -156,29 +142,8 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_about.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ToolkitAboutForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
         <Filename Value="ftk_version.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="frm_edit_changes.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="EditChangeReviewForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="frm_server_settings.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ServerSettingsForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
         <Filename Value="ftk_utilities.pas"/>
@@ -230,12 +195,6 @@
         <ResourceBaseClass Value="Frame"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_oauth.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="OAuthForm"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
         <Filename Value="ftk_terminology_service.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -244,28 +203,80 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_format_chooser.pas"/>
+        <Filename Value="dialogs\frm_project_editor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ProjectSettingsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ToolkitSettingsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_file_format.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileFormatChooser"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ToolkitAboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_edit_changes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditChangeReviewForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_file_changed.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ModifiedFileActionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_file_deleted.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DeletedFileActionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_clip_chooser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ClipboardChooserForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\frm_format_chooser.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormatChooserForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_clip_chooser.pas"/>
+        <Filename Value="dialogs\frm_oauth.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="ClipboardChooserForm"/>
+        <ComponentName Value="OAuthForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="frm_file_deleted.pas"/>
+        <Filename Value="dialogs\frm_server_settings.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="DeletedFileActionForm"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="frm_file_changed.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ModifiedFileActionForm"/>
+        <ComponentName Value="ServerSettingsForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
@@ -278,7 +289,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="editors;stores;views;frames"/>
+      <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
