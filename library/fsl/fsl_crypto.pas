@@ -171,6 +171,9 @@ Type
     property hasX : boolean read GetHasX;
     property hasY : boolean read GetHasY;
 
+    procedure checkThumbprintIsSHA256Hash;
+    function thumbprint : String;
+
     procedure clearKey;
     procedure clearPublicKey;
     procedure clearExponent;
@@ -517,6 +520,15 @@ constructor TJWK.Create(obj: TJsonObject);
 begin
   create;
   FObj := obj;
+end;
+
+procedure TJWK.checkThumbprintIsSHA256Hash;
+var
+  hash : String;
+begin
+  hash := thumbprint;
+  if hash <> id then
+    raise ELibraryException.Create('The key planned for signing cards has kid = "'+id+'" but the thumbprint is different: "'+hash+'"');
 end;
 
 procedure TJWK.clearExponent;
@@ -877,6 +889,27 @@ function TJWK.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FObj.sizeInBytes(magic));
+end;
+
+function TJWK.thumbprint: String;
+var
+  can, s : String;
+  hash : TIdHashSHA256;
+  b : TIdBytes;
+begin
+  if keyType = 'EC' then
+    can := '{"crv":"'+FObj['crv']+'","kty":"'+FObj['kty']+'","x":"'+FObj['x']+'","y":"'+FObj['y']+'"}'
+  else if keyType = 'RSA' then
+    can := '{"e":"'+FObj['e']+'","kty":"'+FObj['kty']+'","n":"'+FObj['n']+'"}'
+  else
+    raise Exception.Create('Unknown key type "'+keyType+'" generating thumbprint');
+  hash := TIdHashSHA256.Create;
+  try
+    b := hash.HashString(can);
+    result := JWTBase64URLStr(idb(b));
+  finally
+    hash.Free;
+  end;
 end;
 
 { TJWKList }

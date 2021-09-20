@@ -142,10 +142,10 @@ begin
   end;
 end;
 
-function OpenSSLGetDigestCtx( AInst : PEVP_MD) : TIdHashIntCtx; inline;
+function OpenSSLGetDigestCtx(AInst : PEVP_MD) : TIdHashIntCtx; inline;
 var LRet : Integer;
 begin
-  Result := AllocMem(SizeOf(EVP_MD_CTX));
+  Result := EVP_MD_CTX_new;
   EVP_MD_CTX_reset(Result);
 
   LRet := EVP_DigestInit_ex(Result, AInst, nil);
@@ -270,7 +270,6 @@ begin
 
   SetLength(Result,LLen);
   EVP_MD_CTX_free(ACtx);
-  FreeMem(ACtx,SizeOf(EVP_MD_CTX));
 end;
 
 function OpenSSLIsHMACAvail : Boolean;
@@ -377,13 +376,13 @@ begin
 //  IsSHA224HashIntfAvail := OpenSSLIsSHA224HashIntfAvail;
 //  GetSHA224HashInst := OpenSSLGetSHA224HashInst;
 //  IsSHA256HashIntfAvail := OpenSSLIsSHA256HashIntfAvail;
-//  GetSHA256HashInst := OpenSSLGetSHA256HashInst;
+  GetSHA256HashInst := OpenSSLGetSHA256HashInst;
 //  IsSHA384HashIntfAvail := OpenSSLIsSHA384HashIntfAvail;
 //  GetSHA384HashInst := OpenSSLGetSHA384HashInst;
 //  IsSHA512HashIntfAvail := OpenSSLIsSHA512HashIntfAvail;
 //  GetSHA512HashInst := OpenSSLGetSHA512HashInst;
-//  UpdateHashInst := OpenSSLUpdateHashInst;
-//  FinalHashInst := OpenSSLFinalHashInst;
+  UpdateHashInst := OpenSSLUpdateHashInst;
+  FinalHashInst := OpenSSLFinalHashInst;
 
   IsHMACAvail := OpenSSLIsHMACAvail;
 

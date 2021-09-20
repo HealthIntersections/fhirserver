@@ -6993,27 +6993,32 @@ begin
   conn.ExecSQL('Delete from Observations where ResourceKey = '+inttostr(rk));
   if not deleted then
   begin
-    obs := Factory.wrapObservation(loadResource(conn, rk));
     try
-      if (obs.subject <> '') and not isAbsoluteUrl(obs.subject) and
-        (obs.hasTime) then
-      begin
-        subj := resolveReference(conn, obs.subject);
-        if (subj <> 0) then
+      obs := Factory.wrapObservation(loadResource(conn, rk));
+      try
+        if (obs.subject <> '') and not isAbsoluteUrl(obs.subject) and
+          (obs.hasTime) then
         begin
-          cl := obs.categories;
-          try
-            SetLength(categories, cl.Count);
-            for i := 0 to cl.Count - 1 do
-              categories[i] := resolveConcept(conn, cl[i]);
-          finally
-            cl.Free;
+          subj := resolveReference(conn, obs.subject);
+          if (subj <> 0) then
+          begin
+            cl := obs.categories;
+            try
+              SetLength(categories, cl.Count);
+              for i := 0 to cl.Count - 1 do
+                categories[i] := resolveConcept(conn, cl[i]);
+            finally
+              cl.Free;
+            end;
+            ProcessObservationContent(conn, key, rk, obs, subj, categories)
           end;
-          ProcessObservationContent(conn, key, rk, obs, subj, categories)
         end;
+      finally
+        obs.Free;
       end;
-    finally
-      obs.Free;
+    except
+      on e : Exception do
+        Logging.log('Error Processing Observation '+inttostr(rk)+': '+e.message);
     end;
   end;
 end;
