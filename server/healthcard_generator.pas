@@ -107,6 +107,7 @@ begin
   FCards := TFslList<THealthcareCard>.create;
   FIssues := TStringList.create;
   FJwk := key;
+  key.checkThumbprintIsSHA256Hash;
   FRequest := request;
 end;
 
@@ -240,7 +241,7 @@ begin
   try
     result.Bundle := bundle.Link;
     result.issueDate := TFslDateTime.makeUTC;
-    result.issuer := FIssuerUrl;
+    result.issuer := ExcludeTrailingSlash(FIssuerUrl);
     result.types := types;
     util := THealthcareCardUtilities.create;
     try

@@ -1369,7 +1369,7 @@ begin
       if canBeNull then
         exit(nil)
       else
-      raise EFHIRException.create('Resource has been deleted');
+        raise EFHIRException.create('Resource has been deleted');
     end;
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['XmlContent'])

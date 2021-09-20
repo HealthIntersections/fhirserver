@@ -319,6 +319,7 @@ function GetStringCell(const ADelimitedString: String; ACell: Cardinal; ADelimit
 function SQLWrapString(const AStr: String): String;
 function SQLWrapStrings(const AStr: String): String;
 function AppendForwardSlash(const AStr: String): String;
+function ExcludeTrailingSlash(const S: string): string;
 Function DescribeBytes(i : int64) : String;
 
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
@@ -5651,6 +5652,13 @@ begin
     Result := AStr
   else
     Result := AStr + '/';
+end;
+
+function ExcludeTrailingSlash(const S: string): string;
+begin
+  Result := S;
+  while Result[length(result)] = '/' do
+    SetLength(Result, Length(Result)-1);
 end;
 
 Function DescribeBytes(i : int64) : String;

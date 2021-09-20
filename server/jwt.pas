@@ -157,6 +157,8 @@ procedure TJWTServices.SetCardKey(const Value: TJWK);
 begin
   FCardKey.Free;
   FCardKey := Value;
+  if FCardKey <> nil then
+    FCardKey.checkThumbprintIsSHA256Hash;
 end;
 
 end.
