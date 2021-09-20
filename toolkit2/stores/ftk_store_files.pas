@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes, Dialogs,
-  fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream,
   ftk_store;
 
 type
@@ -18,7 +18,7 @@ type
     function schemes : TArray<String>; override;
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
-    function load(address : String) : TLoadedBytes; override;
+    function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
     function describe(address : String) : String; override;
@@ -26,6 +26,8 @@ type
     function openDlg(out newName : String) : boolean; override;
     function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; override;
     function MakeFilename(address : String) : String; override;
+    procedure forceLocation(address : String); override;
+    function getName(address : String; mode : TNameMode) : String; override;
   end;
 
 implementation
@@ -47,11 +49,37 @@ begin
   result := 1;
 end;
 
-function TFileStorageService.load(address: String): TLoadedBytes;
+function TFileStorageService.load(address: String; doException : boolean): TLoadedBytes;
+var
+  fn : String;
 begin
-  if not address.startsWith('file:') then raise Exception.create('This is not a file address');
-  result.content := FileToBytes(address.substring(5));
-  result.timestamp := FileGetModified(address.substring(5));
+  if not address.startsWith('file:') then
+    raise ELibraryException.create('This is not a file address');
+
+  fn := address.substring(5);
+  result.timestamp := 0;
+  if not FileExists(fn) then
+  begin
+    if doException then
+      raise ELibraryException.create('The file '+fn+' does not exist')
+    else
+      result.timestamp := -1;
+  end
+  else
+  begin
+    try
+      result.timestamp := FileGetModified(fn);
+      result.content := FileToBytes(fn);
+    except
+      on e : Exception do
+      begin
+        if doException then
+          raise
+        else if result.timestamp = 0 then // a network drive?
+          result.timestamp := 0;
+      end;
+    end;
+  end;
 end;
 
 function TFileStorageService.save(address: String; bytes: TBytes) : TDateTime;
@@ -142,6 +170,29 @@ end;
 function TFileStorageService.MakeFilename(address: String): String;
 begin
   result := ExtractFileName(address.Substring(5));
+end;
+
+procedure TFileStorageService.forceLocation(address: String);
+var
+  dir : String;
+begin
+  if not address.startsWith('file:') then raise Exception.create('This is not a file address');
+  dir := ExtractFileDir(address.Substring(5));
+  ForceFolder(dir);
+end;
+
+function TFileStorageService.getName(address: String; mode: TNameMode): String;
+var
+  fn : string;
+begin
+  if not address.startsWith('file:') then raise Exception.create('This is not a file address');
+  fn := address.Substring(5);
+  case mode of
+    nameModeFullPath : result := fn;
+    nameModeFolder : result := ExtractFileDir(fn);
+    nameModeName : result := ExtractFileName(fn);
+    else result := '';
+  end;
 end;
 
 end.

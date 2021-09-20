@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Math,
-  Graphics, Controls, ExtCtrls, ComCtrls, Menus,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus, Forms,
   SynEdit, SynEditHighlighter, SynEditTypes,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_logging,
   ftk_context, ftk_store;
@@ -174,6 +174,8 @@ type
     procedure updateDesigner; virtual;
     procedure commitDesigner; virtual;
 
+    function escapeText(text : String): String; virtual;
+    function sourceHasFocus : boolean;
     procedure SetContentUndoable(src : string);
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
@@ -200,6 +202,7 @@ type
     procedure updateFont; override;
     function getSource : String; override;
     procedure resizeControls; override;
+    procedure insertText(text : String; escape : boolean); override;
   end;
 
 implementation
@@ -828,10 +831,14 @@ procedure TBaseEditor.getFocus(content: TMenuItem);
 begin
   inc(FFocusCount);
   if FFocusCount = 1 then
+  begin
     bindToContentMenu(content);
+    CanPaste := true;
+  end;
   EditPause;
   if not IsShowingDesigner then
     TextEditor.SetFocus;
+  Context.OnUpdateActions(self);
 end;
 
 procedure TBaseEditor.loseFocus();
@@ -842,6 +849,7 @@ begin
   dec(FFocusCount);
   if FFocusCount = 0 then
   begin
+    CanPaste := false;
     for a in FActions do
     begin
       a.FmenuItem := nil;
@@ -849,6 +857,8 @@ begin
         sa.FMenuItem := nil;
     end;
   end;
+  if Context <> nil then
+    Context.OnUpdateActions(self);
 end;
 
 procedure TBaseEditor.EditPause;
@@ -1177,6 +1187,16 @@ begin
   // nothing here
 end;
 
+function TBaseEditor.escapeText(text: String): String;
+begin
+  result := text;
+end;
+
+function TBaseEditor.sourceHasFocus: boolean;
+begin
+  result := not IsShowingDesigner and (Screen.ActiveControl = TextEditor);
+end;
+
 procedure TBaseEditor.SetContentUndoable(src : string);
 var
   ps, pf : TPoint;
@@ -1396,6 +1416,13 @@ begin
   TextToolbar.Height := Context.ToolBarHeight;
   if DesignerToolbar <> nil then
     DesignerToolbar.Height := Context.ToolBarHeight;
+end;
+
+procedure TBaseEditor.insertText(text: String; escape: boolean);
+begin
+  if escape then
+    text := escapeText(text);
+  TextEditor.InsertTextAtCaret(text);
 end;
 
 

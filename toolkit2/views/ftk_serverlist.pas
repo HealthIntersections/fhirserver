@@ -216,7 +216,10 @@ end;
 
 procedure TFHIRServersView.load;
 begin
-  FManager.doLoad();
+  try
+    FManager.doLoad();
+  except
+  end;
 end;
 
 procedure TFHIRServersView.save;

@@ -310,6 +310,7 @@ Type
     FElements: TStringList;
     FVersion: TFHIRVersion;
     FTransactionResource: TFhirResourceV;
+    FSecureURL: String;
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -390,6 +391,8 @@ Type
       if the request was made on a RESTful interface (else empty)
     }
     property baseUrl : String read FBaseUrl write FBaseUrl;
+
+    property secureURL : String read FSecureURL write FSecureURL;
 
     {
       The type of the resource. Cannot be changed

@@ -172,6 +172,10 @@ begin
       for i := 0 to session.Info.count - 1 do
         params.str[session.info.Names[i]] := session.info.ValueFromIndex[i];
     end;
+    if session.KnownToBeDeleted then
+      result.bool['is-deleted'] := session.KnownToBeDeleted;
+    if session.NoCheckCurrency then
+      result.bool['no-check'] := session.NoCheckCurrency;
     result.link;
   finally
     result.free;
@@ -199,6 +203,8 @@ begin
       for n in json.obj['params'].properties.Keys do
         result.info.AddPair(n, json.obj['params'].str[n]);
     end;
+    result.KnownToBeDeleted := json.bool['is-deleted'];
+    result.NoCheckCurrency := json.bool['no-check'];
     result.link;
   finally
     result.free;

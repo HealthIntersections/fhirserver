@@ -5,8 +5,7 @@ unit ftk_factory;
 interface
 
 uses
-  SysUtils, Classes,
-  Dialogs,
+  SysUtils, Classes, Dialogs, LCLType,
 
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_crypto,
   fhir_objects,
@@ -32,7 +31,11 @@ type
     function examineFile(filename, mimeType : String; const bytes : TBytes) : TToolkitEditSession;
 
     function makeEditor(session : TToolkitEditSession) : TToolkitEditor;
+
+    class function determineFormatFromText(src : String; var content : TBytes) : TSourceEditorKindSet;
+    class function determineFormatFromFmt(fmt : TClipboardFormat; src : Tbytes; var kind : TSourceEditorKind; var content : TBytes) : boolean;
   end;
+
 
 implementation
 
@@ -281,6 +284,83 @@ begin
   else
     raise Exception.create('not supported yet');
   end;
+end;
+
+
+class function TToolkitFactory.determineFormatFromText(src : String; var content : TBytes) : TSourceEditorKindSet;
+var
+  j : TJsonObject;
+  x : TMXmlDocument;
+begin
+  src := src.trim;
+  if (src = '') then
+    exit([]);
+
+  content := TEncoding.UTF8.GetBytes(src);
+  if (src.StartsWith('MSH|') or src.StartsWith('FHS|') or src.StartsWith('BHS|')) then
+    exit([sekv2]);
+
+  if (src.StartsWith('shc:/')) then
+    exit([sekJWT]);
+
+  try
+    j := TJSONParser.Parse(src);
+    try
+      if (j.has('resourceType')) then
+        exit([sekFHIR]);
+      exit([sekJson]);
+    finally
+      j.free;
+    end;
+  except
+  end;
+  try
+    x := TMXmlParser.parse(src, [xpResolveNamespaces]);
+    try
+      if (x.docElement.NamespaceURI = 'http://hl7.org/fhir/') then
+        exit([sekFHIR]);
+
+      if (x.docElement.NamespaceURI = 'urn:hl7-org:v3') and (x.docElement.Name = 'ClinicalDocument')  then
+        exit([sekCDA]);
+
+      if (x.docElement.Name = 'html')  then
+        exit([sekHTML]);
+
+      exit([sekXml]);
+    finally
+      x.free;
+    end;
+  except
+  end;
+  try
+    TJWTUtils.decodeJWT(src).free;
+    exit([sekJwt]);
+  except
+  end;
+
+  // if we get to here, it's plain text, or broken xml or json. We're going to guess and provide options.
+  result := [sekText, sekMD];
+  if (src.StartsWith('{')) then
+    exit(result + [sekJson]);
+  if (src.StartsWith('<')) then
+  begin
+    if (src.contains('<html')) then
+      exit(result + [sekHTML])
+    else
+      exit(result + [sekXml]);
+  end;
+  if (src.contains('function ')) then
+    result := result + [sekJS];
+  if (src.contains('[') and src.contains(']') and src.contains('=')) and not (sekJS in result) then
+    result := result + [sekIni];
+  if (src.contains('{{')) or (src.contains('{%'))  then
+    result := result + [sekLiquid];
+end;
+
+class function TToolkitFactory.determineFormatFromFmt(fmt: TClipboardFormat; src: Tbytes; var kind: TSourceEditorKind; var content: TBytes): boolean;
+begin
+  // for now, false. if we couldn't read it as text, we don't know how to read it.
+  result := false;
 end;
 
 

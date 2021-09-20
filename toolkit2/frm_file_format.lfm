@@ -1,78 +1,83 @@
 object FileFormatChooser: TFileFormatChooser
   Left = 600
-  Height = 785
+  Height = 449
   Top = 350
-  Width = 743
-  Caption = 'FileFormatChooser'
-  ClientHeight = 785
-  ClientWidth = 743
-  DesignTimePPI = 168
+  Width = 425
+  Caption = 'Choose File Format'
+  ClientHeight = 449
+  ClientWidth = 425
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 80
-    Top = 705
-    Width = 743
+    Height = 46
+    Top = 403
+    Width = 425
     Align = alBottom
-    ClientHeight = 80
-    ClientWidth = 743
+    ClientHeight = 46
+    ClientWidth = 425
+    ParentFont = False
     TabOrder = 0
     object btnOk: TButton
-      Left = 449
-      Height = 44
-      Top = 23
-      Width = 131
+      Left = 257
+      Height = 25
+      Top = 13
+      Width = 75
       Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
       Enabled = False
       ModalResult = 1
       OnClick = btnOkClick
+      ParentFont = False
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 596
-      Height = 44
-      Top = 23
-      Width = 131
+      Left = 341
+      Height = 25
+      Top = 13
+      Width = 75
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2
       OnClick = btnCancelClick
+      ParentFont = False
       TabOrder = 1
     end
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 705
+    Height = 403
     Top = 0
-    Width = 743
+    Width = 425
     ActivePage = TabSheet1
     Align = alClient
+    ParentFont = False
     ShowTabs = False
     TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 697
-      ClientWidth = 735
+      ClientHeight = 395
+      ClientWidth = 417
+      ParentFont = False
       object Panel2: TPanel
         Left = 0
-        Height = 697
+        Height = 395
         Top = 0
-        Width = 735
+        Width = 417
         Align = alClient
         BorderWidth = 6
-        ClientHeight = 697
-        ClientWidth = 735
+        ClientHeight = 395
+        ClientWidth = 417
+        ParentFont = False
         TabOrder = 0
         object ListBox1: TListBox
           Left = 7
-          Height = 683
+          Height = 381
           Top = 7
-          Width = 721
+          Width = 403
           Align = alClient
           Items.Strings = (
             'FHIR Resource'
@@ -84,14 +89,15 @@ object FileFormatChooser: TFileFormatChooser
             'Structure Map'
             'Ini File'
             'Text File'
-            '''Markdown'
+            'Markdown'
             'Javascript'
             'HTML'
             'DICOM Image'
           )
-          ItemHeight = 30
+          ItemHeight = 15
           OnClick = ListBox1Click
           OnDblClick = ListBox1DblClick
+          ParentFont = False
           TabOrder = 0
         end
       end
@@ -100,29 +106,33 @@ object FileFormatChooser: TFileFormatChooser
       Caption = 'TabSheet2'
       ClientHeight = 697
       ClientWidth = 734
+      ParentFont = False
       object Panel3: TPanel
         Left = 0
-        Height = 72
+        Height = 41
         Top = 0
         Width = 734
         Align = alTop
-        ClientHeight = 72
+        ClientHeight = 41
         ClientWidth = 734
+        ParentFont = False
         TabOrder = 0
         object Label1: TLabel
-          Left = 16
+          Left = 9
           Height = 30
-          Top = 16
+          Top = 9
           Width = 123
           Caption = 'FHIR Version:'
           ParentColor = False
+          ParentFont = False
         end
         object ComboBox1: TComboBox
-          Left = 160
-          Height = 38
-          Top = 16
-          Width = 247
-          ItemHeight = 30
+          Left = 91
+          Height = 23
+          Top = 9
+          Width = 141
+          ItemHeight = 15
+          ParentFont = False
           Style = csDropDownList
           TabOrder = 0
         end

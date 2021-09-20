@@ -58,6 +58,7 @@ function makeFactory(version : TFHIRVersion) : TFHIRFactory;
 function checkWellKnown(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 function checkMetadata(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 
+
 implementation
 
 uses
@@ -302,7 +303,8 @@ begin
     result.bool['xml'] := xml;
     result.str['format'] := CODES_TFHIRFormat[format];
     result.str['logFileName'] := logFileName;
-    result.obj['smart'] := smartConfig.link;
+    if smartConfig <> nil then
+      result.obj['smart'] := smartConfig.link;
     result.str['smart-mode'] := CODES_TSmartAppLaunchMode[smartMode];
     result.str['client-id'] := ClientId;
     result.str['client-secret'] := ClientSecret;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJscript,
-  fsl_base, fsl_logging, fsl_stream,
+  fsl_base, fsl_utilities, fsl_logging, fsl_stream,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -18,6 +18,8 @@ type
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -37,6 +39,16 @@ end;
 
 procedure TJavascriptEditor.getNavigationList(navpoints: TStringList);
 begin
+end;
+
+function TJavascriptEditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TJavascriptEditor.escapeText(text: String): String;
+begin
+  Result := jsonEscape(text, false);
 end;
 
 constructor TJavascriptEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);

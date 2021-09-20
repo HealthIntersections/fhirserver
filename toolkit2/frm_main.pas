@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls, Math,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
-  lclintf, ValEdit,
+  lclintf, ValEdit, LCLType,
 
   IdOpenSSLLoader,
 
@@ -16,9 +16,10 @@ uses
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
-  ftk_factory, ftk_search, ftk_serverlist,ftk_worker_server,
+  ftk_factory, ftk_search, ftk_serverlist, ftk_worker_server,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth;
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
+  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed;
 
 type
   { TMainToolkitForm }
@@ -33,6 +34,21 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionEditPasteEscaped: TAction;
+    actionNewEditorJWT: TAction;
+    actionNewEditorDicom: TAction;
+    actionNewEditorHTML: TAction;
+    actionNewEditorJS: TAction;
+    actionNewEditorMD: TAction;
+    actionNewEditorText: TAction;
+    actionNewEditorIni: TAction;
+    actionNewEditorLiquid: TAction;
+    actionNewEditorJSON: TAction;
+    actionNewEditorXML: TAction;
+    actionNewEditorCDA: TAction;
+    actionNewEditorV2: TAction;
+    actionNewEditorFHIR: TAction;
+    actionEditPasteNewFile: TAction;
     actionEditReview: TAction;
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
@@ -66,11 +82,10 @@ type
     actionViewMessages: TAction;
     actionViewLog: TAction;
     actionViewStack: TAction;
-    actionEditPasteSpecial: TAction;
+    actionEditPasteFormat: TAction;
     actionEditCopyFilename: TAction;
     actionCopyFileTitle: TAction;
     actionCopyFilePath: TAction;
-    actionCopyFile: TAction;
     actionEditBeginEnd: TAction;
     actionEditRedo: TAction;
     actionFilePrint: TAction;
@@ -115,7 +130,31 @@ type
     mConsole: TMemo;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
+    MenuItem100: TMenuItem;
+    MenuItem101: TMenuItem;
+    MenuItem102: TMenuItem;
+    MenuItem103: TMenuItem;
+    MenuItem111: TMenuItem;
+    MenuItem112: TMenuItem;
+    MenuItem113: TMenuItem;
+    MenuItem114: TMenuItem;
+    MenuItem115: TMenuItem;
+    MenuItem117: TMenuItem;
+    MenuItem118: TMenuItem;
+    N15: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem40: TMenuItem;
+    N14: TMenuItem;
+    MenuItem116: TMenuItem;
+    N13: TMenuItem;
+    MenuItem104: TMenuItem;
+    MenuItem105: TMenuItem;
+    MenuItem106: TMenuItem;
+    MenuItem107: TMenuItem;
+    MenuItem108: TMenuItem;
+    MenuItem109: TMenuItem;
     MenuItem11: TMenuItem;
+    MenuItem110: TMenuItem;
     MenuItem12: TMenuItem;
     MenuItem13: TMenuItem;
     MenuItem14: TMenuItem;
@@ -124,7 +163,7 @@ type
     MenuItem17: TMenuItem;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
-    MenuItem2: TMenuItem;
+    mnuEdit: TMenuItem;
     MenuItem20: TMenuItem;
     MenuItem21: TMenuItem;
     MenuItem22: TMenuItem;
@@ -162,6 +201,7 @@ type
     MenuItem96: TMenuItem;
     MenuItem97: TMenuItem;
     MenuItem98: TMenuItem;
+    MenuItem99: TMenuItem;
     mnuApple: TMenuItem;
     MenuItem95: TMenuItem;
     N12: TMenuItem;
@@ -177,7 +217,6 @@ type
     mnuLVCopy: TMenuItem;
     mnuLVCopyAll: TMenuItem;
     mnuContent: TMenuItem;
-    MenuItem40: TMenuItem;
     MenuItem41: TMenuItem;
     MenuItem42: TMenuItem;
     MenuItem43: TMenuItem;
@@ -250,6 +289,7 @@ type
     pmMessageView: TPopupMenu;
     pmSearch: TPopupMenu;
     dlgFolder: TSelectDirectoryDialog;
+    pmTestServers: TPopupMenu;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     btnSearchFolder: TSpeedButton;
@@ -273,6 +313,7 @@ type
     Timer1: TTimer;
     ToolBar1: TToolBar;
     ToolBar2: TToolBar;
+    ToolBar3: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -305,13 +346,20 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    TreeView1: TTreeView;
     vlInspector: TValueListEditor;
     procedure actConnectToServerExecute(Sender: TObject);
+    procedure actionCopyFilePathExecute(Sender: TObject);
+    procedure actionCopyFileTitleExecute(Sender: TObject);
     procedure actionEditBeginEndExecute(Sender: TObject);
     procedure actionEditCopyExecute(Sender: TObject);
+    procedure actionEditCopyFilenameExecute(Sender: TObject);
     procedure actionEditFindExecute(Sender: TObject);
     procedure actionEditFindNextExecute(Sender: TObject);
     procedure actionEditFindPrevExecute(Sender: TObject);
+    procedure actionEditPasteEscapedExecute(Sender: TObject);
+    procedure actionEditPasteFormatExecute(Sender: TObject);
+    procedure actionEditPasteNewFileExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
@@ -329,6 +377,7 @@ type
     procedure actionhelpAboutExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
+    procedure actionNewEditorExecute(Sender: TObject);
     procedure actionPagesCloseAllExecute(Sender: TObject);
     procedure actionPagesCloseLeftExecute(Sender: TObject);
     procedure actionPagesCloseRightExecute(Sender: TObject);
@@ -369,6 +418,11 @@ type
     procedure lvMessagesDblClick(Sender: TObject);
     procedure lvSearchClick(Sender: TObject);
     procedure lvSearchDblClick(Sender: TObject);
+    procedure MenuItem117Click(Sender: TObject);
+    procedure MenuItem118Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem40Click(Sender: TObject);
+    procedure mnuEditClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
     procedure MenuItem60Click(Sender: TObject);
     procedure MenuItem98Click(Sender: TObject);
@@ -429,7 +483,7 @@ type
     procedure checkLastUpdated;
     procedure updateStatusBar;
     procedure openMRUItem(sender: TObject);
-    procedure createNewFile(kind : TSourceEditorKind);
+    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
     function openFile(address : String) : TToolkitEditor;
     procedure onChangeFocus(sender : TObject);
     procedure updateInspector(sender : TObject);
@@ -448,6 +502,8 @@ type
     procedure doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
+    function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
+    procedure AddServer(name, url : String);
 
   public
     property Context : TToolkitContext read FContext;
@@ -609,6 +665,30 @@ procedure TMainToolkitForm.lvSearchDblClick(Sender: TObject);
 begin
   if lvSearch.Selected <> nil then
     mnuSearchGoClick(sender);
+end;
+
+procedure TMainToolkitForm.MenuItem117Click(Sender: TObject);
+begin
+  AddServer('tx.fhir.org', 'http://tx.fhir.org/r4');
+end;
+
+procedure TMainToolkitForm.MenuItem118Click(Sender: TObject);
+begin
+  AddServer('registry.fhir.org', 'http://registry.fhir.org');
+end;
+
+procedure TMainToolkitForm.MenuItem2Click(Sender: TObject);
+begin
+  AddServer('test.fhir.org', 'http://test.fhir.org/r4');
+end;
+
+procedure TMainToolkitForm.MenuItem40Click(Sender: TObject);
+begin
+  AddServer('hapi.fhir.org', 'http://hapi.fhir.org/baseR4');
+end;
+
+procedure TMainToolkitForm.mnuEditClick(Sender: TObject);
+begin
 end;
 
 procedure TMainToolkitForm.loadLayout;
@@ -870,14 +950,54 @@ var
   loaded : TLoadedBytes;
 begin
   if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
-    (Context.focus.session.nextCurrencyCheck < now) then
+    (Context.focus.session.nextCurrencyCheck < now) and not Context.focus.session.NoCheckCurrency then
   begin
     Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
-    loaded := Context.focus.Store.load(Context.focus.session.address);
-    if loaded.timestamp <> Context.focus.session.Timestamp then
+    loaded := Context.focus.Store.load(Context.focus.session.address, false);
+    if loaded.timestamp = 0 then
+      exit; // problem accessing content at all... todo: show this status on the status panel
+
+    if loaded.timestamp < 0 then
     begin
-      if (MessageDlg(Context.focus.session.caption, Context.focus.describe+' has been changed since you loaded it. Reload?', mtConfirmation, mbYesNo, 0) = mrYes) then
-        actionFileManageReloadExecute(self);
+      case checkDeletedFileAction(self, Context.focus.session.presentedAddress) of
+        dfaSave :
+          begin
+          Context.focus.session.nextCurrencyCheck := now;
+          Context.focus.Store.forceLocation(Context.focus.session.address);
+          actionFileSaveExecute(self);
+          end;
+        dfaIgnore :
+          begin
+          Context.focus.session.Timestamp := 1; // this ensures that if it comes back, user will be notified
+          Context.focus.session.KnownToBeDeleted := true;
+          end;
+        dfaSaveAs :
+          begin
+          Context.focus.session.nextCurrencyCheck := now;
+          actionFileSaveAs1Execute(self);
+          end;
+        dfaDiscard : closeFile(pgEditors.ActivePage, false);
+        dfaNoCheck : Context.focus.session.NoCheckCurrency := true;
+      end;
+    end
+    else if abs(loaded.timestamp - Context.focus.session.Timestamp) > DATETIME_SECOND_ONE then
+    begin
+      Context.focus.session.KnownToBeDeleted := false;
+      case checkModifiedFileAction(self, Context.focus.session.presentedAddress, Context.focus.session.Timestamp, loaded.timestamp) of
+        dmaSave :
+          begin
+          actionFileSaveExecute(self);
+          Context.focus.session.nextCurrencyCheck := now;
+          end;
+        dmaDiff : actionEditReviewExecute(self);
+        dmaReload :
+          begin
+          actionFileManageReloadExecute(self);
+          Context.focus.session.nextCurrencyCheck := now;
+          end;
+        dmaIgnore : Context.focus.session.Timestamp := loaded.timestamp;
+        dmaNoCheck : Context.focus.session.NoCheckCurrency := true;
+      end;
     end;
   end;
 end;
@@ -927,7 +1047,7 @@ begin
   openFile(FTempStore.getMRU((sender as TMenuItem).tag));
 end;
 
-procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind);
+procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
 var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
@@ -967,7 +1087,10 @@ begin
     FContext.addEditor(editor);
     tab := pgEditors.AddTabSheet;
     editor.bindToTab(tab);
-    editor.newContent;
+    if (length(bytes) = 0) then
+      editor.newContent
+    else
+      editor.loadBytes(bytes);
     editor.session.NeedsSaving := false;
     editor.lastChangeChecked := true;
     pgEditors.ActivePage := tab;
@@ -995,7 +1118,7 @@ begin
   else
   begin
     store := Context.StorageForAddress(address);
-    loaded := store.load(address);
+    loaded := store.load(address, true);
     session := FFactory.examineFile(address, loaded.mimeType, loaded.content);
     if session <> nil then
     begin
@@ -1310,7 +1433,7 @@ begin
   else
   begin
     store := Context.StorageForAddress(url);
-    loaded := store.load(url);
+    loaded := store.load(url, true);
     session := FFactory.examineFile(url, loaded.mimeType, loaded.content);
     if session <> nil then
     begin
@@ -1477,7 +1600,7 @@ begin
   actionEditCopyFilename.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileManageFolder.enabled := context.hasFocus and context.Focus.isFile;
   actionCopyFilePath.enabled := context.hasFocus and context.Focus.hasAddress;
-  actionCopyFile.enabled := context.hasFocus and context.Focus.isFile;
+  actionCopyFileTitle.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileClose.enabled := context.hasFocus;
   actionFileSave.enabled := context.hasFocus and context.Focus.CanBeSaved;
   actionFileManageRename.enabled := context.hasFocus and context.Focus.isFile;
@@ -1515,9 +1638,10 @@ begin
   actionEditUndo.enabled := context.hasFocus and context.Focus.canUndo;
   actionEditRedo.enabled := context.hasFocus and context.Focus.canRedo;
   actionEditCut.enabled := context.hasFocus and context.Focus.canCut;
-  actionEditPasteSpecial.enabled := context.hasFocus and context.Focus.canPaste;
   actionEditDelete.enabled := context.hasFocus and context.Focus.canCut;
   actionEditPaste.enabled := context.hasFocus and context.Focus.canPaste;
+  actionEditPasteFormat.enabled := actionEditPaste.enabled;
+  actionEditPasteEscaped.enabled := actionEditPaste.enabled and context.Focus.canEscape;
 
   // enabled if we're in source mode
   actionEditBeginEnd.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
@@ -1784,9 +1908,39 @@ begin
   end;
 end;
 
+procedure TMainToolkitForm.actionCopyFilePathExecute(Sender: TObject);
+begin
+  if context.hasFocus then
+  begin
+    Clipboard.Open;
+    Clipboard.AsText := context.focus.store.getName(context.focus.Session.Address, nameModeFolder);
+    Clipboard.Close;
+  end;
+end;
+
+procedure TMainToolkitForm.actionCopyFileTitleExecute(Sender: TObject);
+begin
+  if context.hasFocus then
+  begin
+    Clipboard.Open;
+    Clipboard.AsText := context.focus.store.getName(context.focus.Session.Address, nameModeName);
+    Clipboard.Close;
+  end;
+end;
+
 procedure TMainToolkitForm.actionEditCopyExecute(Sender: TObject);
 begin
 
+end;
+
+procedure TMainToolkitForm.actionEditCopyFilenameExecute(Sender: TObject);
+begin
+  if context.hasFocus then
+  begin
+    Clipboard.Open;
+    Clipboard.AsText := context.focus.store.getName(context.focus.Session.Address, nameModeFullPath);
+    Clipboard.Close;
+  end;
 end;
 
 procedure TMainToolkitForm.actionEditFindExecute(Sender: TObject);
@@ -1811,6 +1965,110 @@ begin
     lvSearch.itemIndex := lvSearch.itemIndex - 1;
     mnuSearchGoClick(self);
   end;
+end;
+
+procedure TMainToolkitForm.actionEditPasteEscapedExecute(Sender: TObject);
+var
+  clip : TClipboard;
+begin
+  if Context.HasFocus and Context.focus.canEscape then
+  begin
+    clip := TClipboard.create;
+    try
+      Context.focus.insertText(clip.AsText, true);
+    finally
+      clip.free;
+    end;
+  end;
+end;
+
+procedure TMainToolkitForm.actionEditPasteFormatExecute(Sender: TObject);
+var
+  src : String;
+begin
+  src := chooseClipboardContent(self);
+  if (src <> '') then
+    context.focus.insertText(src, false);
+end;
+
+function TMainToolkitForm.determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
+var
+  clip : TClipboard;
+  i : integer;
+  f : TClipboardFormat;
+  s : TBytesStream;
+  fmts : TSourceEditorKindSet;
+begin
+  clip := TClipboard.create;
+  try
+    if clip.AsText <> '' then
+    begin
+      fmts := TToolkitFactory.determineFormatFromText(clip.asText, cnt);
+      if fmts = [] then
+      begin
+        MessageDlg('Paste New File', 'Unable to determine file format', mtError, [mbok], 0);
+        exit(sekNull)
+      end
+      else
+      begin
+        result := onlySourceKind(fmts);
+        if result <> sekNull then
+          exit
+        else
+          exit(ChooseFormat(self, fmts, TEncoding.UTF8.GetString(cnt)));
+      end;
+    end;
+    for i := 0 to clip.FormatCount - 1 do
+    begin
+      s := TBytesStream.create;
+      try
+        f := clip.Formats[i];
+        clip.GetFormat(f, s);
+        if TToolkitFactory.determineFormatFromFmt(f, s.Bytes, result, cnt) then
+          exit;
+      finally
+        s.free;
+      end;
+    end;
+  finally
+    clip.free;
+  end;
+  MessageDlg('Paste New File', 'Unable to determine file format', mtError, [mbok], 0);
+  result := sekNull;
+end;
+
+procedure TMainToolkitForm.AddServer(name, url: String);
+var
+  server : TFHIRServerEntry;
+begin
+  server := TFHIRServerEntry.create;
+  try
+    ServerSettingsForm := TServerSettingsForm.create(self);
+    try
+      ServerSettingsForm.Server := server.link;
+      ServerSettingsForm.edtName.text := name;
+      ServerSettingsForm.edtUrl.text := url;
+      ServerSettingsForm.ServerList := FServerView.ServerList.link;
+      if ServerSettingsForm.ShowModal = mrOk then
+      begin
+        FServerView.addServer(server);
+      end;
+    finally
+      FreeAndNil(ServerSettingsForm);
+    end;
+  finally
+    server.free;
+  end;
+end;
+
+procedure TMainToolkitForm.actionEditPasteNewFileExecute(Sender: TObject);
+var
+  kind : TSourceEditorKind;
+  cnt : TBytes;
+begin
+  kind := determineClipboardFormat(cnt);
+  if kind <> sekNull then
+    createNewFile(kind, cnt);
 end;
 
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
@@ -1850,7 +2108,7 @@ procedure TMainToolkitForm.actionFileManageReloadExecute(Sender: TObject);
 var
   loaded : TLoadedBytes;
 begin
-  loaded := Context.Focus.Store.load(Context.Focus.Session.Address);
+  loaded := Context.Focus.Store.load(Context.Focus.Session.Address, true);
   Context.Focus.LoadBytes(loaded.content);
   Context.Focus.session.NeedsSaving := false;
   Context.Focus.session.Timestamp := loaded.timestamp;
@@ -1961,6 +2219,11 @@ end;
 procedure TMainToolkitForm.actionHelpContentExecute(Sender: TObject);
 begin
   ShowMessage('Not implemented yet');
+end;
+
+procedure TMainToolkitForm.actionNewEditorExecute(Sender: TObject);
+begin
+  createNewFile(TSourceEditorKind((sender as TComponent).tag));
 end;
 
 procedure TMainToolkitForm.actionPagesCloseAllExecute(Sender: TObject);

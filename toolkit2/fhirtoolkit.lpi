@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="QRCodeGenLib4PascalPackage"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>
       <Item>
@@ -239,6 +242,31 @@
       <Unit>
         <Filename Value="editors\ftk_editor_jwt.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_format_chooser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormatChooserForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_clip_chooser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ClipboardChooserForm"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_file_deleted.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DeletedFileActionForm"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_file_changed.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ModifiedFileActionForm"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
   </ProjectOptions>

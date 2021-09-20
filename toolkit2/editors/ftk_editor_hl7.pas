@@ -22,6 +22,8 @@ type
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
     procedure ContentChanged; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -76,6 +78,16 @@ procedure THL7Editor.ContentChanged;
 begin
   FMsg.free;
   FMsg := nil;
+end;
+
+function THL7Editor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function THL7Editor.escapeText(text: String): String;
+begin
+  Result := text;
 end;
 
 procedure THL7Editor.newContent();

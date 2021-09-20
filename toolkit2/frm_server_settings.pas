@@ -138,7 +138,7 @@ begin
     mInfo.text := '';
     Cursor := crHourGlass;
     try
-      if checkWellKnown(FLastUrl, FServer, msg1) and checkMetadata(FLastUrl, FServer, msg2) then
+      if checkMetadata(FLastUrl, FServer, msg2) then
       begin
         case FServer.version of
           fhirVersionRelease2 : cbxVersion.ItemIndex := 0;
@@ -169,6 +169,7 @@ begin
         cbxVersion.Enabled := false;
         cbxFormat.Enabled := false;
       end;
+      checkWellKnown(FLastUrl, FServer, msg1);
       mInfo.lines.Clear;
       if msg1 <> '' then
         mInfo.lines.Add(msg1);
