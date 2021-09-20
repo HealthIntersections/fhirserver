@@ -3902,7 +3902,7 @@ begin
   result := 'Generate Health Cards';
   gen := THealthCardGenerator.create(manager.link, request.Link, (manager as TFhirNativeOperationEngineR4).ServerContext.JWTServices.cardKey.link);
   try
-    gen.IssuerURL := request.baseUrl;
+    gen.IssuerURL := request.secureURL;
     gen.patientId := request.id; // todo: compartment?
     gen.params := makeParamsV(request);
     gen.process;

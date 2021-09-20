@@ -126,7 +126,7 @@ type
     function loadFromRsaDer(cert : string) : TJWKList;
 
     function readVersion(mt : String) : TFHIRVersion;
-    function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
+    function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
     Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
@@ -1100,7 +1100,7 @@ end;
 
 function TStorageWebEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
 var
-  sHost, token, url: string;
+  sHost, sRawHost, token, url: string;
   oRequest: TFHIRRequest;
   oResponse: TFHIRResponse;
   sCookie: string;
@@ -1137,6 +1137,10 @@ Begin
       sHost := 'https://' + request.host
     else
       sHost := 'http://' + request.host;
+    sRawHost := request.host;
+    if sRawHost.contains(':') then
+      sRawHost := sRawHost.substring(0, sRawhost.IndexOf(':'));
+
     domain := request.host;
     if domain.Contains(':') then
       domain := domain.Substring(0, domain.IndexOf(':'));
@@ -1201,7 +1205,7 @@ Begin
               if not Common.Cache.respond(code, request, response, result) then
               begin
                 sBearer := sCookie;
-                oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
+                oRequest := BuildRequest(lang, path, sHost, sRawHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
                   request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
                   request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
                   esession, cert);
@@ -1617,7 +1621,7 @@ begin
     conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
 
-Function TStorageWebEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
+Function TStorageWebEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
   sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
   form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509)
   : TFHIRRequest;
@@ -1643,6 +1647,7 @@ Begin
     oRequest.secure := secure;
     aFormat := ffUnspecified;
     oRequest.baseUrl := sHost + AppendForwardSlash(sBaseURL);
+    oRequest.secureURL := 'https://'+sRawHost+SSLPort()+sBaseURL;
     oRequest.url := sHost + sResource;
     oRequest.lastModifiedDate := 0; // Xml
     // oRequest.contentLocation := sContentLocation; // for version aware updates

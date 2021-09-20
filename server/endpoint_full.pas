@@ -463,6 +463,7 @@ begin
       req.Session.allowAll;
       req.LoadParams('');
       req.baseUrl := FServerContext.Globals.Bases[0];
+
       // GJSHost.registry := FContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create(FServerContext.ValidatorContext.link);
       try
