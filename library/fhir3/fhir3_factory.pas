@@ -112,6 +112,7 @@ type
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; override;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
+    function wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW; override;
     function makeOpReqLookup : TFHIRLookupOpRequestW; override;
     function makeOpRespLookup : TFHIRLookupOpResponseW; override;
     function makeOpReqSubsumes : TFHIRSubsumesOpRequestW; override;
@@ -537,6 +538,14 @@ end;
 function TFHIRFactoryR3.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
+end;
+
+function TFHIRFactoryR3.wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirAttachment3.Create(r);
 end;
 
 function TFHIRFactoryR3.wrapAuditEvent(r: TFHIRResourceV): TFhirAuditEventW;

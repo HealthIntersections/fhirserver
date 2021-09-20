@@ -143,6 +143,15 @@ type
     property end_ : TFslDateTime read GetEnd write SetEnd;
   end;
 
+  TFHIRAttachmentW = class abstract (TFhirDatTypeW)
+  protected
+    function GetContentType: String; virtual; abstract;
+    function GetData: TBytes; virtual; abstract;
+  public
+    property data : TBytes read GetData;
+    property contentType : String read GetContentType;
+  end;
+
   TFhirMetaW = class (TFHIRXVersionElementWrapper)
   protected
     function getVersionId: String; virtual; abstract;
@@ -2430,6 +2439,7 @@ function TFslMetadataResourceList.link: TFslMetadataResourceList;
 begin
   result := TFslMetadataResourceList(inherited link);
 end;
+
 
 end.
 

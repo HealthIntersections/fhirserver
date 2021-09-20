@@ -204,6 +204,7 @@ type
     function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; virtual; abstract;
     function wrapSubscriptionTopic(r : TFHIRResourceV) : TFhirSubscriptionTopicW; virtual; abstract;
     function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; virtual; abstract;
+    function wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW; virtual; abstract;
     function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; virtual; abstract;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; virtual; abstract;
     function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; virtual; abstract;

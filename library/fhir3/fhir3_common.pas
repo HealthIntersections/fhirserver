@@ -867,6 +867,16 @@ type
     function renderText : String; override;
   end;
 
+  TFHIRAttachment3 = class (TFHIRAttachmentW)
+  private
+    function att : TFhirAttachment;
+  protected
+    function GetContentType: String; override;
+    function GetData: TBytes; override;
+  public
+    function renderText : String; override;
+  end;
+
   TFHIRSubsumesOpRequest3 = class (TFHIRSubsumesOpRequestW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
@@ -5643,6 +5653,28 @@ end;
 function TFhirConceptMapGroupElementDependsOn3.value: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).code;
+end;
+
+{ TFHIRAttachment3 }
+
+function TFHIRAttachment3.att: TFhirAttachment;
+begin
+  result := Element as TFhirAttachment;
+end;
+
+function TFHIRAttachment3.GetContentType: String;
+begin
+  result := att.contentType;
+end;
+
+function TFHIRAttachment3.GetData: TBytes;
+begin
+  result := att.data;
+end;
+
+function TFHIRAttachment3.renderText: String;
+begin
+  result := '??';
 end;
 
 end.

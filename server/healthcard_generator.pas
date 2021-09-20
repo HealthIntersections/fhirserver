@@ -5,7 +5,8 @@ unit healthcard_generator;
 interface
 
 uses
-  SysUtils, Classes, DateUtils,
+  SysUtils, Classes, DateUtils, PNGImage,
+  QlpQRCodeGenLibTypes, QlpQrSegment, QlpQrCode, QlpIQrSegment, QlpIQrCode,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
   fhir_objects, fhir_common, fhir_healthcard, fhir_utilities,
   fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
@@ -21,7 +22,9 @@ type
     FPatientId: String;
     FLinks: TFslStringDictionary;
     FIssues : TStringList;
+    FDisplays: boolean;
     procedure linkResource(index : integer; ref : String);
+    function serverContext : TFHIRServerContext;
   public
     constructor Create(manager: TFHIROperationEngine; request : TFHIRRequest; issues : TStringList);
     destructor Destroy; override;
@@ -29,6 +32,7 @@ type
     property links : TFslStringDictionary read FLinks;
     property covid : boolean read FCovid write FCovid;
     property patientId : String read FPatientId write FPatientId;
+    property displays : boolean read FDisplays write FDisplays;
 
     function findPatient : TFHIRPatient;
     function makePatient(patient : TFHIRPatient) : TFHIRPatient;
@@ -76,6 +80,8 @@ type
 
     procedure SetParams(const Value: TFhirParameters);
 
+    function generateImage(card : THealthcareCard) : TBytes;
+
     function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 
     procedure makeImmunizationCard(covid : boolean);
@@ -122,6 +128,38 @@ begin
   inherited;
 end;
 
+function THealthCardGenerator.generateImage(card: THealthcareCard): TBytes;
+var
+  bq : TQRCodeGenLibBitmap;
+  segs : TQRCodeGenLibGenericArray<IQrSegment>;
+  qr : IQrCode;
+  mem : TBytesStream;
+  png : TPngImage;
+begin
+  mem := TBytesStream.create;
+  try
+    segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
+       TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
+       TQrSegment.MakeNumeric(card.qrSource(false)));
+    qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
+    bq := qr.ToBitmapImage(10, 4);
+    try
+      png := TPngImage.Create;
+      try
+        png.Assign(bq);
+        png.SaveToStream(mem);
+      finally
+        png.Free;
+      end;
+    finally
+      bq.free;
+    end;
+    result := mem.Bytes;
+  finally
+    mem.free;
+  end;
+end;
+
 procedure THealthCardGenerator.makeImmunizationCard(covid : boolean);
 var
   engine : TVciImmunizationCardMaker;
@@ -132,6 +170,7 @@ begin
   try
     engine.covid := covid;
     engine.patientId := FPatientId;
+    engine.displays := params.bool['displays'];
     bnd := engine.makeBundle;
     try
       if bnd <> nil then
@@ -204,7 +243,7 @@ begin
         raise EFslException.Create('Unknown _since value "'+p.value.primitiveValue+'"');
       FSince := TFslDateTime.fromXML(p.value.primitiveValue)
     end
-    else
+    else if not StringArrayExistsSensitive(['images', 'displays'], p.name) then
       raise EFslException.Create('Unknown parameter "'+p.name+'"');
   end;
 
@@ -247,6 +286,7 @@ begin
     try
       util.Factory := TFHIRFactoryR4.Create;
       util.sign(result, FJwk);
+      result.image := generateImage(result);
     finally
       util.Free;
     end;
@@ -289,7 +329,7 @@ end;
 
 function TCardMaker.makePatient(patient: TFHIRPatient): TFHIRPatient;
 var
-  n, ns : TFhirHumanName;
+  n : TFhirHumanName;
 begin
   result := TFHIRPatient.Create;
   try
@@ -305,6 +345,11 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TCardMaker.serverContext: TFHIRServerContext;
+begin
+  result := (FManager.ServerContextObject as TFHIRServerContext)
 end;
 
 { TVciImmunizationCardMaker }
@@ -410,6 +455,12 @@ begin
         t := result.vaccineCode.codingList.append;
         t.code := c.code;
         t.system := c.system;
+        if displays then
+        begin
+          t.display := c.display;
+          if (t.display = '') then
+            t.display := serverContext.TerminologyServer.getDisplayForCode(FRequest.Lang, t.system, c.version, t.code);
+        end;
       end;
     result.patient := TFhirReference.Create('resource:0');
     result.occurrence := imm.occurrence.Link;
@@ -438,7 +489,7 @@ begin
           p := FManager.LookupReference(FRequest, actor.reference);
           if (p <> nil) then
           begin
-            s := (FManager.ServerContextObject as TFHIRServerContext).Factory.describe(p.Resource);
+            s := serverContext.Factory.describe(p.Resource);
             if (s <> '') then
             begin
               a := TFhirReference.create;
@@ -517,7 +568,7 @@ begin
   if (obs.value = nil) or not StringArrayExistsSensitive(['CodeableConcept', 'Quantity', 'string'], obs.value.fhirType) then
     exit(false);
 
-  ctxt := (FManager.ServerContextObject as TFHIRServerContext);
+  ctxt := serverContext;
   c := ctxt.Factory.wrapCoding(ctxt.Factory.makeCoding('http://loinc.org', code));
   try
     if covid then
@@ -609,7 +660,7 @@ begin
         p := FManager.LookupReference(FRequest, obs.performerList[0].reference);
         if (p <> nil) then
         begin
-          s := (FManager.ServerContextObject as TFHIRServerContext).Factory.describe(p.Resource);
+          s := serverContext.Factory.describe(p.Resource);
           if (s <> '') then
           begin
             result.performerList.Append.display := s;
