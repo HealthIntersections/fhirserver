@@ -50,8 +50,8 @@ Type
     FIssue : TFhirOperationOutcomeW;
     FCode : integer;
   public
-    constructor Create(code : integer; message : String; issue : TFhirOperationOutcomeW);
-    constructor Create(code : integer; message : String);
+    constructor Create(code : integer; message : String; issue : TFhirOperationOutcomeW); overload;
+    constructor Create(code : integer; message : String); overload;
     destructor Destroy; override;
 
     property errorCode : Integer read FCode;
