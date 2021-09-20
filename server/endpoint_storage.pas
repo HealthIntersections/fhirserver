@@ -944,16 +944,6 @@ begin
       result := 'SCIM';
       ProcessScimRequest(AContext, request, response, PathNoSlash)
     end
-    else if request.Document.StartsWith(PathNoSlash, false) then
-      result := HandleRequest(AContext, request, response, true, FAuthServer <> nil, PathNoSlash, id, Session, cert)
-    else if OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([PathNoSlash, OWIN_TOKEN_PATH]))) then
-    begin
-      response.ResponseNo := 401;
-      response.ResponseText := 'Unauthorized';
-      response.ContentText := 'Authorization is required (OWin at ' + PathNoSlash + OWIN_TOKEN_PATH + ')';
-      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
-      result := 'Unauthorized';
-    end
     else if request.Document = '/.well-known/openid-configuration' then
     begin
       result := 'OAuth Discovery';
@@ -963,6 +953,16 @@ begin
     begin
       result := 'Health card JKWS';
       returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
+    end
+    else if request.Document.StartsWith(PathNoSlash, false) then
+      result := HandleRequest(AContext, request, response, true, FAuthServer <> nil, PathNoSlash, id, Session, cert)
+    else if OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([PathNoSlash, OWIN_TOKEN_PATH]))) then
+    begin
+      response.ResponseNo := 401;
+      response.ResponseText := 'Unauthorized';
+      response.ContentText := 'Authorization is required (OWin at ' + PathNoSlash + OWIN_TOKEN_PATH + ')';
+      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
+      result := 'Unauthorized';
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
       result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, session, cert)
