@@ -142,6 +142,7 @@ type
     MenuItem115: TMenuItem;
     MenuItem117: TMenuItem;
     MenuItem118: TMenuItem;
+    MenuItem119: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -448,6 +449,14 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure tvProjectsChange(Sender: TObject; Node: TTreeNode);
+    procedure tvProjectsChanging(Sender: TObject; Node: TTreeNode;
+      var AllowChange: Boolean);
+    procedure tvProjectsEdited(Sender: TObject; Node: TTreeNode; var S: string);
+    procedure tvProjectsEditing(Sender: TObject; Node: TTreeNode;
+      var AllowEdit: Boolean);
+    procedure tvProjectsEditingEnd(Sender: TObject; Node: TTreeNode;
+      Cancel: Boolean);
     procedure updateMessages(sender : TObject);
   private
     FIni : TIniFile;
@@ -487,8 +496,6 @@ type
     procedure checkLastUpdated;
     procedure updateStatusBar;
     procedure openMRUItem(sender: TObject);
-    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
-    function openFile(address : String) : TToolkitEditor;
     procedure onChangeFocus(sender : TObject);
     procedure updateInspector(sender : TObject);
     procedure closeFile(tab : TTabSheet; store : boolean);
@@ -506,11 +513,17 @@ type
     procedure doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
-    function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     procedure AddServer(name, url : String);
 
   public
     property Context : TToolkitContext read FContext;
+
+    // used by the project manager
+    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []); overload;
+    procedure createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []); overload;
+    function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
+    function openFile(address : String) : TToolkitEditor;
+    procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
   end;
 
 var
@@ -567,6 +580,7 @@ begin
       IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache');
   FServerView := TFHIRServersView.create(FIni);
   FServerView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'servers.json']);
+  FServerView.Images := imgMain;
   FServerView.List := lvServers;
   FServerView.OnOpenServer := OpenServer;
   FServerView.OnEditServer := EditServer;
@@ -575,7 +589,9 @@ begin
 
   FProjectsView := TFHIRProjectsView.create(FIni);
   FProjectsView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'projects.json']);
+  FProjectsView.Images := imgMain;
   FProjectsView.Tree := tvProjects;
+  FProjectsView.Context := FContext.link;
   FProjectsView.load;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
@@ -660,6 +676,7 @@ begin
   end;
   FContext.ToolBarHeight := ToolBar1.Height;
   FServerView.refresh;
+  FProjectsView.refresh;
 end;
 
 procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
@@ -846,6 +863,30 @@ begin
 end;
 
 procedure TMainToolkitForm.ToolButton2Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainToolkitForm.tvProjectsChange(Sender: TObject; Node: TTreeNode);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsChanging(Sender: TObject; Node: TTreeNode; var AllowChange: Boolean);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsEdited(Sender: TObject; Node: TTreeNode; var S: string);
+begin
+  showMessage('edit from '+TFHIRProjectNode(node.data).name+' to '+node.Text+''''+s+'''');
+  s := 'what?';
+end;
+
+procedure TMainToolkitForm.tvProjectsEditing(Sender: TObject; Node: TTreeNode; var AllowEdit: Boolean);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsEditingEnd(Sender: TObject;
+  Node: TTreeNode; Cancel: Boolean);
 begin
 
 end;
@@ -1059,6 +1100,11 @@ begin
 end;
 
 procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
+begin
+  createNewFile(kind, '', '', bytes);
+end;
+
+procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []);
 var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
@@ -1079,25 +1125,41 @@ begin
         FileFormatChooser.free;
       end;
     end
-    else if kind = sekFHIR then
+    else if (kind = sekFHIR) then
     begin
-      FileFormatChooser := TFileFormatChooser.create(self);
-      try
-        FileFormatChooser.setFHIRResource;
-        if FileFormatChooser.ShowModal = mrOK then
-          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
-        else
-          abort;
-      finally
-        FileFormatChooser.free;
-      end;
+      // choose serialization format...
+      //if (length(bytes) = 0) then
+      //begin
+      //  FileFormatChooser := TFileFormatChooser.create(self);
+      //  try
+      //    FileFormatChooser.setFHIRResource;
+      //    if FileFormatChooser.ShowModal = mrOK then
+      //      kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+      //    else
+      //      abort;
+      //  finally
+      //    FileFormatChooser.free;
+      //  end;
+      //end
+      //else
+      //begin
+
     end;
 
     session := FFactory.makeNewSession(kind);
+    if path <> '' then
+      session.Address := 'file:'+path;
+    if (filename <> '') then
+      session.caption := filename;
     editor := FFactory.makeEditor(session);
     FContext.addEditor(editor);
     tab := pgEditors.AddTabSheet;
     editor.bindToTab(tab);
+    if path <> '' then
+    begin
+      BytesToFile(bytes, path);
+      session.Timestamp := FileGetModified(path);
+    end;
     if (length(bytes) = 0) then
       editor.newContent
     else
@@ -1109,6 +1171,7 @@ begin
     FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
     FContext.Focus := editor;
     FContext.Focus.getFocus(mnuContent);
+    FProjectsView.refresh;
     updateActionStatus(editor);
   finally
     info.free;
@@ -1151,9 +1214,30 @@ begin
       editor.lastChangeChecked := true;
       editor.lastMoveChecked := true;
       editor.editPause;
+      FProjectsView.refresh;
       updateActionStatus(editor);
       result := editor;
     end;
+  end;
+end;
+
+procedure TMainToolkitForm.renameProjectFile(op, np: string);
+var
+  //loaded : TLoadedBytes;
+  editor : TToolkitEditor;
+  //tab : TTabSheet;
+  //store : TStorageService;
+  //session : TToolkitEditSession;
+begin
+  editor := Context.EditorForAddress('file:'+op);
+  if (editor <> nil) then
+  begin
+    editor.Session.Address := 'file:'+np;
+    editor.Session.Caption := Context.StorageForAddress(editor.Session.Address).CaptionForAddress(editor.Session.Address);
+    editor.Tab.Caption := editor.Session.Caption;
+    FTempStore.removeFromMRU('file:'+op);
+    FTempStore.storeOpenFileList(Context.editorSessions);
+    updateMessages(self);
   end;
 end;
 
@@ -1221,6 +1305,7 @@ begin
   if (store) then
     FTempStore.storeOpenFileList(FContext.EditorSessions);
   pgEditorsChange(self);
+  FProjectsView.refresh;
 end;
 
 procedure TMainToolkitForm.locateOnTab(sender: TObject; x, y: integer; var point: TPoint);
@@ -1869,6 +1954,7 @@ begin
     FTempStore.storeOpenFileList(Context.editorSessions);
     Context.StorageForAddress(old).delete(old);
     updateMessages(self);
+    FProjectsView.renameFile(old.Substring(5), address.substring(5));
   end;
 end;
 
@@ -1951,7 +2037,10 @@ begin
       ProjectSettingsForm.Project := proj.link;
       ProjectSettingsForm.Projects := FProjectsView.Projects.link;
       if ProjectSettingsForm.ShowModal = mrOk then
+      begin
+        proj.loadFromAddress;
         FProjectsView.addProject(proj);
+      end;
     finally
       ProjectSettingsForm.Free;
     end;

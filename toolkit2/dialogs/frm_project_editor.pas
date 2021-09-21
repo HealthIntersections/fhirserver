@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  fsl_base,
-  ftk_project_tree;
+  Buttons, fsl_base, ftk_project_tree;
 
 type
 
@@ -17,11 +16,17 @@ type
     btnOk: TButton;
     Button2: TButton;
     edtName: TEdit;
+    edtFolder: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
     Label3: TLabel;
     Panel1: TPanel;
+    fd: TSelectDirectoryDialog;
+    SpeedButton1: TSpeedButton;
     procedure btnOkClick(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     FProject: TFHIRProjectNode;
     FProjects: TFslList<TFHIRProjectNode>;
@@ -48,6 +53,15 @@ begin
   FProjects.Free;
 end;
 
+procedure TProjectSettingsForm.SpeedButton1Click(Sender: TObject);
+begin
+  fd.InitialDir := edtFolder.text;
+  if fd.execute then
+    edtFolder.text := fd.FileName;
+  if edtName.text = '' then
+    edtName.text := ExtractFileName(edtFolder.Text);
+end;
+
 procedure TProjectSettingsForm.edtNameChange(Sender: TObject);
 begin
   btnOK.enabled := not NameIsUsed(edtName.text);
@@ -56,6 +70,7 @@ end;
 procedure TProjectSettingsForm.btnOkClick(Sender: TObject);
 begin
   project.name := edtName.text;
+  project.address := edtFolder.text;
 end;
 
 procedure TProjectSettingsForm.SetProject(AValue: TFHIRProjectNode);
