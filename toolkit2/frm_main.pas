@@ -464,6 +464,7 @@ type
     FFileSystem : TStorageService;
     FInternalStorage : TStorageService;
     FSourceMaximised : boolean;
+    FCheckingCurrency : boolean;
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
     FServerView : TFHIRServersView;
@@ -514,8 +515,9 @@ type
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
     procedure AddServer(name, url : String);
-
+    procedure clearContentMenu;
   public
+    property FileSystem : TStorageService read FFileSystem;
     property Context : TToolkitContext read FContext;
 
     // used by the project manager
@@ -524,6 +526,8 @@ type
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     function openFile(address : String) : TToolkitEditor;
     procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
+    procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
+    function closeFiles(path : String) : boolean;
   end;
 
 var
@@ -672,8 +676,10 @@ begin
     pgEditors.ActivePage := tab;
     FContext.Focus := FContext.EditorForTab(tab);
     FContext.focus.getFocus(mnuContent);
-    updateActionStatus(editor);
-  end;
+  end
+  else
+    clearContentMenu;
+  updateActionStatus(editor);
   FContext.ToolBarHeight := ToolBar1.Height;
   FServerView.refresh;
   FProjectsView.refresh;
@@ -1001,55 +1007,60 @@ procedure TMainToolkitForm.checkActiveTabCurrency;
 var
   loaded : TLoadedBytes;
 begin
-  if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
+  if not FCheckingCurrency and FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
     (Context.focus.session.nextCurrencyCheck < now) and not Context.focus.session.NoCheckCurrency then
   begin
-    Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
-    loaded := Context.focus.Store.load(Context.focus.session.address, false);
-    if loaded.timestamp = 0 then
-      exit; // problem accessing content at all... todo: show this status on the status panel
+    FCheckingCurrency := true;
+    try
+      Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
+      loaded := Context.focus.Store.load(Context.focus.session.address, false);
+      if loaded.timestamp = 0 then
+        exit; // problem accessing content at all... todo: show this status on the status panel
 
-    if loaded.timestamp < 0 then
-    begin
-      case checkDeletedFileAction(self, Context.focus.session.presentedAddress) of
-        dfaSave :
-          begin
-          Context.focus.session.nextCurrencyCheck := now;
-          Context.focus.Store.forceLocation(Context.focus.session.address);
-          actionFileSaveExecute(self);
-          end;
-        dfaIgnore :
-          begin
-          Context.focus.session.Timestamp := 1; // this ensures that if it comes back, user will be notified
-          Context.focus.session.KnownToBeDeleted := true;
-          end;
-        dfaSaveAs :
-          begin
-          Context.focus.session.nextCurrencyCheck := now;
-          actionFileSaveAs1Execute(self);
-          end;
-        dfaDiscard : closeFile(pgEditors.ActivePage, false);
-        dfaNoCheck : Context.focus.session.NoCheckCurrency := true;
+      if loaded.timestamp < 0 then
+      begin
+        case checkDeletedFileAction(self, Context.focus.session.presentedAddress) of
+          dfaSave :
+            begin
+            Context.focus.session.nextCurrencyCheck := now;
+            Context.focus.Store.forceLocation(Context.focus.session.address);
+            actionFileSaveExecute(self);
+            end;
+          dfaIgnore :
+            begin
+            Context.focus.session.Timestamp := 1; // this ensures that if it comes back, user will be notified
+            Context.focus.session.KnownToBeDeleted := true;
+            end;
+          dfaSaveAs :
+            begin
+            Context.focus.session.nextCurrencyCheck := now;
+            actionFileSaveAs1Execute(self);
+            end;
+          dfaDiscard : closeFile(pgEditors.ActivePage, false);
+          dfaNoCheck : Context.focus.session.NoCheckCurrency := true;
+        end;
+      end
+      else if abs(loaded.timestamp - Context.focus.session.Timestamp) > DATETIME_SECOND_ONE then
+      begin
+        Context.focus.session.KnownToBeDeleted := false;
+        case checkModifiedFileAction(self, Context.focus.session.presentedAddress, Context.focus.session.Timestamp, loaded.timestamp) of
+          dmaSave :
+            begin
+            actionFileSaveExecute(self);
+            Context.focus.session.nextCurrencyCheck := now;
+            end;
+          dmaDiff : actionEditReviewExecute(self);
+          dmaReload :
+            begin
+            actionFileManageReloadExecute(self);
+            Context.focus.session.nextCurrencyCheck := now;
+            end;
+          dmaIgnore : Context.focus.session.Timestamp := loaded.timestamp;
+          dmaNoCheck : Context.focus.session.NoCheckCurrency := true;
+        end;
       end;
-    end
-    else if abs(loaded.timestamp - Context.focus.session.Timestamp) > DATETIME_SECOND_ONE then
-    begin
-      Context.focus.session.KnownToBeDeleted := false;
-      case checkModifiedFileAction(self, Context.focus.session.presentedAddress, Context.focus.session.Timestamp, loaded.timestamp) of
-        dmaSave :
-          begin
-          actionFileSaveExecute(self);
-          Context.focus.session.nextCurrencyCheck := now;
-          end;
-        dmaDiff : actionEditReviewExecute(self);
-        dmaReload :
-          begin
-          actionFileManageReloadExecute(self);
-          Context.focus.session.nextCurrencyCheck := now;
-          end;
-        dmaIgnore : Context.focus.session.Timestamp := loaded.timestamp;
-        dmaNoCheck : Context.focus.session.NoCheckCurrency := true;
-      end;
+    finally
+      FCheckingCurrency := false;
     end;
   end;
 end;
@@ -1241,6 +1252,27 @@ begin
   end;
 end;
 
+procedure TMainToolkitForm.renameFolder(op, np: string);
+var
+  editor : TToolkitEditor;
+begin
+  op := 'file:/'+op;
+  np := 'file:/'+np;
+  for editor in FContext.Editors do
+    if editor.Session.Address.StartsWith(op) then
+      editor.Session.Address := np+editor.Session.Address.Substring(op.Length);
+end;
+
+function TMainToolkitForm.closeFiles(path: String) : boolean;
+var
+  i : integer;
+begin
+  result := true;
+  for i := FContext.Editors.count - 1 downto 0 do
+    if FContext.Editors[i].session.Address.startsWith('file:'+path) then
+      closeFile(FContext.Editors[i].tab, false);
+end;
+
 procedure TMainToolkitForm.onChangeFocus(sender: TObject);
 begin
   if chkCurrrentFileOnly.Checked then
@@ -1295,10 +1327,10 @@ var
   editor : TToolkitEditor;
 begin
   editor := Context.EditorForTab(tab);
-  if (editor.CanBeSaved) then
+  if not store and (editor.CanBeSaved) then
     checkDoSave(editor);
   editor.saveStatus; // internal save, and then unhook
-  if editor.session.Address <> '' then
+  if not store and (editor.session.Address <> '') then
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
   tab.free;
@@ -2182,6 +2214,12 @@ begin
   end;
 end;
 
+procedure TMainToolkitForm.clearContentMenu;
+begin
+  mnuContent.OnClick := nil;
+  mnuContent.Clear;
+end;
+
 procedure TMainToolkitForm.actionEditPasteNewFileExecute(Sender: TObject);
 var
   kind : TSourceEditorKind;
@@ -2572,7 +2610,9 @@ begin
   begin
     FContext.Focus.getFocus(mnuContent);
     FContext.Focus.editPause;
-  end;
+  end
+  else
+    clearContentMenu;
   checkActiveTabCurrency;
   updateActionStatus(self);
   updateStatusBar;

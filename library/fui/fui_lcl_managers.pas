@@ -244,6 +244,7 @@ type
     function getCellColors(item : T; var fore, back : TColor) : boolean; virtual;
     function getSummaryText(item : T) : String; virtual;
 
+    procedure changed; virtual; // e.g. to save
     function addItem(parent : T; mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
@@ -1412,12 +1413,14 @@ begin
     item.FNode.Data := pointer(item);
     populateTreeNode(item);
     FTree.Selected := item.FNode;
+    changed;
     updateStatus;
   end;
 end;
 
 procedure TTreeManager<T>.doEdit(mode: String);
 begin
+  changed;
   raise ETodo.create('doEdit');
 end;
 
@@ -1442,6 +1445,7 @@ begin
     begin
       DeleteItem(pp, f);
       FTree.items.delete(n);
+      changed;
       updateStatus;
     end;
   end
@@ -1450,6 +1454,7 @@ begin
     if DeleteItem(pp, f) then
     begin
       FTree.items.delete(n);
+      changed;
       updateStatus;
     end;
   end;
@@ -1635,8 +1640,11 @@ begin
     pp := TFslObject(p.data) as T
   else
     pp := nil;
-  if not editItemText(pp, item, s) then
-    s := getCellText(item);
+  if (s <> getCellText(item)) then
+    if editItemText(pp, item, s) then
+      changed
+    else
+      s := getCellText(item);
 end;
 
 procedure TTreeManager<T>.doControl(sender: TObject);
@@ -1702,6 +1710,11 @@ end;
 function TTreeManager<T>.getSummaryText(item : T) : String;
 begin
   result := getCellText(item);
+end;
+
+procedure TTreeManager<T>.changed;
+begin
+  //  nothing
 end;
 
 function TTreeManager<T>.addItem(parent : T; mode : String) : T;

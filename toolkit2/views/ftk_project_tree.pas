@@ -43,6 +43,8 @@ type
 
     procedure loadFromAddress;
     function getNewName(ext : String) : String;
+    function getNameForFile(fn : String) : String;
+    procedure renameChildren(op, np : String);
 
     property id : String read FId write FId;
     property kind : TFHIRProjectNodeKind read FKind write FKind;
@@ -78,6 +80,8 @@ type
     function getCellText(item : TFHIRProjectNode) : String; override;
 //    function getCellColors(item : TFHIRProjectNode; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TFHIRProjectNode) : String; override;
+
+    procedure changed; override;
 
     function addItem(parent : TFHIRProjectNode; mode : String) : TFHIRProjectNode; override;
     function editItem(item : TFHIRProjectNode; mode : String) : boolean; override;
@@ -124,6 +128,7 @@ type
     //function FetchServer(sender : TObject; name : String) : TFHIRServerEntry;
     //
     procedure addProject(project : TFHIRProjectNode);
+    function deleteProjectItem(parent, item : TFHIRProjectNode; files : boolean) : boolean;
     procedure deleteProject(project : TFHIRProjectNode; files : boolean);
     procedure renameFile(old, new : String);
     //procedure updateServer(server, newDetails : TFHIRServerEntry);
@@ -233,21 +238,27 @@ begin
   begin
     for s in TDirectory.getDirectories(address) do
     begin
-      n := TFHIRProjectNode.create;
-      FChildren.add(n);
-      n.kind := pnkFolder;
-      n.name := ExtractFileName(s);
-      n.address := s;
-      n.loadFromAddress;
+      if FileGetAttr(s) and faHidden = 0 then
+      begin
+        n := TFHIRProjectNode.create;
+        FChildren.add(n);
+        n.kind := pnkFolder;
+        n.name := ExtractFileName(s);
+        n.address := s;
+        n.loadFromAddress;
+      end;
     end;
 
     for s in TDirectory.GetFiles(address) do
     begin
-      n := TFHIRProjectNode.create;
-      FChildren.add(n);
-      n.kind := pnkFile;
-      n.name := ExtractFileName(s);
-      n.address := s;
+      if FileGetAttr(s) and faHidden = 0 then
+      begin
+        n := TFHIRProjectNode.create;
+        FChildren.add(n);
+        n.kind := pnkFile;
+        n.name := ExtractFileName(s);
+        n.address := s;
+      end;
     end;
   end;
 end;
@@ -267,6 +278,37 @@ begin
   begin
     inc(i);
     result := base+inttostr(i)+ext;
+  end;
+end;
+
+function TFHIRProjectNode.getNameForFile(fn: String): String;
+var
+  base, ext : String;
+  i : integer;
+begin
+  ext := ExtractFileExt(fn);
+  base := fn.replace(ext, '');
+  result := base+ext;
+  i := 0;
+  while nameExists(result) do
+  begin
+    inc(i);
+    result := base+inttostr(i)+ext;
+  end;
+end;
+
+procedure TFHIRProjectNode.renameChildren(op, np: String);
+var
+  i : TFHIRProjectNode;
+begin
+  for i in FChildren do
+  begin
+    if i.address.startsWith(op) then
+    begin
+      i.address := np+i.address.Substring(op.length);
+      if (i.kind = pnkFolder) then
+       i.renameChildren(op, np);
+    end;
   end;
 end;
 
@@ -348,6 +390,7 @@ begin
   inherited buildMenu;
   mnu := registerMenuEntry('Add', ICON_ADD, copNone, 'file');
   registerSubMenuEntry(mnu, 'Folder', 127, copAdd, 'folder');
+  registerSubMenuEntry(mnu, 'Existing File', 3, copAdd, 'file');
   registerSubMenuEntry(mnu, '-', -1, copNone);
   for t in MainToolkitForm.pmNew.Items do
     if t.visible then
@@ -399,10 +442,15 @@ begin
     Result := item.name;
 end;
 
+procedure TProjectTreeManager.changed;
+begin
+  FView.save;
+end;
+
 function TProjectTreeManager.addItem(parent : TFHIRProjectNode; mode: String): TFHIRProjectNode;
 var
   k : TSourceEditorKind;
-  n, e : String;
+  n, e, p : String;
   cnt : TBytes;
 begin
   result := nil;
@@ -422,9 +470,33 @@ begin
         CreateDir(result.address);
       end;
       parent.FChildren.add(result.link);
-      FView.save;
     finally
       result.free;
+    end;
+  end
+  else if (mode = 'file') then
+  begin
+    if MainToolkitForm.FileSystem.openDlg(p) then
+    begin
+      p := p.substring(5); // remove the file:
+      n := ExtractFileName(p);
+      n := parent.getNameForFile(n);
+      result := TFHIRProjectNode.create;
+      try
+        result.kind := pnkFile;
+        result.name := n;
+        if parent.address <> '' then
+        begin
+          result.address := path([parent.address, n]);
+          BytesToFile(FileToBytes(p), result.address);
+        end
+        else
+          result.address := p;
+        MainToolkitForm.openFile('file:'+result.address);
+        parent.FChildren.add(result.link);
+      finally
+        result.free;
+      end;
     end;
   end
   else
@@ -485,15 +557,19 @@ begin
       MessageDlg('Unable to rename '+item.name+' to '+text+' in '+parent.address, mtInformation, [mbOK], 0);
       exit(false);
     end;
+    if item.kind = pnkFolder then
+      item.renameChildren(op, np);
     item.name := text;
-    MainToolkitForm.renameProjectFile(op, np);
+    if item.kind = pnkFolder then
+      MainToolkitForm.renameFolder(op, np)
+    else
+      MainToolkitForm.renameProjectFile(op, np);
   end
   else
   begin
     // in this case, we only rename the entry in the project; the file itself doesn't change
     item.name := text;
   end;
-  FView.save;
 end;
 
 function TProjectTreeManager.deleteItem(parent, item: TFHIRProjectNode) : boolean;
@@ -501,20 +577,35 @@ var
   res : TModalResult;
 begin
   result := true;
-  if item.address <> '' then
-    res := MessageDlg('Delete Folder '+item.Name+'. Truly delete all the files in the project too? This operation cannot be undone', mtConfirmation, [mbYes, mbNo, mbCancel], 0)
-  else
-    res := MessageDlg('Delete Folder '+item.Name+' and all it''s contents? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+  case item.kind of
+    pnkProject :
+      if item.address <> '' then
+        res := MessageDlg('Delete Project '+item.Name+'. Truly delete all the files in the project too? This operation cannot be undone', mtConfirmation, [mbYes, mbNo, mbCancel], 0)
+      else
+        res := MessageDlg('Delete Project '+item.Name+' and all it''s entries? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+    pnkFolder:
+      if item.address <> '' then
+        res := MessageDlg('Delete Folder '+item.Name+' and all it''s contents? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0)
+      else
+        res := MessageDlg('Delete Folder '+item.Name+' and all it''s entries? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+    pnkFile :
+      if parent.address <> '' then
+        res := MessageDlg('Delete the file '+item.Name+'. This operation cannot be undone', mtConfirmation, [mbYes, mbNo, mbCancel], 0)
+      else
+        res := MessageDlg('Delete the link to file '+item.Name+'? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+  end;
   case res of
-    mrYes: FView.deleteProject(item, true);
-    mrNo: FView.deleteProject(item, false);
+    mrYes: result := FView.deleteProjectItem(parent, item, true);
+    mrNo: result := FView.deleteProjectItem(parent, item, false);
     mrCancel: result := false;
   end;
   if result then
+  begin
     if parent = nil then
       Data.remove(item)
     else
       parent.children.remove(item);
+  end;
 end;
 
 function TProjectTreeManager.executeItem(item: TFHIRProjectNode; mode: String): boolean;
@@ -628,6 +719,7 @@ var
 begin
   json := TJsonObject.create;
   try
+    json.str['edit'] := 'Don''t edit this file manually';
     for p in FManager.Data do
       json.forceArr['projects'].add(p.toJson);
     BytesToFile(TJSONWriter.writeObject(json, true), FControlFile);
@@ -656,6 +748,7 @@ begin
   else
     json := TJsonObject.create;
   try
+    json.str['edit'] := 'Don''t edit this file manually';
     json.forceArr['projects'].add(project.toJson);
 
     BytesToFile(TJSONWriter.writeObject(json, true), FControlFile);
@@ -663,6 +756,29 @@ begin
     json.free;
   end;
   FManager.doLoad;
+end;
+
+function TFHIRProjectsView.deleteProjectItem(parent, item: TFHIRProjectNode; files: boolean) : boolean;
+begin
+  result := true;
+  case item.kind of
+    pnkProject, pnkFolder :
+      begin
+        if (item.address <> '') then
+          if not MainToolkitForm.closeFiles(item.address) then
+            exit(false);
+        if files and (item.address <> '') then
+          FolderDelete(item.address);
+      end;
+    pnkFile :
+      begin
+        if (item.address <> '') then
+          if not MainToolkitForm.closeFiles(item.address) then
+            exit(false);
+        if files and (item.address <> '') then
+          FileDelete(item.address);
+      end;
+  end;
 end;
 
 procedure TFHIRProjectsView.deleteProject(project: TFHIRProjectNode; files: boolean);
@@ -678,6 +794,7 @@ begin
     json := TJsonObject.create;
 
   try
+    json.str['edit'] := 'Don''t edit this file manually';
     for i := json.forceArr['projects'].count - 1 downto 0 do
       if json.arr['projects'][i]['id'] = project.id then
         json.arr['projects'].remove(i);
