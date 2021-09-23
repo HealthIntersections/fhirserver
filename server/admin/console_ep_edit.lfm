@@ -1,10 +1,10 @@
 object EditEPForm: TEditEPForm
   Left = 1139
-  Height = 396
+  Height = 430
   Top = -712
   Width = 626
   Caption = 'Edit EndPoint'
-  ClientHeight = 396
+  ClientHeight = 430
   ClientWidth = 626
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
@@ -32,7 +32,7 @@ object EditEPForm: TEditEPForm
   object Panel1: TPanel
     Left = 0
     Height = 44
-    Top = 352
+    Top = 386
     Width = 626
     Align = alBottom
     ClientHeight = 44
@@ -459,15 +459,15 @@ object EditEPForm: TEditEPForm
     TabOrder = 12
   end
   object Label12: TLabel
-    Left = 16
+    Left = 15
     Height = 15
     Top = 322
-    Width = 33
-    Caption = 'Folder'
+    Width = 24
+    Caption = 'Path'
     ParentColor = False
     ParentFont = False
   end
-  object edtFolder: TEdit
+  object edtSQLiteFile: TEdit
     Left = 80
     Height = 23
     Top = 320
@@ -475,6 +475,25 @@ object EditEPForm: TEditEPForm
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 13
-    Text = 'edtFolder'
+    Text = 'edtSQLiteFile'
+  end
+  object rbSQLite: TRadioButton
+    Left = 370
+    Height = 19
+    Top = 154
+    Width = 58
+    AutoSize = False
+    Caption = 'SQLite'
+    OnChange = rbMSSQLChange
+    ParentFont = False
+    TabOrder = 14
+  end
+  object cbAutocreate: TCheckBox
+    Left = 80
+    Height = 19
+    Top = 352
+    Width = 239
+    Caption = 'Automatically create File if it doesn''t exist'
+    TabOrder = 15
   end
 end

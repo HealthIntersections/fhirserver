@@ -336,8 +336,8 @@ begin
   end
   else if sameText(details['db-type'].value, 'SQLite') then
   begin
-    Logging.log('Connect to '+details.name+' ('+details['db-type'].value+':'+dbn+')');
-    result := TFDBSQLiteManager.create(details.name, dbn, details['db-auto-create'].value = 'true');
+    Logging.log('Connect to SQLite3 database '+details['db-file'].value);
+    result := TFDBSQLiteManager.create(details.name, details['db-file'].value, details['db-auto-create'].value = 'true');
   end
   else
     raise ELibraryException.Create('Unknown database type '+details['db-type'].value);
@@ -350,7 +350,7 @@ begin
   else if sameText(details['db-type'].value, 'mysql') then
     result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
   else if sameText(details['db-type'].value, 'SQLite') then
-    result := details['db-type'].value+':'+details['db-database'].value
+    result := details['db-type'].value+':'+details['db-file'].value
   else
     result := 'Unknown database type '+details['db-type'].value
 end;

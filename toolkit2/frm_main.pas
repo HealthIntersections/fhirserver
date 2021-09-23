@@ -143,6 +143,7 @@ type
     MenuItem117: TMenuItem;
     MenuItem118: TMenuItem;
     MenuItem119: TMenuItem;
+    MenuItem120: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -343,6 +344,9 @@ type
     ToolButton31: TToolButton;
     ToolButton32: TToolButton;
     ToolButton33: TToolButton;
+    ToolButton34: TToolButton;
+    ToolButton35: TToolButton;
+    ToolButton36: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;

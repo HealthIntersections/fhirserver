@@ -3315,11 +3315,11 @@ object MainToolkitForm: TMainToolkitForm
         ParentFont = False
         object Panel2: TPanel
           Left = 0
-          Height = 110
+          Height = 112
           Top = 0
           Width = 36
           Align = alLeft
-          ClientHeight = 110
+          ClientHeight = 112
           ClientWidth = 36
           ParentFont = False
           TabOrder = 0
@@ -3335,9 +3335,9 @@ object MainToolkitForm: TMainToolkitForm
         end
         object mConsole: TMemo
           Left = 36
-          Height = 110
+          Height = 112
           Top = 0
-          Width = 1245
+          Width = 1243
           Align = alClient
           ParentFont = False
           ReadOnly = True
@@ -3354,10 +3354,10 @@ object MainToolkitForm: TMainToolkitForm
           Left = 0
           Height = 32
           Top = 0
-          Width = 1281
+          Width = 1279
           Align = alTop
           ClientHeight = 32
-          ClientWidth = 1281
+          ClientWidth = 1279
           ParentFont = False
           TabOrder = 0
           object Panel6: TPanel
@@ -3373,28 +3373,28 @@ object MainToolkitForm: TMainToolkitForm
             TabOrder = 0
             object Label1: TLabel
               Left = 0
-              Height = 16
+              Height = 15
               Top = 8
-              Width = 46
+              Width = 38
               Caption = 'Search:'
               ParentColor = False
               ParentFont = False
             end
             object chkCase: TCheckBox
-              Left = 733
-              Height = 18
+              Left = 748
+              Height = 19
               Top = 6
-              Width = 109
+              Width = 94
               Anchors = [akTop, akRight]
               Caption = '&Case Sensitive'
               ParentFont = False
               TabOrder = 0
             end
             object chkWholeWord: TCheckBox
-              Left = 849
-              Height = 18
+              Left = 860
+              Height = 19
               Top = 6
-              Width = 102
+              Width = 91
               Anchors = [akTop, akRight]
               Caption = '&Whole Words'
               ParentFont = False
@@ -3416,18 +3416,18 @@ object MainToolkitForm: TMainToolkitForm
             Left = 592
             Height = 30
             Top = 1
-            Width = 688
+            Width = 686
             Align = alClient
             BevelOuter = bvNone
             ClientHeight = 30
-            ClientWidth = 688
+            ClientWidth = 686
             ParentFont = False
             TabOrder = 1
             object Label2: TLabel
               Left = 9
-              Height = 16
+              Height = 15
               Top = 8
-              Width = 15
+              Width = 13
               Caption = 'In:'
               ParentColor = False
               ParentFont = False
@@ -3453,7 +3453,7 @@ object MainToolkitForm: TMainToolkitForm
               Text = 'Current File'
             end
             object btnSearch: TBitBtn
-              Left = 603
+              Left = 601
               Height = 24
               Top = 3
               Width = 75
@@ -3503,14 +3503,14 @@ object MainToolkitForm: TMainToolkitForm
               Left = 216
               Height = 23
               Top = 4
-              Width = 351
+              Width = 349
               Anchors = [akTop, akLeft, akRight]
               ItemHeight = 15
               ParentFont = False
               TabOrder = 2
             end
             object btnSearchFolder: TSpeedButton
-              Left = 569
+              Left = 567
               Height = 24
               Top = 3
               Width = 23
@@ -3525,9 +3525,9 @@ object MainToolkitForm: TMainToolkitForm
         end
         object lvSearch: TListView
           Left = 0
-          Height = 78
+          Height = 80
           Top = 32
-          Width = 1281
+          Width = 1279
           Align = alClient
           AutoSort = False
           AutoWidthLastColumn = True
@@ -3542,7 +3542,7 @@ object MainToolkitForm: TMainToolkitForm
             end          
             item
               Caption = 'Fragment'
-              Width = 921
+              Width = 915
             end>
           ParentFont = False
           ReadOnly = True
@@ -3568,20 +3568,20 @@ object MainToolkitForm: TMainToolkitForm
         ParentFont = False
         object Panel1: TPanel
           Left = 0
-          Height = 110
+          Height = 112
           Top = 0
           Width = 32
           Align = alLeft
-          ClientHeight = 110
+          ClientHeight = 112
           ClientWidth = 32
           ParentFont = False
           TabOrder = 0
           object chkTaskInactive: TCheckBox
             Left = 8
-            Height = 18
+            Height = 19
             Hint = 'Show Inactive Tasks'
             Top = 8
-            Width = 18
+            Width = 20
             ParentFont = False
             ParentShowHint = False
             ShowHint = True
@@ -3589,12 +3589,12 @@ object MainToolkitForm: TMainToolkitForm
           end
         end
         object Panel3: TPanel
-          Left = 1243
-          Height = 110
+          Left = 1241
+          Height = 112
           Top = 0
           Width = 38
           Align = alRight
-          ClientHeight = 110
+          ClientHeight = 112
           ClientWidth = 38
           ParentFont = False
           TabOrder = 1
@@ -3636,9 +3636,9 @@ object MainToolkitForm: TMainToolkitForm
         end
         object lvTasks: TListView
           Left = 32
-          Height = 110
+          Height = 112
           Top = 0
-          Width = 1211
+          Width = 1209
           Align = alClient
           AutoSort = False
           AutoWidthLastColumn = True
@@ -3657,7 +3657,7 @@ object MainToolkitForm: TMainToolkitForm
             end          
             item
               Caption = 'Message'
-              Width = 821
+              Width = 815
             end>
           ParentFont = False
           TabOrder = 2
@@ -4578,19 +4578,36 @@ object MainToolkitForm: TMainToolkitForm
       Style = tbsSeparator
     end
     object ToolButton28: TToolButton
-      Left = 577
+      Left = 631
       Top = 2
       Action = actionHelpContent
     end
     object ToolButton29: TToolButton
-      Left = 600
+      Left = 654
       Top = 2
       Action = actionToolsPackageManager
     end
     object ToolButton30: TToolButton
-      Left = 623
+      Left = 677
       Top = 2
       Action = actionToolsSideBySideMode
+    end
+    object ToolButton34: TToolButton
+      Left = 623
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton34'
+      Style = tbsSeparator
+    end
+    object ToolButton35: TToolButton
+      Left = 577
+      Top = 2
+      Action = actConnectToServer
+    end
+    object ToolButton36: TToolButton
+      Left = 600
+      Top = 2
+      Action = actionCreateNewProject
     end
   end
   object MainMenu1: TMainMenu
@@ -4861,6 +4878,9 @@ object MainToolkitForm: TMainToolkitForm
       Caption = '&Actions'
       object MenuItem97: TMenuItem
         Action = actConnectToServer
+      end
+      object MenuItem120: TMenuItem
+        Action = actionCreateNewProject
       end
     end
     object MenuItem61: TMenuItem
@@ -7328,8 +7348,8 @@ object MainToolkitForm: TMainToolkitForm
   end
   object dlgFolder: TSelectDirectoryDialog
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    Left = 203
-    Top = 544
+    Left = 248
+    Top = 478
   end
   object pmTestServers: TPopupMenu
     Left = 262
