@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Graphics, IniFiles,
-  ComCtrls,
+  Controls, ComCtrls,
   fsl_base, fsl_utilities, fsl_json,
   fui_lcl_managers,
   fhir_client,
@@ -36,7 +36,7 @@ type
 
     function addItem(mode : String) : TFHIRServerEntry; override;
     function editItem(item : TFHIRServerEntry; mode : String) : boolean; override;
-    procedure deleteItem(item : TFHIRServerEntry); override;
+    function deleteItem(item : TFHIRServerEntry) : boolean; override;
     function executeItem(item : TFHIRServerEntry; mode : String) : boolean; override;
 
   end;
@@ -51,8 +51,10 @@ type
     FManager : TServerListManager;
     FOnEditServer: TOpenServerEvent;
     FOnOpenServer : TOpenServerEvent;
+    function GetImages: TImageList;
     function GetList: TListView;
     function GetServerList: TFslList<TFHIRServerEntry>;
+    procedure SetImages(AValue: TImageList);
     procedure SetList(AValue: TListView);
   public
     constructor Create(settings : TIniFile);
@@ -60,6 +62,7 @@ type
 
     property ControlFile : String read FControlFile write FControlFile;
     property List : TListView read GetList write SetList;
+    property Images : TImageList read GetImages write SetImages;
     property ServerList : TFslList<TFHIRServerEntry> read GetServerList;
     property OnOpenServer : TOpenServerEvent read FOnOpenServer write FOnOpenServer;
     property OnEditServer : TOpenServerEvent read FOnEditServer write FOnEditServer;
@@ -172,9 +175,9 @@ begin
   FView.OnEditServer(FView, item);
 end;
 
-procedure TServerListManager.deleteItem(item: TFHIRServerEntry);
+function TServerListManager.deleteItem(item: TFHIRServerEntry) : boolean;
 begin
-  inherited DeleteItem(item);
+  result := inherited DeleteItem(item);
 end;
 
 function TServerListManager.executeItem(item: TFHIRServerEntry; mode: String): boolean;
@@ -204,9 +207,19 @@ begin
   result := FManager.List;
 end;
 
+function TFHIRServersView.GetImages: TImageList;
+begin
+  result := FManager.Images;
+end;
+
 function TFHIRServersView.GetServerList: TFslList<TFHIRServerEntry>;
 begin
   result := FManager.Data;
+end;
+
+procedure TFHIRServersView.SetImages(AValue: TImageList);
+begin
+  FManager.Images := AValue;
 end;
 
 procedure TFHIRServersView.SetList(AValue: TListView);

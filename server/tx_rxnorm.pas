@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
-  fdb_manager,
+  fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
   ftx_service;
@@ -270,24 +270,31 @@ begin
   ts := TStringList.create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNCONSO.RRF']));
-    FConn.sql := 'insert into RXNCONSO (RXCUI, RXAUI, SAB, TTY, CODE, STR, SUPPRESS) values (:RXCUI, :RXAUI, :SAB, :TTY, :CODE, :STR, :SUPPRESS)';
-    FConn.Prepare;
-    for i := 0 to ts.count - 1 do
-    begin
-      if (i mod 135 = 0) then
-        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNCONSO line '+inttostr(i)+' (Step 2 of 5)');
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.sql := 'insert into RXNCONSO (RXCUI, RXAUI, SAB, TTY, CODE, STR, SUPPRESS) values (:RXCUI, :RXAUI, :SAB, :TTY, :CODE, :STR, :SUPPRESS)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 135 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNCONSO line '+inttostr(i)+' (Step 2 of 5)');
 
-      s := ts[i].split(['|']);
-      FConn.BindString('RXCUI', s[0]);
-      FConn.BindString('RXAUI', s[7]);
-      FConn.BindString('SAB', s[11]);
-      FConn.BindString('TTY', s[12]);
-      FConn.BindString('CODE', s[13]);
-      FConn.BindString('STR', s[14]);
-      FConn.BindString('SUPPRESS', s[16]);
-      FConn.Execute;
+        s := ts[i].split(['|']);
+        FConn.BindString('RXCUI', s[0]);
+        FConn.BindString('RXAUI', s[7]);
+        FConn.BindString('SAB', s[11]);
+        FConn.BindString('TTY', s[12]);
+        FConn.BindString('CODE', s[13]);
+        FConn.BindString('STR', s[14]);
+        FConn.BindString('SUPPRESS', s[16]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
     end;
-    FConn.Terminate;
   finally
     ts.free;
   end;
@@ -304,24 +311,31 @@ begin
   ts := TStringList.create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNREL.RRF']));
-    FConn.sql := 'insert into RXNREL (RXCUI1, RXAUI1, REL, RXCUI2, RXAUI2, RELA, SAB) values (:RXCUI1, :RXAUI1, :REL, :RXCUI2, :RXAUI2, :RELA, :SAB)';
-    FConn.Prepare;
-    for i := 0 to ts.count - 1 do
-    begin
-      if (i mod 135 = 0) then
-        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNREL line '+inttostr(i)+' (Step 3 of 5)');
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.sql := 'insert into RXNREL (RXCUI1, RXAUI1, REL, RXCUI2, RXAUI2, RELA, SAB) values (:RXCUI1, :RXAUI1, :REL, :RXCUI2, :RXAUI2, :RELA, :SAB)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 135 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNREL line '+inttostr(i)+' (Step 3 of 5)');
 
-      s := ts[i].split(['|']);
-      FConn.BindString('RXCUI1', s[0]);
-      FConn.BindString('RXAUI1', s[1]);
-      FConn.BindString('REL', s[3]);
-      FConn.BindString('RXCUI2', s[4]);
-      FConn.BindString('RXAUI2', s[5]);
-      FConn.BindString('RELA', s[7]);
-      FConn.BindString('SAB', s[10]);
-      FConn.Execute;
+        s := ts[i].split(['|']);
+        FConn.BindString('RXCUI1', s[0]);
+        FConn.BindString('RXAUI1', s[1]);
+        FConn.BindString('REL', s[3]);
+        FConn.BindString('RXCUI2', s[4]);
+        FConn.BindString('RXAUI2', s[5]);
+        FConn.BindString('RELA', s[7]);
+        FConn.BindString('SAB', s[10]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
     end;
-    FConn.Terminate;
   finally
     ts.free;
   end;
@@ -338,19 +352,26 @@ begin
   ts := TStringList.create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNSTY.RRF']));
-    FConn.sql := 'insert into RXNSTY (RXCUI, TUI) values (:RXCUI, :TUI)';
-    FConn.Prepare;
-    for i := 0 to ts.count - 1 do
-    begin
-      if (i mod 37 = 0) then
-        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNSTY line '+inttostr(i)+' (Step 4 of 5)');
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.sql := 'insert into RXNSTY (RXCUI, TUI) values (:RXCUI, :TUI)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 37 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNSTY line '+inttostr(i)+' (Step 4 of 5)');
 
-      s := ts[i].split(['|']);
-      FConn.BindString('RXCUI', s[0]);
-      FConn.BindString('TUI', s[1]);
-      FConn.Execute;
+        s := ts[i].split(['|']);
+        FConn.BindString('RXCUI', s[0]);
+        FConn.BindString('TUI', s[1]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
     end;
-    FConn.Terminate;
   finally
     ts.free;
   end;
@@ -384,23 +405,30 @@ begin
     end;
     FConn.Terminate;
 
-    FConn.SQL := 'insert into rxnstems (stem, cui) values (:stem, :cui)';
-    FConn.Prepare;
-    callback(self, 10, false, 'Store Word Index (Step 5 of 5)');
-    for i := 0 to stems.count - 1 do
-    begin
-      list := stems.objects[i] as TStringList;
-      for j := 0 to list.count-1 do
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.SQL := 'insert into rxnstems (stem, cui) values (:stem, :cui)';
+      FConn.Prepare;
+      callback(self, 10, false, 'Store Word Index (Step 5 of 5)');
+      for i := 0 to stems.count - 1 do
       begin
-        FConn.BindString('stem', copy(stems[i], 1, 20));
-        FConn.BindString('cui', list[j]);
-        FConn.Execute;
+        list := stems.objects[i] as TStringList;
+        for j := 0 to list.count-1 do
+        begin
+          FConn.BindString('stem', copy(stems[i], 1, 20));
+          FConn.BindString('cui', list[j]);
+          FConn.Execute;
+        end;
+        if (i mod 137 = 0) then
+          callback(self, 10 + trunc(i * 90 / stems.Count), false, 'Store Word Index (Step 5 of 5)');
       end;
-      if (i mod 137 = 0) then
-        callback(self, 10 + trunc(i * 90 / stems.Count), false, 'Store Word Index (Step 5 of 5)');
+      callback(self, 100, true, 'Finished building Word Index (Step 5 of 5)');
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
     end;
-    callback(self, 100, true, 'Finished building Word Index (Step 5 of 5)');
-    FConn.Terminate;
   finally
     for i := 0 to stems.Count - 1 do
       stems.Objects[i].free;

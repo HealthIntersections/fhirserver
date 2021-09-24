@@ -142,6 +142,8 @@ type
     MenuItem115: TMenuItem;
     MenuItem117: TMenuItem;
     MenuItem118: TMenuItem;
+    MenuItem119: TMenuItem;
+    MenuItem120: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -342,6 +344,9 @@ type
     ToolButton31: TToolButton;
     ToolButton32: TToolButton;
     ToolButton33: TToolButton;
+    ToolButton34: TToolButton;
+    ToolButton35: TToolButton;
+    ToolButton36: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
@@ -448,6 +453,14 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure tvProjectsChange(Sender: TObject; Node: TTreeNode);
+    procedure tvProjectsChanging(Sender: TObject; Node: TTreeNode;
+      var AllowChange: Boolean);
+    procedure tvProjectsEdited(Sender: TObject; Node: TTreeNode; var S: string);
+    procedure tvProjectsEditing(Sender: TObject; Node: TTreeNode;
+      var AllowEdit: Boolean);
+    procedure tvProjectsEditingEnd(Sender: TObject; Node: TTreeNode;
+      Cancel: Boolean);
     procedure updateMessages(sender : TObject);
   private
     FIni : TIniFile;
@@ -455,6 +468,7 @@ type
     FFileSystem : TStorageService;
     FInternalStorage : TStorageService;
     FSourceMaximised : boolean;
+    FCheckingCurrency : boolean;
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
     FServerView : TFHIRServersView;
@@ -487,8 +501,6 @@ type
     procedure checkLastUpdated;
     procedure updateStatusBar;
     procedure openMRUItem(sender: TObject);
-    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
-    function openFile(address : String) : TToolkitEditor;
     procedure onChangeFocus(sender : TObject);
     procedure updateInspector(sender : TObject);
     procedure closeFile(tab : TTabSheet; store : boolean);
@@ -506,11 +518,20 @@ type
     procedure doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
     procedure DoConnectToServer(sender : TObject; server : TFHIRServerEntry);
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
-    function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     procedure AddServer(name, url : String);
-
+    procedure clearContentMenu;
   public
+    property FileSystem : TStorageService read FFileSystem;
     property Context : TToolkitContext read FContext;
+
+    // used by the project manager
+    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []); overload;
+    procedure createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []); overload;
+    function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
+    function openFile(address : String) : TToolkitEditor;
+    procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
+    procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
+    function closeFiles(path : String) : boolean;
   end;
 
 var
@@ -567,6 +588,7 @@ begin
       IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache');
   FServerView := TFHIRServersView.create(FIni);
   FServerView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'servers.json']);
+  FServerView.Images := imgMain;
   FServerView.List := lvServers;
   FServerView.OnOpenServer := OpenServer;
   FServerView.OnEditServer := EditServer;
@@ -575,7 +597,9 @@ begin
 
   FProjectsView := TFHIRProjectsView.create(FIni);
   FProjectsView.ControlFile := Path([ExtractFileDir(FIni.FileName), 'projects.json']);
+  FProjectsView.Images := imgMain;
   FProjectsView.Tree := tvProjects;
+  FProjectsView.Context := FContext.link;
   FProjectsView.load;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
@@ -656,10 +680,13 @@ begin
     pgEditors.ActivePage := tab;
     FContext.Focus := FContext.EditorForTab(tab);
     FContext.focus.getFocus(mnuContent);
-    updateActionStatus(editor);
-  end;
+  end
+  else
+    clearContentMenu;
+  updateActionStatus(editor);
   FContext.ToolBarHeight := ToolBar1.Height;
   FServerView.refresh;
+  FProjectsView.refresh;
 end;
 
 procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
@@ -850,6 +877,30 @@ begin
 
 end;
 
+procedure TMainToolkitForm.tvProjectsChange(Sender: TObject; Node: TTreeNode);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsChanging(Sender: TObject; Node: TTreeNode; var AllowChange: Boolean);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsEdited(Sender: TObject; Node: TTreeNode; var S: string);
+begin
+  showMessage('edit from '+TFHIRProjectNode(node.data).name+' to '+node.Text+''''+s+'''');
+  s := 'what?';
+end;
+
+procedure TMainToolkitForm.tvProjectsEditing(Sender: TObject; Node: TTreeNode; var AllowEdit: Boolean);
+begin
+end;
+
+procedure TMainToolkitForm.tvProjectsEditingEnd(Sender: TObject;
+  Node: TTreeNode; Cancel: Boolean);
+begin
+
+end;
+
 procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);
 begin
   saveLayout;
@@ -960,55 +1011,60 @@ procedure TMainToolkitForm.checkActiveTabCurrency;
 var
   loaded : TLoadedBytes;
 begin
-  if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
+  if not FCheckingCurrency and FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes and
     (Context.focus.session.nextCurrencyCheck < now) and not Context.focus.session.NoCheckCurrency then
   begin
-    Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
-    loaded := Context.focus.Store.load(Context.focus.session.address, false);
-    if loaded.timestamp = 0 then
-      exit; // problem accessing content at all... todo: show this status on the status panel
+    FCheckingCurrency := true;
+    try
+      Context.focus.session.nextCurrencyCheck := now + (Context.focus.Store.CurrencyCheckFrequency * DATETIME_SECOND_ONE);
+      loaded := Context.focus.Store.load(Context.focus.session.address, false);
+      if loaded.timestamp = 0 then
+        exit; // problem accessing content at all... todo: show this status on the status panel
 
-    if loaded.timestamp < 0 then
-    begin
-      case checkDeletedFileAction(self, Context.focus.session.presentedAddress) of
-        dfaSave :
-          begin
-          Context.focus.session.nextCurrencyCheck := now;
-          Context.focus.Store.forceLocation(Context.focus.session.address);
-          actionFileSaveExecute(self);
-          end;
-        dfaIgnore :
-          begin
-          Context.focus.session.Timestamp := 1; // this ensures that if it comes back, user will be notified
-          Context.focus.session.KnownToBeDeleted := true;
-          end;
-        dfaSaveAs :
-          begin
-          Context.focus.session.nextCurrencyCheck := now;
-          actionFileSaveAs1Execute(self);
-          end;
-        dfaDiscard : closeFile(pgEditors.ActivePage, false);
-        dfaNoCheck : Context.focus.session.NoCheckCurrency := true;
+      if loaded.timestamp < 0 then
+      begin
+        case checkDeletedFileAction(self, Context.focus.session.presentedAddress) of
+          dfaSave :
+            begin
+            Context.focus.session.nextCurrencyCheck := now;
+            Context.focus.Store.forceLocation(Context.focus.session.address);
+            actionFileSaveExecute(self);
+            end;
+          dfaIgnore :
+            begin
+            Context.focus.session.Timestamp := 1; // this ensures that if it comes back, user will be notified
+            Context.focus.session.KnownToBeDeleted := true;
+            end;
+          dfaSaveAs :
+            begin
+            Context.focus.session.nextCurrencyCheck := now;
+            actionFileSaveAs1Execute(self);
+            end;
+          dfaDiscard : closeFile(pgEditors.ActivePage, false);
+          dfaNoCheck : Context.focus.session.NoCheckCurrency := true;
+        end;
+      end
+      else if abs(loaded.timestamp - Context.focus.session.Timestamp) > DATETIME_SECOND_ONE then
+      begin
+        Context.focus.session.KnownToBeDeleted := false;
+        case checkModifiedFileAction(self, Context.focus.session.presentedAddress, Context.focus.session.Timestamp, loaded.timestamp) of
+          dmaSave :
+            begin
+            actionFileSaveExecute(self);
+            Context.focus.session.nextCurrencyCheck := now;
+            end;
+          dmaDiff : actionEditReviewExecute(self);
+          dmaReload :
+            begin
+            actionFileManageReloadExecute(self);
+            Context.focus.session.nextCurrencyCheck := now;
+            end;
+          dmaIgnore : Context.focus.session.Timestamp := loaded.timestamp;
+          dmaNoCheck : Context.focus.session.NoCheckCurrency := true;
+        end;
       end;
-    end
-    else if abs(loaded.timestamp - Context.focus.session.Timestamp) > DATETIME_SECOND_ONE then
-    begin
-      Context.focus.session.KnownToBeDeleted := false;
-      case checkModifiedFileAction(self, Context.focus.session.presentedAddress, Context.focus.session.Timestamp, loaded.timestamp) of
-        dmaSave :
-          begin
-          actionFileSaveExecute(self);
-          Context.focus.session.nextCurrencyCheck := now;
-          end;
-        dmaDiff : actionEditReviewExecute(self);
-        dmaReload :
-          begin
-          actionFileManageReloadExecute(self);
-          Context.focus.session.nextCurrencyCheck := now;
-          end;
-        dmaIgnore : Context.focus.session.Timestamp := loaded.timestamp;
-        dmaNoCheck : Context.focus.session.NoCheckCurrency := true;
-      end;
+    finally
+      FCheckingCurrency := false;
     end;
   end;
 end;
@@ -1059,6 +1115,11 @@ begin
 end;
 
 procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
+begin
+  createNewFile(kind, '', '', bytes);
+end;
+
+procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []);
 var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
@@ -1079,25 +1140,41 @@ begin
         FileFormatChooser.free;
       end;
     end
-    else if kind = sekFHIR then
+    else if (kind = sekFHIR) then
     begin
-      FileFormatChooser := TFileFormatChooser.create(self);
-      try
-        FileFormatChooser.setFHIRResource;
-        if FileFormatChooser.ShowModal = mrOK then
-          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
-        else
-          abort;
-      finally
-        FileFormatChooser.free;
-      end;
+      // choose serialization format...
+      //if (length(bytes) = 0) then
+      //begin
+      //  FileFormatChooser := TFileFormatChooser.create(self);
+      //  try
+      //    FileFormatChooser.setFHIRResource;
+      //    if FileFormatChooser.ShowModal = mrOK then
+      //      kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+      //    else
+      //      abort;
+      //  finally
+      //    FileFormatChooser.free;
+      //  end;
+      //end
+      //else
+      //begin
+
     end;
 
     session := FFactory.makeNewSession(kind);
+    if path <> '' then
+      session.Address := 'file:'+path;
+    if (filename <> '') then
+      session.caption := filename;
     editor := FFactory.makeEditor(session);
     FContext.addEditor(editor);
     tab := pgEditors.AddTabSheet;
     editor.bindToTab(tab);
+    if path <> '' then
+    begin
+      BytesToFile(bytes, path);
+      session.Timestamp := FileGetModified(path);
+    end;
     if (length(bytes) = 0) then
       editor.newContent
     else
@@ -1109,6 +1186,7 @@ begin
     FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
     FContext.Focus := editor;
     FContext.Focus.getFocus(mnuContent);
+    FProjectsView.refresh;
     updateActionStatus(editor);
   finally
     info.free;
@@ -1151,10 +1229,52 @@ begin
       editor.lastChangeChecked := true;
       editor.lastMoveChecked := true;
       editor.editPause;
+      FProjectsView.refresh;
       updateActionStatus(editor);
       result := editor;
     end;
   end;
+end;
+
+procedure TMainToolkitForm.renameProjectFile(op, np: string);
+var
+  //loaded : TLoadedBytes;
+  editor : TToolkitEditor;
+  //tab : TTabSheet;
+  //store : TStorageService;
+  //session : TToolkitEditSession;
+begin
+  editor := Context.EditorForAddress('file:'+op);
+  if (editor <> nil) then
+  begin
+    editor.Session.Address := 'file:'+np;
+    editor.Session.Caption := Context.StorageForAddress(editor.Session.Address).CaptionForAddress(editor.Session.Address);
+    editor.Tab.Caption := editor.Session.Caption;
+    FTempStore.removeFromMRU('file:'+op);
+    FTempStore.storeOpenFileList(Context.editorSessions);
+    updateMessages(self);
+  end;
+end;
+
+procedure TMainToolkitForm.renameFolder(op, np: string);
+var
+  editor : TToolkitEditor;
+begin
+  op := 'file:/'+op;
+  np := 'file:/'+np;
+  for editor in FContext.Editors do
+    if editor.Session.Address.StartsWith(op) then
+      editor.Session.Address := np+editor.Session.Address.Substring(op.Length);
+end;
+
+function TMainToolkitForm.closeFiles(path: String) : boolean;
+var
+  i : integer;
+begin
+  result := true;
+  for i := FContext.Editors.count - 1 downto 0 do
+    if FContext.Editors[i].session.Address.startsWith('file:'+path) then
+      closeFile(FContext.Editors[i].tab, false);
 end;
 
 procedure TMainToolkitForm.onChangeFocus(sender: TObject);
@@ -1211,16 +1331,17 @@ var
   editor : TToolkitEditor;
 begin
   editor := Context.EditorForTab(tab);
-  if (editor.CanBeSaved) then
+  if not store and (editor.CanBeSaved) then
     checkDoSave(editor);
   editor.saveStatus; // internal save, and then unhook
-  if editor.session.Address <> '' then
+  if not store and (editor.session.Address <> '') then
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
   tab.free;
   if (store) then
     FTempStore.storeOpenFileList(FContext.EditorSessions);
   pgEditorsChange(self);
+  FProjectsView.refresh;
 end;
 
 procedure TMainToolkitForm.locateOnTab(sender: TObject; x, y: integer; var point: TPoint);
@@ -1869,6 +1990,7 @@ begin
     FTempStore.storeOpenFileList(Context.editorSessions);
     Context.StorageForAddress(old).delete(old);
     updateMessages(self);
+    FProjectsView.renameFile(old.Substring(5), address.substring(5));
   end;
 end;
 
@@ -1951,7 +2073,10 @@ begin
       ProjectSettingsForm.Project := proj.link;
       ProjectSettingsForm.Projects := FProjectsView.Projects.link;
       if ProjectSettingsForm.ShowModal = mrOk then
+      begin
+        proj.loadFromAddress;
         FProjectsView.addProject(proj);
+      end;
     finally
       ProjectSettingsForm.Free;
     end;
@@ -2091,6 +2216,12 @@ begin
   finally
     server.free;
   end;
+end;
+
+procedure TMainToolkitForm.clearContentMenu;
+begin
+  mnuContent.OnClick := nil;
+  mnuContent.Clear;
 end;
 
 procedure TMainToolkitForm.actionEditPasteNewFileExecute(Sender: TObject);
@@ -2483,7 +2614,9 @@ begin
   begin
     FContext.Focus.getFocus(mnuContent);
     FContext.Focus.editPause;
-  end;
+  end
+  else
+    clearContentMenu;
   checkActiveTabCurrency;
   updateActionStatus(self);
   updateStatusBar;

@@ -231,28 +231,28 @@ begin
   l := 0;
   for s in FTypes.Keys do
     l := IntegerMax(l, s.Length);
-  FConn.ExecSQL('CREATE TABLE NDCProductTypes (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCProductTypes PRIMARY KEY CLUSTERED (NDCKey ASC))');
+  FConn.ExecSQL('CREATE TABLE NDCProductTypes (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCProductTypes PRIMARY KEY (NDCKey ASC))');
   FConn.ExecSQL('delete from NDCProductTypes');
   for s in FTypes.Keys do
     FConn.ExecSQL('Insert into NDCProductTypes (NDCKey, Name) values ('+inttostr(FTypes[s])+', '''+SQLWrapString(s)+''')');
 
   for s in FOrgs.Keys do
     l := IntegerMax(l, s.Length);
-  FConn.ExecSQL('CREATE TABLE NDCOrganizations (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCOrganizations PRIMARY KEY CLUSTERED (NDCKey ASC))');
+  FConn.ExecSQL('CREATE TABLE NDCOrganizations (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCOrganizations PRIMARY KEY (NDCKey ASC))');
   FConn.ExecSQL('delete from NDCOrganizations');
   for s in FOrgs.Keys do
     FConn.ExecSQL('Insert into NDCOrganizations (NDCKey, Name) values ('+inttostr(FOrgs[s])+', '''+SQLWrapString(s)+''')');
 
   for s in FDoseforms.Keys do
     l := IntegerMax(l, s.Length);
-  FConn.ExecSQL('CREATE TABLE NDCDoseForms (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCDoseForms PRIMARY KEY CLUSTERED (NDCKey ASC))');
+  FConn.ExecSQL('CREATE TABLE NDCDoseForms (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCDoseForms PRIMARY KEY (NDCKey ASC))');
   FConn.ExecSQL('delete from NDCDoseForms');
   for s in FDoseforms.Keys do
     FConn.ExecSQL('Insert into NDCDoseForms (NDCKey, Name) values ('+inttostr(FDoseforms[s])+', '''+SQLWrapString(s)+''')');
 
   for s in FRoutes.Keys do
     l := IntegerMax(l, s.Length);
-  FConn.ExecSQL('CREATE TABLE NDCRoutes (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCRoutes PRIMARY KEY CLUSTERED (NDCKey ASC))');
+  FConn.ExecSQL('CREATE TABLE NDCRoutes (NDCKey int NOT NULL, Name nchar('+inttostr(l)+') NOT NULL, CONSTRAINT PK_NDCRoutes PRIMARY KEY (NDCKey ASC))');
   FConn.ExecSQL('delete from NDCRoutes');
   for s in FRoutes.Keys do
     FConn.ExecSQL('Insert into NDCRoutes (NDCKey, Name) values ('+inttostr(FRoutes[s])+', '''+SQLWrapString(s)+''')');
@@ -312,8 +312,8 @@ begin
         'Category nchar(40) NOT NULL, '+
         'Company int NOT NULL, '+
         'Generics '+DBBlobType(FConn.Owner.Platform)+' NULL, '+
-        'CONSTRAINT PK_NDCProducts PRIMARY KEY CLUSTERED (NDCKey ASC))');
-    FConn.ExecSQL('CREATE UNIQUE NONCLUSTERED INDEX [NDCProductsCode] ON NDCProducts ( Code ASC )');
+        'CONSTRAINT PK_NDCProducts PRIMARY KEY (NDCKey ASC))');
+    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCProductsCode] ON NDCProducts ( Code ASC )');
     FConn.ExecSQL('CREATE TABLE NDCPackages ('+
         'NDCKey int NOT NULL, '+
         'ProductKey int NOT NULL, '+
@@ -321,10 +321,10 @@ begin
         'Code11 nchar(11) NOT NULL, '+
         'Active int NOT NULL, '+
         'Description nchar(255) NOT NULL, '+
-        'CONSTRAINT PK_NDCPackages PRIMARY KEY CLUSTERED (NDCKey ASC))');
-    FConn.ExecSQL('CREATE UNIQUE NONCLUSTERED INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
-    FConn.ExecSQL('CREATE NONCLUSTERED INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
-    FConn.ExecSQL('CREATE NONCLUSTERED INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
+        'CONSTRAINT PK_NDCPackages PRIMARY KEY (NDCKey ASC))');
+    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
+    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
+    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
   finally
     md.Free;
   end;
@@ -421,30 +421,37 @@ var
   f : TFslCSVExtractor;
   fields : TFslStringList;
 begin
-  FConn.SQL := 'Insert into NDCPackages (NDCKey, Code, Code11, ProductKey, Active, Description) values (' +
-               ':NDCKey, :Code, :Code11, :ProductKey, :Active, :Description)';
-  FConn.prepare;
-  FKey := 0;
-  fields := TFslStringList.create;
+  if FConn.Owner.Platform = kdbSQLite then
+    FConn.StartTransact;
   try
-    f := TFslCSVExtractor.Create(Path([FSource, 'package.txt']), TEncoding.ASCII, false, 8192);
+    FConn.SQL := 'Insert into NDCPackages (NDCKey, Code, Code11, ProductKey, Active, Description) values (' +
+                 ':NDCKey, :Code, :Code11, :ProductKey, :Active, :Description)';
+    FConn.prepare;
+    FKey := 0;
+    fields := TFslStringList.create;
     try
-      f.Separator := #9;
-      f.IgnoreWhitespace := false;
-      f.ConsumeEntries(fields); // headers
-      while f.More do
-      begin
-        callback(self, 50 + f.percent div 2, false, 'Processing Packages');
-        f.ConsumeEntries(fields);
-        processPackage(fields);
+      f := TFslCSVExtractor.Create(Path([FSource, 'package.txt']), TEncoding.ASCII, false, 8192);
+      try
+        f.Separator := #9;
+        f.IgnoreWhitespace := false;
+        f.ConsumeEntries(fields); // headers
+        while f.More do
+        begin
+          callback(self, 50 + f.percent div 2, false, 'Processing Packages');
+          f.ConsumeEntries(fields);
+          processPackage(fields);
+        end;
+      finally
+        f.free;
       end;
     finally
-      f.free;
+      fields.free;
     end;
+    FConn.Terminate;
   finally
-    fields.free;
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.commit;
   end;
-  FConn.Terminate;
   callback(self, 100, true, 'Finished Processing');
 end;
 
@@ -453,30 +460,37 @@ var
   f : TFslCSVExtractor;
   fields : TFslStringList;
 begin
-  FConn.SQL := 'Insert into NDCProducts (NDCKey, Code, Active, Type, TradeName, Suffix, DoseForm, Route, StartDate, EndDate, Category, Company, Generics) values (' +
-               ':NDCKey, :Code, :Active, :Type, :TradeName, :Suffix, :DoseForm, :Route, :StartDate, :EndDate, :Category, :Company, :Generics)';
-  FConn.prepare;
-  FKey := 0;
-  fields := TFslStringList.create;
+  if FConn.Owner.Platform = kdbSQLite then
+    FConn.StartTransact;
   try
-    f := TFslCSVExtractor.Create(Path([FSource, 'product.txt']), TEncoding.ASCII, false, 8192);
+    FConn.SQL := 'Insert into NDCProducts (NDCKey, Code, Active, Type, TradeName, Suffix, DoseForm, Route, StartDate, EndDate, Category, Company, Generics) values (' +
+                 ':NDCKey, :Code, :Active, :Type, :TradeName, :Suffix, :DoseForm, :Route, :StartDate, :EndDate, :Category, :Company, :Generics)';
+    FConn.prepare;
+    FKey := 0;
+    fields := TFslStringList.create;
     try
-      f.Separator := #9;
-      f.IgnoreWhitespace := false;
-      f.ConsumeEntries(fields); // headers
-      while f.More do
-      begin
-        callback(self, f.percent div 2, false, 'Processing Products');
-        f.ConsumeEntries(fields);
-        processProduct(fields);
+      f := TFslCSVExtractor.Create(Path([FSource, 'product.txt']), TEncoding.ASCII, false, 8192);
+      try
+        f.Separator := #9;
+        f.IgnoreWhitespace := false;
+        f.ConsumeEntries(fields); // headers
+        while f.More do
+        begin
+          callback(self, f.percent div 2, false, 'Processing Products');
+          f.ConsumeEntries(fields);
+          processProduct(fields);
+        end;
+      finally
+        f.free;
       end;
     finally
-      f.free;
+      fields.free;
     end;
+    FConn.Terminate;
   finally
-    fields.free;
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.commit;
   end;
-  FConn.Terminate;
 end;
 
 { TNDCServices }

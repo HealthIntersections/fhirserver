@@ -85,7 +85,7 @@ type
 
     function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
     function addItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure deleteItem(item : TFHIRServerConfigSection); override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
     function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
@@ -143,7 +143,7 @@ type
 
     function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
     function addItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure deleteItem(item : TFHIRServerConfigSection); override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
     function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
@@ -161,7 +161,7 @@ type
 
     function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
     function addItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure deleteItem(item : TFHIRServerConfigSection); override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
   end;
 
 
@@ -405,10 +405,11 @@ begin
   end;
 end;
 
-procedure TIdentityProviderManager.deleteItem(item: TFHIRServerConfigSection);
+function TIdentityProviderManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['identity-providers'].remove(item.name);
   FFile.Save;
+  result := false;
 end;
 
 { TEndPointManager }
@@ -560,10 +561,11 @@ begin
   end;
 end;
 
-procedure TEndPointManager.deleteItem(item: TFHIRServerConfigSection);
+function TEndPointManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['endpoints'].remove(item.name);
   FFile.Save;
+  result := true;
 end;
 
 function TEndPointManager.executeItem(item: TFHIRServerConfigSection; mode : String) : boolean;
@@ -806,11 +808,11 @@ begin
   end;
 end;
 
-
-procedure TTXManager.deleteItem(item: TFHIRServerConfigSection);
+function TTXManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['terminologies'].remove(item.name);
   FFile.Save;
+  result := true;
 end;
 
 function TTXManager.executeItem(item: TFHIRServerConfigSection; mode: String) : boolean;

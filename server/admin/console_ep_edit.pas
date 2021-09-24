@@ -23,11 +23,12 @@ type
     cbxDriver: TComboBox;
     cbxType: TComboBox;
     cbxVersion: TComboBox;
+    cbAutocreate: TCheckBox;
     chkActive: TCheckBox;
     edtDBName: TEdit;
     edtIdentity: TEdit;
     edtPassword: TEdit;
-    edtFolder: TEdit;
+    edtSQLiteFile: TEdit;
     edtPath: TEdit;
     edtServer: TEdit;
     edtUsername: TEdit;
@@ -46,6 +47,7 @@ type
     Panel1: TPanel;
     rbMSSQL: TRadioButton;
     rbMySQL: TRadioButton;
+    rbSQLite: TRadioButton;
     procedure btnDBTestClick(Sender: TObject);
     procedure btnEPInstallClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -113,7 +115,8 @@ end;
 
 procedure TEditEPForm.FormResize(Sender: TObject);
 begin
-  rbMySQL.left := edtIdentity.Left + edtIdentity.Width div 2;
+  rbMySQL.left := edtIdentity.Left + ((edtIdentity.Width div 3) * 1);
+  rbSQLite.left := edtIdentity.Left + ((edtIdentity.Width div 3) * 2);
 end;
 
 procedure TEditEPForm.FormShow(Sender: TObject);
@@ -139,17 +142,27 @@ var
   dialect : TFDBPlatform;
   i : integer;
 begin
-  if rbMySQL.Checked then
-    dialect := kdbMySQL
-  else
-    dialect := kdbSQLServer;
-  if RecogniseDriver(cbxDriver.Text) <> dialect then
+  cbxDriver.Enabled := not rbSQLite.Checked;
+  edtServer.Enabled := not rbSQLite.Checked;
+  edtDBName.Enabled := not rbSQLite.Checked;
+  edtUsername.Enabled := not rbSQLite.Checked;
+  edtPassword.Enabled := not rbSQLite.Checked;
+  edtSQLiteFile.Enabled := rbSQLite.Checked;
+
+  if not rbSQLite.Checked then
   begin
-    i := cbxDriver.items.IndexOf(StandardODBCDriverName(dialect));
-    if i > -1 then
-      cbxDriver.text := StandardODBCDriverName(dialect)
+    if rbMySQL.Checked then
+      dialect := kdbMySQL
     else
-      cbxDriver.text := '';
+      dialect := kdbSQLServer;
+    if RecogniseDriver(cbxDriver.Text) <> dialect then
+    begin
+      i := cbxDriver.items.IndexOf(StandardODBCDriverName(dialect));
+      if i > -1 then
+        cbxDriver.text := StandardODBCDriverName(dialect)
+      else
+        cbxDriver.text := '';
+    end;
   end;
 end;
 
@@ -185,7 +198,7 @@ begin
     edtDBName.Text := EP['db-database'].value;
     edtUsername.Text := EP['db-username'].value;
     edtPassword.Text := EP['db-password'].value;
-    edtFolder.Text := EP['db-folder'].value;
+    edtSQLiteFile.Text := EP['db-file'].value;
   end;
 end;
 
@@ -222,7 +235,7 @@ begin
     edtDBName.enabled := true;
     edtUsername.enabled := true;
     edtPassword.enabled := true;
-    edtFolder.enabled := false;
+    edtSQLiteFile.enabled := false;
   end
   else if (hasSrcFolder(cbxType.items[cbxType.ItemIndex])) then
   begin
@@ -233,7 +246,7 @@ begin
     edtDBName.enabled := false;
     edtUsername.enabled := false;
     edtPassword.enabled := false;
-    edtFolder.enabled := true;
+    edtSQLiteFile.enabled := true;
   end
   else
   begin
@@ -244,7 +257,7 @@ begin
     edtDBName.enabled := false;
     edtUsername.enabled := false;
     edtPassword.enabled := false;
-    edtFolder.enabled := false;
+    edtSQLiteFile.enabled := false;
   end;
 end;
 
@@ -299,7 +312,7 @@ begin
   EP['db-database'].value := edtDBName.Text;
   EP['db-username'].value := edtUsername.Text;
   EP['db-password'].value := edtPassword.Text;
-  EP['folder'].value := edtFolder.Text;
+  EP['db-file'].value := edtSQLiteFile.Text;
 end;
 
 end.

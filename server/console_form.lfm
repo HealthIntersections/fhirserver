@@ -2548,12 +2548,12 @@ object MainConsoleForm: TMainConsoleForm
           Height = 615
           Top = 0
           Width = 561
-          ActivePage = tbUnii
+          ActivePage = tbRxNorm
           Align = alClient
           ParentFont = False
           ShowTabs = False
           Style = tsButtons
-          TabIndex = 5
+          TabIndex = 3
           TabOrder = 1
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
@@ -4059,11 +4059,11 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel34: TPanel
               Left = 0
-              Height = 240
+              Height = 270
               Top = 216
               Width = 553
               Align = alTop
-              ClientHeight = 240
+              ClientHeight = 270
               ClientWidth = 553
               TabOrder = 5
               object cbxRXNDriver: TComboBox
@@ -4114,7 +4114,7 @@ object MainConsoleForm: TMainConsoleForm
               object Label21: TLabel
                 Left = 16
                 Height = 15
-                Top = 180
+                Top = 182
                 Width = 50
                 Caption = 'Password'
                 ParentColor = False
@@ -4158,6 +4158,8 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 58
                 AutoSize = False
                 Caption = 'MySQL'
+                OnChange = rbRXNMySQLChange
+                OnClick = rbRXNMySQLClick
                 TabOrder = 5
               end
               object rbRXNMSSQL: TRadioButton
@@ -4167,6 +4169,7 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 130
                 AutoSize = False
                 Caption = 'Microsoft SQL Server'
+                OnClick = rbRXNMySQLClick
                 TabOrder = 6
               end
               object Label46: TLabel
@@ -4190,7 +4193,7 @@ object MainConsoleForm: TMainConsoleForm
               object btnTextRxNorm: TBitBtn
                 Left = 80
                 Height = 25
-                Top = 208
+                Top = 238
                 Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Test'
@@ -4233,6 +4236,33 @@ object MainConsoleForm: TMainConsoleForm
                 OnClick = btnTextRxNormClick
                 ParentFont = False
                 TabOrder = 7
+              end
+              object rbRXNSQLite: TRadioButton
+                Left = 310
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'SQLite'
+                OnClick = rbRXNMySQLClick
+                TabOrder = 8
+              end
+              object Label74: TLabel
+                Left = 16
+                Height = 15
+                Top = 210
+                Width = 55
+                Caption = 'SQLite File'
+                ParentColor = False
+              end
+              object edtRXNSQLiteFile: TEdit
+                Left = 80
+                Height = 23
+                Top = 206
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 9
+                Text = 'edtRXNSQLiteFile'
               end
             end
           end
@@ -4471,11 +4501,11 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel45: TPanel
               Left = 0
-              Height = 240
+              Height = 270
               Top = 216
               Width = 553
               Align = alTop
-              ClientHeight = 240
+              ClientHeight = 270
               ClientWidth = 553
               TabOrder = 5
               object cbxNDCDriver: TComboBox
@@ -4570,6 +4600,7 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 58
                 AutoSize = False
                 Caption = 'MySQL'
+                OnClick = rbNDCMSSQLClick
                 TabOrder = 5
               end
               object rbNDCMSSQL: TRadioButton
@@ -4579,6 +4610,7 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 130
                 AutoSize = False
                 Caption = 'Microsoft SQL Server'
+                OnClick = rbNDCMSSQLClick
                 TabOrder = 6
               end
               object Label58: TLabel
@@ -4602,7 +4634,7 @@ object MainConsoleForm: TMainConsoleForm
               object btnTestNDC: TBitBtn
                 Left = 80
                 Height = 25
-                Top = 208
+                Top = 236
                 Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Test'
@@ -4645,6 +4677,33 @@ object MainConsoleForm: TMainConsoleForm
                 OnClick = btnTestNDCClick
                 ParentFont = False
                 TabOrder = 7
+              end
+              object rbNDCSQLite: TRadioButton
+                Left = 310
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'SQLite'
+                OnClick = rbNDCMSSQLClick
+                TabOrder = 8
+              end
+              object Label75: TLabel
+                Left = 18
+                Height = 15
+                Top = 208
+                Width = 53
+                Caption = 'SQLIte file'
+                ParentColor = False
+              end
+              object edtNDCSQLiteFile: TEdit
+                Left = 80
+                Height = 23
+                Top = 206
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 9
+                Text = 'edtRXNPassword'
               end
             end
           end
@@ -4900,11 +4959,11 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel52: TPanel
               Left = 0
-              Height = 240
+              Height = 268
               Top = 242
               Width = 553
               Align = alTop
-              ClientHeight = 240
+              ClientHeight = 268
               ClientWidth = 553
               TabOrder = 5
               object cbxUNIIDriver: TComboBox
@@ -4999,6 +5058,7 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 58
                 AutoSize = False
                 Caption = 'MySQL'
+                OnClick = rbUNIISQLiteClick
                 TabOrder = 5
               end
               object rbUNIIMSSQL: TRadioButton
@@ -5008,6 +5068,7 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 130
                 AutoSize = False
                 Caption = 'Microsoft SQL Server'
+                OnClick = rbUNIISQLiteClick
                 TabOrder = 6
               end
               object Label71: TLabel
@@ -5031,7 +5092,7 @@ object MainConsoleForm: TMainConsoleForm
               object btnTestUNII: TBitBtn
                 Left = 80
                 Height = 25
-                Top = 208
+                Top = 234
                 Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Test'
@@ -5071,9 +5132,36 @@ object MainConsoleForm: TMainConsoleForm
                   1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
                   1400010201000000000000000000000000000000000000000000
                 }
-                OnClick = btnTestNDCClick
+                OnClick = btnTestUNIIClick
                 ParentFont = False
                 TabOrder = 7
+              end
+              object rbUNIISQLite: TRadioButton
+                Left = 310
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'SQLite'
+                OnClick = rbUNIISQLiteClick
+                TabOrder = 8
+              end
+              object Label76: TLabel
+                Left = 18
+                Height = 15
+                Top = 208
+                Width = 55
+                Caption = 'SQLite File'
+                ParentColor = False
+              end
+              object edtUNIISQLiteFile: TEdit
+                Left = 80
+                Height = 23
+                Top = 206
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 9
+                Text = 'edtRXNPassword'
               end
             end
           end

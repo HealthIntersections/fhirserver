@@ -31,7 +31,7 @@ type
     function compareItem(left, right : TNpmPackage; col : integer) : integer; override;
 
     function addItem(mode : String) : TNpmPackage; override;
-    procedure deleteItem(item : TNpmPackage); override;
+    function deleteItem(item : TNpmPackage) : boolean; override;
   end;
 
 
@@ -194,9 +194,10 @@ begin
   end;
 end;
 
-procedure TPackageListManager.deleteItem(item: TNpmPackage);
+function TPackageListManager.deleteItem(item: TNpmPackage) : boolean;
 begin
   FCache.remove(item.name, item.version);
+  result := true;
 end;
 
 

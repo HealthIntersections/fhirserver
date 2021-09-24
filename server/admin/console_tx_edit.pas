@@ -19,7 +19,8 @@ type
     btnSource: TBitBtn;
     btnDBTest1: TBitBtn;
     btnDBTest3: TBitBtn;
-    btnTxImport: TBitBtn;
+    btnSource1: TBitBtn;
+    cbAutocreate: TCheckBox;
     cbxDriver: TComboBox;
     cbxType: TComboBox;
     chkActive: TCheckBox;
@@ -27,6 +28,7 @@ type
     edtDBName: TEdit;
     edtIdentity: TEdit;
     edtPassword: TEdit;
+    edtSQLiteFile: TEdit;
     edtServer: TEdit;
     edtFile: TEdit;
     edtUsername: TEdit;
@@ -35,6 +37,7 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
+    Label13: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -47,8 +50,11 @@ type
     Panel1: TPanel;
     rbMSSQL: TRadioButton;
     rbMySQL: TRadioButton;
+    rbSQLite: TRadioButton;
     procedure btnDBTestClick(Sender: TObject);
+    procedure btnSource1Click(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
+    procedure btnTxImportClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
@@ -135,6 +141,11 @@ begin
     edtFile.text := dlgOpen.fileName;
 end;
 
+procedure TEditTxForm.btnTxImportClick(Sender: TObject);
+begin
+
+end;
+
 procedure TEditTxForm.btnDBTestClick(Sender: TObject);
 var
   db : TFDBManager;
@@ -154,9 +165,17 @@ begin
   end
 end;
 
+procedure TEditTxForm.btnSource1Click(Sender: TObject);
+begin
+  dlgOpen.fileName := edtSQLiteFile.text;
+  if dlgOpen.Execute then
+    edtSQLiteFile.text := dlgOpen.fileName;
+end;
+
 procedure TEditTxForm.FormResize(Sender: TObject);
 begin
-  rbMySQL.left := edtIdentity.Left + edtIdentity.Width div 2;
+  rbMySQL.left := edtIdentity.Left + ((edtIdentity.Width div 3) * 1);
+  rbSQLite.left := edtIdentity.Left + ((edtIdentity.Width div 3) * 2);
 end;
 
 procedure TEditTxForm.FormShow(Sender: TObject);
@@ -182,17 +201,27 @@ var
   dialect : TFDBPlatform;
   i : integer;
 begin
-  if rbMySQL.Checked then
-    dialect := kdbMySQL
-  else
-    dialect := kdbSQLServer;
-  if RecogniseDriver(cbxDriver.Text) <> dialect then
+  cbxDriver.Enabled := not rbSQLite.Checked;
+  edtServer.Enabled := not rbSQLite.Checked;
+  edtDBName.Enabled := not rbSQLite.Checked;
+  edtUsername.Enabled := not rbSQLite.Checked;
+  edtPassword.Enabled := not rbSQLite.Checked;
+  edtSQLiteFile.Enabled := rbSQLite.Checked;
+
+  if not rbSQLite.Checked then
   begin
-    i := cbxDriver.items.IndexOf(StandardODBCDriverName(dialect));
-    if i > -1 then
-      cbxDriver.text := StandardODBCDriverName(dialect)
+    if rbMySQL.Checked then
+      dialect := kdbMySQL
     else
-      cbxDriver.text := '';
+      dialect := kdbSQLServer;
+    if RecogniseDriver(cbxDriver.Text) <> dialect then
+    begin
+      i := cbxDriver.items.IndexOf(StandardODBCDriverName(dialect));
+      if i > -1 then
+        cbxDriver.text := StandardODBCDriverName(dialect)
+      else
+        cbxDriver.text := '';
+    end;
   end;
 end;
 
@@ -212,6 +241,7 @@ begin
 
     rbMSSQL.Checked := tx['db-type'].value = 'mssql';
     rbMySQL.Checked := tx['db-type'].value = 'mysql';
+    rbSQLite.Checked := tx['db-type'].value = 'sqlite';
     rbMSSQLClick(self);
     if tx['db-type'].value <> '' then
       cbxDriver.Text := tx['db-type'].value;
@@ -219,8 +249,10 @@ begin
     edtDBName.Text := tx['db-database'].value;
     edtUsername.Text := tx['db-username'].value;
     edtPassword.Text := tx['db-password'].value;
+    edtSQLiteFile.Text := tx['db-file'].value;
     edtVersion.text := Tx['version'].value;
     chkDefault.Checked := Tx['default'].readAsBool;
+    cbAutocreate.Checked := Tx['db-auto-create'].value = 'true';
   end;
 end;
 
@@ -234,19 +266,26 @@ begin
   tx['db-type'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     tx['db-type'].value := 'mysql'
+  else if rbSQLite.checked then
+    tx['db-type'].value := 'sqlite'
   else
     tx['db-type'].value := 'mssql';
   tx['db-server'].value := edtServer.Text;
   tx['db-database'].value := edtDBName.Text;
   tx['db-username'].value := edtUsername.Text;
   tx['db-password'].value := edtPassword.Text;
+  tx['db-file'].value := edtSQLiteFile.Text;
   Tx['version'].value := edtVersion.text;
   if not chkDefault.Enabled then
     Tx['default'].value := ''
   else if chkDefault.Checked then
     Tx['default'].value := 'true'
   else
-    Tx['default'].value := 'false'
+    Tx['default'].value := 'false';
+  if cbAutocreate.Checked then
+    Tx['db-auto-create'].value := 'true'
+  else
+    Tx['db-auto-create'].value := 'false';
 end;
 
 end.

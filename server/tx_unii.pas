@@ -245,8 +245,8 @@ begin
     finally
       meta.free;
     end;
-    db.ExecSQL('CREATE TABLE Unii (UniiKey int NOT NULL, Code nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_Unii PRIMARY KEY CLUSTERED ( UniiKey ASC))');
-    db.ExecSQL('CREATE TABLE UniiDesc ( UniiDescKey int NOT NULL, UniiKey int NOT NULL, Type nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_UniiDesc PRIMARY KEY CLUSTERED (UniiDescKey ASC))');
+    db.ExecSQL('CREATE TABLE Unii (UniiKey int NOT NULL, Code nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_Unii PRIMARY KEY ( UniiKey ASC))');
+    db.ExecSQL('CREATE TABLE UniiDesc ( UniiDescKey int NOT NULL, UniiKey int NOT NULL, Type nchar(20) NOT NULL, Display nchar(255) NULL, CONSTRAINT PK_UniiDesc PRIMARY KEY (UniiDescKey ASC))');
     db.ExecSQL('CREATE TABLE UniiVersion ( Version nchar(20) NOT NULL)');
     db.ExecSQL('Insert into UniiVersion (Version) values ('''+SQLWrapString(version)+''')');
 

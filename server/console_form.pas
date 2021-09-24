@@ -39,7 +39,7 @@ uses
   IniFiles, Math,
   IdTelnet, IdGlobal,
   fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
-  fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects,
+  fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects, fdb_sqlite3,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii,
   fui_lcl_managers,
   server_config, server_constants,
@@ -166,8 +166,11 @@ type
     edtLoincDest: TEdit;
     edtLoincSource: TEdit;
     edtLoincVersion: TEdit;
+    edtNDCSQLiteFile: TEdit;
+    edtRXNSQLiteFile: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
+    edtUNIISQLiteFile: TEdit;
     edtUNIIVersion: TEdit;
     edtUNIIPassword: TEdit;
     edtUNIIServer: TEdit;
@@ -263,6 +266,9 @@ type
     Label71: TLabel;
     Label72: TLabel;
     Label73: TLabel;
+    Label74: TLabel;
+    Label75: TLabel;
+    Label76: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
@@ -406,12 +412,15 @@ type
     prgSnomedImport: TProgressBar;
     dlgFolder: TSelectDirectoryDialog;
     dlgSave: TSaveDialog;
+    rbNDCSQLite: TRadioButton;
+    rbRXNSQLite: TRadioButton;
     rbUNIIMSSQL: TRadioButton;
     rbUNIIMySQL: TRadioButton;
     rbRXNMSSQL: TRadioButton;
     rbNDCMSSQL: TRadioButton;
     rbRXNMySQL: TRadioButton;
     rbNDCMySQL: TRadioButton;
+    rbUNIISQLite: TRadioButton;
     sBar: TStatusBar;
     btnCert: TSpeedButton;
     btnCACert: TSpeedButton;
@@ -464,6 +473,7 @@ type
     procedure btnLockStatusClick(Sender: TObject);
     procedure btnReIndexRxNormClick(Sender: TObject);
     procedure btnTestNDCClick(Sender: TObject);
+    procedure btnTestUNIIClick(Sender: TObject);
     procedure btnTextRxNormClick(Sender: TObject);
     procedure btnImportLoincClick(Sender: TObject);
     procedure btnImportSnomedClick(Sender: TObject);
@@ -519,6 +529,11 @@ type
     procedure pnlProcessNDCClick(Sender: TObject);
     procedure pnlProcessUNIIClick(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
+    procedure rbNDCMSSQLClick(Sender: TObject);
+    procedure rbRXNMySQLChange(Sender: TObject);
+    procedure rbRXNMySQLClick(Sender: TObject);
+    procedure rbRXNSQLiteClick(Sender: TObject);
+    procedure rbUNIISQLiteClick(Sender: TObject);
     procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
     procedure tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
@@ -1263,6 +1278,45 @@ begin
 
 end;
 
+procedure TMainConsoleForm.rbNDCMSSQLClick(Sender: TObject);
+begin
+  cbxNDCDriver.enabled := not rbNDCSQLite.Checked;
+  edtNDCServer.enabled := not rbNDCSQLite.Checked;
+  edtNDCDBName.enabled := not rbNDCSQLite.Checked;
+  edtNDCPassword.enabled := not rbNDCSQLite.Checked;
+  edtNDCUsername.enabled := not rbNDCSQLite.Checked;
+  edtNDCSQLiteFile.enabled := rbNDCSQLite.Checked;
+end;
+
+procedure TMainConsoleForm.rbRXNMySQLChange(Sender: TObject);
+begin
+
+end;
+
+procedure TMainConsoleForm.rbRXNMySQLClick(Sender: TObject);
+begin
+  cbxRXNDriver.enabled := not rbRXNSQLite.Checked;
+  edtRXNServer.enabled := not rbRXNSQLite.Checked;
+  edtRXNDBName.enabled := not rbRXNSQLite.Checked;
+  edtRXNPassword.enabled := not rbRXNSQLite.Checked;
+  edtRXNUsername.enabled := not rbRXNSQLite.Checked;
+  edtRXNSQLiteFile.enabled := rbRXNSQLite.Checked;
+end;
+
+procedure TMainConsoleForm.rbRXNSQLiteClick(Sender: TObject);
+begin
+end;
+
+procedure TMainConsoleForm.rbUNIISQLiteClick(Sender: TObject);
+begin
+  cbxUNIIDriver.enabled := not rbUNIISQLite.Checked;
+  edtUNIIServer.enabled := not rbUNIISQLite.Checked;
+  edtUNIIDBName.enabled := not rbUNIISQLite.Checked;
+  edtUNIIPassword.enabled := not rbUNIISQLite.Checked;
+  edtUNIIUsername.enabled := not rbUNIISQLite.Checked;
+  edtUNIISQLiteFile.enabled := rbUNIISQLite.Checked;
+end;
+
 procedure TMainConsoleForm.tbConsoleContextPopup(Sender: TObject;
   MousePos: TPoint; var Handled: Boolean);
 begin
@@ -1676,14 +1730,18 @@ var
 begin
   FIni.WriteString('ndc-import', 'source', edtNDCFolder.text);
   if rbNDCMSSQL.checked then
-     FIni.WriteString('ndc-import', 'type', 'mssql')
-   else
-     FIni.WriteString('ndc-import', 'type', 'mysql');
+    FIni.WriteString('ndc-import', 'type', 'mssql')
+  else if rbNDCSQLite.checked then
+    FIni.WriteString('ndc-import', 'type', 'sqlite')
+  else
+    FIni.WriteString('ndc-import', 'type', 'mysql');
    FIni.WriteInteger('ndc-import', 'driver', cbxNDCDriver.ItemIndex);
    FIni.WriteString('ndc-import', 'server', edtNDCServer.text);
    FIni.WriteString('ndc-import', 'database', edtNDCDBName.text);
    FIni.WriteString('ndc-import', 'password', edtNDCPassword.text);
    FIni.WriteString('ndc-import', 'username', edtNDCUsername.text);
+   FIni.WriteString('ndc-import', 'sqlite', edtNDCSQLiteFile.text);
+
 
    if not FolderExists(edtNDCFolder.text) then
    begin
@@ -1698,18 +1756,22 @@ begin
     FRunning := true;
     edtNDCFolder.enabled := false;
     rbNDCMSSQL.enabled := false;
+    rbNDCSQLite.enabled := false;
     rbNDCMySQL.enabled := false;
     cbxNDCDriver.enabled := false;
     edtNDCServer.enabled := false;
     edtNDCDBName.enabled := false;
     edtNDCPassword.enabled := false;
     edtNDCUsername.enabled := false;
+    edtNDCSQLiteFile.enabled := false;
     try
 
        if rbNDCMSSQL.checked then
-         db := TFDBOdbcManager.create('NDCorm', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+         db := TFDBOdbcManager.create('NDC', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+       else if rbNDCSQLite.checked then
+         db := TFDBSQLiteManager.create('NDC', edtNDCSQLiteFile.Text, true)
        else
-         db := TFDBOdbcManager.create('NDCorm', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
+         db := TFDBOdbcManager.create('NDC', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
        try
          c := db.GetConnection('test');
          try
@@ -1731,11 +1793,13 @@ begin
       edtNDCFolder.enabled := true;
       rbNDCMSSQL.enabled := true;
       rbNDCMySQL.enabled := true;
+      rbNDCSQLite.enabled := true;
       cbxNDCDriver.enabled := true;
       edtNDCServer.enabled := true;
       edtNDCDBName.enabled := true;
       edtNDCPassword.enabled := true;
       edtNDCUsername.enabled := true;
+      edtNDCSQLiteFile.enabled := true;
       ndcCallback(self, 0, false, '');
       btnImportNDCStop.Visible := false;
     end;
@@ -1752,14 +1816,17 @@ begin
   FIni.WriteString('unii-import', 'source', edtUNIIFile.text);
   FIni.WriteString('unii-import', 'version', edtUNIIVersion.text);
   if rbUNIIMSSQL.checked then
-     FIni.WriteString('unii-import', 'type', 'mssql')
-   else
-     FIni.WriteString('unii-import', 'type', 'mysql');
+    FIni.WriteString('unii-import', 'type', 'mssql')
+  else if rbUNIISQLite.checked then
+    FIni.WriteString('unii-import', 'type', 'sqlite')
+  else
+    FIni.WriteString('unii-import', 'type', 'mysql');
    FIni.WriteInteger('unii-import', 'driver', cbxUNIIDriver.ItemIndex);
    FIni.WriteString('unii-import', 'server', edtUNIIServer.text);
    FIni.WriteString('unii-import', 'database', edtUNIIDBName.text);
    FIni.WriteString('unii-import', 'password', edtUNIIPassword.text);
    FIni.WriteString('unii-import', 'username', edtUNIIUsername.text);
+   FIni.WriteString('unii-import', 'sqlite', edtUNIISQLiteFile.text);
 
    if not FileExists(edtUNIIFile.text) then
    begin
@@ -1776,14 +1843,18 @@ begin
     edtUNIIVersion.enabled := false;
     rbUNIIMSSQL.enabled := false;
     rbUNIIMySQL.enabled := false;
+    rbUNIISQLite.enabled := false;
     cbxUNIIDriver.enabled := false;
     edtUNIIServer.enabled := false;
     edtUNIIDBName.enabled := false;
     edtUNIIPassword.enabled := false;
     edtUNIIUsername.enabled := false;
+    edtUNIISQLiteFile.enabled := false;
     try
        if rbUNIIMSSQL.checked then
          db := TFDBOdbcManager.create('UNII', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
+       else if rbUNIISQLite.checked then
+         db := TFDBSQLiteManager.create('UNII', edtUNIISQLiteFile.text, true)
        else
          db := TFDBOdbcManager.create('UNII', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
        try
@@ -1797,12 +1868,14 @@ begin
       edtUNIIFile.enabled := true;
       edtUNIIVersion.enabled := true;
       rbUNIIMSSQL.enabled := true;
+      rbUNIISQLite.enabled := true;
       rbUNIIMySQL.enabled := true;
       cbxUNIIDriver.enabled := true;
       edtUNIIServer.enabled := true;
       edtUNIIDBName.enabled := true;
       edtUNIIPassword.enabled := true;
       edtUNIIUsername.enabled := true;
+      edtUNIISQLiteFile.enabled := true;
       uniiCallback(self, 0, false, '');
       btnImportUNIIStop.Visible := false;
     end;
@@ -1832,14 +1905,17 @@ var
 begin
   FIni.WriteString('rxnorm-import', 'source', edtRXNFolder.text);
   if rbRXNMSSQL.checked then
-     FIni.WriteString('rxnorm-import', 'type', 'mssql')
-   else
+    FIni.WriteString('rxnorm-import', 'type', 'mssql')
+  else if rbRXNSQLite.checked then
+    FIni.WriteString('rxnorm-import', 'type', 'sqlite')
+  else
      FIni.WriteString('rxnorm-import', 'type', 'mysql');
    FIni.WriteInteger('rxnorm-import', 'driver', cbxRXNDriver.ItemIndex);
    FIni.WriteString('rxnorm-import', 'server', edtRXNServer.text);
    FIni.WriteString('rxnorm-import', 'database', edtRXNDBName.text);
    FIni.WriteString('rxnorm-import', 'password', edtRXNPassword.text);
    FIni.WriteString('rxnorm-import', 'username', edtRXNUsername.text);
+   FIni.WriteString('rxnorm-import', 'sqlite', edtRXNSQLiteFile.text);
 
   if not FolderExists(edtRXNFolder.text) then
   begin
@@ -1855,15 +1931,19 @@ begin
     edtRXNFolder.enabled := false;
     rbRXNMSSQL.enabled := false;
     rbRXNMySQL.enabled := false;
+    rbRXNSQLite.enabled := false;
+
     cbxRXNDriver.enabled := false;
     edtRXNServer.enabled := false;
     edtRXNDBName.enabled := false;
     edtRXNPassword.enabled := false;
+    edtRXNSQLiteFile.enabled := false;
     edtRXNUsername.enabled := false;
     try
-
        if rbRXNMSSQL.checked then
          db := TFDBOdbcManager.create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
+       else if rbRXNSQLite.checked then
+         db := TFDBSQLiteManager.create('rxnorm', edtRXNSQLiteFile.text, true)
        else
          db := TFDBOdbcManager.create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
        try
@@ -1887,10 +1967,13 @@ begin
       edtRXNFolder.enabled := true;
       rbRXNMSSQL.enabled := true;
       rbRXNMySQL.enabled := true;
+      rbRXNSQLite.enabled := true;
+
       cbxRXNDriver.enabled := true;
       edtRXNServer.enabled := true;
       edtRXNDBName.enabled := true;
       edtRXNPassword.enabled := true;
+      edtRXNSQLiteFile.enabled := true;
       edtRXNUsername.enabled := true;
       rxNormCallback(self, 0, false, '');
       btnReindexRxNormStop.Visible := false;
@@ -1904,10 +1987,11 @@ var
   db : TFDBManager;
   c : TFDBConnection;
 begin
-  FIni.WriteString('unii-import', 'source', edtUNIIFile.text);
-  FIni.WriteString('unii-import', 'version', edtUNIIVersion.text);
+  FIni.WriteString('ndc-import', 'source', edtNDCFolder.text);
   if rbNDCMSSQL.checked then
     FIni.WriteString('ndc-import', 'type', 'mssql')
+  else if rbNDCSQLite.checked then
+    FIni.WriteString('ndc-import', 'type', 'sqlite')
   else
     FIni.WriteString('ndc-import', 'type', 'mysql');
   FIni.WriteInteger('ndc-import', 'driver', cbxNDCDriver.ItemIndex);
@@ -1915,14 +1999,66 @@ begin
   FIni.WriteString('ndc-import', 'database', edtNDCDBName.text);
   FIni.WriteString('ndc-import', 'password', edtNDCPassword.text);
   FIni.WriteString('ndc-import', 'username', edtNDCUsername.text);
+  FIni.WriteString('ndc-import', 'sqllite', edtNDCSQLiteFile.text);
 
   try
     Cursor := crHourGlass;
     try
       if rbNDCMSSQL.checked then
-        db := TFDBOdbcManager.create('rxnorm', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+        db := TFDBOdbcManager.create('ndc', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+      else if rbNDCSQLite.checked then
+        db := TFDBSQLiteManager.create('ndc', edtNDCSQLiteFile.Text, true)
       else
-        db := TFDBOdbcManager.create('rxnorm', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
+        db := TFDBOdbcManager.create('ndc', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
+      try
+        c := db.GetConnection('test');
+        try
+          c.FetchMetaData.free;
+          ShowMessage('Success: connected OK');
+        finally
+          c.Release;
+        end;
+      finally
+        db.free;
+      end;
+    finally
+      Cursor := crDefault;
+    end;
+  except
+    on e : exception do
+      ShowMessage('Failure: '+e.Message);
+  end;
+end;
+
+procedure TMainConsoleForm.btnTestUNIIClick(Sender: TObject);
+var
+  db : TFDBManager;
+  c : TFDBConnection;
+begin
+  FIni.WriteString('unii-import', 'source', edtUNIIFile.text);
+  FIni.WriteString('unii-import', 'version', edtUNIIVersion.text);
+  if rbUNIIMSSQL.checked then
+    FIni.WriteString('unii-import', 'type', 'mssql')
+  else if rbUNIISQLite.checked then
+    FIni.WriteString('unii-import', 'type', 'sqlite')
+  else
+    FIni.WriteString('unii-import', 'type', 'mysql');
+  FIni.WriteInteger('unii-import', 'driver', cbxUNIIDriver.ItemIndex);
+  FIni.WriteString('unii-import', 'server', edtUNIIServer.text);
+  FIni.WriteString('unii-import', 'database', edtUNIIDBName.text);
+  FIni.WriteString('unii-import', 'password', edtUNIIPassword.text);
+  FIni.WriteString('unii-import', 'username', edtUNIIUsername.text);
+  FIni.WriteString('unii-import', 'sqllite', edtUNIISQLiteFile.text);
+
+  try
+    Cursor := crHourGlass;
+    try
+      if rbUNIIMSSQL.checked then
+        db := TFDBOdbcManager.create('unii', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
+      else if rbUNIISQLite.checked then
+        db := TFDBSQLiteManager.create('unii', edtUNIISQLiteFile.Text, true)
+      else
+        db := TFDBOdbcManager.create('unii', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
       try
         c := db.GetConnection('test');
         try
@@ -1950,12 +2086,15 @@ var
 begin
   if rbRXNMSSQL.checked then
     FIni.WriteString('rxnorm-import', 'type', 'mssql')
+  else if rbRXNSQLite.checked then
+    FIni.WriteString('rxnorm-import', 'type', 'sqlite')
   else
     FIni.WriteString('rxnorm-import', 'type', 'mysql');
   FIni.WriteInteger('rxnorm-import', 'driver', cbxRXNDriver.ItemIndex);
   FIni.WriteString('rxnorm-import', 'server', edtRXNServer.text);
   FIni.WriteString('rxnorm-import', 'database', edtRXNDBName.text);
   FIni.WriteString('rxnorm-import', 'password', edtRXNPassword.text);
+  FIni.WriteString('rxnorm-import', 'sqlite', edtRXNSQLiteFile.text);
   FIni.WriteString('rxnorm-import', 'username', edtRXNUsername.text);
 
   try
@@ -1963,6 +2102,8 @@ begin
     try
       if rbRXNMSSQL.checked then
         db := TFDBOdbcManager.create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
+      else if rbRXNSQLite.checked then
+        db := TFDBSQLiteManager.create('rxnorm', edtRXNSQLiteFile.text, true)
       else
         db := TFDBOdbcManager.create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
       try
@@ -2708,31 +2849,39 @@ begin
 
   edtRXNFolder.text := FIni.ReadString('rxnorm-import', 'source', '');
   rbRXNMSSQL.checked := FIni.ReadString('rxnorm-import', 'type', '') = 'mssql';
-  rbRXNMySQL.checked := FIni.ReadString('rxnorm-import', 'type', '') <> 'mssql';
+  rbRXNMySQL.checked := FIni.ReadString('rxnorm-import', 'type', '') = 'mysql';
+  rbRXNSQLite.checked := FIni.ReadString('rxnorm-import', 'type', '') = 'sqlite';
+  rbRXNMySQLClick(self);
   cbxRXNDriver.ItemIndex := FIni.ReadInteger('rxnorm-import', 'driver', -1);
   edtRXNServer.text := FIni.ReadString('rxnorm-import', 'server', '');
   edtRXNDBName.text := FIni.ReadString('rxnorm-import', 'database', '');
   edtRXNPassword.text := FIni.ReadString('rxnorm-import', 'password', '');
   edtRXNUsername.text := FIni.ReadString('rxnorm-import', 'username', '');
+  edtRXNSQLiteFile.text := FIni.ReadString('rxnorm-import', 'sqlite', '');
 
   edtNDCFolder.text := FIni.ReadString('ndc-import', 'source', '');
   rbNDCMSSQL.checked := FIni.ReadString('ndc-import', 'type', '') = 'mssql';
-  rbNDCMySQL.checked := FIni.ReadString('ndc-import', 'type', '') <> 'mssql';
+  rbNDCMySQL.checked := FIni.ReadString('ndc-import', 'type', '') = 'mysql';
+  rbNDCSQLite.checked := FIni.ReadString('ndc-import', 'type', '') = 'sqlite';
+  rbNDCMSSQLClick(self);
   cbxNDCDriver.ItemIndex := FIni.ReadInteger('ndc-import', 'driver', -1);
   edtNDCServer.text := FIni.ReadString('ndc-import', 'server', '');
   edtNDCDBName.text := FIni.ReadString('ndc-import', 'database', '');
   edtNDCPassword.text := FIni.ReadString('ndc-import', 'password', '');
   edtNDCUsername.text := FIni.ReadString('ndc-import', 'username', '');
+  edtNDCSQLiteFile.text := FIni.ReadString('ndc-import', 'sqlite', '');
 
   edtUNIIFile.text := FIni.ReadString('unii-import', 'source', '');
   edtUNIIVersion.text := FIni.ReadString('unii-import', 'version', '');
   rbUNIIMSSQL.checked := FIni.ReadString('unii-import', 'type', '') = 'mssql';
-  rbUNIIMySQL.checked := FIni.ReadString('unii-import', 'type', '') <> 'mssql';
+  rbUNIIMySQL.checked := FIni.ReadString('unii-import', 'type', '') = 'mysql';
+  rbUNIISQLite.checked := FIni.ReadString('unii-import', 'type', '') = 'sqlite';
   cbxUNIIDriver.ItemIndex := FIni.ReadInteger('unii-import', 'driver', -1);
   edtUNIIServer.text := FIni.ReadString('unii-import', 'server', '');
   edtUNIIDBName.text := FIni.ReadString('unii-import', 'database', '');
   edtUNIIPassword.text := FIni.ReadString('unii-import', 'password', '');
   edtUNIIUsername.text := FIni.ReadString('unii-import', 'username', '');
+  edtUNIISQLiteFile.text := FIni.ReadString('unii-import', 'sqllite', '');
 
   pnlSnomedImport.Color := rgb(217, 240, 247);
   pnlLoincImport.color := clWhite;

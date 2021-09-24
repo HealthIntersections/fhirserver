@@ -6,11 +6,11 @@ interface
 
 uses
   Classes, SysUtils, Graphics, IniFiles,
-  ComCtrls,
-  fsl_base, fsl_utilities, fsl_json,
+  Controls, ComCtrls, Dialogs, UITypes, Menus,
+  fsl_base, fsl_utilities, fsl_json, fsl_fpc,
   fui_lcl_managers,
   fhir_client,
-  ftk_utilities, ftk_constants;
+  ftk_utilities, ftk_constants, ftk_context;
 
 type
   TFHIRProjectNodeKind = (pnkProject, pnkFolder, pnkFile);
@@ -28,6 +28,7 @@ type
     FAddress : String;
     FKind : TFHIRProjectNodeKind;
     FChildren : TFslList<TFHIRProjectNode>;
+    function nameExists(name : String) : boolean;
   protected
     function getChildCount : integer; override;
     function getChild(index : integer) : TFslTreeNode; override;
@@ -39,6 +40,11 @@ type
 
     function toJson : TJsonObject;
     class function fromJson(json : TJsonObject) : TFHIRProjectNode;
+
+    procedure loadFromAddress;
+    function getNewName(ext : String) : String;
+    function getNameForFile(fn : String) : String;
+    procedure renameChildren(op, np : String);
 
     property id : String read FId write FId;
     property kind : TFHIRProjectNodeKind read FKind write FKind;
@@ -54,8 +60,18 @@ type
   TProjectTreeManager = class (TTreeManager<TFHIRProjectNode>)
   private
     FView : TFHIRProjectsView;
+    FContext : TToolkitContext;
+    function getKindByMode(mode : String) : TSourceEditorKind;
+    procedure SetContext(AValue: TToolkitContext);
   public
+    destructor Destroy; override;
+
+    property Context : TToolkitContext read FContext write SetContext;
+
     function doubleClickEdit : boolean; override;
+    function AskOnDelete : boolean; override;
+    function readOnly : boolean; override;
+
     function allowedOperations(item : TFHIRProjectNode) : TNodeOperationSet; override;
     function loadData : boolean; override;
 
@@ -65,10 +81,14 @@ type
 //    function getCellColors(item : TFHIRProjectNode; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TFHIRProjectNode) : String; override;
 
-    function addItem(mode : String) : TFHIRProjectNode; override;
+    procedure changed; override;
+
+    function addItem(parent : TFHIRProjectNode; mode : String) : TFHIRProjectNode; override;
     function editItem(item : TFHIRProjectNode; mode : String) : boolean; override;
-    procedure deleteItem(item : TFHIRProjectNode); override;
+    function editItemText(parent, item : TFHIRProjectNode; var text : String) : boolean; override;
+    function deleteItem(parent, item : TFHIRProjectNode) : boolean; override;
     function executeItem(item : TFHIRProjectNode; mode : String) : boolean; override;
+    function refreshItem(item : TFHIRProjectNode) : boolean; override;
   end;
 
 
@@ -78,36 +98,81 @@ type
   private
     FControlFile: String;
     FManager : TProjectTreeManager;
+    function GetContext: TToolkitContext;
+    function GetImages: TImageList;
     function GetProjects: TFslList<TFHIRProjectNode>;
     function GetTree: TTreeView;
+    procedure SetContext(AValue: TToolkitContext);
+    procedure SetImages(AValue: TImageList);
     //function GetServerList: TFslList<TFHIRServerEntry>;
     procedure SetTree(AValue: TTreeView);
+
+    function findNodeForFile(list : TFslList<TFHIRProjectNode>; address: String): TFHIRProjectNode; overload;
   public
     constructor Create(settings : TIniFile);
     destructor Destroy; override;
 
+    property Context : TToolkitContext read GetContext write SetContext;
     property ControlFile : String read FControlFile write FControlFile;
     property Tree : TTreeView read GetTree write SetTree;
     property Projects : TFslList<TFHIRProjectNode> read GetProjects;
+    property Images : TImageList read GetImages write SetImages;
     //property OnOpenServer : TOpenServerEvent read FOnOpenServer write FOnOpenServer;
     //property OnEditServer : TOpenServerEvent read FOnEditServer write FOnEditServer;
 
     procedure load;
+    procedure save;
     procedure refresh;
     procedure saveStatus;
 
     //function FetchServer(sender : TObject; name : String) : TFHIRServerEntry;
     //
     procedure addProject(project : TFHIRProjectNode);
+    function deleteProjectItem(parent, item : TFHIRProjectNode; files : boolean) : boolean;
+    procedure deleteProject(project : TFHIRProjectNode; files : boolean);
+    procedure renameFile(old, new : String);
     //procedure updateServer(server, newDetails : TFHIRServerEntry);
   end;
 
 implementation
 
 uses
-  ftk_worker_server;
+  ftk_worker_server,
+  frm_main;
 
 { TFHIRProjectNode }
+
+constructor TFHIRProjectNode.Create;
+begin
+  inherited Create;
+  FChildren := TFslList<TFHIRProjectNode>.create;
+end;
+
+destructor TFHIRProjectNode.Destroy;
+begin
+  FChildren.Free;
+  inherited Destroy;
+end;
+
+function TFHIRProjectNode.nameExists(name: String): boolean;
+var
+  c : TFHIRProjectNode;
+  s : String;
+begin
+  result := false;
+  for c in FChildren do
+    if SameText(c.name, name) then
+      exit(true);
+  if (address <> '') then
+  begin
+    for s in TDirectory.GetFiles(address) do
+      if SameText(ExtractFileName(s), name) then
+        exit(true);
+    for s in TDirectory.getDirectories(address) do
+      if SameText(ExtractFileName(s), name) then
+        exit(true);
+  end;
+end;
 
 function TFHIRProjectNode.getChildCount: integer;
 begin
@@ -118,19 +183,6 @@ function TFHIRProjectNode.getChild(index: integer): TFslTreeNode;
 begin
   result := FChildren[index];
 
-end;
-
-constructor TFHIRProjectNode.Create;
-begin
-  inherited Create;
-  FChildren := TFslList<TFHIRProjectNode>.create;
-
-end;
-
-destructor TFHIRProjectNode.Destroy;
-begin
-  FChildren.Free;
-  inherited Destroy;
 end;
 
 function TFHIRProjectNode.link: TFHIRProjectNode;
@@ -175,19 +227,139 @@ begin
   end;
 end;
 
+procedure TFHIRProjectNode.loadFromAddress;
+var
+  s : String;
+  n : TFHIRProjectNode;
+begin
+  FChildren.clear;
+
+  if address <> '' then
+  begin
+    for s in TDirectory.getDirectories(address) do
+    begin
+      if FileGetAttr(s) and faHidden = 0 then
+      begin
+        n := TFHIRProjectNode.create;
+        FChildren.add(n);
+        n.kind := pnkFolder;
+        n.name := ExtractFileName(s);
+        n.address := s;
+        n.loadFromAddress;
+      end;
+    end;
+
+    for s in TDirectory.GetFiles(address) do
+    begin
+      if FileGetAttr(s) and faHidden = 0 then
+      begin
+        n := TFHIRProjectNode.create;
+        FChildren.add(n);
+        n.kind := pnkFile;
+        n.name := ExtractFileName(s);
+        n.address := s;
+      end;
+    end;
+  end;
+end;
+
+function TFHIRProjectNode.getNewName(ext: String): String;
+var
+  base : String;
+  i : integer;
+begin
+  if ext = '' then
+    base := 'new_folder_'
+  else
+    base := 'new_file_';
+  result := base+ext;
+  i := 0;
+  while nameExists(result) do
+  begin
+    inc(i);
+    result := base+inttostr(i)+ext;
+  end;
+end;
+
+function TFHIRProjectNode.getNameForFile(fn: String): String;
+var
+  base, ext : String;
+  i : integer;
+begin
+  ext := ExtractFileExt(fn);
+  base := fn.replace(ext, '');
+  result := base+ext;
+  i := 0;
+  while nameExists(result) do
+  begin
+    inc(i);
+    result := base+inttostr(i)+ext;
+  end;
+end;
+
+procedure TFHIRProjectNode.renameChildren(op, np: String);
+var
+  i : TFHIRProjectNode;
+begin
+  for i in FChildren do
+  begin
+    if i.address.startsWith(op) then
+    begin
+      i.address := np+i.address.Substring(op.length);
+      if (i.kind = pnkFolder) then
+       i.renameChildren(op, np);
+    end;
+  end;
+end;
+
 { TProjectTreeManager }
 
+destructor TProjectTreeManager.Destroy;
+begin
+  FContext.Free;
+  inherited Destroy;
+end;
+
+function TProjectTreeManager.getKindByMode(mode: String): TSourceEditorKind;
+begin
+  if StringArrayExists(CODES_TSourceEditorKind, mode) then
+    result := TSourceEditorKind(StringArrayIndexOf(CODES_TSourceEditorKind, mode))
+  else
+    result := sekNull;
+end;
+
+procedure TProjectTreeManager.SetContext(AValue: TToolkitContext);
+begin
+  FContext.Free;
+  FContext := AValue;
+end;
 function TProjectTreeManager.doubleClickEdit: boolean;
 begin
   Result := false;
 end;
 
+function TProjectTreeManager.AskOnDelete: boolean;
+begin
+  Result := false;
+end;
+
+function TProjectTreeManager.readOnly: boolean;
+begin
+  result := false;
+end;
+
 function TProjectTreeManager.allowedOperations(item: TFHIRProjectNode): TNodeOperationSet;
 begin
+  result := [];
   if item <> nil then
-    result := [opDelete, opEdit, opExecute]
-  else
-    result := [];
+    case item.kind of
+      pnkProject, pnkFolder:
+        if item.address <> '' then
+          result := [opAdd, opDelete, opRefresh, opEdit]
+        else
+          result := [opAdd, opDelete, opEdit];
+      pnkFile: result := [opDelete, opRefresh, opEdit, opExecute];
+    end;
 end;
 
 function TProjectTreeManager.loadData : boolean;
@@ -212,18 +384,39 @@ begin
 end;
 
 procedure TProjectTreeManager.buildMenu;
+var
+  mnu, t : TMenuItem;
 begin
   inherited buildMenu;
+  mnu := registerMenuEntry('Add', ICON_ADD, copNone, 'file');
+  registerSubMenuEntry(mnu, 'Folder', 127, copAdd, 'folder');
+  registerSubMenuEntry(mnu, 'Existing File', 3, copAdd, 'file');
+  registerSubMenuEntry(mnu, '-', -1, copNone);
+  for t in MainToolkitForm.pmNew.Items do
+    if t.visible then
+      if t.tag <> 0 then
+        registerSubMenuEntry(mnu, t.Caption, t.ImageIndex, copAdd, CODES_TSourceEditorKind[TSourceEditorKind(t.tag)])
+      else
+        registerSubMenuEntry(mnu, t.Caption, t.ImageIndex, copAdd, 'paste');
   registerMenuEntry('Open', ICON_EXECUTE, copExecute);
+  registerMenuEntry('Refresh', ICON_REFRESH, copRefresh);
   registerMenuEntry('Delete', ICON_DELETE, copDelete);
 end;
 
 function TProjectTreeManager.getImageIndex(item: TFHIRProjectNode): integer;
 begin
   case item.kind of
-    pnkProject : result := ICON_PACKAGE;
+    pnkProject :
+      if (item.address <> '') then
+        result := ICON_PACKAGE_LINK
+      else
+        result := ICON_PACKAGE;
     pnkFolder : result := ICON_FOLDER;
-    pnkFile : result := ICON_FILE;
+    pnkFile :
+      if (item.address <> '') and (Context.EditorForAddress('file:'+item.address) <> nil) then
+        result := ICON_OPEN_FILE
+      else
+        result := ICON_FILE;
   else
     result := -1;
   end;
@@ -241,15 +434,94 @@ end;
 //
 function TProjectTreeManager.getSummaryText(item: TFHIRProjectNode): String;
 begin
-  if (item.address <> '') then
+  if (item = nil) then
+    result := 'Project List'
+  else if (item.address <> '') then
     Result := item.name+' ('+item.address+')'
   else
     Result := item.name;
 end;
 
-function TProjectTreeManager.addItem(mode: String): TFHIRProjectNode;
+procedure TProjectTreeManager.changed;
 begin
-  Result := inherited AddItem(mode);
+  FView.save;
+end;
+
+function TProjectTreeManager.addItem(parent : TFHIRProjectNode; mode: String): TFHIRProjectNode;
+var
+  k : TSourceEditorKind;
+  n, e, p : String;
+  cnt : TBytes;
+begin
+  result := nil;
+  if (parent.kind = pnkFile) then
+    exit;
+
+  if (mode = 'folder') then
+  begin
+    n := parent.getNewName('');
+    result := TFHIRProjectNode.create;
+    try
+      result.kind := pnkFolder;
+      result.name := n;
+      if parent.address <> '' then
+      begin
+        result.address := path([parent.address, n]);
+        CreateDir(result.address);
+      end;
+      parent.FChildren.add(result.link);
+    finally
+      result.free;
+    end;
+  end
+  else if (mode = 'file') then
+  begin
+    if MainToolkitForm.FileSystem.openDlg(p) then
+    begin
+      p := p.substring(5); // remove the file:
+      n := ExtractFileName(p);
+      n := parent.getNameForFile(n);
+      result := TFHIRProjectNode.create;
+      try
+        result.kind := pnkFile;
+        result.name := n;
+        if parent.address <> '' then
+        begin
+          result.address := path([parent.address, n]);
+          BytesToFile(FileToBytes(p), result.address);
+        end
+        else
+          result.address := p;
+        MainToolkitForm.openFile('file:'+result.address);
+        parent.FChildren.add(result.link);
+      finally
+        result.free;
+      end;
+    end;
+  end
+  else
+  begin
+    if mode = 'paste' then
+      k := MainToolkitForm.determineClipboardFormat(cnt)
+    else
+      k := getKindByMode(mode);
+    if k <> sekNull then
+    begin
+      e := EXTENSIONS_TSourceEditorKind[k];
+      n := parent.getNewName(e);
+      result := TFHIRProjectNode.create;
+      try
+        result.kind := pnkFile;
+        result.name := n;
+        if parent.address <> '' then
+          result.address := path([parent.address, n]);
+        MainToolkitForm.createNewFile(k, result.name, result.address, cnt);
+        result.link;
+      finally
+        result.free;
+      end;
+    end;
+  end;
 end;
 
 function TProjectTreeManager.editItem(item: TFHIRProjectNode; mode: String): boolean;
@@ -257,15 +529,108 @@ begin
   // FView.OnEditServer(FView, item);
 end;
 
-procedure TProjectTreeManager.deleteItem(item: TFHIRProjectNode);
+function TProjectTreeManager.editItemText(parent, item: TFHIRProjectNode; var text: String): boolean;
+var
+  t : TFHIRProjectNode;
+  op, np : String;
 begin
-  inherited DeleteItem(item);
+  result := true;
+  for t in parent.children do
+  begin
+    if (t <> item) and (t.name = text) then
+    begin
+      MessageDlg('The name '+text+' is already in use', mtInformation, [mbOK], 0);
+      exit(false);
+    end;
+  end;
+  if parent.address <> '' then
+  begin
+    op := item.address;
+    np := path([parent.address, text]);
+    if FileExists(np) then
+    begin
+      MessageDlg('The name '+text+' is already in use', mtInformation, [mbOK], 0);
+      exit(false);
+    end;
+    if not RenameFile(op, np) then
+    begin
+      MessageDlg('Unable to rename '+item.name+' to '+text+' in '+parent.address, mtInformation, [mbOK], 0);
+      exit(false);
+    end;
+    if item.kind = pnkFolder then
+      item.renameChildren(op, np);
+    item.name := text;
+    if item.kind = pnkFolder then
+      MainToolkitForm.renameFolder(op, np)
+    else
+      MainToolkitForm.renameProjectFile(op, np);
+  end
+  else
+  begin
+    // in this case, we only rename the entry in the project; the file itself doesn't change
+    item.name := text;
+  end;
+end;
+
+function TProjectTreeManager.deleteItem(parent, item: TFHIRProjectNode) : boolean;
+var
+  res : TModalResult;
+begin
+  result := true;
+  case item.kind of
+    pnkProject :
+      if item.address <> '' then
+        res := MessageDlg('Delete Project '+item.Name+'. Truly delete all the files in the project too? This operation cannot be undone', mtConfirmation, [mbYes, mbNo, mbCancel], 0)
+      else
+        res := MessageDlg('Delete Project '+item.Name+' and all it''s entries? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+    pnkFolder:
+      if item.address <> '' then
+        res := MessageDlg('Delete Folder '+item.Name+' and all it''s contents? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0)
+      else
+        res := MessageDlg('Delete Folder '+item.Name+' and all it''s entries? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+    pnkFile :
+      if parent.address <> '' then
+        res := MessageDlg('Delete the file '+item.Name+'. This operation cannot be undone', mtConfirmation, [mbYes, mbNo, mbCancel], 0)
+      else
+        res := MessageDlg('Delete the link to file '+item.Name+'? This operation cannot be undone', mtConfirmation, [mbYes, mbCancel], 0);
+  end;
+  case res of
+    mrYes: result := FView.deleteProjectItem(parent, item, true);
+    mrNo: result := FView.deleteProjectItem(parent, item, false);
+    mrCancel: result := false;
+  end;
+  if result then
+  begin
+    if parent = nil then
+      Data.remove(item)
+    else
+      parent.children.remove(item);
+  end;
 end;
 
 function TProjectTreeManager.executeItem(item: TFHIRProjectNode; mode: String): boolean;
 begin
-  // FView.OnOpenServer(Fview, item);
-  Result := false;
+
+  if (item.kind = pnkFile) then
+  begin
+    MainToolkitForm.openFile('file:'+item.address);
+    result := true;
+  end
+  else
+    Result := false;
+end;
+
+function TProjectTreeManager.refreshItem(item: TFHIRProjectNode) : boolean;
+begin
+  if (item.address <> '') then
+  begin
+    item.loadFromAddress;
+    FView.save;
+    doLoad;
+    result := true;
+  end
+  else
+    result := false;
 end;
 
 { TFHIRProjectsView }
@@ -289,9 +654,29 @@ begin
   result := FManager.Tree;
 end;
 
+procedure TFHIRProjectsView.SetContext(AValue: TToolkitContext);
+begin
+  FManager.Context := AValue;
+end;
+
+procedure TFHIRProjectsView.SetImages(AValue: TImageList);
+begin
+  FManager.Images := AValue;
+end;
+
 function TFHIRProjectsView.GetProjects: TFslList<TFHIRProjectNode>;
 begin
   result := FManager.Data;
+end;
+
+function TFHIRProjectsView.GetImages: TImageList;
+begin
+  result := FManager.Images;
+end;
+
+function TFHIRProjectsView.GetContext: TToolkitContext;
+begin
+  result := FManager.Context;
 end;
 
 //function TFHIRProjectsView.GetServerList: TFslList<TFHIRServerEntry>;
@@ -304,11 +689,42 @@ begin
   FManager.Tree := AValue;
 end;
 
+function TFHIRProjectsView.findNodeForFile(list : TFslList<TFHIRProjectNode>; address: String): TFHIRProjectNode;
+var
+  t : TFHIRProjectNode;
+begin
+  result := nil;
+  for t in list do
+  begin
+    if (t.address = address) then
+      exit(t);
+    result := findNodeForFile(t.children, address);
+    if result <> nil then
+      exit;
+  end;
+end;
+
 procedure TFHIRProjectsView.load;
 begin
   try
     FManager.doLoad();
   except
+  end;
+end;
+
+procedure TFHIRProjectsView.save;
+var
+  json : TJsonObject;
+  p : TFHIRProjectNode;
+begin
+  json := TJsonObject.create;
+  try
+    json.str['edit'] := 'Don''t edit this file manually';
+    for p in FManager.Data do
+      json.forceArr['projects'].add(p.toJson);
+    BytesToFile(TJSONWriter.writeObject(json, true), FControlFile);
+  finally
+    json.free;
   end;
 end;
 
@@ -322,6 +738,7 @@ begin
   FManager.saveStatus;
 end;
 
+
 procedure TFHIRProjectsView.addProject(project: TFHIRProjectNode);
 var
   json : TJsonObject;
@@ -331,6 +748,7 @@ begin
   else
     json := TJsonObject.create;
   try
+    json.str['edit'] := 'Don''t edit this file manually';
     json.forceArr['projects'].add(project.toJson);
 
     BytesToFile(TJSONWriter.writeObject(json, true), FControlFile);
@@ -340,31 +758,64 @@ begin
   FManager.doLoad;
 end;
 
-//function TFHIRProjectsView.FetchServer(sender: TObject; name: String): TFHIRServerEntry;
-//var
-//  t : TFHIRServerEntry;
-//begin
-//  result := nil;
-//  for t in Fmanager.Data do
-//    if (t.Name = name) or (t.URL = name) then
-//      exit(t);
-//end;
-//
-//procedure TFHIRProjectsView.addServer(server: TFHIRServerEntry);
-//begin
-//  server.id := NewGuidId;
-//  FManager.Data.Insert(0, server.link);
-//  save;
-//  FManager.doLoad();
-//end;
-//
-//procedure TFHIRProjectsView.updateServer(server, newDetails: TFHIRServerEntry);
-//begin
-//  server.assign(newDetails);
-//  save;
-//  FManager.doLoad();
-//  if (server.workerObject <> nil) then
-//    (server.workerObject as TServerWorker).serverChanged;
-//end;
+function TFHIRProjectsView.deleteProjectItem(parent, item: TFHIRProjectNode; files: boolean) : boolean;
+begin
+  result := true;
+  case item.kind of
+    pnkProject, pnkFolder :
+      begin
+        if (item.address <> '') then
+          if not MainToolkitForm.closeFiles(item.address) then
+            exit(false);
+        if files and (item.address <> '') then
+          FolderDelete(item.address);
+      end;
+    pnkFile :
+      begin
+        if (item.address <> '') then
+          if not MainToolkitForm.closeFiles(item.address) then
+            exit(false);
+        if files and (item.address <> '') then
+          FileDelete(item.address);
+      end;
+  end;
+end;
+
+procedure TFHIRProjectsView.deleteProject(project: TFHIRProjectNode; files: boolean);
+var
+  json : TJsonObject;
+  i : integer;
+begin
+  if files and (project.address <> '') then
+    FolderDelete(project.address);
+  if FileExists(FControlFile) then
+    json := TJsonParser.ParseFile(FControlFile)
+  else
+    json := TJsonObject.create;
+
+  try
+    json.str['edit'] := 'Don''t edit this file manually';
+    for i := json.forceArr['projects'].count - 1 downto 0 do
+      if json.arr['projects'][i]['id'] = project.id then
+        json.arr['projects'].remove(i);
+    BytesToFile(TJSONWriter.writeObject(json, true), FControlFile);
+  finally
+    json.free;
+  end;
+end;
+
+procedure TFHIRProjectsView.renameFile(old, new: String);
+var
+  p : TFHIRProjectNode;
+begin
+  p := findNodeForFile(FManager.Data, old);
+  if (p <> nil) then
+  begin
+    p.address := new;
+    p.name := ExtractFileName(new);
+    save;
+    FManager.refresh(p);
+  end;
+end;
 
 end.
