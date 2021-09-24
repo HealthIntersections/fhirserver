@@ -90,7 +90,7 @@ implementation
 
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
-  Fini := TFHIRServerConfigFile.Create(Path([ExtractFilePath(paramstr(0)), 'fhir-server-gui.cfg']));
+  Fini := TFHIRServerConfigFile.Create(FilePath([ExtractFilePath(paramstr(0)), 'fhir-server-gui.cfg']));
   FServer := TFHIRServerController.create(FIni.link);
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;

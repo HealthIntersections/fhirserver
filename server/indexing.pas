@@ -630,7 +630,7 @@ function TFhirIndexManager.doResolve(source: TFHIRPathEngineV; appInfo: TFslObje
 begin
   // ok, we'll ask the host engine...
   if not assigned(FOnResolveReference) then
-    raise Exception.Create('No resolve reference service provided');
+    raise EFslException.Create('No resolve reference service provided');
   result := FOnResolveReference(self, appInfo, url);
 end;
 

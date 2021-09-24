@@ -1,4 +1,4 @@
-﻿unit fsl_testing;
+unit fsl_testing;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

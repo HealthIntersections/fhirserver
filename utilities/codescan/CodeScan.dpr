@@ -3,7 +3,7 @@ program CodeScan;
 {$APPTYPE CONSOLE}
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -36,12 +36,12 @@ POSSIBILITY OF SUCH DAMAGE.
 uses
   System.SysUtils,
   IOUtils,
-  fsl_collections in '..\..\library\support\fsl_collections.pas',
-  fsl_base in '..\..\library\support\fsl_base.pas',
-  fsl_utilities in '..\..\library\support\fsl_utilities.pas',
-  fsl_fpc in '..\..\library\support\fsl_fpc.pas',
-  fsl_shell in '..\..\library\support\fsl_shell.pas',
-  fsl_stream in '..\..\library\support\fsl_stream.pas';
+  fsl_collections in '..\..\library\fsl\fsl_collections.pas',
+  fsl_base in '..\..\library\fsl\fsl_base.pas',
+  fsl_utilities in '..\..\library\fsl\fsl_utilities.pas',
+  fsl_fpc in '..\..\library\fsl\fsl_fpc.pas',
+  fsl_shell in '..\..\library\fsl\fsl_shell.pas',
+  fsl_stream in '..\..\library\fsl\fsl_stream.pas';
 
 function isExemptUnit(s : String) : boolean;
 begin
@@ -120,9 +120,8 @@ begin
   finally
     b.Free;
   end;
-
-
 end;
+
 function scanPascalUnit(filename : String) : boolean;
 var
   u, src, srcns : String;
@@ -138,7 +137,7 @@ begin
   if not hasLicenseStatement(src) then
   begin
     // TFileLauncher.Open(filename);
-    if not StringArrayExists(['FHIR.FMX.Ctrls', 'FHIRPackageRegister', 'FHIRStringEdit', 'FHIR.Ui.Chart', 'products', 'unit1', ''], u) then
+    if not StringArrayExists(['FHIR.FMX.Ctrls', 'FHIRPackageRegister', 'FHIRStringEdit', 'FHIR.Ui.Chart', 'products', 'unit1', 'fdb_odbc_fpc', 'fsl_diff', 'fsl_java_jni', 'fsl_scrypt', 'fui_gfx', 'fui_gfx_color', 'fui_gfx_compression', 'fui_gfx_jpg'], u) then
     begin
       writeln('Unit '+filename+' has no license stmt');
       result := false;
@@ -194,7 +193,7 @@ end;
 function isExemptFolder(s : String) : boolean;
 begin
   result := StringArrayExistsInsensitive([
-   'C:\work\fhirserver\dependencies', 'C:\work\fhirserver\library\dstu1'], s);
+   'C:\work\fhirserver\dependencies', 'c:\work\fhirserver\utilities\generator', 'c:\work\fhirserver\packages'], s) or s.Contains('backup');
 end;
 
 function scanPascalUnits(folder : String) : boolean;

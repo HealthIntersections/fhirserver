@@ -41,7 +41,7 @@ Uses
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
 
-  TProgressEvent = procedure(sender : TObject; progess : integer) of Object;
+  TProgressEvent = procedure(sender : TObject; progress : integer) of Object;
 
   TInternetFetcher = Class (TFslObject)
   Private

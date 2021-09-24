@@ -955,12 +955,12 @@ end;
 
 procedure TListManager<T>.doUp;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TListManager<T>.doDown;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TListManager<T>.doExecute(mode: String);
@@ -1078,12 +1078,12 @@ end;
 
 function TListManager<T>.deleteItem(item: T) : boolean;
 begin
-  raise Exception.create('Delete is not supported here');
+  raise EFslException.Create('Delete is not supported here');
 end;
 
 function TListManager<T>.executeItem(item: T; mode: String): boolean;
 begin
-  raise Exception.create('Execute is not supported here');
+  raise EFslException.Create('Execute is not supported here');
 end;
 
 function TListManager<T>.refreshItem(item: T) : boolean;
@@ -1232,7 +1232,7 @@ begin
   do1 := FFocus.LocationData.hasLocation1;
   do2 := FFocus.LocationData.hasLocation2;
   if do1 and do2 then
-    raise Exception.create('not supported yet');
+    raise EFslException.Create('not supported yet');
 
   lines := TStringList.create;
   try
@@ -1285,7 +1285,7 @@ begin
     ffXml : loadXml;
     ffJson : loadJson;
   else
-    raise Exception.create('This format is not supported');
+    raise EFslException.Create('This format is not supported');
   end;
 end;
 
@@ -1300,36 +1300,36 @@ end;
 
 procedure TFHIRSynEditSynchroniser.addProperty(owner: TFHIRObject; name: String);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.deleteProperty(owner: TFHIRObject; name: String);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.addToList(owner: TFHIRObject; name: String; after: TFHIRObject);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.deleteFromList(owner: TFHIRObject; name: String; obj: TFHIRObject);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.moveInList(owner: TFHIRObject; name: String; obj: TFHIRObject; up: boolean);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.commit;
 begin
   case FOpInProgress of
-    opNone : raise Exception.create('No operation in process');
+    opNone : raise EFslException.Create('No operation in process');
     opChange : finishOpChange;
   else
-    raise Exception.create('not done yet');
+    raise EFslException.Create('not done yet');
   end;
   FOpInProgress := opNone;
   FContainer := nil;
@@ -1734,12 +1734,12 @@ end;
 
 function TTreeManager<T>.deleteItem(parent, item : T) : boolean;
 begin
-  raise Exception.create('Delete is not supported here');
+  raise EFslException.Create('Delete is not supported here');
 end;
 
 function TTreeManager<T>.executeItem(item : T; mode : String) : boolean;
 begin
-  raise Exception.create('Execute is not supported here');
+  raise EFslException.Create('Execute is not supported here');
 end;
 
 function TTreeManager<T>.refreshItem(item: T) : boolean;

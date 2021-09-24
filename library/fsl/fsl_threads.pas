@@ -341,6 +341,7 @@ Type
   TBackgroundTaskManager = class (TFslObject)
   private
     FStart : TDateTime;
+    FStarted : boolean;
     FLock : TFslLock;
     FEngines : TFslList<TBackgroundTaskEngine>;
     procedure log(s : String);
@@ -1204,7 +1205,7 @@ end;
 
 procedure TBackgroundTaskEngine.performUIInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-  raise Exception.Create('The method '+className+'.performUIInteraction needs to be overridden');
+  raise EFslException.Create('The method '+className+'.performUIInteraction needs to be overridden');
 end;
 
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
@@ -1360,6 +1361,8 @@ begin
   finally
     FLock.Unlock;
   end;
+  if FStarted then
+    engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>);
@@ -1389,6 +1392,7 @@ procedure TBackgroundTaskManager.stopAll;
 var
   e : TBackgroundTaskEngine;
 begin
+  FStarted := false;
   for e in FEngines do
     e.stop;
 end;
@@ -1422,14 +1426,23 @@ procedure TBackgroundTaskManager.start;
 var
   engine : TBackgroundTaskEngine;
 begin
+  FStarted := true;
+  Log('Start engine');
   for engine in FEngines do
     engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.log(s : String);
 begin
-//  AllocConsole;
-//  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  //AllocConsole;
+  //{$ifdef FPC}
+  //IsConsole := True;
+  //StdInputHandle  := 0;
+  //StdOutputHandle := 0;
+  //StdErrorHandle  := 0;
+  //SysInitStdIO;
+  //{$endif FPC}
+  //writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
 end;
 
 procedure TBackgroundTaskManager.primaryThreadCheck;

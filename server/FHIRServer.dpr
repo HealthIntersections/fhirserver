@@ -518,7 +518,8 @@ uses
   tx_icd11 in 'tx_icd11.pas',
   fhir_healthcard in '..\library\fhir\fhir_healthcard.pas',
   healthcard_generator in 'healthcard_generator.pas',
-  fsl_html in '..\library\fsl\fsl_html.pas';
+  fsl_html in '..\library\fsl\fsl_html.pas',
+  remote_config in 'remote_config.pas';
 
 begin
   ExecuteFhirServer;

@@ -893,7 +893,7 @@ begin
                 end;
                 html.append('</tr>'#13#10);
                 if (not res.hasInteraction) then
-                  raise Exception.Create('No interactions for '+res.code+'?');
+                  raise EFslException.Create('No interactions for '+res.code+'?');
 
                   //<th>Search/Updates Params</th>
                   // html.append('n : offset<br/>');
@@ -1100,7 +1100,7 @@ begin
                 end;
                 html.append('</tr>'#13#10);
                 if (not res.hasInteraction) then
-                  raise Exception.Create('No interactions for '+res.code+'?');
+                  raise EFslException.Create('No interactions for '+res.code+'?');
 
                   //<th>Search/Updates Params</th>
                   // html.append('n : offset<br/>');

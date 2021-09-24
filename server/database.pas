@@ -57,10 +57,6 @@ const
 const
   MAGIC_NUMBER = 941364592;
 
-  CURRENT_FHIR_STORAGE_VERSION = 2;
-  CONFIG_DEFAULT_RIGHTS = 10;
-  CONFIG_DATABASE_VERSION = 5;
-
   RELEASE_DATE = '20131103';
 
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';

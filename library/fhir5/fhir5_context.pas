@@ -215,7 +215,7 @@ end;
 
 function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);

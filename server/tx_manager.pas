@@ -1972,14 +1972,14 @@ var
   begin
     if FileExists(fn) then
       result := fn
-    else if FileExists(Path([fn])) then
-      result := Path([fn])
-    else if FileExists(Path(['[exe]', fn])) then
-      result := Path(['[exe]', fn])
-    else if FileExists(Path(['[curr]', fn])) then
-      result := Path(['[curr]', fn])
+    else if FileExists(FilePath([fn])) then
+      result := FilePath([fn])
+    else if FileExists(FilePath(['[exe]', fn])) then
+      result := FilePath(['[exe]', fn])
+    else if FileExists(FilePath(['[curr]', fn])) then
+      result := FilePath(['[curr]', fn])
     else
-      raise Exception.Create('Unable to find the '+name+' file "'+fn+'"');
+      raise EFslException.Create('Unable to find the '+name+' file "'+fn+'"');
   end;
 
 begin

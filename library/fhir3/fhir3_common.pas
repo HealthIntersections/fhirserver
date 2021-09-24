@@ -5364,7 +5364,7 @@ end;
 
 procedure TFhirTerminologyCapabilities3.setContext(Value: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 procedure TFhirTerminologyCapabilities3.setDate(Value: TFslDateTime);

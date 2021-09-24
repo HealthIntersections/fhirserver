@@ -225,7 +225,8 @@ uses
   fhir3_resources_canonical in '..\library\r3\fhir3_resources_canonical.pas',
   fhir3_resources_base in '..\library\r3\fhir3_resources_base.pas',
   fhir3_resources in '..\library\r3\fhir3_resources.pas',
-  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas';
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  QlpIQrCode in '..\dependencies\qrcode\QlpIQrCode.pas';
 
 {$R *.res}
 

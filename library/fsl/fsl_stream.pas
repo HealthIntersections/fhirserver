@@ -5711,7 +5711,7 @@ end;
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  raise Exception.create('To do');
+  raise EFslException.Create('To do');
 end;
 {$ENDIF}
 

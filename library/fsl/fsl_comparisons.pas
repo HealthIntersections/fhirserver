@@ -299,7 +299,7 @@ begin
     {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', cmd, true);
     {$ELSE}
-    raise Exception.create('to do');
+    raise EFslException.Create('to do');
     {$ENDIF}
   end;
 end;
@@ -422,7 +422,7 @@ begin
       {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
       {$ELSE}
-      raise Exception.create('to do');
+      raise EFslException.Create('to do');
       {$ENDIF}
     finally
       j2.Free;
@@ -541,7 +541,7 @@ begin
           {$IFDEF WINDOWS}
           ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
           {$ELSE}
-          raise Exception.create('to do');
+          raise EFslException.Create('to do');
           {$ENDIF}
         end;
       finally
@@ -562,7 +562,7 @@ begin
       {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
       {$ELSE}
-      raise Exception.create('to do');
+      raise EFslException.Create('to do');
       {$ENDIF}
     end;
   end;
@@ -601,7 +601,7 @@ begin
     {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
     {$ELSE}
-    raise Exception.create('to do');
+    raise EFslException.Create('to do');
     {$ENDIF}
   end;
 end;

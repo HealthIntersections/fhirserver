@@ -12,8 +12,8 @@ unit fui_gfx_strings;
 //
 // The initial developer of the original code is Dipl. Ing. Mike Lischke (Pleiﬂa, Germany, www.delphi-gems.com),
 //
-// Portions created by Dipl. Ing. Mike Lischke are Copyright
-// (C) 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
+// Portions created by Dipl. Ing. Mike Lischke are
+// Copyright (C) 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
 //----------------------------------------------------------------------------------------------------------------------
 // This file is part of the image library GraphicEx.
 //

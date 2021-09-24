@@ -48,7 +48,7 @@ Uses
 
   server_constants, server_config, utilities, server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  tx_manager, telnet_server, web_source, web_server, web_cache,
+  tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder;
 
@@ -115,7 +115,6 @@ type
 
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   protected
-    FStartTime : UInt64;
     function command(cmd: String): boolean; override;
   public
     constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
@@ -143,6 +142,9 @@ implementation
 uses
   JclDebug;
 {$ENDIF}
+
+var
+  GStartTime : UInt64;
 
 { TFhirServerMaintenanceThread }
 
@@ -227,7 +229,6 @@ end;
 
 constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
 begin
-  FStartTime := GetTickCount64;
   inherited create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
@@ -270,8 +271,8 @@ begin
     SetCacheStatus(settings.Ini.web['caching'].value = 'true');
 
     // post start up time.
-    getReport('|', true); // base line the object counting
-    Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
+    getReport('|', true); // base line the object countig
+    Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
     Logging.Starting := false;
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
   except
@@ -397,7 +398,7 @@ begin
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceZipProvider.Create(partnerFile('fhirserver.web'))
   end
   else
-    raise Exception.Create('Unable to find web source');
+    raise EFslException.Create('Unable to find web source');
 
   for ep in FEndPoints do
     FWebServer.registerEndPoint(ep);
@@ -540,7 +541,7 @@ begin
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else
-    raise Exception.Create('Unknown server type "' +config['type'].value+'"');
+    raise EFslException.Create('Unknown server type "' +config['type'].value+'"');
 end;
 
 function TFHIRServiceKernel.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
@@ -691,7 +692,10 @@ var
   cfgName : String;
   fn : String;
   tz : TDateTime;
+  zc : String;
 begin
+  GStartTime := GetTickCount64;
+
   {$IFDEF WINDOWS}
   SetConsoleTitle('FHIR Server');
   {$ENDIF}
@@ -749,6 +753,9 @@ begin
         {$ELSE}
           cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
         {$ENDIF}
+
+        if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
+          cfgName := buildConfigFromSource(cfgName);
 
         cfg := TFHIRServerConfigFile.create(cfgName);
         try

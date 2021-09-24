@@ -746,7 +746,7 @@ begin
   GBackgroundTasks.start;
 
   s := getAppConfigDir(false);
-  FIni := TIniFile.create(path([s, 'FHIRConsole.ini']));
+  FIni := TIniFile.create(FilePath([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
 
@@ -1588,7 +1588,7 @@ var
   combiner : TSnomedCombiner;
   svc : TSnomedServices;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
   if not FileExists(edtInternational.Text) then
     ShowMessage('International File "'+edtInternational.Text+'" not found')
   else if lbEditions.Items.Count = 0 then

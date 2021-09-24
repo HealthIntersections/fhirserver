@@ -176,7 +176,7 @@ function TFHIRIGPublisher.execute(folder : String; logProc: TLogProcedure): bool
 var
   thread : TPublishThread;
 begin
-//  raise Exception.Create('Not done yet');
+//  raise EFslException.Create('Not done yet');
 //    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar' then
 //      FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
 //    else if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
@@ -193,12 +193,12 @@ end;
 
 function TFHIRIGPublisher.needsUpgrade(folder : String; var msg: String): boolean;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 procedure TFHIRIGPublisher.upgrade(folder : String; progressProc: TProgressProc);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 end.

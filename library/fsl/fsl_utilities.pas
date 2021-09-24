@@ -770,7 +770,6 @@ Function FolderExists(Const sFolder : String) : Boolean;
 
 Function FileSize(Const sFileName : String) : Int64; Overload;
 function tempFile(name : String) : String;
-function Path(parts : array of String) : String;
 function FilePath(parts : array of String) : String;
 function URLPath(parts : array of String) : String;
 function makeRelativePath(path, base : String): String;
@@ -2988,24 +2987,6 @@ begin
     result := path;
 end;
 
-function makeAbsolutePath(fn, base : String): String;
-begin
-  if fn.Contains(':') then
-    result := fn
-  else
-    result := path([base, fn]);
-end;
-
-function tempFile(name : String) : String;
-begin
-  result := Path([SystemTemp, name]);
-end;
-
-function FilePath(parts : array of String) : String;
-begin
-  result := path(parts);
-end;
-
 function Path(parts : array of String) : String;
 var
   part : String;
@@ -3039,6 +3020,24 @@ begin
     else
       result := result + s.substring(1);
   end;
+end;
+
+function makeAbsolutePath(fn, base : String): String;
+begin
+  if fn.Contains(':') then
+    result := fn
+  else
+    result := path([base, fn]);
+end;
+
+function tempFile(name : String) : String;
+begin
+  result := Path([SystemTemp, name]);
+end;
+
+function FilePath(parts : array of String) : String;
+begin
+  result := path(parts);
 end;
 
 function URLPath(parts : array of String) : String;

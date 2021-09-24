@@ -65,7 +65,7 @@ begin
   Logging.Log('Run Tests (TestInsight)');
   test_registry.registerTests;
   {$IFDEF FPC}
-  raise Exception.create('This is not supported in FPC');
+  raise EFslException.Create('This is not supported in FPC');
   {$ELSE}
   FreeConsole;
   TestInsight.DUnit.RunRegisteredTests;

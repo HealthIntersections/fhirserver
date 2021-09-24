@@ -346,11 +346,11 @@ end;
 function describeDatabase(details: TFHIRServerConfigSection): String;
 begin
   if sameText(details['db-type'].value, 'mssql') then
-    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
+    result := 'mssql://'+details['db-server'].value+'/'+details['db-database'].value
   else if sameText(details['db-type'].value, 'mysql') then
-    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
+    result := 'mysql://'+details['db-server'].value+'/'+details['db-database'].value
   else if sameText(details['db-type'].value, 'SQLite') then
-    result := details['db-type'].value+':'+details['db-file'].value
+    result := 'sqlite:'+details['db-file'].value
   else
     result := 'Unknown database type '+details['db-type'].value
 end;

@@ -194,11 +194,11 @@ end;
 procedure TUMLSImporter.CheckFiles;
 begin
   if not FileExists(path([FFolder, 'RXNCONSO.RRF'])) then
-    raise Exception.create('File not found: RXNCONSO.RRF');
+    raise EFslException.Create('File not found: RXNCONSO.RRF');
   if not FileExists(path([FFolder, 'RXNREL.RRF'])) then
-    raise Exception.create('File not found: RXNREL.RRF');
+    raise EFslException.Create('File not found: RXNREL.RRF');
   if not FileExists(path([FFolder, 'RXNSTY.RRF'])) then
-    raise Exception.create('File not found: RXNSTY.RRF');
+    raise EFslException.Create('File not found: RXNSTY.RRF');
 end;
 
 procedure TUMLSImporter.CreateTables(callback : TWorkProgressEvent);

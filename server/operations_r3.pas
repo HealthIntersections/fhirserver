@@ -562,7 +562,7 @@ begin
         if m.value is TFhirReference then
           ref := (m.value as TFhirReference).reference
         else
-          raise Exception.Create('Unexpected type');
+          raise EFslException.Create('Unexpected type');
         if ref.StartsWith('Patient/') then
           st.Add(ref.Substring(9));
       end;

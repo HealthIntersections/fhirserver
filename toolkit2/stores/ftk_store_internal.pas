@@ -1,5 +1,33 @@
 unit ftk_store_internal;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -58,7 +86,7 @@ function TInternalStorageService.load(address: String; doException : boolean): T
 var
   fn : String;
 begin
-  fn := path([folder, address.Substring(9)]);
+  fn := FilePath([folder, address.Substring(9)]);
   if (FileExists(fn)) then
   begin
     result.content := FileToBytes(fn);
@@ -72,7 +100,7 @@ function TInternalStorageService.save(address: String; bytes: TBytes): TDateTime
 var
   fn : String;
 begin
-  fn := path([folder, address.Substring(9)]);
+  fn := FilePath([folder, address.Substring(9)]);
   BytesToFile(bytes, fn);
   result := FileGetModified(fn);
 end;
@@ -91,7 +119,7 @@ procedure TInternalStorageService.delete(address: String);
 var
   fn : String;
 begin
-  fn := path([folder, address.Substring(9)]);
+  fn := FilePath([folder, address.Substring(9)]);
   deleteFile(fn);
 end;
 
@@ -118,7 +146,7 @@ end;
 function TInternalStorageService.getName(address: String; mode: TNameMode): String;
 begin
   case mode of
-    nameModeFullPath : result := path([folder, address.Substring(9)]);
+    nameModeFullPath : result := FilePath([folder, address.Substring(9)]);
     nameModeFolder : result := folder;
     nameModeName : result := address.Substring(9);
   else result := '';

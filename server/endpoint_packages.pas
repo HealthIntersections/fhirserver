@@ -1,5 +1,33 @@
 unit endpoint_packages;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -206,7 +234,7 @@ end;
 
 procedure TPackageServerEndPoint.LoadPackages(plist: String);
 begin
-  raise Exception.Create('This is not applicable to this endpoint');
+  raise EFslException.Create('This is not applicable to this endpoint');
 end;
 
 function TPackageServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
@@ -232,7 +260,7 @@ end;
 
 procedure TPackageServerEndPoint.updateAdminPassword;
 begin
-  raise Exception.Create('This is not applicable to this endpoint');
+  raise EFslException.Create('This is not applicable to this endpoint');
 end;
 
 
@@ -1041,12 +1069,12 @@ begin
   try
     token := request.AuthPassword;
     if (token = '') then
-      raise Exception.Create('Authorization is required');
+      raise EFslException.Create('Authorization is required');
     mask := conn.LookupString('PackagePermissions', 'ManualToken', token, 'Mask', '');
     if (mask = '') then
-      raise Exception.Create('Authorization header not acceptable');
+      raise EFslException.Create('Authorization header not acceptable');
     if request.PostStream = nil then
-      raise Exception.Create('No Post Content found');
+      raise EFslException.Create('No Post Content found');
     blob := StreamToBytes(request.PostStream);
     npm := TNpmPackage.fromPackage(blob, '', nil);
     try
@@ -1055,22 +1083,22 @@ begin
       result := 'Create Package '+id+'#'+version;
       canonical := npm.info['canonical'];
       if (id = '') then
-        raise Exception.Create('No NPM Name found in package');
+        raise EFslException.Create('No NPM Name found in package');
       if not isValidPackageId(id) then
-        raise Exception.Create('Id "'+id+'" is not valid');
+        raise EFslException.Create('Id "'+id+'" is not valid');
       if (version = '') then
-        raise Exception.Create('No version found in package');
+        raise EFslException.Create('No version found in package');
       if not isValidSemVer(version) then
-        raise Exception.Create('Version "'+version+'" is not valid');
+        raise EFslException.Create('Version "'+version+'" is not valid');
       if (canonical = '') then
-        raise Exception.Create('No canonical found in package');
+        raise EFslException.Create('No canonical found in package');
       if not isAbsoluteUrl(canonical) then
-        raise Exception.Create('Canonical "'+canonical+'" is not valid');
+        raise EFslException.Create('Canonical "'+canonical+'" is not valid');
       i := mask.IndexOf('*');
       if i > 1 then
       begin
         if (id.Substring(i) <> mask.Substring(i)) then
-          raise Exception.Create('The security context has permissions of "'+mask+'" and is not authorised to upload "'+id+'"');
+          raise EFslException.Create('The security context has permissions of "'+mask+'" and is not authorised to upload "'+id+'"');
       end;
       conn.SQL := 'Select Count(*) from PackageVersions where Id = :i and Version = :v';
       conn.Prepare;
@@ -1079,7 +1107,7 @@ begin
       conn.Execute;
       conn.FetchNext;
       if conn.ColInteger[1] > 0 then
-        raise Exception.Create('The packageId "'+id+'#'+version+'" already exists, and can''t be changed');
+        raise EFslException.Create('The packageId "'+id+'#'+version+'" already exists, and can''t be changed');
       conn.Terminate;
 
       // ok, it's passed all the tests...
@@ -1225,7 +1253,7 @@ begin
         result := 'Package Web Request';
       end
       else
-        raise Exception.Create('The operation GET '+request.Document+' is not supported');
+        raise EFslException.Create('The operation GET '+request.Document+' is not supported');
     end
     else if (request.CommandType = hcPUT) and request.Document.StartsWith('/packages/') and request.Document.endsWith('/current') then
     begin
@@ -1238,7 +1266,7 @@ begin
     end
     else
     begin
-      raise Exception.Create('The operation '+request.Command+' is not supported');
+      raise EFslException.Create('The operation '+request.Command+' is not supported');
     end;
   finally
     pm.free;

@@ -1505,7 +1505,7 @@ begin
       end
   end;
 {$ELSE}
-    raise Exception.Create('This is not supported in R3');
+    raise EFslException.Create('This is not supported in R3');
 {$ENDIF}
 end;
 
@@ -1557,7 +1557,7 @@ end;
 {$ELSE}
 
 begin
-  raise Exception.Create('Not supported in R3');
+  raise EFslException.Create('Not supported in R3');
 end;
 {$ENDIF}
 

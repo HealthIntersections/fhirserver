@@ -413,12 +413,12 @@ end;
 
 function TFhirFacadeCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
 begin
-  raise Exception.Create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 function TFhirFacadeCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;

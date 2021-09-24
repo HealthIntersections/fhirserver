@@ -478,11 +478,11 @@ begin
   else
     i := fpchmod(filename, S_IRWXU or S_IRWXG or S_IRWXO);
   if (i <> 0) then
-    raise Exception.create('chmod failed');
+    raise EFslException.Create('chmod failed');
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  raise Exception.create('Not supported');
+  raise EFslException.Create('Not supported');
 end;
 {$ENDIF}
 end;
@@ -723,7 +723,7 @@ begin
         Exit;
       end;
       if (length(FBuffer) = 0) then
-        raise Exception.create('read File returned an empty buffer but claimed it wasn''t');
+        raise EFslException.Create('read File returned an empty buffer but claimed it wasn''t');
 
       FZStream.next_in := @FBuffer[0];
       FStreamPos := FStream.Position;
@@ -888,11 +888,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -909,11 +909,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -930,11 +930,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if (SearchRec.Attr and SysUtils.faDirectory <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 

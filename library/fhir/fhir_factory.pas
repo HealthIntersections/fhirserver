@@ -124,8 +124,6 @@ type
     function versionString : String; virtual;
     function versionName : String; virtual; abstract;
     function corePackage : String; virtual; abstract;
-    function txPackage : String; virtual; abstract;
-    function txSupportPackage : String; virtual; abstract;
     function specUrl : String; virtual; abstract;
     function description : String; virtual;
     function resourceNames : TArray<String>; virtual; abstract;

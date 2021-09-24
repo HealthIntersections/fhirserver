@@ -2882,7 +2882,7 @@ begin
     else if n is TMXmlAttribute then
       result := result + '/@' + n.FName
     else
-      raise Exception.create('unexpected');
+      raise EFslException.Create('unexpected');
   end;
 end;
 

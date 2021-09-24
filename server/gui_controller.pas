@@ -207,7 +207,7 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := Path([ExtractFilePath(ParamStr(0)), s]);
+  result := FilePath([ExtractFilePath(ParamStr(0)), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;
@@ -333,7 +333,7 @@ end;
 procedure TFHIRServerController.Start;
 begin
   if FThread <> nil then
-    raise Exception.Create('Thread already exists');
+    raise EFslException.Create('Thread already exists');
   FThread := TFHIRServerControllerThread.Create(self);
   FThread.Start;
 end;

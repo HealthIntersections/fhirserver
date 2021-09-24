@@ -3726,12 +3726,12 @@ end;
 
 procedure TValidationProfileSet.addProfiles(errors : TFslList<TFhirValidationMessage>; profiles : TValidationProfileSet; path : String; element : TFHIRMMElement; isEntry : boolean);
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 function TValidationProfileSet.canonicalUrls: TArray<String>;
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 constructor TValidationProfileSet.create(profile: TFHIRStructureDefinition);

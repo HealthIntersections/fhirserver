@@ -76,7 +76,7 @@ begin
     InteractiveClientForm.Free;
   end;
   {$ELSE}
-  raise Exception.Create('VCL not done yet');
+  raise EFslException.Create('VCL not done yet');
   {$ENDIF}
 end;
 

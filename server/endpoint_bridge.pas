@@ -1,5 +1,33 @@
 unit endpoint_bridge;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 {
@@ -264,7 +292,7 @@ end;
 
 procedure TBridgeEndPoint.LoadPackages(plist: String);
 begin
-  raise Exception.Create('This is not supported by the bridge end point');
+  raise EFslException.Create('This is not supported by the bridge end point');
 end;
 
 procedure TBridgeEndPoint.InstallDatabase;
@@ -336,7 +364,7 @@ end;
 
 procedure TBridgeEndPoint.updateAdminPassword;
 begin
-  raise Exception.Create('This is not supported the bridge end point');
+  raise EFslException.Create('This is not supported the bridge end point');
 end;
 
 function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
@@ -895,7 +923,7 @@ end;
 
 function TBridgeWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
-  raise Exception.Create('Authentication is not supported for this endpoint');
+  raise EFslException.Create('Authentication is not supported for this endpoint');
 end;
 
 function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
@@ -905,7 +933,7 @@ end;
 
 function TBridgeWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
-  raise Exception.Create('Upload is not supported for this endpoint');
+  raise EFslException.Create('Upload is not supported for this endpoint');
 end;
 
 function TBridgeWebServer.description: String;
@@ -915,17 +943,17 @@ end;
 
 function TBridgeWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
 begin
-  raise Exception.Create('todo?');
+  raise EFslException.Create('todo?');
 end;
 
 procedure TBridgeWebServer.GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String);
 begin
-  raise Exception.Create('WebUI is not supported for this endpoint');
+  raise EFslException.Create('WebUI is not supported for this endpoint');
 end;
 
 function TBridgeWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 begin
-  raise Exception.Create('WebUI is not supported for this endpoint');
+  raise EFslException.Create('WebUI is not supported for this endpoint');
 end;
 
 function TBridgeWebServer.link: TBridgeWebServer;
@@ -935,7 +963,7 @@ end;
 
 function TBridgeWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
-  raise Exception.Create('Upload is not supported for this endpoint');
+  raise EFslException.Create('Upload is not supported for this endpoint');
 end;
 
 end.

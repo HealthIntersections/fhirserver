@@ -3889,7 +3889,7 @@ var
   f : TFslFile;
   s : AnsiString;
 begin
-  filename := Path([SystemTemp, 'delphi.file.test.txt']);
+  filename := FilePath([SystemTemp, 'delphi.file.test.txt']);
   if FileExists(filename) then
   begin
     FileSetReadOnly(filename, false);

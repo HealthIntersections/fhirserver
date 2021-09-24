@@ -415,7 +415,7 @@ begin
   if DirectoryExists('c:\temp') then
     FTaskFolder := 'c:\temp\fhir-server-tasks'
   else
-    FTaskFolder := path([SystemTemp, 'fhir-server-tasks']);
+    FTaskFolder := FilePath([SystemTemp, 'fhir-server-tasks']);
   ForceFolder(FTaskFolder);
 end;
 
@@ -501,7 +501,7 @@ end;
 procedure TFHIRServerContext.SetValidate(const Value: Boolean);
 begin
   if (Value <> false) then
-    raise Exception.Create('Validation is not currently supported');
+    raise EFslException.Create('Validation is not currently supported');
   FValidate := Value;
 end;
 

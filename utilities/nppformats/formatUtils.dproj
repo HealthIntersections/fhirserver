@@ -120,7 +120,7 @@
         <Manifest_File>(None)</Manifest_File>
         <DCC_ExeOutput>C:\Program Files\Notepad++\plugins\FormatUtils</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
-        <DCC_UnitSearchPath>..\..\library\fsl;..\..\library;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\library\fsl;..\..\library;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\Indy10;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_RangeChecking>true</DCC_RangeChecking>

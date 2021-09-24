@@ -1239,12 +1239,12 @@ end;
 
 procedure TTransformerForm.estException1Click(Sender: TObject);
 begin
-  raise Exception.Create('Test Exception');
+  raise EFslException.Create('Test Exception');
 end;
 
 function TTransformerForm.ExecutorOpenFile(sender: TTransformEngine;f: TWorkspaceFile): TEditorInformation;
 begin
-  raise Exception.Create('Not implemented yet');
+  raise EFslException.Create('Not implemented yet');
 end;
 
 procedure TTransformerForm.ExecutorStateUpdate(sender: TTransformEngine);
@@ -1823,13 +1823,13 @@ end;
 procedure TTransformerForm.mnuDenseClick(Sender: TObject);
 begin
   case FEditor.id.format of
-    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtV2: raise EFslException.Create('Not Supported Yet');
     fmtCDA: FEditor.memo.RawText := makeXmlDense(FEditor.memo.RawText);
-    fmtResource: raise Exception.create('Not Supported Yet');
-    fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: raise Exception.create('Not Supported');
-    fmtTemplate: raise Exception.create('Not Supported Yet');
-    fmtMarkdown: raise Exception.create('Not Supported For Markdown');
+    fmtResource: raise EFslException.Create('Not Supported Yet');
+    fmtJS: raise EFslException.Create('Not Supported Yet');
+    fmtMap: raise EFslException.Create('Not Supported');
+    fmtTemplate: raise EFslException.Create('Not Supported Yet');
+    fmtMarkdown: raise EFslException.Create('Not Supported For Markdown');
   end;
 end;
 
@@ -2021,13 +2021,13 @@ end;
 procedure TTransformerForm.mnuPrettyClick(Sender: TObject);
 begin
   case FEditor.id.format of
-    fmtV2: raise Exception.Create('Not Supported Yet');
+    fmtV2: raise EFslException.Create('Not Supported Yet');
     fmtCDA: FEditor.memo.RawText := makeXmlPretty(FEditor.memo.RawText);
-    fmtResource: raise Exception.create('Not Supported Yet');
-    fmtJS: raise Exception.create('Not Supported Yet');
-    fmtMap: raise Exception.create('Not Supported');
-    fmtTemplate: raise Exception.create('Not Supported Yet');
-    fmtMarkdown: raise Exception.create('Not Supported for Markdown');
+    fmtResource: raise EFslException.Create('Not Supported Yet');
+    fmtJS: raise EFslException.Create('Not Supported Yet');
+    fmtMap: raise EFslException.Create('Not Supported');
+    fmtTemplate: raise EFslException.Create('Not Supported Yet');
+    fmtMarkdown: raise EFslException.Create('Not Supported for Markdown');
   end;
 end;
 
@@ -2251,7 +2251,7 @@ end;
 
 procedure TTransformerForm.Print1Click(Sender: TObject);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 procedure TTransformerForm.vtCallStackAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -2934,7 +2934,7 @@ begin
         fmt := 3;
       output := FEngine.canonical(FEditor.id);
       end;
-    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtJS: raise EFslException.Create('Not Supported Yet');
     fmtMap: output := FEngine.canonical(FEditor.id);
     fmtTemplate: output := FEngine.canonical(FEditor.id);
     fmtMarkdown: output := FEngine.canonical(FEditor.id);
@@ -2992,7 +2992,7 @@ begin
     fmtV2: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtCDA: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtResource: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
-    fmtJS: raise Exception.create('Not Supported Yet');
+    fmtJS: raise EFslException.Create('Not Supported Yet');
     fmtMap: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtTemplate: FEditor.memo.RawText := FEngine.canonical(FEditor.id);
     fmtMarkdown: FEditor.memo.RawText := FEngine.canonical(FEditor.id);

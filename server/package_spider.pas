@@ -212,13 +212,13 @@ begin
     end;
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise Exception.Create('Id "'+id+'" is not valid');
+      raise EFslException.Create('Id "'+id+'" is not valid');
     if not isValidSemVer(version) then
-      raise Exception.Create('Version "'+version+'" is not valid');
+      raise EFslException.Create('Version "'+version+'" is not valid');
     if (canonical = '') then
-      raise Exception.Create('No canonical found in rss');
+      raise EFslException.Create('No canonical found in rss');
     if not isAbsoluteUrl(canonical) then
-      raise Exception.Create('Canonical "'+canonical+'" is not valid');
+      raise EFslException.Create('Canonical "'+canonical+'" is not valid');
 
     commit(FDB, package, npm, date, guid, id, version, description, canonical, '', kind);
 

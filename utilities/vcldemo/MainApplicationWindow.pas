@@ -185,9 +185,9 @@ procedure TMainWindowForm.FormCreate(Sender: TObject);
 begin
   if not LoadOpenSSLLibrary then
     raise EIdOSSLCouldNotLoadSSLLibrary.Create(RSOSSLCouldNotLoadSSLLibrary+' ('+WhichFailedToLoad+')');
-  FLogService := TFileLoggingService.create(path([AppExePath, 'fhir-vcl-demo.log']));
+  FLogService := TFileLoggingService.create(FilePath([AppExePath, 'fhir-vcl-demo.log']));
   FProgressForm := TProgressWindow.Create(self);
-  FIni := TIniFile.Create(Path([SystemTemp, 'fhir-vcl-demo.ini']));
+  FIni := TIniFile.Create(FilePath([SystemTemp, 'fhir-vcl-demo.ini']));
   FAllergies := TFslList<TFHIRAllergyIntolerance>.create;
   FAllergiesComparer := TAllergiesComparer.create;
   FAllergiesComparer.FWindow := self;

@@ -1,5 +1,33 @@
 unit endpoint_storage;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 {
@@ -320,7 +348,7 @@ end;
 
 function TFHIRWebServerCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.createResourceV(resource: TFHIRResourceV; var id: String): TFHIRResourceV;
@@ -331,27 +359,27 @@ end;
 
 function TFHIRWebServerCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 procedure TFHIRWebServerCommunicator.deleteResourceV(atype: TFHIRResourceTypeV; id: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.historyInstanceV(atype: TFHIRResourceTypeV; id: String; allRecords: boolean; params: string): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.historyTypeV(atype: TFHIRResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.operationV(atype: TFHIRResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
@@ -361,17 +389,17 @@ end;
 
 function TFHIRWebServerCommunicator.operationV(atype: TFHIRResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.readResourceV(atype: TFhirResourceTypeV; id: String): TFHIRResourceV;
@@ -381,12 +409,12 @@ end;
 
 function TFHIRWebServerCommunicator.searchAgainV(link: String): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.searchPostV(atype: TFHIRResourceTypeV; allRecords: boolean; params: TStringList; resource: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.searchV(atype: TFHIRResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
@@ -398,7 +426,7 @@ var
 begin
   res := fetchResource('GET', makeUrl(aType)+'?'+params, nil);
   if res = nil then
-    raise Exception.Create('Network error: nothing returned from server?');
+    raise EFslException.Create('Network error: nothing returned from server?');
   bh := FClient.BundleFactory.Create(res);
   try
     if bh.resource.fhirType <> 'Bundle' then
@@ -424,12 +452,12 @@ end;
 
 procedure TFHIRWebServerCommunicator.terminate;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.updateResourceV(resource: TFHIRResourceV): TFHIRResourceV;
@@ -439,7 +467,7 @@ end;
 
 function TFHIRWebServerCommunicator.vreadResourceV(atype: TFhirResourceTypeV; id, vid: String): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRWebServerCommunicator.makeUrl(tail: String): String;
@@ -473,7 +501,7 @@ begin
         FEndPoint.ProcessRequest(ctxt, req, resp);
         result := resp.Resource.link;
         if resp.HTTPCode >= 300 then
-          raise Exception.Create(FEndPoint.Context.Factory.getXhtml(result).AsPlainText);
+          raise EFslException.Create(FEndPoint.Context.Factory.getXhtml(result).AsPlainText);
       finally
         resp.free;
       end;
@@ -2278,7 +2306,7 @@ function TStorageWebEndpoint.loadFromRsaDer(cert: string): TJWKList;
 var
   fn : String;
 begin
-  fn := fsl_utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
+  fn := fsl_utilities.FilePath([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
   StringToFile(cert, fn, TEncoding.UTF8);
   try
     result := TJWKList.create;
@@ -2491,7 +2519,7 @@ begin
         self.Context.Storage.MarkTaskDeleted(key);
         for n in names do
         begin
-          f := fsl_utilities.Path([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+          f := fsl_utilities.FilePath([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
           if FileExists(f) then
             DeleteFile(f);
         end;
@@ -2509,7 +2537,7 @@ begin
               zip.Stream := m.Link;
               for n in names do
               begin
-                f := fsl_utilities.Path([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+                f := fsl_utilities.FilePath([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
                 zip.addFile(n+EXT_WEB_TFHIRFormat[fmt], f);
               end;
               zip.WriteZip;
@@ -2528,7 +2556,7 @@ begin
         end
         else
         begin
-          f := fsl_utilities.Path([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+request.SubId]);
+          f := fsl_utilities.FilePath([self.Context.TaskFolder, 'task-'+inttostr(key)+'-'+request.SubId]);
           if not FileExists(f) then
           begin
             response.HTTPCode := 500;
@@ -2669,7 +2697,7 @@ begin
       self.Context.Storage.MarkTaskDeleted(task.key);
       for n in task.names do
       begin
-        fn := fsl_utilities.Path([self.Context.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
+        fn := fsl_utilities.FilePath([self.Context.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
         if FileExists(fn) then
           DeleteFile(fn);
       end;

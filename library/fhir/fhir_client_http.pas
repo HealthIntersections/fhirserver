@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_stream, fsl_json,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json,
   IdHTTP, IdComponent,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   {$IFNDEF FPC}fsl_wininet, {$ENDIF}
@@ -202,7 +202,7 @@ begin
   FUseIndy := Value;
   {$ELSE}
   if not Value then
-    raise Exception.create('must use indy when not in windows');
+    raise EFslException.Create('must use indy when not in windows');
   {$ENDIF}
 end;
 
@@ -816,7 +816,7 @@ var
 begin
   res := fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers);
   if res = nil then
-    raise Exception.Create('Network error: nothing returned from server?');
+    raise EFslException.Create('Network error: nothing returned from server?');
   bh := FClient.BundleFactory.Create(res);
   try
     if bh.resource.fhirType <> 'Bundle' then

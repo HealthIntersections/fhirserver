@@ -1140,7 +1140,7 @@ var
 begin
   if self = focus then
   begin
-    raise exception.create('not done yet');
+    raise EFslException.Create('not done yet');
   end
   else if start >= LocationData.parseFinish then // if start is after this, then we don't need to do anything
   begin
@@ -2029,7 +2029,7 @@ end;
 
 procedure TFHIRObject.SetDateValue(Value: TFslDateTime);
 begin
-  raise Exception.Create('This object of type '+className+' does not support date value');
+  raise EFslException.Create('This object of type '+className+' does not support date value');
 end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;

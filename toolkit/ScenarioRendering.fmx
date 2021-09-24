@@ -93,7 +93,7 @@ object ESPublishForm: TESPublishForm
     Size.Height = 225.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 28
-    Viewport.Width = 837.000000000000000000
-    Viewport.Height = 221.000000000000000000
+    Viewport.Width = 841.000000000000000000
+    Viewport.Height = 225.000000000000000000
   end
 end

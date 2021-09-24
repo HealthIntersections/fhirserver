@@ -122,7 +122,7 @@ function TFHIRTransformerContext.validateCode(system, version, code: String; vs:
 //  p : TFHIRParametersW;
 //  vsw : TFHIRValueSetW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    c := factory.wrapCoding(factory.makeByName('Coding'));
@@ -172,7 +172,7 @@ function TFHIRTransformerContext.getQuestionnaire(url: string): TFhirQuestionnai
 //var
 //  q : TFhirQuestionnaire;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  result := nil;
 //  if url.StartsWith('Questionnaire/') then
 //    url := url.Substring(14);
@@ -197,7 +197,7 @@ function TFHIRTransformerContext.expand(vs : TFhirValueSet; options : TExpansion
 //  vsw, res : TFHIRValueSetW;
 //  limit : integer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    limit := 0;
@@ -216,7 +216,7 @@ end;
 
 function TFHIRTransformerContext.supportsSystem(system, version : string) : boolean;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  result := FTerminologyServer.supportsSystem(system, version);
 end;
 
@@ -224,7 +224,7 @@ function TFHIRTransformerContext.validateCode(system, version, code, display : S
 //var
 //  op : TFHIROperationOutcomeW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
 //  try
 //    result := TValidationResult.Create;
@@ -257,7 +257,7 @@ function TFHIRTransformerContext.validateCode(code: TFHIRCoding; vs: TFhirValueS
 //  vsw : TFHIRValueSetW;
 //  c : TFhirCodingW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    result := TValidationResult.Create;
@@ -293,7 +293,7 @@ function TFHIRTransformerContext.validateCode(code: TFHIRCodeableConcept; vs: TF
 //  vsw : TFHIRValueSetW;
 //  c : TFhirCodeableConceptW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    result := TValidationResult.Create;

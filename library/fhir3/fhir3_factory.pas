@@ -50,8 +50,6 @@ type
     function versionString : String; override;
     function versionName : String; override;
     function corePackage : String; override;
-    function txPackage : String; override;
-    function txSupportPackage : String; override;
     function specUrl : String; override;
     function description : String; override;
     function resourceNames : TArray<String>; override;
@@ -339,7 +337,7 @@ end;
 
 function TFHIRFactoryR3.makeHealthcareCard: THealthcareCard;
 begin
-  raise Exception.Create('Healthcare Cards are not supported in version '+versionString);
+  raise EFslException.Create('Healthcare Cards are not supported in version '+versionString);
 end;
 
 function TFHIRFactoryR3.makeInteger(s: string): TFHIRObject;
@@ -513,16 +511,6 @@ end;
 function TFHIRFactoryR3.specUrl: String;
 begin
   result := 'http://build.fhir.org';
-end;
-
-function TFHIRFactoryR3.txPackage: String;
-begin
-  result := 'hl7.terminology.r3';
-end;
-
-function TFHIRFactoryR3.txSupportPackage: String;
-begin
-  result := 'fhir.tx.support.r3';
 end;
 
 function TFHIRFactoryR3.version: TFHIRVersion;
