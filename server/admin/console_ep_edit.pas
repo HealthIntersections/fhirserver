@@ -60,11 +60,13 @@ type
     edtSQLiteFile: TEdit;
     edtPath: TEdit;
     edtServer: TEdit;
+    edtFolder: TEdit;
     edtUsername: TEdit;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
+    Label13: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -177,6 +179,7 @@ begin
   edtUsername.Enabled := not rbSQLite.Checked;
   edtPassword.Enabled := not rbSQLite.Checked;
   edtSQLiteFile.Enabled := rbSQLite.Checked;
+  cbAutocreate.enabled := rbSQLite.Checked;
 
   if not rbSQLite.Checked then
   begin
@@ -214,13 +217,13 @@ begin
     edtIdentity.text := EP.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type'].value);
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
-    cbxTypeChange(self);
     edtPath.text := EP['path'].value;
     chkActive.Checked := EP['active'].readAsBool;
 
+    edtFolder.Text := EP['folder'].value;
     rbMSSQL.Checked := EP['db-type'].value = 'mssql';
     rbMySQL.Checked := EP['db-type'].value = 'mysql';
-    rbMSSQLChange(self);
+    rbSQLite.Checked := EP['db-type'].value = 'sqlite';
     if EP['db-type'].value <> '' then
       cbxDriver.Text := EP['db-type'].value;
     edtServer.Text := EP['db-server'].value;
@@ -228,6 +231,9 @@ begin
     edtUsername.Text := EP['db-username'].value;
     edtPassword.Text := EP['db-password'].value;
     edtSQLiteFile.Text := EP['db-file'].value;
+    cbAutocreate.checked := EP['db-auto-create'].valueBool;
+    rbMSSQLChange(self);
+    cbxTypeChange(self);
   end;
 end;
 
@@ -240,6 +246,7 @@ end;
 
 procedure TEditEPForm.cbxTypeChange(Sender: TObject);
 begin
+  // 1. sorting out version
   if (cbxType.ItemIndex = -1) or (hasVersions(cbxType.items[cbxType.ItemIndex])) then
   begin
     cbxVersion.Enabled := true;
@@ -255,39 +262,38 @@ begin
     cbxVersion.Enabled := false;
     cbxVersion.itemIndex := -1;
   end;
+
+  // sorting out source
   if (cbxType.ItemIndex = -1) or (hasDatabase(cbxType.items[cbxType.ItemIndex])) then
   begin
+    edtFolder.Enabled := cbxType.ItemIndex = -1;
     rbMSSQL.enabled := true;
     rbMySQL.enabled := true;
-    cbxDriver.enabled := true;
-    edtServer.enabled := true;
-    edtDBName.enabled := true;
-    edtUsername.enabled := true;
-    edtPassword.enabled := true;
-    edtSQLiteFile.enabled := false;
-  end
-  else if (hasSrcFolder(cbxType.items[cbxType.ItemIndex])) then
-  begin
-    rbMSSQL.enabled := false;
-    rbMySQL.enabled := false;
-    cbxDriver.enabled := false;
-    edtServer.enabled := false;
-    edtDBName.enabled := false;
-    edtUsername.enabled := false;
-    edtPassword.enabled := false;
-    edtSQLiteFile.enabled := true;
+    rbSQLite.enabled := true;
+    cbxDriver.enabled := not rbSQLite.Checked;
+    edtServer.enabled := not rbSQLite.Checked;
+    edtDBName.enabled := not rbSQLite.Checked;
+    edtUsername.enabled := not rbSQLite.Checked;
+    edtPassword.enabled := not rbSQLite.Checked;
+    edtSQLiteFile.enabled := rbSQLite.Checked;
+    cbAutocreate.enabled := rbSQLite.Checked;
   end
   else
   begin
     rbMSSQL.enabled := false;
     rbMySQL.enabled := false;
+    rbSQLite.enabled := false;
     cbxDriver.enabled := false;
     edtServer.enabled := false;
     edtDBName.enabled := false;
     edtUsername.enabled := false;
     edtPassword.enabled := false;
     edtSQLiteFile.enabled := false;
+    cbAutocreate.enabled := false;
+    edtFolder.Enabled := hasSrcFolder(cbxType.items[cbxType.ItemIndex]);
   end;
+  btnDBTest.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
+  btnEPInstall.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
 end;
 
 
@@ -332,9 +338,12 @@ begin
   EP['active'].ValueBool := chkActive.Checked;
 
   EP['path'].value := edtPath.text;
+  EP['folder'].value := edtFolder.Text;
   EP['db-type'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     EP['db-type'].value := 'mysql'
+  else if rbSQLite.Checked then
+    EP['db-type'].value := 'sqlite'
   else
     EP['db-type'].value := 'mssql';
   EP['db-server'].value := edtServer.Text;
@@ -342,6 +351,7 @@ begin
   EP['db-username'].value := edtUsername.Text;
   EP['db-password'].value := edtPassword.Text;
   EP['db-file'].value := edtSQLiteFile.Text;
+  EP['db-auto-create'].valueBool := cbAutocreate.checked;
 end;
 
 end.

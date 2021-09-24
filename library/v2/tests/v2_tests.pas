@@ -47,7 +47,7 @@ uses
   {$IFNDEF NO_JS}
   fsl_javascript, fhir_javascript, fhir4_javascript, v2_javascript,
   {$ENDIF}
-  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_Database, v2_objects, v2_message, v2_protocol;
+  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_database, v2_objects, v2_message, v2_protocol;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused

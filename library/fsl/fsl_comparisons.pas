@@ -35,7 +35,7 @@ interface
 Uses
   SysUtils,
   IdGlobalProtocols,
-  fsl_utilities, fsl_xml, fsl_json, fsl_turtle, fsl_stream
+  fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_turtle, fsl_stream
   {$IFDEF WINDOWS}, fsl_shell{$ENDIF};
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;

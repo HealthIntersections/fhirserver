@@ -519,7 +519,8 @@ uses
   fhir_healthcard in '..\library\fhir\fhir_healthcard.pas',
   healthcard_generator in 'healthcard_generator.pas',
   fsl_html in '..\library\fsl\fsl_html.pas',
-  remote_config in 'remote_config.pas';
+  remote_config in 'remote_config.pas',
+  endpoint_folder in 'endpoint_folder.pas';
 
 begin
   ExecuteFhirServer;
