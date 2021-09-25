@@ -326,7 +326,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="dialogs\frm_about.pas"/>
+        <Filename Value="..\server\admin\frm_about.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ToolkitAboutForm"/>
         <HasResources Value="True"/>

@@ -35,15 +35,15 @@ interface
 uses
   {$IFDEF WINDOWS}Windows, {$ENDIF}
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry, Types,
-  ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
+  ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces, LclIntf,
   IniFiles, Math,
   IdTelnet, IdGlobal,
   fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
   fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects, fdb_sqlite3,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii,
-  fui_lcl_managers,
+  fui_lcl_managers, fui_lcl_cache,
   server_config, server_constants,
-  console_managers;
+  console_managers, frm_about;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -521,6 +521,9 @@ type
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
     procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+    procedure MenuItem17Click(Sender: TObject);
+    procedure MenuItem33Click(Sender: TObject);
+    procedure MenuItem37Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
@@ -923,6 +926,28 @@ begin
 
 end;
 
+procedure TMainConsoleForm.MenuItem17Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainConsoleForm.MenuItem33Click(Sender: TObject);
+begin
+  OpenURL('http://www.healthintersections.com.au/wiki/index.php/Console/Manager_Documentation');
+end;
+
+procedure TMainConsoleForm.MenuItem37Click(Sender: TObject);
+var
+  frm : TConsoleAboutForm;
+begin
+  frm := TConsoleAboutForm.create(self);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
 begin
   ServerConnectionForm.edtServer.Text := FAddress;
@@ -947,7 +972,13 @@ end;
 
 procedure TMainConsoleForm.MenuItem6Click(Sender: TObject);
 begin
-
+  PackageCacheForm := TPackageCacheForm.create(self);
+   try
+     PackageCacheForm.Ini := FIni;
+     PackageCacheForm.showModal;
+   finally
+     PackageCacheForm.free;
+   end;
 end;
 
 procedure TMainConsoleForm.connectToServer(server : String);

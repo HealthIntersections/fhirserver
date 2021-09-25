@@ -222,7 +222,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="13">
       <Unit0>
         <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
@@ -293,6 +293,13 @@
         <Filename Value="installer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="admin\frm_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsoleAboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

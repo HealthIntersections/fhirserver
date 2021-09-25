@@ -5507,6 +5507,7 @@ object MainConsoleForm: TMainConsoleForm
       object MenuItem17: TMenuItem
         Caption = 'E&xit'
         ImageIndex = 14
+        OnClick = MenuItem17Click
       end
     end
     object MenuItem3: TMenuItem
@@ -5541,6 +5542,7 @@ object MainConsoleForm: TMainConsoleForm
       object MenuItem33: TMenuItem
         Caption = '&Content'
         ImageIndex = 26
+        OnClick = MenuItem33Click
       end
       object MenuItem35: TMenuItem
         Caption = 'Check For &Upgrades'
@@ -5552,6 +5554,7 @@ object MainConsoleForm: TMainConsoleForm
       object MenuItem37: TMenuItem
         Caption = '&About'
         ImageIndex = 28
+        OnClick = MenuItem37Click
       end
     end
   end
