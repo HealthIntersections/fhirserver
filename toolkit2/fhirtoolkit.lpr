@@ -21,7 +21,7 @@ uses
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
   ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
   ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
-  frm_file_deleted, frm_file_changed, frm_project_editor;
+  frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager;
 
 {$R *.res}
 
@@ -37,7 +37,6 @@ begin
   frm := TToolkitAboutForm.create(Application);
   try
     frm.Button1.Visible := false;
-    frm.height := frm.pnlBase.height;
     frm.Show;
     frm.Update;
     Application.CreateForm(TMainToolkitForm, MainToolkitForm);
@@ -49,6 +48,7 @@ begin
   Application.CreateForm(TDeletedFileActionForm, DeletedFileActionForm);
   Application.CreateForm(TModifiedFileActionForm, ModifiedFileActionForm);
   Application.CreateForm(TProjectSettingsForm, ProjectSettingsForm);
+  Application.CreateForm(TViewManagerForm, ViewManagerForm);
   Application.Run;
 end.
 

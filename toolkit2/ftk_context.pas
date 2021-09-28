@@ -724,6 +724,7 @@ begin
   FMessageView := TToolkitMessagesView.create;
   FInspector := TToolkitEditorInspectorView.create;
   FConsole := TToolkitConsole.create;
+  Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
 end;
@@ -733,6 +734,7 @@ begin
   FTerminologyService.Free;
   FInspector.Free;
   FMessageView.Free;
+  Logging.removeListener(FConsole);
   FConsole.Free;
   FStorages.Free;
   FEditors.Free;
