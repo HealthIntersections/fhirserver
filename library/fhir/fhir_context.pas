@@ -47,13 +47,17 @@ type
      FContext: TFHIRWorkerContextWithFactory;
      FIgnoreEmptyCodeSystems: boolean;
      FPackages: TStringList;
+     FUserMode: boolean;
      procedure SetContext(AValue: TFHIRWorkerContextWithFactory);
    public
      constructor Create; override;
      destructor Destroy; override;
 
+     function description : String; override;
+
      property context : TFHIRWorkerContextWithFactory read FContext write SetContext;
      property packages : TStringList read FPackages;
+     property userMode : boolean read FUserMode write FUserMode;
      property ignoreEmptyCodeSystems : boolean read FIgnoreEmptyCodeSystems write FIgnoreEmptyCodeSystems;
    end;
 
@@ -74,7 +78,8 @@ type
    private
      FNpm : TFHIRPackageManager;
      FBase, FStep : double;
-     procedure loadPackage(context : TFHIRWorkerContextWithFactory; id : String; ignoreEmptyCodeSystems : boolean);
+     procedure doNpmWork(sender : TObject; pct : integer; done : boolean; desc : String);
+     procedure loadPackage(context : TFHIRWorkerContextWithFactory; id : String; user, ignoreEmptyCodeSystems : boolean);
      procedure doProgress(state : String; c, t : integer);
      procedure loadResource(context : TFHIRWorkerContextWithFactory; res: TFHIRResourceV; ignoreEmptyCodeSystems: boolean);
    protected
@@ -121,6 +126,11 @@ begin
   inherited Destroy;
 end;
 
+function TFHIRLoadContextTaskRequest.description: String;
+begin
+  result := FContext.Factory.versionString;
+end;
+
 procedure TFHIRLoadContextTaskRequest.SetContext(AValue: TFHIRWorkerContextWithFactory);
 begin
   FContext.Free;
@@ -136,6 +146,7 @@ end;
 
 destructor TFHIRContextLoaderEngine.Destroy;
 begin
+  FNpm.Free;
   inherited Destroy;
 end;
 
@@ -154,11 +165,11 @@ begin
   resp := response as TFHIRLoadContextTaskResponse;
 
   FBase := 0;
-  FStep := 100 / req.packages.count;
+  FStep := 100 / (req.packages.count * 2);
   for s in req.packages do
   begin
-    loadPackage(req.context, s, req.ignoreEmptyCodeSystems);
-    FBase := FBase + FStep;
+    loadPackage(req.context, s, req.userMode, req.ignoreEmptyCodeSystems);
+    FBase := FBase + FStep * 2;
   end;
 end;
 
@@ -180,7 +191,12 @@ begin
     context.seeResource(res);
 end;
 
-procedure TFHIRContextLoaderEngine.loadPackage(context : TFHIRWorkerContextWithFactory; id : String; ignoreEmptyCodeSystems : boolean);
+procedure TFHIRContextLoaderEngine.doNpmWork(sender: TObject; pct: integer; done: boolean; desc: String);
+begin
+  progress(desc, trunc(FBase + (FStep * (pct / 100))));
+end;
+
+procedure TFHIRContextLoaderEngine.loadPackage(context : TFHIRWorkerContextWithFactory; id : String; user, ignoreEmptyCodeSystems : boolean);
 var
   npm : TNpmPackage;
   s : String;
@@ -192,11 +208,12 @@ begin
   doProgress('Loading Package' +id, 0, 1);
 
   if (FNpm = nil) then
-    FNpm := TFHIRPackageManager.Create(false);
+    FNpm := TFHIRPackageManager.Create(user);
   i := 0;
 
   p := context.factory.makeParser(context.Link, ffJson, defLang);
   try
+    FNpm.OnWork := doNpmWork;
     npm := FNpm.loadPackage(id);
     try
       context.Packages.Add(npm.name+'#'+npm.version);
@@ -234,7 +251,7 @@ end;
 
 procedure TFHIRContextLoaderEngine.doProgress(state : String; c, t: integer);
 begin
-  progress(state, trunc(FBase + (FStep * (c / t))));
+  progress(state, trunc(FBase + FStep + (FStep * (c / t))));
 end;
 
 initialization

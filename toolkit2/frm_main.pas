@@ -147,7 +147,7 @@ type
     chkCase: TCheckBox;
     chkWholeWord: TCheckBox;
     chkhideHintsAndWarnings: TCheckBox;
-    chkTaskInactive: TCheckBox;
+    chkTaskEngines: TCheckBox;
     chkCurrrentFileOnly: TCheckBox;
     cbxSearch: TComboBox;
     cbxSearchType: TComboBox;
@@ -1005,21 +1005,28 @@ var
 begin
   list := TFslList<TBackgroundTaskStatusInfo>.create;
   try
-    GBackgroundTasks.report(list);
+    if chkTaskEngines.checked then
+      GBackgroundTasks.report(list, tvtEngines)
+    else
+      GBackgroundTasks.report(list, tvtTasks);
     lvTasks.BeginUpdate;
     try
       index := lvTasks.ItemIndex;
       lvTasks.items.clear;
       for item in list do
       begin
-        if chkTaskInactive.Checked or not (item.status in [btsWaiting, btsClosed]) then
-        begin
+        //if chkTaskEngines.Checked or not (item.status in [btsWaiting, btsClosed]) then
+        //begin
           entry := lvTasks.items.add;
-          entry.Caption := item.name;
+          if item.info <> '' then
+            entry.Caption := item.name+': '+item.info
+          else
+            entry.Caption := item.name;
           entry.subitems.add(item.StatusDisplay);
           entry.subitems.add(item.PctDisplay);
+          entry.subitems.add(item.timeDisplay);
           entry.subitems.add(item.Message);
-        end;
+        //end;
       end;
       lvTasks.ItemIndex := Min(index, lvTasks.Items.Count);
     finally
@@ -2883,6 +2890,7 @@ procedure TMainToolkitForm.startLoadingContexts;
     try
       req.context := context;
       req.packages.add(pid);
+      req.userMode := true;
       resp := TFHIRLoadContextTaskResponse.create;
       try
         resp.context := context.link;
@@ -2901,7 +2909,7 @@ end;
 
 procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);
 begin
-  raise Exception.Create('not done yet');
+  FContext.context[(response as TFHIRLoadContextTaskResponse).context.Factory.version] := (response as TFHIRLoadContextTaskResponse).context.link;
 end;
 
 procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);

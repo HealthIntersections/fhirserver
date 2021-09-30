@@ -92,8 +92,8 @@ function checkMetadata(url : String; server : TFHIRServerEntry; var msg : String
 implementation
 
 uses
-  fhir3_client, fhir3_factory, fhir3_context,
-  fhir4_client, fhir4_factory, fhir4_context;
+  fhir3_client, fhir3_factory, fhir3_profiles,
+  fhir4_client, fhir4_factory, fhir4_profiles;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
 begin
@@ -108,8 +108,8 @@ end;
 function makeContext(version : TFHIRVersion) : TFHIRWorkerContextWithFactory;
 begin
   case version of
-    fhirVersionRelease3 : result := TFHIRWorkerContext3.create(TFHIRFactoryR3.create);
-    fhirVersionRelease4 : result := TFHIRWorkerContext4.create(TFHIRFactoryR4.create);
+    fhirVersionRelease3 : result := TBaseWorkerContextR3.create(TFHIRFactoryR3.create);
+    fhirVersionRelease4 : result := TBaseWorkerContextR4.create(TFHIRFactoryR4.create);
   else
     raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
   end;
