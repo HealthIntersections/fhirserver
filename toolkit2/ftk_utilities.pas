@@ -36,7 +36,7 @@ uses
   Classes, SysUtils,
   IdUri,
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_http, fsl_fetcher,
-  fhir_objects, fhir_factory, fhir_client, fhir_utilities, fhir_client_http, fhir_oauth;
+  fhir_objects, fhir_factory, fhir_client, fhir_utilities, fhir_client_http, fhir_oauth, fhir_context;
 
 type
 
@@ -81,6 +81,8 @@ type
   end;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
+function makeContext(version : TFHIRVersion) : TFHIRWorkerContextWithFactory;
+
 //function makeClient(version : TFHIRVersion; url : String) : TFhirClientV;
 
 function checkWellKnown(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
@@ -90,15 +92,26 @@ function checkMetadata(url : String; server : TFHIRServerEntry; var msg : String
 implementation
 
 uses
-  fhir3_client, fhir4_client, fhir3_factory, fhir4_factory;
+  fhir3_client, fhir3_factory, fhir3_context,
+  fhir4_client, fhir4_factory, fhir4_context;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
 begin
   case version of
     fhirVersionRelease3 : result := TFHIRFactoryR3.create;
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
-    else
-      raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
+  else
+    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
+  end;
+end;
+
+function makeContext(version : TFHIRVersion) : TFHIRWorkerContextWithFactory;
+begin
+  case version of
+    fhirVersionRelease3 : result := TFHIRWorkerContext3.create(TFHIRFactoryR3.create);
+    fhirVersionRelease4 : result := TFHIRWorkerContext4.create(TFHIRFactoryR4.create);
+  else
+    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
   end;
 end;
 

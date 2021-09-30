@@ -387,6 +387,10 @@
         <Filename Value="..\library\fhir\fhir_healthcard.pas"/>
         <UnitName Value="fhir_healthcard"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_context.pas"/>
+        <UnitName Value="fhir_context"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

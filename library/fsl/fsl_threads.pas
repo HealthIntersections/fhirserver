@@ -255,6 +255,7 @@ Type
 
   TBackgroundTaskStatusInfo = class (TFslObject)
   private
+    FCanCancel: boolean;
     FName: String;
     FId: integer;
     FStatus: TBackgroundTaskStatus;
@@ -270,6 +271,7 @@ Type
     property status : TBackgroundTaskStatus read FStatus write FStatus;
     property message : String read FMessage write FMessage;
     property pct : integer read FPct write FPct;
+    property canCancel : boolean read FCanCancel write FCanCancel;
 
     function StatusDisplay : string;
     function PctDisplay : String;
@@ -305,6 +307,7 @@ Type
     FUIExceptionClass : ExceptClass;
 
     function reportStatus : TBackgroundTaskStatusInfo;
+    function canCancel : boolean; virtual; abstract;
   public
     constructor Create; overload; override;
     constructor Create(notify : TBackgroundTaskEvent); overload;
@@ -331,6 +334,8 @@ Type
 
   TNullTaskEngine = class (TBackgroundTaskEngine)
   private
+  protected
+    function canCancel : boolean; override;
   public
     function name : String; override;
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
@@ -668,6 +673,11 @@ end;
 function TNullTaskEngine.name: String;
 begin
   result := 'Idle Task';
+end;
+
+function TNullTaskEngine.canCancel: boolean;
+begin
+  result := false;
 end;
 
 procedure TNullTaskEngine.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
@@ -1188,7 +1198,7 @@ procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackagePair);
 begin
   try
     SetStatus(btsProcessing);
-    GBackgroundTasks.log('Task '+name+' go');
+    GBackgroundTasks.log('Task '+name+' go ('+pck.request.ClassName+','+pck.response.ClassName+')');
     execute(pck.request, pck.response);
     GBackgroundTasks.log('Task '+name+' done');
     setStatus(btsWaiting);
@@ -1224,6 +1234,7 @@ begin
   result.status := FStatus;
   result.message := FState;
   result.pct := FPct;
+  result.canCancel := canCancel;
 end;
 
 procedure TBackgroundTaskEngine.setStatus(v: TBackgroundTaskStatus);
@@ -1434,15 +1445,15 @@ end;
 
 procedure TBackgroundTaskManager.log(s : String);
 begin
-  //AllocConsole;
-  //{$ifdef FPC}
-  //IsConsole := True;
-  //StdInputHandle  := 0;
-  //StdOutputHandle := 0;
-  //StdErrorHandle  := 0;
-  //SysInitStdIO;
-  //{$endif FPC}
-  //writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  AllocConsole;
+  {$ifdef FPC}
+  IsConsole := True;
+  StdInputHandle  := 0;
+  StdOutputHandle := 0;
+  StdErrorHandle  := 0;
+  SysInitStdIO;
+  {$endif FPC}
+  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
 end;
 
 procedure TBackgroundTaskManager.primaryThreadCheck;

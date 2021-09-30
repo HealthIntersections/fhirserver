@@ -3454,11 +3454,11 @@ object MainToolkitForm: TMainToolkitForm
         Height = 140
         Top = 1
         Width = 1287
-        ActivePage = tbMessages
+        ActivePage = tbTasks
         Align = alClient
         Images = imgMain
         ParentFont = False
-        TabIndex = 0
+        TabIndex = 4
         TabOrder = 0
         OnChange = pgBottomChange
         object tbMessages: TTabSheet
@@ -3890,21 +3890,11 @@ object MainToolkitForm: TMainToolkitForm
                 ShowHint = True
                 TabOrder = 0
               end
-            end
-            object Panel3: TPanel
-              Left = 1241
-              Height = 112
-              Top = 0
-              Width = 38
-              Align = alRight
-              ClientHeight = 112
-              ClientWidth = 38
-              ParentFont = False
-              TabOrder = 1
-              object SpeedButton1: TSpeedButton
-                Left = 8
+              object btnStopTask: TSpeedButton
+                Left = 2
                 Height = 24
-                Top = 8
+                Hint = 'Cancel Current Task'
+                Top = 34
                 Width = 24
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -3934,8 +3924,19 @@ object MainToolkitForm: TMainToolkitForm
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                 }
+                ShowHint = True
                 ParentFont = False
+                ParentShowHint = False
               end
+            end
+            object Panel3: TPanel
+              Left = 1241
+              Height = 112
+              Top = 0
+              Width = 38
+              Align = alRight
+              ParentFont = False
+              TabOrder = 1
             end
             object lvTasks: TListView
               Left = 32
@@ -4725,7 +4726,7 @@ object MainToolkitForm: TMainToolkitForm
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
                 ColWidths = (
                   64
-                  152
+                  135
                 )
               end
             end

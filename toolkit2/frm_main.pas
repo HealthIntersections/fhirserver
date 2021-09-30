@@ -40,7 +40,7 @@ uses
   IdOpenSSLLoader,
 
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl,
-  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser,
+  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
   fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
@@ -340,10 +340,10 @@ type
     pmSearch: TPopupMenu;
     dlgFolder: TSelectDirectoryDialog;
     pmTestServers: TPopupMenu;
-    SpeedButton1: TSpeedButton;
     btnClearLog: TSpeedButton;
     btnSearchFolder: TSpeedButton;
     btnCopyLog: TSpeedButton;
+    btnStopTask: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
@@ -583,6 +583,8 @@ type
     procedure AddServer(name, url : String);
     procedure clearContentMenu;
     procedure ApplyViewLayout;
+    procedure startLoadingContexts;
+    procedure doContextLoaded(id : integer; response : TBackgroundTaskResponsePackage);
   public
     property FileSystem : TStorageService read FFileSystem;
     property Context : TToolkitContext read FContext;
@@ -697,6 +699,7 @@ begin
   actionViewsOpenLog.enabled := false;
   actionViewsCopyLog.enabled := false;
   updateActionStatus(nil);
+  startLoadingContexts;
   Logging.Log('FHIR Toolkit Started: '+TFslDateTime.makeLocal.toString);
 end;
 
@@ -998,14 +1001,17 @@ var
   list : TFslList<TBackgroundTaskStatusInfo>;
   entry : TListItem;
   item : TBackgroundTaskStatusInfo;
+  index : integer;
 begin
   list := TFslList<TBackgroundTaskStatusInfo>.create;
   try
     GBackgroundTasks.report(list);
     lvTasks.BeginUpdate;
     try
+      index := lvTasks.ItemIndex;
       lvTasks.items.clear;
       for item in list do
+      begin
         if chkTaskInactive.Checked or not (item.status in [btsWaiting, btsClosed]) then
         begin
           entry := lvTasks.items.add;
@@ -1014,9 +1020,12 @@ begin
           entry.subitems.add(item.PctDisplay);
           entry.subitems.add(item.Message);
         end;
+      end;
+      lvTasks.ItemIndex := Min(index, lvTasks.Items.Count);
     finally
       lvTasks.EndUpdate;
     end;
+    btnStopTask.enabled := (lvTasks.ItemIndex > -1) and (list[lvTasks.ItemIndex].status in [btsWaiting, btsProcessing]) and (list[lvTasks.ItemIndex].canCancel) ;
   finally
     list.free;
   end;
@@ -2862,6 +2871,37 @@ begin
     FDoingLayout := false;
     EndFormUpdate;
   end;
+end;
+
+procedure TMainToolkitForm.startLoadingContexts;
+  procedure setLoadContext(context : TFHIRWorkerContextWithFactory; pid : String);
+  var
+    req : TFHIRLoadContextTaskRequest;
+    resp : TFHIRLoadContextTaskResponse;
+  begin
+    req := TFHIRLoadContextTaskRequest.create;
+    try
+      req.context := context;
+      req.packages.add(pid);
+      resp := TFHIRLoadContextTaskResponse.create;
+      try
+        resp.context := context.link;
+        GBackgroundTasks.queueTask(GContextLoaderTaskId, req.link, resp.link, doContextLoaded);
+      finally
+        resp.free;
+      end;
+    finally
+      req.free;
+    end;
+  end;
+begin
+  SetLoadContext(makeContext(fhirVersionRelease3), 'hl7.fhir.r3.core');
+  SetLoadContext(makeContext(fhirVersionRelease4), 'hl7.fhir.r4.core');
+end;
+
+procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);
+begin
+  raise Exception.Create('not done yet');
 end;
 
 procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);

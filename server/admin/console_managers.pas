@@ -81,6 +81,8 @@ type
   { TTXStatusChecker }
 
   TTXStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -143,6 +145,8 @@ type
   { TEPStatusChecker }
 
   TEPStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -200,6 +204,11 @@ uses
 
 { TEPStatusChecker }
 
+function TEPStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
+
 procedure TEPStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 begin
   (response as TEPStatusCheckResponse).status := checkDatabaseInstall((request as TEPStatusCheckRequest).Fitem);
@@ -225,6 +234,11 @@ begin
 end;
 
 { TTXStatusChecker }
+
+function TTXStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TTXStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 var

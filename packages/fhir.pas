@@ -29,7 +29,8 @@ uses
   v2_dictionary_v26, v2_dictionary_v27, v2_dictionary_v231, 
   v2_dictionary_v251, v2_dictionary_Versions, v2_javascript, v2_message, 
   v2_objects, v2_protocol, dicom_dictionary, dicom_jpegls, dicom_objects, 
-  dicom_parser, dicom_Writer, ftx_lang, fhir_healthcard, LazarusPackageIntf;
+  dicom_parser, dicom_Writer, ftx_lang, fhir_healthcard, fhir_context, 
+  LazarusPackageIntf;
 
 implementation
 

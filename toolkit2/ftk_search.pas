@@ -176,6 +176,8 @@ type
    TToolkitSearchTaskEngine  = class abstract (TBackgroundTaskEngine)
    private
      procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
+   protected
+       function canCancel : boolean; override;
    public
      function name : String; override;
      procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
@@ -247,6 +249,11 @@ end;
 procedure TToolkitSearchTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
   progress(desc, pct);
+end;
+
+function TToolkitSearchTaskEngine.canCancel: boolean;
+begin
+  result := true;
 end;
 
 function TToolkitSearchTaskEngine.name: String;
