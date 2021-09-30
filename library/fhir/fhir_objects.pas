@@ -598,14 +598,20 @@ type
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
   end;
 
+  { TFHIRWorkerContextV }
+
   TFHIRWorkerContextV = class (TFslObject)
   protected
     FLang : THTTPLanguages;
+    FPackages : TStringList;
 
     function GetVersion: TFHIRVersion; virtual;
   public
     constructor Create; override;
+    destructor Destroy; override;
     function link : TFHIRWorkerContextV; overload;
+
+    property Packages : TStringList read FPackages;
 
     property lang : THTTPLanguages read FLang write FLang;
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
@@ -2276,7 +2282,14 @@ end;
 constructor TFHIRWorkerContextV.Create;
 begin
   inherited;
-  FLang := THTTPLanguages.create('en');
+  FLang := defLang;
+  FPackages := TStringList.create;
+end;
+
+destructor TFHIRWorkerContextV.Destroy;
+begin
+  FPackages.Free;
+  inherited Destroy;
 end;
 
 function TFHIRWorkerContextV.GetVersion: TFHIRVersion;

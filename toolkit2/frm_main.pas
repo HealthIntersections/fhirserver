@@ -40,14 +40,15 @@ uses
   IdOpenSSLLoader,
 
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl,
-  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser,
+  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
+  fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
-  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor;
+  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types;
 
 type
   { TMainToolkitForm }
@@ -62,6 +63,9 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionViewManager: TAction;
+    actionViewsCopyLog: TAction;
+    actionViewsOpenLog: TAction;
     actionCreateNewProject: TAction;
     actionEditPasteEscaped: TAction;
     actionNewEditorJWT: TAction;
@@ -82,7 +86,6 @@ type
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
     actionEditFind: TAction;
-    actionViewReset: TAction;
     actionToolsSideBySideMode: TAction;
     actionViewFormDesigner: TAction;
     actionViewsClearLog: TAction;
@@ -139,6 +142,7 @@ type
     actionFileOpen: TAction;
     actionFileSaveAs1: TAction;
     actionHelpContent: THelpContents;
+    btnOpenLog: TSpeedButton;
     btnSearch: TBitBtn;
     chkCase: TCheckBox;
     chkWholeWord: TCheckBox;
@@ -305,6 +309,21 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Panel7: TPanel;
+    pnlLeftSpace: TPanel;
+    pnlRightSpace: TPanel;
+    pnlStack: TPanel;
+    pnlPackages: TPanel;
+    pnlFHIRPath: TPanel;
+    pnlTasks: TPanel;
+    pnlBreakpoints: TPanel;
+    pnlSearch: TPanel;
+    pnlLog: TPanel;
+    pnlMessages: TPanel;
+    pnlVariables: TPanel;
+    pnlInspector: TPanel;
+    pnlServers: TPanel;
+    pnlProjects: TPanel;
+    pnlClient: TPanel;
     pgEditors: TPageControl;
     Panel1: TPanel;
     Panel3: TPanel;
@@ -321,9 +340,10 @@ type
     pmSearch: TPopupMenu;
     dlgFolder: TSelectDirectoryDialog;
     pmTestServers: TPopupMenu;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
+    btnClearLog: TSpeedButton;
     btnSearchFolder: TSpeedButton;
+    btnCopyLog: TSpeedButton;
+    btnStopTask: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
@@ -429,18 +449,22 @@ type
     procedure actionViewFormDesignerExecute(Sender: TObject);
     procedure actionViewInspectorExecute(Sender: TObject);
     procedure actionViewLogExecute(Sender: TObject);
+    procedure actionViewManagerExecute(Sender: TObject);
     procedure actionViewMessagesExecute(Sender: TObject);
     procedure actionViewPackagesExecute(Sender: TObject);
     procedure actionViewProjectManagerExecute(Sender: TObject);
     procedure actionViewResetExecute(Sender: TObject);
     procedure actionViewsClearLogExecute(Sender: TObject);
+    procedure actionViewsCopyLogExecute(Sender: TObject);
     procedure actionViewSearchExecute(Sender: TObject);
     procedure actionViewServersExecute(Sender: TObject);
+    procedure actionViewsOpenLogExecute(Sender: TObject);
     procedure actionViewStackExecute(Sender: TObject);
     procedure actionViewTasksExecute(Sender: TObject);
     procedure actionViewVariablesExecute(Sender: TObject);
     procedure actionZoomInExecute(Sender: TObject);
     procedure actionZoomOutExecute(Sender: TObject);
+    procedure btnOpenLogClick(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure btnSearchFolderClick(Sender: TObject);
     procedure cbxSearchEditingDone(Sender: TObject);
@@ -469,11 +493,14 @@ type
     procedure mnuSearchGoClick(Sender: TObject);
     procedure NewFromFormatClick(Sender: TObject);
     procedure MenuItem79Click(Sender: TObject);
+    procedure pgBottomChange(Sender: TObject);
     procedure pgEditorsChange(Sender: TObject);
     procedure pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure pgLeftChange(Sender: TObject);
+    procedure pgRightChange(Sender: TObject);
     procedure pmMessageViewPopup(Sender: TObject);
-    procedure pmPagesPopup(Sender: TObject);
+    procedure pnlRightClick(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
@@ -495,10 +522,10 @@ type
     FTempStore : TFHIRToolkitTemporaryStorage;
     FFileSystem : TStorageService;
     FInternalStorage : TStorageService;
-    FSourceMaximised : boolean;
     FCheckingCurrency : boolean;
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
+    FViewManager : TViewManager;
     FServerView : TFHIRServersView;
     FProjectsView : TFHIRProjectsView;
     FFinishedLoading : boolean;
@@ -506,17 +533,24 @@ type
     FSearchTask : integer;
     FSearch : TFslList<TToolkitSearchMatch>;
     FShuttingDown : boolean;
+    FDoingLayout : boolean;
+    FViews : Array [TViewManagerPanelId] of TWinControl;
+    FLeftStack : TPanelStack;
+    FRightStack : TPanelStack;
+
     function checkDoSave(editor : TToolkitEditor): boolean;
     procedure copyFonts;
+    procedure hideTabs(pg: TPageControl);
     procedure loadFont(font: TFont; sname: String);
+    procedure placeView(panel : TPanel; id: TViewManagerPanelId);
     procedure SaveFile(editor: TToolkitEditor; address : String; updateStatus : boolean);
     procedure saveFont(font: TFont; sname : String);
-    procedure saveLayout;
-    procedure loadLayout;
+    procedure saveFonts;
+    procedure loadFonts;
     procedure loadSearch;
     procedure saveSearch;
     procedure maximiseSource;
-    procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
+    procedure showView(viewId : TViewManagerPanelId);
     procedure unmaximiseSource;
     procedure updateActionStatus(Sender : TObject);
     procedure DoAppActivate(Sender : TObject);
@@ -548,6 +582,9 @@ type
     function DoSmartLogin(server : TFHIRServerEntry) : boolean;
     procedure AddServer(name, url : String);
     procedure clearContentMenu;
+    procedure ApplyViewLayout;
+    procedure startLoadingContexts;
+    procedure doContextLoaded(id : integer; response : TBackgroundTaskResponsePackage);
   public
     property FileSystem : TStorageService read FFileSystem;
     property Context : TToolkitContext read FContext;
@@ -593,9 +630,25 @@ begin
   GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
-  FTempStore := TFHIRToolkitTemporaryStorage.create;
-  loadLayout;
+  FScale := 100;
+  FLeftStack := TPanelStack.create(pnlLeftSpace);
+  FRightStack := TPanelStack.create(pnlRightSpace);
+  FViewManager := TViewManager.create;
+  FViewManager.IniFile := FIni;
+  if FIni.readBool('main-form', 'maximised', false) then
+    WindowState := wsMaximized
+  else
+  begin
+    Top := FIni.readInteger('main-form', 'top', Top);
+    Left := FIni.readInteger('main-form', 'left', Left);
+    Height := FIni.readInteger('main-form', 'height', Height);
+    Width := FIni.readInteger('main-form', 'width', Width);
+  end;
+  loadFonts;
   loadSearch;
+
+
+  FTempStore := TFHIRToolkitTemporaryStorage.create;
 
   FContext := TToolkitContext.create(imgMain, actList);
   FContext.OnUpdateActions := updateActionStatus;
@@ -642,13 +695,20 @@ begin
   http.OnConnectToServer := DoConnectToServer;
   FSearch := TFslList<TToolkitSearchMatch>.create;
   FFactory := TToolkitFactory.create(FContext.link, self);
+  actionViewsClearLog.enabled := false;
+  actionViewsOpenLog.enabled := false;
+  actionViewsCopyLog.enabled := false;
   updateActionStatus(nil);
+  startLoadingContexts;
+  Logging.Log('FHIR Toolkit Started: '+TFslDateTime.makeLocal.toString);
 end;
 
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
 var
   editor : TToolkitEditor;
 begin
+  FLeftStack.free;
+  FRightStack.free;
   for editor in FContext.Editors do
     editor.saveStatus;
   FServerView.saveStatus;
@@ -663,7 +723,16 @@ begin
   FInternalStorage.Free;
   FTempStore.Free;
   FContext.Free;
-  saveLayout;
+  FViewManager.Free;
+
+  FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
+  if WindowState <> wsMaximized then
+  begin
+    FIni.WriteInteger('main-form', 'top', Top);
+    FIni.WriteInteger('main-form', 'left', Left);
+    FIni.WriteInteger('main-form', 'height', Height);
+    FIni.WriteInteger('main-form', 'width', Width);
+  end;
   FIni.Free;
 end;
 
@@ -676,6 +745,8 @@ var
   ns : boolean;
   i : integer;
 begin
+  ApplyViewLayout;
+
   sessions := TFslList<TToolkitEditSession>.create;
   try
     FTempStore.fetchOpenList(sessions);
@@ -695,6 +766,7 @@ begin
   finally
     sessions.free;
   end;
+
 
   for i := 1 to ParamCount do
     if (FileExists(ParamStr(i))) then
@@ -757,24 +829,8 @@ procedure TMainToolkitForm.mnuEditClick(Sender: TObject);
 begin
 end;
 
-procedure TMainToolkitForm.loadLayout;
+procedure TMainToolkitForm.loadFonts;
 begin
-  FScale := FIni.ReadInteger('main-form', 'scale', 100);
-  if FIni.readBool('main-form', 'maximised', false) then
-    WindowState := wsMaximized
-  else
-  begin
-    Top := FIni.readInteger('main-form', 'top', Top);
-    Left := FIni.readInteger('main-form', 'left', Left);
-    Height := FIni.readInteger('main-form', 'height', Height);
-    Width := FIni.readInteger('main-form', 'width', Width);
-  end;
-  pnlLeft.Width := FIni.readInteger('main-form', 'left.width', pnlLeft.Width);
-  pnlRight.Width := FIni.readInteger('main-form', 'right.width', pnlRight.Width);
-  pnlBottom.Height := FIni.ReadInteger('main-form', 'bottom.height', pnlBottom.Height);
-  if FIni.readBool('main-form', 'source.maximised', false) then
-    maximiseSource;
-
   loadFont(SynEdit1.font, 'font-editor');
   loadFont(lvMessages.font, 'font-view');
   loadFont(mConsole.font, 'font-log');
@@ -848,30 +904,11 @@ begin
     FIni.WriteBool(sname, 'underline', true);
 end;
 
-procedure TMainToolkitForm.saveLayout;
+procedure TMainToolkitForm.saveFonts;
 begin
-  FIni.WriteInteger('main-form', 'scale', FScale);
-  FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
-  if WindowState <> wsMaximized then
-  begin
-    FIni.WriteInteger('main-form', 'top', Top);
-    FIni.WriteInteger('main-form', 'left', Left);
-    FIni.WriteInteger('main-form', 'height', Height);
-    FIni.WriteInteger('main-form', 'width', Width);
-  end;
-  FIni.WriteInteger('main-form', 'panel.left.width', pnlLeft.Width);
-  FIni.WriteInteger('main-form', 'panel.right.width', pnlRight.Width);
-  FIni.WriteInteger('main-form', 'panel.bottom.height', pnlBottom.Height);
-  FIni.WriteBool('main-form', 'source.maximised', FSourceMaximised);
-
   saveFont(SynEdit1.font, 'font-editor');
   saveFont(lvMessages.font, 'font-view');
   saveFont(mConsole.font, 'font-log');
-end;
-
-procedure TMainToolkitForm.Splitter3Moved(Sender: TObject);
-begin
-  saveLayout;
 end;
 
 procedure TMainToolkitForm.tbLogShow(Sender: TObject);
@@ -929,16 +966,6 @@ begin
 
 end;
 
-procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);
-begin
-  saveLayout;
-end;
-
-procedure TMainToolkitForm.Splitter2Moved(Sender: TObject);
-begin
-  saveLayout;
-end;
-
 procedure TMainToolkitForm.maximiseSource;
 begin
   pnlLeft.visible := false;
@@ -947,7 +974,7 @@ begin
   Splitter1.enabled := false;
   Splitter2.enabled := false;
   Splitter3.enabled := false;
-  FSourceMaximised := true;
+  FViewManager.srcIsMaximised := true;
 end;
 
 procedure TMainToolkitForm.unmaximiseSource;
@@ -958,7 +985,7 @@ begin
   Splitter1.enabled := true;
   Splitter2.enabled := true;
   Splitter3.enabled := true;
-  FSourceMaximised := false;
+  FViewManager.srcIsMaximised := false;
 end;
 
 procedure TMainToolkitForm.updateUI;
@@ -974,14 +1001,17 @@ var
   list : TFslList<TBackgroundTaskStatusInfo>;
   entry : TListItem;
   item : TBackgroundTaskStatusInfo;
+  index : integer;
 begin
   list := TFslList<TBackgroundTaskStatusInfo>.create;
   try
     GBackgroundTasks.report(list);
     lvTasks.BeginUpdate;
     try
+      index := lvTasks.ItemIndex;
       lvTasks.items.clear;
       for item in list do
+      begin
         if chkTaskInactive.Checked or not (item.status in [btsWaiting, btsClosed]) then
         begin
           entry := lvTasks.items.add;
@@ -990,9 +1020,12 @@ begin
           entry.subitems.add(item.PctDisplay);
           entry.subitems.add(item.Message);
         end;
+      end;
+      lvTasks.ItemIndex := Min(index, lvTasks.Items.Count);
     finally
       lvTasks.EndUpdate;
     end;
+    btnStopTask.enabled := (lvTasks.ItemIndex > -1) and (list[lvTasks.ItemIndex].status in [btsWaiting, btsProcessing]) and (list[lvTasks.ItemIndex].canCancel) ;
   finally
     list.free;
   end;
@@ -1023,6 +1056,8 @@ begin
         mConsole.Lines.EndUpdate;
       end;
       actionViewsClearLog.enabled := true;
+      actionViewsOpenLog.enabled := true;
+      actionViewsCopyLog.enabled := true;
       if not mConsole.IsVisible then
         tbLog.ImageIndex := 85;
     end;
@@ -1419,6 +1454,8 @@ begin
   pnlMain.ScaleBy(FScale, 100);
   Splitter1.ScaleBy(FScale, 100);
   pnlBottom.ScaleBy(FScale, 100);
+  if not FDoingLayout then
+    FViewManager.scale := FScale;
 end;
 
 procedure TMainToolkitForm.doSearch;
@@ -1824,22 +1861,33 @@ end;
 
 procedure TMainToolkitForm.actionViewEditorExecute(Sender: TObject);
 begin
-  if FSourceMaximised then
+  if FViewManager.srcIsMaximised then
     unmaximiseSource
   else
     maximiseSource;
 end;
 
-procedure TMainToolkitForm.showView(pnl : TPanel; pg : TPageControl; tab : TTabSheet);
+procedure TMainToolkitForm.showView(viewId : TViewManagerPanelId);
+var
+  pg : TPageControl;
 begin
-  if FSourceMaximised then
+  if FViewManager.srcIsMaximised then
     unmaximiseSource;
-  pg.ActivePage := tab;
+  case FViewManager.location(viewId) of
+    tvlLeft : if pnlLeft.Width < 170 then pnlLeft.Width := 170;
+    tvlRight : if pnlRight.Width < 230 then pnlRight.Width := 230;
+    tvlBottom : if pnlBottom.Height < 142 then pnlBottom.Height := 142;
+  end;
+  if FViews[viewId] is TTabSheet then
+  begin
+    pg := (FViews[viewId] as TTabSheet).PageControl;
+    pg.ActivePage := FViews[viewId] as TTabSheet;
+  end;
 end;
 
 procedure TMainToolkitForm.actionViewExpressionEditorExecute(Sender: TObject);
 begin
-  showView(pnlLeft, pgLeft, tbExpression);
+  showView(tviFHIRPath);
 end;
 
 procedure TMainToolkitForm.actionViewFormDesignerExecute(Sender: TObject);
@@ -1853,77 +1901,88 @@ end;
 
 procedure TMainToolkitForm.actionViewInspectorExecute(Sender: TObject);
 begin
-  showView(pnlRight, pgRight, tbInspector);
+  showView(tviInspector);
 end;
 
 procedure TMainToolkitForm.actionViewLogExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbLog);
+  showView(tviLog);
+end;
+
+procedure TMainToolkitForm.actionViewManagerExecute(Sender: TObject);
+begin
+  ViewManagerForm := TViewManagerForm.create(self);
+  try
+    ViewManagerForm.Manager := FViewManager.link;
+    if ViewManagerForm.showModal = mrOk then
+      ApplyViewLayout;
+  finally
+    ViewManagerForm.Free;
+  end;
 end;
 
 procedure TMainToolkitForm.actionViewMessagesExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbMessages);
+  showView(tviMessages);
 end;
 
 procedure TMainToolkitForm.actionViewPackagesExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbPackages);
+  showView(tviPackages);
 end;
 
 procedure TMainToolkitForm.actionViewProjectManagerExecute(Sender: TObject);
 begin
-  showView(pnlLeft, pgLeft, tbProjects);
+  showView(tviProjects);
 end;
 
 procedure TMainToolkitForm.actionViewResetExecute(Sender: TObject);
 begin
-  BeginFormUpdate;
-  try
-    setScale(100);
-    pnlLeft.Width := 170;
-    pgLeft.ActivePage := tbProjects;
-    pnlRight.Width := 230;
-    pgRight.ActivePage := tbInspector;
-    pnlBottom.Height := 130;
-    pgBottom.ActivePage := tbMessages;
-    if FSourceMaximised then
-      unmaximiseSource
-  finally
-    EndFormUpdate;
-  end;
+
 end;
 
 procedure TMainToolkitForm.actionViewsClearLogExecute(Sender: TObject);
 begin
   mConsole.Clear;
   actionViewsClearLog.enabled := false;
+  actionViewsOpenLog.enabled := false;
+  actionViewsCopyLog.enabled := false;
+end;
+
+procedure TMainToolkitForm.actionViewsCopyLogExecute(Sender: TObject);
+begin
+  mConsole.CopyToClipboard;
 end;
 
 procedure TMainToolkitForm.actionViewSearchExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbSearch);
+  showView(tviSearch);
   cbxSearch.SetFocus;
 end;
 
 procedure TMainToolkitForm.actionViewServersExecute(Sender: TObject);
 begin
-  showView(pnlLeft, pgLeft, tbServers);
+  showView(tviServers);
+end;
+
+procedure TMainToolkitForm.actionViewsOpenLogExecute(Sender: TObject);
+begin
+  createNewFile(sekText, TEncoding.UTF8.GetBytes(mConsole.Text));
 end;
 
 procedure TMainToolkitForm.actionViewStackExecute(Sender: TObject);
 begin
-  showView(pnlRight, pgRight, tbStack);
+  showView(tviStack);
 end;
 
 procedure TMainToolkitForm.actionViewTasksExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbTasks);
+  showView(tviTasks);
 end;
 
 procedure TMainToolkitForm.actionViewVariablesExecute(Sender: TObject);
 begin
-  showView(pnlRight, pgRight, tbVariables);
+  showView(tviVariables);
 end;
 
 procedure TMainToolkitForm.actionZoomInExecute(Sender: TObject);
@@ -1945,6 +2004,12 @@ begin
     EndFormUpdate;
   end;
 end;
+
+procedure TMainToolkitForm.btnOpenLogClick(Sender: TObject);
+begin
+
+end;
+
 
 procedure TMainToolkitForm.btnSearchClick(Sender: TObject);
 begin
@@ -2130,7 +2195,7 @@ end;
 
 procedure TMainToolkitForm.actionEditFindExecute(Sender: TObject);
 begin
-  showView(pnlBottom, pgBottom, tbSearch);
+  showView(tviSearch);
   cbxSearch.SetFocus;
 end;
 
@@ -2504,7 +2569,7 @@ begin
       FIni.WriteString('tx', 'server', ToolkitSettingsForm.edtTxServer.Text);
       FIni.WriteString('tx', 'log', ToolkitSettingsForm.edtTxLog.Text);
       copyFonts;
-      saveLayout;
+      saveFonts;
     end;
   finally
     ToolkitSettingsForm.Free;
@@ -2691,10 +2756,190 @@ begin
   mnuLVCopyAll.enabled := lvMessages.Items.count > 0;
 end;
 
-procedure TMainToolkitForm.pmPagesPopup(Sender: TObject);
+procedure TMainToolkitForm.pnlRightClick(Sender: TObject);
 begin
 
 end;
+
+procedure TMainToolkitForm.placeView(panel : TPanel; id : TViewManagerPanelId);
+var
+  loc : TViewManagerLocation;
+  pg : TPageControl;
+  ndx : integer;
+  tab : TTabSheet;
+  stack : TPanelStack;
+begin
+  loc := FViewManager.location(id);
+  ndx := FViewManager.index(id);
+  if FViewManager.tabbed[loc] then
+  begin
+    case loc of
+      tvlLeft : pg := pgLeft;
+      tvlRight : pg := pgRight;
+      tvlBottom : pg := pgBottom;
+    end;
+    if ndx < pg.PageCount then
+      tab := pg.Pages[ndx]
+    else
+      tab := pg.AddTabSheet;
+    tab.Caption := TITLES_TViewManagerPanelId[id];
+    tab.ImageIndex := ICONS_TViewManagerPanelId[id];
+    tab.TabVisible := true;
+    FViews[id] := tab;
+    panel.Parent := tab;
+  end
+  else
+  begin
+    if loc = tvlLeft then
+      stack := FLeftStack
+    else
+      stack := FRightStack;
+    stack.setCaption(ndx, TITLES_TViewManagerPanelId[id], ICONS_TViewManagerPanelId[id]);
+    FViews[id] := stack.panel[ndx];
+    panel.Parent := stack.panel[ndx];
+//    stack.setSize(ndx,
+  end;
+end;
+
+procedure TMainToolkitForm.hideTabs(pg : TPageControl);
+var
+  i : integer;
+begin
+  for i := 0 to pg.PageCount - 1 do
+    pg.Pages[i].TabVisible := false;
+end;
+
+procedure TMainToolkitForm.ApplyViewLayout;
+begin
+  BeginFormUpdate;
+  FDoingLayout := true;
+  try
+    if FViewManager.scale <> FScale then
+      setScale(FViewManager.scale);
+
+    pnlLeft.Width := FViewManager.size(tvlLeft, pnlLeft.Width);
+    pnlRight.Width := FViewManager.size(tvlRight, pnlRight.Width);
+    pnlBottom.Height := FViewManager.size(tvlBottom, pnlBottom.Height);
+
+    if FViewManager.srcIsMaximised then
+      maximiseSource
+    else
+      unmaximiseSource;
+
+    // hide all tabs
+    hideTabs(pgLeft);
+    hideTabs(pgRight);
+    hideTabs(pgBottom);
+    if (FViewManager.tabbed[tvlLeft]) then
+      pgLeft.Visible := true
+    else
+    begin
+      FLeftStack.reset(FViewManager.count(tvlLeft));
+      pgLeft.Visible := false;
+    end;
+    if (FViewManager.tabbed[tvlRight]) then
+      pgRight.Visible := true
+    else
+    begin
+      FRightStack.reset(FViewManager.count(tvlRight));
+      pgRight.Visible := false;
+    end;
+
+    // fill out views
+    placeView(pnlProjects, tviProjects);
+    placeView(pnlServers, tviServers);
+    placeView(pnlInspector, tviInspector);
+    placeView(pnlVariables, tviVariables);
+    placeView(pnlStack, tviStack);
+    placeView(pnlMessages, tviMessages);
+    placeView(pnlLog, tviLog);
+    placeView(pnlSearch, tviSearch);
+    placeView(pnlBreakpoints, tviBreakpoints);
+    placeView(pnlTasks, tviTasks);
+    placeView(pnlFHIRPath, tviFHIRPath);
+    placeView(pnlPackages, tviPackages);
+
+    if (not FViewManager.tabbed[tvlLeft]) then
+      FLeftStack.resize;
+    if (not FViewManager.tabbed[tvlRight]) then
+      FRightStack.resize;
+
+    pgLeft.ActivePageIndex := FViewManager.active[tvlLeft];
+    pgRight.ActivePageIndex := FViewManager.active[tvlRight];
+    pgBottom.ActivePageIndex := FViewManager.active[tvlBottom];
+  finally
+    FDoingLayout := false;
+    EndFormUpdate;
+  end;
+end;
+
+procedure TMainToolkitForm.startLoadingContexts;
+  procedure setLoadContext(context : TFHIRWorkerContextWithFactory; pid : String);
+  var
+    req : TFHIRLoadContextTaskRequest;
+    resp : TFHIRLoadContextTaskResponse;
+  begin
+    req := TFHIRLoadContextTaskRequest.create;
+    try
+      req.context := context;
+      req.packages.add(pid);
+      resp := TFHIRLoadContextTaskResponse.create;
+      try
+        resp.context := context.link;
+        GBackgroundTasks.queueTask(GContextLoaderTaskId, req.link, resp.link, doContextLoaded);
+      finally
+        resp.free;
+      end;
+    finally
+      req.free;
+    end;
+  end;
+begin
+  SetLoadContext(makeContext(fhirVersionRelease3), 'hl7.fhir.r3.core');
+  SetLoadContext(makeContext(fhirVersionRelease4), 'hl7.fhir.r4.core');
+end;
+
+procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);
+begin
+  raise Exception.Create('not done yet');
+end;
+
+procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.setsize(tvlBottom, pnlBottom.Height);
+end;
+
+procedure TMainToolkitForm.Splitter3Moved(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.setsize(tvlLeft, pnlLeft.Width);
+end;
+
+procedure TMainToolkitForm.Splitter2Moved(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.setsize(tvlRight, pnlRight.Width);
+end;
+
+procedure TMainToolkitForm.pgBottomChange(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.active[tvlBottom] := pgBottom.ActivePageIndex;
+end;
+
+procedure TMainToolkitForm.pgLeftChange(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.active[tvlLeft] := pgLeft.ActivePageIndex;
+end;
+
+procedure TMainToolkitForm.pgRightChange(Sender: TObject);
+begin
+  if FDoingLayout then exit;
+  FViewManager.active[tvlRight] := pgRight.ActivePageIndex;
+end;
+
 
 end.
 

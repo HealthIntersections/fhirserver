@@ -44,11 +44,11 @@ type
   TToolkitAboutForm = class(TForm)
     Button1: TButton;
     Image1: TImage;
+    Image2: TImage;
     Label1: TLabel;
     lblVersion: TLabel;
     lblAge: TLabel;
     Panel1: TPanel;
-    pnlBase: TPanel;
     procedure FormShow(Sender: TObject);
     procedure Image1Click(Sender: TObject);
   private

@@ -322,8 +322,13 @@ type
     FTerminologyService: TFHIRTerminologyService;
     FToolBarHeight: integer;
     FSettings : TiniFile;
+    FContexts : Array [TFHIRVersion] of TFHIRWorkerContextWithFactory;
+
+    function GetContext(version : TFHIRVersion): TFHIRWorkerContextWithFactory;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
+    procedure SetContext(version : TFHIRVersion;
+      AValue: TFHIRWorkerContextWithFactory);
     procedure SetFocus(AValue: TToolkitEditor);
     procedure SetSideBySide(AValue: boolean);
     procedure SetTerminologyService(AValue: TFHIRTerminologyService);
@@ -375,6 +380,7 @@ type
     function factory(version : TFHIRVersion) : TFHIRFactory;
     procedure OpenResource(url : String);
 
+    property context[version : TFHIRVersion] : TFHIRWorkerContextWithFactory read GetContext write SetContext;
 
     property OnUpdateActions : TNotifyEvent read FOnUpdateActions write FOnUpdateActions;
     property OnChangeFocus : TNotifyEvent read FOnChangeFocus write FOnChangeFocus;
@@ -676,6 +682,17 @@ begin
   result := nil;
 end;
 
+function TToolkitContext.GetContext(version : TFHIRVersion): TFHIRWorkerContextWithFactory;
+begin
+  result := FContexts[version];
+end;
+
+procedure TToolkitContext.SetContext(version : TFHIRVersion; AValue: TFHIRWorkerContextWithFactory);
+begin
+  FContexts[version].Free;
+  FContexts[version] := AValue;
+end;
+
 function TToolkitContext.GetHasFocus: boolean;
 begin
   result := FFocus <> nil;
@@ -724,15 +741,21 @@ begin
   FMessageView := TToolkitMessagesView.create;
   FInspector := TToolkitEditorInspectorView.create;
   FConsole := TToolkitConsole.create;
+  Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
 end;
 
 destructor TToolkitContext.Destroy;
+var
+  a : TFHIRVersion;
 begin
+  for a in TFHIRVersion do
+    FContexts[a].Free;
   FTerminologyService.Free;
   FInspector.Free;
   FMessageView.Free;
+  Logging.removeListener(FConsole);
   FConsole.Free;
   FStorages.Free;
   FEditors.Free;

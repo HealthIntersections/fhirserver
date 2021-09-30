@@ -176,9 +176,11 @@ type
 
   { TFHIRLoadPackagesTaskEngine }
 
-  TFHIRLoadPackagesTaskEngine  = class abstract (TBackgroundTaskEngine)
+  TFHIRLoadPackagesTaskEngine  = class (TBackgroundTaskEngine)
   private
     procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
+  protected
+    function canCancel : boolean; override;
   public
     function name : String; override;
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
@@ -228,6 +230,11 @@ begin
 end;
 
 { TFHIRLoadPackagesTaskEngine }
+
+function TFHIRLoadPackagesTaskEngine.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TFHIRLoadPackagesTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
