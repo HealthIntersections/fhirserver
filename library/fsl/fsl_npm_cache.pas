@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ELSE} LazFileUtils, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads,
+  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads, fsl_logging,
   fsl_stream, fsl_fetcher,
   fsl_npm, fsl_npm_client;
 
@@ -156,6 +156,8 @@ type
   public
     constructor Create(manager : TFHIRPackageManager);
     destructor Destroy; override;
+
+    function description : String; override;
 
     property Manager : TFHIRPackageManager read FManager;
   end;
@@ -290,6 +292,11 @@ destructor TFHIRLoadPackagesTaskRequest.Destroy;
 begin
   FManager.free;
   inherited Destroy;
+end;
+
+function TFHIRLoadPackagesTaskRequest.description: String;
+begin
+  result := '';
 end;
 
 function TFHIRLoadPackagesTaskRequest.sizeInBytesV(magic : integer) : cardinal;
@@ -506,10 +513,11 @@ var
   aborted : boolean;
   s : String;
 begin
+  Logging.log('Installing Package from '+url+' to '+FFolder);
   fetch := TInternetFetcher.Create;
   try
     fetch.onProgress := progress;
-    FTaskDesc := 'Downloading';
+    FTaskDesc := 'Downloading from '+url;
     fetch.Buffer := TFslBuffer.create;
     aborted := false;
     s := '';
@@ -529,7 +537,7 @@ begin
       raise EIOException.create('Unable to find package for '+url+': '+s);
     if result then
     begin
-      Import(fetch.Buffer.AsBytes);
+      Import(fetch.Buffer.AsBytes).free;
     end;
   finally
     fetch.Free;

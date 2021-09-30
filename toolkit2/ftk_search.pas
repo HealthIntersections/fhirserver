@@ -89,6 +89,8 @@ type
      property kind : TToolkitSearchKind read FKind write FKind;
      property scope : String read FScope write FScope;
      property sources : TFslList<TToolkitSearchSource> read FSources;
+
+     function summary : String;
    end;
 
    { TToolkitSearchMatch }
@@ -156,6 +158,7 @@ type
 
      property spec : TToolkitSearchSpecification read FSpec;
      property context : TToolkitContext read FContext;
+     function description : String; override;
    end;
 
 
@@ -244,6 +247,17 @@ begin
   result := TToolkitSearchSpecification(inherited link);
 end;
 
+function TToolkitSearchSpecification.summary: String;
+begin
+  case FKind of
+    tskCurrent : result := FText+' in current document';
+    tskAllOpen : result := FText+' in all open documents';
+    tskProject : result := FText+' in project '+scope;
+    tskFolder : result := FText+' in folder '+scope;
+    tskFolderTree : result := FText+' in folders in '+scope;
+  end;
+end;
+
 { TToolkitSearchTaskEngine }
 
 procedure TToolkitSearchTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
@@ -291,6 +305,11 @@ begin
   FSpec.Free;
   FContext.free;
   inherited Destroy;
+end;
+
+function TToolkitSearchTaskRequest.description: String;
+begin
+  result := spec.summary;
 end;
 
 { TToolkitSearchTaskResponse }

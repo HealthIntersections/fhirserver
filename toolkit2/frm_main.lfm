@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
-  Left = 380
+  Left = 307
   Height = 757
-  Top = -905
+  Top = 122
   Width = 1289
   Caption = 'FHIR Toolkit'
   ClientHeight = 737
@@ -3207,7 +3207,7 @@ object MainToolkitForm: TMainToolkitForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object pnlStatus: TStatusBar
     Left = 0
     Height = 23
@@ -3658,7 +3658,6 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 38
                   Caption = 'Search:'
-                  ParentColor = False
                   ParentFont = False
                 end
                 object chkCase: TCheckBox
@@ -3710,7 +3709,6 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 13
                   Caption = 'In:'
-                  ParentColor = False
                   ParentFont = False
                 end
                 object cbxSearchType: TComboBox
@@ -3879,10 +3877,10 @@ object MainToolkitForm: TMainToolkitForm
               ClientWidth = 32
               ParentFont = False
               TabOrder = 0
-              object chkTaskInactive: TCheckBox
+              object chkTaskEngines: TCheckBox
                 Left = 8
                 Height = 19
-                Hint = 'Show Inactive Tasks'
+                Hint = 'Show engines not tasks'
                 Top = 8
                 Width = 20
                 ParentFont = False
@@ -3958,6 +3956,10 @@ object MainToolkitForm: TMainToolkitForm
                 item
                   Caption = '%'
                   Width = 40
+                end              
+                item
+                  Caption = 'Time'
+                  Width = 80
                 end              
                 item
                   Caption = 'Message'
@@ -4475,10 +4477,6 @@ object MainToolkitForm: TMainToolkitForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
-        ScrollOnEditLeftOptions.ScrollExtraPercent = 20
-        ScrollOnEditLeftOptions.ScrollExtraMax = 10
-        ScrollOnEditRightOptions.ScrollExtraPercent = 30
-        ScrollOnEditRightOptions.ScrollExtraMax = 25
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone

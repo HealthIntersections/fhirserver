@@ -64,6 +64,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TTXStatusCheckResponse }
@@ -127,6 +128,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TEPStatusCheckResponse }
@@ -332,6 +334,11 @@ begin
   inherited Destroy;
 end;
 
+function TTXStatusCheckRequest.description: String;
+begin
+  result := '';
+end;
+
 { TEPStatusCheckRequest }
 
 constructor TEPStatusCheckRequest.Create(item: TFHIRServerConfigSection);
@@ -344,6 +351,11 @@ destructor TEPStatusCheckRequest.Destroy;
 begin
   FItem.Free;
   inherited;
+end;
+
+function TEPStatusCheckRequest.description: String;
+begin
+  result := '';
 end;
 
 { TAdminManager }
