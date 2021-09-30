@@ -112,6 +112,7 @@ recent bug fixes so older versions are probably not supported.
 The FhirServer depends on the following other GitHub repositories:
 * https://github.com/dezlov/PascalTZ
 * https://github.com/grahamegrieve/delphi-markdown
+* https://github.com/Xor-el/QRCodeGenLib4Pascal
 
 The toolkit also depends on these repositories:
 * https://github.com/mriscoc/extrasyn
