@@ -116,7 +116,7 @@ The FhirServer depends on the following other GitHub repositories:
 
 The toolkit also depends on these repositories:
 * https://github.com/mriscoc/extrasyn
-* https://github.com/BerndGabriel/HtmlViewer
+* https://github.com/grahamegrieve/HtmlViewer
 
 Get a local copy of these, and install their packages. 
 
