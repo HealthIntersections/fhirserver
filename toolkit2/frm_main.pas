@@ -39,19 +39,31 @@ uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang,
   fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
   fui_lcl_managers,
 
-  ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service,
+  ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
-  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types;
+  frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
+  dlg_new_resource;
 
 type
-  { TMainToolkitForm }
+  {$IFDEF WINDOWS}
+   { TPageControl }
+   TPageControl = class(ComCtrls.TPageControl)
+   private
+     const btnSize = 10;
+   protected
+     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+     procedure PaintWindow(DC: HDC); override;
+   end;
+   {$ENDIF}
+
+{ TMainToolkitForm }
 
   TMainToolkitForm = class(TForm)
     actExecuteDebug: TAction;
@@ -372,18 +384,18 @@ type
     ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
-    ToolButton16: TToolButton;
-    ToolButton17: TToolButton;
-    ToolButton18: TToolButton;
-    ToolButton19: TToolButton;
+    tbView1: TToolButton;
+    tbView2: TToolButton;
+    tbView3: TToolButton;
+    tbView4: TToolButton;
     ToolButton2: TToolButton;
-    ToolButton20: TToolButton;
-    ToolButton21: TToolButton;
-    ToolButton22: TToolButton;
-    ToolButton23: TToolButton;
-    ToolButton24: TToolButton;
-    ToolButton25: TToolButton;
-    ToolButton26: TToolButton;
+    tbView5: TToolButton;
+    tbView6: TToolButton;
+    tbView7: TToolButton;
+    tbView8: TToolButton;
+    tbView9: TToolButton;
+    tbView10: TToolButton;
+    tbView11: TToolButton;
     ToolButton27: TToolButton;
     ToolButton28: TToolButton;
     ToolButton29: TToolButton;
@@ -395,6 +407,7 @@ type
     ToolButton34: TToolButton;
     ToolButton35: TToolButton;
     ToolButton36: TToolButton;
+    ToolButton37: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
@@ -495,8 +508,8 @@ type
     procedure MenuItem79Click(Sender: TObject);
     procedure pgBottomChange(Sender: TObject);
     procedure pgEditorsChange(Sender: TObject);
-    procedure pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure pgEditorsCloseTabClicked(Sender: TObject);
+    procedure pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure pgLeftChange(Sender: TObject);
     procedure pgRightChange(Sender: TObject);
     procedure pmMessageViewPopup(Sender: TObject);
@@ -531,6 +544,7 @@ type
     FFinishedLoading : boolean;
     FScale : integer;
     FSearchTask : integer;
+    FLastTaskUpdate : UInt64;
     FSearch : TFslList<TToolkitSearchMatch>;
     FShuttingDown : boolean;
     FDoingLayout : boolean;
@@ -606,6 +620,49 @@ implementation
 
 {$R *.lfm}
 
+{$IFDEF WINDOWS}
+procedure TPageControl.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  r : TRect;
+begin
+  inherited MouseDown(Button, Shift, X, Y);
+  if (self = MainToolkitForm.pgEditors) and (Button = mbLeft) then
+  begin
+    R := TabRect(ActivePageIndex);
+    if PtInRect(Classes.Rect(R.Right - btnSize - 4, R.Top + 2, R.Right - 4, R.Top + btnSize + 2), Classes.Point(X, Y)) then
+      MainToolkitForm.pgEditorsCloseTabClicked(nil);
+  end;
+end;
+
+procedure TPageControl.PaintWindow(DC: HDC);
+var
+  i : integer;
+  r : TRect;
+  bm : TBitmap;
+begin
+  inherited PaintWindow(DC);
+
+  if (self = MainToolkitForm.pgEditors) then
+  begin
+    bm := TBitmap.Create;
+    try
+      bm.SetSize(16, 16);
+      MainToolkitForm.imgMain.GetBitmap(ICON_CLOSE, bm);
+      for i := 0 to PageCount - 1 do
+      begin
+        R := TabRect(i);
+        if i = ActivePageIndex then
+          StretchBlt(DC, R.Right - btnSize - 4, R.Top + 4, btnSize, btnSize, bm.Canvas.Handle, 0, 0, 16, 16, cmSrcCopy)
+        else
+          StretchBlt(DC, R.Right - btnSize - 4, R.Top + 6, btnSize, btnSize, bm.Canvas.Handle, 0, 0, 16, 16, cmSrcCopy);
+      end;
+    finally
+      bm.Free;
+    end;
+  end;
+end;
+{$ENDIF}
+
 { TMainToolkitForm }
 
 procedure TMainToolkitForm.FormCreate(Sender: TObject);
@@ -620,7 +677,7 @@ begin
   {$ELSE}
   mnuApple.Visible := false;
   {$ENDIF}
-  initialiseTZData(partnerFile('tzdata.tar.gz'));
+  initialiseTZData(partnerFile('tz.dat'));
   {$IFDEF WINDOWS}
 
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
@@ -699,6 +756,7 @@ begin
   actionViewsOpenLog.enabled := false;
   actionViewsCopyLog.enabled := false;
   updateActionStatus(nil);
+  FContext.Languages := TIETFLanguageDefinitions.create(FileToString(FilePath([ExtractFilePath(paramstr(0)), 'lang.dat']), TEncoding.UTF8));
   startLoadingContexts;
   Logging.Log('FHIR Toolkit Started: '+TFslDateTime.makeLocal.toString);
 end;
@@ -997,41 +1055,59 @@ begin
 end;
 
 procedure TMainToolkitForm.updateTasks;
+  procedure setSubItem(entry : TListItem; index : integer; value : String);
+  begin
+    if (entry.SubItems.count <= index) then
+      entry.subitems.add(value)
+    else
+      entry.subitems[index] := value;
+  end;
 var
   list : TFslList<TBackgroundTaskStatusInfo>;
   entry : TListItem;
   item : TBackgroundTaskStatusInfo;
-  index : integer;
+  id, index, count, i : integer;
+
 begin
+  if FLastTaskUpdate + 500 > GetTickCount64 then
+    exit;
+  FLastTaskUpdate := GetTickCount64;
   list := TFslList<TBackgroundTaskStatusInfo>.create;
   try
     if chkTaskEngines.checked then
       GBackgroundTasks.report(list, tvtEngines)
     else
       GBackgroundTasks.report(list, tvtTasks);
-    lvTasks.BeginUpdate;
-    try
-      index := lvTasks.ItemIndex;
-      lvTasks.items.clear;
-      for item in list do
-      begin
-        //if chkTaskEngines.Checked or not (item.status in [btsWaiting, btsClosed]) then
-        //begin
-          entry := lvTasks.items.add;
-          if item.info <> '' then
-            entry.Caption := item.name+': '+item.info
-          else
-            entry.Caption := item.name;
-          entry.subitems.add(item.StatusDisplay);
-          entry.subitems.add(item.PctDisplay);
-          entry.subitems.add(item.timeDisplay);
-          entry.subitems.add(item.Message);
-        //end;
-      end;
-      lvTasks.ItemIndex := Min(index, lvTasks.Items.Count);
-    finally
-      lvTasks.EndUpdate;
+    if lvTasks.ItemIndex > -1 then
+      id := integer(lvTasks.items[lvTasks.ItemIndex].data)
+    else
+      id := 0;
+    index := -1;
+    count := 0;
+
+    for item in list do
+    begin
+      if count = lvTasks.Items.count then
+        entry := lvTasks.items.add
+      else
+        entry := lvTasks.items[count];
+      if item.info <> '' then
+        entry.Caption := item.name+': '+item.info
+      else
+        entry.Caption := item.name;
+      if (item.UniqueID = id) then
+        index := count;
+      entry.data := TObject(item.UniqueID);
+      setSubItem(entry, 0, item.StatusDisplay);
+      setSubItem(entry, 1, item.PctDisplay);
+      setSubItem(entry, 2, item.timeDisplay);
+      setSubItem(entry, 3, item.Message);
+      inc(count);
     end;
+    for i := count to lvTasks.Items.count - 1 do
+      lvTasks.Items.Delete(i);
+    lvTasks.ItemIndex := index;
+    lvTasks.Refresh;
     btnStopTask.enabled := (lvTasks.ItemIndex > -1) and (list[lvTasks.ItemIndex].status in [btsWaiting, btsProcessing]) and (list[lvTasks.ItemIndex].canCancel) ;
   finally
     list.free;
@@ -1209,55 +1285,54 @@ begin
       finally
         FileFormatChooser.free;
       end;
-    end
-    else if (kind = sekFHIR) then
-    begin
-      // choose serialization format...
-      //if (length(bytes) = 0) then
-      //begin
-      //  FileFormatChooser := TFileFormatChooser.create(self);
-      //  try
-      //    FileFormatChooser.setFHIRResource;
-      //    if FileFormatChooser.ShowModal = mrOK then
-      //      kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
-      //    else
-      //      abort;
-      //  finally
-      //    FileFormatChooser.free;
-      //  end;
-      //end
-      //else
-      //begin
-
     end;
-
     session := FFactory.makeNewSession(kind);
-    if path <> '' then
-      session.Address := 'file:'+path;
-    if (filename <> '') then
-      session.caption := filename;
-    editor := FFactory.makeEditor(session);
-    FContext.addEditor(editor);
-    tab := pgEditors.AddTabSheet;
-    editor.bindToTab(tab);
-    if path <> '' then
-    begin
-      BytesToFile(bytes, path);
-      session.Timestamp := FileGetModified(path);
+    try
+      if (kind = sekFHIR) and (length(bytes) = 0) then
+      begin
+        NewResourceDialog := TNewResourceDialog.create(self);
+        try
+          NewResourceDialog.IniFile := FIni;
+          NewResourceDialog.Context := FContext.link;
+          if NewResourceDialog.ShowModal <> mrOk then
+            abort;
+          session.Info.AddPair('fhir-version', NewResourceDialog.version);
+          session.Info.AddPair('fhir-format', NewResourceDialog.format);
+          bytes := NewResourceDialog.generate;
+        finally
+          NewResourceDialog.Free;
+        end;
+      end;
+
+      if path <> '' then
+        session.Address := 'file:'+path;
+      if (filename <> '') then
+        session.caption := filename;
+      editor := FFactory.makeEditor(session.link);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      if path <> '' then
+      begin
+        BytesToFile(bytes, path);
+        session.Timestamp := FileGetModified(path);
+      end;
+      if (length(bytes) = 0) then
+        editor.newContent
+      else
+        editor.loadBytes(bytes);
+      editor.session.NeedsSaving := false;
+      editor.lastChangeChecked := true;
+      pgEditors.ActivePage := tab;
+      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      FContext.Focus := editor;
+      FContext.Focus.getFocus(mnuContent);
+      FProjectsView.refresh;
+      updateActionStatus(editor);
+    finally
+      session.free;
     end;
-    if (length(bytes) = 0) then
-      editor.newContent
-    else
-      editor.loadBytes(bytes);
-    editor.session.NeedsSaving := false;
-    editor.lastChangeChecked := true;
-    pgEditors.ActivePage := tab;
-    FTempStore.storeOpenFileList(FContext.EditorSessions);
-    FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
-    FContext.Focus := editor;
-    FContext.Focus.getFocus(mnuContent);
-    FProjectsView.refresh;
-    updateActionStatus(editor);
   finally
     info.free;
   end;
@@ -1401,10 +1476,10 @@ var
   editor : TToolkitEditor;
 begin
   editor := Context.EditorForTab(tab);
-  if not store and (editor.CanBeSaved) then
+  if store and (editor.CanBeSaved) then
     checkDoSave(editor);
   editor.saveStatus; // internal save, and then unhook
-  if not store and (editor.session.Address <> '') then
+  if store and (editor.session.Address <> '') then
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
   tab.free;
@@ -1876,7 +1951,7 @@ end;
 
 procedure TMainToolkitForm.showView(viewId : TViewManagerPanelId);
 var
-  pg : TPageControl;
+  pg : ComCtrls.TPageControl;
 begin
   if FViewManager.srcIsMaximised then
     unmaximiseSource;
@@ -2722,6 +2797,11 @@ begin
   updateStatusBar;
 end;
 
+procedure TMainToolkitForm.pgEditorsCloseTabClicked(Sender: TObject);
+begin
+  closeFile(pgEditors.ActivePage, true);
+end;
+
 procedure TMainToolkitForm.pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 var
   index: integer;
@@ -2874,6 +2954,18 @@ begin
     pgLeft.ActivePageIndex := FViewManager.active[tvlLeft];
     pgRight.ActivePageIndex := FViewManager.active[tvlRight];
     pgBottom.ActivePageIndex := FViewManager.active[tvlBottom];
+
+    tbView1.Visible := FViewManager.showToolbarButtons;
+    tbView2.Visible := FViewManager.showToolbarButtons;
+    tbView3.Visible := FViewManager.showToolbarButtons;
+    tbView4.Visible := FViewManager.showToolbarButtons;
+    tbView5.Visible := FViewManager.showToolbarButtons;
+    tbView6.Visible := FViewManager.showToolbarButtons;
+    tbView7.Visible := FViewManager.showToolbarButtons;
+    tbView8.Visible := FViewManager.showToolbarButtons;
+    tbView9.Visible := FViewManager.showToolbarButtons;
+    tbView10.Visible := FViewManager.showToolbarButtons;
+    tbView11.Visible := FViewManager.showToolbarButtons;
   finally
     FDoingLayout := false;
     EndFormUpdate;
@@ -2903,8 +2995,8 @@ procedure TMainToolkitForm.startLoadingContexts;
     end;
   end;
 begin
-  SetLoadContext(makeContext(fhirVersionRelease3), 'hl7.fhir.r3.core');
-  SetLoadContext(makeContext(fhirVersionRelease4), 'hl7.fhir.r4.core');
+  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3')), 'hl7.fhir.r3.core');
+  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4')), 'hl7.fhir.r4.core');
 end;
 
 procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);

@@ -57,7 +57,7 @@ type
     property SearchParameters : TFslList<TFHIRSearchParameter> read FSearchParameters;
   end;
 
- TFHIRMetadataResourceManager<T : TFHIRMetadataResource> = class (TFslObject)
+ TFHIRMetadataResourceManager<T : TFhirCanonicalResource> = class (TFslObject)
   private
     FMap : TFslMap<T>;
     FList : TFslList<T>;
@@ -84,7 +84,7 @@ type
     function count: integer;
     procedure clear;
     procedure listAll(list: TFslList<T>);
-    procedure listAllM(list: TFslList<TFHIRMetadataResource>);
+    procedure listAllM(list: TFslList<TFhirCanonicalResource>);
   end;
 
 
@@ -559,7 +559,7 @@ begin
   list.addAll(Flist);
 end;
 
-procedure TFHIRMetadataResourceManager<T>.listAllM(list : TFslList<TFHIRMetadataResource>);
+procedure TFHIRMetadataResourceManager<T>.listAllM(list : TFslList<TFhirCanonicalResource>);
 var
   tt : T;
 begin

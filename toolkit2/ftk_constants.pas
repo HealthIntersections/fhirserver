@@ -50,6 +50,7 @@ const
   ICON_FILE = 130;
   ICON_OPEN_FILE = 128;
 
+  ICON_CLOSE = 64;
 
 implementation
 

@@ -732,7 +732,7 @@ begin
     CoInitialize(nil);
     {$ENDIF}
     {$IFDEF FPC}
-    initialiseTZData(partnerFile('tzdata.tar.gz'));
+    initialiseTZData(partnerFile('tz.dat'));
     {$ENDIF}
     tz := TimeZoneBias;
     if tz = 0 then

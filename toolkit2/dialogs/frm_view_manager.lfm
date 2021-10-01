@@ -3,11 +3,14 @@ object ViewManagerForm: TViewManagerForm
   Height = 525
   Top = 121
   Width = 780
+  BorderIcons = []
+  BorderStyle = bsDialog
   Caption = 'Manage Views'
   ClientHeight = 525
   ClientWidth = 780
   OnDestroy = FormDestroy
   OnShow = FormShow
+  Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
@@ -33,7 +36,10 @@ object ViewManagerForm: TViewManagerForm
       Top = 9
       Width = 79
       Increment = 10
+      MaxValue = 1000
+      MinValue = 10
       TabOrder = 0
+      Value = 10
     end
     object btn100: TButton
       Left = 129
@@ -51,6 +57,14 @@ object ViewManagerForm: TViewManagerForm
       Width = 79
       Caption = 'Editor View'
       TabOrder = 2
+    end
+    object chkToolButtons: TCheckBox
+      Left = 396
+      Height = 19
+      Top = 12
+      Width = 138
+      Caption = 'Show Views in Toolbar'
+      TabOrder = 3
     end
   end
   object Panel2: TPanel

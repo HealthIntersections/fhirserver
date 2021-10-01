@@ -202,6 +202,8 @@ type
     procedure updateDesigner; virtual;
     procedure commitDesigner; virtual;
 
+    function preEditSource(src : String) : string; virtual;
+
     function escapeText(text : String): String; virtual;
     function sourceHasFocus : boolean;
     procedure SetContentUndoable(src : string);
@@ -761,6 +763,8 @@ begin
 
     src := encoding.GetString(bytes, start, length(bytes) - start);
 
+    src := preEditSource(src);
+
     lf := false;
     cr := false;
     crlf := false;
@@ -1213,6 +1217,11 @@ end;
 procedure TBaseEditor.commitDesigner;
 begin
   // nothing here
+end;
+
+function TBaseEditor.preEditSource(src: String): string;
+begin
+  result := src;
 end;
 
 function TBaseEditor.escapeText(text: String): String;

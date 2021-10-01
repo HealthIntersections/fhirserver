@@ -272,6 +272,7 @@ Type
     procedure testUtf8n;
     procedure testUtf8;
     procedure testUtf16;
+    procedure testFloat;
   end;
 
   TJsonPatchTest = Class (TFslTestSuiteCase)
@@ -4329,6 +4330,26 @@ begin
   end;
 end;
 
+procedure TJsonTests.testFloat;
+var
+  json : TJsonObject;
+begin
+  json := TJSONParser.Parse('{  "nbf" : 1.622690247979E9, "nbf2" : 1622690247.979, "nbf3" : 1622690247979 }');
+  try
+    assertTrue(json['nbf'] = '1.622690247979E9');
+    assertTrue(json['nbf2'] = '1622690247.979');
+    assertTrue(json['nbf3'] = '1622690247979');
+
+    assertTrue(json.int['nbf'] = 1622690247);
+    assertTrue(json.int['nbf2'] = 1622690247);
+    assertTrue(json.int['nbf3'] = 1622690247979);
+
+  finally
+    json.Free;
+  end;
+
+end;
+
 procedure TJsonTests.TestResource;
 var
   json : TJsonObject;
@@ -4819,7 +4840,7 @@ procedure TTarGZParserTests.testTzData;
 var
   tgz : TFslList<TFslNameBuffer>;
 begin
-  tgz := load('tzdata.tar.gz');
+  tgz := load('tz.dat');
   try
     assertTrue(tgz.Count = 12);
   finally

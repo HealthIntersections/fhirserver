@@ -47,7 +47,7 @@ var
   ok : boolean;
 begin
   try
-    initialiseTZData(partnerFile('tzdata.tar.gz'));
+    initialiseTZData(partnerFile('tz.dat'));
     InitialiseODBC;
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));

@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList, IniFiles,
-  fsl_base, fsl_utilities, fsl_stream, fsl_logging,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang,
   fhir_objects, fhir_client, fhir_factory,
   fhir4_factory, fhir3_factory,
   ftk_store, ftk_console, ftk_utilities;
@@ -303,6 +303,7 @@ type
     FConsole: TToolkitConsole;
     FFont: TFont;
     FInspector: TToolkitEditorInspectorView;
+    FLanguages: TIETFLanguageDefinitions;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
     FOnConnectToServer: TConnectToServerEvent;
@@ -330,6 +331,7 @@ type
     procedure SetContext(version : TFHIRVersion;
       AValue: TFHIRWorkerContextWithFactory);
     procedure SetFocus(AValue: TToolkitEditor);
+    procedure SetLanguages(AValue: TIETFLanguageDefinitions);
     procedure SetSideBySide(AValue: boolean);
     procedure SetTerminologyService(AValue: TFHIRTerminologyService);
     procedure SetToolBarHeight(AValue: integer);
@@ -355,6 +357,7 @@ type
     function StorageForAddress(address : String; server : TFHIRServerEntry = nil) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
     property TerminologyService : TFHIRTerminologyService read FTerminologyService write SetTerminologyService;
+    property Languages : TIETFLanguageDefinitions read FLanguages write SetLanguages;
 
     // global settings
     property SideBySide : boolean read FSideBySide write SetSideBySide;
@@ -659,7 +662,7 @@ end;
 procedure TToolkitEditor.bindToTab(tab: TTabSheet);
 begin
   FTab := tab;
-  tab.Caption := FSession.Caption;
+  tab.Caption := FSession.Caption{$IFDEF WINDOWS}+'    '{$ENDIF};
 end;
 
 procedure TToolkitEditor.saveStatus;
@@ -702,6 +705,12 @@ procedure TToolkitContext.SetFocus(AValue: TToolkitEditor);
 begin
   FFocus := AValue;
   FOnChangeFocus(self);
+end;
+
+procedure TToolkitContext.SetLanguages(AValue: TIETFLanguageDefinitions);
+begin
+  FLanguages.free;
+  FLanguages := AValue;
 end;
 
 procedure TToolkitContext.SetSideBySide(AValue: boolean);
@@ -760,6 +769,7 @@ begin
   FStorages.Free;
   FEditors.Free;
   FEditorSessions.Free;
+  FLanguages.free;
   inherited Destroy;
 end;
 

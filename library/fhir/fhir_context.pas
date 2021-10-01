@@ -205,7 +205,7 @@ var
   p : TFHIRParser;
   a : TArray<String>;
 begin
-  doProgress('Loading Package' +id, 0, 1);
+  doProgress('Loading Package ' +id, 0, 1);
 
   if (FNpm = nil) then
     FNpm := TFHIRPackageManager.Create(user);
@@ -220,7 +220,7 @@ begin
       a := npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap', 'StructureDefinition', 'StructureMap', 'CapabilityStatement', 'OperationDefinition']);
       for s in a do
       begin
-        doProgress('Loading Package'+npm.name+'#'+npm.version, i, length(a));
+        doProgress('Loading Package '+npm.name+'#'+npm.version, i, length(a));
         inc(i);
         try
           res := p.parseResource(npm.loadBytes(s));
@@ -246,7 +246,7 @@ begin
   finally
     p.Free;
   end;
-  doProgress('Loading Package' +id, 1, 1);
+  doProgress('Loading Package ' +id, 1, 1);
 end;
 
 procedure TFHIRContextLoaderEngine.doProgress(state : String; c, t: integer);

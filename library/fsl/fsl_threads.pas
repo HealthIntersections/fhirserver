@@ -227,6 +227,7 @@ Type
 
   TBackgroundTaskPackagePair = class (TFslObject)
   private
+    FUniqueID : Integer;
     FOnNotify: TBackgroundTaskEvent;
     FRequest: TBackgroundTaskRequestPackage;
     FResponse: TBackgroundTaskResponsePackage;
@@ -266,11 +267,13 @@ Type
     FPct: integer;
     FMessage: String;
     FTime: Cardinal;
+    FUniqueID: integer;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskStatusInfo; overload;
 
+    property UniqueID : integer read FUniqueID write FUniqueID;
     property id : integer read FId write FId;
     property name : String read FName write FName; // name of the engine
     property info : String read FInfo write FInfo; // description of the task
@@ -293,6 +296,7 @@ Type
   private
     { private thread management section }
     FId : integer;
+    FUniqueID : integer;
     FThread : TBackgroundTaskThread; // owned...
     FWantBreak : boolean;
     FWantStop : boolean;
@@ -305,6 +309,7 @@ Type
     FPct : Integer;
     FStartTime : UInt64;
     FDesc : String;
+    FCurrentTask : TBackgroundTaskPackagePair;
     procedure break;
     procedure stop;
     procedure terminate;
@@ -403,6 +408,7 @@ var
   GFirst: TFslLock = NIL;
   GCount: Integer = 0;
   GTotal: Integer = 0;
+  GBackgroundTaskUniqueID : integer = 0;
 
 var
   GThreadList : TList;
@@ -705,6 +711,7 @@ begin
   inherited Create;
   FRequest := request;
   FResponse := response;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 destructor TBackgroundTaskPackagePair.Destroy;
@@ -1192,6 +1199,7 @@ begin
   FWaiting := TFslList<TBackgroundTaskPackagePair>.create;
   FDone := TFslList<TBackgroundTaskPackagePair>.create;
   FStatus := btsWaiting;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 constructor TBackgroundTaskEngine.Create(notify : TBackgroundTaskEvent);
@@ -1209,21 +1217,38 @@ end;
 
 procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackagePair);
 begin
+  GBackgroundTasks.FLock.Lock;
   try
-    SetStatus(btsProcessing);
-    FStartTime := GetTickCount64;
-    FDesc := pck.request.description;
-    GBackgroundTasks.log('Task '+name+' go ('+pck.request.ClassName+','+pck.response.ClassName+')');
-    execute(pck.request, pck.response);
-    GBackgroundTasks.log('Task '+name+' done');
-    setStatus(btsWaiting);
-  except
-    on e : Exception do
-    begin
-      GBackgroundTasks.log('Task '+name+' error: '+e.Message);
-      SetStatus(btsWaiting);
-      pck.response.ExceptionClass := ExceptClass(e.ClassType);
-      pck.response.Exception := e.message;
+    FCurrentTask := pck.link;
+  finally
+    GBackgroundTasks.FLock.UnLock;
+  end;
+  try
+    try
+      SetStatus(btsProcessing);
+      FStartTime := GetTickCount64;
+      FDesc := pck.request.description;
+      GBackgroundTasks.log('Task '+name+' go ('+pck.request.ClassName+','+pck.response.ClassName+')');
+      execute(pck.request, pck.response);
+      GBackgroundTasks.log('Task '+name+' done');
+      setStatus(btsWaiting);
+    except
+      on e : Exception do
+      begin
+        GBackgroundTasks.log('Task '+name+' error: '+e.Message);
+        SetStatus(btsWaiting);
+        pck.response.ExceptionClass := ExceptClass(e.ClassType);
+        pck.response.Exception := e.message;
+      end;
+    end;
+  finally
+    GBackgroundTasks.FLock.Lock;
+    try
+      SetStatus(btsProcessing);
+      FCurrentTask.Free;
+      FCurrentTask := nil;
+    finally
+      GBackgroundTasks.FLock.UnLock;
     end;
   end;
 end;
@@ -1245,6 +1270,7 @@ function TBackgroundTaskEngine.reportStatus: TBackgroundTaskStatusInfo;
 begin
   result := TBackgroundTaskStatusInfo.Create;
   result.id := FId;
+  result.UniqueID := FUniqueID;
   result.name := name;
   result.info := FDesc;
   result.status := FStatus;
@@ -1259,6 +1285,7 @@ procedure TBackgroundTaskEngine.listTasks(list: TFslList<TBackgroundTaskStatusIn
   begin
     result := TBackgroundTaskStatusInfo.create;
     result.id := FId;
+    result.UniqueID := tp.FUniqueID;
     result.name := name;
     result.info := tp.request.Description;
     result.status := btsWaiting;
@@ -1269,11 +1296,24 @@ procedure TBackgroundTaskEngine.listTasks(list: TFslList<TBackgroundTaskStatusIn
   end;
 var
   tp : TBackgroundTaskPackagePair;
+  info : TBackgroundTaskStatusInfo;
 begin
-  if FStatus = btsProcessing then
-    list.add(reportStatus);
   GBackgroundTasks.FLock.Lock;
   try
+    if FCurrentTask <> nil then
+    begin
+      info := TBackgroundTaskStatusInfo.Create;
+      list.add(info);
+      info.id := FId;
+      info.UniqueID := FCurrentTask.FUniqueID;
+      info.name := name;
+      info.info := FDesc;
+      info.status := FStatus;
+      info.message := FState;
+      info.pct := FPct;
+      info.time := GetTickCount64 - FStartTime;
+      info.canCancel := canCancel;
+    end;
     for tp in FWaiting do
       list.add(reportForTask(tp));
   finally
@@ -1745,8 +1785,8 @@ function TBackgroundTaskStatusInfo.timeDisplay: String;
 begin
   if FTime = 0 then
     result := ''
-  else if (FTime < 2000) then
-    result := inttostr(FTime)+'ms'
+  //else if (FTime < 2000) then
+  //  result := inttostr(FTime)+'ms'
   else
     result := inttostr(FTime div 1000)+'s';
 end;
