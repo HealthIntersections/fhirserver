@@ -58,7 +58,7 @@ type
     { unpacks, and verifies, and sets isValid to true }
     function verify(token : String) : THealthcareCard;
 
-    function readQR(src : String) : String; // returns a JWS
+    class function readQR(src : String) : String; // returns a JWS
 
     property Factory : TFHIRFactory read FFactory write SetFactory;
     property JWKList : TJWKList read FJWKList write SetJWKList;
@@ -186,7 +186,7 @@ begin
     try
       result.issuer := p.str['iss'];
       dt1 := EncodeDate(1970, 1, 1);
-      dt2 := (p.int['nbf'] * DATETIME_SECOND_ONE);
+      dt2 := trunc((p.int['nbf'] * DATETIME_SECOND_ONE));
       result.issueDate := TFslDateTime.make(dt1+dt2, dttzUTC);
       vc := p.obj['vc'];
       if (vc = nil) then
@@ -220,7 +220,7 @@ begin
   end;
 end;
 
-function THealthcareCardUtilities.readQR(src: String): String;
+class function THealthcareCardUtilities.readQR(src: String): String;
 var
   b : TFslStringBuilder;
   i, v : integer;

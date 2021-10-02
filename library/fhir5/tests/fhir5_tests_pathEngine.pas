@@ -283,7 +283,7 @@ begin
     gTests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\fhirpath\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
   {$IFNDEF SIMPLETEST}
   ucum := TUcumServices.Create;
-  ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
+  ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum.dat');
   engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, TUcumServiceImplementation.Create(ucum.link));
   {$ELSE}
   engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);

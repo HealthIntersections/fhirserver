@@ -227,7 +227,7 @@ Type
     Function divideBy(o1, o2 : TUcumPair) : TUcumPair;
 
 
-    // load from ucum-essence.xml
+    // load from ucum.dat
     Procedure Import(sFilename : String);
     class function checkFile(sFilename : String) : String;
 

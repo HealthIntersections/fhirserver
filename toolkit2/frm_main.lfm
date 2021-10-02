@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
-  Left = 307
+  Left = 302
   Height = 757
-  Top = 122
+  Top = -944
   Width = 1289
   Caption = 'FHIR Toolkit'
   ClientHeight = 737
@@ -3207,7 +3207,7 @@ object MainToolkitForm: TMainToolkitForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.1.0.0'
   object pnlStatus: TStatusBar
     Left = 0
     Height = 23
@@ -3332,99 +3332,104 @@ object MainToolkitForm: TMainToolkitForm
       Top = 2
       Action = actionViewEditor
     end
-    object ToolButton16: TToolButton
-      Left = 316
+    object tbView1: TToolButton
+      Left = 339
       Top = 2
       Action = actionViewProjectManager
     end
-    object ToolButton17: TToolButton
-      Left = 339
+    object tbView2: TToolButton
+      Left = 362
       Top = 2
       Action = actionViewServers
     end
-    object ToolButton18: TToolButton
-      Left = 362
+    object tbView3: TToolButton
+      Left = 385
       Top = 2
       Action = actionViewSearch
     end
-    object ToolButton19: TToolButton
-      Left = 385
+    object tbView4: TToolButton
+      Left = 408
       Top = 2
       Action = actionViewMessages
     end
-    object ToolButton20: TToolButton
-      Left = 408
+    object tbView5: TToolButton
+      Left = 431
       Top = 2
       Action = actionViewLog
     end
-    object ToolButton21: TToolButton
-      Left = 431
+    object tbView6: TToolButton
+      Left = 454
       Top = 2
       Action = actionViewStack
     end
-    object ToolButton22: TToolButton
-      Left = 454
+    object tbView7: TToolButton
+      Left = 477
       Top = 2
       Action = actionViewVariables
     end
-    object ToolButton23: TToolButton
-      Left = 477
+    object tbView8: TToolButton
+      Left = 500
       Top = 2
       Action = actionViewInspector
     end
-    object ToolButton24: TToolButton
-      Left = 500
+    object tbView9: TToolButton
+      Left = 523
       Top = 2
       Action = actionViewPackages
     end
-    object ToolButton25: TToolButton
-      Left = 523
+    object tbView10: TToolButton
+      Left = 546
       Top = 2
       Action = actionViewTasks
     end
-    object ToolButton26: TToolButton
-      Left = 546
+    object tbView11: TToolButton
+      Left = 569
       Top = 2
       Action = actionViewExpressionEditor
     end
     object ToolButton27: TToolButton
-      Left = 569
+      Left = 592
       Height = 22
       Top = 2
       Caption = 'ToolButton27'
       Style = tbsSeparator
     end
     object ToolButton28: TToolButton
-      Left = 631
+      Left = 654
       Top = 2
       Action = actionHelpContent
     end
     object ToolButton29: TToolButton
-      Left = 654
+      Left = 677
       Top = 2
       Action = actionToolsPackageManager
     end
     object ToolButton30: TToolButton
-      Left = 677
+      Left = 700
       Top = 2
       Action = actionToolsSideBySideMode
     end
     object ToolButton34: TToolButton
-      Left = 623
+      Left = 646
       Height = 22
       Top = 2
       Caption = 'ToolButton34'
       Style = tbsSeparator
     end
     object ToolButton35: TToolButton
-      Left = 577
+      Left = 600
       Top = 2
       Action = actConnectToServer
     end
     object ToolButton36: TToolButton
-      Left = 600
+      Left = 623
       Top = 2
       Action = actionCreateNewProject
+    end
+    object ToolButton37: TToolButton
+      Left = 316
+      Top = 2
+      Action = actionViewManager
     end
   end
   object pnlClient: TPanel
@@ -3658,6 +3663,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 38
                   Caption = 'Search:'
+                  ParentColor = False
                   ParentFont = False
                 end
                 object chkCase: TCheckBox
@@ -3709,6 +3715,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 13
                   Caption = 'In:'
+                  ParentColor = False
                   ParentFont = False
                 end
                 object cbxSearchType: TComboBox
@@ -3873,6 +3880,7 @@ object MainToolkitForm: TMainToolkitForm
               Top = 0
               Width = 32
               Align = alLeft
+              BevelOuter = bvNone
               ClientHeight = 112
               ClientWidth = 32
               ParentFont = False
@@ -3966,6 +3974,8 @@ object MainToolkitForm: TMainToolkitForm
                   Width = 815
                 end>
               ParentFont = False
+              ReadOnly = True
+              RowSelect = True
               TabOrder = 2
               ViewStyle = vsReport
             end
@@ -4477,6 +4487,10 @@ object MainToolkitForm: TMainToolkitForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
+        ScrollOnEditLeftOptions.ScrollExtraPercent = 20
+        ScrollOnEditLeftOptions.ScrollExtraMax = 10
+        ScrollOnEditRightOptions.ScrollExtraPercent = 30
+        ScrollOnEditRightOptions.ScrollExtraMax = 25
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone
@@ -4785,12 +4799,14 @@ object MainToolkitForm: TMainToolkitForm
         Top = 1
         Width = 877
         Align = alClient
+        Images = imgMain
         ParentFont = False
         ParentShowHint = False
         PopupMenu = pmPages
         ShowHint = True
         TabOrder = 2
         OnChange = pgEditorsChange
+        OnCloseTabClicked = pgEditorsCloseTabClicked
         OnMouseMove = pgEditorsMouseMove
         Options = [nboShowCloseButtons]
       end

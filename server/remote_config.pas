@@ -210,7 +210,7 @@ begin
     cfg.web['http-cache-time'].value := '1000';
     cfg.web['plain-mode'].value := 'false';
     cfg.web['caching'].value := 'true';
-    cfg.service['langfile'].value := FilePath([ExtractFilePath(ParamStr(0)), 'lang.txt']);
+    cfg.service['langfile'].value := FilePath([ExtractFilePath(ParamStr(0)), 'lang.dat']);
     cfg.admin['scim-salt'].value := NewGuidId;
 
     for n in FFiles.Keys do

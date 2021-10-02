@@ -2594,7 +2594,7 @@ var
 
 Function LoadSource : TBytes;
 begin
-  result := fsl_stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
+  result := fsl_stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'fhir-lang.dat');
 end;
 
 procedure LoadMessages;

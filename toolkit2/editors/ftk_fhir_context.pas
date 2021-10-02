@@ -1,4 +1,4 @@
-unit fsl_tests_lang;
+unit ftk_fhir_context;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,93 +28,37 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$i fhir.inc}
 
 interface
 
 uses
-  Sysutils, Classes,
-  fsl_testing,
-  fsl_stream,
-  fsl_lang;
-
+  Classes, SysUtils,
+  fsl_lang,
+  fhir_objects, fhir_factory,
+  ftk_fhir_context_2, ftk_fhir_context_3, ftk_fhir_context_4, ftk_fhir_context_5;
 
 type
-  TIETFLangTests = Class (TFslTestCase)
-  private
-    FDefinitions : TIETFLanguageDefinitions;
-    procedure pass(code : String);
-    procedure fail(code : String);
+  TToolkitValidatorContext = class
   public
-    Procedure SetUp; override;
-    procedure TearDown; override;
-  published
-    Procedure TestSimple;
-    Procedure TestWrong;
+    class function create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; TerminologyServer : String) : TFHIRWorkerContextWithFactory;
   end;
-
-procedure registerTests;
 
 implementation
 
-{ TIETFLangTests }
+{ TToolkitValidatorContext }
 
-procedure TIETFLangTests.fail(code : String);
-var
-  msg : String;
-  o : TIETFLanguageCodeConcept;
+class function TToolkitValidatorContext.create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String): TFHIRWorkerContextWithFactory;
 begin
-  o := FDefinitions.parse(code, msg);
-  try
-    assertTrue(o = nil);
-    assertTrue(msg <> '');
-  finally
-    o.Free;
+  case factory.version of
+    fhirVersionRelease2 : result := TToolkitValidatorContextR2.Create(factory, languages, TerminologyServer);
+    fhirVersionRelease3 : result := TToolkitValidatorContextR3.Create(factory, languages, TerminologyServer);
+    fhirVersionRelease4 : result := TToolkitValidatorContextR4.Create(factory, languages, TerminologyServer);
+    fhirVersionRelease5 : result := TToolkitValidatorContextR5.Create(factory, languages, TerminologyServer);
+  else
+    raise EFHIRException.create('Unexpected version');
   end;
 end;
 
-procedure TIETFLangTests.pass(code : String);
-var
-  msg : String;
-  o : TIETFLanguageCodeConcept;
-begin
-  o := FDefinitions.parse(code, msg);
-  try
-    assertTrue(o <> nil, msg);
-    assertTrue(msg = '');
-  finally
-    o.Free;
-  end;
-end;
-
-procedure TIETFLangTests.Setup;
-begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString(TestSettings.serverTestFile(['resources', 'lang.dat']), TEncoding.ASCII));
-end;
-
-procedure TIETFLangTests.TearDown;
-begin
-  FDefinitions.Free;
-end;
-
-procedure TIETFLangTests.TestSimple;
-begin
-  pass('en');
-  pass('en-AU');
-  pass('en-Latn-AU');
-  pass('en-Brai-US');
-end;
-
-procedure TIETFLangTests.TestWrong;
-begin
-  fail('enAU');
-  fail('en-AUA');
-end;
-
-procedure registerTests;
-// don't use initialization - give other code time to set up directories etc
-begin
-  RegisterTest('Terminology.Lang Tests', TIETFLangTests.Suite);
-end;
 
 end.

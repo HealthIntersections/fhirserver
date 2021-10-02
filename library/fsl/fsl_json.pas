@@ -202,9 +202,9 @@ Type
     function GetForcedArray(name: String): TJsonArray;
     function GetNode(name: String): TJsonNode;
     procedure setNode(name: String; const Value: TJsonNode);
-    function GetInteger(name: String): Integer;
+    function GetInteger(name: String): Int64;
 
-    procedure SetInteger(name: String; const Value: Integer);
+    procedure SetInteger(name: String; const Value: Int64);
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
@@ -223,7 +223,7 @@ Type
     property node[name : String] : TJsonNode read GetNode write setNode;
     Property str[name : String] : String read GetString write SetString; default;
     Property num[name : String] : String read GetNumber write SetNumber;
-    Property int[name : String] : Integer read GetInteger write SetInteger;
+    Property int[name : String] : Int64 read GetInteger write SetInteger;
     Property bool[name : String] : boolean read GetBool write SetBool;
     Property arr[name : String] : TJsonArray read GetArray write SetArray;
     Property obj[name : String] : TJsonObject read GetObject write SetObject;
@@ -2436,7 +2436,7 @@ begin
   result := obj[name];
 end;
 
-function TJsonObject.GetInteger(name: String): Integer;
+function TJsonObject.GetInteger(name: String): Int64;
 var
   n : TJsonNode;
   s : String;
@@ -2455,7 +2455,7 @@ begin
     else if (n is TJsonNumber) then
     begin
       s := (n as TJsonNumber).FValue;
-      result := StrToIntDef(s, 0);
+      result := trunc(StrToFloatDef(s, 0));
     end
     else if (n is TJsonString) then
     begin
@@ -2593,7 +2593,7 @@ begin
   end;
 end;
 
-procedure TJsonObject.SetInteger(name: String; const Value: Integer);
+procedure TJsonObject.SetInteger(name: String; const Value: Int64);
 var
   v : TJsonNumber;
 begin
@@ -3498,7 +3498,7 @@ end;
 
 function TJWT.GetnotBefore : TDateTime;
 begin
-  result := UnixToDateTime(StrToIntDef(payload['nbf'], 0));
+  result := UnixToDateTime(payload.int['nbf']);
 end;
 
 procedure TJWT.SetnotBefore(Value: TDateTime);

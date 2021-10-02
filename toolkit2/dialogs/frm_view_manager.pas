@@ -29,6 +29,7 @@ type
     FRight : TStringList;
     FBottom : TStringList;
     FScale: Integer;
+    FShowToolbarButtons: boolean;
     FSrcIsMaximised: boolean;
     function GetActive(location : TViewManagerLocation): integer;
     function GetTabbed(location : TViewManagerLocation): boolean;
@@ -37,6 +38,7 @@ type
 
     function readPanelId(code : String) : TViewManagerPanelId;
     procedure SetScale(AValue: Integer);
+    procedure SetShowToolbarButtons(AValue: boolean);
     procedure SetSrcIsMaximised(AValue: boolean);
     procedure SetTabbed(location : TViewManagerLocation; AValue: boolean);
   public
@@ -52,6 +54,7 @@ type
     procedure setSize(location : TViewManagerLocation; width : integer);
 
     property srcIsMaximised : boolean read FSrcIsMaximised write SetSrcIsMaximised;
+    property showToolbarButtons : boolean read FShowToolbarButtons write SetShowToolbarButtons;
     property scale : Integer read FScale write SetScale;
     property active[location : TViewManagerLocation] : integer read GetActive write SetActive;
     property tabbed[location : TViewManagerLocation] : boolean read GetTabbed write SetTabbed;
@@ -81,6 +84,7 @@ type
     btnBottomRight: TButton;
     btnRightUp: TButton;
     Button14: TButton;
+    chkToolButtons: TCheckBox;
     chkSrcIsMaximised: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -181,6 +185,7 @@ begin
   FBottom.CommaText := FIniFile.readString('layout', 'bottom-views', '');
   FScale := FIniFile.ReadInteger('main-form', 'scale', 100);
   FSrcIsMaximised := FIniFile.readBool('main-form', 'source.maximised', false);
+  FShowToolbarButtons := FIniFile.readBool('main-form', 'toolbar-views', false);
 end;
 
 function TViewManager.GetActive(location : TViewManagerLocation): integer;
@@ -216,10 +221,17 @@ begin
   save;
 end;
 
+procedure TViewManager.SetShowToolbarButtons(AValue: boolean);
+begin
+  if FShowToolbarButtons = AValue then Exit;
+  FShowToolbarButtons := AValue;
+  save;
+end;
+
 procedure TViewManager.SetSrcIsMaximised(AValue: boolean);
 begin
-  if FSrcIsMaximised=AValue then Exit;
-  FSrcIsMaximised:=AValue;
+  if FSrcIsMaximised = AValue then Exit;
+  FSrcIsMaximised := AValue;
   save;
 end;
 
@@ -237,6 +249,7 @@ begin
 
   FIniFile.WriteInteger('main-form', 'scale', FScale);
   FIniFile.WriteBool('main-form', 'source.maximised', FSrcIsMaximised);
+  FIniFile.WriteBool('main-form', 'toolbar-views', FShowToolbarButtons);
 end;
 
 function TViewManager.size(location: TViewManagerLocation; def: integer): integer;
@@ -503,6 +516,7 @@ begin
   edtBottomWidth.Value := FManager.size(tvlBottom, 0);
   edtZoom.Value := FManager.FScale;
   chkSrcIsMaximised.Checked := FManager.srcIsMaximised;
+  chkToolButtons.Checked := FManager.showToolbarButtons;
   rbLeftTabbed.Checked := FManager.tabbed[tvlLeft];
   rbLeftStacked.Checked := not rbLeftTabbed.Checked;
   rbRightTabbed.Checked := FManager.tabbed[tvlRight];
@@ -564,6 +578,7 @@ begin
   FManager.setSize(tvlBottom, edtBottomWidth.Value);
   FManager.Scale := edtZoom.Value;
   FManager.srcIsMaximised := chkSrcIsMaximised.Checked;
+  FManager.showToolbarButtons := chkToolButtons.Checked;
 
   FManager.tabbed[tvlLeft] := rbLeftTabbed.Checked;
   FManager.tabbed[tvlRight] := rbRightTabbed.Checked;

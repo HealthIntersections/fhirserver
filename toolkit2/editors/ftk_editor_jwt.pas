@@ -37,6 +37,7 @@ uses
   Graphics, Controls, StdCtrls, ExtCtrls, ComCtrls, Menus, Forms, Dialogs,
   SynEdit, SynEditHighlighter, SynEditTypes, SynHighlighterJson,
   fsl_base, fsl_xml, fsl_logging, fsl_stream, fsl_crypto, fsl_json, fsl_fetcher,
+  fhir_healthcard,
   ftk_context,
   ftk_editor_base;
 
@@ -66,6 +67,7 @@ type
     procedure ContentChanged; override;
     procedure makeTextTab; override;
     function getFixedEncoding : TSourceEncoding; override;
+    function preEditSource(src : String) : string; override;
   public
     procedure newContent(); override;
     function FileExtension : String; override;
@@ -427,6 +429,14 @@ end;
 function TJWTEditor.getFixedEncoding: TSourceEncoding;
 begin
   Result := senASCII;
+end;
+
+function TJWTEditor.preEditSource(src: String): string;
+begin
+  if src.StartsWith('shc:/') then
+    result := THealthcareCardUtilities.readQR(src)
+  else
+    Result := inherited preEditSource(src);
 end;
 
 procedure TJWTEditor.newContent();

@@ -176,6 +176,12 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="fhir5"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir2"/>
+      </Item>
+      <Item>
         <PackageName Value="QRCodeGenLib4PascalPackage"/>
       </Item>
       <Item>
@@ -436,6 +442,21 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_new_resource.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="NewResourceDialog"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_fhir_context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ftk_fhir_context_5.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -451,6 +472,7 @@
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
         <IncludeAssertionCode Value="True"/>
       </SyntaxOptions>
     </Parsing>

@@ -81,7 +81,6 @@ type
   end;
 
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
-function makeContext(version : TFHIRVersion) : TFHIRWorkerContextWithFactory;
 
 //function makeClient(version : TFHIRVersion; url : String) : TFhirClientV;
 
@@ -105,15 +104,6 @@ begin
   end;
 end;
 
-function makeContext(version : TFHIRVersion) : TFHIRWorkerContextWithFactory;
-begin
-  case version of
-    fhirVersionRelease3 : result := TBaseWorkerContextR3.create(TFHIRFactoryR3.create);
-    fhirVersionRelease4 : result := TBaseWorkerContextR4.create(TFHIRFactoryR4.create);
-  else
-    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
-  end;
-end;
 
 function checkWellKnown(url : String; server : TFHIRServerEntry; var msg : String) : boolean;
 begin
