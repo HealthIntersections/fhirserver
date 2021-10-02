@@ -35,6 +35,8 @@ You need to install the GUI version of Lazarus in order to get the command line 
   
 4. Installing dependencies
 
+This is automated in linuz-install.sh
+
 clone the following repos to ~/work:
  - https://github.com/dezlov/PascalTZ
  - https://github.com/grahamegrieve/delphi-markdown
