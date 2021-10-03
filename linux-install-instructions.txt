@@ -48,11 +48,10 @@ Run Lazarus
  open the package work/PascalTZ/package/pascaltz.lpk. Compile and install it
  open the package work/extrasyn/extrahighlighters.lpk. Compile it
  open the package work/extrasyn/extrahighlighters_dsgn.lpk. Install it
- open the package work/lazarus-ide-tester/package/idetester.dpk. Compile it
+ open the package work/lazarus-ide-tester/package/idetester.lpk. Compile it
  open the package work/lazarus-ide-tester/ide/idetester_dsgn.lpk. Install it
- open the package work/HtmlViwer/package/FrameViewer09.lpk. Compile and install it
+ open the package work/HtmlViewer/package/FrameViewer09.lpk. Compile and install it
  open the package work/delphi-markdown/packages/markdownengine.lpk. Compile it
- open the package ork/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk - compile it
+ open the package work/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk - compile it
+
  Open the project group work/fhirserver/
- 
- 
