@@ -2913,6 +2913,8 @@ begin
     else
       unmaximiseSource;
 
+    exit;
+
     // hide all tabs
     hideTabs(pgLeft);
     hideTabs(pgRight);
