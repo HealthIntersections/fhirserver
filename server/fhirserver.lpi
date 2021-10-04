@@ -116,6 +116,7 @@
             <LinkSmart Value="True"/>
             <Options>
               <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-R .\"/>
             </Options>
           </Linking>
           <Other>
