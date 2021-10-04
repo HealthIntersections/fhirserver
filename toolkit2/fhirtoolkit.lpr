@@ -22,7 +22,7 @@ uses
   ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
   ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
   frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager,
-  dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5;
+  dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5, ftk_worker_home;
 
 {$R *.res}
 

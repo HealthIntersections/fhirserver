@@ -38,11 +38,11 @@ uses
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_crypto,
   fhir_objects,
 
-  ftk_context, ftk_store,
+  ftk_context, ftk_store, ftk_store_temp,
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
   ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir, ftk_editor_jwt,
 
-  ftk_worker_server;
+  ftk_worker_server, ftk_worker_home;
 
 type
 
@@ -58,7 +58,7 @@ type
     function makeNewSession(kind : TSourceEditorKind) : TToolkitEditSession;
     function examineFile(filename, mimeType : String; const bytes : TBytes) : TToolkitEditSession;
 
-    function makeEditor(session : TToolkitEditSession) : TToolkitEditor;
+    function makeEditor(session : TToolkitEditSession; tempStore : TFHIRToolkitTemporaryStorage) : TToolkitEditor;
 
     class function determineFormatFromText(src : String; var content : TBytes) : TSourceEditorKindSet;
     class function determineFormatFromFmt(fmt : TClipboardFormat; src : Tbytes; var kind : TSourceEditorKind; var content : TBytes) : boolean;
@@ -292,7 +292,7 @@ begin
   end;
 end;
 
-function TToolkitFactory.makeEditor(session : TToolkitEditSession): TToolkitEditor;
+function TToolkitFactory.makeEditor(session : TToolkitEditSession; tempStore : TFHIRToolkitTemporaryStorage): TToolkitEditor;
 var
   store : TStorageService;
 begin
@@ -308,6 +308,7 @@ begin
   sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
   sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
   sekServer : result := TServerWorker.create(FContext{.link}, session, store.link);
+  sekHome : result := THomePageWorker.create(FContext{.link}, session, store.link, tempStore.link);
   sekJWT : result := TJWTEditor.create(FContext{.link}, session, store.link);
   else
     raise EFslException.Create('not supported yet');

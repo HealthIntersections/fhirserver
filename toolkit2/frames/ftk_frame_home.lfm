@@ -1,0 +1,80 @@
+object HomePageFrame: THomePageFrame
+  Left = 0
+  Height = 364
+  Top = 0
+  Width = 1177
+  ClientHeight = 364
+  ClientWidth = 1177
+  OnResize = FrameResize
+  TabOrder = 0
+  DesignLeft = 623
+  DesignTop = -488
+  object Panel1: TPanel
+    Left = 0
+    Height = 364
+    Top = 0
+    Width = 474
+    Align = alLeft
+    BevelOuter = bvNone
+    BorderWidth = 6
+    ClientHeight = 364
+    ClientWidth = 474
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    object HtmlViewer1: THtmlViewer
+      Left = 6
+      Height = 352
+      Top = 6
+      Width = 462
+      BorderStyle = htNone
+      DefBackground = clWhite
+      HistoryMaxCount = 0
+      NoSelect = False
+      PrintMarginBottom = 2
+      PrintMarginLeft = 2
+      PrintMarginRight = 2
+      PrintMarginTop = 2
+      PrintScale = 1
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 474
+    Height = 364
+    Top = 0
+    Width = 703
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 6
+    ClientHeight = 364
+    ClientWidth = 703
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 6
+      Height = 25
+      Top = 6
+      Width = 691
+      Align = alTop
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = '  Recent Files'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object lbMRU: TListBox
+      Left = 6
+      Height = 327
+      Top = 31
+      Width = 691
+      Align = alClient
+      BorderStyle = bsNone
+      ItemHeight = 0
+      OnDblClick = lbMRUDblClick
+      OnShowHint = lbMRUShowHint
+      TabOrder = 1
+    end
+  end
+end

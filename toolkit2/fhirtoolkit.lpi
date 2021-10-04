@@ -52,6 +52,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
+              <LinkerOptions Value="-R ./"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -455,6 +456,10 @@
       </Unit>
       <Unit>
         <Filename Value="ftk_fhir_context_5.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_worker_home.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

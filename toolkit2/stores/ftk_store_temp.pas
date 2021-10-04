@@ -51,10 +51,13 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TFHIRToolkitTemporaryStorage; overload;
 
     // this is called immediately after opening a file, to save the current list of open files
     // it aims to be reliable storage based on a normal file system
-    procedure storeOpenFileList(sessions : TFslList<TToolkitEditSession>);
+    function startOpenFileList() : TJsonArray;
+    procedure storeOpenFile(list : TJsonArray; session : TToolkitEditSession);
+    procedure finishOpenFileList(list : TJsonArray);
 
     // this is called regularly on any open file
     procedure storeContent(guid : String; original : boolean; bytes : TBytes);
@@ -64,6 +67,7 @@ type
     function fetchContent(guid : String) : TBytes;
 
     procedure getMRUList(list : TStrings);
+    procedure getMRUListRaw(list : TStrings);
     function getMRU(index : integer) : String;
     procedure addToMru(address, description : String);
     procedure removeFromMRU(address : String);
@@ -85,21 +89,28 @@ begin
   inherited Destroy;
 end;
 
-procedure TFHIRToolkitTemporaryStorage.storeOpenFileList(sessions: TFslList<TToolkitEditSession>);
+function TFHIRToolkitTemporaryStorage.link: TFHIRToolkitTemporaryStorage;
+begin
+  result := TFHIRToolkitTemporaryStorage(inherited link);
+end;
+
+function TFHIRToolkitTemporaryStorage.startOpenFileList() : TJsonArray;
+begin
+  result := TJsonArray.create;
+end;
+
+procedure TFHIRToolkitTemporaryStorage.storeOpenFile(list : TJsonArray; session : TToolkitEditSession);
+begin
+  list.add(sessionTOJson(session));
+end;
+
+procedure TFHIRToolkitTemporaryStorage.finishOpenFileList(list : TJsonArray);
 var
-  arr : TJsonArray;
-  session : TToolkitEditSession;
   cnt : TBytes;
   fn, fnn : String;
 begin
-  arr := TJsonArray.create;
-  try
-    for session in sessions do
-      arr.add(sessionTOJson(session));
-    cnt := TJSONWriter.writeArray(arr, true);
-  finally
-    arr.free;
-  end;
+  cnt := TJSONWriter.writeArray(list, true);
+  list.free;
 
   fn := FFolder+'editor-sessions.json';
   fnn := FFolder+'editor-sessions-new.json';
@@ -264,6 +275,13 @@ begin
   finally
     ts.free;
   end;
+end;
+
+procedure TFHIRToolkitTemporaryStorage.getMRUListRaw(list: TStrings);
+begin
+  list.clear;
+  if FileExists(FFolder+'mrulist.cfg') then
+    list.LoadFromFile(FFolder+'mrulist.cfg');
 end;
 
 function TFHIRToolkitTemporaryStorage.getMRU(index: integer): String;
