@@ -832,6 +832,9 @@ end;
 
 constructor TFDBOdbcManager.create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
+  if not isODBCLoaded then
+    InitialiseODBC;
+
   {$IFDEF FPC}
   if @SQLAllocHandle = nil then
     InitialiseODBC;
