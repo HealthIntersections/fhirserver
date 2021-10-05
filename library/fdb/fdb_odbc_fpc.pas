@@ -49,7 +49,7 @@ uses
 {$IFDEF Linux}
   {$DEFINE extdecl := cdecl}
   const
-!    odbclib = 'libodbc.'+sharedsuffix;
+    odbclib = 'libodbc.'+sharedsuffix;
 {$ENDIF}
 {$IFDEF DARWIN}
   {$DEFINE extdecl := cdecl}
