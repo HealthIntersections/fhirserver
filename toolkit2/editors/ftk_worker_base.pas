@@ -62,6 +62,7 @@ type
   public
     destructor Destroy; override;
     property Context : TToolkitContext read FContext;
+    procedure getFocus; virtual;
     procedure saveStatus; virtual; // called before shut down because shut down order isn't always predictable
   end;
 
@@ -99,6 +100,7 @@ type
     function getSource : String; override;
     procedure resizeControls; override;
     procedure saveStatus; override;
+    function FileExtension : String; override;
   end;
 
 implementation
@@ -108,6 +110,11 @@ implementation
 destructor TBaseWorkerFrame.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TBaseWorkerFrame.getFocus;
+begin
+  // nothing
 end;
 
 procedure TBaseWorkerFrame.saveStatus;
@@ -214,7 +221,7 @@ end;
 
 procedure TBaseWorker.getFocus(content: TMenuItem);
 begin
-
+  FFrame.getFocus;
 end;
 
 procedure TBaseWorker.loseFocus();
@@ -286,6 +293,11 @@ procedure TBaseWorker.saveStatus;
 begin
   inherited saveStatus;
   FFrame.saveStatus;
+end;
+
+function TBaseWorker.FileExtension: String;
+begin
+  result := 'bin';
 end;
 
 end.

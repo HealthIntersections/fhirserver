@@ -44,8 +44,10 @@ type
     function folder : String;
   public
     function schemes : TArray<String>; override;
+    function inScope(url : String) : boolean; override;
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
+    function canSave : boolean; override;
     function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
@@ -72,6 +74,11 @@ begin
   result := ['internal'];
 end;
 
+function TInternalStorageService.inScope(url: String): boolean;
+begin
+  result := true;
+end;
+
 function TInternalStorageService.CheckTimes: boolean;
 begin
   result := false;
@@ -80,6 +87,11 @@ end;
 function TInternalStorageService.CurrencyCheckFrequency: integer;
 begin
   result := 1;
+end;
+
+function TInternalStorageService.canSave: boolean;
+begin
+  result := true;
 end;
 
 function TInternalStorageService.load(address: String; doException : boolean): TLoadedBytes;

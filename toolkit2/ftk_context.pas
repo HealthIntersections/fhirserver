@@ -54,7 +54,7 @@ uses
 // resource
 
 type
-  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT);
+  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT, sekHome);
   TSourceEditorKindSet = set of TSourceEditorKind;
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
@@ -67,9 +67,9 @@ const
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
 
-  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
-  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
-  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'HomePage', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
+  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
+  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'Home Page', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
@@ -204,6 +204,7 @@ type
     function FileExtension : String; virtual; abstract;
     function GetBytes: TBytes; virtual; abstract;
     function describe : String;
+    function EditorTitle : String; virtual;
 
     // editing related functionality
     property Pause : integer read FPause write FPause;
@@ -617,19 +618,23 @@ begin
   FStore := store;
   if (session.caption = '') then
   begin
-    if (FStore <> nil) then
-      session.caption := store.CaptionForAddress(session.address)
-    else
+    session.Caption := EditorTitle;
+    if (session.caption = '') then
     begin
-      i := 0;
-      repeat
-        inc(i);
-        ok := true;
-        for ss in context.FEditorSessions do
-          if (ss.Caption = 'new_file_'+inttostr(i)+'.'+FileExtension) then
-            ok := false;
-      until ok;
-      session.Caption := 'new_file_'+inttostr(i)+'.'+FileExtension;
+      if (FStore <> nil) then
+        session.caption := store.CaptionForAddress(session.address)
+      else
+      begin
+        i := 0;
+        repeat
+          inc(i);
+          ok := true;
+          for ss in context.FEditorSessions do
+            if (ss.Caption = 'new_file_'+inttostr(i)+'.'+FileExtension) then
+              ok := false;
+        until ok;
+        session.Caption := 'new_file_'+inttostr(i)+'.'+FileExtension;
+      end;
     end;
   end;
 end;
@@ -657,6 +662,11 @@ begin
     result := FStore.describe(Session.Address)
   else
     result := 'File';
+end;
+
+function TToolkitEditor.EditorTitle: String;
+begin
+  result := '';
 end;
 
 procedure TToolkitEditor.bindToTab(tab: TTabSheet);
@@ -798,6 +808,9 @@ var
 begin
   scheme := address.Substring(0, address.IndexOf(':'));
   result := nil;
+  for storage in storages do
+    if StringArrayExists(storage.schemes, scheme) and storage.inScope(address) then
+      exit(storage);
   for storage in storages do
     if StringArrayExists(storage.schemes, scheme) then
       exit(storage);

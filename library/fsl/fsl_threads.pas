@@ -135,8 +135,6 @@ Type
   TFslThreadHandle = TThreadHandle;
   TFslThreadID = TThreadID;
 
-  TFslThreadDelegate = Procedure Of Object;
-
   { TFslThread }
 
   TFslThread = Class abstract (TFslObject)

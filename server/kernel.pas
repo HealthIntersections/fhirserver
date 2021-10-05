@@ -46,6 +46,10 @@ Uses
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
 
+  {$IFDEF FPC}
+  fui_fake_console,
+  {$ENDIF}
+
   server_constants, server_config, utilities, server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
@@ -392,6 +396,11 @@ begin
     Logging.log('Web source from ..\..\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('..\..\server\web')
   end
+  else if FolderExists('../../server/web') then
+  begin
+    Logging.log('Web source from ../../server/web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('../../server/web')
+  end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
     Logging.log('Web source from '+partnerFile('fhirserver.web'));
@@ -686,7 +695,7 @@ begin
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
-procedure ExecuteFhirServer;
+procedure ExecuteFhirServerInner;
 var
   cfg : TFHIRServerConfigFile;
   cfgName : String;
@@ -788,6 +797,22 @@ begin
   end;
 end;
 
+procedure ExecuteFhirServer;
+var
+  fc : TFakeConsoleForm;
+begin
+  if hasCommandLineParam('fake-console') then
+  begin
+    Application.Initialize;
+    Application.CreateForm(TFakeConsoleForm, fc);
+    fc.Op := ExecuteFhirServerInner;
+    fc.showModal;
+    fc.close;
+    fc.free;
+  end
+  else
+    ExecuteFhirServerInner;
+end;
 
 end.
 

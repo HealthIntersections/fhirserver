@@ -44,8 +44,10 @@ type
   TFileStorageService = class (TStorageService)
   public
     function schemes : TArray<String>; override;
+    function inScope(url : String) : boolean; override;
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
+    function canSave : boolean; override;
     function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
@@ -67,6 +69,11 @@ begin
   result := ['file'];
 end;
 
+function TFileStorageService.inScope(url: String): boolean;
+begin
+  result := true;
+end;
+
 function TFileStorageService.CheckTimes: boolean;
 begin
   result := true;
@@ -75,6 +82,11 @@ end;
 function TFileStorageService.CurrencyCheckFrequency: integer;
 begin
   result := 1;
+end;
+
+function TFileStorageService.canSave: boolean;
+begin
+  result := true;
 end;
 
 function TFileStorageService.load(address: String; doException : boolean): TLoadedBytes;

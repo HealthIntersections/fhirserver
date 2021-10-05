@@ -1326,7 +1326,7 @@ begin
   FLastLocationAWS := FPrevLocation;
 
   FValue.Clear;
-  If (CharInSet(ch, [#0, ' ', #13, #10, #9]) and Not More) Then
+  If (ch = #0) or (CharInSet(ch, [' ', #13, #10, #9]) and Not More) Then
     FLexType := jltEof
   Else case ch of
     '{' : FLexType := jltOpen;

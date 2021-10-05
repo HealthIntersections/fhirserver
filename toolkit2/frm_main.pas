@@ -39,17 +39,18 @@ uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json,
+
   fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
   fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants,
-  ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
+  ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http, ftk_store_server,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource;
+  dlg_new_resource, dlg_open_url;
 
 type
   {$IFDEF WINDOWS}
@@ -75,6 +76,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
     actionViewsCopyLog: TAction;
     actionViewsOpenLog: TAction;
@@ -188,6 +190,7 @@ type
     MenuItem118: TMenuItem;
     MenuItem119: TMenuItem;
     MenuItem120: TMenuItem;
+    MenuItem54: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -277,10 +280,10 @@ type
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
-    MenuItem54: TMenuItem;
-    MenuItem56: TMenuItem;
-    MenuItem57: TMenuItem;
-    MenuItem58: TMenuItem;
+    mnuPagesClose: TMenuItem;
+    mnuPagesCloseLeft: TMenuItem;
+    mnuPagesCloseRight: TMenuItem;
+    mnuPagesCloseOthers: TMenuItem;
     MenuItem63: TMenuItem;
     MenuItem64: TMenuItem;
     MenuItem65: TMenuItem;
@@ -446,6 +449,7 @@ type
     procedure actionhelpAboutExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
+    procedure actionHelpWelcomePageExecute(Sender: TObject);
     procedure actionNewEditorExecute(Sender: TObject);
     procedure actionPagesCloseAllExecute(Sender: TObject);
     procedure actionPagesCloseLeftExecute(Sender: TObject);
@@ -599,18 +603,21 @@ type
     procedure ApplyViewLayout;
     procedure startLoadingContexts;
     procedure doContextLoaded(id : integer; response : TBackgroundTaskResponsePackage);
+    procedure storeOpenFileList;
+    procedure checkWelcomePage;
   public
     property FileSystem : TStorageService read FFileSystem;
     property Context : TToolkitContext read FContext;
 
     // used by the project manager
-    procedure createNewFile(kind : TSourceEditorKind; bytes : TBytes = []); overload;
-    procedure createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []); overload;
+    function createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor; overload;
+    function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor; overload;
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     function openFile(address : String) : TToolkitEditor;
     procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     function closeFiles(path : String) : boolean;
+    function openFromURL(url : String) : boolean;
   end;
 
 var
@@ -661,13 +668,14 @@ begin
     end;
   end;
 end;
+
 {$ENDIF}
 
 { TMainToolkitForm }
 
 procedure TMainToolkitForm.FormCreate(Sender: TObject);
 var
-  http : THTTPStorageService;
+  ss : TServerStorageService;
 begin
   Application.OnActivate := DoAppActivate;
   Application.OnException := DoAppException;
@@ -747,9 +755,10 @@ begin
   FContext.storages.add(FFileSystem.link);
   FInternalStorage := TInternalStorageService.create(self, FIni);
   FContext.storages.add(FInternalStorage.link);
-  http := THTTPStorageService.create(FServerView.ServerList.link);
-  FContext.storages.add(http);
-  http.OnConnectToServer := DoConnectToServer;
+  FContext.storages.add(THTTPStorageService.create); // must be before the next line
+  ss := TServerStorageService.create(FServerView.ServerList.link);
+  FContext.storages.add(ss);
+  ss.OnConnectToServer := DoConnectToServer;
   FSearch := TFslList<TToolkitSearchMatch>.create;
   FFactory := TToolkitFactory.create(FContext.link, self);
   actionViewsClearLog.enabled := false;
@@ -802,16 +811,19 @@ var
   tab : TTabSheet;
   ns : boolean;
   i : integer;
+  empty : boolean;
 begin
   ApplyViewLayout;
 
+  empty := true;
   sessions := TFslList<TToolkitEditSession>.create;
   try
     FTempStore.fetchOpenList(sessions);
     for session in sessions do
     begin
+      empty := false;
       ns := session.NeedsSaving;
-      editor := FFactory.makeEditor(session.link);
+      editor := FFactory.makeEditor(session.link, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
@@ -824,7 +836,8 @@ begin
   finally
     sessions.free;
   end;
-
+  if (empty) then
+    createNewFile(sekHome).Session.Info.Values['auto'] := 'true';
 
   for i := 1 to ParamCount do
     if (FileExists(ParamStr(i))) then
@@ -1260,12 +1273,12 @@ begin
   openFile(FTempStore.getMRU((sender as TMenuItem).tag));
 end;
 
-procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []);
+function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor;
 begin
-  createNewFile(kind, '', '', bytes);
+  result := createNewFile(kind, '', '', bytes);
 end;
 
-procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []);
+function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
 var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
@@ -1308,7 +1321,7 @@ begin
         session.Address := 'file:'+path;
       if (filename <> '') then
         session.caption := filename;
-      editor := FFactory.makeEditor(session.link);
+      editor := FFactory.makeEditor(session.link, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
@@ -1324,12 +1337,14 @@ begin
       editor.session.NeedsSaving := false;
       editor.lastChangeChecked := true;
       pgEditors.ActivePage := tab;
-      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FContext.Focus := editor;
       FContext.Focus.getFocus(mnuContent);
       FProjectsView.refresh;
       updateActionStatus(editor);
+      checkWelcomePage;
+      result := editor;
     finally
       session.free;
     end;
@@ -1353,19 +1368,19 @@ begin
   begin
     store := Context.StorageForAddress(address);
     loaded := store.load(address, true);
-    session := FFactory.examineFile(address, loaded.mimeType, loaded.content);
+    session := FFactory.examineFile(address, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
       session.address := address;
       session.Timestamp := loaded.timestamp;
-      editor := FFactory.makeEditor(session);
+      editor := FFactory.makeEditor(session, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
       editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
-      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
@@ -1376,6 +1391,7 @@ begin
       editor.editPause;
       FProjectsView.refresh;
       updateActionStatus(editor);
+      checkWelcomePage;
       result := editor;
     end;
   end;
@@ -1396,7 +1412,7 @@ begin
     editor.Session.Caption := Context.StorageForAddress(editor.Session.Address).CaptionForAddress(editor.Session.Address);
     editor.Tab.Caption := editor.Session.Caption;
     FTempStore.removeFromMRU('file:'+op);
-    FTempStore.storeOpenFileList(Context.editorSessions);
+    storeOpenFileList;
     updateMessages(self);
   end;
 end;
@@ -1420,6 +1436,60 @@ begin
   for i := FContext.Editors.count - 1 downto 0 do
     if FContext.Editors[i].session.Address.startsWith('file:'+path) then
       closeFile(FContext.Editors[i].tab, false);
+end;
+
+function TMainToolkitForm.openFromURL(url: String): boolean;
+  function showError(msg : String) : boolean;
+  begin
+    result := MessageDlg('Error', msg, mtError, [mbRetry, mbOK], 0) = mrOK;
+  end;
+var
+  store : TStorageService;
+  loaded : TLoadedBytes;
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  session : TToolkitEditSession;
+begin
+  editor := Context.EditorForAddress(url);
+  if (editor <> nil) then
+    pgEditors.ActivePage := editor.tab
+  else
+  begin
+    // todo: if URL is a canonical, present a list of versions
+    store := Context.StorageForAddress(url);
+    if (store = nil) then
+      exit(showError('Unable to fetch '+url+': not a supported protocol'));
+    try
+      loaded := store.load(url, true);
+      // well, we can open whatever it is
+      session := FFactory.examineFile(url, loaded.mimeType, loaded.content, true);
+      session.address := url;
+      session.Timestamp := loaded.timestamp;
+      editor := FFactory.makeEditor(session, FTempStore);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      editor.LoadBytes(loaded.content);
+      editor.session.NeedsSaving := false;
+      pgEditors.ActivePage := tab;
+      storeOpenFileList;
+      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      FTempStore.removeFromMRU(editor.session.address);
+      editor.lastChangeChecked := true;
+      FContext.Focus := editor;
+      FContext.Focus.getFocus(mnuContent);
+      editor.lastChangeChecked := true;
+      editor.lastMoveChecked := true;
+      editor.editPause;
+      FProjectsView.refresh;
+      updateActionStatus(editor);
+      checkWelcomePage;
+      result := true;
+    except
+      on e : Exception do
+        exit(showError('Error fetching '+url+': '+e.message));
+    end;
+  end;
 end;
 
 procedure TMainToolkitForm.onChangeFocus(sender: TObject);
@@ -1474,8 +1544,10 @@ end;
 procedure TMainToolkitForm.closeFile(tab: TTabSheet; store : boolean);
 var
   editor : TToolkitEditor;
+  home : boolean;
 begin
   editor := Context.EditorForTab(tab);
+  home := editor.Session.kind = sekHome;
   if store and (editor.CanBeSaved) then
     checkDoSave(editor);
   editor.saveStatus; // internal save, and then unhook
@@ -1483,10 +1555,11 @@ begin
     FTempStore.addToMru(editor.session.Address, editor.session.caption);
   Context.removeEditor(editor);
   tab.free;
-  if (store) then
-    FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   pgEditorsChange(self);
   FProjectsView.refresh;
+  if (not home) and (pgEditors.PageCount = 0) then
+    createNewFile(sekHome).Session.Info.Values['auto'] := 'true';
 end;
 
 procedure TMainToolkitForm.locateOnTab(sender: TObject; x, y: integer; var point: TPoint);
@@ -1659,7 +1732,7 @@ begin
     session := FFactory.makeNewSession(sekServer);
     session.caption := 'Server '+server.Name;
     session.address := 'internal:server.'+server.name;
-    worker := FFactory.makeEditor(session) as TServerWorker;
+    worker := FFactory.makeEditor(session, FTempStore) as TServerWorker;
     FContext.addEditor(worker);
     tab := pgEditors.AddTabSheet;
     worker.bindToTab(tab);
@@ -1667,12 +1740,13 @@ begin
     worker.session.NeedsSaving := false;
     worker.lastChangeChecked := true;
     pgEditors.ActivePage := tab;
-    FTempStore.storeOpenFileList(FContext.EditorSessions);
+    storeOpenFileList;
     FTempStore.storeContent(worker.session.Guid, true, worker.getBytes);
     FContext.Focus := worker;
     FContext.Focus.getFocus(mnuContent);
     FServerView.refresh;
     updateActionStatus(worker);
+    checkWelcomePage;
   end;
 end;
 
@@ -1713,19 +1787,19 @@ begin
   begin
     store := Context.StorageForAddress(url);
     loaded := store.load(url, true);
-    session := FFactory.examineFile(url, loaded.mimeType, loaded.content);
+    session := FFactory.examineFile(url, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
       session.address := url;
       session.Timestamp := loaded.timestamp;
-      editor := FFactory.makeEditor(session);
+      editor := FFactory.makeEditor(session, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
       editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
-      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
@@ -1735,6 +1809,7 @@ begin
       editor.lastMoveChecked := true;
       editor.editPause;
       updateActionStatus(editor);
+      checkWelcomePage;
     end;
   end;
 end;
@@ -1748,7 +1823,7 @@ var
 begin
   session := FFactory.makeNewSession(sekFHIR);
   session.info.Values['Format'] := CODES_TFHIRFormat[format];
-  editor := FFactory.makeEditor(session);
+  editor := FFactory.makeEditor(session, FTempStore);
   FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;
   editor.bindToTab(tab);
@@ -1756,11 +1831,12 @@ begin
   editor.session.NeedsSaving := false;
   editor.lastChangeChecked := true;
   pgEditors.ActivePage := tab;
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
   FContext.Focus := editor;
   FContext.Focus.getFocus(mnuContent);
   updateActionStatus(editor);
+  checkWelcomePage;
 end;
 
 procedure TMainToolkitForm.doOpenSource(sender : TObject; src : TBytes; kind : TSourceEditorKind);
@@ -1771,7 +1847,7 @@ var
   session : TToolkitEditSession;
 begin
   session := FFactory.makeNewSession(kind);
-  editor := FFactory.makeEditor(session);
+  editor := FFactory.makeEditor(session, FTempStore);
   FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;
   editor.bindToTab(tab);
@@ -1779,11 +1855,12 @@ begin
   editor.session.NeedsSaving := false;
   editor.lastChangeChecked := true;
   pgEditors.ActivePage := tab;
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
   FContext.Focus := editor;
   FContext.Focus.getFocus(mnuContent);
   updateActionStatus(editor);
+  checkWelcomePage;
 end;
 
 procedure TMainToolkitForm.doOpenResourceObj(sender: TObject; obj : TFHIRResourceV);
@@ -1880,7 +1957,7 @@ begin
   actionFileManageFolder.enabled := context.hasFocus and context.Focus.isFile;
   actionCopyFilePath.enabled := context.hasFocus and context.Focus.hasAddress;
   actionCopyFileTitle.enabled := context.hasFocus and context.Focus.hasAddress;
-  actionFileClose.enabled := context.hasFocus;
+  actionFileClose.enabled := context.hasFocus and (pgEditors.PageCount > 1);
   actionFileSave.enabled := context.hasFocus and context.Focus.CanBeSaved;
   actionFileManageRename.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageCopy.enabled := context.hasFocus and context.Focus.isFile;
@@ -2141,7 +2218,7 @@ var
   editor : TToolkitEditor;
 begin
   GBackgroundTasks.stopAll;
-  FTempStore.storeOpenFileList(Context.editorSessions);
+  storeOpenFileList;
   for editor in FContext.Editors do
   begin
     if not editor.lastChangeChecked then
@@ -2162,7 +2239,7 @@ begin
     Context.Focus.Session.Caption := Context.StorageForAddress(address).CaptionForAddress(address);
     Context.Focus.Tab.Caption := Context.Focus.Session.Caption;
     FTempStore.removeFromMRU(address);
-    FTempStore.storeOpenFileList(Context.editorSessions);
+    storeOpenFileList;
     Context.StorageForAddress(old).delete(old);
     updateMessages(self);
     FProjectsView.renameFile(old.Substring(5), address.substring(5));
@@ -2195,25 +2272,8 @@ begin
 end;
 
 procedure TMainToolkitForm.actConnectToServerExecute(Sender: TObject);
-var
-  server : TFHIRServerEntry;
 begin
-  server := TFHIRServerEntry.create;
-  try
-    ServerSettingsForm := TServerSettingsForm.create(self);
-    try
-      ServerSettingsForm.Server := server.link;
-      ServerSettingsForm.ServerList := FServerView.ServerList.link;
-      if ServerSettingsForm.ShowModal = mrOk then
-      begin
-        FServerView.addServer(server);
-      end;
-    finally
-      FreeAndNil(ServerSettingsForm);
-    end;
-  finally
-    server.free;
-  end;
+  AddServer('', '');
 end;
 
 procedure TMainToolkitForm.actionCopyFilePathExecute(Sender: TObject);
@@ -2450,7 +2510,7 @@ begin
   Context.Focus.LoadBytes(loaded.content);
   Context.Focus.session.NeedsSaving := false;
   Context.Focus.session.Timestamp := loaded.timestamp;
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   FTempStore.storeContent(Context.Focus.session.Guid, true, Context.Focus.getBytes);
   Context.Focus.lastChangeChecked := true;
 end;
@@ -2469,8 +2529,29 @@ begin
 end;
 
 procedure TMainToolkitForm.actionFileOpenUrlExecute(Sender: TObject);
+var
+  mr : TModalResult;
 begin
+  OpenURLForm := TOpenURLForm.create(self);
+  try
+    FTempStore.getURLList(OpenURLForm.cbxURL.items);
+    OpenURLForm.cbxURL.Text := '';
+    if isAbsoluteUrl(Clipboard.AsText) then
+      OpenURLForm.cbxURL.Text := Clipboard.AsText;
 
+    repeat
+      mr := OpenURLForm.ShowModal;
+      case mr of
+        mrOK: if openFromURL(OpenURLForm.cbxURL.Text) then
+            FTempStore.addURL(OpenURLForm.cbxURL.Text)
+          else
+            mr := mrNone;
+        mrRetry : AddServer('', OpenURLForm.cbxURL.Text);
+      end;
+    until mr <> mrNone;
+  finally
+    OpenURLForm.free;
+  end;
 end;
 
 procedure TMainToolkitForm.actionFileSaveAllExecute(Sender: TObject);
@@ -2501,7 +2582,7 @@ begin
       Context.Focus.Session.Caption := Context.Focus.Store.CaptionForAddress(address);
       Context.Focus.Tab.Caption := Context.Focus.Session.Caption;
       FTempStore.removeFromMRU(address);
-      FTempStore.storeOpenFileList(Context.editorSessions);
+      storeOpenFileList;
       updateMessages(self);
       updateActionStatus(self);
     end
@@ -2512,7 +2593,7 @@ end;
 procedure TMainToolkitForm.actionFileSaveExecute(Sender: TObject);
 begin
   if (Context.Focus <> nil) then
-    if Context.Focus.hasAddress then
+    if Context.Focus.hasAddress and Context.Focus.Store.canSave then
       SaveFile(Context.Focus, Context.Focus.Session.Address, true)
     else
       actionFileSaveAs1Execute(sender);
@@ -2559,6 +2640,22 @@ begin
   ShowMessage('Not implemented yet');
 end;
 
+procedure TMainToolkitForm.actionHelpWelcomePageExecute(Sender: TObject);
+var
+  editor : TToolkitEditor;
+begin
+  for editor in FContext.editors do
+  begin
+    if editor.Session.Kind = sekHome then
+    begin
+      pgEditors.ActivePage := editor.tab;
+      exit;
+    end;
+  end;
+
+  createNewFile(sekHome);
+end;
+
 procedure TMainToolkitForm.actionNewEditorExecute(Sender: TObject);
 begin
   createNewFile(TSourceEditorKind((sender as TComponent).tag));
@@ -2572,7 +2669,7 @@ begin
   for i := pgEditors.PageCount - 1 downto 0 do
     if i <> c then
       closeFile(pgEditors.Pages[i], false);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   updateActionStatus(self);
 end;
 
@@ -2583,7 +2680,7 @@ begin
   c := pgEditors.ActivePageIndex;
   for i := c - 1 downto 0 do
     closeFile(pgEditors.Pages[i], false);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   updateActionStatus(self);
 end;
 
@@ -2594,7 +2691,7 @@ begin
   c := pgEditors.ActivePageIndex;
   for i := pgEditors.PageCount - 1 downto c+1 do
     closeFile(pgEditors.Pages[i], false);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
   updateActionStatus(self);
 end;
 
@@ -2602,28 +2699,28 @@ procedure TMainToolkitForm.actionPagesMoveFarleftExecute(Sender: TObject);
 begin
   pgEditors.ActivePage.PageIndex := 0;
   updateActionStatus(self);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
 end;
 
 procedure TMainToolkitForm.actionPagesMoveFarRIghtExecute(Sender: TObject);
 begin
   pgEditors.ActivePage.PageIndex := pgEditors.PageCount - 1;
   updateActionStatus(self);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
 end;
 
 procedure TMainToolkitForm.actionPagesMoveLeftExecute(Sender: TObject);
 begin
   pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex - 1;
   updateActionStatus(self);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
 end;
 
 procedure TMainToolkitForm.actionPagesMoveRightExecute(Sender: TObject);
 begin
   pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex + 1;
   updateActionStatus(self);
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  storeOpenFileList;
 end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
@@ -2868,7 +2965,9 @@ begin
     if ndx < pg.PageCount then
       tab := pg.Pages[ndx]
     else
+    begin
       tab := pg.AddTabSheet;
+    end;
     tab.Caption := TITLES_TViewManagerPanelId[id];
     tab.ImageIndex := ICONS_TViewManagerPanelId[id];
     tab.TabVisible := true;
@@ -3004,6 +3103,30 @@ begin
   FContext.context[(response as TFHIRLoadContextTaskResponse).context.Factory.version] := (response as TFHIRLoadContextTaskResponse).context.link;
 end;
 
+procedure TMainToolkitForm.storeOpenFileList;
+var
+  list : TJsonArray;
+  i : integer;
+  session : TToolkitEditSession;
+begin
+  list := FTempStore.startOpenFileList;
+  for i := 0 to pgEditors.PageCount - 1 do
+  begin
+    session := FContext.EditorForTab(pgEditors.Pages[i]).Session;
+    FTempStore.storeOpenFile(list, session);
+  end;
+  FTempStore.finishOpenFileList(list);
+end;
+
+procedure TMainToolkitForm.checkWelcomePage;
+var
+  editor : TToolkitEditor;
+begin
+  for editor in FContext.Editors do
+    if (editor.Session.kind = sekHome) and (editor.Session.Info.Values['auto'] = 'true') then
+      closeFile(editor.Tab, false);
+end;
+
 procedure TMainToolkitForm.Splitter1Moved(Sender: TObject);
 begin
   if FDoingLayout then exit;
@@ -3042,4 +3165,6 @@ end;
 
 
 end.
+
+
 
