@@ -726,6 +726,9 @@ begin
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
+    {$IFDEF OSX}
+    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+    {$ENDIF}
     InitOpenSSL;
     {$IFDEF DELPHI}
     JclStartExceptionTracking;

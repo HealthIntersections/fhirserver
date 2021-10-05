@@ -408,7 +408,7 @@ end;
 procedure InitOpenSSL;
 begin
   if not GetOpenSSLLoader.Load then
-    raise EFslException.Create('open SSL failed to load');
+    raise EFslException.Create('open SSL failed to load: '+GetOpenSSLLoader.LoadError);
   InstallIndyRoutines;
 end;
 

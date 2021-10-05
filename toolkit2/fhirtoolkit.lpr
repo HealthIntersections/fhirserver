@@ -3,6 +3,7 @@ program fhirtoolkit;
 {$I fhir.inc}
 
 uses
+  cmem,
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
