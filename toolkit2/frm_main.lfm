@@ -3463,7 +3463,7 @@ object MainToolkitForm: TMainToolkitForm
         Align = alClient
         Images = imgMain
         ParentFont = False
-        TabIndex = 4
+        TabIndex = 0
         TabOrder = 0
         OnChange = pgBottomChange
         object tbMessages: TTabSheet
@@ -4536,10 +4536,10 @@ object MainToolkitForm: TMainToolkitForm
         Left = 1
         Height = 564
         Top = 1
-        Width = 183
+        Width = 300
         Align = alLeft
-        ClientHeight = 564
-        ClientWidth = 183
+        ClientHeight = 539
+        ClientWidth = 300
         Constraints.MinWidth = 57
         ParentFont = False
         TabOrder = 0
@@ -4561,13 +4561,13 @@ object MainToolkitForm: TMainToolkitForm
           Align = alClient
           Images = imgMain
           ParentFont = False
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           OnChange = pgLeftChange
           object tbProjects: TTabSheet
             Caption = 'Projects'
-            ClientHeight = 532
-            ClientWidth = 175
+            ClientHeight = 506
+            ClientWidth = 288
             ImageIndex = 38
             ParentFont = False
             object pnlProjects: TPanel
@@ -4580,6 +4580,12 @@ object MainToolkitForm: TMainToolkitForm
               Caption = 'pnlProjects'
               ClientHeight = 532
               ClientWidth = 175
+              Width = 288
+              Align = alClient
+              BevelOuter = bvNone
+              Caption = 'pnlProjects'
+              ClientHeight = 506
+              ClientWidth = 288
               TabOrder = 0
               object ToolBar3: TToolBar
                 Left = 0
@@ -4698,7 +4704,7 @@ object MainToolkitForm: TMainToolkitForm
           Align = alClient
           Images = imgMain
           ParentFont = False
-          TabIndex = 2
+          TabIndex = 0
           TabOrder = 0
           OnChange = pgRightChange
           object tbInspector: TTabSheet
@@ -4739,8 +4745,8 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbVariables: TTabSheet
             Caption = 'Variables'
-            ClientHeight = 532
-            ClientWidth = 252
+            ClientHeight = 506
+            ClientWidth = 338
             ImageIndex = 33
             ParentFont = False
             object pnlVariables: TPanel
