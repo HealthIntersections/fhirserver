@@ -1919,6 +1919,7 @@ function CurrToNumericStruct(c: currency): SQL_NUMERIC_STRUCT;
 {$IFDEF DYNLOADINGODBC}
 Procedure InitialiseODBC(OverrideName : string ='');
 Procedure ReleaseODBC;
+function isODBCLoaded : boolean;
 
 var ODBCLibraryHandle : TLibHandle;
 {$ENDIF}
@@ -1929,9 +1930,14 @@ implementation
 
 var RefCount : integer;
 
+function isODBCLoaded : boolean;
+begin
+  result := RefCount > 0;
+end;
+
 Procedure InitialiseODBC(OverrideName : string ='');
 
-var libname : string;
+var libname, error : string;
 
 begin
   inc(RefCount);
@@ -1945,7 +1951,9 @@ begin
     if ODBCLibraryHandle = nilhandle then
       begin
       RefCount := 0;
-      Raise EInOutError.Create('Can not load ODBC client. Is it installed? ('+odbclib+')');
+
+      error:= GetLoadErrorStr;
+      Raise EInOutError.Create('Can not load ODBC client. Is it installed? ('+odbclib+': '+error+')');
       end;
 
 {$ifdef fpc}
