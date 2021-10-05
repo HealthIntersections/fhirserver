@@ -391,15 +391,10 @@ begin
     Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
   end
-  else if FolderExists('..\..\server\web') then
-  begin
-    Logging.log('Web source from ..\..\server\web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('..\..\server\web')
-  end
-  else if FolderExists('../../server/web') then
+  else if FolderExists(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web'])) then
   begin
     Logging.log('Web source from ../../server/web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('../../server/web')
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web']))
   end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
