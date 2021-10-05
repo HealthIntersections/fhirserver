@@ -15,8 +15,57 @@
       <Icon Value="0"/>
     </General>
     <BuildModes>
-      <Item Name="Win64" Default="True"/>
-      <Item Name="Linux">
+      <Item Name="default" Default="True"/>
+      <Item Name="win64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRToolkit"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx5024="True"/>
+            </CompilerMessages>
+          </Other>
+        </CompilerOptions>
+      </Item>
+      <Item Name="linux">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -52,7 +101,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -65,7 +114,7 @@
           </Other>
         </CompilerOptions>
       </Item>
-      <Item Name="OSX">
+      <Item Name="osx">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -500,8 +549,6 @@
         <StackChecks Value="True"/>
       </Checks>
       <VerifyObjMethodCallValidity Value="True"/>
-      <TargetCPU Value="x86_64"/>
-      <TargetOS Value="win64"/>
       <Optimizations>
         <OptimizationLevel Value="0"/>
       </Optimizations>

@@ -16,12 +16,52 @@
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
-    <MacroValues Count="1">
-      <Macro3 Name="LCLWidgetType" Value="win32"/>
-    </MacroValues>
     <BuildModes Count="6">
-      <Item1 Name="win32" Default="True"/>
-      <Item2 Name="win64">
+      <Item1 Name="default" Default="True"/>
+      <Item2 Name="win32">
+        <MacroValues Count="1">
+          <Macro3 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="admin"/>
+            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="win64">
         <MacroValues Count="1">
           <Macro3 Name="LCLWidgetType" Value="win32"/>
         </MacroValues>
@@ -66,8 +106,8 @@
             </Options>
           </Linking>
         </CompilerOptions>
-      </Item2>
-      <Item3 Name="linux">
+      </Item3>
+      <Item4 Name="linux">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -97,8 +137,8 @@
             </Options>
           </Linking>
         </CompilerOptions>
-      </Item3>
-      <Item4 Name="osx">
+      </Item4>
+      <Item5 Name="osx">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -123,66 +163,27 @@
             </Debugging>
           </Linking>
         </CompilerOptions>
-      </Item4>
-      <Item5 Name="win32-release">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <PathDelim Value="\"/>
-          <Target>
-            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
-          </SearchPaths>
-          <CodeGeneration>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
-            <Optimizations>
-              <OptimizationLevel Value="3"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-            </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
-          </Linking>
-        </CompilerOptions>
       </Item5>
-      <Item6 Name="win64-release">
+      <Item6 Name="osx-m1">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
+            <Filename Value="..\exec\64\fhirconsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;admin"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="admin"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="win64"/>
-            <Optimizations>
-              <OptimizationLevel Value="3"/>
-            </Optimizations>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
         </CompilerOptions>
       </Item6>
@@ -326,8 +327,6 @@
         <StackChecks Value="True"/>
       </Checks>
       <VerifyObjMethodCallValidity Value="True"/>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
     </CodeGeneration>
     <Linking>
       <Debugging>

@@ -16,12 +16,50 @@
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
-    <MacroValues Count="1">
-      <Macro3 Name="LCLWidgetType" Value="win32"/>
-    </MacroValues>
-    <BuildModes Count="4">
-      <Item1 Name="Win32" Default="True"/>
-      <Item2 Name="Win64">
+    <BuildModes Count="6">
+      <Item1 Name="default" Default="True"/>
+      <Item2 Name="win32">
+        <MacroValues Count="1">
+          <Macro3 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="tests;admin;..\..\idetester\source"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="4"/>
+            </Optimizations>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dODBC"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="win64">
         <MacroValues Count="1">
           <Macro3 Name="LCLWidgetType" Value="win32"/>
         </MacroValues>
@@ -72,8 +110,8 @@
             <CustomOptions Value="-dNO_CONVERSIONX"/>
           </Other>
         </CompilerOptions>
-      </Item2>
-      <Item3 Name="Linux">
+      </Item3>
+      <Item4 Name="linux">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -129,8 +167,8 @@
             </CompilerMessages>
           </Other>
         </CompilerOptions>
-      </Item3>
-      <Item4 Name="OSX">
+      </Item4>
+      <Item5 Name="osx">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -170,7 +208,45 @@
             <CustomOptions Value="-dODBC"/>
           </Other>
         </CompilerOptions>
-      </Item4>
+      </Item5>
+      <Item6 Name="osx-m1">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
+            <Optimizations>
+              <OptimizationLevel Value="4"/>
+            </Optimizations>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dODBC"/>
+          </Other>
+        </CompilerOptions>
+      </Item6>
       <SharedMatrixOptions Count="3">
         <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="714078438566" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
@@ -584,8 +660,6 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
       <Optimizations>
         <OptimizationLevel Value="4"/>
       </Optimizations>
