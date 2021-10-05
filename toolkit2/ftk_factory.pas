@@ -304,6 +304,7 @@ begin
   sekFHIR : result := TFHIREditor.create(FContext{.link}, session, store.link);
   sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
   sekText : result := TTextEditor.create(FContext{.link}, session, store.link);
+  sekLiquid : result := THtmlEditor.create(FContext{.link}, session, store.link);
   sekXml : result := TXmlEditor.create(FContext{.link}, session, store.link);
   sekJson : result := TJsonEditor.create(FContext{.link}, session, store.link);
   sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);

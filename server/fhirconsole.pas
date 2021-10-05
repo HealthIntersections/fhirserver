@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$i fhir.inc}
 uses
-  {$IFDEF UNIX}
-  cthreads,
+  {$IFNDEF WINDOWS}
+  cmem, cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   SysUtils, Forms, Dialogs, datetimectrls,
@@ -52,6 +52,10 @@ begin
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
+    {$IFDEF OSX}
+    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+    {$ENDIF}
+
     InitOpenSSL;
     ok := true;
   except

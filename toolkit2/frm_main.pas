@@ -687,8 +687,10 @@ begin
   {$ENDIF}
   initialiseTZData(partnerFile('tz.dat'));
   {$IFDEF WINDOWS}
-
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  {$ENDIF}
+  {$IFDEF OSX}
+  GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
   {$ENDIF}
   InitOpenSSL;
 
@@ -1957,7 +1959,7 @@ begin
   actionFileManageFolder.enabled := context.hasFocus and context.Focus.isFile;
   actionCopyFilePath.enabled := context.hasFocus and context.Focus.hasAddress;
   actionCopyFileTitle.enabled := context.hasFocus and context.Focus.hasAddress;
-  actionFileClose.enabled := context.hasFocus and (pgEditors.PageCount > 1);
+  actionFileClose.enabled := context.hasFocus;
   actionFileSave.enabled := context.hasFocus and context.Focus.CanBeSaved;
   actionFileManageRename.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageCopy.enabled := context.hasFocus and context.Focus.isFile;

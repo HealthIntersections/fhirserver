@@ -7,13 +7,15 @@ until these are resolved in the core.
 changes:
 
 }
-{$DEFINE DYNLOADINGODBC}
-
 
 {$ifdef fpc}
  {$mode objfpc}
  {$macro on}
 {$endif}
+
+{$DEFINE DYNLOADINGODBC}
+
+
 
 {$h+}
 
@@ -43,16 +45,23 @@ uses
      ctypes,
      sysutils;
 
-{$IFDEF Unix}
+
+{$IFDEF Linux}
   {$DEFINE extdecl := cdecl}
   const
-    odbclib = 'libodbc.'+sharedsuffix;
+!    odbclib = 'libodbc.'+sharedsuffix;
+{$ENDIF}
+{$IFDEF DARWIN}
+  {$DEFINE extdecl := cdecl}
+  const
+    odbclib = 'libiodbc.2.'+sharedsuffix;
 {$ENDIF}
 {$IFDEF Windows}
   {$DEFINE extdecl := stdcall}
   const
-    odbclib = 'odbc32.dll';
+!    odbclib = 'odbc32.dll';
 {$ENDIF}
+
 
 (* DATA TYPES CORRESPONDENCE
    BDE fields  ODBC types
