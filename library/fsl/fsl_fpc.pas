@@ -40,7 +40,11 @@ uses
   baseunix, unix,
   {$ENDIF}
   Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
-  {$IFDEF FPC}, RegExpr, dateutils, upascaltz {$ENDIF};
+  {$IFDEF FPC},
+  {$IFDEF OSX}
+  MacOSAll, CocoaUtils,
+  {$ENDIF}
+  RegExpr, dateutils, upascaltz {$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -261,6 +265,10 @@ type
     class procedure delete(path : String); overload;  static;
   end;
 
+{$ENDIF}
+
+{$IFDEF OSX}
+function getMacTimezoneName : String;
 {$ENDIF}
 
 implementation
@@ -944,6 +952,16 @@ begin
   end;
 end;
 
+{$ENDIF}
+
+{$IFDEF OSX}
+function getMacTimezoneName;
+var
+  tz : CFTimeZoneRef;
+begin
+  tz := CFTimeZoneCopySystem;
+  result := CFStringToStr(CFTimeZoneGetName(tz));
+end;
 {$ENDIF}
 
 initialization

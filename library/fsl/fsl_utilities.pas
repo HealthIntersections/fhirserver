@@ -12221,7 +12221,7 @@ end;
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  result := '';
+  result := getMacTimezoneName;
 end;
 {$ENDIF}
 {$IFDEF LINUX}
