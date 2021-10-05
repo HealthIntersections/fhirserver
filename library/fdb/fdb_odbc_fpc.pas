@@ -59,7 +59,7 @@ uses
 {$IFDEF Windows}
   {$DEFINE extdecl := stdcall}
   const
-!    odbclib = 'odbc32.dll';
+    odbclib = 'odbc32.dll';
 {$ENDIF}
 
 

@@ -387,6 +387,7 @@ procedure TConfigurationBuilder.downloadFile(fn : String);
 var
   src, tgt : String;
   fetcher : TInternetFetcher;
+  start : TDateTime;
 begin
   src := UrlPath([FUrl, fn]);
   tgt := FilePath([FFolder, fn]);
@@ -410,16 +411,17 @@ begin
     begin
       Logging.start('Download '+fn);
       try
+        start := UniversalDateTime;
         fetcher := TInternetFetcher.Create;
         try
           fetcher.OnProgress := DownloadProgress;
           fetcher.URL := src;
           fetcher.Fetch;
           fetcher.Buffer.SaveToFileName(tgt);
+          Logging.finish(' Done ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(UniversalDateTime - start)+')');
         finally
           fetcher.Free;
         end;
-        Logging.finish(' Done');
       except
         on e : Exception do
         begin
