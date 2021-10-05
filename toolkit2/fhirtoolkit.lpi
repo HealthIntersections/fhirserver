@@ -334,7 +334,7 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="stores\ftk_store_http.pas"/>
+        <Filename Value="stores\ftk_store_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -460,6 +460,17 @@
       </Unit>
       <Unit>
         <Filename Value="editors\ftk_worker_home.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_open_url.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OpenURLForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\ftk_store_http.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

@@ -72,6 +72,8 @@ type
     procedure addToMru(address, description : String);
     procedure removeFromMRU(address : String);
 
+    procedure getURLList(list : TStrings);
+    procedure addURL(url : String);
   end;
 
 implementation
@@ -332,6 +334,32 @@ begin
       if ts[i].startsWith(address+'|') then
         ts.delete(i);
     ts.SaveTOFile(FFolder+'mrulist.cfg');
+  finally
+    ts.free;
+  end;
+end;
+
+procedure TFHIRToolkitTemporaryStorage.getURLList(list: TStrings);
+begin
+  if FileExists(FFolder+'urllist.cfg') then
+    list.LoadFromFile(FFolder+'urllist.cfg');
+end;
+
+procedure TFHIRToolkitTemporaryStorage.addURL(url : String);
+var
+  ts : TStringList;
+  s : String;
+  i : integer;
+begin
+  ts := TStringList.create;
+  try
+    if FileExists(FFolder+'urllist.cfg') then
+      ts.LoadFromFile(FFolder+'urllist.cfg');
+    i := ts.IndexOf(url);
+    if (i > -1) then
+      ts.Delete(i);
+    ts.Insert(0, url);
+    ts.SaveToFile(FFolder+'urllist.cfg');
   finally
     ts.free;
   end;

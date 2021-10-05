@@ -43,8 +43,11 @@ Type
 
   TProgressEvent = procedure(sender : TObject; progress : integer) of Object;
 
+  { TInternetFetcher }
+
   TInternetFetcher = Class (TFslObject)
   Private
+    FLastModified: TDateTime;
     FURL: String;
     FBuffer: TFslBuffer;
     FUsername: String;
@@ -83,6 +86,7 @@ Type
     Property Password : String read FPassword write SetPassword;
     Property Method : TInternetFetcherMethod read FMethod write FMethod;
     Property ContentType : String read FContentType;
+    Property LastModified : TDateTime read FLastModified write FLastModified;
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
     property Timeout : cardinal read FTimeout write FTimeout;
 
@@ -161,6 +165,7 @@ begin
               FBuffer.Capacity := oMem.Size;
               oMem.read(Fbuffer.Data^, oMem.Size);
               FContentType := oHTTP.Response.ContentType;
+              FLastModified := oHTTP.Response.LastModified;
             Finally
               oMem.Free;
             End;

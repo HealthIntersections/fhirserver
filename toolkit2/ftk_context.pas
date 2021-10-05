@@ -809,6 +809,9 @@ begin
   scheme := address.Substring(0, address.IndexOf(':'));
   result := nil;
   for storage in storages do
+    if StringArrayExists(storage.schemes, scheme) and storage.inScope(address) then
+      exit(storage);
+  for storage in storages do
     if StringArrayExists(storage.schemes, scheme) then
       exit(storage);
 end;

@@ -56,7 +56,7 @@ type
     constructor Create(context : TToolkitContext; handle: TComponent);
     destructor Destroy; override;
     function makeNewSession(kind : TSourceEditorKind) : TToolkitEditSession;
-    function examineFile(filename, mimeType : String; const bytes : TBytes) : TToolkitEditSession;
+    function examineFile(filename, mimeType : String; const bytes : TBytes; exception : boolean) : TToolkitEditSession;
 
     function makeEditor(session : TToolkitEditSession; tempStore : TFHIRToolkitTemporaryStorage) : TToolkitEditor;
 
@@ -158,7 +158,7 @@ begin
     result := TToolkitEditSession.create(sekJson);
 end;
 
-function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes): TToolkitEditSession;
+function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes; exception : boolean): TToolkitEditSession;
 var
   ext, s : String;
   xml : TMXmlDocument;
@@ -288,7 +288,10 @@ begin
       end;
     except
     end;
-    ShowMessage('The file '+filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
+    if exception then
+      raise EFslException.create(filename+' isn''t recognised by this application (unknown extension, and not xml or json)')
+    else
+      ShowMessage(filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
   end;
 end;
 

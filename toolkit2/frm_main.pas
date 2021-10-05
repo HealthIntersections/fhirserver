@@ -45,12 +45,12 @@ uses
   fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants,
-  ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http,
+  ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http, ftk_store_server,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource;
+  dlg_new_resource, dlg_open_url;
 
 type
   {$IFDEF WINDOWS}
@@ -617,6 +617,7 @@ type
     procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     function closeFiles(path : String) : boolean;
+    function openFromURL(url : String) : boolean;
   end;
 
 var
@@ -674,7 +675,7 @@ end;
 
 procedure TMainToolkitForm.FormCreate(Sender: TObject);
 var
-  http : THTTPStorageService;
+  ss : TServerStorageService;
 begin
   Application.OnActivate := DoAppActivate;
   Application.OnException := DoAppException;
@@ -754,9 +755,10 @@ begin
   FContext.storages.add(FFileSystem.link);
   FInternalStorage := TInternalStorageService.create(self, FIni);
   FContext.storages.add(FInternalStorage.link);
-  http := THTTPStorageService.create(FServerView.ServerList.link);
-  FContext.storages.add(http);
-  http.OnConnectToServer := DoConnectToServer;
+  FContext.storages.add(THTTPStorageService.create); // must be before the next line
+  ss := TServerStorageService.create(FServerView.ServerList.link);
+  FContext.storages.add(ss);
+  ss.OnConnectToServer := DoConnectToServer;
   FSearch := TFslList<TToolkitSearchMatch>.create;
   FFactory := TToolkitFactory.create(FContext.link, self);
   actionViewsClearLog.enabled := false;
@@ -1366,7 +1368,7 @@ begin
   begin
     store := Context.StorageForAddress(address);
     loaded := store.load(address, true);
-    session := FFactory.examineFile(address, loaded.mimeType, loaded.content);
+    session := FFactory.examineFile(address, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
       session.address := address;
@@ -1434,6 +1436,60 @@ begin
   for i := FContext.Editors.count - 1 downto 0 do
     if FContext.Editors[i].session.Address.startsWith('file:'+path) then
       closeFile(FContext.Editors[i].tab, false);
+end;
+
+function TMainToolkitForm.openFromURL(url: String): boolean;
+  function showError(msg : String) : boolean;
+  begin
+    result := MessageDlg('Error', msg, mtError, [mbRetry, mbOK], 0) = mrOK;
+  end;
+var
+  store : TStorageService;
+  loaded : TLoadedBytes;
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  session : TToolkitEditSession;
+begin
+  editor := Context.EditorForAddress(url);
+  if (editor <> nil) then
+    pgEditors.ActivePage := editor.tab
+  else
+  begin
+    // todo: if URL is a canonical, present a list of versions
+    store := Context.StorageForAddress(url);
+    if (store = nil) then
+      exit(showError('Unable to fetch '+url+': not a supported protocol'));
+    try
+      loaded := store.load(url, true);
+      // well, we can open whatever it is
+      session := FFactory.examineFile(url, loaded.mimeType, loaded.content, true);
+      session.address := url;
+      session.Timestamp := loaded.timestamp;
+      editor := FFactory.makeEditor(session, FTempStore);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      editor.LoadBytes(loaded.content);
+      editor.session.NeedsSaving := false;
+      pgEditors.ActivePage := tab;
+      storeOpenFileList;
+      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      FTempStore.removeFromMRU(editor.session.address);
+      editor.lastChangeChecked := true;
+      FContext.Focus := editor;
+      FContext.Focus.getFocus(mnuContent);
+      editor.lastChangeChecked := true;
+      editor.lastMoveChecked := true;
+      editor.editPause;
+      FProjectsView.refresh;
+      updateActionStatus(editor);
+      checkWelcomePage;
+      result := true;
+    except
+      on e : Exception do
+        exit(showError('Error fetching '+url+': '+e.message));
+    end;
+  end;
 end;
 
 procedure TMainToolkitForm.onChangeFocus(sender: TObject);
@@ -1731,7 +1787,7 @@ begin
   begin
     store := Context.StorageForAddress(url);
     loaded := store.load(url, true);
-    session := FFactory.examineFile(url, loaded.mimeType, loaded.content);
+    session := FFactory.examineFile(url, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
       session.address := url;
@@ -2216,25 +2272,8 @@ begin
 end;
 
 procedure TMainToolkitForm.actConnectToServerExecute(Sender: TObject);
-var
-  server : TFHIRServerEntry;
 begin
-  server := TFHIRServerEntry.create;
-  try
-    ServerSettingsForm := TServerSettingsForm.create(self);
-    try
-      ServerSettingsForm.Server := server.link;
-      ServerSettingsForm.ServerList := FServerView.ServerList.link;
-      if ServerSettingsForm.ShowModal = mrOk then
-      begin
-        FServerView.addServer(server);
-      end;
-    finally
-      FreeAndNil(ServerSettingsForm);
-    end;
-  finally
-    server.free;
-  end;
+  AddServer('', '');
 end;
 
 procedure TMainToolkitForm.actionCopyFilePathExecute(Sender: TObject);
@@ -2490,8 +2529,29 @@ begin
 end;
 
 procedure TMainToolkitForm.actionFileOpenUrlExecute(Sender: TObject);
+var
+  mr : TModalResult;
 begin
+  OpenURLForm := TOpenURLForm.create(self);
+  try
+    FTempStore.getURLList(OpenURLForm.cbxURL.items);
+    OpenURLForm.cbxURL.Text := '';
+    if isAbsoluteUrl(Clipboard.AsText) then
+      OpenURLForm.cbxURL.Text := Clipboard.AsText;
 
+    repeat
+      mr := OpenURLForm.ShowModal;
+      case mr of
+        mrOK: if openFromURL(OpenURLForm.cbxURL.Text) then
+            FTempStore.addURL(OpenURLForm.cbxURL.Text)
+          else
+            mr := mrNone;
+        mrRetry : AddServer('', OpenURLForm.cbxURL.Text);
+      end;
+    until mr <> mrNone;
+  finally
+    OpenURLForm.free;
+  end;
 end;
 
 procedure TMainToolkitForm.actionFileSaveAllExecute(Sender: TObject);
@@ -2533,7 +2593,7 @@ end;
 procedure TMainToolkitForm.actionFileSaveExecute(Sender: TObject);
 begin
   if (Context.Focus <> nil) then
-    if Context.Focus.hasAddress then
+    if Context.Focus.hasAddress and Context.Focus.Store.canSave then
       SaveFile(Context.Focus, Context.Focus.Session.Address, true)
     else
       actionFileSaveAs1Execute(sender);
@@ -2951,8 +3011,6 @@ begin
       maximiseSource
     else
       unmaximiseSource;
-
-    exit;
 
     // hide all tabs
     hideTabs(pgLeft);

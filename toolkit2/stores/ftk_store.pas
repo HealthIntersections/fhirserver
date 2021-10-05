@@ -62,9 +62,11 @@ type
      property Handle : TComponent read FHandle;
 
      function schemes : TArray<String>; virtual; abstract;
+     function inScope(url : String) : boolean; virtual; abstract;
+
      function CheckTimes : boolean; virtual; abstract;
      function CurrencyCheckFrequency : integer; virtual; abstract; // number of seconds
-     procedure forceLocation(address : String); virtual; abstract;
+     function canSave : boolean; virtual; abstract;     procedure forceLocation(address : String); virtual; abstract;
      function openDlg(out newName : String) : boolean; virtual; abstract;
      function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; virtual; abstract;
 
