@@ -411,14 +411,14 @@ begin
     begin
       Logging.start('Download '+fn);
       try
-        start := UniversalDateTime;
+        start := now;
         fetcher := TInternetFetcher.Create;
         try
           fetcher.OnProgress := DownloadProgress;
           fetcher.URL := src;
           fetcher.Fetch;
           fetcher.Buffer.SaveToFileName(tgt);
-          Logging.finish(' Done ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(UniversalDateTime - start)+')');
+          Logging.finish(' Done ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(now - start)+')');
         finally
           fetcher.Free;
         end;
