@@ -733,12 +733,17 @@ begin
     {$IFDEF OSX}
     GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
     {$ENDIF}
+    if GetOpenSSLLoader.OpenSSLPath = '' then
+      Logging.Log('SSL 1.1 from (default)')
+    else
+      Logging.Log('SSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
     InitOpenSSL;
     {$IFDEF DELPHI}
     JclStartExceptionTracking;
     CoInitialize(nil);
     {$ENDIF}
     {$IFDEF FPC}
+    Logging.Log('Timezone Data');
     initialiseTZData(partnerFile('tz.dat'));
     {$ENDIF}
     tz := TimeZoneBias;
@@ -760,6 +765,7 @@ begin
         {$ELSE}
           cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
         {$ENDIF}
+        Logging.Log('Config: '+cfgName);
 
         if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
           cfgName := buildConfigFromSource(cfgName);
