@@ -318,12 +318,15 @@ begin
   end;
 end;
 
+function check(count, def : integer) : Integer;
+begin
+  if count <= 0 then
+    result := def
+  else
+    result := count;
+end;
 function TViewManager.count(location: TViewManagerLocation): integer;
-  function check(count, def : integer) : Integer;
-  begin
-    if count = 0 then
-      count := def;
-  end;
+
 begin
   case location of
     tvlLeft : result := check(FLeft.count, 2);
@@ -517,10 +520,14 @@ begin
   edtZoom.Value := FManager.FScale;
   chkSrcIsMaximised.Checked := FManager.srcIsMaximised;
   chkToolButtons.Checked := FManager.showToolbarButtons;
-  rbLeftTabbed.Checked := FManager.tabbed[tvlLeft];
-  rbLeftStacked.Checked := not rbLeftTabbed.Checked;
-  rbRightTabbed.Checked := FManager.tabbed[tvlRight];
-  rbRightStacked.Checked := not rbRightTabbed.Checked;
+  if FManager.tabbed[tvlLeft] then
+    rbLeftTabbed.Checked := true
+  else
+    rbLeftStacked.Checked := true;
+  if FManager.tabbed[tvlRight] then
+    rbRightTabbed.Checked := true
+  else
+    rbRightStacked.Checked := true;
 end;
 
 procedure TViewManagerForm.updateStatus(Sender: TObject);

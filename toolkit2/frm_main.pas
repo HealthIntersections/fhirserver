@@ -991,6 +991,9 @@ end;
 
 procedure TMainToolkitForm.Timer1Timer(Sender: TObject);
 begin
+  if FContext = nil then
+    exit;
+
   FFinishedLoading := true;
   updateUI;
   try
@@ -1252,6 +1255,9 @@ procedure TMainToolkitForm.updateStatusBar;
 var
   focus : TToolkitEditor;
 begin
+  if FContext = nil then
+    exit;
+
   focus := FContext.focus;
   if focus = nil then
   begin
@@ -3019,17 +3025,25 @@ begin
     hideTabs(pgRight);
     hideTabs(pgBottom);
     if (FViewManager.tabbed[tvlLeft]) then
-      pgLeft.Visible := true
+    begin
+      pgLeft.Visible := true;
+      pnlLeftSpace.visible := false;
+    end
     else
     begin
+      pnlLeftSpace.visible := true;
       FLeftStack.reset(FViewManager.count(tvlLeft));
       pgLeft.Visible := false;
     end;
     if (FViewManager.tabbed[tvlRight]) then
-      pgRight.Visible := true
+    begin
+      pgRight.Visible := true;
+      pnlRightSpace.visible := false;
+    end
     else
     begin
       FRightStack.reset(FViewManager.count(tvlRight));
+      pnlRightSpace.visible := true;
       pgRight.Visible := false;
     end;
 
