@@ -1122,7 +1122,7 @@ begin
       setSubItem(entry, 3, item.Message);
       inc(count);
     end;
-    for i := count to lvTasks.Items.count - 1 do
+    for i := lvTasks.Items.count - 1 downto count do
       lvTasks.Items.Delete(i);
     lvTasks.ItemIndex := index;
     lvTasks.Refresh;
