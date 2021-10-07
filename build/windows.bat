@@ -1,5 +1,8 @@
 Rem ---- initial set up ----------
 
+REM user can pass in a parameter if they want the temporary scratch area to be somewhere else than r:\fsbuild (which is a RAM drive)
+REM the folder must exist 
+
 set FSDIR=%CD%
 setlocal
 set "tmp=r:\fsbuild"
@@ -11,11 +14,14 @@ set "tmp=%1"
 
 cd /d %tmp%
 
-Rem ---- install the two compilers ----------
+Rem ---- install the compiler ----------
+
+rem ---- download the installer
 
 md tools
-curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0b/fpcup-x86_64-win64.exe --output tools\fpcup.exe
 curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0b/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
+
+rem -- run the installer- will finish with a full install of Lazarus 
 
 tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm 
 
