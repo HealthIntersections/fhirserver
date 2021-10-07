@@ -10,8 +10,7 @@ RUN /work/bootstrap/linux-dependencies.sh /work/bootstrap
 
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
-RUN ls -l /work
-RUN /work/fhirserver/build/linux-fhirserver.sh
+RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 
 ENV DISPLAY :99
 ENV PORT 80
