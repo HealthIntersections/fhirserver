@@ -743,7 +743,7 @@ begin
     CoInitialize(nil);
     {$ENDIF}
     {$IFDEF FPC}
-    Logging.Log('Timezone Data');
+    Logging.Log('Timezone Data from '+partnerFile('tz.dat'));
     initialiseTZData(partnerFile('tz.dat'));
     {$ENDIF}
     tz := TimeZoneBias;
