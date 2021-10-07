@@ -3,10 +3,6 @@
 echo "Preparing dependencies for linux"
 
 # ---- initial set up ----------
-# user can pass in a parameter if they want the temporary scratch area to be somewhere else than /tmp/fsbuild 
-# fsbuild must already exist 
-
-# todo... fix this for .sh
 
 BUILDDIR=${1:-"/tmp/fsbuild"}
 mkdir -p $BUILDDIR
