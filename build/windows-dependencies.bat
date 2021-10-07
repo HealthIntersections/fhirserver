@@ -12,9 +12,6 @@ set "tmp=%1"
 
 :No1
 
-call windows-depedendencies.bat %tmp%
-call windows-fhirserver.bat %tmp%
-
 cd /d %tmp%
 
 Rem ---- install the compiler ----------
@@ -40,30 +37,6 @@ git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester 
 git clone https://github.com/Xor-el/QRCodeGenLib4Pascal
 
-cd PascalTZ 
-git pull
-cd ..
-
-cd delphi-markdown 
-git pull
-cd ..
-
-cd extrasyn 
-git pull
-cd ..
-
-cd HtmlViewer
-git pull
-cd ..
-
-cd lazarus-ide-tester 
-git pull
-cd ..
-
-cd QRCodeGenLib4Pascal
-git pull
-cd ..
-
 cd ..
 
 Rem ---- register the source with lazarus ----------
@@ -82,17 +55,5 @@ Rem ----  back to the server ----------
 
 chdir /d %FSDIR% &rem restore current directory
 cd ..
-
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir.lpk 
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir2.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir3.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir4.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir5.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_xver.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_fsl.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_fui.lpk
-%tmp%\tools\lazarus\lazbuild.exe server/fhirconsole.lpi --build-mode=win64
-%tmp%\tools\lazarus\lazbuild.exe server/fhirserver.lpr --build-mode=win64
-%tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64
     
 pause

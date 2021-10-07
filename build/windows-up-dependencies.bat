@@ -12,9 +12,6 @@ set "tmp=%1"
 
 :No1
 
-call windows-depedendencies.bat %tmp%
-call windows-fhirserver.bat %tmp%
-
 cd /d %tmp%
 
 Rem ---- install the compiler ----------
@@ -82,17 +79,3 @@ Rem ----  back to the server ----------
 
 chdir /d %FSDIR% &rem restore current directory
 cd ..
-
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir.lpk 
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir2.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir3.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir4.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir5.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_xver.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_fsl.lpk
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir_fui.lpk
-%tmp%\tools\lazarus\lazbuild.exe server/fhirconsole.lpi --build-mode=win64
-%tmp%\tools\lazarus\lazbuild.exe server/fhirserver.lpr --build-mode=win64
-%tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64
-    
-pause
