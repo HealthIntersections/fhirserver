@@ -15,6 +15,9 @@ RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 ENV DISPLAY :99
 ENV PORT 80
 
+ENV TERMINOLOGY_CACHE /terminology
+VOLUME /terminology
+
 RUN printf '#!/bin/bash \n\
 Xvfb  :99 -screen 0 1024x768x8 -nolisten tcp & \n\
 echo "[web]" > /work/fhirserver/exec/64/web.ini; \n\
@@ -24,4 +27,4 @@ chmod +x /bin/entrypoint.sh
 
 ENTRYPOINT ["/bin/entrypoint.sh"]
 
-CMD ["-cmd",  "exec",  "-cfg", "http://tx.fhir.org/config", "-version",  "4"]
+CMD ["-cmd",  "exec",  "-cfg", "http://tx.fhir.org/config", "-version",  "4", "-local", "$TERMINOLOGY_CACHE"]
