@@ -37,6 +37,7 @@ uses
   ExtCtrls, StdCtrls, Buttons,
   fsl_base, fsl_utilities,
   fhir_objects, fhir_utilities, fhir_client, fhir_oauth, fhir_common, fhir_factory,
+  fui_lcl_utilities,
   ftk_utilities;
 
 type
@@ -47,7 +48,7 @@ type
     btnCert: TSpeedButton;
     btnOk: TButton;
     btnAddAll: TButton;
-    Button2: TButton;
+    btnCancel: TButton;
     Button3: TButton;
     cbxFormat: TComboBox;
     cbxSmartMode: TComboBox;
@@ -94,6 +95,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure cbxSmartModeChange(Sender: TObject);
     procedure edtUrlChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     FServer : TFHIRServerEntry;
@@ -224,6 +226,11 @@ begin
   begin
     btnOk.enabled := false;
   end;
+end;
+
+procedure TServerSettingsForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 procedure TServerSettingsForm.btnOkClick(Sender: TObject);

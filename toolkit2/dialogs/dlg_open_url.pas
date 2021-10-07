@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  fui_lcl_utilities,
   ftk_store_temp;
 
 type
@@ -15,7 +16,7 @@ type
   TOpenURLForm = class(TForm)
     btnOk: TButton;
     Button1: TButton;
-    Button2: TButton;
+    btnCancel: TButton;
     cbxURL: TComboBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -23,6 +24,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
+    procedure FormCreate(Sender: TObject);
   private
   end;
 
@@ -34,6 +36,11 @@ implementation
 {$R *.lfm}
 
 { TOpenURLForm }
+
+procedure TOpenURLForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
+end;
 
 end.
 

@@ -34,6 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  fui_lcl_utilities,
   ftk_context;
 
 type
@@ -52,6 +53,7 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Splitter1: TSplitter;
+    procedure FormCreate(Sender: TObject);
     procedure lbChoicesClick(Sender: TObject);
     procedure lbChoicesDblClick(Sender: TObject);
   private
@@ -95,6 +97,11 @@ end;
 procedure TFormatChooserForm.lbChoicesClick(Sender: TObject);
 begin
   btnOk.enabled := lbChoices.ItemIndex <> -1;
+end;
+
+procedure TFormatChooserForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 procedure TFormatChooserForm.lbChoicesDblClick(Sender: TObject);

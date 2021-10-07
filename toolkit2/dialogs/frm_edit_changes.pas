@@ -37,6 +37,7 @@ uses
   ComCtrls, SynEdit,
   Process,
   fsl_diff, fsl_utilities,
+  fui_lcl_utilities,
   ftk_context;
 
 type
@@ -64,6 +65,7 @@ type
     Timer1: TTimer;
     procedure btnCancelClick(Sender: TObject);
     procedure btnExternalDiffClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure mSourceChange(Sender: TObject);
@@ -125,6 +127,11 @@ begin
   lblStatus.visible := true;
   FFileTime := FileGetModified(currFile);
   Timer1.enabled := true;
+end;
+
+procedure TEditChangeReviewForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnReplace, btnCancel);
 end;
 
 procedure TEditChangeReviewForm.btnCancelClick(Sender: TObject);

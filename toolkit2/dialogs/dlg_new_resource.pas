@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, IniFiles,
   fsl_base, fsl_http,
   fhir_objects, fhir_parser, fhir_common, fhir_factory,
+  fui_lcl_utilities,
   ftk_context;
 
 type
@@ -15,7 +16,7 @@ type
 
   TNewResourceDialog = class(TForm)
     btnOk: TButton;
-    Button2: TButton;
+    btnCancel: TButton;
     cbxVersion: TComboBox;
     cbxResource: TComboBox;
     cbxProfile: TComboBox;
@@ -96,6 +97,7 @@ end;
 
 procedure TNewResourceDialog.FormCreate(Sender: TObject);
 begin
+  setForOs(btnOk, btnCancel);
   FList := TFslList<TFhirStructureDefinitionW>.create;
 end;
 

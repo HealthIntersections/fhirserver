@@ -1,5 +1,5 @@
 object ClipboardChooserForm: TClipboardChooserForm
-  Left = -7
+  Left = 72
   Height = 549
   Top = 118
   Width = 728
@@ -12,7 +12,7 @@ object ClipboardChooserForm: TClipboardChooserForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
@@ -22,7 +22,7 @@ object ClipboardChooserForm: TClipboardChooserForm
     BevelOuter = bvNone
     ClientHeight = 41
     ClientWidth = 728
-    TabOrder = 0
+    TabOrder = 3
     object btnOk: TButton
       Left = 563
       Height = 25
@@ -57,7 +57,7 @@ object ClipboardChooserForm: TClipboardChooserForm
     Caption = 'Panel2'
     ClientHeight = 508
     ClientWidth = 198
-    TabOrder = 1
+    TabOrder = 0
     object lbFormats: TListBox
       Left = 4
       Height = 476
@@ -68,6 +68,7 @@ object ClipboardChooserForm: TClipboardChooserForm
       OnClick = lbFormatsClick
       OnDblClick = lbFormatsDblClick
       TabOrder = 0
+      TopIndex = -1
     end
     object Panel5: TPanel
       Left = 4
@@ -98,7 +99,7 @@ object ClipboardChooserForm: TClipboardChooserForm
     Caption = 'Panel3'
     ClientHeight = 508
     ClientWidth = 525
-    TabOrder = 3
+    TabOrder = 2
     object Panel6: TPanel
       Left = 4
       Height = 24

@@ -34,7 +34,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls;
+  ComCtrls,
+  fui_lcl_utilities;
 
 type
 
@@ -54,6 +55,7 @@ type
     TabSheet2: TTabSheet;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure ListBox1Click(Sender: TObject);
     procedure ListBox1DblClick(Sender: TObject);
   private
@@ -107,6 +109,11 @@ begin
     btnCancel.caption := 'Back';
     btnCancel.ModalResult := mrNone;
   end;
+end;
+
+procedure TFileFormatChooser.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 procedure TFileFormatChooser.btnCancelClick(Sender: TObject);

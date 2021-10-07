@@ -28,12 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$mode objfpc}{$H+}
+{$i fhir.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  fui_lcl_utilities;
 
 type
   TDeletedFileAction = (dfaSave, dfaSaveAs, dfaDiscard, dfaIgnore, dfaNoCheck);
@@ -56,6 +57,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FAction : TDeletedFileAction;
   public
@@ -96,6 +98,10 @@ procedure TDeletedFileActionForm.Button7Click(Sender: TObject);
 begin
   FAction := dfaNoCheck;
   ModalResult := mrOK;
+end;
+
+procedure TDeletedFileActionForm.FormCreate(Sender: TObject);
+begin
 end;
 
 procedure TDeletedFileActionForm.Button5Click(Sender: TObject);

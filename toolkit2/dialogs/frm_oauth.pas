@@ -36,7 +36,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
   LclIntf, StdCtrls, ExtCtrls,
 
-  fhir_client, fhir_oauth;
+  fhir_client, fhir_oauth,
+  fui_lcl_utilities;
 
 type
 

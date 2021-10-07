@@ -7,8 +7,9 @@ object ModifiedFileActionForm: TModifiedFileActionForm
   Caption = 'File Modified'
   ClientHeight = 147
   ClientWidth = 576
+  OnCreate = FormCreate
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel4: TPanel
     Left = 0
     Height = 35
@@ -27,7 +28,7 @@ object ModifiedFileActionForm: TModifiedFileActionForm
       Width = 75
       Caption = '&Ignore'
       OnClick = Button3Click
-      TabOrder = 0
+      TabOrder = 3
     end
     object ModifiedFileActionForm: TButton
       Left = 282
@@ -36,7 +37,7 @@ object ModifiedFileActionForm: TModifiedFileActionForm
       Width = 75
       Caption = '&Reload'
       OnClick = ModifiedFileActionFormClick
-      TabOrder = 1
+      TabOrder = 2
     end
     object Button5: TButton
       Left = 200
@@ -45,7 +46,7 @@ object ModifiedFileActionForm: TModifiedFileActionForm
       Width = 75
       Caption = '&Save'
       OnClick = Button5Click
-      TabOrder = 2
+      TabOrder = 1
     end
     object Button6: TButton
       Left = 118
@@ -54,7 +55,7 @@ object ModifiedFileActionForm: TModifiedFileActionForm
       Width = 75
       Caption = 'See &Diff'
       OnClick = Button6Click
-      TabOrder = 3
+      TabOrder = 0
     end
     object Button4: TButton
       Left = 442
@@ -100,7 +101,6 @@ object ModifiedFileActionForm: TModifiedFileActionForm
         Width = 538
         Align = alClient
         Caption = 'sasd'
-        ParentColor = False
         WordWrap = True
       end
     end

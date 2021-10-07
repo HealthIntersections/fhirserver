@@ -7,8 +7,9 @@ object FormatChooserForm: TFormatChooserForm
   Caption = 'Choose Format'
   ClientHeight = 593
   ClientWidth = 740
+  OnCreate = FormCreate
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
@@ -18,7 +19,7 @@ object FormatChooserForm: TFormatChooserForm
     BevelOuter = bvNone
     ClientHeight = 41
     ClientWidth = 740
-    TabOrder = 0
+    TabOrder = 3
     object btnOk: TButton
       Left = 575
       Height = 25
@@ -53,7 +54,7 @@ object FormatChooserForm: TFormatChooserForm
     Caption = 'Panel2'
     ClientHeight = 502
     ClientWidth = 198
-    TabOrder = 1
+    TabOrder = 0
     object lbChoices: TListBox
       Left = 4
       Height = 470
@@ -64,6 +65,7 @@ object FormatChooserForm: TFormatChooserForm
       OnClick = lbChoicesClick
       OnDblClick = lbChoicesDblClick
       TabOrder = 0
+      TopIndex = -1
     end
     object Panel5: TPanel
       Left = 4
@@ -94,7 +96,7 @@ object FormatChooserForm: TFormatChooserForm
     Caption = 'Panel3'
     ClientHeight = 502
     ClientWidth = 537
-    TabOrder = 3
+    TabOrder = 2
     object Panel6: TPanel
       Left = 4
       Height = 24

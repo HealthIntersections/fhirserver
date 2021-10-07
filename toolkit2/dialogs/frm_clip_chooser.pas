@@ -34,7 +34,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd, LclType,
-  fsl_base, fsl_utilities, fsl_stream;
+  fsl_base, fsl_utilities, fsl_stream,
+  fui_lcl_utilities;
 
 type
   { TClipboardChooserForm }
@@ -145,6 +146,7 @@ end;
 
 procedure TClipboardChooserForm.FormCreate(Sender: TObject);
 begin
+  setForOs(btnOk, btnCancel);
   FFormats := TFslStringDictionary.create;
 end;
 

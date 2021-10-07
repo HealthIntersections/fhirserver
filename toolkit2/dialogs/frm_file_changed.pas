@@ -54,6 +54,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure ModifiedFileActionFormClick(Sender: TObject);
   private
     FAction : TModifiedFileAction;
@@ -90,6 +91,10 @@ procedure TModifiedFileActionForm.Button6Click(Sender: TObject);
 begin
   FAction := dmaDiff;
   ModalResult := mrOK;
+end;
+
+procedure TModifiedFileActionForm.FormCreate(Sender: TObject);
+begin
 end;
 
 procedure TModifiedFileActionForm.ModifiedFileActionFormClick(Sender: TObject);

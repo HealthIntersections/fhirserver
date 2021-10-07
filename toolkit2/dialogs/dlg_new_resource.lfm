@@ -1,7 +1,7 @@
 object NewResourceDialog: TNewResourceDialog
   Left = 1375
   Height = 177
-  Top = -520
+  Top = 27
   Width = 435
   BorderIcons = [biMaximize]
   BorderStyle = bsDialog
@@ -12,7 +12,7 @@ object NewResourceDialog: TNewResourceDialog
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
@@ -22,7 +22,7 @@ object NewResourceDialog: TNewResourceDialog
     BevelOuter = bvNone
     ClientHeight = 41
     ClientWidth = 435
-    TabOrder = 0
+    TabOrder = 4
     object btnOk: TButton
       Left = 270
       Height = 25
@@ -33,7 +33,7 @@ object NewResourceDialog: TNewResourceDialog
       ModalResult = 1
       TabOrder = 0
     end
-    object Button2: TButton
+    object btnCancel: TButton
       Left = 351
       Height = 25
       Top = 6
@@ -47,83 +47,79 @@ object NewResourceDialog: TNewResourceDialog
   end
   object Label1: TLabel
     Left = 10
-    Height = 15
+    Height = 17
     Top = 18
-    Width = 41
+    Width = 55
     Caption = 'Version:'
-    ParentColor = False
   end
   object cbxVersion: TComboBox
     Left = 72
-    Height = 23
+    Height = 33
     Top = 16
     Width = 352
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 0
     OnChange = cbxVersionChange
     Style = csDropDownList
-    TabOrder = 1
+    TabOrder = 0
   end
   object Label2: TLabel
     Left = 10
-    Height = 15
+    Height = 17
     Top = 48
-    Width = 51
+    Width = 66
     Caption = 'Resource:'
-    ParentColor = False
   end
   object cbxResource: TComboBox
     Left = 72
-    Height = 23
+    Height = 33
     Top = 46
     Width = 352
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 0
     OnChange = cbxResourceChange
     Style = csDropDownList
-    TabOrder = 2
+    TabOrder = 1
   end
   object Label3: TLabel
     Left = 10
-    Height = 15
+    Height = 17
     Top = 78
-    Width = 37
+    Width = 49
     Caption = 'Profile:'
-    ParentColor = False
   end
   object cbxProfile: TComboBox
     Left = 72
-    Height = 23
+    Height = 33
     Top = 76
     Width = 352
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 0
     OnChange = cbxProfileChange
     Style = csDropDownList
-    TabOrder = 3
+    TabOrder = 2
   end
   object Label4: TLabel
     Left = 10
-    Height = 15
+    Height = 17
     Top = 108
-    Width = 41
+    Width = 54
     Caption = 'Format:'
-    ParentColor = False
   end
   object cbxFormat: TComboBox
     Left = 72
-    Height = 23
+    Height = 29
     Top = 106
     Width = 352
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 0
     ItemIndex = 0
     Items.Strings = (
       'json'
       'xml'
     )
     Style = csDropDownList
-    TabOrder = 4
+    TabOrder = 3
     Text = 'json'
   end
 end

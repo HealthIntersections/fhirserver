@@ -34,7 +34,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons, fsl_base, ftk_project_tree;
+  Buttons,
+  fsl_base,
+  fui_lcl_utilities,
+  ftk_project_tree;
 
 type
 
@@ -42,7 +45,7 @@ type
 
   TProjectSettingsForm = class(TForm)
     btnOk: TButton;
-    Button2: TButton;
+    btnCancel: TButton;
     edtName: TEdit;
     edtFolder: TEdit;
     Label1: TLabel;
@@ -53,6 +56,7 @@ type
     SpeedButton1: TSpeedButton;
     procedure btnOkClick(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
   private
@@ -93,6 +97,11 @@ end;
 procedure TProjectSettingsForm.edtNameChange(Sender: TObject);
 begin
   btnOK.enabled := not NameIsUsed(edtName.text);
+end;
+
+procedure TProjectSettingsForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 procedure TProjectSettingsForm.btnOkClick(Sender: TObject);

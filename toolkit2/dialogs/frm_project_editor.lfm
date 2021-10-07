@@ -1,28 +1,29 @@
 object ProjectSettingsForm: TProjectSettingsForm
   Left = 1183
-  Height = 139
-  Top = -414
-  Width = 468
+  Height = 162
+  Top = 27
+  Width = 496
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'New Project'
-  ClientHeight = 139
-  ClientWidth = 468
+  ClientHeight = 162
+  ClientWidth = 496
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
-    Top = 98
-    Width = 468
+    Top = 121
+    Width = 496
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 41
-    ClientWidth = 468
-    TabOrder = 0
+    ClientWidth = 496
+    TabOrder = 2
     object btnOk: TButton
-      Left = 303
+      Left = 331
       Height = 25
       Top = 6
       Width = 75
@@ -32,8 +33,8 @@ object ProjectSettingsForm: TProjectSettingsForm
       OnClick = btnOkClick
       TabOrder = 0
     end
-    object Button2: TButton
-      Left = 384
+    object btnCancel: TButton
+      Left = 412
       Height = 25
       Top = 6
       Width = 75
@@ -46,43 +47,42 @@ object ProjectSettingsForm: TProjectSettingsForm
   end
   object Label3: TLabel
     Left = 14
-    Height = 15
+    Height = 17
     Top = 16
-    Width = 35
+    Width = 44
     Caption = 'Name:'
-    ParentColor = False
   end
   object edtName: TEdit
     Left = 94
-    Height = 23
+    Height = 33
     Top = 14
-    Width = 363
+    Width = 391
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = edtNameChange
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 14
+    Height = 17
+    Top = 64
+    Width = 80
+    Caption = 'Disk Folder:'
+  end
+  object edtFolder: TEdit
+    Left = 96
+    Height = 33
+    Top = 56
+    Width = 362
     Anchors = [akTop, akLeft, akRight]
     OnChange = edtNameChange
     TabOrder = 1
   end
-  object Label1: TLabel
-    Left = 14
-    Height = 15
-    Top = 46
-    Width = 61
-    Caption = 'Disk Folder:'
-    ParentColor = False
-  end
-  object edtFolder: TEdit
-    Left = 94
-    Height = 23
-    Top = 44
-    Width = 334
-    Anchors = [akTop, akLeft, akRight]
-    OnChange = edtNameChange
-    TabOrder = 2
-  end
   object SpeedButton1: TSpeedButton
-    Left = 434
+    Left = 462
     Height = 25
-    Top = 43
+    Top = 56
     Width = 23
+    Anchors = [akTop, akRight]
     Glyph.Data = {
       36030000424D3803000000000000360000002800000010000000100000000100
       18000000000000000000120B0000120B00000000000000000000FF00FFFF00FF
@@ -114,12 +114,11 @@ object ProjectSettingsForm: TProjectSettingsForm
     OnClick = SpeedButton1Click
   end
   object Label2: TLabel
-    Left = 16
-    Height = 15
-    Top = 76
-    Width = 358
+    Left = 14
+    Height = 17
+    Top = 96
+    Width = 454
     Caption = 'If you don''t pick a folder, the project is just a collection of other files'
-    ParentColor = False
   end
   object fd: TSelectDirectoryDialog
     Left = 242

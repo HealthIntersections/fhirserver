@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Spin, IniFiles, fsl_base, fsl_utilities;
+  Spin, IniFiles, fsl_base, fsl_utilities, fui_lcl_utilities;
 
 type
   TViewManagerLocation = (tvlLeft, tvlRight, tvlBottom);
@@ -68,9 +68,9 @@ type
 
   { TViewManagerForm }
   TViewManagerForm = class(TForm)
-    btnCancel1: TButton;
+    btnCancel: TButton;
     btnLeftUp: TButton;
-    btnOk1: TButton;
+    btnOk: TButton;
     btnRightDown: TButton;
     btnRightLeft: TButton;
     btnRightBottom: TButton;
@@ -128,12 +128,13 @@ type
     procedure btnLeftDownClick(Sender: TObject);
     procedure btnLeftRightClick(Sender: TObject);
     procedure btnLeftUpClick(Sender: TObject);
-    procedure btnOk1Click(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
     procedure btnRightBottomClick(Sender: TObject);
     procedure btnRightDownClick(Sender: TObject);
     procedure btnRightLeftClick(Sender: TObject);
     procedure btnRightUpClick(Sender: TObject);
     procedure Button13Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure updateStatus(Sender: TObject);
@@ -383,7 +384,7 @@ begin
   updateStatus(nil);
 end;
 
-procedure TViewManagerForm.btnOk1Click(Sender: TObject);
+procedure TViewManagerForm.btnOkClick(Sender: TObject);
 begin
   commit;
   ModalResult := mrOK;
@@ -440,6 +441,11 @@ begin
   FManager.FRight.Clear;
   FManager.FBottom.Clear;
   build;
+end;
+
+procedure TViewManagerForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 procedure TViewManagerForm.btnBottomUpClick(Sender: TObject);
