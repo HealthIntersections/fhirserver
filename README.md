@@ -13,8 +13,12 @@ in this project:
   * includes v2 and DICOM end points
   * includes set of tests for the server and library 
 * The FHIR toolkit - a set of utilities for developers
-* The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers 
+
+
+Also:
+
 * A VCL demo program that shows how to connect to to an argonaut interface (contributed by Wellsoft, thanks)
+* The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers (being phased out)
 
 For binary releases of this content, see http://www.healthintersections.com.au/FhirServer
 
@@ -37,7 +41,7 @@ well optimised for hosting/supporting very large repositories efficiently.
 
 The open source FHIR Server includes delphi/pascal implementations of:
 * Xml/XPath/XML Patch + XML Digital Signature
-* JSON/JSONPointer/Json Patch + JSON Digital Signature (+ JWT/JWK support)
+* JSON/JSONPointer/Json Patch + JSON Digital Signature (+ JWT/JWK support using openSSL)
 * OAuth/openID Connect (including google/facebook clients)
 * Turtle format (RDF)
 * GraphQL
@@ -50,15 +54,15 @@ The open source FHIR Server includes delphi/pascal implementations of:
 * LOINC/SNOMED/RxNorm/CVX/UCUM
 * CQL (Clinical Query Language)
 * Graphical Components
-  * Scintilla Wrapper (per InnoSetup) with XMl/JSON/Javascript syntax highlighters
   * simple quick graphing library
   * De Novo word processor
-  * FHIR FMX Components
+  * FHIR LCL Components
+  * FHIR FMX Components. Note that FMX support is being phased out
 * All of FHIR + FHIRPath + smart all launch + cds-hooks, of course
 
 ## Projects
 
-FPC:
+FPC/Lazarus:
 * /server/fhirserver.lpi - the FHIR server (win64, win32, linux64, osx64)
 * /server/fhirconsole.lpi - management utility for the server  (win64, win32, linux64, osx64)
 * /toolkit2/fhirtoolkit.lpi - ToolKit for FHIR developers (win64, win32, linux64, osx64)
@@ -106,9 +110,8 @@ resource constrained environments.
 
 ### FPC / Lazarus
 
-The code compiles using FPC 3.3.1 / Lazarus 2.1.0 (or more recent). The code depends on some 
-recent bug fixes so older versions are probably not supported.
-  
+The code compiles using the trunk versions of FPC + Lazarus. In time, it would be good to transit to the stable version, but compiling depends on bug fixes in FPC that are not in stable yet
+ 
 The FhirServer depends on the following other GitHub repositories:
 * https://github.com/dezlov/PascalTZ
 * https://github.com/grahamegrieve/delphi-markdown
@@ -120,6 +123,8 @@ The toolkit also depends on these repositories:
 
 Get a local copy of these, and install their packages. 
 
+You can build the FPC applications without installing any software - just run build/xx.y where xx.y is the script for the appropriate platform
+
 ## Test Cases
 
 in order to run the tests, you also need the repo https://github.com/FHIR/fhir-test-cases locally, and you'll need to pass this as a parameter to the test cases.
@@ -129,3 +134,5 @@ in order to run the tests, you also need the repo https://github.com/FHIR/fhir-t
 Bulding an actual release requires the following tools
 * Innosetup v6 + 
 * FinalBuilder v8
+
+... todo
