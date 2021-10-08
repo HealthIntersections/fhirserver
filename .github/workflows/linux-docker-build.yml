@@ -1,0 +1,9 @@
+on: [push, pull_request]
+jobs:
+  Build-Docker-Image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+    - run: |
+        docker build -t fhirserver .
