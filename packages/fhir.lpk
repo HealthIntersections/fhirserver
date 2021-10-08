@@ -10,7 +10,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fhir\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>

@@ -10,7 +10,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fhir5"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fhir5\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>

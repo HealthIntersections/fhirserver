@@ -74,7 +74,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
