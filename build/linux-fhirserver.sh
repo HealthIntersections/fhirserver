@@ -24,19 +24,12 @@ $BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk -q -q
 echo compile console
 
 $BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --build-mode=linux -q -q
-find . -name "*.ppu" -type f -delete
-find . -name "*.o" -type f -delete
 
 echo compile toolkit
 
 $BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --build-mode=linux -q -q
-find . -name "*.ppu" -type f -delete
-find . -name "*.o" -type f -delete
 
 echo compile server
 
 $BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux -q -q
-find . -name "*.ppu" -type f -delete
-find . -name "*.o" -type f -delete
-
 
