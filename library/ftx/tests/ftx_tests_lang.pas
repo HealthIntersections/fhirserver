@@ -34,7 +34,7 @@ interface
 
 uses
   Sysutils, Classes,
-  fsl_stream, fsl_lang,
+  fsl_utilities, fsl_stream, fsl_lang,
   fsl_testing;
 
 
@@ -88,7 +88,7 @@ end;
 
 procedure TIETFLangTests.Setup;
 begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString(TestSettings.serverTestFile(['resources', 'lang.dat']), TEncoding.ASCII));
+  FDefinitions := TIETFLanguageDefinitions.create(FileToString(partnerFile('lang.dat'), TEncoding.ASCII));
 end;
 
 procedure TIETFLangTests.TearDown;
