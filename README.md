@@ -152,9 +152,12 @@ The build scripts are found in /build. There are 2 sets of files:
 These are broken up into modules:
 * x-all.x: Install the entire tool chain
 * x-update.x: Just update the libaries and build. Use this after you've run x-all.x once
+
 * x-toolchain.x: installs the actual tool chain
 * x-libraries.x: installs/updates the libraries 
 * x-fhirserver.x: does the actual build of the 3 applications
+
+In general, the intent is to only use the first two
 
 You can run these without parameters, in which case they'll attempt to use a default location (/tmp/fsbuild for linux, r:/fsbuild - ram drive - for windows).
 In that location, all the tools and libraries are installed, including a fully working version of the lazarus IDE which is used for developing
