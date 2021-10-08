@@ -4,17 +4,39 @@ set -e
 
 BUILD=${1:-"/tmp/fsbuild"}
 
-# The path with C:/ in it needs to be fixed, but it reflects current behavior
-cp ./exec/pack/*.cfg ./exec/pack/*.dat /work/fhirserver/Exec/64/
+cd ..
 
-$BUILD/tools/lazarus/lazbuild packages/fhir.lpk 
-$BUILD/tools/lazarus/lazbuild packages/fhir2.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir3.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir4.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir5.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir_xver.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk
-$BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk
-$BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --build-mode=linux
-$BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux
-$BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --build-mode=linux
+mkdir -p exec/64/
+cp exec/pack/*.cfg exec/pack/*.dat exec/64/
+cp exec/pack/linux/*.so exec/64/
+
+echo compile libraries
+
+$BUILD/tools/lazarus/lazbuild packages/fhir.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir2.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir3.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir4.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir5.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir_xver.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk -q -q
+
+echo compile console
+
+$BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --build-mode=linux -q -q
+find . -name "*.ppu" -type f -delete
+find . -name "*.o" -type f -delete
+
+echo compile toolkit
+
+$BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --build-mode=linux -q -q
+find . -name "*.ppu" -type f -delete
+find . -name "*.o" -type f -delete
+
+echo compile server
+
+$BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux -q -q
+find . -name "*.ppu" -type f -delete
+find . -name "*.o" -type f -delete
+
+

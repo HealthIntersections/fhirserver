@@ -30,20 +30,4 @@ git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester
 git clone https://github.com/Xor-el/QRCodeGenLib4Pascal
 
-cd ..
-
-# ---- register the source with lazarus ----------
-
-tools/lazarus/lazbuild source/PascalTZ/package/pascaltz.lpk
-tools/lazarus/lazbuild source/extrasyn/extrahighlighters.lpk
-tools/lazarus/lazbuild source/extrasyn/extrahighlighters_dsgn.lpk
-tools/lazarus/lazbuild source/lazarus-ide-tester/package/idetester.lpk
-tools/lazarus/lazbuild source/lazarus-ide-tester/ide/idetester_dsgn.lpk
-tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk
-tools/lazarus/lazbuild source/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk
-tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk
-tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk
-
-# ----  back to the server ----------
-
 popd
