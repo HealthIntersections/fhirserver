@@ -1,1 +1,0 @@
-del *.dcu /s /q

@@ -22,7 +22,7 @@ Also:
 
 For binary releases of this content, see http://www.healthintersections.com.au/FhirServer
 
-This project is maintained by the FHIR Project lead. The server runs in 
+This project is maintained by the FHIR Project lead (Grahame Grieve). The server runs in 
 multiple locations, including http://test.fhir.org, http://tx.fhir.org, and http://packages2.fhir.org
 
 ## Support
@@ -63,15 +63,17 @@ The open source FHIR Server includes delphi/pascal implementations of:
 ## Projects
 
 FPC/Lazarus:
+* fhirprojects.lpg - a group containing the three projects
 * /server/fhirserver.lpi - the FHIR server (win64, win32, linux64, osx64)
 * /server/fhirconsole.lpi - management utility for the server  (win64, win32, linux64, osx64)
 * /toolkit2/fhirtoolkit.lpi - ToolKit for FHIR developers (win64, win32, linux64, osx64)
 
 Delphi:
 
+* fhir-projects.groupproj - a group containing these projects
 * \server\FHIRServer.dproj - the FHIR server (win64 or win32)
 * \utilities\vcldemo\FhirVclDemo.dproj - a demonstration of a working standalone client for Cerner and Epic
-* \utilities\nppformats\formatUtils.dproj - useful utility extensions for Notepad++
+* \utilities\nppformats\formatUtils.dproj - useful utility extensions for Notepad++ (not FHIR specific)
 * \utilities\cde\ClinicalDocumentEditor.dproj - word processor demo + CDA editor. Planned to be moved to FPC/Lazarus 
 * \toolkit\FHIRToolkitR3.dproj and \toolkit\FHIRToolkitR4.dproj - win/osx - deprecated for fhirtoolkit.lpi - see above
 * \transformer\FHIRTransformer.dproj - Prototype transform tool - deprecated for fhirtoolkit.lpi - see above
@@ -82,6 +84,23 @@ Delphi:
 
 * **library**: the pascal reference implementation with supporting code
 * **exec**: files needed by the server at run time
+
+* **1-ClickServer**: Not sure what this is
+* **exec**: files required at execution time, and target for the compiled applications (e.g. exec/64)
+* **build**: build scripts for windows and linux. Will install the entire pascal toolchain from scratch  - see below
+* **dependencies**: external code that isn't in it's own repository (mainly for legacy reasons)
+* **doco**: documentation for the product (though most documentation lives in the healthintersections wiki)
+* **install**: install scripts for the windows versions of the applications (to be reviewed)
+* **library**: library code as described above  
+* **npp**: FHIR Npp - being phased out
+* **packages**: lazarus packages for the libraries
+* **resources**: resources used in the test scripts
+* **server**: server code (including the server console)
+* **testcases**: more resources for test cases 
+* **toolkit**: old toolkit being phased out
+* **toolkit2**: new toolkit under development
+* **transformer**: - being phased out
+* **utilities**: - misc other projects as listed above + java code generator for pascal code
 
 ## Compiling 
 
@@ -121,13 +140,31 @@ The toolkit also depends on these repositories:
 * https://github.com/mriscoc/extrasyn
 * https://github.com/grahamegrieve/HtmlViewer
 
-Get a local copy of these, and install their packages. 
+Get a local copy of these, and install their packages. Or, alternatively, use the build scripts, see below
 
-You can build the FPC applications without installing any software - just run build/xx.y where xx.y is the script for the appropriate platform
+## Build scripts 
+
+The build scripts are found in /build. There are 2 sets of files:
+
+* windows*.bat
+* linux*.sh
+
+These are broken up into modules:
+* x-all.x: Install the entire tool chain
+* x-update.x: Just update the libaries and build. Use this after you've run x-all.x once
+* x-toolchain.x: installs the actual tool chain
+* x-libraries.x: installs/updates the libraries 
+* x-fhirserver.x: does the actual build of the 3 applications
+
+You can run these without parameters, in which case they'll attempt to use a default location (/tmp/fsbuild for linux, r:/fsbuild - ram drive - for windows).
+In that location, all the tools and libraries are installed, including a fully working version of the lazarus IDE which is used for developing
+the applications (if not using delphi)
 
 ## Test Cases
 
 in order to run the tests, you also need the repo https://github.com/FHIR/fhir-test-cases locally, and you'll need to pass this as a parameter to the test cases.
+
+(todo: extend the build scripts to install the test cases too)
 
 ## Building Release
 

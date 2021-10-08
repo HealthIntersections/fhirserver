@@ -29,16 +29,16 @@
 **/lib
 
 # folders to ignore
-Exec/32
-Exec/64
-Exec/certs
+exec/32
+exec/64
+exec/certs
 library/r5gen
 utilities/generator/workspace/.metadata
 
 # files to ignore
 tests.ini
-Exec/fhir.dev.local.cfg
-Exec/pack/fhirserver.web
+exec/fhir.dev.local.cfg
+exec/pack/fhirserver.web
 server/fhirserver.testing.ini
 testcases/v2dict/hl7_94Jul2018.mdb
 testcases/snomed/test.cache

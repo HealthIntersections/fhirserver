@@ -31,7 +31,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -119,8 +119,8 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="..\library\fdb;admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <OtherUnitFiles Value="admin"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -151,7 +151,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -174,7 +174,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="aarch64"/>

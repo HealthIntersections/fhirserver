@@ -18,16 +18,4 @@ chmod +x tools/fpclazup
 
 tools/fpclazup --noconfirm --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools
 
-# ---- get the source we depend on ----------
-
-mkdir source
-cd source
-
-git clone https://github.com/dezlov/PascalTZ
-git clone https://github.com/grahamegrieve/delphi-markdown
-git clone https://github.com/mriscoc/extrasyn
-git clone https://github.com/grahamegrieve/HtmlViewer
-git clone https://github.com/grahamegrieve/lazarus-ide-tester
-git clone https://github.com/Xor-el/QRCodeGenLib4Pascal
-
 popd

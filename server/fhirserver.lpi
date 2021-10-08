@@ -125,7 +125,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\exec\pack\linux"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -672,6 +672,8 @@
       </Debugging>
       <LinkSmart Value="True"/>
       <Options>
+        <PassLinkerOptions Value="True"/>
+        <LinkerOptions Value="-R .\"/>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>

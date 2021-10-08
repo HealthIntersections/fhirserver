@@ -8,6 +8,7 @@ BUILDDIR=${1:-"/tmp/fsbuild"}
 mkdir -p $BUILDDIR
 pushd $BUILDDIR
 
+mkdir source
 cd source
 
 if [ ! -d "PascalTZ" ] ; then
