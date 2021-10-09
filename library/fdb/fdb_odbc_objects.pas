@@ -5183,7 +5183,7 @@ Begin
   End
   Else
   Begin
-    FRetCode := SQLDescribeParam(FHstmt, Param, SqlType, ParameterSize, DecimalDigits, Nullable);
+    FRetCode := SQLDescribeParam(FHstmt, Param, @SqlType, @ParameterSize, @DecimalDigits, @Nullable);
     If Not FEnv.Error.Success(FRetCode) Then
       DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, True);
   End;
@@ -10230,7 +10230,7 @@ begin
     ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode := SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
+  RetCode := SQLForeignKeysW(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
                                                    nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName));
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
@@ -10262,7 +10262,7 @@ begin
     ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode := SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
+  RetCode := SQLForeignKeysW(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
                                                    nil, 0, nil, 0, nil, 0);
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
