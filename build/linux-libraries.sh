@@ -47,6 +47,12 @@ else
     cd QRCodeGenLib4Pascal  && git pull && cd ..
 fi
 
+if [ ! -d "fhir-test-cases" ] ; then
+    git clone https://github.com/FHIR/fhir-test-cases
+else
+    cd fhir-test-cases  && git pull && cd ..
+fi
+
 cd ..
 
 # ---- register the source with lazarus ----------
@@ -60,6 +66,7 @@ tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk -q
 tools/lazarus/lazbuild source/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk -q
 tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q
 tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk -q
+
 
 # ----  back to the server ----------
 
