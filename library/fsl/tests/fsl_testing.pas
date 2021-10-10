@@ -38,7 +38,7 @@ Uses
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF}
   IdGlobalProtocols,
   CommonTestBase,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_logging;
 
 // *** General Testing Infrastructure ******************************************
 
@@ -423,6 +423,11 @@ begin
     MDTestRoot := FIni.ReadString('locations', 'markdown', '');
   if not getCommandLineParam('snomed-data', GSnomedDataFile) then
     GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  Logging.log('Test Locations: ');
+  Logging.log('  fhirserver='+FServerTestsRoot);
+  Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
+  Logging.log('  markdown='+MDTestRoot);
+  Logging.log('  snomed='+GSnomedDataFile);
 end;
 
 destructor TFslTestSettings.Destroy;
