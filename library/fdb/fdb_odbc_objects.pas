@@ -2784,10 +2784,14 @@ end;
 
 function odbcPChar(count : integer) : PChar; overload;
 begin
-  {$IFDEF OSX}
+  {$IFDEF FPC}
   getMem(result, count);
   {$ELSE}
-  getMem(result, count);
+  {$IFDEF OSX}
+  getMem(result, count * 4);
+  {$ELSE}
+  getMem(result, count * 2);
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -5076,7 +5080,11 @@ Begin
   End
   Else
   Begin
+    {$IFDEF DELPHI}
+    FRetCode := SQLDescribeParam(FHstmt, Param, SqlType, ParameterSize, DecimalDigits, Nullable);
+    {$ELSE}
     FRetCode := SQLDescribeParam(FHstmt, Param, @SqlType, @ParameterSize, @DecimalDigits, @Nullable);
+    {$ENDIF}
     If Not FEnv.Error.Success(FRetCode) Then
       DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, True);
   End;

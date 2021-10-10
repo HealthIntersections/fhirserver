@@ -533,7 +533,11 @@ const
 
 function makePChar(len : integer) : pchar;
 begin
+  {$IFDEF FPC}
   result := Getmem(len);
+  {$ELSE}
+  Getmem(result, len);
+  {$ENDIF}
 end;
 
 function fromPChar(p : PChar; length : integer) : String;
@@ -604,16 +608,22 @@ var
   co : pchar;
   l : smallint;
   np : SQLUINTEGER;
-  pwd : String;
+  srvr, uid, db, pwd : String;
 begin
-  pwd := 'test';
+  srvr := TestSettings['mysql', 'server'];
+  db := TestSettings['mysql', 'database'];
+  uid := TestSettings['mysql', 'username'];
+  pwd := TestSettings['mysql', 'password'];
+
+  {$IFDEF FPC}
   if not isODBCLoaded then
     InitialiseODBC;
+  {$ENDIF}
 
   check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
   check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
   check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
-  cs := 'UID=test;PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server=localhost;Database=test;';
+  cs := 'UID='+uid+';PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server='+srvr+';Database='+db+';';
   co := makePChar(DefaultStringSize);
   try
     check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
@@ -623,6 +633,7 @@ begin
   check(SQLAllocHandle(SQL_HANDLE_STMT, dbc, stmt), 'SQLAllocHandle', SQL_HANDLE_DBC, dbc);
   sql := 'SET time_zone = ''+11:00''';
   check(SQLPrepare(stmt, pchar(sql), SQL_NTS), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+  // this line bloews up mysql
   //np := 0;
   //check(SQLSetStmtAttr(stmt, SQL_ATTR_PARAMSET_SIZE, pointer(np), sizeof(np)), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
   check(SQLExecDirect(stmt, pchar(sql), SQL_NTS), 'SQLExecDirect', SQL_HANDLE_STMT, stmt);

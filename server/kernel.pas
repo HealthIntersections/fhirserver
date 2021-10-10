@@ -797,6 +797,7 @@ begin
 end;
 
 procedure ExecuteFhirServer;
+{$IFDEF FPC}
 var
   fc : TFakeConsoleForm;
 begin
@@ -812,6 +813,11 @@ begin
   else
     ExecuteFhirServerInner;
 end;
+{$ELSE}
+begin
+  ExecuteFhirServerInner;
+end;
+{$ENDIF}
 
 end.
 

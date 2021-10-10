@@ -113,17 +113,21 @@ type
     constructor Create(proc : TRunMethod);
   end;
 
+  { TFslTestSettings }
+
   TFslTestSettings = class (TFslObject)
   private
     Fini : TIniFile;
     FFilename : String;
     FServerTestsRoot : String;
     FFHIRTestsRoot : String;
+    function GetValue(section, name : String): String;
     function testFile(root : String; parts : array of String) : String;
   public
     constructor Create(filename : String);
     destructor Destroy; override;
     property filename : String read FFilename;
+    property value[section, name : String] : String read GetValue; default;
 
     function serverTestFile(parts : array of String) : String;
     function fhirTestFile(parts : array of String) : String;
@@ -490,6 +494,11 @@ begin
     else
       result := result + s.substring(1);
   end;
+end;
+
+function TFslTestSettings.GetValue(section, name : String): String;
+begin
+  result := FIni.ReadString(section, name, '');
 end;
 
 function TFslTestSettings.section(name: String): TFslStringMap;

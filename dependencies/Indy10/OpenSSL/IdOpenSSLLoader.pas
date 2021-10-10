@@ -192,7 +192,9 @@ begin
       Result := not (FLibCrypto = IdNilHandle) and not (FLibSSL = IdNilHandle);
       if not Result then
       begin
+        {$IFDEF FPC}
         FLoadError := GetLoadErrorStr;
+        {$ENDIF}
         Exit;
       end;
 
