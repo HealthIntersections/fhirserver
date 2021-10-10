@@ -1039,9 +1039,9 @@ begin
       else
       begin
         engine.execute(tests, target, patch);
-        StringToFile(target.first.ToXml(true), 'c:\temp\outcome.xml', TEncoding.UTF8);
-        StringToFile(patched.first.ToXml(true), 'c:\temp\patched.xml', TEncoding.UTF8);
-        ok := CheckXMLIsSame('c:\temp\patched.xml', 'c:\temp\outcome.xml', s);
+        StringToFile(target.first.ToXml(true), filePath(['[tmp]', 'outcome.xml']), TEncoding.UTF8);
+        StringToFile(patched.first.ToXml(true), filePath(['[tmp]', 'patched.xml']), TEncoding.UTF8);
+        ok := CheckXMLIsSame(filePath(['[tmp]', 'patched.xml']), filePath(['[tmp]', 'outcome.xml']), s);
         assertTrue(ok, s);
       end;
     end;

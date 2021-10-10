@@ -76,7 +76,7 @@ var
   f : TFileStream;
   prsr : TFHIRJsonParser;
 begin
-  f := TFileStream.Create(TestSettings.fhirTestFile(['R4', 'examples', filename]), fmOpenRead + fmShareDenyWrite);
+  f := TFileStream.Create(TestSettings.fhirTestFile(['r4', 'examples', filename]), fmOpenRead + fmShareDenyWrite);
   try
     prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
     try

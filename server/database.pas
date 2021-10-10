@@ -4406,7 +4406,7 @@ end;
 //      end;
 //    end;
 //    inc(iCount);
-//    TFHIRXhtmlComposer.Create(THTTPLanguages.create('en')).Compose(TFileStream.Create('c:\temp\q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
+//    TFHIRXhtmlComposer.Create(THTTPLanguages.create('en')).Compose(TFileStream.Create(filePath(['[tmp]', 'q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
 //    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
 //  except
 //    on e: exception do
@@ -6555,7 +6555,7 @@ begin
     bufJ := TFslBuffer.Create;
     try
       bufJ.AsText := b.ToString;
-      bufJ.SaveToFileName('c:\temp\validation.txt');
+      bufJ.SaveToFileName(filePath(['[tmp]', 'validation.txt']));
     finally
       bufJ.free;
     end;

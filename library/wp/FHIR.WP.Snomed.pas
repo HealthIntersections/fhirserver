@@ -206,7 +206,7 @@ begin
   inherited;
   FLock := TFslLock.Create;
   FSnomedDescriptions := TFslStringMatch.Create;
-  FIni := TIniFile.Create('c:\temp\snomed.ini');
+  FIni := TIniFile.Create(filePath(['[tmp]', 'snomed.ini']));
   FServiceURL := 'http://localhost:9556/soap';
   FUsername := 'g';
   FPassword := 'g';

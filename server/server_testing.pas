@@ -94,10 +94,12 @@ var
   app : TIdeTesterConsoleRunner;
 begin
   Logging.Log('Run Tests (Console)');
+  ShowObjectLeaks := hasCommandLineParam('leak-report');
   app := TIdeTesterConsoleRunner.Create(nil);
   app.Initialize;
   app.Title := 'FPCUnit Console test runner';
   app.showProgress := true;
+  app.sparse := true;
   app.Run;
   app.Free;
 end;

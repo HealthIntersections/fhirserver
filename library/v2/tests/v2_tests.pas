@@ -40,8 +40,7 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  fsl_testing,
-  fsl_stream,
+  fsl_utilities, fsl_testing, fsl_stream,
   fhir_objects,
   fhir4_pathnode, fhir4_pathengine,
   {$IFNDEF NO_JS}
@@ -106,9 +105,11 @@ type
     procedure TestConnection;
     procedure TestConnectionLimit;
     procedure TestSyncForwards;
+    {$IFNDEF LINUX}
     procedure TestSyncBackwards;
     procedure TestSyncForwards1000;
     procedure TestSyncBackwards1000;
+    {$ENDIF}
     procedure TestSingleThread;
     procedure TestSingleThreadTimeout;
   end;
@@ -396,6 +397,8 @@ begin
     end;
 end;
 
+{$IFNDEF LINUX}
+
 procedure TLLPTests.TestSyncBackwards;
 var
   LIn: Tv2Protocol;
@@ -477,6 +480,8 @@ begin
     end;
 end;
 
+{$ENDIF}
+
 procedure TLLPTests.TestSyncForwards;
 var
   LIn: Tv2Protocol;
@@ -511,6 +516,8 @@ begin
     FreeAndNil(LIn);
     end;
 end;
+
+{$IFNDEF LINUX}
 
 procedure TLLPTests.TestSyncForwards1000;
 var
@@ -550,6 +557,8 @@ begin
     FreeAndNil(LIn);
   end;
 end;
+
+{$ENDIF}
 
 {$IFDEF WINDOWS}
 
@@ -617,8 +626,8 @@ begin
   finally
     msg.Free;
   end;
-  StringToFile(source, 'c:\temp\source.hl7', TEncoding.UTF8);
-  StringToFile(output, 'c:\temp\output.hl7', TEncoding.UTF8);
+  StringToFile(source, filePath(['[tmp]', 'source.hl7']), TEncoding.UTF8);
+  StringToFile(output, filePath(['[tmp]', 'output.hl7']), TEncoding.UTF8);
   assertEqual(source, output);
 end;
 

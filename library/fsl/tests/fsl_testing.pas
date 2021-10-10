@@ -143,6 +143,8 @@ type
 
 var
   TestSettings : TFslTestSettings;
+  GSnomedDataFile : string = '';
+
 
 {$IFDEF FPC}
 procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
@@ -409,9 +411,14 @@ begin
   inherited create;
   FFilename := filename;
   FIni := TIniFile.create(filename);
-  FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
-  FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
-  MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
 end;
 
 destructor TFslTestSettings.Destroy;

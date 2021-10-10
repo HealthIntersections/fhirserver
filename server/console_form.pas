@@ -1669,7 +1669,7 @@ begin
         combiner.destination := edtCombinedDestination.text;
         combiner.store := edtCombinedStore.text;
         combiner.Execute;
-        combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
+        combiner.issues.SaveToFile(filePath(['[tmp]', 'snomed-combination-notes.txt']));
         MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
       finally
         combiner.free;

@@ -761,7 +761,7 @@ begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
       {$ELSE}
-      DefaultMessageBox('Object Leaks', pchar(s), MB_OK);
+      DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
       {$ENDIF}
     end;
   end;

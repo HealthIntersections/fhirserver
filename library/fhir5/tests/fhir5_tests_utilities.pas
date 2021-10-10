@@ -61,7 +61,7 @@ begin
   bnd := fileToResource(FHIR_PUB_FILE('document-example-dischargesummary.xml')) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
-    ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
+    ResourceToFile(bnd, filePath(['[tmp]', 'signed.xml']), ffXml, OutputStylePretty);
     Assert.IsTrue(bnd <> nil);
   finally
     bnd.Free;
@@ -81,7 +81,7 @@ begin
   bnd := fileToResource(FHIR_PUB_FILE('document-example-dischargesummary.xml')) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
-    ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
+    ResourceToFile(bnd, filePath(['[tmp]', 'signed.json']), ffJson, OutputStylePretty);
     Assert.IsTrue(bnd <> nil);
   finally
     bnd.Free;
@@ -133,7 +133,7 @@ begin
     s := dr.asZip(fn);
     try
       s.Position := 0;
-      f := TFIleStream.create('c:\temp\test.zip', fmCreate);
+      f := TFIleStream.create(filePath(['[tmp]', 'test.zip']), fmCreate);
       try
         f.CopyFrom(s, s.Size)
       finally
