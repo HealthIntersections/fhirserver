@@ -37,10 +37,13 @@ Uses
   fsl_testing,
 
   fsl_base, fsl_utilities, fsl_stream,
-  fdb_dialects,
+  fdb_dialects, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
   fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 Type
+
+  { TFDBTests }
+
   TFDBTests = Class (TFslTestCase)
   private
     conn4: TFDBConnection;
@@ -48,6 +51,7 @@ Type
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
+    procedure odbcTest;
     procedure TestMSSQL;
     procedure TestMySQL;
     // procedure TestMySQLMaria;
@@ -522,6 +526,110 @@ begin
   finally
     db.Free;
   end;
+end;
+
+const
+  DefaultStringSize = 255 * {$IFDEF OSX} 4 {$ELSE} 2 {$ENDIF};
+
+function makePChar(len : integer) : pchar;
+begin
+  result := Getmem(len);
+end;
+
+function fromPChar(p : PChar; length : integer) : String;
+begin
+  result := p;
+end;
+
+
+Function odbcError(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): String;
+Var
+  ErrorNum: Integer;
+
+  RetCode: SQLRETURN;
+  State: PChar;
+  Native: SQLINTEGER;
+  Message: PChar;
+  StringLength: SQLSMALLINT;
+Begin
+  State := makePChar(DefaultStringSize);
+  Message := makePChar(DefaultStringSize);
+  try
+    Result := '';
+
+    Case ARetCode Of
+      SQL_ERROR, -24238,
+      SQL_SUCCESS_WITH_INFO:
+      Begin
+        ErrorNum := 0;
+        Repeat
+          Inc(ErrorNum);
+
+          RetCode := SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
+          If RetCode = SQL_SUCCESS Then
+            CommaAdd(result, fromPChar(State, 5)+': '+fromPChar(Message, StringLength));
+        Until RetCode <> SQL_SUCCESS;
+        If (Result = '') Or (RetCode <> SQL_NO_DATA) Then
+          result := 'Unable to Retrieve ODBC Error';
+      End;
+      Else
+      Begin
+        Case ARetCode Of
+          SQL_INVALID_HANDLE:
+            result := 'Invalid ODBC Handle';
+          SQL_NO_DATA:
+            result := 'No Data Found';
+          Else
+            result := 'ODBC Return Code '+IntToStr(ARetCode);
+        End;
+      End;
+    End;
+  finally
+    freemem(state);
+    freemem(message);
+  end;
+End;
+
+procedure TFDBTests.odbcTest;
+  procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
+  begin
+    if (retValue <> 0) then
+      raise ELibraryException.create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
+  end;
+var
+  env : SQLHENV;
+  dbc : SQLHDBC;
+  stmt : SQLHSTMT;
+  cs, sql : String;
+  co : pchar;
+  l : smallint;
+  np : SQLUINTEGER;
+  pwd : String;
+begin
+  pwd := 'test';
+  if not isODBCLoaded then
+    InitialiseODBC;
+
+  check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
+  check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
+  check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
+  cs := 'UID=test;PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server=34.122.27.199;Database=test;';
+  co := makePChar(DefaultStringSize);
+  try
+    check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
+  finally
+    freemem(co);
+  end;
+  check(SQLAllocHandle(SQL_HANDLE_STMT, dbc, stmt), 'SQLAllocHandle', SQL_HANDLE_DBC, dbc);
+  sql := 'SET time_zone = ''+11:00''';
+  check(SQLPrepare(stmt, pchar(sql), SQL_NTS), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+  //np := 0;
+  //check(SQLSetStmtAttr(stmt, SQL_ATTR_PARAMSET_SIZE, pointer(np), sizeof(np)), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+  check(SQLExecDirect(stmt, pchar(sql), SQL_NTS), 'SQLExecDirect', SQL_HANDLE_STMT, stmt);
+  check(SQLFreeHandle(SQL_HANDLE_STMT, stmt), 'SQLFreeHandle', SQL_HANDLE_STMT, stmt);
+  check(SQLDisconnect(dbc), 'SQLDisconnect', SQL_HANDLE_STMT, stmt);
+  check(SQLFreeHandle(SQL_HANDLE_DBC, dbc), 'SQLFreeHandle', SQL_HANDLE_DBC, dbc);
+  check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
 end;
 
 procedure TFDBTests.TestSQLite;
