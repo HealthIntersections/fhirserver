@@ -937,7 +937,12 @@ begin
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
     result := TFDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
-    result.Initialise;
+    try
+      result.Initialise;
+      result.link;
+    finally
+      result.free;
+    end;
   except
     on e:exception do
       begin

@@ -454,8 +454,8 @@ var
   conn3: TFDBConnection;
   conn5: TFDBConnection;
 begin
-  DeleteFile('c:\temp\sql.db');
-  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  DeleteFile(filePath(['[tmp]', 'sql.db']));
+  db := TFDBSQLiteManager.create('test', filePath(['[tmp]', 'sql.db']), true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -529,7 +529,7 @@ begin
 end;
 
 const
-  DefaultStringSize = 255 * {$IFDEF OSX} 4 {$ELSE} 2 {$ENDIF};
+  DefaultStringSize = 255;
 
 function makePChar(len : integer) : pchar;
 begin
@@ -613,7 +613,7 @@ begin
   check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
   check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
   check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
-  cs := 'UID=test;PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server=34.122.27.199;Database=test;';
+  cs := 'UID=test;PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server=localhost;Database=test;';
   co := makePChar(DefaultStringSize);
   try
     check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
@@ -636,8 +636,8 @@ procedure TFDBTests.TestSQLite;
 var
   db: TFDBManager;
 begin
-  DeleteFile('c:\temp\sql.db');
-  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  DeleteFile(filePath(['[tmp]', 'sql.db']));
+  db := TFDBSQLiteManager.create('test', filePath(['[tmp]', 'sql.db']), true, 4);
   try
     test(db);
   finally

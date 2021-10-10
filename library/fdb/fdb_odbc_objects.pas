@@ -35,7 +35,7 @@ interface
 
 Uses
   SysUtils, Classes, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fsl_utilities, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_fpc,
   fdb_dialects;
 
 const
@@ -177,14 +177,6 @@ Type
   TOdbcConnection = Class;
   TOdbcStatement = Class;
 
-  { TErrorPtr }
-  TErrorPtr = ^TErrorRec;
-  TErrorRec = Record
-    FState: String;
-    FNative: SQLINTEGER;
-    FMessage: String;
-  End;
-
   TManagedMemoryStream = class (TMemoryStream)
   public
     property Capacity;
@@ -200,36 +192,19 @@ Type
     { Private declarations }
     FOwner: TODBCObject;
     FRetCode: SQLRETURN;
-    FCursor: Integer;
-    FErrors: TList;
-
-    Function GetState: String;
-    Function GetNative: SQLINTEGER;
-    Function GetMessage: String;
-    Procedure SetMessage(AMessage: String);
   Public
     { Public declarations }
-    Property Owner: TODBCObject Read FOwner;
-    Property RetCode: SQLRETURN Read FRetCode;
-    Property State: String Read GetState;
-    Property Native: SQLINTEGER Read GetNative;
-    Property Message: String Read GetMessage Write SetMessage;
-
     constructor Create(AOwner: TODBCObject;
                        ARetCode: SQLRETURN;
-                       AErrors: TList);
-    destructor Destroy; Override;
-    Procedure First;
-    Procedure Last;
-    Function Next: Boolean;
-    Function Prev: Boolean;
+                       Message : String);
+    property RetCode : SQLRETURN read FRetCode;
   End;
 
   { TODBCErrorHandler }
 
   TODBCErrorHandler = Class
   Private
-    Function Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
+    Function Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): string;
   Public
     { Public declarations }
     Procedure RaiseError(AOwner: TODBCObject; ARetCode: SQLRETURN);
@@ -2761,79 +2736,13 @@ End;
 
 { EODBC }
 
-Constructor EODBC.Create(AOwner: TODBCObject;
-                         ARetCode: SQLRETURN;
-                         AErrors: TList);
-Begin
-  FOwner := AOwner;
+constructor EODBC.Create(AOwner: TODBCObject; ARetCode: SQLRETURN; Message: String);
+begin
+  inherited Create(Message);
   FRetCode := ARetCode;
-  FCursor := 0;
-  FErrors := AErrors;
+  FOwner := AOwner;
+end;
 
-  Inherited Create(Message);
-End;
-
-Destructor EODBC.Destroy;
-Var
-  i: Integer;
-Begin
-  For i := 0 To FErrors.Count-1 Do
-    Dispose(TErrorPtr(FErrors[i]));
-  FErrors.Free;
-
-  Inherited Destroy;
-End;
-
-
-Procedure EODBC.First;
-Begin
-  FCursor := 0;
-End;
-
-Procedure EODBC.Last;
-Begin
-  FCursor := FErrors.Count-1;
-End;
-
-Function EODBC.Next: Boolean;
-Begin
-  Result := False;
-  If FCursor < FErrors.Count Then
-  Begin
-    Inc(FCursor);
-    Result := FCursor < FErrors.Count;
-  End;
-End;
-
-Function EODBC.Prev: Boolean;
-Begin
-  Result := False;
-  If FCursor > -1 Then
-  Begin
-    Dec(FCursor);
-    Result := FCursor > -1;
-  End;
-End;
-
-Function EODBC.GetState: String;
-Begin
-  Result := TErrorPtr(FErrors[FCursor]).FState;
-End;
-
-Function EODBC.GetNative: SQLINTEGER;
-Begin
-  Result := TErrorPtr(FErrors[FCursor]).FNative;
-End;
-
-Function EODBC.GetMessage: String;
-Begin
-  Result := TErrorPtr(FErrors[FCursor]).FMessage;
-End;
-
-Procedure EODBC.SetMessage(AMessage: String);
-Begin
-  Inherited Message := AMessage;
-End;
 
 function fromOdbcPChar(p : PChar; length : integer) : String;
   {$IFDEF OSX}
@@ -2884,22 +2793,19 @@ end;
 
 { TODBCErrorHandler }
 
-Function TODBCErrorHandler.Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
+Function TODBCErrorHandler.Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): string;
 Var
-  ErrorNum: Integer;
-  ErrorPtr: TErrorPtr;
-
   RetCode: SQLRETURN;
   State: PChar;
   Native: SQLINTEGER;
   Message: PChar;
   StringLength: SQLSMALLINT;
+  errorNum : integer;
 Begin
   State := odbcPChar(DefaultStringSize);
   Message := odbcPChar(DefaultStringSize);
   try
-    Result := TList.Create;
-    Result.Clear;
+    Result := '';
 
     Case ARetCode Of
       SQL_ERROR, -24238,
@@ -2907,43 +2813,26 @@ Begin
       Begin
         ErrorNum := 0;
         Repeat
-          Inc(ErrorNum);
-
+          inc(ErrorNum);
           //depreciated RetCode := _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
           RetCode := SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
 
           If Success(RetCode) Then
-          Begin
-            New(ErrorPtr);
-            ErrorPtr.FState := fromOdbcPChar(State, 5);
-            ErrorPtr.FNative := Native;
-            ErrorPtr.FMessage := fromOdbcPChar(Message, StringLength);
-            Result.Add(ErrorPtr);
-          End;
+            CommaAdd(result, fromOdbcPChar(State, 5) + ':'+fromOdbcPChar(Message, StringLength));
         Until Not Success(RetCode);
-        If (Result.Count = 0) Or (RetCode <> SQL_NO_DATA) Then
-        Begin
-          New(ErrorPtr);
-          ErrorPtr.FState := '';
-          ErrorPtr.FNative := 0;
-          ErrorPtr.FMessage := 'Unable to Retrieve ODBC Error';
-          Result.Add(ErrorPtr);
-        End;
+        If (Result = '') Then
+          result := 'Unable to Retrieve ODBC Error';
       End;
       Else
       Begin
-        New(ErrorPtr);
-        ErrorPtr.FState := '';
-        ErrorPtr.FNative := 0;
         Case ARetCode Of
           SQL_INVALID_HANDLE:
-            ErrorPtr.FMessage := 'Invalid ODBC Handle';
+            result := 'Invalid ODBC Handle';
           SQL_NO_DATA:
-            ErrorPtr.FMessage := 'No Data Found';
+            result := 'No Data Found';
           Else
-            ErrorPtr.FMessage := 'ODBC Return Code '+IntToStr(ARetCode);
+            result := 'ODBC Return Code '+IntToStr(ARetCode);
         End;
-        Result.Add(ErrorPtr);
       End;
     End;
   finally
@@ -3403,8 +3292,12 @@ End;
 procedure TOdbcConnection.TerminateHandle;
 begin
   FRetCode := SQLFreeHandle(SQL_HANDLE_DBC, FHdbc);
-  If Not FEnv.FError.Success(FRetCode) Then
-    FEnv.FError.RaiseError(Self, FRetCode);
+  try
+    If Not FEnv.FError.Success(FRetCode) Then
+      FEnv.FError.RaiseError(Self, FRetCode);
+  except
+    // nothing - we don't this one to hide anything else going on
+  end;
   FHdbc := Nil;
 end;
 
@@ -5773,10 +5666,13 @@ Begin
   DoBeforeExecute;
 
   { Set Bulk Size }
-  //deprecated FRetCode := SQLParamOptions(FHstmt, FNumParams, @irow);
-  FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_PARAMSET_SIZE, Pointer(FNumParams), SizeOf(FNumParams));
-  If (Not FEnv.Error.Success(FRetCode)) And (FNumParams > 1) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
+  if FNumParams > 0 then
+  begin
+    //deprecated FRetCode := SQLParamOptions(FHstmt, FNumParams, @irow);
+    FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_PARAMSET_SIZE, Pointer(FNumParams), SizeOf(FNumParams));
+    If (Not FEnv.Error.Success(FRetCode)) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
+  end;
 
   FExecuted := False;
   FAborted := False;
