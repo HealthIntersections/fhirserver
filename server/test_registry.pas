@@ -48,6 +48,7 @@ uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
+  fsl_logging,
   fsl_tests, fsl_tests_web, fsl_tests_scrypt, fsl_tests_npm, fsl_tests_iduri,
   v2_tests, cda_tests, fdb_tests,
   ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
@@ -122,6 +123,8 @@ var
 begin
   if not getCommandLineParam('test-settings', iniName) then
     iniName := partnerFile('test-settings.ini');
+
+  Logging.log('Test Settings from '+iniName);
 
   if not FileExists(iniName) then
      setupDefaultTestSettings(iniName);

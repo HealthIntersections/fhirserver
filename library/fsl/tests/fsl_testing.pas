@@ -113,17 +113,21 @@ type
     constructor Create(proc : TRunMethod);
   end;
 
+  { TFslTestSettings }
+
   TFslTestSettings = class (TFslObject)
   private
     Fini : TIniFile;
     FFilename : String;
     FServerTestsRoot : String;
     FFHIRTestsRoot : String;
+    function GetValue(section, name : String): String;
     function testFile(root : String; parts : array of String) : String;
   public
     constructor Create(filename : String);
     destructor Destroy; override;
     property filename : String read FFilename;
+    property value[section, name : String] : String read GetValue; default;
 
     function serverTestFile(parts : array of String) : String;
     function fhirTestFile(parts : array of String) : String;
@@ -143,6 +147,8 @@ type
 
 var
   TestSettings : TFslTestSettings;
+  GSnomedDataFile : string = '';
+
 
 {$IFDEF FPC}
 procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
@@ -409,9 +415,14 @@ begin
   inherited create;
   FFilename := filename;
   FIni := TIniFile.create(filename);
-  FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
-  FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
-  MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
 end;
 
 destructor TFslTestSettings.Destroy;
@@ -483,6 +494,11 @@ begin
     else
       result := result + s.substring(1);
   end;
+end;
+
+function TFslTestSettings.GetValue(section, name : String): String;
+begin
+  result := FIni.ReadString(section, name, '');
 end;
 
 function TFslTestSettings.section(name: String): TFslStringMap;

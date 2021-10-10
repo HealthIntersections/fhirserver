@@ -203,7 +203,7 @@ procedure TFHIRTelnetServer.TelnetLogin(AThread: TIdContext; const username, pas
 begin
   If (username = 'console') and (password = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1') and (AThread.Binding.PeerIP = '127.0.0.1') then
     AAuthenticated := true
-  else If (username = 'g') and (password = 'g') and (AThread.Binding.PeerIP = '127.0.0.1') and FileExists('C:\temp\gg.txt') then
+  else If (username = 'g') and (password = 'g') and (AThread.Binding.PeerIP = '127.0.0.1') and FileExists(filePath(['[tmp]', 'gg.txt'])) then
     AAuthenticated := true
   else If (username = 'console') and (password = FPassword) and (FPassword <> '') then
     AAuthenticated := true

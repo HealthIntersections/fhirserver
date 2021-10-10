@@ -412,10 +412,7 @@ begin
   FClientCacheManager := TClientCacheManager.Create;
 
   FMaps := TFslMap<TFHIRStructureMapW>.create('tx.maps');
-  if DirectoryExists('c:\temp') then
-    FTaskFolder := 'c:\temp\fhir-server-tasks'
-  else
-    FTaskFolder := FilePath([SystemTemp, 'fhir-server-tasks']);
+  FTaskFolder := FilePath(['[tmp]', 'fhir-server-tasks']);
   ForceFolder(FTaskFolder);
 end;
 

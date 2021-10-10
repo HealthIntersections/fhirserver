@@ -70,10 +70,10 @@ var
   src, xml, json, json2 : String;
   obs : TFhirObservation;
 begin
-  src := 'C:\temp\obs.xml';
-  xml := 'C:\temp\xml.xml';
-  json := 'C:\temp\json.json';
-  json2 := 'C:\temp\json2.json';
+  src := filePath(['[tmp]', 'obs.xml']);
+  xml := filePath(['[tmp]', 'xml.xml']);
+  json := filePath(['[tmp]', 'json.json']);
+  json2 := filePath(['[tmp]', 'json2.json']);
   if FileExists(src) then  
     TFIle.Delete(src);
   TFile.Copy(FHIR_PUB_FILE('observation-decimal.xml'), src, false);

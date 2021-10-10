@@ -577,10 +577,10 @@ Begin
   LoadDll;
   Try
     // debug input
-    StringToFile(FBytes, 'c:\temp\dump.jpg');
+    StringToFile(FBytes, filePath(['[tmp]', 'dump.jpg']));
 
     // loading test data
-    //sTestData := FileToString('C:\Temp\DicomImage.bmp');
+    //sTestData := FileToString(filePath(['[tmp]', 'DicomImage.bmp']));
     //FWidth := 640;
     //FHeight := 480;
     //FStride := 1960;
@@ -605,7 +605,7 @@ Begin
         SetLength(FBytes, iDataLen);
         Move(pData^, FBytes[1], iDataLen);
         // debug output
-        StringToFile(FBytes, 'c:\temp\dump2.jpg');
+        StringToFile(FBytes, filePath(['[tmp]', 'dump2.jpg']));
       End;
     Finally
       FreeMem(pData);

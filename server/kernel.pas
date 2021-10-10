@@ -706,10 +706,8 @@ begin
 
   if getCommandLineParam('log', fn) then
     Logging.logToFile(fn)
-  else if (FolderExists('c:\temp')) then
-    Logging.logToFile('c:\temp\fhirserver.log')
   else
-    Logging.logToFile(tempFile('fhirserver.log'));
+    Logging.logToFile(filePath(['[tmp]', 'fhirserver.log']));
   Logging.FileLog.Policy.FullPolicy := lfpChop;
   Logging.FileLog.Policy.MaximumSize := 1024 * 1024;
 
@@ -799,6 +797,7 @@ begin
 end;
 
 procedure ExecuteFhirServer;
+{$IFDEF FPC}
 var
   fc : TFakeConsoleForm;
 begin
@@ -814,6 +813,11 @@ begin
   else
     ExecuteFhirServerInner;
 end;
+{$ELSE}
+begin
+  ExecuteFhirServerInner;
+end;
+{$ENDIF}
 
 end.
 

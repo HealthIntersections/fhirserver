@@ -1152,11 +1152,11 @@ begin
      if (c = 'years') or (c = 'year') then
        result.dateValue := d.dateValue.add(v, dtuYear)
      else if (c = 'a') then
-       raise EFHIRPath(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+       raise EFHIRPath.create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
      else if (c = 'months') or (c = 'month') then
        result.dateValue := d.dateValue.add(v, dtuMonth)
      else if (c = 'mo') then
-       raise EFHIRPath(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+       raise EFHIRPath.create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
      else if (c = 'weeks') or (c = 'week') or (c = 'wk') then
        result.dateValue := d.dateValue.add(v * 7, dtuDay)
      else if (c = 'days') or (c = 'day') or (c = 'd') then
@@ -1170,7 +1170,7 @@ begin
      else if (c = 'millisecond') or (c = 'millisecond') or (c = 'ms') then
        result.dateValue := d.dateValue.add(v, dtuMillisecond)
      else
-       raise EFHIRPath(format('Error in date arithmetic: unrecognized time unit %s', [c]));
+       raise EFHIRPath.create(format('Error in date arithmetic: unrecognized time unit %s', [c]));
      result.Link;
    finally
      result.Free;

@@ -50,7 +50,7 @@ procedure TFHIRServerConfigTestCases.testConfig;
 var
   f : TFHIRServerConfigFile;
 begin
-  f := TFHIRServerConfigFile.create('C:\work\fhirserver\testcases\config\example.cfg.txt');
+  f := TFHIRServerConfigFile.create(TestSettings.serverTestFile(['testcases', 'config', 'example.cfg.txt']));
   try
     assertTrue(f.web['host'].value = 'local.fhir.org');
     f.web['host'].value := 'local.fhir.org';

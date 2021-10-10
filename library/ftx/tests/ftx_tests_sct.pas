@@ -61,7 +61,6 @@ type
     Procedure Subsumes;
   end;
 
-
 procedure registerTests;
 
 
@@ -72,7 +71,10 @@ implementation
 procedure TSnomedTests.Setup;
 begin
   FServices := TSnomedServices.Create(nil);
-  FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
+  if GSnomedDataFile <> '' then
+    FServices.Load(GSnomedDataFile, true)
+  else
+    FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
 end;
 
 procedure TSnomedTests.TearDown;

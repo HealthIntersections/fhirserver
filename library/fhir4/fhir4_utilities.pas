@@ -5811,8 +5811,20 @@ Begin
     Result := '.bin';
 End;
 {$ELSE}
-begin
-  raise EFHIRTodo.create('GetExtForMimeType');
+Var
+  s : String;
+  i : integer;
+Begin
+  mimeType := lowercase(mimeType);
+  i := StringArrayIndexOfInsensitive(KNOWN_MIME_TYPES, mimeType);
+  if i > -1 then
+    exit(KNOWN_MIME_EXTENSIONS[i]);
+  if mimeType.Contains('+xml') then
+    result := '.xml';
+  if mimeType.Contains('+json') then
+    result := '.json';
+  If Result = '' Then
+    Result := '.bin';
 end;
 {$ENDIF}
 
