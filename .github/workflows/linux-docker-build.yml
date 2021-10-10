@@ -31,4 +31,5 @@ jobs:
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
+        cat ~/test-settings.ini | grep -iv password
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
