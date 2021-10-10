@@ -28,7 +28,7 @@ jobs:
         FHIRSERVER_SSL_CACERT_PATH: /work/fhiserver/fixtures/rootCA.crt
         FHIRSERVER_SSL_PASSWORD: password
       run: |
-        mkdir -p ~terminology/fhir-server
+        mkdir -p ~/terminology/fhir-server
         wget --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
