@@ -31,7 +31,11 @@ jobs:
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    - name: Run tests in docker image
+    - name: Get SNOMED file
+      run: |
+        mkdir -p ~/terminology/fhir-server
+        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
+    - name: Prepare ini file
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
         FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH: /work/bootstrap/source/fhir-test-cases
@@ -45,7 +49,8 @@ jobs:
         FHIRSERVER_SSL_CACERT_PATH: /work/fhiserver/fixtures/rootCA.crt
         FHIRSERVER_SSL_PASSWORD: password
       run: |
-        mkdir -p ~/terminology/fhir-server
-        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
-        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests || true
+    - name: Run tests in docker
+      env:
+      run: |
+        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
