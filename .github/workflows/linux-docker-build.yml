@@ -39,7 +39,7 @@ jobs:
         FHIRSERVER_EMAIL_PASSWORD: ${{ secrets.FHIRSERVER_EMAIL_PASSWORD }}
         FHIRSERVER_SSL_CERT_PATH: /work/fhirserver/fixtures/domain.crt
         FHIRSERVER_SSL_KEY_PATH: /work/fhirserver/fixtures/domain.key
-        FHIRSERVER_SSL_CACERT_PATH: /work/fhiserver/fixtures/rootCA.crt
+        FHIRSERVER_SSL_CACERT_PATH: /work/fhirserver/fixtures/rootCA.crt
         FHIRSERVER_SSL_PASSWORD: password
       run: |
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
