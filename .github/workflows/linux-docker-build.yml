@@ -20,7 +20,7 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-    - name: Docker Buildx (build)
+    - name: Docker Buildx
       run: |
         docker buildx build \
           --cache-from "type=local,src=/tmp/.buildx-cache" \
