@@ -42,5 +42,5 @@ jobs:
         ls -ltr ~/terminology
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
         cat ~/test-settings.ini | grep -iv password
-        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini --entrypoint find fhirterm  /terminology
+        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini --entrypoint find fhirserver  /terminology
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
