@@ -23,6 +23,7 @@ jobs:
     - name: Docker Buildx
       run: |
         docker buildx build \
+          --output=type=docker \
           --cache-from "type=local,src=/tmp/.buildx-cache" \
           --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
           --tag fhirserver \
@@ -49,6 +50,7 @@ jobs:
         ls  ~/terminology/fhir-server/snomed.test.cache
     - name: Run tests in docker
       run: |
+        docker images --all
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
     - name: Update cache
       run: |
