@@ -20,9 +20,17 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-    - name: Build docker image
+    - name: Docker Buildx (build)
       run: |
-        docker build -t fhirserver .
+        docker buildx build \
+          --cache-from "type=local,src=/tmp/.buildx-cache" \
+          --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+          --tag fhirserver \
+          .
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
     - name: Run tests in docker image
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
@@ -40,4 +48,4 @@ jobs:
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
-        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
+        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests || true
