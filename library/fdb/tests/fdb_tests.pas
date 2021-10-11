@@ -34,9 +34,7 @@ interface
 
 Uses
   Sysutils, Classes,
-  fsl_testing,
-
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_testing, fsl_logging, fsl_base, fsl_utilities, fsl_stream,
   fdb_dialects, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
   fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
@@ -255,11 +253,15 @@ var
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mssql') then
-    assertNotTested
+  begin
+    Logging.log('ignore mssql test - no settings');
+    assertNotTested;
+  end
   else
   begin
     settings := TestSettings.section('mssql');
     try
+      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
@@ -278,11 +280,15 @@ var
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mysql') then
+  begin
+    Logging.log('ignore mysql test - no settings');
     assertNotTested
+  end
   else
   begin
     settings := TestSettings.section('mysql');
     try
+      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
       try
         test(db);
@@ -453,9 +459,17 @@ var
   conn2: TFDBConnection;
   conn3: TFDBConnection;
   conn5: TFDBConnection;
+  fn  : String;
 begin
-  DeleteFile(filePath(['[tmp]', 'sql.db']));
-  db := TFDBSQLiteManager.create('test', filePath(['[tmp]', 'sql.db']), true, 4);
+  fn := filePath(['[tmp]', 'sql.db']);
+  if FileExists(fn) then
+  begin
+    Logging.log('SQLite DB @ '+fn+': delete');
+    DeleteFile(fn);
+  end
+  else
+    Logging.log('SQLite DB @ '+fn);
+  db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -645,10 +659,18 @@ end;
 
 procedure TFDBTests.TestSQLite;
 var
-  db: TFDBManager;
+  db : TFDBManager;
+  fn : String;
 begin
-  DeleteFile(filePath(['[tmp]', 'sql.db']));
-  db := TFDBSQLiteManager.create('test', filePath(['[tmp]', 'sql.db']), true, 4);
+  fn := filePath(['[tmp]', 'sql.db']);
+  if FileExists(fn) then
+  begin
+    Logging.log('SQLite DB @ '+fn+': delete');
+    DeleteFile(fn);
+  end
+  else
+    Logging.log('SQLite DB @ '+fn);
+  db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
     test(db);
   finally
