@@ -4840,7 +4840,7 @@ procedure TTarGZParserTests.testTzData;
 var
   tgz : TFslList<TFslNameBuffer>;
 begin
-  tgz := load('tz.dat');
+  tgz := load(partnerFile('tz.dat'));
   try
     assertTrue(tgz.Count = 12);
   finally

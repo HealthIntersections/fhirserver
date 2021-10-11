@@ -548,6 +548,10 @@ begin
   assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
   assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
 
+  assertTrue(FileExists(TestSettings.SSLCertFile), 'SSL Certificate not found at '+TestSettings.SSLCertFile);
+  assertTrue(FileExists(TestSettings.SSLCAFile), 'CA SSL Certificate not found at '+TestSettings.SSLCAFile);
+  assertTrue(FileExists(TestSettings.SSLKeyFile), 'SSL Private key not found at '+TestSettings.SSLKeyFile);
+
   startServer110;
   try
     assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17423/test')) = 8);

@@ -77,7 +77,7 @@ begin
   if gTests = nil then
     gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r5', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
   ucum := TUcumServices.Create(nil);
-  ucum.Import('ucum.dat');
+  ucum.Import(partnerFile('ucum.dat'));
   engine := TFHIRPathEngine.Create(TTestingWorkerContext4.Use, TUcumServiceImplementation.Create(ucum.link));
 end;
 
