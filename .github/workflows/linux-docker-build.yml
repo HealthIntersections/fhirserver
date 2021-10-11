@@ -28,7 +28,7 @@ jobs:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
         FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH: /work/bootstrap/source/fhir-test-cases
         FHIRSERVER_LOCATIONS_MARKDOWN_CLONE_PATH: /work/bootstrap/source/delphi-markdown
-        FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH: /terminology/fhir-server/snomed.cache
+        FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH: /terminology/fhir-server/snomed.test.cache
         FHIRSERVER_EMAIL_SENDER: fhirservertests@gmail.com
         FHIRSERVER_EMAIL_DESTINATION: fhirservertests@gmail.com
         FHIRSERVER_EMAIL_PASSWORD: ${{ secrets.FHIRSERVER_EMAIL_PASSWORD }}
@@ -39,8 +39,5 @@ jobs:
       run: |
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
-        ls -ltr ~/terminology
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
-        cat ~/test-settings.ini | grep -iv password
-        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini --entrypoint find fhirserver  /terminology
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
