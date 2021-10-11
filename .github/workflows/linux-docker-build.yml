@@ -27,14 +27,6 @@ jobs:
           --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
           --tag fhirserver \
           .
-    - name: Move cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    - name: Get SNOMED file
-      run: |
-        mkdir -p ~/terminology/fhir-server
-        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
     - name: Prepare ini file
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
@@ -50,7 +42,14 @@ jobs:
         FHIRSERVER_SSL_PASSWORD: password
       run: |
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
+    - name: Get SNOMED file
+      run: |
+        mkdir -p ~/terminology/fhir-server
+        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
     - name: Run tests in docker
-      env:
       run: |
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
+    - name: Update cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
