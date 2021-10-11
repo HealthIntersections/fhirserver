@@ -42,10 +42,11 @@ jobs:
         FHIRSERVER_SSL_PASSWORD: password
       run: |
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
-    - name: Get SNOMED file
+    - name: Ensure SNOMED cache is present
       run: |
         mkdir -p ~/terminology/fhir-server
-        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache
+        wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache || true
+        ls  ~/terminology/fhir-server/snomed.test.cache
     - name: Run tests in docker
       run: |
         docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
