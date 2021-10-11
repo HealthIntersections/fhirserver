@@ -1,3 +1,5 @@
 .git
 Dockerfile
 terminology
+.github
+.dockerignore
