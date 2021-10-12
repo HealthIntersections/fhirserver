@@ -9,6 +9,10 @@ COPY build/linux-toolchain.sh build/linux-libraries.sh /work/bootstrap/
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
 
+RUN wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc_8.0.26-1ubuntu20.04_amd64.deb && \
+    dpkg -i mysql-connector-odbc_8.0.26–1ubuntu20.04_amd64.deb && \
+    rm -f mysql-connector-odbc_8.0.26–1ubuntu20.04_amd64.deb
+
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
