@@ -11,10 +11,10 @@ database=test
 
 [mysql]
 driver=MySQL ODBC 8.0 Unicode Driver
-server=34.122.27.199
+server=${FHIRSERVER_MYSQL_SERVER}
 database=test
 username=test
-password=XXX
+password=test
 
 [email]
 ; Sender MUST be a GMail aaccount; servers are hardcoded
