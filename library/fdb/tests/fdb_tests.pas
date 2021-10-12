@@ -49,7 +49,7 @@ Type
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
-    procedure odbcTest;
+    procedure TestODBC;
     procedure TestMSSQL;
     procedure TestMySQL;
     // procedure TestMySQLMaria;
@@ -608,7 +608,7 @@ Begin
   end;
 End;
 
-procedure TFDBTests.odbcTest;
+procedure TFDBTests.TestODBC;
   procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
   begin
     if (retValue <> 0) then
@@ -655,6 +655,7 @@ begin
   check(SQLDisconnect(dbc), 'SQLDisconnect', SQL_HANDLE_STMT, stmt);
   check(SQLFreeHandle(SQL_HANDLE_DBC, dbc), 'SQLFreeHandle', SQL_HANDLE_DBC, dbc);
   check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
+  assertTrue(true); // get to here, success
 end;
 
 procedure TFDBTests.TestSQLite;

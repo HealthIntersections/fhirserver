@@ -17356,7 +17356,7 @@ end;
 
 function TFslTimeZone.ToLocalTime(const ADateTime: TDateTime): TDateTime;
 begin
-  result := ToLocalTime(ADateTime);
+  result := FDetails.ToLocalTime(ADateTime);
 end;
 
 function TFslTimeZone.ToUniversalTime(const ADateTime: TDateTime): TDateTime;
