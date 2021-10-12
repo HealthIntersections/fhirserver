@@ -11,6 +11,17 @@ jobs:
         path: ~/terminology
         key: terminology-${{ github.sha }}
         restore-keys: terminology-
+    - name: Setup MySQL
+      run: |
+        docker network create gh
+        docker run \
+          --network gh \
+          --name mysql \
+          -e MYSQL_ROOT_PASSWORD=test \
+          -e MYSQL_USER=test \
+          -e MYSQL_PASSWORD=test \
+          -e MYSQL_DATABASE=test \
+          -d mysql:8
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Cache Docker layers
@@ -34,6 +45,7 @@ jobs:
         FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH: /work/bootstrap/source/fhir-test-cases
         FHIRSERVER_LOCATIONS_MARKDOWN_CLONE_PATH: /work/bootstrap/source/delphi-markdown
         FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH: /terminology/fhir-server/snomed.test.cache
+        FHIRSERVER_MYSQL_SERVER: mysql
         FHIRSERVER_EMAIL_SENDER: fhirservertests@gmail.com
         FHIRSERVER_EMAIL_DESTINATION: fhirservertests@gmail.com
         FHIRSERVER_EMAIL_PASSWORD: ${{ secrets.FHIRSERVER_EMAIL_PASSWORD }}
@@ -51,7 +63,11 @@ jobs:
     - name: Run tests in docker
       run: |
         docker images --all
-        docker run -v ~/terminology:/terminology -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini fhirserver -tests
+        docker run \
+          --network gh \
+          -v ~/terminology:/terminology \
+          -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
+          fhirserver -tests
     - name: Update cache
       run: |
         rm -rf /tmp/.buildx-cache
