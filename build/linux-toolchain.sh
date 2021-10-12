@@ -19,3 +19,10 @@ chmod +x tools/fpclazup
 tools/fpclazup --noconfirm --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools
 
 popd
+
+# --------- setting up mysql -------------------------------------
+# create user 'test'@'%' identified by 'test';
+# create database test;
+# GRANT ALL PRIVILEGES ON test.* TO 'test'@'%';
+# flush privileges;
+

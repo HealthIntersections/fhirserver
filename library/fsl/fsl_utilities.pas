@@ -46,7 +46,7 @@ Uses
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
-  TzDB,
+  TZDB,
   fsl_fpc, fsl_base;
 
 type
