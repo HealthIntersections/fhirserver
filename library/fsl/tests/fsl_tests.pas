@@ -3913,9 +3913,13 @@ begin
   finally
     f.Free;
   end;
+  {$IFDEF WINDOWS}
+  // this doesn't  work on linux; a root account always has full control and can always write and delete a file.
   FileSetReadOnly(filename, true);
   FileDelete(filename);
   assertTrue(FileExists(filename), 'FileExists(filename) #3');
+  {$ENDIF}
+
   FileSetReadOnly(filename, false);
   FileDelete(filename);
   assertFalse(FileExists(filename), 'FileExists(filename) #4');

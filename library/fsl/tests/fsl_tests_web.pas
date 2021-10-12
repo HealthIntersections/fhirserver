@@ -287,22 +287,29 @@ var
 
 procedure TJWTTests.TestUnpacking;
 var
+  json : TJsonObject;
   jwt : TJWT;
 begin
   // HS256 test from the spec
-  jwk := TJWKList.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
+  json := TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}');
   try
-    jwt := TJWTUtils.decodeJWT('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk');
+    jwk := TJWKList.create(json);
     try
-      TJWTUtils.verifyJWT(jwt, jwk, true);
-      // inspect
-      assertTrue(true);
+      jwt := TJWTUtils.decodeJWT('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk');
+      try
+        TJWTUtils.verifyJWT(jwt, jwk, true);
+        // inspect
+        assertTrue(true);
+      finally
+        jwt.Free;
+      end;
     finally
-      jwt.Free;
+      jwk.Free;
     end;
   finally
-    jwk.Free;
+    json.free;
   end;
+
    (*
   // from google
   jwk := TJWKList.create(TJSONParser.Parse(
