@@ -1,4 +1,4 @@
-unit FHIR.Ui.Graph;
+unit fcomp_graph;
 
 {
 Copyright (c) 1996+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -31,12 +31,14 @@ POSSIBILITY OF SUCH DAMAGE.
 // todo:
 // https://stackoverflow.com/questions/21562662/how-can-i-manually-scale-a-components-font-with-a-change-in-dpi-in-delphi
 
+{$i fhir.inc}
+
 interface
 
 uses
   SysUtils, Classes, Generics.Collections, Math,
-  {$IFDEF FMX}
-  System.Types, System.UITypes, FMX.Graphics, FMX.StdCtrls, System.Math.Vectors, FMX.Types, FMX.Objects,
+  {$IFDEF FPC}
+  {Windows, }Graphics, Controls, StdCtrls, ExtCtrls, Forms,
   {$ELSE}
   WinApi.Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
   {$ENDIF}
@@ -62,49 +64,11 @@ const
   MouseToleranceHit = 5; { how far from target mouse is allowed to be }
   NO_VALUE = -2.145e45;
 
-  {$IFDEF FMX}
-const
-  clBlack = TAlphaColors.Black;
-  clSilver = TAlphaColors.Silver;
-  clRed = TAlphaColors.Red;
-  clgreen = TAlphaColors.Green;
-  clblue = TAlphaColors.Blue;
-  clWhite = TAlphaColors.White;
-  clGray = TAlphaColors.Gray;
-  clMaroon = TAlphaColors.Maroon;
-  clInfoBk = TAlphaColors.Lightyellow;
-  mbLeft = TMouseButton.mbLeft;
-
-  psDot = TStrokeDash.Dot;
-  psDash = TStrokeDash.Dash;
-  PsDashDot = TStrokeDash.DashDot;
-  PsDashDotDot = TStrokeDash.DashDotDot;
-  psSolid = TStrokeDash.Solid;
-
-  bsClear = TBrushKind.None;
-  bsSolid = TBrushKind.Solid;
-
-type
-  TCustomPanel = TRectangle;
-  TPen = TStrokeBrush;
-  TPenStyle = TStrokeDash;
-  TBrushStyle = TBrushKind;
-  TPenMode = (pmXOr);
-  {$ELSE}
 Type
   TAlphaColor = TColor;
-  {$ENDIF}
 
 type
-  TFontAdapted = class (TFont)
-  private
-    {$IFDEF FMX}
-    function GetOnChange: TNotifyEvent;
-    procedure SetOnChange(const Value: TNotifyEvent);
-  public
-    property OnChange : TNotifyEvent read GetOnChange write SetOnChange;
-    {$ENDIF}
-  end;
+  TFontAdapted = class (TFont);
   TLinePoints = array[0..1] of TPoint;
   pLinePoints = ^TLinePoints;
 
@@ -129,13 +93,28 @@ type
     procedure clear;
   end;
 
-  TDataProcessingRoutine = reference to procedure (pp : TFGraphDataPoint);
+  TFGraphDataProvider = class;
+
+  { TFGraphDataPointEnumerator }
+
+  TFGraphDataPointEnumerator = class (TEnumerator<TFGraphDataPoint>)
+  private
+    FProvider : TFGraphDataProvider;
+    FIndex : integer;
+  protected
+    constructor create(provider : TFGraphDataProvider);
+    function DoGetCurrent: TFGraphDataPoint; override;
+    function DoMoveNext: boolean; override;
+  end;
+
 
   // all these methods are hit constantly and are performance critical
+
+  { TFGraphDataProvider }
+
   TFGraphDataProvider = class abstract (TFslObject)
   private
     FSeries : TFGraphSeries;
-    procedure iterate(processor : TDataProcessingRoutine);
   protected
     procedure change; virtual;
   public
@@ -154,6 +133,7 @@ type
     function getMaxXValue : Double; virtual; abstract;
     function getMinYValue : Double; virtual; abstract;
     function getMaxYValue : Double; virtual; abstract;
+    function GetEnumerator: TFGraphDataPointEnumerator;
   end;
 
   TFGraphLegendStatus = (lsNone, lsNameOnly, lsPoints, lsLines, lsAll);
@@ -741,10 +721,6 @@ type
   TGraphCanvas = class (TFslObject)
   private
     FCanvas : TCanvas;
-    {$IFDEF FMX}
-    FState : TCanvasSaveState;
-    FFonTAlphaColor : TAlphaColor;
-    {$ENDIF}
     function GetFont: TFont;
     procedure SetFont(const Value: TFont);
     function GetPenColor: TAlphaColor;
@@ -879,18 +855,14 @@ type
     procedure AnnotationChange(Sender: TObject; const Item: TFGraphAnnotation; Action: TCollectionNotification);
     procedure FunctionsChange(Sender: TObject; const Item: TFGraphFunction; Action: TCollectionNotification);
 
-    {$IFNDEF FMX}
     procedure ChangeScale(M, D: Integer); override;
-    {$ENDIF}
     function GetYAxis2(which : boolean) : TFGraphAxis;
 
-    {$IFNDEF FMX}
     {Implements dragging and resizing : }
     procedure MouseDown(Button : TMouseButton; Shift : TShiftState; X, Y : Integer); override;
     procedure MouseMove(Shift : TShiftState; X,Y : Integer); override;
     procedure MouseUp(Button : TMouseButton; Shift : TShiftState; X,Y : Integer); override;
     Procedure SetUpDragging(X,Y : Integer);
-    {$ENDIF}
   public
     constructor Create(AOwner : TComponent); override;
     destructor  Destroy; override;
@@ -914,9 +886,7 @@ type
     function CreateFunction(event : TFGraphFunctionEvent) : TFGraphFunction;
 
     procedure addBand(color :  TAlphaColor; min, max, opacity : Double);
-    {$IFNDEF FMX}
     function settingsText(code : boolean) : String;
-    {$ENDIF}
 
     property YAxis[which : boolean] : TFGraphAxis read GetYAxis2;
   published
@@ -934,18 +904,17 @@ type
     property OnWantDesigner : TNotifyEvent read FOnWantDesigner write FOnWantDesigner;
 
     property Plotting : Boolean read FPlotting write SetPlotting;
-    {$IFDEF FMX}
-    property Color : TAlphaColor read FColor write FColor;
-    {$ELSE}
     property Align;
     property BevelInner default bvNone;
     property BevelOuter default bvNone;
     property BevelWidth;
     property BorderStyle default bsSingle;
     property BorderWidth;
+    {$IFNDEF FPC}
     property Ctl3D;
-    property Cursor;
     property ParentCtl3D;
+    {$ENDIF}
+    property Cursor;
     property ParentFont;
     property PopupMenu;
     property Visible;
@@ -961,7 +930,6 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnResize;
-    {$ENDIF}
   end;
 
 implementation
@@ -980,6 +948,27 @@ begin
   Result.Y := AY;
 end;
 
+{ TFGraphDataPointEnumerator }
+
+constructor TFGraphDataPointEnumerator.create(provider: TFGraphDataProvider);
+begin
+  inherited create;
+  FProvider := provider;
+  FIndex := -1;
+end;
+
+function TFGraphDataPointEnumerator.DoGetCurrent: TFGraphDataPoint;
+begin
+  result := FProvider.getPoint(FIndex);
+
+end;
+
+function TFGraphDataPointEnumerator.DoMoveNext: boolean;
+begin
+  inc(FIndex);
+  result := FIndex < FProvider.count;
+end;
+
 { TFGraphComponent }
 
 procedure TFGraphComponent.change;
@@ -996,12 +985,9 @@ begin
   FSeries.change;
 end;
 
-procedure TFGraphDataProvider.iterate(processor: TDataProcessingRoutine);
-var
-  i : integer;
+function TFGraphDataProvider.GetEnumerator: TFGraphDataPointEnumerator;
 begin
-  for i := 0 to count - 1 do
-    processor(getPoint(i));
+  result := TFGraphDataPointEnumerator.create(self);
 end;
 
 { TFGraphSeries }
@@ -1312,12 +1298,13 @@ begin
 end;
 
 procedure TFGraphSeries.populateRegression(m2, m, c: Double);
+var
+  pp : TFGraphDataPoint;
 begin
   FRegressionData.clear;
-  Data.iterate(procedure (pp : TFGraphDataPoint) begin
+  for pp in Data do
     if (pp.error = '') then
       addRegressionValue(pp.x, (pp.x * pp.x * m2) + (pp.x * m) + c);
-  end);
 end;
 
 {Linear Regression. reference, Devore, JL.: "Probability and Statistics for the engineering and Scientists", Duxbury Press, Belmont, Ca. 1990, pp460 - 461}
@@ -1343,7 +1330,8 @@ begin
     sumY := 0;
     sumX2 := 0;
     sumXY := 0;
-    Data.iterate(procedure (pp : TFGraphDataPoint) begin
+    for pp in Data do
+    begin
       if (pp.error = '') then
       begin
         sumX := sumX + pp.x;
@@ -1351,7 +1339,7 @@ begin
         sumX2 := sumX2 + (pp.x * pp.x);
         sumXY := sumXY + (pp.x * pp.y);
       end;
-    end);
+    end;
     FAnalysis.RegSlope2 := 0;
     FAnalysis.RegSlope := ((Data.Datacount * sumXY) - (sumX * sumY)) / ((Data.DataCount * sumX2) - (sumX * sumX));
     FAnalysis.RegressionIntercept := (sumY / Data.DataCount) - FAnalysis.RegSlope * (sumX / Data.DataCount);
@@ -1367,9 +1355,9 @@ procedure TFGraphSeries.DoPassingBablok;
 var
   i, j: LongInt;
   points : TList<Double>;
-//  datat, pp: psPoint;
   p1, p2: TFGraphDataPoint;
   rstats : TFGraphDataStatistics;
+  pp : TFGraphDataPoint;
 begin
   if (FData.DataCount < 2) or (FXStats.sd = 0) then
   begin
@@ -1409,10 +1397,11 @@ begin
       FAnalysis.SlopeSD := rstats.SD;
 
       points.Clear;
-      Data.iterate(procedure (pp : TFGraphDataPoint) begin
+      for pp in Data do
+      begin
         if (pp.error = '') then
           points.Add(pp.y - (FAnalysis.RegSlope * pp.x));
-      end);
+      end;
       points.Sort;
       DoCalcStats(points, rstats);
       FAnalysis.RegressionIntercept := rstats.median;
@@ -1449,7 +1438,8 @@ begin
     sumx2y := 0;
     sumx3 := 0;
     sumx4 := 0;
-    Data.iterate(procedure (pp : TFGraphDataPoint) begin
+    for pp in Data do
+    begin
       if (pp.error = '') then
       begin
         sumX := sumX + pp.x;
@@ -1460,7 +1450,7 @@ begin
         sumx3 := sumx3 +  + (pp.x * pp.x * pp.x);
         sumx4 := sumx4 + (pp.x * pp.x * pp.x * pp.x);
       end;
-    end);
+    end;
     xmean := sumx/Data.DataCount;
     ymean := sumy/Data.DataCount;
     x2mean := sumx2/Data.DataCount;
@@ -1584,7 +1574,8 @@ begin
   sumY := 0;
   sumX2 := 0;
   sumXY := 0;
-  Data.iterate(procedure (pp : TFGraphDataPoint) begin
+  for pp in Data do
+  begin
     if (pp.error = '') then
     begin
       cx := (pp.x - FData.getMinXValue + xDiff) / xDiff;
@@ -1598,7 +1589,7 @@ begin
       sumX2 := sumX2 + (cx * cx);
       sumXY := sumXY + Weight * (cx * cy);
     end;
-  end);
+  end;
   Result := (((j * sumXY) - (sumX * sumY)) / ((j * sumX2) - (sumX * sumX))) * vx
             + (sumY / j) - (((j * sumXY) - (sumX * sumY)) / ((j * sumX2) - (sumX * sumX))) * (sumX / j);
 end;
@@ -1696,7 +1687,7 @@ begin
   xs := (Data.getMaxXValue - Xmin) / RegControl1;
   Xmax := Data.getMaxXValue + 0.00001*xs; {OK for < 100,000 points}
   x := Data.getMinXValue;
-(*  pp := nil;
+(.*  pp := nil;
   pp2 := nil;
   while x <= Xmax do
   begin
@@ -1852,13 +1843,14 @@ begin
   begin
     list := TList<Double>.create;
     try
-      Data.iterate(procedure (pp : TFGraphDataPoint) begin
+      for pp in Data do
+      begin
         if (pp.error = '') and (not restrict or ((pp.x <= max) and (pp.x >= min))) then
           if isxaxis then
             list.Add(pp.x)
           else
             list.Add(pp.y);
-      end);
+      end;
       if not isxaxis then
         list.Sort;
        DoCalcStats(list,Stats);
@@ -1975,19 +1967,21 @@ begin
 
   XAverage := 0.0;
   YAverage := 0.0;
-  Data.iterate(procedure (pp : TFGraphDataPoint) begin
+  for pp in Data do
+  begin
     if (pp.error = '') then
     begin
       XAverage := XAverage + pp.x;
       YAverage := YAverage + pp.y;
     end;
-  end);
+  end;
   XAverage := XAverage/Data.DataCount;
   YAverage := YAverage/Data.DataCount;
   sumxx := 0.0;
   sumyy := 0.0;
   sumxy := 0.0;
-  Data.iterate(procedure (pp : TFGraphDataPoint) begin
+  for pp in Data do
+  begin
     if (pp.error = '') then
     begin
       xt := pp.x-XAverage;
@@ -1996,7 +1990,7 @@ begin
       sumyy := sumyy+sqr(yt);
       sumxy := sumxy+xt*yt;
     end;
-  end);
+  end;
 
   with FAnalysis do
     begin
@@ -2462,8 +2456,8 @@ begin
   DecodeTime(FOMin, nHour, nMin, nSec, nMSec);
   DecodeTime(FOMax, xHour, xMin, xSec, xMSec);
   case FDateTickType of
-   {dt_custom : { in this case no action is taken to change the scale of the axes }
-      {setMinMax; called elsewhere}
+   //dt_custom : { in this case no action is taken to change the scale of the axes }
+   //   {setMinMax; called elsewhere}
    dt_minute :      {set begin to nearest whole minute before start and set end to}
                    {nearest whole minute after end}
       begin
@@ -3414,10 +3408,6 @@ begin
   FNoGridlines := false;
   Width := 200;
   Height := 200;
-  {$IFDEF FMX}
-  Fill.Color := clWhite;
-  Stroke.Thickness := 0;
-  {$ELSE}
   if (csDesigning in ComponentState) then
     Caption := name
   else
@@ -3430,7 +3420,6 @@ begin
   Font.Name := 'Arial';
   Font.Style := [];
   Color := clWhite;
-  {$ENDIF}
 
   FXAxis := TFGraphAxis.Create;
   FXAxis.FGraph := self;
@@ -3619,7 +3608,7 @@ begin
     end;
   {dragging : }
   FHasDragged := false;
-  drect := rect(0,0,0,0);
+  drect := TRect.create(0,0,0,0);
 end;
 
 
@@ -3665,7 +3654,6 @@ end;
      if the mouse is in the top left corner, the user wants to move the graph
      if the mouse is in the bottom right corner, the user wants to resize the graph}
 
-{$IFNDEF FMX}
 procedure TFGraph.MouseDown(Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
 const
   SC_DragMove = $f012;
@@ -3697,9 +3685,7 @@ begin
    fdragging := true;
    dx := x;
    dy := y;
-   {$IFNDEF FMX}
    screen.cursor := crCross;
-   {$ENDIF}
    if not FHasDragged then
      begin
      FHoldXAS := FXAxis.Autosizing;
@@ -3714,11 +3700,9 @@ begin
      end;
    FHasDragged := true;
    end;
-   {$IFNDEF FMX}
    FCanvas.penColor := Self.color;
    FCanvas.penStyle := psDot;
    FCanvas.penMode := pmXOr;
-   {$ENDIF}
 end;
 
 procedure TFGraph.MouseMove(Shift : TShiftState; X, Y : Integer);
@@ -3794,8 +3778,10 @@ begin
   begin
     FCanvas.penColor := clBlack;
     FCanvas.penMode := pmCopy; {//pmXOr;}
-    drect := rect(0,0,0,0);
+    drect := TRect.create(0,0,0,0);
+    {$IFNDEF FPC}
     releaseCapture;
+    {$ENDIF}
   end;
   if FLegDragging then
     begin
@@ -3887,7 +3873,6 @@ begin
   inherited mouseup(button, shift, x, y);
 end;
 
-{$ENDIF}
 { getmousex/y return the value as determined by the scales }
 function TFGraph.GetMouseX(x : Integer) : Double;
 begin
@@ -3940,13 +3925,13 @@ think of faster ways. But this is enough for me.}
 function TFGraph.findNearestPoint(x,y : integer; var series : TFGraphSeries; var point : TFGraphDataPoint) : boolean;
 //var
 //current,currs : longint;
-//    pp,currpp : TFGraphDataPoint;
+//
 //    p : TFGraphSeries;
 var
   found : boolean;
   dist, min : integer;
   s, sr : TFGraphSeries;
-  p : TFGraphDataPoint;
+  p, pp : TFGraphDataPoint;
 //     function sqr(w : longint) : longint;
 //     begin
 //       result := w*w;
@@ -3957,7 +3942,8 @@ begin
   sr := nil;
   for s in FSeries do
   begin
-    s.Data.iterate(procedure (pp : TFGraphDataPoint) begin
+    for pp in s.Data do
+    begin
       if (pp.error = '') then
       begin
         dist := sqr(fx(pp.x)-x) + sqr(Fy(pp.y, s.FYAxis2) - y);
@@ -3969,7 +3955,7 @@ begin
           found := true;
         end;
       end;
-    end);
+    end;
   end;
   result := found;
   series := sr;
@@ -4530,7 +4516,6 @@ end;
 
 procedure TFGraph.ColorBackground;
 begin
-  {$IFNDEF FMX}
   FCanvas.brushcolor := FAppearance.FMarginColor;
   FCanvas.brushstyle := bsSolid;
   FCanvas.pencolor := FAppearance.FMarginColor;
@@ -4544,9 +4529,8 @@ begin
   With FDimensions do
    FCanvas.rectangle(Fleft + FXOffset, Ftop + FYOffSet, FCurrWidth - (FRight) + FXOffset, FCurrHeight - (FBottom) + FYOffSet);
      {same as (fx(FXAxis.FMin), fy(FYAxis.FMax), fx(FXAxis.FMax),
-      fy(FYAxis.FMin)) , except that fx/fy may not be available}                     ;
+      fy(FYAxis.FMin)), except that fx/fy may not be available}                     ;
    { FCanvas.brush.color := Color;}
-  {$ENDIF}
 end;
 
 procedure TFGraph.DrawXAxis;
@@ -4997,7 +4981,6 @@ begin
   end;
 end;
 
-{$IFNDEF FMX}
 procedure TFGraph.ChangeScale(M, D: Integer);
 begin
   inherited;
@@ -5005,7 +4988,6 @@ begin
   FSD := D;
   RePaint;
 end;
-{$ENDIF}
 
 function TFGraph.CheckScalesOK : Boolean;
 var
@@ -5211,6 +5193,22 @@ begin
   end;
 end;
 
+function minDouble(a, b : Double) : Double; inline;
+begin
+   if a < b then
+     result := a
+   else
+     result := b;
+end;
+
+function maxDouble(a, b : Double) : Double; inline;
+begin
+   if a > b then
+     result := a
+   else
+     result := b;
+end;
+
 procedure TFGraph.PaintSeriesPoints(series : TFGraphSeries);
 var
   s1Size : Word;
@@ -5411,10 +5409,10 @@ begin
                      tx1 := pp.x + series.FBarOffset;
                      tx2 := pp.x + series.FBarOffset + series.FBarWidth;
                      ty := Min(ty, FDimensions.FTop);
-                     tx1 := Min(tx1, FXAxis.min);
-                     tx2 := Min(tx2, FXAxis.min);
-                     tx1 := Max(tx1, FXAxis.max);
-                     tx2 := Max(tx2, FXAxis.max);
+                     tx1 := MinDouble(tx1, FXAxis.min);
+                     tx2 := MinDouble(tx2, FXAxis.min);
+                     tx1 := MaxDouble(tx1, FXAxis.max);
+                     tx2 := MaxDouble(tx2, FXAxis.max);
                      PlotBar(fx(tx1), fx(tx2), ty, ty2);
                      end;
       end;
@@ -5539,10 +5537,8 @@ end;
 
 procedure TFGraph.Paint;
 begin
-  {$IFNDEF FMX}
   if not HandleAllocated then
     exit;
-  {$ENDIF}
   inherited Paint;
   if FPainting then
     exit;
@@ -5566,12 +5562,11 @@ begin
   if v then DoRescaleEvent;
 end;
 
-{$IFNDEF FMX}
 var
   CODES_TAlign : array [TAlign] of String = ('alNone', 'alTop', 'alBottom', 'alLeft', 'alRight', 'alClient', 'alCustom');
   CODES_TBevelCut : array [TBevelCut] of String = ('bvNone', 'bvLowered', 'bvRaised', 'bvSpace');
   CODES_TFormBorderStyle : array [TFormBorderStyle] of String = ('bsNone', 'bsSingle', 'bsSizeable', 'bsDialog', 'bsToolWindow', 'bsSizeToolWin');
-  CODES_TPenStyle : array [TPenStyle] of String = ('psSolid', 'psDash', 'psDot', 'psDashDot', 'psDashDotDot', 'psClear', 'psInsideFrame', 'psUserStyle', 'psAlternate');
+  CODES_TPenStyle : array [TPenStyle] of String = ('psSolid', 'psDash', 'psDot', 'psDashDot', 'psDashDotDot', 'psClear', 'psInsideFrame', 'psUserStyle'{$IFNDEF FPC}, 'psAlternate'{$ENDIF});
   CODES_TFontStyle : array [TFontStyle] of String = ('fsBold', 'fsItalic', 'fsUnderline', 'fsStrikeOut');
   CODES_TFGraphLegendStyle : array [TFGraphLegendStyle] of String = ('lsAcross', 'lsDown');
   CODES_TFGraphDateTickType : array [TFGraphDateTickType] of String = ('dt_minute', 'dt_5minute', 'dt_halfhourly', 'dt_hourly', 'dt_daily', 'dt_weekly', 'dt_monthly', 'dt_2monthly', 'dt_quarterly', 'dt_annually', 'dt_decade', 'dt_century', 'dt_custom');
@@ -5599,8 +5594,7 @@ var
   var
     s : String;
   begin
-    if (value = clSystemColor) then s := 'clSystemColor'
-    else if (value = clScrollBar) then s := 'clScrollBar'
+    if (value = clScrollBar) then s := 'clScrollBar'
     else if (value = clBackground) then s := 'clBackground'
     else if (value = clActiveCaption) then s := 'clActiveCaption'
     else if (value = clInactiveCaption) then s := 'clInactiveCaption'
@@ -5652,6 +5646,8 @@ var
     else if (value = clSkyBlue) then s := 'clSkyBlue'
     else if (value = clCream) then s := 'clCream'
     else if (value = clMedGray) then s := 'clMedGray'
+    {$IFDEF DELPHI}
+    else if (value = clSystemColor) then s := 'clSystemColor'
     else if (value = clWebSnow) then s := 'clWebSnow'
     else if (value = clWebFloralWhite) then s := 'clWebFloralWhite'
     else if (value = clWebLavenderBlush) then s := 'clWebLavenderBlush'
@@ -5792,6 +5788,7 @@ var
     else if (value = clWebGainsboro) then s := 'clWebGainsboro'
     else if (value = clWebDarkGray) then s := 'clWebDarkGray'
     else if (value = clWebBlack) then s := 'clWebBlack'
+    {$ENDIF}
     else s := inttostr(value);
 
     b.Append('  '+self.Name+'.'+name+' := '+s+';');
@@ -5841,9 +5838,11 @@ begin
     p('BevelWidth', BevelWidth);
     p('BorderStyle', ord(BorderStyle), CODES_TFormBorderStyle);
     p('BorderWidth', BorderWidth);
+    {$IFDEF DELPHI}
     p('Ctl3D', Ctl3D);
-    p('Cursor', Cursor);
     p('ParentCtl3D', ParentCtl3D);
+    {$ENDIF}
+    p('Cursor', Cursor);
     p('ParentFont', ParentFont);
     p('Visible', Visible);
     p('Plotting', Plotting);
@@ -5965,7 +5964,6 @@ begin
     b.Free;
   end;
 end;
-{$ENDIF}
 
 procedure TFGraph.SetHasDragged(v : boolean);
 { this procedure is primarily present to set FHasdragged to false
@@ -6151,9 +6149,6 @@ constructor TGraphCanvas.create(canvas: TCanvas);
 begin
   inherited create;
   FCanvas := canvas;
-  {$IFDEF FMX}
-  FFonTAlphaColor := TAlphaColors.Black;
-  {$ENDIF}
 end;
 
 destructor TGraphCanvas.Destroy;
@@ -6162,68 +6157,44 @@ begin
 end;
 
 procedure TGraphCanvas.clip(x1, y1, x2, y2: integer);
-{$IFNDEF FMX}
-var
-  ClipRgn : HRgn;
-{$ENDIF}
+//var
+//  ClipRgn : HRgn;
 begin
-{$IFDEF FMX}
-//  FState := FCanvas.SaveState;
-//  FCanvas.IntersectClipRect(TRectF.Create(x1, y1, x2, y2));
-{$ELSE}
-  ClipRgn := CreateRectRgn(x1,y1,x2,y2);
-  SelectClipRgn(FCanvas.Handle, ClipRgn);
-  DeleteObject(ClipRgn);
-{$ENDIF}
+  //ClipRgn := CreateRectRgn(x1,y1,x2,y2);
+  //SelectClipRgn(FCanvas.Handle, ClipRgn);
+  //DeleteObject(ClipRgn);
+  //
+  FCanvas.ClipRect := TRect.create(x1, y1, x2, y2);
+  FCanvas.Clipping := true;
 end;
 
 procedure TGraphCanvas.unClip(x1, y1, x2, y2: integer);
-{$IFNDEF FMX}
-var
-  ClipRgn : HRgn;
-{$ENDIF}
+//var
+//  ClipRgn : HRgn;
 begin
-{$IFDEF FMX}
-//  FCanvas.RestoreState(FState);
-{$ELSE}
-  ClipRgn := CreateRectRgn(x1,y1,x2,y2);
-  SelectClipRgn(FCanvas.Handle, ClipRgn);
-  DeleteObject(ClipRgn);
-{$ENDIF}
+  //ClipRgn := CreateRectRgn(x1,y1,x2,y2);
+  //SelectClipRgn(FCanvas.Handle, ClipRgn);
+  //DeleteObject(ClipRgn);
+  FCanvas.Clipping := false;
 end;
 
 procedure TGraphCanvas.Ellipse(X1, Y1, X2, Y2: Integer);
 begin
-  {$IFDEF FMX}
-  FCanvas.DrawEllipse(TRectF.Create(x1, y1, x2, y2), 1.0);
-  {$ELSE}
   FCanvas.Ellipse(x1, y1, x2, y2);
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.finish;
 begin
-  {$IFDEF FMX}
-  FCanvas.EndScene;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetBrushColor: TAlphaColor;
 begin
-  {$IFDEF FMX}
-  result := FCanvas.Fill.Color;
-  {$ELSE}
   result := FCanvas.Brush.Color;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetBrushStyle: TBrushStyle;
 begin
-  {$IFDEF FMX}
-  result := FCanvas.Fill.Kind;
-  {$ELSE}
   result := FCanvas.Brush.Style;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetFont: TFont;
@@ -6233,132 +6204,65 @@ end;
 
 function TGraphCanvas.GetFonTAlphaColor: TAlphaColor;
 begin
-  {$IFDEF FMX}
-  result := FFonTAlphaColor;
-  {$ELSE}
   result := FCanvas.Font.Color;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetPenColor: TAlphaColor;
 begin
-  {$IFDEF FMX}
-  result := FCanvas.Stroke.Color;
-  {$ELSE}
   result := FCanvas.Pen.Color;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetPenMode: TPenMode;
 begin
-  {$IFDEF FMX}
-  result := pmXOr;
-  {$ELSE}
   result := FCanvas.Pen.Mode;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetPenStyle: TPenStyle;
 begin
-  {$IFDEF FMX}
-  result := FCanvas.Stroke.Dash;
-  {$ELSE}
   result := FCanvas.Pen.Style;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.GetPenWidth: integer;
 begin
-  {$IFDEF FMX}
-  result := trunc(FCanvas.Stroke.Thickness);
-  {$ELSE}
   result := FCanvas.Pen.Width;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.Line(x1, y1, x2, y2: integer);
 begin
-  {$IFDEF FMX}
-  FCanvas.DrawLine(TPointF.Create(x1, y1), TPointF.Create(x2,y2), 1.0);
-  {$ELSE}
   FCanvas.MoveTo(x1, y1);
   FCanvas.LineTo(x2, y2);
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.Polygon(const Points: array of TPoint);
-{$IFDEF FMX}
-var
-  p : TPolygon;
-  i : integer;
-{$ENDIF}
 begin
-  {$IFDEF FMX}
-  SetLength(p, length(points));
-  for i := 0 to length(Points) - 1 do
-    p[i] := TPointF.create(points[i].x, points[i].y);
-  FCanvas.DrawPolygon(p, 1.0);
-  {$ELSE}
   FCanvas.Polygon(points);
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.Polyline(points: pLinePoints; count: integer);
-{$IFDEF FMX}
 var
-  p : TPathData;
+  p : array of TPoint;
   i : integer;
-{$ENDIF}
 begin
-  {$IFDEF FMX}
-  p := TPathData.Create;
-  try
-    p.MoveTo(TPointF.Create(points[0].x, points[0].y));
-    for i := 1 to count - 1 do
-      p.LineTo(TPointF.create(points[i].x, points[i].y));
-    FCanvas.DrawPath(p, 1.0);
-  finally
-    p.free;
-  end;
-  {$ELSE}
-  WinApi.Windows.Polyline(FCanvas.Handle, points^, count);
-  {$ENDIF}
+  setLength(p, count);
+  for i := 0 to count - 1 do
+    p[i] := points[i];
+  FCanvas.Polyline(p);
 end;
 
 
 procedure TGraphCanvas.Polyline(const Points: array of TPoint);
-{$IFDEF FMX}
-var
-  p : TPathData;
-  i : integer;
-{$ENDIF}
 begin
-  {$IFDEF FMX}
-  p := TPathData.Create;
-  try
-    p.MoveTo(TPointF.Create(points[0].x, points[0].y));
-    for i := 1 to length(points) - 1 do
-      p.LineTo(TPointF.create(points[i].x, points[i].y));
-    FCanvas.DrawPath(p, 1.0);
-  finally
-    p.free;
-  end;
-  {$ELSE}
   FCanvas.Polyline(points);
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.Rectangle(x1, y1, x2, y2: integer; opacity : double = 1.0);
-{$IFNDEF FMX}
+{$IFDEF DELPHI}
 Var
   bmp : TBitmap;
   Blend : _BLENDFUNCTION;
-{$ENDIF}
+  {$ENDIF}
 begin
-  {$IFDEF FMX}
-  FCanvas.FillRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, opacity);
-  FCanvas.DrawRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, opacity);
-  {$ELSE}
+  {$IFDEF DELPHI}
   if opacity <> 1 then
   begin
     bmp := TBitmap.Create;
@@ -6376,181 +6280,102 @@ begin
      end;
   end
   else
+  {$ENDIF}
     FCanvas.Rectangle(x1, y1, x2, y2);
- {$ENDIF}
 end;
 
 function TGraphCanvas.SelectObject(obj: THandle): THandle;
 begin
-  {$IFDEF FMX}
+  {$IFDEF DELPHI}
+  result := Windows.SelectObject(FCanvas.Handle, obj);
   {$ELSE}
-  result := WinApi.Windows.SelectObject(FCanvas.Handle, obj);
+  result := 0;
   {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetBrushColor(const Value: TAlphaColor);
 begin
-  {$IFDEF FMX}
-  FCanvas.Fill.Color := Value;
-  {$ELSE}
   FCanvas.Brush.Color := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetBrushStyle(const Value: TBrushStyle);
 begin
-  {$IFDEF FMX}
-  FCanvas.Fill.Kind := Value;
-  {$ELSE}
   FCanvas.Brush.Style := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetFont(const Value: TFont);
 begin
-  {$IFDEF FMX}
-  FCanvas.Font.Assign(value);
-  {$ELSE}
   FCanvas.Font := value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetFonTAlphaColor(const Value: TAlphaColor);
 begin
-  {$IFDEF FMX}
-  FFonTAlphaColor := Value;
-  {$ELSE}
   FCanvas.Font.Color := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetPenColor(const Value: TAlphaColor);
 begin
-  {$IFDEF FMX}
-  FCanvas.Stroke.Color := value;
-  {$ELSE}
   FCanvas.Pen.Color := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetPenMode(const Value: TPenMode);
 begin
-  {$IFDEF FMX}
-  {$ELSE}
   FCanvas.Pen.Mode := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetPenStyle(const Value: TPenStyle);
 begin
-  {$IFDEF FMX}
-  FCanvas.Stroke.Dash := value;
-  {$ELSE}
   FCanvas.Pen.Style := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.SetPenWidth(const Value: integer);
 begin
-  {$IFDEF FMX}
-  FCanvas.Stroke.Thickness := value;
-  {$ELSE}
   FCanvas.Pen.Width := Value;
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.start;
 begin
-  {$IFDEF FMX}
-  FCanvas.BeginScene;
-  {$ENDIF}
 end;
 
 function TGraphCanvas.TextHeight(text: String): integer;
 begin
-  {$IFDEF FMX}
-  result := trunc(FCanvas.TextHeight(text));
-  {$ELSE}
   result := FCanvas.TextHeight(text);
-  {$ENDIF}
 end;
 
 procedure TGraphCanvas.TextOut(xOrigin, yOrigin : integer; xDelta, yDelta : integer; text : String; angle : double);
+{$IFDEF DELPHI}
 var
-{$IFDEF FMX}
-  l_OriginalMatrix: TMatrix;
-  l_Matrix: TMatrix;
-  l_CenterPoint : TPointF;
-{$ELSE}
   LogRec  : TLOGFONT;
   OldFont, NewFont : HFONT;
   xoffst, yoffst : integer;
 {$ENDIF}
 begin
-  {$IFDEF FMX}
-  l_OriginalMatrix := FCanvas.Matrix;
-  try
-    // create a point around which will rotate
-    l_CenterPoint := TPointF.Create(xOrigin, yOrigin);
-    l_Matrix := l_OriginalMatrix;
-    l_Matrix := l_Matrix * TMatrix.CreateTranslation(-l_CenterPoint.X,-l_CenterPoint.Y);
-    l_Matrix := l_Matrix * TMatrix.CreateRotation(-angle);
-    l_Matrix := l_Matrix * TMatrix.CreateTranslation(l_CenterPoint.X,l_CenterPoint.Y);
-    FCanvas.SetMatrix(l_Matrix);
-    Textout(xOrigin+yDelta, yOrigin-yDelta, text);
-  finally
-    FCanvas.SetMatrix(l_OriginalMatrix);
-  end;
-  {$ELSE}
+  {$IFDEF DELPHI}
   { Get the current font information. We only want to modify the angle }
   GetObject(FCanvas.Font.Handle,SizeOf(LogRec),@LogRec);
   LogRec.lfEscapement := trunc(angle * 10 * 180 / pi);
   LogRec.lfOrientation := trunc(angle * 10 * 180 / pi);    {see win32 api?}
   LogRec.lfOutPrecision := OUT_TT_ONLY_PRECIS;  {doesn't work under win95??}
   NewFont := CreateFontIndirect(LogRec);
-  OldFont := WinApi.Windows.SelectObject(FCanvas.Handle, NewFont);  {Save old font}
+  OldFont := Windows.SelectObject(FCanvas.Handle, NewFont);  {Save old font}
   { offsets }
   xoffst := Round(sin(angle) * yDelta);
   yoffst := Round(cos(angle) * yDelta);
   TextOut(xOrigin - xoffst, yOrigin - yoffst, text);
-  NewFont := WinApi.Windows.SelectObject(FCanvas.Handle,OldFont); {Restore oldfont}
+  NewFont := Windows.SelectObject(FCanvas.Handle,OldFont); {Restore oldfont}
   DeleteObject(NewFont);
   {$ENDIF}
 end;
 
 procedure TGraphCanvas.TextOut(x, y: integer; text: String);
 begin
-  {$IFDEF FMX}
-  FCanvas.Fill.Color := fonTAlphaColor;
-  FCanvas.FillText(TRectF.Create(x, y, x+TextWidth(text), y+Textheight(text)), text, false, 1.0, [], TTextAlign.Leading);
-  {$ELSE}
   FCanvas.TextOut(x,y, text);
-  {$ENDIF}
 end;
 
 function TGraphCanvas.TextWidth(text: String): integer;
 begin
-  {$IFDEF FMX}
-  result := trunc(FCanvas.TextWidth(text));
-  {$ELSE}
   result := FCanvas.TextWidth(text);
-  {$ENDIF}
 end;
-
-{$IFDEF FMX}
-
-{ TFontAdapted }
-
-function TFontAdapted.GetOnChange: TNotifyEvent;
-begin
-  result := OnChanged;
-end;
-
-procedure TFontAdapted.SetOnChange(const Value: TNotifyEvent);
-begin
-  OnChanged := Value;
-end;
-{$ENDIF}
 
 { TFGraphDataPoint }
 

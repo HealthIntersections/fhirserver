@@ -740,10 +740,6 @@ begin
     JclStartExceptionTracking;
     CoInitialize(nil);
     {$ENDIF}
-    {$IFDEF FPC}
-    Logging.Log('Timezone Data from '+partnerFile('tz.dat'));
-    initialiseTZData(partnerFile('tz.dat'));
-    {$ENDIF}
     tz := TimeZoneBias;
     if tz = 0 then
       Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')

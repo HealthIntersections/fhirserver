@@ -695,10 +695,13 @@
     </Files>
     <RequiredPkgs>
       <Item>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="LCLBase"/>
       </Item>
       <Item>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="tzdb_fpc"/>
+      </Item>
+      <Item>
+        <PackageName Value="MarkdownEngine"/>
       </Item>
       <Item>
         <PackageName Value="FCL"/>

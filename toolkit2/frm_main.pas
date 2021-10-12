@@ -685,7 +685,6 @@ begin
   {$ELSE}
   mnuApple.Visible := false;
   {$ENDIF}
-  initialiseTZData(partnerFile('tz.dat'));
   {$IFDEF WINDOWS}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
   {$ENDIF}

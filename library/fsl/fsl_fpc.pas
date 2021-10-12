@@ -44,7 +44,7 @@ uses
   {$IFDEF OSX}
   MacOSAll, CocoaUtils,
   {$ENDIF}
-  RegExpr, dateutils, upascaltz {$ENDIF};
+  RegExpr, dateutils{$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -113,23 +113,6 @@ type
   public
     function substring(start, stop : integer) : String; overload;
     function substring(start : integer) : String; overload;
-  end;
-
-  { TTimeZone }
-  TTimeSpan = record
-    TotalDays : Double;
-  end;
-
-  TTimeZone = class
-  private
-    FZone : String;
-    FOffset : Double;
-  public
-    constructor Create(zone : String);
-    function GetUtcOffset(const ADateTime: TDateTime): TTimeSpan; inline;
-    function ToLocalTime(const ADateTime: TDateTime): TDateTime;
-    function ToUniversalTime(const ADateTime: TDateTime): TDateTime; inline;
-    class function Local: TTimeZone;
   end;
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
@@ -225,12 +208,7 @@ const
     ''
     );
 
-var
-  GTimeZoneData : TPascalTZ;
-  GLocalTZ : TTimeZone;
 {$ENDIF}
-
-procedure initialiseTZData(filename : String);
 
 {$IFDEF FPC}
 type
@@ -275,7 +253,7 @@ implementation
 
 {$IFDEF FPC}
 uses
-  FileUtil, LazUTF8, uPascalTZ_Types,
+  FileUtil, LazUTF8,
   fsl_base, fsl_stream, fsl_utilities;
 {$ENDIF}
 
@@ -391,41 +369,6 @@ end;
 procedure TSemaphore.Release;
 begin
   setEvent();
-end;
-
-{ TTimeZone }
-
-constructor TTimeZone.Create(zone: String);
-begin
-  inherited Create;
-  FZone := zone;
-  if FZone = '' then
-    FOffset := TPascalTZ.UniversalTime - TPascalTZ.LocalTime
-  else
-    FOffset := GetUtcOffset(now).totalDays;
-end;
-
-function TTimeZone.GetUtcOffset(const ADateTime: TDateTime): TTimeSpan;
-var
-  utc : TDateTime;
-begin
-  utc := GTimeZoneData.LocalTimeToGMT(ADateTime, TimeZoneIANAName);
-  result.TotalDays := ADateTime - utc;
-end;
-
-function TTimeZone.ToLocalTime(const ADateTime: TDateTime): TDateTime;
-begin
-  result := GTimeZoneData.GMTToLocalTime(ADateTime, TimeZoneIANAName);
-end;
-
-function TTimeZone.ToUniversalTime(const ADateTime: TDateTime): TDateTime;
-begin
-  result := GTimeZoneData.LocalTimeToGMT(ADateTime, TimeZoneIANAName);
-end;
-
-class function TTimeZone.Local: TTimeZone;
-begin
-  result := GLocalTZ;
 end;
 
 { TCharHelper }
@@ -802,52 +745,6 @@ end;
 
 {$ENDIF}
 
-procedure initialiseTZData(filename : String);
-{$IFDEF FPC}
-var
-  stream : TFileStream;
-  z : TZDecompressionStream;
-  tar : TTarArchive;
-  entry : TTarDirRec;
-  bi : TBytesStream;
-begin
-  GTimeZoneData := TPascalTZ.create;
-  stream := TFileStream.Create(filename, fmOpenRead);
-  try
-    z := TZDecompressionStream.Create(stream, 15+16);
-    try
-      tar := TTarArchive.Create(z);
-      try
-        while tar.FindNext(entry) do
-        begin
-          if (StringArrayExists(TZ_FILES_STANDARD, entry.name)) then
-          begin
-            bi := TBytesStream.Create;
-            try
-              tar.ReadFile(bi);
-              bi.position := 0;
-              GTimeZoneData.ParseDatabaseFromStream(bi);
-            finally
-              bi.free;
-            end;
-          end;
-        end;
-      finally
-        tar.free;
-      end;
-    finally
-      z.free;
-    end;
-  finally
-    stream.Free;
-  end;
-  GLocalTZ := TTimeZone.create('');
-end;
-{$ELSE}
-begin
-end;
-{$ENDIF}
-
 {$IFDEF FPC}
 
 { TRegEx }
@@ -964,11 +861,6 @@ begin
 end;
 {$ENDIF}
 
-initialization
-finalization
-{$IFDEF FPC}
-  GTimeZoneData.free;
-{$ENDIF}
 end.
 
 

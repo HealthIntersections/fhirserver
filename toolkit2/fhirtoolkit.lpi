@@ -259,9 +259,6 @@
         <PackageName Value="MarkdownEngine"/>
       </Item>
       <Item>
-        <PackageName Value="PascalTZ"/>
-      </Item>
-      <Item>
         <PackageName Value="SynEdit"/>
       </Item>
       <Item>
