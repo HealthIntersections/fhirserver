@@ -1009,13 +1009,14 @@ Const
 type
   TFslTimeSpan = Double;
 
-  TFSLTimeZone = class (TFslObject)
+  TFslTimeZone = record
   private
     FZone : String;
     FDetails : TBundledTimeZone;
-  public
     constructor Create(zone : String);
-    class function Local: TFslTimeZone;
+  public
+    class function other(zone : String) : TFslTimeZone; overload; static;
+    class function local : TFslTimeZone; overload; static;
 
     function GetUtcOffset(const ADateTime: TDateTime): TFslTimeSpan; inline;
     function ToLocalTime(const ADateTime: TDateTime): TDateTime;
@@ -11439,27 +11440,13 @@ begin
 end;
 
 Function TimeZoneBias(where : String) : TDateTime;
-var
-  tz : TFslTimeZone;
 begin
-  tz := TFslTimeZone.Create(where);
-  try
-    result := tz.GetUtcOffset(now);
-  finally
-    tz.free;
-  end;
+  result := TFslTimeZone.other(where).GetUtcOffset(now);
 end;
 
 Function TimeZoneBias(where : String; when : TDateTime) : TDateTime; Overload;
-var
-  tz : TFslTimeZone;
 begin
-  tz := TFslTimeZone.Create(where);
-  try
-    result := tz.GetUtcOffset(when);
-  finally
-    tz.free;
-  end;
+  result := TFslTimeZone.other(where).GetUtcOffset(when);
 end;
 
 
@@ -17352,7 +17339,6 @@ end;
 
 constructor TFslTimeZone.Create(zone: String);
 begin
-  inherited Create;
   FZone := zone;
   if FZone = '' then
     FDetails := TBundledTimeZone.GetTimeZone(TimeZoneIANAName)
@@ -17378,9 +17364,14 @@ begin
   result := FDetails.ToUniversalTime(ADateTime);
 end;
 
-class function TFslTimeZone.Local: TFslTimeZone;
+class function TFslTimeZone.local: TFslTimeZone;
 begin
   result := TFslTimeZone.create('');
+end;
+
+class function TFslTimeZone.other(zone : String) : TFslTimeZone;
+begin
+  result := TFslTimeZone.create(zone);
 end;
 
 Initialization
