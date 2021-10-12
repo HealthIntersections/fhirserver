@@ -3913,9 +3913,13 @@ begin
   finally
     f.Free;
   end;
+  {$IFDEF WINDOWS}
+  // this doesn't  work on linux; a root account always has full control and can always write and delete a file.
   FileSetReadOnly(filename, true);
   FileDelete(filename);
   assertTrue(FileExists(filename), 'FileExists(filename) #3');
+  {$ENDIF}
+
   FileSetReadOnly(filename, false);
   FileDelete(filename);
   assertFalse(FileExists(filename), 'FileExists(filename) #4');
@@ -4098,13 +4102,13 @@ begin
   // Timezone Wrangling
   d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
-  assertTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime), 'sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime)');
+  assertTrue(sameInstant(d1.DateTime - TimezoneBias('Australia/Melbourne', EncodeDate(2011, 2, 2)), d2.DateTime), 'sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime)');
   assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'sameInstant(d1.UTC.DateTime, d2.DateTime)');
   assertTrue(not d1.equal(d2), 'not d1.equal(d2)');
   assertTrue(d1.sameTime(d2), 'd1.sameTime(d2)');
   d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
   d2 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
-  dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
+  dt1 := d1.DateTime - TimezoneBias('Australia/Melbourne', EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
   assertTrue(sameInstant(dt1, dt2), 'sameInstant(dt1, dt2)');
   assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'sameInstant(d1.UTC.DateTime, d2.DateTime)');

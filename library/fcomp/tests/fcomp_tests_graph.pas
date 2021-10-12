@@ -1,4 +1,4 @@
-unit GraphTester;
+unit fui_tests_graph;
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -66,7 +66,7 @@ type
   end;
 
 
-  TFGraphTester = {static} class
+  TFGraphTester = {static} class (TFslTestCase)
   public
     class procedure configure(graph : TFGraph);
     class procedure addMarks(graph : TFGraph);

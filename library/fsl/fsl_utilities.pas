@@ -46,6 +46,7 @@ Uses
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
+  TZDB,
   fsl_fpc, fsl_base;
 
 type
@@ -1006,6 +1007,24 @@ Const
      (0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31));
 
 type
+  TFslTimeSpan = Double;
+
+  TFslTimeZone = record
+  private
+    FZone : String;
+    FDetails : TBundledTimeZone;
+    constructor Create(zone : String);
+  public
+    class function other(zone : String) : TFslTimeZone; overload; static;
+    class function local : TFslTimeZone; overload; static;
+
+    function GetUtcOffset(const ADateTime: TDateTime): TFslTimeSpan; inline;
+    function ToLocalTime(const ADateTime: TDateTime): TDateTime;
+    function ToUniversalTime(const ADateTime: TDateTime): TDateTime; inline;
+  end;
+
+
+type
   TYear = Word;
 
   EDateFormatError = class(Exception);
@@ -1514,6 +1533,8 @@ Function LocalDateTime : TDateTime; Overload;
 
 Function TimeZoneBias : TDateTime; Overload;
 Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
+Function TimeZoneBias(where : String) : TDateTime; Overload;
+Function TimeZoneBias(where : String; when : TDateTime) : TDateTime; Overload;
 Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
 function SameInstant(t1, t2 : TDateTime) : boolean;
 Function TimeSeparator : Char; Overload;
@@ -8802,14 +8823,14 @@ var
 begin
   if FPrecision >= dtpHour then
     case TimezoneType of
-      dttzUTC : result := TFslDateTime.makeLocal(TTimeZone.Local.ToLocalTime(self.DateTime));
+      dttzUTC : result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToLocalTime(self.DateTime));
       dttzSpecified :
         begin
         if TimezoneHours < 0 then
           bias := - (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
         else
           bias := (TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
-        result := TFslDateTime.makeLocal(TTimeZone.Local.ToLocalTime(self.DateTime-bias));
+        result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToLocalTime(self.DateTime-bias));
         end
     else
       result := self;
@@ -9114,7 +9135,7 @@ begin
   if FPrecision >= dtpHour then
     case TimezoneType of
       dttzUTC : result := TFslDateTime.makeLocal(self.DateTime+nbias);
-      dttzLocal : result := TFslDateTime.makeLocal(TTimeZone.Local.ToUniversalTime(self.DateTime-bias)+nbias);
+      dttzLocal : result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToUniversalTime(self.DateTime-bias)+nbias);
       dttzSpecified :
         begin
         if TimezoneHours < 0 then
@@ -9140,7 +9161,7 @@ begin
   result := self;
   if FPrecision >= dtpHour then
     case TimezoneType of
-      dttzLocal : result := TFslDateTime.makeUTC(TTimeZone.Local.ToUniversalTime(self.DateTime));
+      dttzLocal : result := TFslDateTime.makeUTC(TFslTimeZone.Local.ToUniversalTime(self.DateTime));
       dttzSpecified :
         begin
         if TimezoneHours < 0 then
@@ -9159,7 +9180,7 @@ end;
 
 class function TFslDateTime.makeUTC : TFslDateTime;
 begin
-  result := TFslDateTime.makeUTC(TTimeZone.Local.ToUniversalTime(now));
+  result := TFslDateTime.makeUTC(TFslTimeZone.Local.ToUniversalTime(now));
 end;
 
 class function TFslDateTime.makeUTC(value: TDateTime) : TFslDateTime;
@@ -11410,12 +11431,22 @@ end;
 
 Function TimeZoneBias : TDateTime;
 begin
-  result := TTimeZone.Local.GetUtcOffset(now).TotalDays;
+  result := TFslTimeZone.Local.GetUtcOffset(now);
 end;
 
 Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
 begin
-  result := TTimeZone.Local.GetUtcOffset(when).TotalDays;
+  result := TFslTimeZone.Local.GetUtcOffset(when);
+end;
+
+Function TimeZoneBias(where : String) : TDateTime;
+begin
+  result := TFslTimeZone.other(where).GetUtcOffset(now);
+end;
+
+Function TimeZoneBias(where : String; when : TDateTime) : TDateTime; Overload;
+begin
+  result := TFslTimeZone.other(where).GetUtcOffset(when);
 end;
 
 
@@ -17302,6 +17333,45 @@ begin
   for s in FList do
     result := result + sep + s;
   result := copy(result, sep.Length, length(result) - sep.Length);
+end;
+
+{ TFslTimeZone }
+
+constructor TFslTimeZone.Create(zone: String);
+begin
+  FZone := zone;
+  if FZone = '' then
+    FDetails := TBundledTimeZone.GetTimeZone(TimeZoneIANAName)
+  else
+    FDetails := TBundledTimeZone.GetTimeZone(zone);
+end;
+
+function TFslTimeZone.GetUtcOffset(const ADateTime: TDateTime): TFslTimeSpan;
+var
+  utc : TDateTime;
+begin
+  utc := FDetails.ToUniversalTime(ADateTime);
+  result := ADateTime - utc;
+end;
+
+function TFslTimeZone.ToLocalTime(const ADateTime: TDateTime): TDateTime;
+begin
+  result := FDetails.ToLocalTime(ADateTime);
+end;
+
+function TFslTimeZone.ToUniversalTime(const ADateTime: TDateTime): TDateTime;
+begin
+  result := FDetails.ToUniversalTime(ADateTime);
+end;
+
+class function TFslTimeZone.local: TFslTimeZone;
+begin
+  result := TFslTimeZone.create('');
+end;
+
+class function TFslTimeZone.other(zone : String) : TFslTimeZone;
+begin
+  result := TFslTimeZone.create(zone);
 end;
 
 Initialization

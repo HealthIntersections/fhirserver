@@ -200,28 +200,31 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="7">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fcomp"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir"/>
+        <PackageName Value="LazControls"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_fsl"/>
       </Item3>
       <Item4>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fhir"/>
       </Item4>
       <Item5>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="fhir_fui"/>
       </Item5>
       <Item6>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item7>
+      <Item8>
+        <PackageName Value="LCL"/>
+      </Item8>
     </RequiredPackages>
     <Units Count="13">
       <Unit0>

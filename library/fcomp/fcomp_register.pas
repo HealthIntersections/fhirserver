@@ -1,7 +1,7 @@
-program fhirconsole;
+unit fcomp_register;
 
 {
-Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 1996+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,51 +28,22 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$i fhir.inc}
-uses
-  {$IFNDEF WINDOWS}
-  cmem, cthreads,
-  {$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
-  IdOpenSSLLoader,
-  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
-  fdb_odbc_fpc,
-  console_form,
-  console_tx_edit, console_ep_edit, install_form, install_log, installer;
+{$mode objfpc}{$H+}
+
+interface
+
+procedure Register;
+
+implementation
 
 {$R *.res}
 
-var
-  ok : boolean;
+uses
+  Classes, LResources, fcomp_graph;
+
+procedure Register;
 begin
-  try
-    InitialiseODBC;
-    {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
-    {$ENDIF}
-    {$IFDEF OSX}
-    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
-    {$ENDIF}
+  RegisterComponents('FHIR', [TFGraph]);
+end;
 
-    InitOpenSSL;
-    ok := true;
-  except
-    on e : Exception do
-    begin
-      MessageDlg('Initialization failure', e.message, mtError, [mbClose], 0);
-      ok := false;
-    end;
-  end;
-
-  if ok then
-  begin
-    RequireDerivedFormResource := True;
-    Application.Scaled := True;
-
-    Application.Initialize;
-    Application.CreateForm(TMainConsoleForm, MainConsoleForm);
-    Application.Run;
-  end;
 end.
-

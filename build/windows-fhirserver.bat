@@ -14,6 +14,8 @@ set "tmp=%1"
 
 cd ..
 
+%tmp%\tools\lazarus\lazbuild.exe packages/fsl.lpk -q
+%tmp%\tools\lazarus\lazbuild.exe packages/fcomp.lpk -q
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir.lpk -q
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir2.lpk -q
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir3.lpk -q

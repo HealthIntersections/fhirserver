@@ -12,9 +12,9 @@ mkdir source
 cd source
 
 if [ ! -d "PascalTZ" ] ; then
-    git clone https://github.com/dezlov/PascalTZ
+    git clone https://github.com/grahamegrieve/tzdb
 else
-    cd PascalTZ && git pull && cd ..
+    cd tzdb && git pull && cd ..
 fi
 
 if [ ! -d "delphi-markdown" ] ; then
@@ -57,7 +57,7 @@ cd ..
 
 # ---- register the source with lazarus ----------
 
-tools/lazarus/lazbuild source/PascalTZ/package/pascaltz.lpk -q
+tools/lazarus/lazbuild source/tzdb/dist/tzdb_fpc.lpk -q
 tools/lazarus/lazbuild source/extrasyn/extrahighlighters.lpk -q
 tools/lazarus/lazbuild source/extrasyn/extrahighlighters_dsgn.lpk -q
 tools/lazarus/lazbuild source/lazarus-ide-tester/package/idetester.lpk -q

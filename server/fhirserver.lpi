@@ -263,40 +263,40 @@
     </RunParams>
     <RequiredPackages Count="16">
       <Item1>
-        <PackageName Value="QRCodeGenLib4PascalPackage"/>
+        <PackageName Value="tzdb_fpc"/>
       </Item1>
       <Item2>
-        <PackageName Value="idetester"/>
+        <PackageName Value="QRCodeGenLib4PascalPackage"/>
       </Item2>
       <Item3>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="idetester"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item4>
       <Item5>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_xver"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir_fui"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir_fsl"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir5"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir4"/>
       </Item9>
       <Item10>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir3"/>
       </Item10>
       <Item11>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir2"/>
       </Item11>
       <Item12>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="fhir"/>
       </Item12>
       <Item13>
         <PackageName Value="MarkdownTests"/>

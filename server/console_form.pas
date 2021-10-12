@@ -34,16 +34,15 @@ interface
 
 uses
   {$IFDEF WINDOWS}Windows, {$ENDIF}
-  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry, Types,
-  ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces, LclIntf,
-  IniFiles, Math,
-  IdTelnet, IdGlobal,
-  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
-  fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects, fdb_sqlite3,
-  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii,
-  fui_lcl_managers, fui_lcl_cache,
-  server_config, server_constants,
-  console_managers, frm_about;
+  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls,
+  StdCtrls, Registry, Types, ExtCtrls, Menus, ActnList, StdActns, Buttons,
+  DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, IniFiles, Math, IdTelnet,
+  IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
+  fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
+  fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
+  tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
+  server_constants, console_managers, frm_about;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -199,6 +198,7 @@ type
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
     edtWebPort1: TEdit;
+    FGraph1: TFGraph;
     FileNewAction: TAction;
     ActionList1: TActionList;
     EditCopy1: TEditCopy;
@@ -364,6 +364,7 @@ type
     Panel50: TPanel;
     Panel51: TPanel;
     Panel52: TPanel;
+    Panel53: TPanel;
     pgMain: TPageControl;
     pgManage: TPageControl;
     Panel1: TPanel;
