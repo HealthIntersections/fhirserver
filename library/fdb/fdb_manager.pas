@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_threads,  fsl_fpc,
+  fsl_base, fsl_utilities, fsl_threads,  fsl_fpc, fsl_logging,
   fdb_logging, fdb_dialects;
 
 const
@@ -1331,6 +1331,7 @@ begin
 
   FClosing := false;
   GManagers.AddConnMan(self);
+  logging.log('db conn manager: init '+aName);
   init;
 end;
 
