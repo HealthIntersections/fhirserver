@@ -4,7 +4,7 @@ fhir-test-cases=${FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH}
 markdown=${FHIRSERVER_LOCATIONS_MARKDOWN_CLONE_PATH}
 snomed=${FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH}
 
-[mssql]
+[mssql-not]
 driver=SQL Server
 server=(local)
 database=test
