@@ -2,20 +2,18 @@ FROM ubuntu:20.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3
+RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 && \
+    cd /tmp && \
+    wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
+    tar -xzvf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
+    cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/lib/ /usr/local/lib && \
+    cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/bin/ /usr/local/bin && \
+    rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit  && \
+    rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz
 
 COPY build/linux-toolchain.sh build/unix-libraries.sh /work/bootstrap/
-
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
-
-RUN  cd /tmp && \
-wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
-tar -xzvf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
-cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/lib/ /usr/local/lib && \
-cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/bin/ /usr/local/bin && \
-rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit  && \
-rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz
 
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
