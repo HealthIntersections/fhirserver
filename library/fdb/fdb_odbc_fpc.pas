@@ -45,7 +45,7 @@ uses
      ctypes,
      sysutils;
 
-{$IFDEF Unix}
+{$IFDEF Linux}
   {$DEFINE extdecl:=cdecl}
   const
     odbclib = 'libodbc.'+sharedsuffix;
