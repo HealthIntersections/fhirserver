@@ -12,8 +12,8 @@ RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
 RUN  cd /tmp && \
 wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
 tar -xzvf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz && \
-cp mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/lib/ /usr/local/lib && \
-cp mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/bin/ /usr/local/bin && \
+cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/lib/ /usr/local/lib && \
+cp -r mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit/bin/ /usr/local/bin && \
 rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit  && \
 rm -rf mysql-connector-odbc-8.0.26-linux-glibc2.12-x86-64bit.tar.gz
 
