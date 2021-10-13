@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3
 
-COPY build/linux-toolchain.sh build/linux-libraries.sh /work/bootstrap/
+COPY build/linux-toolchain.sh build/unix-libraries.sh /work/bootstrap/
 
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
