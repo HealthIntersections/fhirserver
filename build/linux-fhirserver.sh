@@ -10,7 +10,7 @@ cp exec/pack/linux/*.so exec/64/
 
 echo compile libraries
 
-$BUILD/tools/lazarus/lazbuild packages/fsl.lpk -q -q
+$BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fcomp.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir2.lpk -q -q
@@ -18,7 +18,6 @@ $BUILD/tools/lazarus/lazbuild packages/fhir3.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir4.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir5.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir_xver.lpk -q -q
-$BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q
 $BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk -q -q
 
 echo compile console

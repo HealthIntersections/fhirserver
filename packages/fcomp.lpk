@@ -10,7 +10,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fcomp"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fcomp\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>
