@@ -7,7 +7,7 @@ RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite
 COPY build/linux-toolchain.sh build/linux-libraries.sh /work/bootstrap/
 
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
-RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
+RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
 
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
