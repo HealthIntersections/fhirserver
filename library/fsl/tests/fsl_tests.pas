@@ -4103,7 +4103,7 @@ begin
   d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
   assertTrue(sameInstant(d1.DateTime - TimezoneBias('Australia/Melbourne', EncodeDate(2011, 2, 2)), d2.DateTime), 'sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime)');
-  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'sameInstant(d1.UTC.DateTime, d2.DateTime)');
+  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'not the sameInstant(d1.UTC.DateTime, d2.DateTime): '+d1.UTC.toXML+' vs '+d2.toXML);
   assertTrue(not d1.equal(d2), 'not d1.equal(d2)');
   assertTrue(d1.sameTime(d2), 'd1.sameTime(d2)');
   d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
