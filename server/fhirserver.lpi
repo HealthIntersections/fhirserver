@@ -31,7 +31,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="tests;admin;..\..\idetester\source"/>
+            <OtherUnitFiles Value="tests;admin;..\..\idetester\source;..\library\fcomp\tests"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -73,7 +73,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -125,7 +125,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\exec\pack\linux"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -181,7 +181,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -219,7 +219,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -261,55 +261,58 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="16">
+    <RequiredPackages Count="17">
       <Item1>
-        <PackageName Value="tzdb_fpc"/>
+        <PackageName Value="fcomp"/>
       </Item1>
       <Item2>
-        <PackageName Value="QRCodeGenLib4PascalPackage"/>
+        <PackageName Value="tzdb_fpc"/>
       </Item2>
       <Item3>
-        <PackageName Value="idetester"/>
+        <PackageName Value="QRCodeGenLib4PascalPackage"/>
       </Item3>
       <Item4>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="idetester"/>
       </Item4>
       <Item5>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_xver"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir_fui"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir_fsl"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir5"/>
       </Item9>
       <Item10>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir4"/>
       </Item10>
       <Item11>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir3"/>
       </Item11>
       <Item12>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir2"/>
       </Item12>
       <Item13>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="fhir"/>
       </Item13>
       <Item14>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownTests"/>
       </Item14>
       <Item15>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item15>
       <Item16>
-        <PackageName Value="LCL"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item16>
+      <Item17>
+        <PackageName Value="LCL"/>
+      </Item17>
     </RequiredPackages>
     <Units Count="83">
       <Unit0>
@@ -657,7 +660,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin"/>
+      <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

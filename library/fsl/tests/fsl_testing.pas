@@ -55,7 +55,7 @@ type
   TFslTestCase = class (TTestCase)
   protected
     procedure Status(const Msg: string);
-    procedure assertNotTested;
+    procedure assertNotTested(reason : String);
     procedure assertPass;
     procedure assertFail(message : String);
     procedure assertTrue(test : boolean; message : String); overload;
@@ -232,10 +232,10 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslTestCase.assertNotTested;
+procedure TFslTestCase.assertNotTested(reason : String);
 begin
   {$IFDEF FPC}
-  TAssert.Fail('Not Tested');
+  Ignore('Not Tested: '+reason);
   {$ELSE}
   Fail('Not Tested');
   {$ENDIF}

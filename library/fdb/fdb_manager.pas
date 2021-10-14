@@ -1331,7 +1331,6 @@ begin
 
   FClosing := false;
   GManagers.AddConnMan(self);
-  logging.log('db conn manager: init '+aName);
   init;
 end;
 
