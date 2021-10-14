@@ -2,7 +2,7 @@ FROM ubuntu:20.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3
+RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev
 
 COPY build/linux-toolchain.sh build/unix-libraries.sh /work/bootstrap/
 

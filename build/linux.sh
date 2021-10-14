@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+odbcinst -j
+
 # the build directory: pass as a parameter or defaults to /tmp/fsbuild - will be created if necessary
 
 BASEDIR=$(dirname "$0")
