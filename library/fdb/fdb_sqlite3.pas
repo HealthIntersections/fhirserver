@@ -154,11 +154,14 @@ end;
 
 procedure TFDBSQLiteManager.init;
 begin
+  Logging.log('load SQLite3');
   loadSQLite;
+  Logging.log('loaded SQLite3');
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
     if not FileExists(FFIlename) then
       raise EDBException.create('SQLite Database '+FFIlename+' not found');
+  Logging.log('inited SQLite3');
 end;
 
 function TFDBSQLiteManager.sizeInBytesV(magic : integer) : cardinal;
