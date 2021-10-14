@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo "## ODBC info"
+
+odbcinst -j
+
 set -e
 
 BUILD=${1:-"/tmp/fsbuild"}
