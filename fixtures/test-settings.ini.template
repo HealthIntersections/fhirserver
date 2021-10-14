@@ -10,7 +10,7 @@ server=(local)
 database=test
 
 [mysql]
-driver=MySQL ODBC 8.0 Unicode Driver
+driver=MySQL ODBC 8.0
 server=${FHIRSERVER_MYSQL_SERVER}
 database=test
 username=test
