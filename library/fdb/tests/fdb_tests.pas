@@ -254,14 +254,14 @@ var
 begin
   if not TestSettings.hasSection('mssql') then
   begin
-    Logging.log('ignore mssql test - no settings');
-    assertNotTested;
+//    Logging.log('ignore mssql test - no settings');
+    assertNotTested('MSSQL not configured');
   end
   else
   begin
     settings := TestSettings.section('mssql');
     try
-      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+//      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
@@ -281,14 +281,14 @@ var
 begin
   if not TestSettings.hasSection('mysql') then
   begin
-    Logging.log('ignore mysql test - no settings');
-    assertNotTested
+//    Logging.log('ignore mysql test - no settings');
+    assertNotTested('MySQL not configured');
   end
   else
   begin
     settings := TestSettings.section('mysql');
     try
-      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+//      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
       try
         test(db);
@@ -463,34 +463,29 @@ var
 begin
   fn := filePath(['[tmp]', 'sql.db']);
   if FileExists(fn) then
-  begin
-    Logging.log('SQLite DB @ '+fn+': delete');
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
     DeleteFile(fn);
-  end
-  else
-    Logging.log('SQLite DB @ '+fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
   db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
-    Logging.log('TestSemaphore waypoint #1');
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
     try
-      Logging.log('TestSemaphore waypoint #2');
       assertTrue(db.CurrConnCount = 1);
       conn2 := db.GetConnection('test2');
       try
-        Logging.log('TestSemaphore waypoint #3');
         assertTrue(db.CurrConnCount = 2);
         conn3 := db.GetConnection('test3');
         try
-          Logging.log('TestSemaphore waypoint #4');
           assertTrue(db.CurrConnCount = 3);
           assertTrue(db.CurrUseCount = 3);
           conn4 := db.GetConnection('test4');
           try
             try
               db.GetConnection('test');
-              Logging.log('TestSemaphore waypoint #5');
               assertTrue(false);
             except
               assertTrue(true);
@@ -670,12 +665,12 @@ var
 begin
   fn := filePath(['[tmp]', 'sql.db']);
   if FileExists(fn) then
-  begin
-    Logging.log('SQLite DB @ '+fn+': delete');
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
     DeleteFile(fn);
-  end
-  else
-    Logging.log('SQLite DB @ '+fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
   db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
     test(db);

@@ -1,4 +1,4 @@
-unit fui_tests_graph;
+unit fcomp_tests_graph;
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -27,12 +27,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 interface
 
 uses
-  System.UITypes, {$IFDEF FMX} FMX.Graphics, FMX.Types, {$ELSE}Graphics, Controls, {$ENDIF}
   Generics.Collections, Math,
-  FHIR.Ui.Graph;
+  System.UITypes, Graphics, Controls,
+  fsl_testing,
+  fcomp_graph;
 
 type
   TRandomData = class (TFGraphDataProvider)
@@ -66,15 +69,26 @@ type
   end;
 
 
-  TFGraphTester = {static} class (TFslTestCase)
-  public
-    class procedure configure(graph : TFGraph);
-    class procedure addMarks(graph : TFGraph);
-    class procedure addSeries(graph : TFGraph);
-    class procedure addBand(graph : TFGraph);
+  { TFGraphTester }
+
+  TFGraphTester = class (TFslTestCase)
+  private
+    procedure configure(graph : TFGraph);
+    procedure addMarks(graph : TFGraph);
+    procedure addSeries(graph : TFGraph);
+    procedure addBand(graph : TFGraph);
+  published
+    procedure TestGraph;
   end;
 
+procedure registerTests;
+
 implementation
+
+procedure registerTests;
+begin
+  RegisterTest('Library.Components', TFGraphTester.Suite);
+end;
 
 
 { TRandomData }
@@ -188,7 +202,7 @@ end;
 
 { TFGraphTester }
 
-class procedure TFGraphTester.addMarks(graph: TFGraph);
+procedure TFGraphTester.addMarks(graph: TFGraph);
 begin
   graph.Annotations.Add(graph.createMark(0.5, 0.5, 0.9, 0.9, clRed, 'Test 1', mtLine, mpUpRight, dtAfter));
   graph.Annotations.Add(graph.createMark(0.5, 0.5, 0.9, 0.1, clGreen, 'Test 2', mtLine, mpUpRight, dtAfter));
@@ -196,7 +210,7 @@ begin
   graph.Annotations.Add(graph.createMark(0.5, 0.5, 0.1, 0.1, clGray, 'Test 4', mtLine, mpUpRight, dtAfter));
 end;
 
-class procedure TFGraphTester.addSeries(graph: TFGraph);
+procedure TFGraphTester.addSeries(graph: TFGraph);
 var
   n : string;
 begin
@@ -211,7 +225,7 @@ begin
   graph.Series.last.PointShape := ps_Square;
 end;
 
-class procedure TFGraphTester.configure(graph: TFGraph);
+procedure TFGraphTester.configure(graph: TFGraph);
 begin
   graph.Name := 'TestChart';
   {$IFDEF FMX}
@@ -240,7 +254,7 @@ begin
   graph.Legend.width := 0;
 end;
 
-class procedure TFGraphTester.addBand(graph : TFGraph);
+procedure TFGraphTester.addBand(graph: TFGraph);
 var
   band : TFGraphBand;
 begin
@@ -257,5 +271,21 @@ begin
     band.Free;
   end;
 end;
+
+procedure TFGraphTester.TestGraph;
+var
+  graph : TFGraph;
+begin
+  graph := TFGraph.create(nil);
+  try
+    configure(graph);
+    addMarks(graph);
+    addSeries(graph);
+    addBand(graph);
+  finally
+    graph.free;
+  end;
+end;
+
 
 end.

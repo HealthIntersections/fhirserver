@@ -153,7 +153,7 @@ begin
     end;
   end
   else
-    assertNotTested;
+    assertNotTested('not access database available');
 end;
 
 {$IFDEF TEST_COMPILED}
@@ -597,7 +597,7 @@ var
   msg : THL7V2Message;
 begin
   if FHL7Dict = nil then
-    assertNotTested
+    assertNotTested('No HL7 Dictionary')
   else
   begin
     msg := parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+

@@ -180,7 +180,6 @@ begin
   inherited create(AOwner);
   FConnection := TSQLite3Database.Create;
   FConnection.Delay := 2000;
-  Logging.log('connecting to SQlite database. autoCreate='+BoolToStr(autoCreate)+' on file '+Filename);
   if autoCreate then
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE)
   else
