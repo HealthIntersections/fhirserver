@@ -4,6 +4,8 @@ echo "## ODBC info"
 
 odbcinst -j
 
+echo "$(</etc/odbcinst.ini)"
+
 set -e
 
 BUILD=${1:-"/tmp/fsbuild"}
