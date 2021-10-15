@@ -243,6 +243,14 @@ type
     class procedure delete(path : String); overload;  static;
   end;
 
+  { TTimespan }
+
+  TTimespan = record
+    FTicks : Int64;
+    class function makeTicks(ticks : Int64) : TTimespan; static;
+    function hours : integer;
+    function minutes : integer;
+  end;
 {$ENDIF}
 
 {$IFDEF OSX}
@@ -357,6 +365,26 @@ end;
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 begin
   result := FileUtil.DeleteDirectory(DirectoryName, OnlyChildren);
+end;
+
+{ TTimespan }
+
+class function TTimespan.makeTicks(ticks: Int64): TTimespan;
+begin
+  result.FTicks := ticks;
+end;
+
+function TTimespan.hours: integer;
+begin
+  result := FTicks div (60 * 60);
+end;
+
+function TTimespan.minutes: integer;
+var
+  t : int64;
+begin
+  t := (FTicks - (hours * 60 * 60));
+  result := t div 60;
 end;
 
 { TSemaphore }

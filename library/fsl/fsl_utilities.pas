@@ -9206,24 +9206,14 @@ end;
 
 class function TFslDateTime.make(value: TDateTime; zone: String): TFslDateTime;
 var
-  offs : TDateTime;
+  offs : TTimeSpan;
   h, m, s, z : word;
 begin
   result := make(value, dttzSpecified);
   result.FPrecision := dtpSec;
-  offs := TBundledTimeZone.GetTimeZone(zone).GetUtcOffset(value);
-  if (offs >= 0) then
-  begin
-    DecodeTime(offs, h, m, s, z);
-    result.TimeZoneHours := h;
-    result.TimezoneMins := m;
-  end
-  else
-  begin
-    DecodeTime(-offs, h, m, s, z);
-    result.TimeZoneHours := -h;
-    result.TimezoneMins := m;
-  end;
+  offs := {$IFDEF FPC}TTimeSpan.makeTicks{$ENDIF}(TBundledTimeZone.GetTimeZone(zone).GetUtcOffset(value));
+  result.TimeZoneHours := offs.Hours;
+  result.TimezoneMins := offs.Minutes;
 end;
 
 class function TFslDateTime.makeLocal(value: TDateTime) : TFslDateTime;
@@ -9638,7 +9628,7 @@ end;
 
 function sameInstant(t1, t2 : TDateTime) : boolean;
 begin
-  result := abs(t1-t2) < DATETIME_SECOND_ONE;
+  result := abs(t1-t2) < (DATETIME_SECOND_ONE * 2); // one second is ok
 end;
 
 

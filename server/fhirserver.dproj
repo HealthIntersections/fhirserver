@@ -642,6 +642,8 @@
         <DCCReference Include="..\library\fsl\fsl_html.pas"/>
         <DCCReference Include="remote_config.pas"/>
         <DCCReference Include="endpoint_folder.pas"/>
+        <DCCReference Include="..\library\fcomp\fcomp_graph.pas"/>
+        <DCCReference Include="..\library\fcomp\tests\fcomp_tests_graph.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
