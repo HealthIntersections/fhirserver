@@ -637,12 +637,16 @@ begin
       end
       else
       begin
+        {$IFDEF WINDOWS}
         try
           writeln('No -cmd parameter - exiting now'); // won't see this if an actual windows service
         except
           // catch 105 err
         end;
         svc.Execute;
+        {$ELSE}
+        svc.ConsoleExecute;
+        {$ENDIF}
       end;
     finally
       svc.Free;
@@ -719,7 +723,13 @@ begin
   logCompileInfo;
 
   if ParamCount = 0 then
-    Logging.log('FHIR Server running as a Service')
+  begin
+    {$IFDEF WINDOWS}
+    Logging.log('FHIR Server running as a Service');
+    {$ELSE}
+    Logging.log('FHIR Server: no parameters');
+    {$ENDIF}
+  end
   else
     Logging.log(commandLineAsString);
 
@@ -729,12 +739,13 @@ begin
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
     {$IFDEF OSX}
+    // todo: do something about this
     GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
     {$ENDIF}
     if GetOpenSSLLoader.OpenSSLPath = '' then
-      Logging.Log('SSL 1.1 from (default)')
+      Logging.Log('OpenSSL 1.1 from (default)')
     else
-      Logging.Log('SSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
+      Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
     InitOpenSSL;
     {$IFDEF DELPHI}
     JclStartExceptionTracking;
