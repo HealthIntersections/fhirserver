@@ -12,12 +12,14 @@ type
     function GetOpenSSLPath: string;
     procedure SetOpenSSLPath(const Value: string);
     function GetFailedToLoad: TStringList;
+    function GetLoadError : String;
 
     function Load: Boolean;
     procedure Unload;
 
     property OpenSSLPath: string read GetOpenSSLPath write SetOpenSSLPath;
     property FailedToLoad: TStringList read GetFailedToLoad;
+    property loadError : String read GetLoadError;
   end;
 
 function GetOpenSSLLoader: IOpenSSLLoader;
@@ -115,16 +117,21 @@ end;
 
 {$IFNDEF STATICLOAD_OPENSSL}
 type
+
+  { TOpenSSLLoader }
+
   TOpenSSLLoader = class(TInterfacedObject, IOpenSSLLoader)
   private
     FLibCrypto: TIdLibHandle;
     FLibSSL: TIdLibHandle;
     FOpenSSLPath: string;
     FFailed: TStringList;
+    FLoadError : String;
     FLoadCount: TIdThreadSafeInteger;
     function GetOpenSSLPath: string;
     procedure SetOpenSSLPath(const Value: string);
     function GetFailedToLoad: TStringList;
+    function GetLoadError : String;
   public
     constructor Create;
     destructor Destroy; override;
@@ -134,6 +141,7 @@ type
 
     property OpenSSLPath: string read GetOpenSSLPath write SetOpenSSLPath;
     property FailedToLoad: TStringList read GetFailedToLoad;
+    property LoadError : String read GetLoadError;
   end;
 
 { TOpenSSLLoader }
@@ -157,13 +165,18 @@ begin
   Result := FFailed;
 end;
 
+function TOpenSSLLoader.GetLoadError: String;
+begin
+  result := FLoadError;
+end;
+
 function TOpenSSLLoader.GetOpenSSLPath: string;
 begin
   Result := FOpenSSLPath;
 end;
 
 function TOpenSSLLoader.Load: Boolean;
-begin                                  //FI:C101
+begin
   Result := True;
   FLoadCount.Lock();
   try
@@ -178,7 +191,12 @@ begin                                  //FI:C101
       {$ENDIF}
       Result := not (FLibCrypto = IdNilHandle) and not (FLibSSL = IdNilHandle);
       if not Result then
+      begin
+        {$IFDEF FPC}
+        FLoadError := GetLoadErrorStr;
+        {$ENDIF}
         Exit;
+      end;
 
       FLoadCount.Value := 1;
 

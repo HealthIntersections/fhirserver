@@ -1,26 +1,26 @@
 object ToolkitSettingsForm: TToolkitSettingsForm
   Left = 602
-  Height = 441
-  Top = 25
+  Height = 459
+  Top = 27
   Width = 418
   BorderIcons = [biSystemMenu]
   Caption = 'FHIRToolkit Settings'
-  ClientHeight = 441
+  ClientHeight = 459
   ClientWidth = 418
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
-    Top = 401
+    Top = 419
     Width = 418
     Align = alBottom
     ClientHeight = 40
     ClientWidth = 418
     ParentFont = False
-    TabOrder = 0
+    TabOrder = 1
     object btnOk: TButton
       Left = 250
       Height = 25
@@ -48,16 +48,16 @@ object ToolkitSettingsForm: TToolkitSettingsForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 401
+    Height = 419
     Top = 0
     Width = 418
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 10
-    ClientHeight = 401
+    ClientHeight = 419
     ClientWidth = 418
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 0
     object GroupBox1: TGroupBox
       Left = 10
       Height = 73
@@ -70,9 +70,9 @@ object ToolkitSettingsForm: TToolkitSettingsForm
     end
     object chkSideBySide: TCheckBox
       Left = 28
-      Height = 19
+      Height = 23
       Top = 36
-      Width = 188
+      Width = 237
       Caption = 'Side By Side (Designer and Text)'
       ParentFont = False
       TabOrder = 1
@@ -84,31 +84,29 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       Width = 398
       Align = alTop
       Caption = '  Fonts  '
-      ClientHeight = 99
-      ClientWidth = 394
+      ClientHeight = 101
+      ClientWidth = 396
       ParentFont = False
       TabOrder = 2
       object Label2: TLabel
         Left = 16
-        Height = 15
+        Height = 17
         Top = 12
-        Width = 37
+        Width = 49
         Caption = 'Editor: '
-        ParentColor = False
         ParentFont = False
       end
       object lblEditorFont: TLabel
         Left = 88
-        Height = 15
+        Height = 17
         Top = 12
-        Width = 531
+        Width = 533
         Anchors = [akTop, akLeft, akRight]
         Caption = 'lblEditorFont'
-        ParentColor = False
         ParentFont = False
       end
       object btnEditorFont: TButton
-        Left = 323
+        Left = 325
         Height = 25
         Top = 6
         Width = 60
@@ -120,25 +118,23 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       end
       object Label4: TLabel
         Left = 16
-        Height = 15
+        Height = 17
         Top = 41
-        Width = 23
+        Width = 28
         Caption = 'Log:'
-        ParentColor = False
         ParentFont = False
       end
       object lblLogFont: TLabel
         Left = 88
-        Height = 15
+        Height = 17
         Top = 41
-        Width = 531
+        Width = 533
         Anchors = [akTop, akLeft, akRight]
         Caption = 'lblLogFont'
-        ParentColor = False
         ParentFont = False
       end
       object btnLogFont: TButton
-        Left = 323
+        Left = 325
         Height = 25
         Top = 35
         Width = 60
@@ -150,25 +146,23 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       end
       object Label6: TLabel
         Left = 16
-        Height = 15
+        Height = 17
         Top = 70
-        Width = 33
+        Width = 44
         Caption = 'Views:'
-        ParentColor = False
         ParentFont = False
       end
       object lblViewFont: TLabel
         Left = 88
-        Height = 15
+        Height = 17
         Top = 70
-        Width = 547
+        Width = 549
         Anchors = [akTop, akLeft, akRight]
         Caption = 'lblViewFont'
-        ParentColor = False
         ParentFont = False
       end
       object btnViewFont: TButton
-        Left = 323
+        Left = 325
         Height = 25
         Top = 64
         Width = 60
@@ -186,32 +180,30 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       Width = 398
       Align = alTop
       Caption = '  External Tools  '
-      ClientHeight = 42
-      ClientWidth = 394
+      ClientHeight = 44
+      ClientWidth = 396
       ParentFont = False
       TabOrder = 3
       object Label3: TLabel
         Left = 14
-        Height = 15
+        Height = 17
         Top = 12
-        Width = 47
+        Width = 61
         Caption = 'Diff Tool:'
-        ParentColor = False
         ParentFont = False
       end
       object lblDiff: TLabel
         Left = 88
         Height = 15
         Top = 12
-        Width = 531
+        Width = 533
         Anchors = [akTop, akLeft, akRight]
         AutoSize = False
         Caption = 'lblDiff'
-        ParentColor = False
         ParentFont = False
       end
       object Button6: TButton
-        Left = 323
+        Left = 325
         Height = 25
         Top = 6
         Width = 60
@@ -224,70 +216,67 @@ object ToolkitSettingsForm: TToolkitSettingsForm
     end
     object GroupBox4: TGroupBox
       Left = 10
-      Height = 122
+      Height = 146
       Top = 264
       Width = 398
       Align = alTop
       Caption = '  Terminology Server  '
-      ClientHeight = 102
-      ClientWidth = 394
+      ClientHeight = 128
+      ClientWidth = 396
       TabOrder = 4
       object Label1: TLabel
         Left = 14
-        Height = 15
-        Top = 12
-        Width = 35
+        Height = 17
+        Top = 16
+        Width = 47
         Caption = 'Server:'
-        ParentColor = False
       end
       object edtTxServer: TEdit
-        Left = 62
-        Height = 23
+        Left = 70
+        Height = 33
         Top = 10
-        Width = 320
+        Width = 312
         TabOrder = 0
         Text = 'edtTxServer'
       end
       object Label5: TLabel
         Left = 14
-        Height = 15
-        Top = 42
-        Width = 44
+        Height = 17
+        Top = 56
+        Width = 55
         Caption = 'Log File:'
-        ParentColor = False
       end
       object edtTxLog: TEdit
-        Left = 62
-        Height = 23
-        Top = 40
-        Width = 320
+        Left = 70
+        Height = 33
+        Top = 48
+        Width = 314
         TabOrder = 1
         Text = 'edtTxLog'
       end
       object btnClearCache: TButton
-        Left = 306
+        Left = 310
         Height = 25
-        Top = 70
+        Top = 88
         Width = 75
         Caption = 'Clear'
         OnClick = btnClearCacheClick
-        TabOrder = 2
+        TabOrder = 3
       end
       object Label7: TLabel
         Left = 14
-        Height = 15
-        Top = 72
-        Width = 36
+        Height = 17
+        Top = 88
+        Width = 44
         Caption = 'Cache:'
-        ParentColor = False
       end
       object edtCache: TEdit
-        Left = 62
-        Height = 23
-        Top = 70
-        Width = 240
+        Left = 70
+        Height = 33
+        Top = 88
+        Width = 234
         ReadOnly = True
-        TabOrder = 3
+        TabOrder = 2
         Text = 'edtCache'
       end
     end

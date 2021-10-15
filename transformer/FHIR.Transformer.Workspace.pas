@@ -207,7 +207,7 @@ begin
   if fn.endsWith('.md') then
     exit(fmtMarkdown);
 
-  raise Exception.create('unknown format');
+  raise EFslException.Create('unknown format');
 end;
 
 { TWorkspace }

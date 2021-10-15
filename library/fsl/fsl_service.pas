@@ -34,6 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
+  {$IFNDEF WINDOWS}
+  baseunix,
+  {$ENDIF}
   fsl_base, fsl_utilities;
 
 type
@@ -128,11 +131,28 @@ procedure TSystemService.dump;
 begin
 end;
 
+{$IFNDEF WINDOWS}
+procedure handleSigTerm(signum: CInt); cdecl;
+begin
+  GService.Stop('SigTerm');
+end;
+
+procedure handleSigQuit(signum: CInt); cdecl;
+begin
+  GService.Stop('SigQuit');
+end;
+
+{$ENDIF}
+
 procedure TSystemService.Execute;
 var
   LMsg : string;
   LCheckTime : TDateTime;
 begin
+  {$IFNDEF WINDOWS}
+  fpSignal(SigTerm, SignalHandler(@handleSigTerm));
+  fpSignal(SigQuit, SignalHandler(@handleSigQuit));
+  {$ENDIF}
   LCheckTime := 0;
   try
     if CanStart then

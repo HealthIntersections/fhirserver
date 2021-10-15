@@ -478,7 +478,8 @@ begin
   else
     ts.add(indent+name+' # '+FComment);
   for prop in FProperties do
-    prop.save(indent, ts);
+    if prop.name.Trim <> '' then
+      prop.save(indent, ts);
   if not FSections.Empty then
   begin
     for sect in FSections do
@@ -727,7 +728,7 @@ end;
 //    map.add(key, item);
 //  end
 //  else
-//    raise Exception.Create('Should not get to here');
+//    raise EFslException.Create('Should not get to here');
 //end;
 //
 //destructor TFHIRServerIniFile.Destroy;

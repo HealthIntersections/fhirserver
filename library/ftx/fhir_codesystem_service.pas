@@ -549,7 +549,7 @@ begin
       result := TFhirCodeSystemProviderContext.create(ctxt.concept.concept(context.current))
     else
     begin
-      raise Exception.Create('Not supported right now');
+      raise EFslException.Create('Not supported right now');
 //      ndx := context.current - TFhirCodeSystemProviderContext(context.context).context.conceptCount;
 //      // what is this doing?
 //      for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensions.forEnum do

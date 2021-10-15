@@ -727,9 +727,9 @@ end;
 function TFHIRLiquidEngine.findInclude(page, source: String): String;
 begin
   if not assigned(FOnFetchInclude) then
-    raise Exception.Create('Liquid Engine does not support includes (including "'+page+'" from '+source);
+    raise EFslException.Create('Liquid Engine does not support includes (including "'+page+'" from '+source);
   if not FOnFetchInclude(self, page, result) then
-    raise Exception.Create('Unable to find file "'+page+'" included from '+source);
+    raise EFslException.Create('Unable to find file "'+page+'" included from '+source);
 end;
 
 function TFHIRLiquidEngine.parse(source: String; sourceName : String): TFHIRLiquidDocument;

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IniFiles,
   fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging,
   fsl_fetcher,
   fdb_manager,
@@ -41,6 +41,7 @@ uses
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
+  EMAIL_DAYS_LIMIT= 7;
 
 Type
   TPackageRestrictions = class (TFslObject)
@@ -63,6 +64,8 @@ Type
     FFeedErrors : String;
     FOnSendEmail : TSendEmailEvent;
     FTotalBytes : Cardinal;
+    FIni : TIniFile;
+    procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
@@ -141,6 +144,18 @@ begin
   end;
 end;
 
+procedure TPackageUpdater.DoSendEmail(dest, subj, body: String);
+var
+  dt : TDateTime;
+begin
+  dt := FIni.ReadDate('sent', dest, 0);
+  if dt < now - EMAIL_DAYS_LIMIT then
+  begin
+    FIni.WriteDate('sent', dest, now);
+    FOnSendEmail(dest, subj, body);
+  end;
+end;
+
 function TPackageUpdater.fetchJson(url: string): TJsonObject;
 begin
   result := TJSONParser.Parse(fetchUrl(url, 'application/json'));
@@ -212,13 +227,13 @@ begin
     end;
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise Exception.Create('Id "'+id+'" is not valid');
+      raise EFslException.Create('Id "'+id+'" is not valid');
     if not isValidSemVer(version) then
-      raise Exception.Create('Version "'+version+'" is not valid');
+      raise EFslException.Create('Version "'+version+'" is not valid');
     if (canonical = '') then
-      raise Exception.Create('No canonical found in rss');
+      raise EFslException.Create('No canonical found in rss');
     if not isAbsoluteUrl(canonical) then
-      raise Exception.Create('Canonical "'+canonical+'" is not valid');
+      raise EFslException.Create('Canonical "'+canonical+'" is not valid');
 
     commit(FDB, package, npm, date, guid, id, version, description, canonical, '', kind);
 
@@ -246,32 +261,37 @@ var
   i : integer;
   pr : TPackageRestrictions;
 begin
-  log('Start Package Scan', '', false);
-  FTotalBytes := 0;
-  FErrors := '';
-  FDB := DB;
+  FIni := TIniFile.Create('package-spider.ini');
   try
-    log('Fetch '+MASTER_URL, '', false);
-    json := fetchJson(MASTER_URL);
+    log('Start Package Scan', '', false);
+    FTotalBytes := 0;
+    FErrors := '';
+    FDB := DB;
     try
-      pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+      log('Fetch '+MASTER_URL, '', false);
+      json := fetchJson(MASTER_URL);
       try
-        arr := json.arr['feeds'];
-        for i := 0 to arr.Count - 1 do
-          updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+        pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+        try
+          arr := json.arr['feeds'];
+          for i := 0 to arr.Count - 1 do
+            updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+        finally
+          pr.Free;
+        end;
       finally
-        pr.Free;
+        json.free;
       end;
-    finally
-      json.free;
+    except
+      on e : Exception do
+      begin
+        Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+      end;
     end;
-  except
-    on e : Exception do
-    begin
-      Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
-    end;
+    log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
+  finally
+    FIni.Free;
   end;
-  log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
 end;
 
 procedure TPackageUpdater.updateTheFeed(url, source, email: String; pr : TPackageRestrictions);
@@ -303,13 +323,13 @@ begin
       xml.Free;
     end;
     if (FFeedErrors <> '') and (email <> '') then
-        FOnSendEmail(email, 'Errors Processing '+url, FFeedErrors);
+        DoSendEmail(email, 'Errors Processing '+url, FFeedErrors);
   except
     on e : Exception do
     begin
       log('Exception processing feed: '+url+': '+e.Message, source, false);
       if (email <> '') then
-        FOnSendEmail(email, 'Exception Processing '+url, e.Message);
+        DoSendEmail(email, 'Exception Processing '+url, e.Message);
     end;
   end;
 end;

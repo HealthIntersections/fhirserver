@@ -833,7 +833,7 @@ end;
 constructor TFDBOdbcManager.create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   {$IFDEF FPC}
-  if @SQLAllocHandle = nil then
+  if not isODBCLoaded then
     InitialiseODBC;
   {$ENDIF}
   inherited create(Aname, AMaxConnCount);
@@ -934,7 +934,12 @@ begin
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
     result := TFDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
-    result.Initialise;
+    try
+      result.Initialise;
+      result.link;
+    finally
+      result.free;
+    end;
   except
     on e:exception do
       begin

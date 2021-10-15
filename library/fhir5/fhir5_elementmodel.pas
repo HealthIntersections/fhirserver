@@ -1066,7 +1066,7 @@ end;
 
 procedure TFHIRMMElement.markValidation(profile: TFHIRStructureDefinition; element: TFhirElementDefinition);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TFHIRMMElement.getId: String;

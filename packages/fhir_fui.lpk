@@ -10,7 +10,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fui"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fui\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>
@@ -41,6 +41,10 @@
       <Item>
         <Filename Value="..\library\fui\fui_lcl_utilities.pas"/>
         <UnitName Value="fui_lcl_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_fake_console.pas"/>
+        <UnitName Value="fui_fake_console"/>
       </Item>
     </Files>
     <RequiredPkgs>

@@ -1,5 +1,33 @@
 unit ftk_search;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -61,6 +89,8 @@ type
      property kind : TToolkitSearchKind read FKind write FKind;
      property scope : String read FScope write FScope;
      property sources : TFslList<TToolkitSearchSource> read FSources;
+
+     function summary : String;
    end;
 
    { TToolkitSearchMatch }
@@ -128,6 +158,7 @@ type
 
      property spec : TToolkitSearchSpecification read FSpec;
      property context : TToolkitContext read FContext;
+     function description : String; override;
    end;
 
 
@@ -148,6 +179,8 @@ type
    TToolkitSearchTaskEngine  = class abstract (TBackgroundTaskEngine)
    private
      procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
+   protected
+       function canCancel : boolean; override;
    public
      function name : String; override;
      procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
@@ -214,11 +247,27 @@ begin
   result := TToolkitSearchSpecification(inherited link);
 end;
 
+function TToolkitSearchSpecification.summary: String;
+begin
+  case FKind of
+    tskCurrent : result := FText+' in current document';
+    tskAllOpen : result := FText+' in all open documents';
+    tskProject : result := FText+' in project '+scope;
+    tskFolder : result := FText+' in folder '+scope;
+    tskFolderTree : result := FText+' in folders in '+scope;
+  end;
+end;
+
 { TToolkitSearchTaskEngine }
 
 procedure TToolkitSearchTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
   progress(desc, pct);
+end;
+
+function TToolkitSearchTaskEngine.canCancel: boolean;
+begin
+  result := true;
 end;
 
 function TToolkitSearchTaskEngine.name: String;
@@ -256,6 +305,11 @@ begin
   FSpec.Free;
   FContext.free;
   inherited Destroy;
+end;
+
+function TToolkitSearchTaskRequest.description: String;
+begin
+  result := spec.summary;
 end;
 
 { TToolkitSearchTaskResponse }
@@ -448,7 +502,7 @@ end;
 
 procedure TToolkitSearchEngine.goProject;
 begin
-  raise Exception.create('not supported yet');
+  raise EFslException.Create('not supported yet');
 end;
 
 procedure TToolkitSearchEngine.goFolder(contained: boolean);

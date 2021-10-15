@@ -319,10 +319,8 @@ begin
   inherited Create;
   if Filename <> '' then
     FLog := TLogger.Create(Filename)
-  else if DirectoryExists('c:\temp') then
-    FLog := TLogger.Create('c:\temp\'+PathTitle(ParamStr(0))+'.fhir.log')
   else
-    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp) + ''+PathTitle(ParamStr(0))+'.fhir.log')
+    FLog := TLogger.Create(filePath(['[tmp]', PathTitle(ParamStr(0))+'.fhir.log']))
 end;
 
 destructor TTextFileLogger.Destroy;

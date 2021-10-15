@@ -1,16 +1,17 @@
 object EditChangeReviewForm: TEditChangeReviewForm
-  Left = -1151
+  Left = 72
   Height = 738
-  Top = -489
+  Top = 27
   Width = 965
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Editor Change Review'
   ClientHeight = 738
   ClientWidth = 965
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 42
@@ -20,7 +21,7 @@ object EditChangeReviewForm: TEditChangeReviewForm
     ClientHeight = 42
     ClientWidth = 965
     ParentFont = False
-    TabOrder = 0
+    TabOrder = 2
     object btnCancel: TButton
       Left = 880
       Height = 25
@@ -45,11 +46,10 @@ object EditChangeReviewForm: TEditChangeReviewForm
     end
     object lblStatus: TLabel
       Left = 200
-      Height = 15
+      Height = 17
       Top = 12
-      Width = 45
+      Width = 60
       Caption = 'lblStatus'
-      ParentColor = False
       ParentFont = False
       Visible = False
     end
@@ -75,7 +75,7 @@ object EditChangeReviewForm: TEditChangeReviewForm
     ClientHeight = 50
     ClientWidth = 965
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 0
     object lblSummary: TLabel
       Left = 14
       Height = 17
@@ -84,7 +84,6 @@ object EditChangeReviewForm: TEditChangeReviewForm
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'lblSummary'
-      ParentColor = False
       ParentFont = False
     end
   end
@@ -97,17 +96,17 @@ object EditChangeReviewForm: TEditChangeReviewForm
     Align = alClient
     ParentFont = False
     TabIndex = 0
-    TabOrder = 2
+    TabOrder = 1
     object TabSheet2: TTabSheet
       Caption = 'Source'
-      ClientHeight = 618
-      ClientWidth = 957
+      ClientHeight = 615
+      ClientWidth = 955
       ParentFont = False
       inline mSource: TSynEdit
         Left = 0
-        Height = 618
+        Height = 615
         Top = 0
-        Width = 957
+        Width = 955
         Align = alClient
         Font.Height = -13
         Font.Name = 'Courier New'
@@ -555,10 +554,6 @@ object EditChangeReviewForm: TEditChangeReviewForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
-        ScrollOnEditLeftOptions.ScrollExtraPercent = 20
-        ScrollOnEditLeftOptions.ScrollExtraMax = 10
-        ScrollOnEditRightOptions.ScrollExtraPercent = 30
-        ScrollOnEditRightOptions.ScrollExtraMax = 25
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone
@@ -610,17 +605,17 @@ object EditChangeReviewForm: TEditChangeReviewForm
     end
     object TabSheet1: TTabSheet
       Caption = 'Text Diff'
-      ClientHeight = 619
-      ClientWidth = 957
+      ClientHeight = 615
+      ClientWidth = 955
       OnResize = TabSheet1Resize
       ParentFont = False
       object pnlTextLeft: TPanel
         Left = 0
-        Height = 619
+        Height = 615
         Top = 0
         Width = 380
         Align = alLeft
-        ClientHeight = 619
+        ClientHeight = 615
         ClientWidth = 380
         ParentFont = False
         TabOrder = 0
@@ -636,7 +631,7 @@ object EditChangeReviewForm: TEditChangeReviewForm
         end
         object mBase: TMemo
           Left = 1
-          Height = 589
+          Height = 585
           Top = 29
           Width = 378
           Align = alClient
@@ -650,19 +645,19 @@ object EditChangeReviewForm: TEditChangeReviewForm
       end
       object pnlTextRight: TPanel
         Left = 380
-        Height = 619
+        Height = 615
         Top = 0
-        Width = 577
+        Width = 575
         Align = alClient
-        ClientHeight = 619
-        ClientWidth = 577
+        ClientHeight = 615
+        ClientWidth = 575
         ParentFont = False
         TabOrder = 1
         object pnlRightSummary: TPanel
           Left = 1
           Height = 28
           Top = 1
-          Width = 575
+          Width = 573
           Align = alTop
           Caption = 'pnlRightSummary'
           ParentFont = False
@@ -670,9 +665,9 @@ object EditChangeReviewForm: TEditChangeReviewForm
         end
         object mCurr: TMemo
           Left = 1
-          Height = 589
+          Height = 585
           Top = 29
-          Width = 575
+          Width = 573
           Align = alClient
           Lines.Strings = (
             'Memo2'

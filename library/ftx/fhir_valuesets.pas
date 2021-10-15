@@ -441,7 +441,7 @@ begin
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   FFactory.checkNoModifiers(vs, 'ValueSetChecker.prepare', 'ValueSet');
   if (vs = nil) then
-    raise Exception.Create('Error Error: vs = nil')
+    raise EFslException.Create('Error Error: vs = nil')
   else
   begin
     FValueSet := vs.link;

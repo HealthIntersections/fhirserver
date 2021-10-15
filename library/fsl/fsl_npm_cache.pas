@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ELSE} LazFileUtils, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads,
+  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads, fsl_logging,
   fsl_stream, fsl_fetcher,
   fsl_npm, fsl_npm_client;
 
@@ -157,6 +157,8 @@ type
     constructor Create(manager : TFHIRPackageManager);
     destructor Destroy; override;
 
+    function description : String; override;
+
     property Manager : TFHIRPackageManager read FManager;
   end;
 
@@ -176,9 +178,11 @@ type
 
   { TFHIRLoadPackagesTaskEngine }
 
-  TFHIRLoadPackagesTaskEngine  = class abstract (TBackgroundTaskEngine)
+  TFHIRLoadPackagesTaskEngine  = class (TBackgroundTaskEngine)
   private
     procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
+  protected
+    function canCancel : boolean; override;
   public
     function name : String; override;
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
@@ -228,6 +232,11 @@ begin
 end;
 
 { TFHIRLoadPackagesTaskEngine }
+
+function TFHIRLoadPackagesTaskEngine.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TFHIRLoadPackagesTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
@@ -285,6 +294,11 @@ begin
   inherited Destroy;
 end;
 
+function TFHIRLoadPackagesTaskRequest.description: String;
+begin
+  result := '';
+end;
+
 function TFHIRLoadPackagesTaskRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -300,9 +314,9 @@ begin
   FUser := user or MustBeUserMode;
   {$IFDEF WINDOWS}
   if FUser then
-    FFolder := path([UserFolder, '.fhir', 'packages'])
+    FFolder := FilePath([UserFolder, '.fhir', 'packages'])
   else
-    FFolder := path([ProgData, '.fhir', 'packages']);
+    FFolder := FilePath([ProgData, '.fhir', 'packages']);
   {$ELSE}
   if FUser then
     FFolder := ExpandFileNameUTF8('~/.fhir/packages')
@@ -310,7 +324,7 @@ begin
     FFolder := '/var/lib/.fhir/packages';
   {$ENDIF}
   ForceFolder(FFolder);
-  FIni := TIniFile.create(Path([FFolder, 'packages.ini']));
+  FIni := TIniFile.create(FilePath([FFolder, 'packages.ini']));
   if FIni.ReadInteger('cache', 'version', 0) <> CACHE_VERSION then
   begin
     clearCache;
@@ -445,7 +459,7 @@ begin
       if not check('Replace existing copy of '+id+' version '+ver+'?') then
         exit(nil);
     work(0, false, 'Installing');
-    dir := path([FFolder, id+'#'+ver]);
+    dir := FilePath([FFolder, id+'#'+ver]);
     if FolderExists(dir) then
       if not FolderDelete(dir) then
         raise EIOException.create('Unable to delete existing package');
@@ -460,7 +474,7 @@ begin
         work(trunc((c / files.Count) * 100), false, 'Installing');
         if length(files[s]) > 0 then
         begin
-          fn := path([dir, s]);
+          fn := FilePath([dir, s]);
           ForceFolder(PathFolder(fn));
           if FileExists(fn) then
           begin
@@ -478,7 +492,7 @@ begin
         end;
       end;
       work(100, false, 'Installing');
-      StringToFile(indexer.build, path([FFolder, '.index.json']), TEncoding.UTF8);
+      StringToFile(indexer.build, FilePath([FFolder, '.index.json']), TEncoding.UTF8);
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
       work(100, true, 'Installing');
@@ -499,10 +513,11 @@ var
   aborted : boolean;
   s : String;
 begin
+  Logging.log('Installing Package from '+url+' to '+FFolder);
   fetch := TInternetFetcher.Create;
   try
     fetch.onProgress := progress;
-    FTaskDesc := 'Downloading';
+    FTaskDesc := 'Downloading from '+url;
     fetch.Buffer := TFslBuffer.create;
     aborted := false;
     s := '';
@@ -522,7 +537,7 @@ begin
       raise EIOException.create('Unable to find package for '+url+': '+s);
     if result then
     begin
-      Import(fetch.Buffer.AsBytes);
+      Import(fetch.Buffer.AsBytes).free;
     end;
   finally
     fetch.Free;
@@ -565,7 +580,7 @@ begin
     for s in ts do
     begin
       work(trunc(1/ts.count * 100), false, 'Package '+ExtractFileName(s));
-      if s.Contains('#') and FileExists(Path([s, 'package', 'package.json'])) then
+      if s.Contains('#') and FileExists(FilePath([s, 'package', 'package.json'])) then
       begin
         npm := loadPackageFromCache(s);
         try
@@ -615,7 +630,7 @@ begin
     for s in ts do
     begin
       work(trunc(1/ts.count * 100), false, 'Package '+ExtractFileName(s));
-      if s.Contains('#') and FileExists(Path([s, 'package', 'package.json'])) then
+      if s.Contains('#') and FileExists(FilePath([s, 'package', 'package.json'])) then
       begin
         npm := TNpmPackage.fromFolderQuick(s);
         try
@@ -743,7 +758,7 @@ begin
     if not packageExists(id, '') then
       raise EIOException.create('Unable to load package '+id+' as it couldn''t be found');
     ver := latestPackageVersion(id);
-    result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+    result := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
   end;
 end;
 
@@ -756,7 +771,7 @@ begin
     autoInstallPackage(id, ver);
     if not packageExists(id, ver) then
       raise EIOException.create('Unable to load package '+id+'#'+ver+' as it couldn''t be found');
-    result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+    result := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
   end;
 end;
 
@@ -780,7 +795,7 @@ begin
 
   work(0, false, 'Scanning Package');
 
-  npm := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+  npm := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
   try
     if npm.info.has('dependencies') then
     begin
@@ -796,7 +811,7 @@ begin
     begin
       if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.ResourceType)) then
       begin
-        f := TFileStream.Create(path([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
+        f := TFileStream.Create(FilePath([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
             loadInfo.OnLoadEvent(fi.ResourceType, fi.id, f);
@@ -827,7 +842,7 @@ begin
     result.Link
   else
   begin
-    if not FileExists(Path([folder, 'package', '.index.json'])) then
+    if not FileExists(FilePath([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
     result := TNpmPackage.fromFolder(folder);
     FCache.add(folder, result.Link);
@@ -882,7 +897,7 @@ var
 begin
   indexer := TNpmPackageIndexBuilder.Create;
   try
-    l := TDirectory.GetFiles(path([folder, 'package']));
+    l := TDirectory.GetFiles(FilePath([folder, 'package']));
     try
       work(0, false, 'Analysing '+ExtractFileName(folder));
       try
@@ -890,13 +905,13 @@ begin
         for s in l do
         begin
           inc(i);
-          work(trunc(i / length(l) * 100), false, 'Analysing '+Path([ExtractFileName(folder),'package',ExtractFileName(s)]));
+          work(trunc(i / length(l) * 100), false, 'Analysing '+FilePath([ExtractFileName(folder),'package',ExtractFileName(s)]));
           indexer.seeFile(ExtractFileName(s), FileToBytes(s));
         end;
       finally
         work(100, true, 'Analysing '+ExtractFileName(folder));
       end;
-      StringToFile(indexer.build, path([folder, 'package', '.index.json']), TEncoding.UTF8);
+      StringToFile(indexer.build, FilePath([folder, 'package', '.index.json']), TEncoding.UTF8);
     except
       on e : EAbort do
       begin
@@ -939,9 +954,9 @@ begin
   end
   else
   begin
-    result := FolderExists(Path([FFolder, id+'#'+ver]));
+    result := FolderExists(FilePath([FFolder, id+'#'+ver]));
     if result then
-      result := FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
+      result := FileExists(FilePath([FFolder, id+'#'+ver, 'package', 'package.json']));
   end;
 end;
 
@@ -1063,7 +1078,7 @@ begin
   if FVersion = '' then
     FVersion := ver
   else if FVersion <> ver then
-    raise Exception.Create('FHIR Loading Version mismatch: loading '+ver+' but already loaded '+FVersion);
+    raise EFslException.Create('FHIR Loading Version mismatch: loading '+ver+' but already loaded '+FVersion);
 end;
 
 function TPackageLoadingInformation.isLoaded(id, ver: String): boolean;

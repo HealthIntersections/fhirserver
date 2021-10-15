@@ -30,6 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
+{.$.DEFINE DEBUG_TASKS}
+
 interface
 
 {$OVERFLOWCHECKS OFF}
@@ -133,8 +135,6 @@ Type
   TFslThreadHandle = TThreadHandle;
   TFslThreadID = TThreadID;
 
-  TFslThreadDelegate = Procedure Of Object;
-
   { TFslThread }
 
   TFslThread = Class abstract (TFslObject)
@@ -198,9 +198,10 @@ Type
 
   { TBackgroundTaskRequestPackage }
 
-  TBackgroundTaskRequestPackage = class (TBackgroundTaskPackage)
+  TBackgroundTaskRequestPackage = class abstract (TBackgroundTaskPackage)
   public
     function link : TBackgroundTaskRequestPackage; overload;
+    function description : String; virtual; abstract;
   end;
 
   { TBackgroundTaskResponsePackage }
@@ -224,6 +225,7 @@ Type
 
   TBackgroundTaskPackagePair = class (TFslObject)
   private
+    FUniqueID : Integer;
     FOnNotify: TBackgroundTaskEvent;
     FRequest: TBackgroundTaskRequestPackage;
     FResponse: TBackgroundTaskResponsePackage;
@@ -255,24 +257,33 @@ Type
 
   TBackgroundTaskStatusInfo = class (TFslObject)
   private
+    FCanCancel: boolean;
+    FInfo: String;
     FName: String;
     FId: integer;
     FStatus: TBackgroundTaskStatus;
     FPct: integer;
     FMessage: String;
+    FTime: Cardinal;
+    FUniqueID: integer;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskStatusInfo; overload;
 
+    property UniqueID : integer read FUniqueID write FUniqueID;
     property id : integer read FId write FId;
-    property name : String read FName write FName;
+    property name : String read FName write FName; // name of the engine
+    property info : String read FInfo write FInfo; // description of the task
     property status : TBackgroundTaskStatus read FStatus write FStatus;
     property message : String read FMessage write FMessage;
     property pct : integer read FPct write FPct;
+    property canCancel : boolean read FCanCancel write FCanCancel;
+    property time : Cardinal read FTime write FTime; // millseconds
 
     function StatusDisplay : string;
     function PctDisplay : String;
+    function timeDisplay : String;
   end;
 
   { TBackgroundTaskEngine }
@@ -283,6 +294,7 @@ Type
   private
     { private thread management section }
     FId : integer;
+    FUniqueID : integer;
     FThread : TBackgroundTaskThread; // owned...
     FWantBreak : boolean;
     FWantStop : boolean;
@@ -293,6 +305,9 @@ Type
     FUIResponse : TBackgroundTaskUIResponse;
     FState : String;
     FPct : Integer;
+    FStartTime : UInt64;
+    FDesc : String;
+    FCurrentTask : TBackgroundTaskPackagePair;
     procedure break;
     procedure stop;
     procedure terminate;
@@ -305,6 +320,8 @@ Type
     FUIExceptionClass : ExceptClass;
 
     function reportStatus : TBackgroundTaskStatusInfo;
+    procedure listTasks(list: TFslList<TBackgroundTaskStatusInfo>);
+    function canCancel : boolean; virtual; abstract;
   public
     constructor Create; overload; override;
     constructor Create(notify : TBackgroundTaskEvent); overload;
@@ -331,16 +348,21 @@ Type
 
   TNullTaskEngine = class (TBackgroundTaskEngine)
   private
+  protected
+    function canCancel : boolean; override;
   public
     function name : String; override;
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
   end;
+
+  TBackgroundTaskManagerTaskViewType = (tvtEngines, tvtTasks);
 
   { TBackgroundTaskManager }
 
   TBackgroundTaskManager = class (TFslObject)
   private
     FStart : TDateTime;
+    FStarted : boolean;
     FLock : TFslLock;
     FEngines : TFslList<TBackgroundTaskEngine>;
     procedure log(s : String);
@@ -365,7 +387,7 @@ Type
     procedure primaryThreadCheck;
     function TasksAreWorking : boolean;
 
-    procedure report(list : TFslList<TBackgroundTaskStatusInfo>); overload;
+    procedure report(list : TFslList<TBackgroundTaskStatusInfo>; view : TBackgroundTaskManagerTaskViewType); overload;
     function report(taskId : integer) : TBackgroundTaskStatusInfo; overload;
   end;
 
@@ -384,6 +406,7 @@ var
   GFirst: TFslLock = NIL;
   GCount: Integer = 0;
   GTotal: Integer = 0;
+  GBackgroundTaskUniqueID : integer = 0;
 
 var
   GThreadList : TList;
@@ -669,6 +692,11 @@ begin
   result := 'Idle Task';
 end;
 
+function TNullTaskEngine.canCancel: boolean;
+begin
+  result := false;
+end;
+
 procedure TNullTaskEngine.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 begin
   // nothing
@@ -681,6 +709,7 @@ begin
   inherited Create;
   FRequest := request;
   FResponse := response;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 destructor TBackgroundTaskPackagePair.Destroy;
@@ -1168,6 +1197,7 @@ begin
   FWaiting := TFslList<TBackgroundTaskPackagePair>.create;
   FDone := TFslList<TBackgroundTaskPackagePair>.create;
   FStatus := btsWaiting;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 constructor TBackgroundTaskEngine.Create(notify : TBackgroundTaskEvent);
@@ -1185,26 +1215,45 @@ end;
 
 procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackagePair);
 begin
+  GBackgroundTasks.FLock.Lock;
   try
-    SetStatus(btsProcessing);
-    GBackgroundTasks.log('Task '+name+' go');
-    execute(pck.request, pck.response);
-    GBackgroundTasks.log('Task '+name+' done');
-    setStatus(btsWaiting);
-  except
-    on e : Exception do
-    begin
-      GBackgroundTasks.log('Task '+name+' error: '+e.Message);
-      SetStatus(btsWaiting);
-      pck.response.ExceptionClass := ExceptClass(e.ClassType);
-      pck.response.Exception := e.message;
+    FCurrentTask := pck.link;
+  finally
+    GBackgroundTasks.FLock.UnLock;
+  end;
+  try
+    try
+      SetStatus(btsProcessing);
+      FStartTime := GetTickCount64;
+      FDesc := pck.request.description;
+      GBackgroundTasks.log('Task '+name+' go ('+pck.request.ClassName+','+pck.response.ClassName+')');
+      execute(pck.request, pck.response);
+      GBackgroundTasks.log('Task '+name+' done');
+      setStatus(btsWaiting);
+    except
+      on e : Exception do
+      begin
+        GBackgroundTasks.log('Task '+name+' error: '+e.Message);
+        SetStatus(btsWaiting);
+        pck.response.ExceptionClass := ExceptClass(e.ClassType);
+        pck.response.Exception := e.message;
+      end;
+    end;
+  finally
+    GBackgroundTasks.FLock.Lock;
+    try
+      SetStatus(btsProcessing);
+      FCurrentTask.Free;
+      FCurrentTask := nil;
+    finally
+      GBackgroundTasks.FLock.UnLock;
     end;
   end;
 end;
 
 procedure TBackgroundTaskEngine.performUIInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-  raise Exception.Create('The method '+className+'.performUIInteraction needs to be overridden');
+  raise EFslException.Create('The method '+className+'.performUIInteraction needs to be overridden');
 end;
 
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
@@ -1219,10 +1268,55 @@ function TBackgroundTaskEngine.reportStatus: TBackgroundTaskStatusInfo;
 begin
   result := TBackgroundTaskStatusInfo.Create;
   result.id := FId;
+  result.UniqueID := FUniqueID;
   result.name := name;
+  result.info := FDesc;
   result.status := FStatus;
   result.message := FState;
   result.pct := FPct;
+  result.time := GetTickCount64 - FStartTime;
+  result.canCancel := canCancel;
+end;
+
+procedure TBackgroundTaskEngine.listTasks(list: TFslList<TBackgroundTaskStatusInfo>);
+  function reportForTask(tp : TBackgroundTaskPackagePair) : TBackgroundTaskStatusInfo;
+  begin
+    result := TBackgroundTaskStatusInfo.create;
+    result.id := FId;
+    result.UniqueID := tp.FUniqueID;
+    result.name := name;
+    result.info := tp.request.Description;
+    result.status := btsWaiting;
+    result.message := 'Waiting for another task';
+    result.pct := 0;
+    result.time := 0;
+    result.canCancel := canCancel;
+  end;
+var
+  tp : TBackgroundTaskPackagePair;
+  info : TBackgroundTaskStatusInfo;
+begin
+  GBackgroundTasks.FLock.Lock;
+  try
+    if FCurrentTask <> nil then
+    begin
+      info := TBackgroundTaskStatusInfo.Create;
+      list.add(info);
+      info.id := FId;
+      info.UniqueID := FCurrentTask.FUniqueID;
+      info.name := name;
+      info.info := FDesc;
+      info.status := FStatus;
+      info.message := FState;
+      info.pct := FPct;
+      info.time := GetTickCount64 - FStartTime;
+      info.canCancel := canCancel;
+    end;
+    for tp in FWaiting do
+      list.add(reportForTask(tp));
+  finally
+    GBackgroundTasks.FLock.Unlock;
+  end;
 end;
 
 procedure TBackgroundTaskEngine.setStatus(v: TBackgroundTaskStatus);
@@ -1360,16 +1454,26 @@ begin
   finally
     FLock.Unlock;
   end;
+  if FStarted then
+    engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
-procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>);
+procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>; view : TBackgroundTaskManagerTaskViewType);
 var
   engine : TBackgroundTaskEngine;
 begin
   FLock.Lock;
   try
-    for engine in FEngines do
-      list.Add(engine.reportStatus);
+    if view = tvtEngines then
+    begin
+      for engine in FEngines do
+        list.Add(engine.reportStatus);
+    end
+    else
+    begin
+      for engine in FEngines do
+        engine.listTasks(list);
+    end;
   finally
     FLock.Unlock;
   end;
@@ -1389,6 +1493,7 @@ procedure TBackgroundTaskManager.stopAll;
 var
   e : TBackgroundTaskEngine;
 begin
+  FStarted := false;
   for e in FEngines do
     e.stop;
 end;
@@ -1422,14 +1527,25 @@ procedure TBackgroundTaskManager.start;
 var
   engine : TBackgroundTaskEngine;
 begin
+  FStarted := true;
+  Log('Start engine');
   for engine in FEngines do
     engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.log(s : String);
 begin
-//  AllocConsole;
-//  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  {$IFDEF DEBUG_TASKS}
+  AllocConsole;
+  {$ifdef FPC}
+  IsConsole := True;
+  StdInputHandle  := 0;
+  StdOutputHandle := 0;
+  StdErrorHandle  := 0;
+  SysInitStdIO;
+  {$endif FPC}
+  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  {$ENDIF}
 end;
 
 procedure TBackgroundTaskManager.primaryThreadCheck;
@@ -1661,6 +1777,16 @@ begin
     result := ''
   else
     result := inttostr(pct);
+end;
+
+function TBackgroundTaskStatusInfo.timeDisplay: String;
+begin
+  if FTime = 0 then
+    result := ''
+  //else if (FTime < 2000) then
+  //  result := inttostr(FTime)+'ms'
+  else
+    result := inttostr(FTime div 1000)+'s';
 end;
 
 function TBackgroundTaskStatusInfo.sizeInBytesV(magic : integer) : cardinal;

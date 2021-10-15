@@ -1,5 +1,33 @@
 unit fhir_healthcard;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -30,7 +58,7 @@ type
     { unpacks, and verifies, and sets isValid to true }
     function verify(token : String) : THealthcareCard;
 
-    function readQR(src : String) : String; // returns a JWS
+    class function readQR(src : String) : String; // returns a JWS
 
     property Factory : TFHIRFactory read FFactory write SetFactory;
     property JWKList : TJWKList read FJWKList write SetJWKList;
@@ -158,7 +186,7 @@ begin
     try
       result.issuer := p.str['iss'];
       dt1 := EncodeDate(1970, 1, 1);
-      dt2 := (p.int['nbf'] * DATETIME_SECOND_ONE);
+      dt2 := trunc((p.int['nbf'] * DATETIME_SECOND_ONE));
       result.issueDate := TFslDateTime.make(dt1+dt2, dttzUTC);
       vc := p.obj['vc'];
       if (vc = nil) then
@@ -192,14 +220,14 @@ begin
   end;
 end;
 
-function THealthcareCardUtilities.readQR(src: String): String;
+class function THealthcareCardUtilities.readQR(src: String): String;
 var
   b : TFslStringBuilder;
   i, v : integer;
   c : char;
 begin
   if not src.StartsWith('shc:/') then
-    raise Exception.create('Unable to process smart health card (didn''t start with shc:/)');
+    raise EFslException.Create('Unable to process smart health card (didn''t start with shc:/)');
   b := TFslStringBuilder.create;
   try
     for i := 0 to ((length(src)-5) div 2) - 1 do

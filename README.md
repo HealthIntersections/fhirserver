@@ -13,13 +13,42 @@ in this project:
   * includes v2 and DICOM end points
   * includes set of tests for the server and library 
 * The FHIR toolkit - a set of utilities for developers
-* The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers 
+
+
+Also:
+
 * A VCL demo program that shows how to connect to to an argonaut interface (contributed by Wellsoft, thanks)
+* The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers (being phased out)
 
 For binary releases of this content, see http://www.healthintersections.com.au/FhirServer
 
-This project is maintained by the FHIR Project lead. The server runs in 
+This project is maintained by the FHIR Project lead (Grahame Grieve). The server runs in 
 multiple locations, including http://test.fhir.org, http://tx.fhir.org, and http://packages2.fhir.org
+
+## License
+
+The license is standard BSD-3:
+
+Copyright (c) 2011+, HL7, Inc and Health Intersections Pty Ltd
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of HL7 nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
 
 ## Support
 
@@ -37,7 +66,7 @@ well optimised for hosting/supporting very large repositories efficiently.
 
 The open source FHIR Server includes delphi/pascal implementations of:
 * Xml/XPath/XML Patch + XML Digital Signature
-* JSON/JSONPointer/Json Patch + JSON Digital Signature (+ JWT/JWK support)
+* JSON/JSONPointer/Json Patch + JSON Digital Signature (+ JWT/JWK support using openSSL)
 * OAuth/openID Connect (including google/facebook clients)
 * Turtle format (RDF)
 * GraphQL
@@ -50,24 +79,26 @@ The open source FHIR Server includes delphi/pascal implementations of:
 * LOINC/SNOMED/RxNorm/CVX/UCUM
 * CQL (Clinical Query Language)
 * Graphical Components
-  * Scintilla Wrapper (per InnoSetup) with XMl/JSON/Javascript syntax highlighters
   * simple quick graphing library
   * De Novo word processor
-  * FHIR FMX Components
+  * FHIR LCL Components
+  * FHIR FMX Components. Note that FMX support is being phased out
 * All of FHIR + FHIRPath + smart all launch + cds-hooks, of course
 
 ## Projects
 
-FPC:
+FPC/Lazarus:
+* fhirprojects.lpg - a group containing the three projects
 * /server/fhirserver.lpi - the FHIR server (win64, win32, linux64, osx64)
 * /server/fhirconsole.lpi - management utility for the server  (win64, win32, linux64, osx64)
 * /toolkit2/fhirtoolkit.lpi - ToolKit for FHIR developers (win64, win32, linux64, osx64)
 
 Delphi:
 
+* fhir-projects.groupproj - a group containing these projects
 * \server\FHIRServer.dproj - the FHIR server (win64 or win32)
 * \utilities\vcldemo\FhirVclDemo.dproj - a demonstration of a working standalone client for Cerner and Epic
-* \utilities\nppformats\formatUtils.dproj - useful utility extensions for Notepad++
+* \utilities\nppformats\formatUtils.dproj - useful utility extensions for Notepad++ (not FHIR specific)
 * \utilities\cde\ClinicalDocumentEditor.dproj - word processor demo + CDA editor. Planned to be moved to FPC/Lazarus 
 * \toolkit\FHIRToolkitR3.dproj and \toolkit\FHIRToolkitR4.dproj - win/osx - deprecated for fhirtoolkit.lpi - see above
 * \transformer\FHIRTransformer.dproj - Prototype transform tool - deprecated for fhirtoolkit.lpi - see above
@@ -79,52 +110,33 @@ Delphi:
 * **library**: the pascal reference implementation with supporting code
 * **exec**: files needed by the server at run time
 
-## Compiling 
+* **1-ClickServer**: Not sure what this is
+* **.github**: ci-build setup
+* **exec**: files required at execution time, and target for the compiled applications (e.g. exec/64)
+* **build**: build scripts for windows and linux. Will install the entire pascal toolchain from scratch  - see below
+* **dependencies**: external code that isn't in it's own repository (mainly for legacy reasons)
+* **doco**: documentation for the product (though most documentation lives in the healthintersections wiki)
+* **fixtures**: resources used for running the tests during the ci-build
+* **install**: install scripts for the windows versions of the applications (to be reviewed)
+* **library**: library code as described above  
+* **npp**: FHIR Npp - being phased out
+* **packages**: lazarus packages for the libraries
+* **resources**: resources used in the test scripts
+* **server**: server code (including the server console)
+* **testcases**: more resources for test cases 
+* **toolkit**: old toolkit being phased out
+* **toolkit2**: new toolkit under development
+* **transformer**: - being phased out
+* **utilities**: - misc other projects as listed above + java code generator for pascal code
 
-The code compiles under either Delphi (windows 32+64) or Lazarus/FPC (windows 32+64/Linux/OSX).
+## Compiling / Building
 
-### Delphi
-
-The code should in principle compile under Delphi XE3+ (any edition, personal will do). Note that 
-in practice, various subtle but breaking changes have been introduced to the runtime library (Streams, 
-Indy) that mean that some fiddling with IFDEFs may be necessary. 10.3 and 10.4 are both expected to 
-work without modification.
-
-In order to properly compile, the following git repositories must be put in these places:
-- https://github.com/grahamegrieve/fhirserver in C:\work\fhirserver
-- https://github.com/grahamegrieve/delphi-markdown in C:\work\markdown
-
-And also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Home (all delphi 
-users should have this installed!)
-
-For design time support for the GUI applications, you need to install treeview and 
-synedit (see in dependencies folders), then open and compile the packages in /packages, 
-and install the 2 design time packages.
-
-Note that the FHIRServer is a *big* compile. You may have problems compiling in 
-resource constrained environments.
-
-### FPC / Lazarus
-
-The code compiles using FPC 3.3.1 / Lazarus 2.1.0 (or more recent). The code depends on some 
-recent bug fixes so older versions are probably not supported.
-  
-The FhirServer depends on the following other GitHub repositories:
-* https://github.com/dezlov/PascalTZ
-* https://github.com/grahamegrieve/delphi-markdown
-
-The toolkit also depends on these repositories:
-* https://github.com/mriscoc/extrasyn
-* https://github.com/BerndGabriel/HtmlViewer
-
-Get a local copy of these, and install their packages. 
-
-## Test Cases
-
-in order to run the tests, you also need the repo https://github.com/FHIR/fhir-test-cases locally, and you'll need to pass this as a parameter to the test cases.
+See [build/readme.md] for further instructions for building the programs in this repository.
 
 ## Building Release
 
 Bulding an actual release requires the following tools
 * Innosetup v6 + 
 * FinalBuilder v8
+
+... todo

@@ -266,10 +266,7 @@ begin
   fn := ini.admin['logging-in'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
-    if (FolderExists('c:\temp')) then
-      FInLog := TLogger.Create('c:\temp\'+fn)
-    else
-      FInLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+fn);
+    FInLog := TLogger.Create(filePath(['[tmp]', fn]));
     FInLog.Policy.FullPolicy := lfpChop;
     FInLog.Policy.MaximumSize := 100*1024*1024;
     FInLog.Policy.AllowExceptions := false;
@@ -278,10 +275,7 @@ begin
   fn := ini.admin['logging-out'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
-    if (FolderExists('c:\temp')) then
-      FOutLog := TLogger.Create('c:\temp\'+fn)
-    else
-      FOutLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+fn);
+    FOutLog := TLogger.Create(filePath(['[tmp]', fn]));
     FOutLog.Policy.FullPolicy := lfpChop;
     FOutLog.Policy.MaximumSize := 300*1024*1024;
     FOutLog.Policy.AllowExceptions := false;

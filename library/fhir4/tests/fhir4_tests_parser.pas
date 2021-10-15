@@ -186,10 +186,10 @@ var
   src, xml, json, json2 : String;
   obs : TFhirObservation;
 begin
-  src := Path(['[tmp]', 'obs.xml']);
-  xml := Path(['[tmp]', 'xml.xml']);
-  json := Path(['[tmp]', 'json.json']);
-  json2 := Path(['[tmp]', 'json2.json']);
+  src := FilePath(['[tmp]', 'obs.xml']);
+  xml := FilePath(['[tmp]', 'xml.xml']);
+  json := FilePath(['[tmp]', 'json.json']);
+  json2 := FilePath(['[tmp]', 'json2.json']);
   if FileExists(src) then
     TFile.Delete(src);
   TFile.Copy(TestSettings.fhirTestFile(['r4', 'examples', 'observation-decimal.xml']), src, false);

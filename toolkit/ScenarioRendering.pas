@@ -156,7 +156,7 @@ end;
 
 
 {$ELSE}
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 {$ENDIF}
 
 

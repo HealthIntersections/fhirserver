@@ -105,10 +105,10 @@ Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}"; 
 ; 3. Data Files
 Source: "..\exec\pack\fhirserver.cfg";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
 Source: "..\exec\pack\fhirserver.web";                        DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\ucum-essence.xml";                      DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\lang.txt";                              DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\tzdata.tar.gz";                         DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\translations.xml";                      DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\ucum.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\lang.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\tz.dat";                                DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\fhir-lang.dat";                         DestDir: "{app}";       Flags: ignoreversion 
 
 ; 4. Documentation
 Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";

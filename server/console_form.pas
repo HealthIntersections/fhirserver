@@ -34,16 +34,15 @@ interface
 
 uses
   {$IFDEF WINDOWS}Windows, {$ENDIF}
-  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry, Types,
-  ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
-  IniFiles, Math,
-  IdTelnet, IdGlobal,
-  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
-  fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects, fdb_sqlite3,
-  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii,
-  fui_lcl_managers,
-  server_config, server_constants,
-  console_managers;
+  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls,
+  StdCtrls, Registry, Types, ExtCtrls, Menus, ActnList, StdActns, Buttons,
+  DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, IniFiles, Math, IdTelnet,
+  IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
+  fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
+  fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
+  tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
+  server_constants, console_managers, frm_about;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -199,6 +198,7 @@ type
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
     edtWebPort1: TEdit;
+    FGraph1: TFGraph;
     FileNewAction: TAction;
     ActionList1: TActionList;
     EditCopy1: TEditCopy;
@@ -364,6 +364,7 @@ type
     Panel50: TPanel;
     Panel51: TPanel;
     Panel52: TPanel;
+    Panel53: TPanel;
     pgMain: TPageControl;
     pgManage: TPageControl;
     Panel1: TPanel;
@@ -521,6 +522,9 @@ type
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
     procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+    procedure MenuItem17Click(Sender: TObject);
+    procedure MenuItem33Click(Sender: TObject);
+    procedure MenuItem37Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
@@ -746,7 +750,7 @@ begin
   GBackgroundTasks.start;
 
   s := getAppConfigDir(false);
-  FIni := TIniFile.create(path([s, 'FHIRConsole.ini']));
+  FIni := TIniFile.create(FilePath([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
 
@@ -923,6 +927,28 @@ begin
 
 end;
 
+procedure TMainConsoleForm.MenuItem17Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainConsoleForm.MenuItem33Click(Sender: TObject);
+begin
+  OpenURL('http://www.healthintersections.com.au/wiki/index.php/Console/Manager_Documentation');
+end;
+
+procedure TMainConsoleForm.MenuItem37Click(Sender: TObject);
+var
+  frm : TConsoleAboutForm;
+begin
+  frm := TConsoleAboutForm.create(self);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
 begin
   ServerConnectionForm.edtServer.Text := FAddress;
@@ -947,7 +973,13 @@ end;
 
 procedure TMainConsoleForm.MenuItem6Click(Sender: TObject);
 begin
-
+  PackageCacheForm := TPackageCacheForm.create(self);
+   try
+     PackageCacheForm.Ini := FIni;
+     PackageCacheForm.showModal;
+   finally
+     PackageCacheForm.free;
+   end;
 end;
 
 procedure TMainConsoleForm.connectToServer(server : String);
@@ -1588,7 +1620,7 @@ var
   combiner : TSnomedCombiner;
   svc : TSnomedServices;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
   if not FileExists(edtInternational.Text) then
     ShowMessage('International File "'+edtInternational.Text+'" not found')
   else if lbEditions.Items.Count = 0 then
@@ -1638,7 +1670,7 @@ begin
         combiner.destination := edtCombinedDestination.text;
         combiner.store := edtCombinedStore.text;
         combiner.Execute;
-        combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
+        combiner.issues.SaveToFile(filePath(['[tmp]', 'snomed-combination-notes.txt']));
         MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
       finally
         combiner.free;

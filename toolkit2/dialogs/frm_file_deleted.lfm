@@ -8,8 +8,9 @@ object DeletedFileActionForm: TDeletedFileActionForm
   Caption = 'Deleted File'
   ClientHeight = 131
   ClientWidth = 574
+  OnCreate = FormCreate
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 37
@@ -114,7 +115,6 @@ object DeletedFileActionForm: TDeletedFileActionForm
         Width = 536
         Align = alClient
         Caption = 'sasd'
-        ParentColor = False
         WordWrap = True
       end
     end

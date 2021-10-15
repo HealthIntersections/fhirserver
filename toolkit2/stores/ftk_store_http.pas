@@ -5,26 +5,29 @@ unit ftk_store_http;
 interface
 
 uses
-  SysUtils, Classes, Dialogs,
-  fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_client,
-  ftk_store, ftk_utilities, ftk_context;
+  Classes, SysUtils,
+  IdUri,
+  fsl_fetcher,
+  fhir_client,
+  ftk_store;
+
+{
+ this implementation share addresses with the server store.
+ that will be used wherever there's a matching registered server for an http:
+ else it falls back to this which is read-only
+}
 
 type
-
   { THTTPStorageService }
-  THTTPStorageService = class (TStorageService)
-  private
-    FOnConnectToServer: TConnectToServerEvent;
-    FServerList : TFslList<TFHIRServerEntry>;
-    procedure resolve(url : String; var server : TFHIRServerEntry; var rtype, id : String);
-  public
-    constructor Create(serverList : TFslList<TFHIRServerEntry>);
-    destructor Destroy; override;
 
+  THTTPStorageService = class (TStorageService)
+  public
     function schemes : TArray<String>; override;
+    function inScope(url : String) : boolean; override;
+
     function CheckTimes : boolean; override;
     function CurrencyCheckFrequency : integer; override;
+    function canSave : boolean; override;
     function load(address : String; doException : boolean) : TLoadedBytes; override;
     function save(address : String; bytes : TBytes) : TDateTime; override;
     function CaptionForAddress(address : String) : String; override;
@@ -36,52 +39,20 @@ type
     function clientForAddress(address : String) : TFHIRClientV; override;
     procedure forceLocation(address : String); override;
     function getName(address : String; mode : TNameMode) : String; override;
-
-    property OnConnectToServer : TConnectToServerEvent read FOnConnectToServer write FOnConnectToServer;
   end;
 
 implementation
 
 { THTTPStorageService }
 
-procedure THTTPStorageService.resolve(url: String; var server : TFHIRServerEntry; var rtype, id: String);
-var
-  e : TFHIRServerEntry;
-  p : TArray<String>;
+function THTTPStorageService.schemes: TArray<String>;
 begin
-  for e in FServerList do
-  begin
-    if url.StartsWith(e.URL) then
-    begin
-      p := url.subString(e.url.length).split(['/']);
-      if (length(p) < 2) then
-        raise EFHIRException.create('Unable to understand '+url+' for server '+e.url);
-      if e.client = nil then
-        OnConnectToServer(self, e);
-      server := e;
-      rtype := p[length(p)-2];
-      id := p[length(p)-1];
-      exit;
-    end;
-  end;
-  raise EFHIRException.create('No registered server for address "'+url+'"');
+  result := ['http', 'https', 'ftp'];
 end;
 
-constructor THTTPStorageService.Create(serverList: TFslList<TFHIRServerEntry>);
+function THTTPStorageService.inScope(url: String): boolean;
 begin
-  inherited create;
-  FServerList := serverList;
-end;
-
-destructor THTTPStorageService.Destroy;
-begin
-  FServerList.free;
-  inherited Destroy;
-end;
-
-function THTTPStorageService.schemes : TArray<String>;
-begin
-  result := ['http', 'https'];
+  result := false;
 end;
 
 function THTTPStorageService.CheckTimes: boolean;
@@ -94,162 +65,83 @@ begin
   result := 5 * 60;
 end;
 
-function THTTPStorageService.load(address: String; doException : boolean): TLoadedBytes;
-var
-  server : TFHIRServerEntry;
-  rtype, id : String;
-  buffer : TFslHTTPBuffer;
-  headers : THTTPHeaders;
+function THTTPStorageService.canSave: boolean;
 begin
-  resolve(address, server, rtype, id);
+  result := false;
+end;
+
+function THTTPStorageService.load(address: String; doException: boolean): TLoadedBytes;
+var
+  fetcher : TInternetFetcher;
+begin
+  fetcher := TInternetFetcher.create;
   try
-    buffer := server.client.customGet(rtype+'/'+id, headers);
-    try
-      result.content := buffer.AsBytes;
-      result.timestamp := buffer.timestamp;
-      result.mimeType := buffer.mimeType;
-    finally
-      buffer.free;
-    end;
-  except
-    on e : EFHIRClientException do
-    begin
-      if doException then
-        raise
-      else if e.errorCode = 404 then
-        result.timestamp := -1
-      else
-        result.timestamp := 0;
-    end;
-    on e : Exception do
-    begin
-      if doException then
-        raise
-      else
-        result.timestamp := 0;
-    end;
+    fetcher.URL := address;
+    fetcher.Fetch;
+    result.content := fetcher.Buffer.AsBytes;
+    result.mimeType := fetcher.ContentType;
+    result.timestamp := fetcher.LastModified;
+  finally
+    fetcher.free;
   end;
 end;
 
-function THTTPStorageService.save(address: String; bytes: TBytes) : TDateTime;
+function THTTPStorageService.save(address: String; bytes: TBytes): TDateTime;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise Exception.create('This store cannot save');
 end;
 
 function THTTPStorageService.CaptionForAddress(address: String): String;
 var
-  server : TFHIRServerEntry;
-  rtype, id : String;
+  uri : TIdUri;
 begin
-  resolve(address, server, rtype, id);
-  result := rtype+'/'+id;
+  uri := TIdURI.create(address);
+  try
+    result := uri.document;
+  finally
+    uri.free;
+  end;
 end;
 
 function THTTPStorageService.describe(address: String): String;
-var
-  server : TFHIRServerEntry;
-  rtype, id : String;
 begin
-  resolve(address, server, rtype, id);
-  result := server.name+':'+rtype+'/'+id;
+  result := CaptionForAddress((address));
 end;
 
 procedure THTTPStorageService.delete(address: String);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise Exception.create('This store cannot delete');
 end;
 
-function THTTPStorageService.openDlg(out newName : String) : boolean;
-//var
-//  dlg : TOpenDialog;
+function THTTPStorageService.openDlg(out newName: String): boolean;
 begin
-  raise EFHIRException.create('Not done yet');
-  //dlg := TOpenDialog.create(handle);
-  //try
-  //  dlg.Filter := 'All Known Files|*.xml; *.json; *.ini; *.txt; *.v2; *.msg; *.hl7; *.template; *.liquid; *.js; *.md; *.htm; *.html|'+
-  //    'XML|*.xml|'+
-  //    'JSON|*.json|'+
-  //    'Ini|*.ini|'+
-  //    'V2 Messages|*.v2; *.msg; *.hl7|'+
-  //    'Liquid Templates|*.template; *.liquid|'+
-  //    'Javascript|*.js|'+
-  //    'Markdown|*.md|'+
-  //    'HTML|*.htm; *.html|'+
-  //    'Text|*.txt|'+
-  //    'All Fles|*.*';
-  //  dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
-  //  dlg.InitialDir := FIni.ReadString('file-store', 'folder', dlg.InitialDir);
-  //  result := dlg.execute;
-  //  if result then
-  //  begin
-  //    newName := 'file:'+dlg.FileName;
-  //    FIni.WriteString('file-store', 'folder', ExtractFilePath(newName));
-  //  end;
-  //finally
-  //  dlg.free;
-  //end;
+  raise Exception.create('Not supported by this store');
 end;
 
-function THTTPStorageService.saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean;
-//var
-//  dlg : TSaveDialog;
-//  fn : String;
+function THTTPStorageService.saveDlg(existing: String; suggestedExtension: String; out newName: String): boolean;
 begin
-  //dlg := TSaveDialog.create(Handle);
-  //try
-  //  dlg.Options := [ofOverwritePrompt, ofEnableSizing, ofViewDetail];
-  //  if (existing <> '') and existing.startsWith('file:') then
-  //  begin
-  //    fn := existing.Substring(5);
-  //    dlg.InitialDir := ExtractFilePath(fn);
-  //    dlg.FileName := ChangeFileExt(ExtractFileName(fn), '.'+suggestedExtension);
-  //  end
-  //  else
-  //  begin
-  //    dlg.InitialDir := FIni.ReadString('file-store', 'folder', '');
-  //    dlg.FileName := 'filename.'+suggestedExtension;
-  //  end;
-  //  result := dlg.Execute;
-  //  if result then
-  //  begin
-  //    newName := 'file:'+dlg.filename;
-  //    FIni.WriteString('file-store', 'folder', ExtractFilePath(dlg.fileName));
-  //  end;
-  //finally
-  //  dlg.free;
-  //end;
+  raise Exception.create('Not supported by this store');
 end;
 
 function THTTPStorageService.MakeFilename(address: String): String;
 begin
-  raise EFHIRException.create('Not done yet');
-//  result := ExtractFileName(address.Substring(5));
+  result := CaptionForAddress(address);
 end;
 
 function THTTPStorageService.clientForAddress(address: String): TFHIRClientV;
-var
-  server : TFHIRServerEntry;
-  rtype, id : String;
 begin
-  resolve(address, server, rtype, id);
-  if server.client = nil then
-    OnConnectToServer(self, server);
-  result := server.client;
+  raise Exception.create('Not supported by this store');
 end;
 
 procedure THTTPStorageService.forceLocation(address: String);
 begin
-  // nothing
+  raise Exception.create('Not supported by this store');
 end;
 
 function THTTPStorageService.getName(address: String; mode: TNameMode): String;
 begin
-  case mode of
-    nameModeFullPath : result := address;
-    nameModeFolder : result := address.Substring(0, address.LastIndexOf('/'));
-    nameModeName : result := address.Substring(address.LastIndexOf('/')+1);
-  else result := '';
-  end;
+  raise Exception.create('Not supported by this store');
 end;
 
 end.
+

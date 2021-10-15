@@ -272,6 +272,7 @@ Type
     procedure testUtf8n;
     procedure testUtf8;
     procedure testUtf16;
+    procedure testFloat;
   end;
 
   TJsonPatchTest = Class (TFslTestSuiteCase)
@@ -1038,9 +1039,9 @@ begin
       else
       begin
         engine.execute(tests, target, patch);
-        StringToFile(target.first.ToXml(true), 'c:\temp\outcome.xml', TEncoding.UTF8);
-        StringToFile(patched.first.ToXml(true), 'c:\temp\patched.xml', TEncoding.UTF8);
-        ok := CheckXMLIsSame('c:\temp\patched.xml', 'c:\temp\outcome.xml', s);
+        StringToFile(target.first.ToXml(true), filePath(['[tmp]', 'outcome.xml']), TEncoding.UTF8);
+        StringToFile(patched.first.ToXml(true), filePath(['[tmp]', 'patched.xml']), TEncoding.UTF8);
+        ok := CheckXMLIsSame(filePath(['[tmp]', 'patched.xml']), filePath(['[tmp]', 'outcome.xml']), s);
         assertTrue(ok, s);
       end;
     end;
@@ -3889,35 +3890,39 @@ var
   f : TFslFile;
   s : AnsiString;
 begin
-  filename := Path([SystemTemp, 'delphi.file.test.txt']);
+  filename := FilePath([SystemTemp, 'delphi.file.test.txt']);
   if FileExists(filename) then
   begin
     FileSetReadOnly(filename, false);
     FileDelete(filename);
   end;
-  assertFalse(FileExists(filename));
+  assertFalse(FileExists(filename), 'FileExists(filename) #1');
   f := TFslFile.Create(filename, fmCreate);
   try
     f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
   finally
     f.Free;
   end;
-  assertTrue(FileExists(filename));
-  assertTrue(FileSize(filename) = 27);
+  assertTrue(FileExists(filename), 'FileExists(filename) #2');
+  assertTrue(FileSize(filename) = 27, 'FileSize(filename) = 27');
   f := TFslFile.Create(filename, fmOpenRead);
   try
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
-    assertTrue(s = TEST_FILE_CONTENT);
+    assertTrue(s = TEST_FILE_CONTENT, 's = TEST_FILE_CONTENT');
   finally
     f.Free;
   end;
+  {$IFDEF WINDOWS}
+  // this doesn't  work on linux; a root account always has full control and can always write and delete a file.
   FileSetReadOnly(filename, true);
   FileDelete(filename);
-  assertTrue(FileExists(filename));
+  assertTrue(FileExists(filename), 'FileExists(filename) #3');
+  {$ENDIF}
+
   FileSetReadOnly(filename, false);
   FileDelete(filename);
-  assertFalse(FileExists(filename));
+  assertFalse(FileExists(filename), 'FileExists(filename) #4');
 end;
 
 procedure TXPlatformTests.TesTFslObject;
@@ -4055,82 +4060,82 @@ var
   dt1, dt2 : Double;
 begin
   // null
-  assertTrue(d1.null);
-  assertFalse(d1.notNull);
+  assertTrue(d1.null, 'd1.null');
+  assertFalse(d1.notNull, 'd1.notNull');
   d1 := TFslDateTime.makeToday;
-  assertTrue(d1.notNull);
-  assertFalse(d1.null);
+  assertTrue(d1.notNull, 'd1.notNull');
+  assertFalse(d1.null, 'd1.null');
   d1 := TFslDateTime.makeNull;
-  assertTrue(d1.null);
-  assertFalse(d1.notNull);
+  assertTrue(d1.null, 'd1.null');
+  assertFalse(d1.notNull, 'd1.notNull');
 
   // format support
-  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456');
-  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z');
-  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000');
-  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000');
-  assertTrue(TFslDateTime.fromXML('2013-04-05').toHL7 = '20130405');
-  assertTrue(TFslDateTime.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456', 'TFslDateTime.fromXML(''2013-04-05T12:34:56'').toHL7 = ''20130405123456''');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z', 'TFslDateTime.fromXML(''2013-04-05T12:34:56Z'').toHL7 = ''20130405123456Z''');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000', 'TFslDateTime.fromXML(''2013-04-05T12:34:56+10:00'').toHL7 = ''20130405123456+1000''');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000', 'TFslDateTime.fromXML(''2013-04-05T12:34:56-10:00'').toHL7 = ''20130405123456-1000''');
+  assertTrue(TFslDateTime.fromXML('2013-04-05').toHL7 = '20130405', 'TFslDateTime.fromXML(''2013-04-05'').toHL7 = ''20130405''');
+  assertTrue(TFslDateTime.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00', 'TFslDateTime.fromHL7(''20130405123456-1000'').toXML = ''2013-04-05T12:34:56-10:00''');
 
   // Date Time conversion
-  assertTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
+  assertTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000', 'TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = ''20130405123456.000''');
   assertWillRaise(test60Sec, EConvertError, '');
   dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
   dt2 := TFslDateTime.fromHL7('20130405123456').DateTime;
-  assertTrue(dt1 = dt2);
+  assertTrue(dt1 = dt2, 'dt1 = dt2');
 
   // comparison
   d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
-  assertTrue(d2.after(d1, false));
-  assertFalse(d1.after(d1, false));
-  assertTrue(d1.after(d1, true));
-  assertFalse(d2.before(d1, false));
-  assertFalse(d1.before(d1, false));
-  assertTrue(d1.before(d1, true));
-  assertFalse(d1.after(d2, false));
-  assertTrue(d1.before(d2, false));
-  assertTrue(d1.compare(d2) = -1);
-  assertTrue(d2.compare(d1) = 1);
-  assertTrue(d1.compare(d1) = 0);
+  assertTrue(d2.after(d1, false), 'd2.after(d1, false)');
+  assertFalse(d1.after(d1, false), 'd1.after(d1, false)');
+  assertTrue(d1.after(d1, true), 'd1.after(d1, true)');
+  assertFalse(d2.before(d1, false), 'd2.before(d1, false)');
+  assertFalse(d1.before(d1, false), 'd1.before(d1, false)');
+  assertTrue(d1.before(d1, true), 'd1.before(d1, true)');
+  assertFalse(d1.after(d2, false), 'd1.after(d2, false)');
+  assertTrue(d1.before(d2, false), 'd1.before(d2, false)');
+  assertTrue(d1.compare(d2) = -1, 'd1.compare(d2) = -1');
+  assertTrue(d2.compare(d1) = 1, 'd2.compare(d1) = 1');
+  assertTrue(d1.compare(d1) = 0, 'd1.compare(d1) = 0');
 
   // Timezone Wrangling
-  d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
+  d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), 'Australia/Melbourne'); // during daylight savings (+11)
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
-  assertTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime));
-  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
-  assertTrue(not d1.equal(d2));
-  assertTrue(d1.sameTime(d2));
-  d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
+  assertTrue(sameInstant(d1.DateTime - TimezoneBias('Australia/Melbourne', EncodeDate(2011, 2, 2)), d2.DateTime), 'sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime)');
+  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'not the sameInstant(d1.UTC.DateTime, d2.DateTime): '+d1.UTC.toXML+' vs '+d2.toXML);
+  assertTrue(not d1.equal(d2), 'not d1.equal(d2)');
+  assertTrue(d1.sameTime(d2), 'd1.sameTime(d2)');
+  d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), 'Australia/Melbourne'); // not during daylight savings (+10)
   d2 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
-  dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
+  dt1 := d1.DateTime - TimezoneBias('Australia/Melbourne', EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
-  assertTrue(sameInstant(dt1, dt2));
-  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
-  assertTrue(not d1.equal(d2));
-  assertTrue(d1.sameTime(d2));
-  assertTrue(TFslDateTime.fromHL7('20130405120000+1000').sameTime(TFslDateTime.fromHL7('20130405100000+0800')));
-  assertTrue(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  assertTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')));
+  assertTrue(sameInstant(dt1, dt2), 'sameInstant(dt1, dt2)');
+  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime), 'sameInstant(d1.UTC.DateTime, d2.DateTime)');
+  assertTrue(not d1.equal(d2), 'not d1.equal(d2)');
+  assertTrue(d1.sameTime(d2), 'd1.sameTime(d2)');
+  assertTrue(TFslDateTime.fromHL7('20130405120000+1000').sameTime(TFslDateTime.fromHL7('20130405100000+0800')), 'TFslDateTime.fromHL7(''20130405120000+1000'').sameTime(TFslDateTime.fromHL7(''20130405100000+0800''))');
+  assertTrue(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')), 'TFslDateTime.fromXML(''2017-11-05T05:30:00.0Z'').sameTime(TFslDateTime.fromXML(''2017-11-05T05:30:00.0Z''))');
+  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')), 'TFslDateTime.fromXML(''2017-11-05T09:30:00.0+04:00'').sameTime(TFslDateTime.fromXML(''2017-11-05T05:30:00.0Z''))');
+  assertTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')), 'TFslDateTime.fromXML(''2017-11-05T01:30:00.0-04:00'').sameTime(TFslDateTime.fromXML(''2017-11-05T05:30:00.0Z''))');
+  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')), 'TFslDateTime.fromXML(''2017-11-05T09:30:00.0+04:00'').sameTime(TFslDateTime.fromXML(''2017-11-05T01:30:00.0-04:00''))');
 
   // Min/Max
-  assertTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
-  assertTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
-  assertTrue(TFslDateTime.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
-  assertTrue(TFslDateTime.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
+  assertTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000', 'TFslDateTime.fromHL7(''20130405123456'').Min.toHL7 = ''20130405123456.000''');
+  assertTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000', 'TFslDateTime.fromHL7(''20130405123456'').Max.toHL7 = ''20130405123457.000''');
+  assertTrue(TFslDateTime.fromHL7('201304051234').Min.toHL7 = '20130405123400.000', 'TFslDateTime.fromHL7(''201304051234'').Min.toHL7 = ''20130405123400.000''');
+  assertTrue(TFslDateTime.fromHL7('201304051234').Max.toHL7 = '20130405123500.000', 'TFslDateTime.fromHL7(''201304051234'').Max.toHL7 = ''20130405123500.000''');
 
-  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), true));
-  assertTrue(not TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), false));
-  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010001'), true));
-  assertTrue(not TFslDateTime.fromHL7('201301010001').before(TFslDateTime.fromHL7('201301010000'), true));
+  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), true), 'TFslDateTime.fromHL7(''201301010000'').before(TFslDateTime.fromHL7(''201301010000''), true)');
+  assertTrue(not TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), false), 'not TFslDateTime.fromHL7(''201301010000'').before(TFslDateTime.fromHL7(''201301010000''), false)');
+  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010001'), true), 'TFslDateTime.fromHL7(''201301010000'').before(TFslDateTime.fromHL7(''201301010001''), true)');
+  assertTrue(not TFslDateTime.fromHL7('201301010001').before(TFslDateTime.fromHL7('201301010000'), true), 'not TFslDateTime.fromHL7(''201301010001'').before(TFslDateTime.fromHL7(''201301010000''), true)');
   //
 //  d1 := UniversalDateTime;
 //  d2 := LocalDateTime;
 //  d3 := TimeZoneBias;
-//  assertTrue(d1 <> d2);
-//  assertTrue(d1 = d2 - d3);
+//  assertTrue(d1 <> d2, 'd1 <> d2');
+//  assertTrue(d1 = d2 - d3, 'd1 = d2 - d3');
 end;
 
 { TTestCriticalSectionThread }
@@ -4327,6 +4332,26 @@ begin
   finally
     f.Free;
   end;
+end;
+
+procedure TJsonTests.testFloat;
+var
+  json : TJsonObject;
+begin
+  json := TJSONParser.Parse('{  "nbf" : 1.622690247979E9, "nbf2" : 1622690247.979, "nbf3" : 1622690247979 }');
+  try
+    assertTrue(json['nbf'] = '1.622690247979E9');
+    assertTrue(json['nbf2'] = '1622690247.979');
+    assertTrue(json['nbf3'] = '1622690247979');
+
+    assertTrue(json.int['nbf'] = 1622690247);
+    assertTrue(json.int['nbf2'] = 1622690247);
+    assertTrue(json.int['nbf3'] = 1622690247979);
+
+  finally
+    json.Free;
+  end;
+
 end;
 
 procedure TJsonTests.TestResource;
@@ -4819,7 +4844,7 @@ procedure TTarGZParserTests.testTzData;
 var
   tgz : TFslList<TFslNameBuffer>;
 begin
-  tgz := load('tzdata.tar.gz');
+  tgz := load(partnerFile('tz.dat'));
   try
     assertTrue(tgz.Count = 12);
   finally

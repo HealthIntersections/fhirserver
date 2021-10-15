@@ -37,6 +37,9 @@ uses
   {$IFDEF LINUX}
   cmem, cthreads,
   {$ENDIF}
+  {$IFDEF OSX}
+  cmem, cthreads, forms,
+  {$ENDIF}
   Classes, SysUtils,
   Interfaces,
   kernel, server_testing;

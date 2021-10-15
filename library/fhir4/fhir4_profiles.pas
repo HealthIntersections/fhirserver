@@ -851,7 +851,7 @@ begin
       begin
         if result.meta = nil then
           result.meta := TFhirMeta.Create;
-        result.meta.profileList.Add(TFHIRUri.Create(profile.url));
+        result.meta.profileList.Add(TFHIRCanonical.Create(profile.url));
       end;
 
       result.Link;

@@ -7223,7 +7223,7 @@ Begin
     result.Name := oElement.Name;
     result.namespace := oElement.namespaceURI;
     result.offset := offset;
-    raise Exception.Create('to do');
+    raise EFslException.Create('to do');
 (*
     for i := 0 to oElement.attributes.Count - 1 Do
     begin

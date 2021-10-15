@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
   fsl_base, fsl_utilities, fsl_stream,
-   fhir_client, fhir_oauth, FHIR.Smart.Login;
+  fhir_objects, fhir_client, fhir_oauth;
 
 type
   TSmartTestMode = (stmAllOk, stmBadRedirect, stmBadLogin);
@@ -231,7 +231,7 @@ begin
     stmBadRedirect:
       result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://'+server.thishost+'-invalid:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
   else
-    raise Exception.Create('not done yet');
+    raise EFslException.Create('not done yet');
   end;
 end;
 

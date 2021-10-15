@@ -598,14 +598,20 @@ type
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
   end;
 
+  { TFHIRWorkerContextV }
+
   TFHIRWorkerContextV = class (TFslObject)
   protected
     FLang : THTTPLanguages;
+    FPackages : TStringList;
 
     function GetVersion: TFHIRVersion; virtual;
   public
     constructor Create; override;
+    destructor Destroy; override;
     function link : TFHIRWorkerContextV; overload;
+
+    property Packages : TStringList read FPackages;
 
     property lang : THTTPLanguages read FLang write FLang;
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
@@ -1140,7 +1146,7 @@ var
 begin
   if self = focus then
   begin
-    raise exception.create('not done yet');
+    raise EFslException.Create('not done yet');
   end
   else if start >= LocationData.parseFinish then // if start is after this, then we don't need to do anything
   begin
@@ -2029,7 +2035,7 @@ end;
 
 procedure TFHIRObject.SetDateValue(Value: TFslDateTime);
 begin
-  raise Exception.Create('This object of type '+className+' does not support date value');
+  raise EFslException.Create('This object of type '+className+' does not support date value');
 end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;
@@ -2276,7 +2282,14 @@ end;
 constructor TFHIRWorkerContextV.Create;
 begin
   inherited;
-  FLang := THTTPLanguages.create('en');
+  FLang := defLang;
+  FPackages := TStringList.create;
+end;
+
+destructor TFHIRWorkerContextV.Destroy;
+begin
+  FPackages.Free;
+  inherited Destroy;
 end;
 
 function TFHIRWorkerContextV.GetVersion: TFHIRVersion;
@@ -2581,7 +2594,7 @@ var
 
 Function LoadSource : TBytes;
 begin
-  result := fsl_stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
+  result := fsl_stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'fhir-lang.dat');
 end;
 
 procedure LoadMessages;

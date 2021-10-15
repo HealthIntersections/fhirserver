@@ -784,7 +784,7 @@ begin
     pn := BN_bin2bn(@b[0], length(b), nil);
   end
   else
-    raise Exception.Create('Cannot load a key without a public key');
+    raise EFslException.Create('Cannot load a key without a public key');
   if privKey and hasPrivateKey then
   begin
     b := privateKey;
@@ -902,7 +902,7 @@ begin
   else if keyType = 'RSA' then
     can := '{"e":"'+FObj['e']+'","kty":"'+FObj['kty']+'","n":"'+FObj['n']+'"}'
   else
-    raise Exception.Create('Unknown key type "'+keyType+'" generating thumbprint');
+    raise EFslException.Create('Unknown key type "'+keyType+'" generating thumbprint');
   hash := TIdHashSHA256.Create;
   try
     b := hash.HashString(can);
@@ -1016,9 +1016,9 @@ begin
   else if (alg = 'ES256') then
   result := encodeJWT(jwt, jwt_es256, key)
   else if (alg = '') then
-    raise Exception.create('No algorithm specified in either header or key')
+    raise EFslException.Create('No algorithm specified in either header or key')
   else
-    raise Exception.create('Algorithm "'+alg+'" not understood')
+    raise EFslException.Create('Algorithm "'+alg+'" not understood')
 end;
 
 class function TJWTUtils.encodeJWT(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String; zip : String): String;
@@ -1110,7 +1110,7 @@ class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
 var
   fn : String;
 begin
-  fn := Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
+  fn := FilePath([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
   BytesToFile(contents, fn);
   try
     result := loadRSAPublicKey(AnsiString(fn));
@@ -2256,7 +2256,7 @@ end;
 function TDigitalSigner.signEnveloped(xml: TBytes; method : TSignatureMethod; keyinfo : boolean): TBytes;
 begin
   {$IFDEF FPC}
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
   {$ELSE}
   result := signEnveloped(xml, function (doc : TMXmlDocument) : TMXmlElement begin result := doc.docElement end, method, keyInfo);
   {$ENDIF}

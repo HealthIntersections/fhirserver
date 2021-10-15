@@ -1998,7 +1998,7 @@ function TInstanceValidator.hint(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.isAbsolute(uri : String) : boolean;
@@ -2164,7 +2164,7 @@ function TInstanceValidator.matchSlice(hostContext: TFhirValidatorHostContext;
   i: integer; ed: TFHIRElementDefinition; childUnsupportedSlicing: boolean;
   ei: TElementInfo): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 
 end;
 
@@ -2363,7 +2363,7 @@ function TInstanceValidator.rule(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.sliceMatches(hostContext : TFhirValidatorHostContext; element : TFhirMMElement; path : String; slicer : TFhirElementDefinition; ed : TFhirElementDefinition; profile : TFhirStructureDefinition; errors : TFslList<TFhirValidationMessage>; stack : TNodeStack) : boolean;
@@ -4237,7 +4237,7 @@ function TInstanceValidator.warning(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.yearIsValid(v : String) : boolean;
@@ -4625,7 +4625,7 @@ procedure TInstanceValidator.checkMaxValueSet(
   element: TFhirMMElement; profile: TFhirStructureDefinition; maxVSUrl,
   c: String);
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 
 end;
 

@@ -332,7 +332,7 @@ begin
   result := [];
   if (FFolder <> '') then
   begin
-    f := path([FFolder, name]);
+    f := FilePath([FFolder, name]);
     if (FileExists(f)) then
       result := FileToBytes(f)
     else
@@ -348,7 +348,7 @@ function TNpmPackageFolder.hasFile(name: String): boolean;
 begin
   if (FFolder <> '') then
   begin
-    result := FileExists(path([FFolder, name]));
+    result := FileExists(FilePath([FFolder, name]));
   end
   else
   begin
@@ -762,7 +762,7 @@ begin
     result := folders[name]
   else 
   begin
-    s := path(['package', name]);
+    s := FilePath(['package', name]);
     if (folders.containsKey(s)) then
       result := folders[s]
     else

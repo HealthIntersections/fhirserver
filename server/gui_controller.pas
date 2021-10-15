@@ -207,14 +207,14 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := Path([ExtractFilePath(ParamStr(0)), s]);
+  result := FilePath([ExtractFilePath(ParamStr(0)), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('ucum');
 //  result.value['type'] := 'ucum';
-//  result.value['source'] := localFile('ucum-essence.xml');
+//  result.value['source'] := localFile('ucum.dat');
   result := nil;
 end;
 
@@ -230,7 +230,7 @@ function makeLang : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('lang');
 //  result.value['type'] := 'lang';
-//  result.value['source'] := localFile('lang.txt');
+//  result.value['source'] := localFile('lang.dat');
   result := nil;
 end;
 
@@ -333,7 +333,7 @@ end;
 procedure TFHIRServerController.Start;
 begin
   if FThread <> nil then
-    raise Exception.Create('Thread already exists');
+    raise EFslException.Create('Thread already exists');
   FThread := TFHIRServerControllerThread.Create(self);
   FThread.Start;
 end;

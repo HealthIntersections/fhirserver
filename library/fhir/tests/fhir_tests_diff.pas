@@ -201,8 +201,8 @@ var
 begin
   e := asXml(expected);
   o := asXml(obtained);
-  StringToFile(e, 'c:\temp\expected.xml', TEncoding.UTF8);
-  StringToFile(o, 'c:\temp\obtained.xml', TEncoding.UTF8);
+  StringToFile(e, filePath(['[tmp]', 'expected.xml']), TEncoding.UTF8);
+  StringToFile(o, filePath(['[tmp]', 'obtained.xml']), TEncoding.UTF8);
   Assert.IsTrue(e = o, mode+' does not match for '+name);
 end;
 

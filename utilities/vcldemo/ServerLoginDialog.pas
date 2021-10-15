@@ -135,7 +135,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, System.UITypes, IniFiles,
   fsl_utilities, fsl_shell, fsl_http,
-  fhir_utilities, fhir_common, fhir_oauth, fui_vcl_smart, fhir_objects, fhir_client_http,
+  fhir_utilities, fhir_common, fhir_oauth, fui_vcl_smart, fhir_objects, fhir_client_http, fhir_client,
   fhir2_client, fhir2_types, fhir2_resources, fhir2_utilities, fhir2_common,
   ProgressDialog, FHIRDemoLogging;
 

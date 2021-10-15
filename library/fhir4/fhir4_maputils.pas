@@ -1765,10 +1765,10 @@ begin
               // simple inferred, map by type
               src := v.get(vmINPUT, rule.sourceList[0].variable);
               if (src = nil) then
-                raise Exception.Create('No source at rule '+map.url+'#'+group.name+'.'+rule.name);
+                raise EFslException.Create('No source at rule '+map.url+'#'+group.name+'.'+rule.name);
               tgt := v.get(vmOUTPUT, rule.targetList[0].variable);
               if (tgt = nil) then
-                raise Exception.Create('No target at rule '+map.url+'#'+group.name+'.'+rule.name);
+                raise EFslException.Create('No target at rule '+map.url+'#'+group.name+'.'+rule.name);
               srcType := src.fhirType();
               tgtType := tgt.fhirType();
               resolveGroupByTypes(map, rule.name, group, rule, srcType, tgtType, rg, rm);

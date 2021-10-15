@@ -561,7 +561,7 @@ begin
       try
         result := TEncoding.UTF8.getString(b);
       except
-        raise Exception.Create('Unable to Read LOINC source String @'+inttostr(iIndex+3)+'+'+inttostr(l));
+        raise EFslException.Create('Unable to Read LOINC source String @'+inttostr(iIndex+3)+'+'+inttostr(l));
       end;
     end;  
   end;

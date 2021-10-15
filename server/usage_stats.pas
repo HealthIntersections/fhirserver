@@ -89,18 +89,18 @@ begin
       try
         id := json.str['package'];
         if id = '' then
-          raise Exception.Create('no package id');
+          raise EFslException.Create('no package id');
         if not id.Contains('.') then
-          raise Exception.Create('invalid package id');
+          raise EFslException.Create('invalid package id');
         if not id.length > 32 then
-          raise Exception.Create('invalid package id');
+          raise EFslException.Create('invalid package id');
         ver := json.str['version'];
         if ver = '' then
-          raise Exception.Create('no package ver');
+          raise EFslException.Create('no package ver');
         if not ver.length > 32 then
-          raise Exception.Create('invalid package ver');
+          raise EFslException.Create('invalid package ver');
         json.str['date'] := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', TFslDateTime.makeUTC.DateTime);
-        BytesToFile(TJSONWriter.writeObject(json), fsl_utilities.Path([FDirectory, id+'#'+ver+'.json']));
+        BytesToFile(TJSONWriter.writeObject(json), fsl_utilities.FilePath([FDirectory, id+'#'+ver+'.json']));
       finally
         json.free;
       end;

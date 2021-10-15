@@ -622,7 +622,7 @@ begin
 //        if m.value is TFhirReference then
 //          ref := (m.value as TFhirReference).reference
 //        else
-//          raise Exception.Create('Unexpected type');
+//          raise EFslException.Create('Unexpected type');
 //        if ref.StartsWith('Patient/') then
 //          st.Add(ref.Substring(9));
 //      end;
@@ -3547,12 +3547,12 @@ end;
 
 procedure TServerTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TServerTransformerServices.createType(appInfo: TFslObject; tn: String): TFHIRObject;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 destructor TServerTransformerServices.Destroy;
@@ -3569,7 +3569,7 @@ end;
 function TServerTransformerServices.performSearch(appInfo: TFslObject;
   url: String): TFslList<TFHIRObject>;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TServerTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;

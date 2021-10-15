@@ -485,7 +485,7 @@ begin
     if (sd <> nil) and (sd.kind = StructureDefinitionKindLogical) then
     begin
       // result := Manager.build(context, sd);
-      raise Exception.Create('Not Done yet');
+      raise EFslException.Create('Not Done yet');
     end
     else
     begin
@@ -523,7 +523,7 @@ end;
 
 function TLocalTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 { TMapBreakpointResolver }
@@ -894,7 +894,7 @@ var
   js : TFHIRJavascript;
 begin
   if not checkCanRun(executionDetails, true, msg) then
-    raise Exception.Create(msg);
+    raise EFslException.Create(msg);
   CheckTerminologyServer;
   services := TFHIRConversionEngine.Create(FContext.Link, FTxServer.link, nil);
   try
@@ -1106,9 +1106,9 @@ var
   msg : String;
 begin
 //  if not checkCanRun(executionDetails, true, msg) then
-//    raise Exception.Create(msg);
+//    raise EFslException.Create(msg);
 //  case executionDetails.kind of
-//    ekV2 : raise Exception.Create('Not done yet');
+//    ekV2 : raise EFslException.Create('Not done yet');
 //    ekCDA: executeCDA(executionDetails, false);
 //  end;
 end;

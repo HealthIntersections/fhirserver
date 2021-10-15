@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities, fsl_threads,
   fsl_http,
   fsl_npm, fsl_npm_cache,
-  fhir_objects, fhir_factory, fhir_common, 
+  fhir_objects, fhir_factory, fhir_common,
   fhir5_types, fhir5_resources, fhir5_resources_base;
 
 type
@@ -57,7 +57,7 @@ type
     property SearchParameters : TFslList<TFHIRSearchParameter> read FSearchParameters;
   end;
 
- TFHIRMetadataResourceManager<T : TFHIRMetadataResource> = class (TFslObject)
+ TFHIRMetadataResourceManager<T : TFhirCanonicalResource> = class (TFslObject)
   private
     FMap : TFslMap<T>;
     FList : TFslList<T>;
@@ -84,7 +84,7 @@ type
     function count: integer;
     procedure clear;
     procedure listAll(list: TFslList<T>);
-    procedure listAllM(list: TFslList<TFHIRMetadataResource>);
+    procedure listAllM(list: TFslList<TFhirCanonicalResource>);
   end;
 
 
@@ -215,7 +215,7 @@ end;
 
 function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);
@@ -559,7 +559,7 @@ begin
   list.addAll(Flist);
 end;
 
-procedure TFHIRMetadataResourceManager<T>.listAllM(list : TFslList<TFHIRMetadataResource>);
+procedure TFHIRMetadataResourceManager<T>.listAllM(list : TFslList<TFhirCanonicalResource>);
 var
   tt : T;
 begin

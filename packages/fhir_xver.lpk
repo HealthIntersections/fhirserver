@@ -10,13 +10,13 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fxver"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\"/>
+        <UnitOutputDirectory Value="lib\fxver\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>
       <Item>
         <Filename Value="..\library\fxver\fxver_conversion_engine.pas"/>
-        <UnitName Value="FHIR.Conversion.Engine"/>
+        <UnitName Value="fxver_conversion_engine"/>
       </Item>
       <Item>
         <Filename Value="..\library\fxver\fxver_convertor_30_40.pas"/>

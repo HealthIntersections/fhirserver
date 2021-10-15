@@ -1,5 +1,33 @@
 unit console_ep_edit;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -7,6 +35,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   Buttons,
+  fsl_base,
   fdb_dialects, fdb_manager, fdb_odbc, fdb_odbc_objects,
   server_config, utilities,
   install_form;
@@ -31,11 +60,13 @@ type
     edtSQLiteFile: TEdit;
     edtPath: TEdit;
     edtServer: TEdit;
+    edtFolder: TEdit;
     edtUsername: TEdit;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
+    Label13: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -148,6 +179,7 @@ begin
   edtUsername.Enabled := not rbSQLite.Checked;
   edtPassword.Enabled := not rbSQLite.Checked;
   edtSQLiteFile.Enabled := rbSQLite.Checked;
+  cbAutocreate.enabled := rbSQLite.Checked;
 
   if not rbSQLite.Checked then
   begin
@@ -185,13 +217,13 @@ begin
     edtIdentity.text := EP.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type'].value);
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
-    cbxTypeChange(self);
     edtPath.text := EP['path'].value;
     chkActive.Checked := EP['active'].readAsBool;
 
+    edtFolder.Text := EP['folder'].value;
     rbMSSQL.Checked := EP['db-type'].value = 'mssql';
     rbMySQL.Checked := EP['db-type'].value = 'mysql';
-    rbMSSQLChange(self);
+    rbSQLite.Checked := EP['db-type'].value = 'sqlite';
     if EP['db-type'].value <> '' then
       cbxDriver.Text := EP['db-type'].value;
     edtServer.Text := EP['db-server'].value;
@@ -199,6 +231,9 @@ begin
     edtUsername.Text := EP['db-username'].value;
     edtPassword.Text := EP['db-password'].value;
     edtSQLiteFile.Text := EP['db-file'].value;
+    cbAutocreate.checked := EP['db-auto-create'].valueBool;
+    rbMSSQLChange(self);
+    cbxTypeChange(self);
   end;
 end;
 
@@ -211,6 +246,7 @@ end;
 
 procedure TEditEPForm.cbxTypeChange(Sender: TObject);
 begin
+  // 1. sorting out version
   if (cbxType.ItemIndex = -1) or (hasVersions(cbxType.items[cbxType.ItemIndex])) then
   begin
     cbxVersion.Enabled := true;
@@ -226,39 +262,38 @@ begin
     cbxVersion.Enabled := false;
     cbxVersion.itemIndex := -1;
   end;
+
+  // sorting out source
   if (cbxType.ItemIndex = -1) or (hasDatabase(cbxType.items[cbxType.ItemIndex])) then
   begin
+    edtFolder.Enabled := cbxType.ItemIndex = -1;
     rbMSSQL.enabled := true;
     rbMySQL.enabled := true;
-    cbxDriver.enabled := true;
-    edtServer.enabled := true;
-    edtDBName.enabled := true;
-    edtUsername.enabled := true;
-    edtPassword.enabled := true;
-    edtSQLiteFile.enabled := false;
-  end
-  else if (hasSrcFolder(cbxType.items[cbxType.ItemIndex])) then
-  begin
-    rbMSSQL.enabled := false;
-    rbMySQL.enabled := false;
-    cbxDriver.enabled := false;
-    edtServer.enabled := false;
-    edtDBName.enabled := false;
-    edtUsername.enabled := false;
-    edtPassword.enabled := false;
-    edtSQLiteFile.enabled := true;
+    rbSQLite.enabled := true;
+    cbxDriver.enabled := not rbSQLite.Checked;
+    edtServer.enabled := not rbSQLite.Checked;
+    edtDBName.enabled := not rbSQLite.Checked;
+    edtUsername.enabled := not rbSQLite.Checked;
+    edtPassword.enabled := not rbSQLite.Checked;
+    edtSQLiteFile.enabled := rbSQLite.Checked;
+    cbAutocreate.enabled := rbSQLite.Checked;
   end
   else
   begin
     rbMSSQL.enabled := false;
     rbMySQL.enabled := false;
+    rbSQLite.enabled := false;
     cbxDriver.enabled := false;
     edtServer.enabled := false;
     edtDBName.enabled := false;
     edtUsername.enabled := false;
     edtPassword.enabled := false;
     edtSQLiteFile.enabled := false;
+    cbAutocreate.enabled := false;
+    edtFolder.Enabled := hasSrcFolder(cbxType.items[cbxType.ItemIndex]);
   end;
+  btnDBTest.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
+  btnEPInstall.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
 end;
 
 
@@ -297,15 +332,18 @@ begin
   if not hasVersion(EP['type'].value) then
     EP['version'].value := ''
   else if cbxVersion.itemIndex = -1 then
-    raise Exception.create('A Version is required')
+    raise EFslException.Create('A Version is required')
   else
     EP['version'].value := cbxVersion.Items[cbxVersion.itemIndex];
   EP['active'].ValueBool := chkActive.Checked;
 
   EP['path'].value := edtPath.text;
+  EP['folder'].value := edtFolder.Text;
   EP['db-type'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     EP['db-type'].value := 'mysql'
+  else if rbSQLite.Checked then
+    EP['db-type'].value := 'sqlite'
   else
     EP['db-type'].value := 'mssql';
   EP['db-server'].value := edtServer.Text;
@@ -313,6 +351,7 @@ begin
   EP['db-username'].value := edtUsername.Text;
   EP['db-password'].value := edtPassword.Text;
   EP['db-file'].value := edtSQLiteFile.Text;
+  EP['db-auto-create'].valueBool := cbAutocreate.checked;
 end;
 
 end.

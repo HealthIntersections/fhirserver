@@ -3,6 +3,7 @@ program fhirtoolkit;
 {$I fhir.inc}
 
 uses
+  cmem,
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
@@ -19,9 +20,11 @@ uses
   ftk_frame_resource, frm_about, ftk_version, frm_edit_changes,
   frm_server_settings, ftk_utilities, ftk_serverlist, ftk_constants,
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
-  ftk_store_http, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
+  ftk_store_server, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
   ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
-  frm_file_deleted, frm_file_changed, frm_project_editor;
+  frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager,
+  dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5, ftk_worker_home,
+  dlg_open_url, ftk_store_http;
 
 {$R *.res}
 
@@ -37,7 +40,6 @@ begin
   frm := TToolkitAboutForm.create(Application);
   try
     frm.Button1.Visible := false;
-    frm.height := frm.pnlBase.height;
     frm.Show;
     frm.Update;
     Application.CreateForm(TMainToolkitForm, MainToolkitForm);
@@ -45,10 +47,6 @@ begin
   finally
     frm.Free;
   end;
-  Application.CreateForm(TClipboardChooserForm, ClipboardChooserForm);
-  Application.CreateForm(TDeletedFileActionForm, DeletedFileActionForm);
-  Application.CreateForm(TModifiedFileActionForm, ModifiedFileActionForm);
-  Application.CreateForm(TProjectSettingsForm, ProjectSettingsForm);
   Application.Run;
 end.
 

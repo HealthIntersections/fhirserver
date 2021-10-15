@@ -528,7 +528,7 @@ end;
 function TCovidExtension.resolveConstant(context: TFHIRPathExecutionContext; s: String; var obj: TFHIRObject): boolean;
 begin
   if s = '%covid' then
-    raise Exception.Create('No Covid Specific object yet')
+    raise EFslException.Create('No Covid Specific object yet')
   else
     result := inherited resolveConstant(context, s, obj);
 end;

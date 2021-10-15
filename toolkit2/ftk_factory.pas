@@ -1,5 +1,33 @@
 unit ftk_factory;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -10,11 +38,11 @@ uses
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_crypto,
   fhir_objects,
 
-  ftk_context, ftk_store,
+  ftk_context, ftk_store, ftk_store_temp,
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
   ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir, ftk_editor_jwt,
 
-  ftk_worker_server;
+  ftk_worker_server, ftk_worker_home;
 
 type
 
@@ -28,9 +56,9 @@ type
     constructor Create(context : TToolkitContext; handle: TComponent);
     destructor Destroy; override;
     function makeNewSession(kind : TSourceEditorKind) : TToolkitEditSession;
-    function examineFile(filename, mimeType : String; const bytes : TBytes) : TToolkitEditSession;
+    function examineFile(filename, mimeType : String; const bytes : TBytes; exception : boolean) : TToolkitEditSession;
 
-    function makeEditor(session : TToolkitEditSession) : TToolkitEditor;
+    function makeEditor(session : TToolkitEditSession; tempStore : TFHIRToolkitTemporaryStorage) : TToolkitEditor;
 
     class function determineFormatFromText(src : String; var content : TBytes) : TSourceEditorKindSet;
     class function determineFormatFromFmt(fmt : TClipboardFormat; src : Tbytes; var kind : TSourceEditorKind; var content : TBytes) : boolean;
@@ -130,7 +158,7 @@ begin
     result := TToolkitEditSession.create(sekJson);
 end;
 
-function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes): TToolkitEditSession;
+function TToolkitFactory.examineFile(filename, mimeType: String; const bytes: TBytes; exception : boolean): TToolkitEditSession;
 var
   ext, s : String;
   xml : TMXmlDocument;
@@ -260,11 +288,14 @@ begin
       end;
     except
     end;
-    ShowMessage('The file '+filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
+    if exception then
+      raise EFslException.create(filename+' isn''t recognised by this application (unknown extension, and not xml or json)')
+    else
+      ShowMessage(filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
   end;
 end;
 
-function TToolkitFactory.makeEditor(session : TToolkitEditSession): TToolkitEditor;
+function TToolkitFactory.makeEditor(session : TToolkitEditSession; tempStore : TFHIRToolkitTemporaryStorage): TToolkitEditor;
 var
   store : TStorageService;
 begin
@@ -273,6 +304,7 @@ begin
   sekFHIR : result := TFHIREditor.create(FContext{.link}, session, store.link);
   sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
   sekText : result := TTextEditor.create(FContext{.link}, session, store.link);
+  sekLiquid : result := THtmlEditor.create(FContext{.link}, session, store.link);
   sekXml : result := TXmlEditor.create(FContext{.link}, session, store.link);
   sekJson : result := TJsonEditor.create(FContext{.link}, session, store.link);
   sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);
@@ -280,9 +312,10 @@ begin
   sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
   sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
   sekServer : result := TServerWorker.create(FContext{.link}, session, store.link);
+  sekHome : result := THomePageWorker.create(FContext{.link}, session, store.link, tempStore.link);
   sekJWT : result := TJWTEditor.create(FContext{.link}, session, store.link);
   else
-    raise Exception.create('not supported yet');
+    raise EFslException.Create('not supported yet');
   end;
 end;
 

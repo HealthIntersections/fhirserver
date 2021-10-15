@@ -1,5 +1,33 @@
 unit endpoint_txsvr;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -203,8 +231,6 @@ type
     UTGFolder : String;
     FWeb : TTerminologyServerWebServer;
     function version : TFHIRVersion;
-    function makeFactory : TFHIRFactory;
-    function makeServerFactory : TFHIRServerFactory;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
@@ -223,6 +249,9 @@ type
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
   end;
+
+function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
+function makeTxServerFactory(version : TFHIRVersion) : TFHIRServerFactory;
 
 implementation
 
@@ -1311,7 +1340,7 @@ begin
   result := 'Terminology Server using '+describeDatabase(Config);
 end;
 
-function TTerminologyServerEndPoint.makeFactory: TFHIRFactory;
+function makeTxFactory(version : TFHIRVersion): TFHIRFactory;
 begin
   case version of
     fhirVersionRelease2 : result := TFHIRFactoryR2.create;
@@ -1319,11 +1348,11 @@ begin
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
     fhirVersionRelease5 : result := TFHIRFactoryR5.create;
   else
-    raise Exception.Create('Unsupported Version');
+    raise EFslException.Create('Unsupported Version');
   end;
 end;
 
-function TTerminologyServerEndPoint.makeServerFactory: TFHIRServerFactory;
+function makeTxServerFactory(version : TFHIRVersion): TFHIRServerFactory;
 begin
   result := TTerminologyServerFactory.Create(version);
 end;
@@ -1342,24 +1371,25 @@ begin
 end;
 
 procedure TTerminologyServerEndPoint.Load;
+var
+  pid : String;
 begin
-  FStore := TTerminologyFhirServerStorage.Create(makeFactory);
-  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeServerFactory);
+  FStore := TTerminologyFhirServerStorage.Create(makeTxFactory(version));
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(version));
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
+
   FStore.loadPackage(FStore.factory.corePackage, false);
   if UTGFolder <> '' then
-    FStore.loadUTGFolder(UTGFolder)
-  else if FStore.factory.txPackage <> '' then
-    FStore.loadPackage(FStore.factory.txPackage, true);
-  FStore.loadPackage(FStore.factory.txSupportPackage, false);
-  FStore.Initialise;
+    FStore.loadUTGFolder(UTGFolder);
 
-  // still to be done: load ad-hoc files
-//    for s in listF do
-//      store.loadFile(factory, s);
+  for pid in Config['packages'].values do
+    if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
+      FStore.loadPackage(pid, true);
+
+  FStore.Initialise;
 end;
 
 procedure TTerminologyServerEndPoint.Unload;
@@ -1394,7 +1424,7 @@ var
 begin
   conn := Database.getConnection('install');
   try
-    dbi := TFHIRDatabaseInstaller.Create(conn, makeFactory, makeServerFactory);
+    dbi := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(version), makeTxServerFactory(version));
     try
       dbi.InstallTerminologyServer;
     finally
@@ -1435,12 +1465,12 @@ end;
 
 procedure TTerminologyServerEndPoint.LoadPackages(plist: String);
 begin
-  raise Exception.Create('This operation does not apply to this endpoint');
+  raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
 procedure TTerminologyServerEndPoint.updateAdminPassword;
 begin
-  raise Exception.Create('This operation does not apply to this endpoint');
+  raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
 function TTerminologyServerEndPoint.version: TFHIRVersion;
@@ -1457,7 +1487,7 @@ begin
   else if (v = 'r5') then
     result := fhirVersionRelease5
   else
-    raise Exception.Create('Unknown version "'+v+'"');
+    raise EFslException.Create('Unknown version "'+v+'"');
 end;
 
 { TTerminologyServerWebServer }
@@ -1480,7 +1510,7 @@ end;
 
 function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
-  raise Exception.Create('Authentication is not supported for the terminology server');
+  raise EFslException.Create('Authentication is not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
@@ -1574,7 +1604,7 @@ end;
 
 function TTerminologyServerWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
-  raise Exception.Create('Uploads are not supported for the terminology server');
+  raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.data: TTerminologyServerData;
@@ -1589,7 +1619,7 @@ end;
 
 function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 function TTerminologyServerWebServer.factory: TFHIRFactory;
@@ -1605,12 +1635,12 @@ end;
 
 function TTerminologyServerWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 begin
-  raise Exception.Create('The WebUI is not supported for the terminology server');
+  raise EFslException.Create('The WebUI is not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
-  raise Exception.Create('Uploads are not supported for the terminology server');
+  raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.terminologies: TCommonTerminologies;

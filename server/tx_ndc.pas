@@ -56,6 +56,7 @@ type
     FKey : integer;
     procedure importProducts(callback: TWorkProgressEvent);
     procedure importPackages(callback: TWorkProgressEvent);
+    procedure importVersion;
     procedure processProduct(fields: TFslStringList);
     procedure processPackage(fields: TFslStringList);
     procedure prepareDatabase;
@@ -223,6 +224,11 @@ begin
   inherited;
 end;
 
+procedure TNdcImporter.process(callback: TInstallerCallback);
+begin
+
+end;
+
 procedure TNdcImporter.finishDatabase;
 var
   s : String;
@@ -258,22 +264,12 @@ begin
     FConn.ExecSQL('Insert into NDCRoutes (NDCKey, Name) values ('+inttostr(FRoutes[s])+', '''+SQLWrapString(s)+''')');
 end;
 
-procedure TNdcImporter.process(callback: TInstallerCallback);
-begin
-  //FOrgs.Clear;
-  //FTypes.Clear;
-  //prepareDatabase;
-  //importProducts(callback);
-  //importPackages(callback);
-  //finishDatabase;
-  //FConn.Release;
-end;
-
 procedure TNdcImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
 begin
   FOrgs.Clear;
   FTypes.Clear;
   prepareDatabase;
+  importVersion;
   importProducts(callback);
   importPackages(callback);
   finishDatabase;
@@ -325,6 +321,7 @@ begin
     FConn.ExecSQL('CREATE UNIQUE INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
     FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
     FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
+    FConn.ExecSQL('CREATE TABLE NDCVersion (Version String NOT NULL)');
   finally
     md.Free;
   end;
@@ -336,7 +333,7 @@ begin
     exit(copy(s, 1, 255));
 
   if s.Length > len then
-    raise Exception.Create(name+' Too long ('+inttostr(s.Length)+')');
+    raise EFslException.Create(name+' Too long ('+inttostr(s.Length)+')');
   result := s;
 end;
 
@@ -453,6 +450,14 @@ begin
       FConn.commit;
   end;
   callback(self, 100, true, 'Finished Processing');
+end;
+
+procedure TNdcImporter.importVersion;
+var
+  v : String;
+begin
+  v := FileToString(Path([FSource, 'version.txt']), TEncoding.UTF8).trim();
+  FConn.ExecSQL('Insert into NDCVersion (Version) values ('''+SQLWrapString(v)+''')');
 end;
 
 procedure TNdcImporter.importProducts(callback: TWorkProgressEvent);
@@ -839,7 +844,7 @@ begin
       else if value = 'product' then
         res := TNDCFilterContext.Create(fcmProduct, FDb.GetConnection('ndc.filter'))
       else
-        raise Exception.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
+        raise EFslException.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
       if forIteration then
       begin
         if res.FMode = fcmProduct then
@@ -851,7 +856,7 @@ begin
       end;
     end
     else
-      raise Exception.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
+      raise EFslException.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
     result := res.link;
   finally
     res.free;

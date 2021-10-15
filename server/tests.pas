@@ -280,19 +280,19 @@ end;
 //    thisOut.Resource.text := nil;
 //    thisOut.Profile := FDataStore.ValidatorContext.profiles['http://hl7.org/fhir/Profile/'+name].Link;
 //    thisOut.Build;
-//    saveResource(thisOut.Resource, 'c:\temp\start.json');
-//    saveResource(thisOut.Answers, 'c:\temp\qa.json');
+//    saveResource(thisOut.Resource, filePath(['[tmp]', 'start.json');
+//    saveResource(thisOut.Answers, filePath(['[tmp]', 'qa.json');
 //
 //    thisIn.answers := thisOut.Answers.Link;
 //    thisIn.Profile := FDataStore.ValidatorContext.profiles['http://hl7.org/fhir/Profile/'+name].Link;
 //    thisIn.UnBuild;
-//    saveResource(thisIn.Resource, 'c:\temp\end.json');
+//    saveResource(thisIn.Resource, filePath(['[tmp]', 'end.json');
 //
 //  finally
 //    thisOut.Free;
 //    thisIn.Free;
 //  end;
-//  ExecuteOpen('c:\Program Files (x86)\WinMerge\WinMergeU.exe', 'c:\temp\start.json c:\temp\end.json');
+//  ExecuteOpen('c:\Program Files (x86)\WinMerge\WinMergeU.exe', filePath(['[tmp]', 'start.json filePath(['[tmp]', 'end.json');
 //end;
 //
 

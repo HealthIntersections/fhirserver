@@ -46,9 +46,13 @@ Uses
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
 
+  {$IFDEF FPC}
+  fui_fake_console,
+  {$ENDIF}
+
   server_constants, server_config, utilities, server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  tx_manager, telnet_server, web_source, web_server, web_cache,
+  tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder;
 
@@ -115,7 +119,6 @@ type
 
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   protected
-    FStartTime : UInt64;
     function command(cmd: String): boolean; override;
   public
     constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
@@ -143,6 +146,9 @@ implementation
 uses
   JclDebug;
 {$ENDIF}
+
+var
+  GStartTime : UInt64;
 
 { TFhirServerMaintenanceThread }
 
@@ -227,7 +233,6 @@ end;
 
 constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
 begin
-  FStartTime := GetTickCount64;
   inherited create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
@@ -270,8 +275,8 @@ begin
     SetCacheStatus(settings.Ini.web['caching'].value = 'true');
 
     // post start up time.
-    getReport('|', true); // base line the object counting
-    Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
+    getReport('|', true); // base line the object countig
+    Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
     Logging.Starting := false;
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
   except
@@ -386,10 +391,10 @@ begin
     Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
   end
-  else if FolderExists('..\..\server\web') then
+  else if FolderExists(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web'])) then
   begin
-    Logging.log('Web source from ..\..\server\web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('..\..\server\web')
+    Logging.log('Web source from ../../server/web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web']))
   end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
@@ -397,7 +402,7 @@ begin
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceZipProvider.Create(partnerFile('fhirserver.web'))
   end
   else
-    raise Exception.Create('Unable to find web source');
+    raise EFslException.Create('Unable to find web source');
 
   for ep in FEndPoints do
     FWebServer.registerEndPoint(ep);
@@ -540,7 +545,7 @@ begin
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else
-    raise Exception.Create('Unknown server type "' +config['type'].value+'"');
+    raise EFslException.Create('Unknown server type "' +config['type'].value+'"');
 end;
 
 function TFHIRServiceKernel.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
@@ -632,12 +637,16 @@ begin
       end
       else
       begin
+        {$IFDEF WINDOWS}
         try
           writeln('No -cmd parameter - exiting now'); // won't see this if an actual windows service
         except
           // catch 105 err
         end;
         svc.Execute;
+        {$ELSE}
+        svc.ConsoleExecute;
+        {$ENDIF}
       end;
     finally
       svc.Free;
@@ -685,23 +694,24 @@ begin
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
-procedure ExecuteFhirServer;
+procedure ExecuteFhirServerInner;
 var
   cfg : TFHIRServerConfigFile;
   cfgName : String;
   fn : String;
   tz : TDateTime;
+  zc : String;
 begin
+  GStartTime := GetTickCount64;
+
   {$IFDEF WINDOWS}
   SetConsoleTitle('FHIR Server');
   {$ENDIF}
 
   if getCommandLineParam('log', fn) then
     Logging.logToFile(fn)
-  else if (FolderExists('c:\temp')) then
-    Logging.logToFile('c:\temp\fhirserver.log')
   else
-    Logging.logToFile(tempFile('fhirserver.log'));
+    Logging.logToFile(filePath(['[tmp]', 'fhirserver.log']));
   Logging.FileLog.Policy.FullPolicy := lfpChop;
   Logging.FileLog.Policy.MaximumSize := 1024 * 1024;
 
@@ -713,7 +723,13 @@ begin
   logCompileInfo;
 
   if ParamCount = 0 then
-    Logging.log('FHIR Server running as a Service')
+  begin
+    {$IFDEF WINDOWS}
+    Logging.log('FHIR Server running as a Service');
+    {$ELSE}
+    Logging.log('FHIR Server: no parameters');
+    {$ENDIF}
+  end
   else
     Logging.log(commandLineAsString);
 
@@ -722,13 +738,18 @@ begin
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
+    {$IFDEF OSX}
+    // todo: do something about this
+    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+    {$ENDIF}
+    if GetOpenSSLLoader.OpenSSLPath = '' then
+      Logging.Log('OpenSSL 1.1 from (default)')
+    else
+      Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
     InitOpenSSL;
     {$IFDEF DELPHI}
     JclStartExceptionTracking;
     CoInitialize(nil);
-    {$ENDIF}
-    {$IFDEF FPC}
-    initialiseTZData(partnerFile('tzdata.tar.gz'));
     {$ENDIF}
     tz := TimeZoneBias;
     if tz = 0 then
@@ -749,6 +770,10 @@ begin
         {$ELSE}
           cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
         {$ENDIF}
+        Logging.Log('Config: '+cfgName);
+
+        if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
+          cfgName := buildConfigFromSource(cfgName);
 
         cfg := TFHIRServerConfigFile.create(cfgName);
         try
@@ -778,6 +803,28 @@ begin
   end;
 end;
 
+procedure ExecuteFhirServer;
+{$IFDEF FPC}
+var
+  fc : TFakeConsoleForm;
+begin
+  if hasCommandLineParam('fake-console') then
+  begin
+    Application.Initialize;
+    Application.CreateForm(TFakeConsoleForm, fc);
+    fc.Op := ExecuteFhirServerInner;
+    fc.showModal;
+    fc.close;
+    fc.free;
+  end
+  else
+    ExecuteFhirServerInner;
+end;
+{$ELSE}
+begin
+  ExecuteFhirServerInner;
+end;
+{$ENDIF}
 
 end.
 

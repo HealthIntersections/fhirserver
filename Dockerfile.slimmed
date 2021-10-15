@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y xvfb libgtk2.0-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /work/fhirserver
+ENV DISPLAY :99
+ENV PORT 80
+
+COPY --from=fhirserver /work/fhirserver/exec/64 /work/fhirserver/exec/64
+COPY --from=fhirserver /work/fhirserver/exec/pack/linux/libChakraCore.so /usr/lib/libChakraCore.so
+
+ENV TERMINOLOGY_CACHE /terminology
+VOLUME /terminology
+
+RUN printf '#!/bin/bash \n\
+Xvfb  :99 -screen 0 1024x768x8 -nolisten tcp & \n\
+echo "[web]" > /work/fhirserver/exec/64/web.ini; \n\
+echo "http=${PORT}" >> /work/fhirserver/exec/64/web.ini; \n\
+/work/fhirserver/exec/64/fhirserver $(eval echo "$@")'> /bin/entrypoint.sh && \
+chmod +x /bin/entrypoint.sh
+
+ENTRYPOINT ["/bin/entrypoint.sh"]
+
+CMD ["-cmd",  "exec",  "-cfg", "http://tx.fhir.org/config", "-version",  "4", "-local", "$TERMINOLOGY_CACHE"]

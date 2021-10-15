@@ -4463,7 +4463,7 @@ begin
       on e : exception do
       begin
 //        dbg := TEncoding.ANSI.getString(LBuffer, StartIndex, ByteBufLen);
-//        BytesToFile(LBuffer, StartIndex, ByteBufLen, 'c:\temp\encoding.bin');
+//        BytesToFile(LBuffer, StartIndex, ByteBufLen, filePath(['[tmp]', 'encoding.bin']));
         if FCheckEncoding and (tries > FEncoding.GetMaxByteCount(1)) then
          raise EEncodingError.create(e.message{+ '('+dbg+')'})
         else
@@ -5711,7 +5711,7 @@ end;
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  raise Exception.create('To do');
+  raise EFslException.Create('To do');
 end;
 {$ENDIF}
 

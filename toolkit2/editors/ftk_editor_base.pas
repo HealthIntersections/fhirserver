@@ -1,5 +1,33 @@
 unit ftk_editor_base;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -24,11 +52,13 @@ type
     FMenuItemP: TMenuItem;
     FMenuItem: TMenuItem;
     function GetCaption: String;
+    function GetChecked: boolean;
     function GetEnabled: boolean;
     function GetEvent: TNotifyEvent;
     function GetImageIndex: integer;
     function GetTag: integer;
     procedure SetCaption(AValue: String);
+    procedure SetChecked(AValue: boolean);
     procedure SetEnabled(AValue: boolean);
     procedure SetEvent(AValue: TNotifyEvent);
     procedure SetImageIndex(AValue: integer);
@@ -43,6 +73,7 @@ type
     property imageIndex : integer read GetImageIndex write SetImageIndex;
     property tag : integer read GetTag write SetTag;
     property enabled : boolean read GetEnabled write SetEnabled;
+    property checked : boolean read GetChecked write SetChecked;
     property event : TNotifyEvent read GetEvent write SetEvent;
   end;
 
@@ -98,8 +129,18 @@ type
     actViewTextTab : TContentAction;
     actNavigate : TContentAction;
     actEncoding : TContentAction;
+    actEncodingAscii : TContentSubAction;
+    actEncodingUTf8 : TContentSubAction;
+    actEncodingUTF16B : TContentSubAction;
+    actEncodingUTF16L : TContentSubAction;
     actLineMarkers : TContentAction;
+    actLineMarkersWindows : TContentSubAction;
+    actLineMarkersUnix : TContentSubAction;
+    actLineMarkersMac : TContentSubAction;
+
     actBOM : TContentAction;
+    actBOMNo : TContentSubAction;
+    actBOMYes : TContentSubAction;
     FTextPanelBase : TPanel;
     FDesignerPanelBase : TPanel;
 
@@ -173,6 +214,8 @@ type
     procedure makeDesigner; virtual;
     procedure updateDesigner; virtual;
     procedure commitDesigner; virtual;
+
+    function preEditSource(src : String) : string; virtual;
 
     function escapeText(text : String): String; virtual;
     function sourceHasFocus : boolean;
@@ -296,6 +339,11 @@ begin
   result := FMenuItemP.Caption;
 end;
 
+function TContentSubAction.GetChecked: boolean;
+begin
+  result := FMenuItemP.checked;
+end;
+
 function TContentSubAction.GetEnabled: boolean;
 begin
   result := FMenuItemP.Enabled;
@@ -321,6 +369,13 @@ begin
   FMenuItemP.Caption := AValue;
   if (FMenuItem <> nil) then
     FMenuItem.Caption := AValue;
+end;
+
+procedure TContentSubAction.SetChecked(AValue: boolean);
+begin
+  FMenuItemP.Checked := AValue;
+  if (FMenuItem <> nil) then
+    FMenuItem.Checked := AValue;
 end;
 
 procedure TContentSubAction.SetEnabled(AValue: boolean);
@@ -387,7 +442,7 @@ begin
   if (assigned(action.OnShow)) then
     action.OnShow(self);
   pt := Context.locateOnScreen(action.FButton.Left, action.FButton.top + action.FButton.Height);
-  action.FPopup.PopUp(pt.x, pt.y);
+  action.FPopup.PopUp(pt.x+6, pt.y+26); // why needs adjustment?
 end;
 
 procedure TBaseEditor.bindToContentMenu(content: TMenuItem);
@@ -549,7 +604,7 @@ begin
   if HasTextTab then
     FContent.assign(TextEditor.lines)
   else
-    raise Exception.create('Not supported yet');
+    raise EFslException.Create('Not supported yet');
 end;
 
 procedure TBaseEditor.updateFromContent;
@@ -733,6 +788,8 @@ begin
 
     src := encoding.GetString(bytes, start, length(bytes) - start);
 
+    src := preEditSource(src);
+
     lf := false;
     cr := false;
     crlf := false;
@@ -795,6 +852,10 @@ end;
 
 procedure TBaseEditor.updateToolbarButtons;
 begin
+  actLineMarkersWindows.checked := Session.EndOfLines = slCRLF;
+  actLineMarkersUnix.checked := Session.EndOfLines = slLF;
+  actLineMarkersMac.checked := Session.EndOfLines = slCR;
+
   case Session.EndOfLines of
     slUnknown : actLineMarkers.ImageIndex := 51;
     slCRLF: actLineMarkers.ImageIndex := 51;
@@ -811,6 +872,10 @@ begin
       senUTF16BE: actEncoding.ImageIndex := 59;
       senUTF16LE: actEncoding.ImageIndex := 60;
     end;
+    actEncodingAscii.checked := Session.Encoding = senASCII;
+    actEncodingUTf8.checked := Session.Encoding = senUTF8;
+    actEncodingUTF16B.checked := Session.Encoding = senUTF16BE;
+    actEncodingUTF16L.checked := Session.Encoding = senUTF16LE;
     if Session.Encoding in [senUnknown, senBinary, senASCII] then
     begin
       actBOM.Enabled := false;
@@ -819,6 +884,8 @@ begin
     else
     begin
       actBOM.Enabled := true;
+      actBOMYes.checked := Session.HasBOM;
+      actBOMNo.checked := not Session.HasBOM;
       if Session.HasBOM then
         actBOM.ImageIndex := 62
       else
@@ -1135,20 +1202,20 @@ begin
   if getFixedEncoding = senUnknown then
   begin
     actEncoding := makeAction(TextToolbar, 'Encoding', 0);
-    makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
-    makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
-    makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
-    makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
+    actEncodingAscii := makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
+    actEncodingUTf8 := makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
+    actEncodingUTF16B := makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
+    actEncodingUTF16L := makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
 
     actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
-    makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
-    makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
+    actBOMNo := makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
+    actBOMYes := makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
   end;
 
   actLineMarkers := makeAction(TextToolbar, 'End of Lines', 4);
-  makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
-  makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
-  makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
+  actLineMarkersWindows := makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
+  actLineMarkersUnix := makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
+  actLineMarkersMac := makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
@@ -1185,6 +1252,11 @@ end;
 procedure TBaseEditor.commitDesigner;
 begin
   // nothing here
+end;
+
+function TBaseEditor.preEditSource(src: String): string;
+begin
+  result := src;
 end;
 
 function TBaseEditor.escapeText(text: String): String;

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  fsl_base, fsl_utilities,
+  fsl_base, fsl_utilities, fsl_logging,
   fdb_dialects, fdb_manager,
   fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
@@ -426,7 +426,15 @@ end;
 
 function TFDBSQLiteConnection.GetColTypeV(ACol: Word): TFDBColumnType;
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.GetColTypeV');
+  case FStatement.ColumnType(ACol) of
+    SQLITE_INTEGER: result := ctInteger;
+    SQLITE_FLOAT: result := ctFloat;
+    SQLITE_BLOB: result := ctBlob;
+    SQLITE_NULL: result := ctChar;
+    SQLITE_TEXT: result := ctChar;
+  else
+    result := ctUnknown;
+  end;
 end;
 
 function TFDBSQLiteConnection.GetRowsAffectedV: Integer;

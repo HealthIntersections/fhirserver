@@ -38,13 +38,14 @@ This unit contains a set of classes that orchestrate the UI interface
 - TListManager - binds a list of objects to a set of UI controls, with a TListView as the centerpiece
 - TTreeManager - binds a tree of objects to a set of UI controls, with a TTreeView as a centerpiece
 - TFHIRSynEditSynchroniser - keeps a SynEdit source for a resource in sync with a loaded resource
+- TPanelStack - binds to a TPanel and manages a set of subpanels that arew laid out vertically (logical alternative to a TPageControl)
 
 }
 
 Interface
 
 uses
-  SysUtils, Classes, Graphics, IniFiles,
+  SysUtils, Classes, Contnrs, Graphics, IniFiles,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus,
   SynEdit, SynEditTypes,
   fsl_base, fsl_stream, fsl_http,
@@ -397,8 +398,58 @@ type
       procedure abandon;
     end;
 
+  { TPanelStackSubPanel }
+
+  TPanelStackSubPanel = class (TFslObject)
+  private
+    FContainer: TPanel;
+    FFraction: Double;
+    FHeading: TPanel;
+  public
+    constructor create(container, heading : TPanel);
+
+    property container : TPanel read FContainer write FContainer;
+    property heading : TPanel read FHeading write FHeading;
+    property fraction : Double read FFraction write FFraction;
+  end;
+
+  { TPanelStack }
+
+  // this looks like a list of panels, but in fact, it's a nested set, so that splitters work
+  TPanelStack = class (TFslObject)
+  private
+    FSpace : TPanel;
+    FCount : integer;
+    FPanels : TFslList<TPanelStackSubPanel>;
+    FImageList: TImageList;
+    FLastSize : integer;
+    function GetPanel(index : integer): TPanel;
+    procedure AddPanel;
+    procedure doResize(sender : TObject);
+  public
+    constructor Create(space : TPanel);
+    destructor Destroy; override;
+
+    property imageList : TImageList read FImageList write FImageList;
+
+    property panel[index : integer] : TPanel read GetPanel;
+    procedure reset(count : integer);
+    procedure resize;
+
+    procedure setCaption(index : integer; caption : String; imageIndex : integer);
+  end;
 
 Implementation
+
+{ TPanelStackSubPanel }
+
+constructor TPanelStackSubPanel.create(container, heading: TPanel);
+begin
+  inherited Create;
+  FContainer := container;
+  FHeading := heading;
+end;
+
 
 { TObjectManagerControl }
 
@@ -955,12 +1006,12 @@ end;
 
 procedure TListManager<T>.doUp;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TListManager<T>.doDown;
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TListManager<T>.doExecute(mode: String);
@@ -1078,12 +1129,12 @@ end;
 
 function TListManager<T>.deleteItem(item: T) : boolean;
 begin
-  raise Exception.create('Delete is not supported here');
+  raise EFslException.Create('Delete is not supported here');
 end;
 
 function TListManager<T>.executeItem(item: T; mode: String): boolean;
 begin
-  raise Exception.create('Execute is not supported here');
+  raise EFslException.Create('Execute is not supported here');
 end;
 
 function TListManager<T>.refreshItem(item: T) : boolean;
@@ -1232,7 +1283,7 @@ begin
   do1 := FFocus.LocationData.hasLocation1;
   do2 := FFocus.LocationData.hasLocation2;
   if do1 and do2 then
-    raise Exception.create('not supported yet');
+    raise EFslException.Create('not supported yet');
 
   lines := TStringList.create;
   try
@@ -1285,7 +1336,7 @@ begin
     ffXml : loadXml;
     ffJson : loadJson;
   else
-    raise Exception.create('This format is not supported');
+    raise EFslException.Create('This format is not supported');
   end;
 end;
 
@@ -1300,36 +1351,36 @@ end;
 
 procedure TFHIRSynEditSynchroniser.addProperty(owner: TFHIRObject; name: String);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.deleteProperty(owner: TFHIRObject; name: String);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.addToList(owner: TFHIRObject; name: String; after: TFHIRObject);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.deleteFromList(owner: TFHIRObject; name: String; obj: TFHIRObject);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.moveInList(owner: TFHIRObject; name: String; obj: TFHIRObject; up: boolean);
 begin
-  raise Exception.create('not done yet');
+  raise EFslException.Create('not done yet');
 end;
 
 procedure TFHIRSynEditSynchroniser.commit;
 begin
   case FOpInProgress of
-    opNone : raise Exception.create('No operation in process');
+    opNone : raise EFslException.Create('No operation in process');
     opChange : finishOpChange;
   else
-    raise Exception.create('not done yet');
+    raise EFslException.Create('not done yet');
   end;
   FOpInProgress := opNone;
   FContainer := nil;
@@ -1734,17 +1785,136 @@ end;
 
 function TTreeManager<T>.deleteItem(parent, item : T) : boolean;
 begin
-  raise Exception.create('Delete is not supported here');
+  raise EFslException.Create('Delete is not supported here');
 end;
 
 function TTreeManager<T>.executeItem(item : T; mode : String) : boolean;
 begin
-  raise Exception.create('Execute is not supported here');
+  raise EFslException.Create('Execute is not supported here');
 end;
 
 function TTreeManager<T>.refreshItem(item: T) : boolean;
 begin
   result := false;
+end;
+
+{ TPanelStack }
+
+constructor TPanelStack.Create(space: TPanel);
+begin
+  inherited Create;
+  FSpace := space;
+  FSpace.OnResize := doResize;
+  FPanels := TFslList<TPanelStackSubPanel>.create;
+end;
+
+destructor TPanelStack.Destroy;
+begin
+  FPanels.Free;
+  inherited Destroy;
+end;
+
+function TPanelStack.GetPanel(index : integer): TPanel;
+begin
+  result := FPanels[index].container;
+end;
+
+procedure TPanelStack.AddPanel;
+var
+  h, c : TPanel;
+  s : TSplitter;
+begin
+  c := TPanel.create(FSpace);
+  if FPanels.Count = 0 then // the first is special
+  begin
+    c.parent := FSpace;
+    c.align := alClient;
+    c.Height := FSpace.height;
+    s := nil;
+  end
+  else
+  begin
+    c.parent := FPanels.Last.container;
+    c.align := alBottom;
+    c.Height := FSpace.height div FCount; // gets fixed up later
+    s := TSplitter.create(FSpace);
+    s.parent := FPanels.Last.Container;
+    s.align := alBottom;
+  end;
+  c.BevelOuter := bvNone;
+  c.caption := '';
+  c.ParentColor := false;
+  c.color := clWhite;
+  h := TPanel.create(c);
+  h.parent := c;
+  h.align := alTop;
+  h.Height := 26;
+  h.BevelOuter := bvNone;
+  h.Alignment := taLeftJustify;
+  h.caption := '  Caption';
+  h.ParentColor := false;
+  h.color := clBtnFace;
+  FPanels.add(TPanelStackSubPanel.create(c, h));
+end;
+
+procedure TPanelStack.doResize(sender: TObject);
+var
+  i, t, h : integer;
+begin
+
+  if FLastSize = 0 then
+    exit;
+  t := 0;
+  for i := FCount - 1 downto 0 do
+  begin
+    h := FPanels[i].container.height - t;
+    FPanels[i].fraction := h / FLastSize;
+    t := FPanels[i].container.height;
+  end;
+
+  t := 0;
+  for i := FCount - 1 downto 0 do
+  begin
+    h := trunc(FPanels[i].fraction * FSpace.height);
+    inc(t, h);
+    FPanels[i].container.height := t;
+  end;
+  FLastSize := FSpace.Height;
+end;
+
+
+procedure TPanelStack.reset(count: integer);
+var
+  i : integer;
+begin
+  FLastSize := 0;
+  FCount := count;
+  while (FPanels.count <= count) do
+    AddPanel;
+  // we can't delete panels we don't need, as they might contain content we don't want to lose, so we just hide them
+  for i := count to FPanels.Count - 1 do
+    FPanels[i].container.visible := false;
+end;
+
+procedure TPanelStack.setCaption(index: integer; caption: String; imageIndex: integer);
+begin
+  FPanels[index].heading.caption := '  '+caption;
+end;
+
+
+procedure TPanelStack.resize;
+var
+  i, t : integer;
+begin
+  t := 0;
+  for i := FCount - 1 downto 0 do
+  begin
+    inc(t, FSpace.height div FCount);
+    FPanels[i].container.height := t;
+  end;
+  FLastSize := FSpace.Height;
+
+
 end;
 
 End.

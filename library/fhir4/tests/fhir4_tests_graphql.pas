@@ -147,7 +147,7 @@ function TFHIRGraphQLTest.LookupResource(appInfo: TFslObject; requestType, id: S
 var
   filename : String;
 begin
-  filename := TestSettings.fhirTestFile(['r4', 'examples', requestType+'-'+id+'.xml']);
+  filename := TestSettings.fhirTestFile(['r4', 'examples', requestType.toLower+'-'+id+'.xml']);
   result := FileExists(filename);
   if result then
     res := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);

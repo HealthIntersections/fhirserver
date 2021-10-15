@@ -40,7 +40,11 @@ uses
   baseunix, unix,
   {$ENDIF}
   Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
-  {$IFDEF FPC}, RegExpr, dateutils, upascaltz {$ENDIF};
+  {$IFDEF FPC},
+  {$IFDEF OSX}
+  MacOSAll, CFBase, CFString,
+  {$ENDIF}
+  RegExpr, dateutils{$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -109,23 +113,6 @@ type
   public
     function substring(start, stop : integer) : String; overload;
     function substring(start : integer) : String; overload;
-  end;
-
-  { TTimeZone }
-  TTimeSpan = record
-    TotalDays : Double;
-  end;
-
-  TTimeZone = class
-  private
-    FZone : String;
-    FOffset : Double;
-  public
-    constructor Create(zone : String);
-    function GetUtcOffset(const ADateTime: TDateTime): TTimeSpan; inline;
-    function ToLocalTime(const ADateTime: TDateTime): TDateTime;
-    function ToUniversalTime(const ADateTime: TDateTime): TDateTime; inline;
-    class function Local: TTimeZone;
   end;
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
@@ -221,12 +208,7 @@ const
     ''
     );
 
-var
-  GTimeZoneData : TPascalTZ;
-  GLocalTZ : TTimeZone;
 {$ENDIF}
-
-procedure initialiseTZData(filename : String);
 
 {$IFDEF FPC}
 type
@@ -261,13 +243,25 @@ type
     class procedure delete(path : String); overload;  static;
   end;
 
+  { TTimespan }
+
+  TTimespan = record
+    FTicks : Int64;
+    class function makeTicks(ticks : Int64) : TTimespan; static;
+    function hours : integer;
+    function minutes : integer;
+  end;
+{$ENDIF}
+
+{$IFDEF OSX}
+function getMacTimezoneName : String;
 {$ENDIF}
 
 implementation
 
 {$IFDEF FPC}
 uses
-  FileUtil, LazUTF8, uPascalTZ_Types,
+  FileUtil, LazUTF8,
   fsl_base, fsl_stream, fsl_utilities;
 {$ENDIF}
 
@@ -373,6 +367,26 @@ begin
   result := FileUtil.DeleteDirectory(DirectoryName, OnlyChildren);
 end;
 
+{ TTimespan }
+
+class function TTimespan.makeTicks(ticks: Int64): TTimespan;
+begin
+  result.FTicks := ticks;
+end;
+
+function TTimespan.hours: integer;
+begin
+  result := FTicks div (60 * 60);
+end;
+
+function TTimespan.minutes: integer;
+var
+  t : int64;
+begin
+  t := (FTicks - (hours * 60 * 60));
+  result := t div 60;
+end;
+
 { TSemaphore }
 
 constructor TSemaphore.create(attr: PSecurityAttributes; AInitialCount, AMaximumCount: Integer; const Name: string);
@@ -383,41 +397,6 @@ end;
 procedure TSemaphore.Release;
 begin
   setEvent();
-end;
-
-{ TTimeZone }
-
-constructor TTimeZone.Create(zone: String);
-begin
-  inherited Create;
-  FZone := zone;
-  if FZone = '' then
-    FOffset := TPascalTZ.UniversalTime - TPascalTZ.LocalTime
-  else
-    FOffset := GetUtcOffset(now).totalDays;
-end;
-
-function TTimeZone.GetUtcOffset(const ADateTime: TDateTime): TTimeSpan;
-var
-  utc : TDateTime;
-begin
-  utc := GTimeZoneData.LocalTimeToGMT(ADateTime, TimeZoneIANAName);
-  result.TotalDays := ADateTime - utc;
-end;
-
-function TTimeZone.ToLocalTime(const ADateTime: TDateTime): TDateTime;
-begin
-  result := GTimeZoneData.GMTToLocalTime(ADateTime, TimeZoneIANAName);
-end;
-
-function TTimeZone.ToUniversalTime(const ADateTime: TDateTime): TDateTime;
-begin
-  result := GTimeZoneData.LocalTimeToGMT(ADateTime, TimeZoneIANAName);
-end;
-
-class function TTimeZone.Local: TTimeZone;
-begin
-  result := GLocalTZ;
 end;
 
 { TCharHelper }
@@ -478,11 +457,11 @@ begin
   else
     i := fpchmod(filename, S_IRWXU or S_IRWXG or S_IRWXO);
   if (i <> 0) then
-    raise Exception.create('chmod failed');
+    raise EFslException.Create('chmod failed');
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  raise Exception.create('Not supported');
+  raise EFslException.Create('Not supported');
 end;
 {$ENDIF}
 end;
@@ -723,7 +702,7 @@ begin
         Exit;
       end;
       if (length(FBuffer) = 0) then
-        raise Exception.create('read File returned an empty buffer but claimed it wasn''t');
+        raise EFslException.Create('read File returned an empty buffer but claimed it wasn''t');
 
       FZStream.next_in := @FBuffer[0];
       FStreamPos := FStream.Position;
@@ -794,52 +773,6 @@ end;
 
 {$ENDIF}
 
-procedure initialiseTZData(filename : String);
-{$IFDEF FPC}
-var
-  stream : TFileStream;
-  z : TZDecompressionStream;
-  tar : TTarArchive;
-  entry : TTarDirRec;
-  bi : TBytesStream;
-begin
-  GTimeZoneData := TPascalTZ.create;
-  stream := TFileStream.Create(filename, fmOpenRead);
-  try
-    z := TZDecompressionStream.Create(stream, 15+16);
-    try
-      tar := TTarArchive.Create(z);
-      try
-        while tar.FindNext(entry) do
-        begin
-          if (StringArrayExists(TZ_FILES_STANDARD, entry.name)) then
-          begin
-            bi := TBytesStream.Create;
-            try
-              tar.ReadFile(bi);
-              bi.position := 0;
-              GTimeZoneData.ParseDatabaseFromStream(bi);
-            finally
-              bi.free;
-            end;
-          end;
-        end;
-      finally
-        tar.free;
-      end;
-    finally
-      z.free;
-    end;
-  finally
-    stream.Free;
-  end;
-  GLocalTZ := TTimeZone.create('');
-end;
-{$ELSE}
-begin
-end;
-{$ENDIF}
-
 {$IFDEF FPC}
 
 { TRegEx }
@@ -888,11 +821,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -909,11 +842,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -930,11 +863,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if (SearchRec.Attr and SysUtils.faDirectory <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
-          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -946,11 +879,49 @@ end;
 
 {$ENDIF}
 
-initialization
-finalization
-{$IFDEF FPC}
-  GTimeZoneData.free;
+{$IFDEF OSX}
+// borrowed from CarbonProcs
+function CFStringToStr(AString: CFStringRef; Encoding: CFStringEncoding): String;
+var
+  Str: Pointer;
+  StrSize: CFIndex;
+  StrRange: CFRange;
+begin
+  if AString = nil then
+  begin
+    Result := '';
+    Exit;
+  end;
+
+  // Try the quick way first
+  Str := CFStringGetCStringPtr(AString, Encoding);
+  if Str <> nil then
+    Result := PChar(Str)
+  else
+  begin
+    // if that doesn't work this will
+    StrRange.location := 0;
+    StrRange.length := CFStringGetLength(AString);
+
+    CFStringGetBytes(AString, StrRange, Encoding,
+      Ord('?'), False, nil, 0, StrSize{%H-});
+    SetLength(Result, StrSize);
+
+    if StrSize > 0 then
+      CFStringGetBytes(AString, StrRange, Encoding,
+        Ord('?'), False, @Result[1], StrSize, StrSize);
+  end;
+end;
+
+function getMacTimezoneName;
+var
+  tz : CFTimeZoneRef;
+begin
+  tz := CFTimeZoneCopySystem;
+  result := CFStringToStr(CFTimeZoneGetName(tz), kCFStringEncodingUTF8);
+end;
 {$ENDIF}
+
 end.
 
 

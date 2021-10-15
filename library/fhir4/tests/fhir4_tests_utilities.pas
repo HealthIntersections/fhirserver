@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_testing, fsl_stream,
+  fsl_testing, fsl_stream, fsl_utilities,
   fsl_http, fsl_crypto,
   fhir_objects, fhir4_parser, fhir_healthcard,
   fhir4_types, fhir4_resources, fhir4_utilities, fhir4_factory;
@@ -63,7 +63,7 @@ begin
   bnd := fileToResource(TestSettings.fhirTestFile(['R4', 'examples', 'document-example-dischargesummary.xml'])) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
-    ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
+    ResourceToFile(bnd, filePath(['[tmp]', 'signed.xml']), ffXml, OutputStylePretty);
     assertTrue(bnd <> nil);
   finally
     bnd.Free;
@@ -91,7 +91,7 @@ begin
     utils.JWKList := TJWKList.Create;
 
     jws := utils.readQR(josh_qr);
-    StringToFile(jws, 'c:\temp\jws.txt', TEncoding.UTF8);
+    StringToFile(jws, filePath(['[tmp]', 'jws.txt']), TEncoding.UTF8);
 
     card := utils.verify(jws);
     try
@@ -111,7 +111,7 @@ begin
   bnd := fileToResource(TestSettings.fhirTestFile(['R4', 'examples', 'document-example-dischargesummary.xml'])) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
-    ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
+    ResourceToFile(bnd, filePath(['[tmp]', 'signed.json']), ffJson, OutputStylePretty);
     assertTrue(bnd <> nil);
   finally
     bnd.Free;

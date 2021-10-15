@@ -218,8 +218,8 @@ begin
   try
     fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
     fetcher.Fetch;
-//    fetcher.Buffer.SaveToFileName('c:\temp\test.json');
-    stream := TFileStream.Create('c:\temp\test.json', fmOpenRead + fmShareDenyWrite);
+//    fetcher.Buffer.SaveToFileName(filePath(['[tmp]', 'test.json']));
+    stream := TFileStream.Create(filePath(['[tmp]', 'test.json']), fmOpenRead + fmShareDenyWrite);
     try
 //      fetcher.Buffer.SaveToStream(stream);
 //      stream.Position := 0;

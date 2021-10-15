@@ -1,5 +1,33 @@
 unit ftk_context;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -7,7 +35,7 @@ interface
 uses
   Classes, SysUtils,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList, IniFiles,
-  fsl_base, fsl_utilities, fsl_stream, fsl_logging,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang,
   fhir_objects, fhir_client, fhir_factory,
   fhir4_factory, fhir3_factory,
   ftk_store, ftk_console, ftk_utilities;
@@ -26,7 +54,7 @@ uses
 // resource
 
 type
-  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT);
+  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT, sekHome);
   TSourceEditorKindSet = set of TSourceEditorKind;
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
@@ -39,9 +67,9 @@ const
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
 
-  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
-  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
-  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'HomePage', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
+  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
+  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'Home Page', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
@@ -176,6 +204,7 @@ type
     function FileExtension : String; virtual; abstract;
     function GetBytes: TBytes; virtual; abstract;
     function describe : String;
+    function EditorTitle : String; virtual;
 
     // editing related functionality
     property Pause : integer read FPause write FPause;
@@ -275,6 +304,7 @@ type
     FConsole: TToolkitConsole;
     FFont: TFont;
     FInspector: TToolkitEditorInspectorView;
+    FLanguages: TIETFLanguageDefinitions;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
     FOnConnectToServer: TConnectToServerEvent;
@@ -294,9 +324,15 @@ type
     FTerminologyService: TFHIRTerminologyService;
     FToolBarHeight: integer;
     FSettings : TiniFile;
+    FContexts : Array [TFHIRVersion] of TFHIRWorkerContextWithFactory;
+
+    function GetContext(version : TFHIRVersion): TFHIRWorkerContextWithFactory;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
+    procedure SetContext(version : TFHIRVersion;
+      AValue: TFHIRWorkerContextWithFactory);
     procedure SetFocus(AValue: TToolkitEditor);
+    procedure SetLanguages(AValue: TIETFLanguageDefinitions);
     procedure SetSideBySide(AValue: boolean);
     procedure SetTerminologyService(AValue: TFHIRTerminologyService);
     procedure SetToolBarHeight(AValue: integer);
@@ -322,6 +358,7 @@ type
     function StorageForAddress(address : String; server : TFHIRServerEntry = nil) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
     property TerminologyService : TFHIRTerminologyService read FTerminologyService write SetTerminologyService;
+    property Languages : TIETFLanguageDefinitions read FLanguages write SetLanguages;
 
     // global settings
     property SideBySide : boolean read FSideBySide write SetSideBySide;
@@ -347,6 +384,7 @@ type
     function factory(version : TFHIRVersion) : TFHIRFactory;
     procedure OpenResource(url : String);
 
+    property context[version : TFHIRVersion] : TFHIRWorkerContextWithFactory read GetContext write SetContext;
 
     property OnUpdateActions : TNotifyEvent read FOnUpdateActions write FOnUpdateActions;
     property OnChangeFocus : TNotifyEvent read FOnChangeFocus write FOnChangeFocus;
@@ -580,19 +618,23 @@ begin
   FStore := store;
   if (session.caption = '') then
   begin
-    if (FStore <> nil) then
-      session.caption := store.CaptionForAddress(session.address)
-    else
+    session.Caption := EditorTitle;
+    if (session.caption = '') then
     begin
-      i := 0;
-      repeat
-        inc(i);
-        ok := true;
-        for ss in context.FEditorSessions do
-          if (ss.Caption = 'new_file_'+inttostr(i)+'.'+FileExtension) then
-            ok := false;
-      until ok;
-      session.Caption := 'new_file_'+inttostr(i)+'.'+FileExtension;
+      if (FStore <> nil) then
+        session.caption := store.CaptionForAddress(session.address)
+      else
+      begin
+        i := 0;
+        repeat
+          inc(i);
+          ok := true;
+          for ss in context.FEditorSessions do
+            if (ss.Caption = 'new_file_'+inttostr(i)+'.'+FileExtension) then
+              ok := false;
+        until ok;
+        session.Caption := 'new_file_'+inttostr(i)+'.'+FileExtension;
+      end;
     end;
   end;
 end;
@@ -622,10 +664,15 @@ begin
     result := 'File';
 end;
 
+function TToolkitEditor.EditorTitle: String;
+begin
+  result := '';
+end;
+
 procedure TToolkitEditor.bindToTab(tab: TTabSheet);
 begin
   FTab := tab;
-  tab.Caption := FSession.Caption;
+  tab.Caption := FSession.Caption{$IFDEF WINDOWS}+'    '{$ENDIF};
 end;
 
 procedure TToolkitEditor.saveStatus;
@@ -648,6 +695,17 @@ begin
   result := nil;
 end;
 
+function TToolkitContext.GetContext(version : TFHIRVersion): TFHIRWorkerContextWithFactory;
+begin
+  result := FContexts[version];
+end;
+
+procedure TToolkitContext.SetContext(version : TFHIRVersion; AValue: TFHIRWorkerContextWithFactory);
+begin
+  FContexts[version].Free;
+  FContexts[version] := AValue;
+end;
+
 function TToolkitContext.GetHasFocus: boolean;
 begin
   result := FFocus <> nil;
@@ -657,6 +715,12 @@ procedure TToolkitContext.SetFocus(AValue: TToolkitEditor);
 begin
   FFocus := AValue;
   FOnChangeFocus(self);
+end;
+
+procedure TToolkitContext.SetLanguages(AValue: TIETFLanguageDefinitions);
+begin
+  FLanguages.free;
+  FLanguages := AValue;
 end;
 
 procedure TToolkitContext.SetSideBySide(AValue: boolean);
@@ -696,19 +760,26 @@ begin
   FMessageView := TToolkitMessagesView.create;
   FInspector := TToolkitEditorInspectorView.create;
   FConsole := TToolkitConsole.create;
+  Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
 end;
 
 destructor TToolkitContext.Destroy;
+var
+  a : TFHIRVersion;
 begin
+  for a in TFHIRVersion do
+    FContexts[a].Free;
   FTerminologyService.Free;
   FInspector.Free;
   FMessageView.Free;
+  Logging.removeListener(FConsole);
   FConsole.Free;
   FStorages.Free;
   FEditors.Free;
   FEditorSessions.Free;
+  FLanguages.free;
   inherited Destroy;
 end;
 
@@ -737,6 +808,9 @@ var
 begin
   scheme := address.Substring(0, address.IndexOf(':'));
   result := nil;
+  for storage in storages do
+    if StringArrayExists(storage.schemes, scheme) and storage.inScope(address) then
+      exit(storage);
   for storage in storages do
     if StringArrayExists(storage.schemes, scheme) then
       exit(storage);

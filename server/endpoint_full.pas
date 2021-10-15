@@ -1,5 +1,33 @@
 unit endpoint_full;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -507,7 +535,7 @@ begin
   else if (v = 'r5') then
     result := fhirVersionRelease5
   else
-    raise Exception.Create('Unknown version "'+v+'"');
+    raise EFslException.Create('Unknown version "'+v+'"');
 end;
 
 function TFullServerEndPoint.makeFactory: TFHIRFactory;
@@ -518,7 +546,7 @@ begin
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
     fhirVersionRelease5 : result := TFHIRFactoryR5.create;
   else
-    raise Exception.Create('Unsupported Version');
+    raise EFslException.Create('Unsupported Version');
   end;
 end;
 
@@ -544,7 +572,7 @@ begin
     fhirVersionRelease4: result := TFHIRNativeStorageServiceR4.create(Database.Link, TFHIRFactoryR4.Create);
     fhirVersionRelease5: result := TFHIRNativeStorageServiceR5.create(Database.Link, TFHIRFactoryR5.Create);
   else
-    raise Exception.Create('Unsupported Version');
+    raise EFslException.Create('Unsupported Version');
   end;
 end;
 
@@ -705,13 +733,13 @@ var
   rights, un, pw, em : String;
 begin
   if not getCommandLineParam('default-rights', rights) then
-    raise Exception.Create('Some default rights are required');
+    raise EFslException.Create('Some default rights are required');
   if not getCommandLineParam('username', un) then
-    raise Exception.Create('An Administrator username is required');
+    raise EFslException.Create('An Administrator username is required');
   if not getCommandLineParam('password', pw) then
-    raise Exception.Create('An Administrator password is required');
+    raise EFslException.Create('An Administrator password is required');
   if not Settings.Ini.admin.getProp('email', em) then
-    raise Exception.Create('An Administrator email address is required in the configuration');
+    raise EFslException.Create('An Administrator email address is required in the configuration');
 
   Logging.log('Install database '+Database.DBDetails);
   Logging.log('Admin User = '+un);
@@ -776,7 +804,7 @@ var
   pw : String;
 begin
   if not getCommandLineParam('password', pw) then
-    raise Exception.Create('An Administrator password is required');
+    raise EFslException.Create('An Administrator password is required');
   conn := Database.getConnection('install');
   try
     scim := makeScimServer('', false);

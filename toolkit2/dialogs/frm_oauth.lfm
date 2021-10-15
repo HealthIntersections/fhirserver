@@ -12,7 +12,7 @@ object OAuthForm: TOAuthForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 48
@@ -32,7 +32,6 @@ object OAuthForm: TOAuthForm
       Align = alClient
       AutoSize = False
       Caption = 'Initializing...'
-      ParentColor = False
       WordWrap = True
     end
   end

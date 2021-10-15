@@ -39,7 +39,7 @@ uses
   fsl_base,
   fdb_manager, fdb_dialects, fsl_stream,
   fhir_objects, fhir_factory, fhir_utilities,
-  indexing, server_factory, server_version,
+  indexing, server_factory, server_version, server_constants,
   scim_server;
 
 const
@@ -131,7 +131,7 @@ Type
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
 
-    Procedure Upgrade(version : integer);
+    procedure Upgrade(version : integer = 0);
     property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
@@ -1290,10 +1290,13 @@ begin
 end;
 
 
-procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
+procedure TFHIRDatabaseInstaller.Upgrade(version : integer = 0);
 begin
   FConn.StartTransact;
   try
+    if version = 0 then
+      version := Fconn.CountSQL('Select Value from Config where ConfigKey = '+inttostr(CONFIG_DATABASE_VERSION));
+
     if version > ServerDBVersion then
       raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < ServerDBVersionEarliestSupported) then

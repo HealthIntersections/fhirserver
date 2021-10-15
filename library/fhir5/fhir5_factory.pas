@@ -50,8 +50,6 @@ type
     function versionString : String; override;
     function versionName : String; override;
     function corePackage : String; override;
-    function txPackage : String; override;
-    function txSupportPackage : String; override;
     function specUrl : String; override;
     function description : String; override;
     function resourceNames : TArray<String>; override;
@@ -345,7 +343,7 @@ end;
 
 function TFHIRFactoryR5.makeHealthcareCard: THealthcareCard;
 begin
-  raise Exception.Create('Healthcare Cards are not supported in version '+versionString);
+  raise EFslException.Create('Healthcare Cards are not supported in version '+versionString);
 end;
 
 function TFHIRFactoryR5.makeInteger(s: string): TFHIRObject;
@@ -519,16 +517,6 @@ end;
 function TFHIRFactoryR5.specUrl: String;
 begin
   result := 'http://build.fhir.org';
-end;
-
-function TFHIRFactoryR5.txPackage: String;
-begin
-  result := 'hl7.terminology.r4';
-end;
-
-function TFHIRFactoryR5.txSupportPackage: String;
-begin
-  result := 'fhir.tx.support.r4';
 end;
 
 function TFHIRFactoryR5.version: TFHIRVersion;
@@ -887,7 +875,8 @@ begin
     result := TFhirId.create()
   else if name = 'positiveInt' then
     result := TFhirPositiveInt.create()
-{gen-factory-start}  else if name = 'Address' then
+{gen-factory-start}
+  else if name = 'Address' then
     result := TFhirAddress.create()
   else if name = 'Annotation' then
     result := TFhirAnnotation.create()

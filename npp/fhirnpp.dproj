@@ -7,7 +7,7 @@
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Library</AppType>
         <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>19.0</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -151,39 +151,39 @@
         <DCCReference Include="FHIR.Npp.Settings.pas">
             <Form>SettingForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\r3\FHIR.R3.Validator.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Objects.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Utilities.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Scim.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Types.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Constants.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Tags.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_validator.pas"/>
+        <DCCReference Include="..\library\Support\fsl_base.pas"/>
+        <DCCReference Include="..\library\Support\fsl_utilities.pas"/>
+        <DCCReference Include="..\library\Support\fsl_collections.pas"/>
+        <DCCReference Include="..\library\Support\fsl_stream.pas"/>
+        <DCCReference Include="..\library\Support\fsl_json.pas"/>
+        <DCCReference Include="..\library\base\fhir_objects.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_utilities.pas"/>
+        <DCCReference Include="..\library\base\fsl_scim.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_types.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_constants.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_tags.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Xml.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Json.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Turtle.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Parser.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.WinInet.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Profiles.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_xml.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_json.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_turtle.pas"/>
+        <DCCReference Include="..\library\base\fhir_parser.pas"/>
+        <DCCReference Include="..\library\web\fsl_wininet.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_profiles.pas"/>
         <DCCReference Include="FHIR.Npp.Validator.pas"/>
         <DCCReference Include="FHIR.Npp.Make.pas">
             <Form>ResourceNewForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\r3\FHIR.R3.Narrative.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_narrative.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.ServerDialog.pas">
             <Form>EditRegisteredServerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\web\FHIR.Web.Parsers.pas"/>
+        <DCCReference Include="..\library\web\fsl_http.pas"/>
         <DCCReference Include="FHIR.Npp.Fetch.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.PathEngine.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_pathengine.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
         </DCCReference>
@@ -207,100 +207,100 @@
             <Form>UpgradePromptForm</Form>
         </DCCReference>
         <DCCReference Include="FHIR.Npp.Utilities.pas"/>
-        <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Utilities.pas"/>
+        <DCCReference Include="..\library\cdshooks\fhir_cdshooks.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.Shell.pas"/>
+        <DCCReference Include="..\library\Support\fsl_shell.pas"/>
         <DCCReference Include="CDSBrowserForm.pas">
             <Form>CDSBrowser</Form>
         </DCCReference>
-        <DCCReference Include="..\library\web\FHIR.Web.Rdf.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.ElementModel.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Context.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.MapUtilities.pas"/>
-        <DCCReference Include="..\library\tools\FHIR.Tools.DiffEngine.pas"/>
+        <DCCReference Include="..\library\web\fsl_rdf.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_elementmodel.pas"/>
+        <DCCReference Include="..\library\base\fhir_xhtml.pas"/>
+        <DCCReference Include="..\library\web\fsl_fetcher.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_context.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_maputils.pas"/>
+        <DCCReference Include="..\library\tools\fhir_diff.pas"/>
         <DCCReference Include="ResDisplayForm.pas">
             <Form>ResourceDisplayForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
+        <DCCReference Include="..\library\support\fsl_xml.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="FHIR.Npp.CodeGen.pas">
             <Form>CodeGeneratorForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\tools\FHIR.Tools.CodeGen.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
+        <DCCReference Include="..\library\tools\fhir_codegen.pas"/>
+        <DCCReference Include="..\library\support\fsl_turtle.pas"/>
         <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Client.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Registry.pas"/>
+        <DCCReference Include="..\library\client\fhir_client_registry.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\library\ucum\FHIR.Ucum.IFace.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.PathNode.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.ParserBase.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Base.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Parser.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Client.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Threaded.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
+        <DCCReference Include="..\library\ucum\fsl_ucum.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_pathnode.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_parserBase.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_base.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_parser.pas"/>
+        <DCCReference Include="..\library\client\fhir_client.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_client.pas"/>
+        <DCCReference Include="..\library\client\fhir_client_http.pas"/>
+        <DCCReference Include="..\library\client\fhir_client_threaded.pas"/>
+        <DCCReference Include="..\library\support\fsl_xml.pas"/>
+        <DCCReference Include="..\library\support\fsl_threads.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.GraphQL.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.MsXml.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Narrative.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Factory.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Factory.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.PathEngine.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Types.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Base.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.ElementModel.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Utilities.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Context.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.PathNode.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Common.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Common.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Common.pas"/>
+        <DCCReference Include="..\library\web\fsl_graphql.pas"/>
+        <DCCReference Include="..\library\support\fsl_msxml.pas"/>
+        <DCCReference Include="..\library\base\fhir_validator.pas"/>
+        <DCCReference Include="..\library\base\fhir_narrative.pas"/>
+        <DCCReference Include="..\library\base\fhir_factory.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_factory.pas"/>
+        <DCCReference Include="..\library\base\fhir_pathengine.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_constants.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_types.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_base.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_elementmodel.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_utilities.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_context.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_pathnode.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_profiles.pas"/>
+        <DCCReference Include="..\library\base\fhir_common.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_common.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_common.pas"/>
         <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas">
             <Form>PackageCacheForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Factory.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Types.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Base.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Utilities.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Constants.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Context.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.ElementModel.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Common.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Profiles.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Parser.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Xml.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.ParserBase.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Json.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Validator.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.PathNode.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.PathEngine.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Narrative.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Client.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Factory.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Parser.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Xml.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.ParserBase.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Json.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Validator.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.PathEngine.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Narrative.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Client.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Turtle.pas"/>
-        <DCCReference Include="..\library\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
-        <DCCReference Include="..\library\smart\FHIR.Smart.Utilities.pas"/>
+        <DCCReference Include="..\library\npm\fsl_npm_cache.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_factory.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_types.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_base.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_utilities.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_constants.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_context.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_elementmodel.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_common.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_profiles.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_parser.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_xml.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_parserBase.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_json.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_validator.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_pathnode.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_pathengine.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_narrative.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_client.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_factory.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_parser.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_xml.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_parserBase.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_json.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_validator.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_pathengine.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_narrative.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_client.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_turtle.pas"/>
+        <DCCReference Include="..\library\support\fsl_fpc.pas"/>
+        <DCCReference Include="..\library\base\fhir_utilities.pas"/>
+        <DCCReference Include="..\library\smart\fhir_oauth.pas"/>
         <DCCReference Include="..\library\smart\FHIR.Smart.Login.pas"/>
         <DCCReference Include="..\library\smart\FHIR.Smart.LoginVCL.pas">
             <Form>SmartOnFhirLoginForm</Form>
@@ -314,18 +314,18 @@
         <DCCReference Include="..\library\npm\FHIR.Npm.Browser.pas">
             <Form>PackageFinderForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\FHIR.Tx.Service.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Operations.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.OpBase.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Operations.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.OpBase.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Operations.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.OpBase.pas"/>
-        <DCCReference Include="..\library\tools\FHIR.Tools.CodeSystemProvider.pas"/>
-        <DCCReference Include="..\library\tools\FHIR.Tools.ValueSets.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.AuthMap.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.AuthMap.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.AuthMap.pas"/>
+        <DCCReference Include="..\library\ftx_service.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_operations.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_opbase.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_operations.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_opbase.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_operations.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_opbase.pas"/>
+        <DCCReference Include="..\library\tools\fhir_codesystem_service.pas"/>
+        <DCCReference Include="..\library\tools\fhir_valuesets.pas.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_authmap.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_authmap.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_authmap.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.StyleHooks.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Classes.pas"/>
@@ -335,11 +335,11 @@
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Export.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTHeaderPopup.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Lang.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Narrative.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Types.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
+        <DCCReference Include="..\library\cda\cda_base.pas"/>
+        <DCCReference Include="..\library\cda\cda_narrative.pas"/>
+        <DCCReference Include="..\library\cda\cda_types.pas"/>
+        <DCCReference Include="..\library\base\fhir_oids.pas"/>
+        <DCCReference Include="..\library\base\fhir_elementmodel.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.ClientDialog.pas">
             <Form>RegisterClientForm</Form>
@@ -347,7 +347,7 @@
         <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
             <Form>TextPresentationDialog</Form>
         </DCCReference>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
+        <DCCReference Include="..\library\npm\fsl_npm.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
@@ -357,25 +357,26 @@
         <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Base.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Admin.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Other.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Medications.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Resources.Financial.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.Base.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.Admin.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.Other.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.Clinical.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Resources.Canonical.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Admin.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Other.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Clinical.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Canonical.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Base.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_clinical.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_canonical.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_base.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_admin.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_other.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_medications.pas"/>
+        <DCCReference Include="..\library\r4\fhir4_resources_financial.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources_base.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources_admin.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources_other.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources_clinical.pas"/>
+        <DCCReference Include="..\library\r2\fhir2_resources_canonical.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources_admin.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources_other.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources_clinical.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources_canonical.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources_base.pas"/>
+        <DCCReference Include="..\library\r3\fhir3_resources.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\dependencies\qrcode\QlpIQrCode.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
@@ -405,7 +406,6 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="OSX64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
@@ -571,6 +571,16 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\drawable-xxhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon192">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xxxhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>res\drawable-xxxhdpi</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -804,6 +814,32 @@
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
+                <DeployClass Name="iOS_AppStore1024">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_AppIcon152">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_AppIcon167">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="iPad_Launch1024">
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
@@ -975,6 +1011,56 @@
                     </Platform>
                     <Platform Name="iOSSimulator">
                         <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Notification40">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Setting58">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_SpotLight80">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_AppIcon120">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_AppIcon180">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -1169,6 +1255,66 @@
                     </Platform>
                     <Platform Name="iOSSimulator">
                         <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\LaunchScreenImage.imageset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Notification40">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Notification60">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Setting58">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Setting87">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Spotlight120">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Spotlight80">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

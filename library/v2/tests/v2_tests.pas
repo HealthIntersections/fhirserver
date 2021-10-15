@@ -40,14 +40,13 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  fsl_testing,
-  fsl_stream,
+  fsl_utilities, fsl_testing, fsl_stream,
   fhir_objects,
   fhir4_pathnode, fhir4_pathengine,
   {$IFNDEF NO_JS}
   fsl_javascript, fhir_javascript, fhir4_javascript, v2_javascript,
   {$ENDIF}
-  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_Database, v2_objects, v2_message, v2_protocol;
+  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_database, v2_objects, v2_message, v2_protocol;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
@@ -106,9 +105,11 @@ type
     procedure TestConnection;
     procedure TestConnectionLimit;
     procedure TestSyncForwards;
+    {$IFNDEF LINUX}
     procedure TestSyncBackwards;
     procedure TestSyncForwards1000;
     procedure TestSyncBackwards1000;
+    {$ENDIF}
     procedure TestSingleThread;
     procedure TestSingleThreadTimeout;
   end;
@@ -152,7 +153,7 @@ begin
     end;
   end
   else
-    assertNotTested;
+    assertNotTested('not access database available');
 end;
 
 {$IFDEF TEST_COMPILED}
@@ -396,6 +397,8 @@ begin
     end;
 end;
 
+{$IFNDEF LINUX}
+
 procedure TLLPTests.TestSyncBackwards;
 var
   LIn: Tv2Protocol;
@@ -477,6 +480,8 @@ begin
     end;
 end;
 
+{$ENDIF}
+
 procedure TLLPTests.TestSyncForwards;
 var
   LIn: Tv2Protocol;
@@ -511,6 +516,8 @@ begin
     FreeAndNil(LIn);
     end;
 end;
+
+{$IFNDEF LINUX}
 
 procedure TLLPTests.TestSyncForwards1000;
 var
@@ -551,6 +558,8 @@ begin
   end;
 end;
 
+{$ENDIF}
+
 {$IFDEF WINDOWS}
 
 { THL7v2ParserTests }
@@ -588,7 +597,7 @@ var
   msg : THL7V2Message;
 begin
   if FHL7Dict = nil then
-    assertNotTested
+    assertNotTested('No HL7 Dictionary')
   else
   begin
     msg := parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
@@ -617,8 +626,8 @@ begin
   finally
     msg.Free;
   end;
-  StringToFile(source, 'c:\temp\source.hl7', TEncoding.UTF8);
-  StringToFile(output, 'c:\temp\output.hl7', TEncoding.UTF8);
+  StringToFile(source, filePath(['[tmp]', 'source.hl7']), TEncoding.UTF8);
+  StringToFile(output, filePath(['[tmp]', 'output.hl7']), TEncoding.UTF8);
   assertEqual(source, output);
 end;
 

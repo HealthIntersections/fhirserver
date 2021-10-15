@@ -1,4 +1,4 @@
-﻿unit fsl_testing;
+unit fsl_testing;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -38,7 +38,7 @@ Uses
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF}
   IdGlobalProtocols,
   CommonTestBase,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_logging;
 
 // *** General Testing Infrastructure ******************************************
 
@@ -55,7 +55,7 @@ type
   TFslTestCase = class (TTestCase)
   protected
     procedure Status(const Msg: string);
-    procedure assertNotTested;
+    procedure assertNotTested(reason : String);
     procedure assertPass;
     procedure assertFail(message : String);
     procedure assertTrue(test : boolean; message : String); overload;
@@ -113,17 +113,21 @@ type
     constructor Create(proc : TRunMethod);
   end;
 
+  { TFslTestSettings }
+
   TFslTestSettings = class (TFslObject)
   private
     Fini : TIniFile;
     FFilename : String;
     FServerTestsRoot : String;
     FFHIRTestsRoot : String;
+    function GetValue(section, name : String): String;
     function testFile(root : String; parts : array of String) : String;
   public
     constructor Create(filename : String);
     destructor Destroy; override;
     property filename : String read FFilename;
+    property value[section, name : String] : String read GetValue; default;
 
     function serverTestFile(parts : array of String) : String;
     function fhirTestFile(parts : array of String) : String;
@@ -143,6 +147,8 @@ type
 
 var
   TestSettings : TFslTestSettings;
+  GSnomedDataFile : string = '';
+
 
 {$IFDEF FPC}
 procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
@@ -226,10 +232,10 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslTestCase.assertNotTested;
+procedure TFslTestCase.assertNotTested(reason : String);
 begin
   {$IFDEF FPC}
-  TAssert.Fail('Not Tested');
+  Ignore('Not Tested: '+reason);
   {$ELSE}
   Fail('Not Tested');
   {$ENDIF}
@@ -409,9 +415,19 @@ begin
   inherited create;
   FFilename := filename;
   FIni := TIniFile.create(filename);
-  FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
-  FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
-  MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  Logging.log('Test Locations: ');
+  Logging.log('  fhirserver='+FServerTestsRoot);
+  Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
+  Logging.log('  markdown='+MDTestRoot);
+  Logging.log('  snomed='+GSnomedDataFile);
 end;
 
 destructor TFslTestSettings.Destroy;
@@ -483,6 +499,11 @@ begin
     else
       result := result + s.substring(1);
   end;
+end;
+
+function TFslTestSettings.GetValue(section, name : String): String;
+begin
+  result := FIni.ReadString(section, name, '');
 end;
 
 function TFslTestSettings.section(name: String): TFslStringMap;

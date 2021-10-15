@@ -1,5 +1,33 @@
 unit console_managers;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -36,6 +64,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TTXStatusCheckResponse }
@@ -53,6 +82,8 @@ type
   { TTXStatusChecker }
 
   TTXStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -97,6 +128,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TEPStatusCheckResponse }
@@ -115,6 +147,8 @@ type
   { TEPStatusChecker }
 
   TEPStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -172,6 +206,11 @@ uses
 
 { TEPStatusChecker }
 
+function TEPStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
+
 procedure TEPStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 begin
   (response as TEPStatusCheckResponse).status := checkDatabaseInstall((request as TEPStatusCheckRequest).Fitem);
@@ -197,6 +236,11 @@ begin
 end;
 
 { TTXStatusChecker }
+
+function TTXStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TTXStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 var
@@ -290,6 +334,11 @@ begin
   inherited Destroy;
 end;
 
+function TTXStatusCheckRequest.description: String;
+begin
+  result := '';
+end;
+
 { TEPStatusCheckRequest }
 
 constructor TEPStatusCheckRequest.Create(item: TFHIRServerConfigSection);
@@ -302,6 +351,11 @@ destructor TEPStatusCheckRequest.Destroy;
 begin
   FItem.Free;
   inherited;
+end;
+
+function TEPStatusCheckRequest.description: String;
+begin
+  result := '';
 end;
 
 { TAdminManager }
@@ -823,7 +877,7 @@ begin
   else if (item['type'].value = 'rxnorm') then
     importRxNorm(item)
   else
-    raise Exception.create('Not done yet');
+    raise EFslException.Create('Not done yet');
 end;
 
 

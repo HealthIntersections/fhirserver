@@ -98,7 +98,7 @@ function TFHIRWebServerSourceFolderProvider.asBytes(filename: String): TBytes;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  fn := FilePath([FSourcePath, filename]);
   result := FileToBytes(fn);
 end;
 
@@ -106,7 +106,7 @@ function TFHIRWebServerSourceFolderProvider.asStream(filename: String): TStream;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  fn := FilePath([FSourcePath, filename]);
   result := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
 end;
 
@@ -120,7 +120,7 @@ function TFHIRWebServerSourceFolderProvider.exists(filename: String): boolean;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  fn := FilePath([FSourcePath, filename]);
   result := FileExists(fn);
 end;
 
@@ -131,7 +131,7 @@ begin
   if FileExists(filename) then
     fn := filename
   else
-    fn := path([FSourcePath, filename]);
+    fn := FilePath([FSourcePath, filename]);
   result := fsl_stream.FileToString(fn, TEncoding.UTF8);
 end;
 
