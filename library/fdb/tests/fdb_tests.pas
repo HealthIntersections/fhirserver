@@ -254,14 +254,14 @@ var
 begin
   if not TestSettings.hasSection('mssql') then
   begin
-    Logging.log('ignore mssql test - no settings');
-    assertNotTested;
+//    Logging.log('ignore mssql test - no settings');
+    assertNotTested('MSSQL not configured');
   end
   else
   begin
     settings := TestSettings.section('mssql');
     try
-      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+//      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
@@ -281,14 +281,14 @@ var
 begin
   if not TestSettings.hasSection('mysql') then
   begin
-    Logging.log('ignore mysql test - no settings');
-    assertNotTested
+//    Logging.log('ignore mysql test - no settings');
+    assertNotTested('MySQL not configured');
   end
   else
   begin
     settings := TestSettings.section('mysql');
     try
-      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+//      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
       try
         test(db);
@@ -463,12 +463,12 @@ var
 begin
   fn := filePath(['[tmp]', 'sql.db']);
   if FileExists(fn) then
-  begin
-    Logging.log('SQLite DB @ '+fn+': delete');
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
     DeleteFile(fn);
-  end
-  else
-    Logging.log('SQLite DB @ '+fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
   db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
@@ -622,8 +622,9 @@ var
   co : pchar;
   l : smallint;
   np : SQLUINTEGER;
-  srvr, uid, db, pwd : String;
+  srvr, uid, db, pwd, drvr : String;
 begin
+  drvr := TestSettings['mysql', 'driver'];
   srvr := TestSettings['mysql', 'server'];
   db := TestSettings['mysql', 'database'];
   uid := TestSettings['mysql', 'username'];
@@ -637,7 +638,7 @@ begin
   check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
   check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
   check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
-  cs := 'UID='+uid+';PWD='+pwd+';DRIVER=MySQL ODBC 8.0 Unicode Driver;Server='+srvr+';Database='+db+';';
+  cs := 'UID='+uid+';PWD='+pwd+';DRIVER='+drvr+';Server='+srvr+';Database='+db+';';
   co := makePChar(DefaultStringSize);
   try
     check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
@@ -665,12 +666,12 @@ var
 begin
   fn := filePath(['[tmp]', 'sql.db']);
   if FileExists(fn) then
-  begin
-    Logging.log('SQLite DB @ '+fn+': delete');
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
     DeleteFile(fn);
-  end
-  else
-    Logging.log('SQLite DB @ '+fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
   db := TFDBSQLiteManager.create('test', fn, true, 4);
   try
     test(db);

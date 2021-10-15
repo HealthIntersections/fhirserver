@@ -111,10 +111,12 @@ Delphi:
 * **exec**: files needed by the server at run time
 
 * **1-ClickServer**: Not sure what this is
+* **.github**: ci-build setup
 * **exec**: files required at execution time, and target for the compiled applications (e.g. exec/64)
 * **build**: build scripts for windows and linux. Will install the entire pascal toolchain from scratch  - see below
 * **dependencies**: external code that isn't in it's own repository (mainly for legacy reasons)
 * **doco**: documentation for the product (though most documentation lives in the healthintersections wiki)
+* **fixtures**: resources used for running the tests during the ci-build
 * **install**: install scripts for the windows versions of the applications (to be reviewed)
 * **library**: library code as described above  
 * **npp**: FHIR Npp - being phased out
@@ -127,72 +129,9 @@ Delphi:
 * **transformer**: - being phased out
 * **utilities**: - misc other projects as listed above + java code generator for pascal code
 
-## Compiling 
+## Compiling / Building
 
-The code compiles under either Delphi (windows 32+64) or Lazarus/FPC (windows 32+64/Linux/OSX).
-
-### Delphi
-
-The code should in principle compile under Delphi XE3+ (any edition, personal will do). Note that 
-in practice, various subtle but breaking changes have been introduced to the runtime library (Streams, 
-Indy) that mean that some fiddling with IFDEFs may be necessary. 10.3 and 10.4 are both expected to 
-work without modification.
-
-In order to properly compile, the following git repositories must be put in these places:
-- https://github.com/grahamegrieve/fhirserver in C:\work\fhirserver
-- https://github.com/grahamegrieve/delphi-markdown in C:\work\markdown
-
-And also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Home (all delphi 
-users should have this installed!)
-
-For design time support for the GUI applications, you need to install treeview and 
-synedit (see in dependencies folders), then open and compile the packages in /packages, 
-and install the 2 design time packages.
-
-Note that the FHIRServer is a *big* compile. You may have problems compiling in 
-resource constrained environments.
-
-### FPC / Lazarus
-
-The code compiles using the trunk versions of FPC + Lazarus. In time, it would be good to transit to the stable version, but compiling depends on bug fixes in FPC that are not in stable yet
- 
-The FhirServer depends on the following other GitHub repositories:
-* https://github.com/dezlov/PascalTZ
-* https://github.com/grahamegrieve/delphi-markdown
-* https://github.com/Xor-el/QRCodeGenLib4Pascal
-
-The toolkit also depends on these repositories:
-* https://github.com/mriscoc/extrasyn
-* https://github.com/grahamegrieve/HtmlViewer
-
-Get a local copy of these, and install their packages. Or, alternatively, use the build scripts, see below
-
-## Build scripts 
-
-The build scripts are found in /build. There are 2 sets of files:
-
-* windows*.bat
-* linux*.sh
-
-These are broken up into modules:
-* x-all.x: Install the entire tool chain
-* x-update.x: Just update the libaries and build. Use this after you've run x-all.x once
-
-* x-toolchain.x: installs the actual tool chain
-* x-libraries.x: installs/updates the libraries 
-* x-fhirserver.x: does the actual build of the 3 applications
-
-In general, the intent is to only use the first two
-
-You can run these without parameters, in which case they'll attempt to use a default location (/tmp/fsbuild for linux, r:/fsbuild - ram drive - for windows).
-In that location, all the tools and libraries are installed, including a fully working version of the lazarus IDE which is used for developing
-the applications (if not using delphi)
-
-## Test Cases
-
-in order to run the tests, you also need the repo https://github.com/FHIR/fhir-test-cases locally, and you'll need to pass this as a parameter to the test cases.
-
-(todo: extend the build scripts to install the test cases too)
+See [build/readme.md] for further instructions for building the programs in this repository.
 
 ## Building Release
 

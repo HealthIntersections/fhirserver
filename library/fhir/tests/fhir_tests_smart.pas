@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
   fsl_base, fsl_utilities, fsl_stream,
-   fhir_client, fhir_oauth, FHIR.Smart.Login;
+  fhir_objects, fhir_client, fhir_oauth;
 
 type
   TSmartTestMode = (stmAllOk, stmBadRedirect, stmBadLogin);

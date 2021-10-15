@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  fsl_base, fsl_utilities,
+  fsl_base, fsl_utilities, fsl_logging,
   fdb_dialects, fdb_manager,
   fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 

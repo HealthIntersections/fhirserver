@@ -40,7 +40,7 @@ uses
   {$IFDEF FPC}
   {Windows, }Graphics, Controls, StdCtrls, ExtCtrls, Forms,
   {$ELSE}
-  WinApi.Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
+  Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
   {$ENDIF}
   fsl_base;
 
@@ -6157,25 +6157,34 @@ begin
 end;
 
 procedure TGraphCanvas.clip(x1, y1, x2, y2: integer);
-//var
-//  ClipRgn : HRgn;
+{$IFDEF DELPHI}
+var
+  ClipRgn : HRgn;
+{$ENDIF}
 begin
-  //ClipRgn := CreateRectRgn(x1,y1,x2,y2);
-  //SelectClipRgn(FCanvas.Handle, ClipRgn);
-  //DeleteObject(ClipRgn);
-  //
+  {$IFDEF DELPHI}
+  ClipRgn := CreateRectRgn(x1,y1,x2,y2);
+  SelectClipRgn(FCanvas.Handle, ClipRgn);
+  DeleteObject(ClipRgn);
+  {$ELSE}
   FCanvas.ClipRect := TRect.create(x1, y1, x2, y2);
   FCanvas.Clipping := true;
+  {$ENDIF}
 end;
 
 procedure TGraphCanvas.unClip(x1, y1, x2, y2: integer);
-//var
-//  ClipRgn : HRgn;
+{$IFDEF DELPHI}
+var
+  ClipRgn : HRgn;
+{$ENDIF}
 begin
-  //ClipRgn := CreateRectRgn(x1,y1,x2,y2);
-  //SelectClipRgn(FCanvas.Handle, ClipRgn);
-  //DeleteObject(ClipRgn);
+  {$IFDEF DELPHI}
+  ClipRgn := CreateRectRgn(x1,y1,x2,y2);
+  SelectClipRgn(FCanvas.Handle, ClipRgn);
+  DeleteObject(ClipRgn);
+  {$ELSE}
   FCanvas.Clipping := false;
+  {$ENDIF}
 end;
 
 procedure TGraphCanvas.Ellipse(X1, Y1, X2, Y2: Integer);

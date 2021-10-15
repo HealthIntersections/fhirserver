@@ -4,13 +4,13 @@ fhir-test-cases=${FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH}
 markdown=${FHIRSERVER_LOCATIONS_MARKDOWN_CLONE_PATH}
 snomed=${FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH}
 
-[mssql]
+[mssql-not]
 driver=SQL Server
 server=(local)
 database=test
 
 [mysql]
-driver=MySQL ODBC 8.0 Unicode Driver
+driver=MySQL ODBC 8.0
 server=${FHIRSERVER_MYSQL_SERVER}
 database=test
 username=test

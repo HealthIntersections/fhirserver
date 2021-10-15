@@ -1093,6 +1093,7 @@ type
     class function makeLocal(value : TDateTime) : TFslDateTime; overload; static; // stated time, local timezone
     class function make(value : TDateTime; tz : TFslDateTimeTimezone) : TFslDateTime; overload; static; // stated time and timezone
     class function make(value : TDateTime; tz : TFslDateTimeTimezone; precision : TFslDateTimePrecision) : TFslDateTime; overload; static; // stated time and timezone
+    class function make(value : TDateTime; zone : String) : TFslDateTime; overload; static; // stated time in stated timezone
     class function fromHL7(value : String) : TFslDateTime; static; // load from a v2/cda date format
     class function fromXML(value : String) : TFslDateTime; static; // load from XML format
     class function fromTS(value : TTimestamp; tz : TFslDateTimeTimezone = dttzLocal) : TFslDateTime; overload; static; // load from classic SQL format
@@ -7906,7 +7907,7 @@ begin
   result := err = '';
 end;
 
-procedure TFslDateTime.clear;
+procedure TFslDateTime.clear();
 begin
   Source := '';
   year := 0;
@@ -8464,12 +8465,13 @@ begin
   result.RollUp;
 end;
 
-class operator TFslDateTime.LessThan(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.LessThan(a: TFslDateTime; b: TFslDateTime): Boolean;
 begin
   result := a.before(b, false);
 end;
 
-class operator TFslDateTime.LessThanOrEqual(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.LessThanOrEqual(a: TFslDateTime; b: TFslDateTime
+  ): Boolean;
 begin
   result := a.before(b, true);
 end;
@@ -8527,7 +8529,7 @@ begin
   end;
 end;
 
-function TFslDateTime.ToString(format: String): String;
+function TFslDateTime.toString(format: String): String;
 begin
   if Source = '' then
     exit('');
@@ -8709,12 +8711,14 @@ begin
   result.source := value;
 end;
 
-class operator TFslDateTime.GreaterThan(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.GreaterThan(a: TFslDateTime; b: TFslDateTime
+  ): Boolean;
 begin
   result := a.after(b, false);
 end;
 
-class operator TFslDateTime.GreaterThanOrEqual(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.GreaterThanOrEqual(a: TFslDateTime; b: TFslDateTime
+  ): Boolean;
 begin
   result := a.after(b, true);
 end;
@@ -8762,7 +8766,7 @@ begin
   end;
 end;
 
-function TFslDateTime.toXml: String;
+function TFslDateTime.toXML: String;
 begin
   if null then
     exit('');
@@ -9065,7 +9069,7 @@ begin
   result.Source := result.toXML;
 end;
 
-class operator TFslDateTime.NotEqual(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.NotEqual(a: TFslDateTime; b: TFslDateTime): Boolean;
 begin
   result := not a.equal(b);
 end;
@@ -9200,6 +9204,18 @@ begin
   result.FPrecision := precision;
 end;
 
+class function TFslDateTime.make(value: TDateTime; zone: String): TFslDateTime;
+var
+  offs : TTimeSpan;
+  h, m, s, z : word;
+begin
+  result := make(value, dttzSpecified);
+  result.FPrecision := dtpSec;
+  offs := {$IFDEF FPC}TTimeSpan.makeTicks{$ENDIF}(TBundledTimeZone.GetTimeZone(zone).GetUtcOffset(value));
+  result.TimeZoneHours := offs.Hours;
+  result.TimezoneMins := offs.Minutes;
+end;
+
 class function TFslDateTime.makeLocal(value: TDateTime) : TFslDateTime;
 begin
   result := make(value, dttzLocal);
@@ -9233,7 +9249,7 @@ begin
   result.Source := 'fromTS';
 end;
 
-function TFslDateTime.Equal(other: TFslDateTime): Boolean;
+function TFslDateTime.equal(other: TFslDateTime): Boolean;
 begin
   result := (year = other.year) and
     ((FPrecision < dtpMonth) or (month = other.month)) and
@@ -9252,7 +9268,7 @@ begin
   result.FPrecision := precision;
 end;
 
-function TFslDateTime.SameTime(other: TFslDateTime): Boolean;
+function TFslDateTime.sameTime(other: TFslDateTime): Boolean;
 begin
   if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
     if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
@@ -9279,17 +9295,19 @@ begin
   end;
 end;
 
-class operator TFslDateTime.subtract(a, b: TFslDateTime): TDateTime;
+class operator TFslDateTime.Subtract(a: TFslDateTime; b: TFslDateTime
+  ): TDateTime;
 begin
   result := a.difference(b);
 end;
 
-class operator TFslDateTime.subtract(a: TFslDateTime; b: TDateTime): TFslDateTime;
+class operator TFslDateTime.Subtract(a: TFslDateTime; b: TDateTime
+  ): TFslDateTime;
 begin
   result := a.subtract(b);
 end;
 
-function TFslDateTime.ToString: String;
+function TFslDateTime.toString: String;
 begin
   if null then
     exit('');
@@ -9391,7 +9409,7 @@ begin
     result := (uSelf.fraction > uOther.fraction);
 end;
 
-class operator TFslDateTime.add(a: TFslDateTime; b: TDateTime): TFslDateTime;
+class operator TFslDateTime.Add(a: TFslDateTime; b: TDateTime): TFslDateTime;
 begin
   result := a.add(b);
 end;
@@ -9610,7 +9628,7 @@ end;
 
 function sameInstant(t1, t2 : TDateTime) : boolean;
 begin
-  result := abs(t1-t2) < DATETIME_SECOND_ONE;
+  result := abs(t1-t2) < (DATETIME_SECOND_ONE * 2); // one second is ok
 end;
 
 
@@ -12261,7 +12279,7 @@ begin
 end;
 {$ENDIF}
 
-class operator TFslDateTime.equal(a, b: TFslDateTime): Boolean;
+class operator TFslDateTime.Equal(a: TFslDateTime; b: TFslDateTime): Boolean;
 begin
   result := a.equal(b);
 end;
