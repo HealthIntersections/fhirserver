@@ -520,7 +520,9 @@ uses
   healthcard_generator in 'healthcard_generator.pas',
   fsl_html in '..\library\fsl\fsl_html.pas',
   remote_config in 'remote_config.pas',
-  endpoint_folder in 'endpoint_folder.pas';
+  endpoint_folder in 'endpoint_folder.pas',
+  fcomp_graph in '..\library\fcomp\fcomp_graph.pas',
+  fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas';
 
 begin
   ExecuteFhirServer;
