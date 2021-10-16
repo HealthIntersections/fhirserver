@@ -125,6 +125,7 @@ type
 
     function packageExists(id, ver : String) : boolean; overload;
     function autoInstallPackage(id, ver : String) : boolean; overload;
+    function latestPublishedVersion(id : String) : String;
 
     function loadPackage(id : String) : TNpmPackage; overload;
     function loadPackage(id, ver : String) : TNpmPackage; overload;
@@ -854,6 +855,8 @@ var
   list : TFslList<TFHIRPackageInfo>;
   t, pd : TFHIRPackageInfo;
 begin
+  if (ver = '') then
+    ver := latestPublishedVersion(id);
   result := packageExists(id, ver);
   if (not result) then
   begin
@@ -877,7 +880,7 @@ begin
       list.Free;
     end;
     result := packageExists(id, ver);
-  end;
+  end
 end;
 
 procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadInfo : TPackageLoadingInformation);
@@ -975,6 +978,33 @@ begin
     n := ExtractFileName(s);
     if n.StartsWith(id+'#') then
       result := n.Substring(n.IndexOf('#')+1);
+  end;
+end;
+
+function TFHIRPackageManager.latestPublishedVersion(id: String): String;
+var
+  pck, t : TFHIRPackageInfo;
+  list : TFslList<TFHIRPackageInfo>;
+begin
+  result := '';
+  list := TFslList<TFHIRPackageInfo>.create;
+  try
+    try
+      TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_PRIMARY, id);
+    except
+    end;
+    try
+      TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
+    except
+    end;
+    pck := nil;
+    for t in list do
+      if (t.Id = id) and ((pck = nil) or isMoreRecentVersion(t.version, pck.version)) then
+        pck := t;
+    if pck <> nil then
+      result := pck.version;
+  finally
+    list.free;
   end;
 end;
 

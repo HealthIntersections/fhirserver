@@ -17,7 +17,7 @@
       <ResourceType Value="res"/>
       <Icon Value="0"/>
     </General>
-    <BuildModes Count="6">
+    <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win32">
         <MacroValues Count="1">
@@ -248,6 +248,48 @@
           </Other>
         </CompilerOptions>
       </Item6>
+      <Item7 Name="win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\fhirserver"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseValgrind Value="True"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dNO_CONVERSIONX"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
       <SharedMatrixOptions Count="3">
         <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="714078438566" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>

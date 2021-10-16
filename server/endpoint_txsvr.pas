@@ -1014,8 +1014,6 @@ var
   i : integer;
   p : TFHIRParser;
 begin
-  Logging.start('Load package '+pid);
-
   if (FNpm = nil) then
     FNpm := TFHIRPackageManager.Create(false);
   i := 0;
@@ -1024,6 +1022,7 @@ begin
   try
     npm := FNpm.loadPackage(pid);
     try
+      Logging.start('Load package '+npm.name+'#'+npm.version);
       FData.FPackages.Add(npm.name+'#'+npm.version);
       for s in npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']) do
       begin
