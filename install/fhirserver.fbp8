@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug in translate routine"
+        as.returnvalue = "reduce frequency of email from package_spider"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -232,8 +232,8 @@ begin
           delphi.compileroptions
           begin
             alwaysuseconditionalsfromdof = false
-            alwaysusedelphilibrarypath = false
-            alwaysusedofsearchpath = false
+            alwaysusedelphilibrarypath = true
+            alwaysusedofsearchpath = true
             assertions = true
             assignableconst = false
             booleval = false
@@ -273,7 +273,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10;C:\\work\\fhirserver\\dependencies\\qrcode
             showhints = true
             showwarnings = true
             stackframes = false
@@ -363,8 +363,8 @@ begin
           delphi.compileroptions
           begin
             alwaysuseconditionalsfromdof = false
-            alwaysusedelphilibrarypath = false
-            alwaysusedofsearchpath = false
+            alwaysusedelphilibrarypath = true
+            alwaysusedofsearchpath = true
             assertions = false
             assignableconst = false
             booleval = false
@@ -404,7 +404,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10;C:\\work\\fhirserver\\dependencies\\qrcode
             showhints = true
             showwarnings = true
             stackframes = false

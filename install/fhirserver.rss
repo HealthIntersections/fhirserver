@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.380 2021-08-21</title>
+		<item><title>FHIRServer release 1.0.396 2021-10-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.396.exe</link>
+			<description>2021-10-16 (v1.0.396): reduce frequency of email from package_spider</description>
+		</item>
+<item><title>FHIRServer release 1.0.380 2021-08-21</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.380.exe</link>
 			<description>2021-08-21 (v1.0.380): imported value set fixes, rxnorm and ndc imports, package security impl</description>
 		</item>
-<item><title>FHIRServer release 1.0.379 2021-08-18</title>
+		<item><title>FHIRServer release 1.0.379 2021-08-18</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.379.exe</link>
 			<description>2021-08-18 (v1.0.379): Stability fixes for packages2.fhir.org</description>
 		</item>

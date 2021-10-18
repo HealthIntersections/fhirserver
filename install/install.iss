@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=FHRServer v1.0.380
+AppVerName=FHRServer v1.0.396
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirserver-1.0.380
+OutputBaseFilename=fhirserver-1.0.396
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -114,12 +114,6 @@ Source: "..\exec\pack\fhir-lang.dat";                         DestDir: "{app}"; 
 Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";
 Source: "..\readme.md";                                       DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "readme.txt";
 Source: "readme.rtf";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "installation-documentation.rtf";
-
-; utilities files - put in app dir because these may be different to ones already on the machine.
-Source: "..\exec\pack\w64\openssl.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqldiff.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3_analyzer.exe";              DestDir: "{app}\utils"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\FHIR Server Manager";         Filename: "{app}\fhirconsole.exe";                      WorkingDir: "{app}"    

@@ -33,7 +33,7 @@ interface
 
 uses
   Generics.Collections, Math,
-  System.UITypes, Graphics, Controls,
+  System.UITypes, Vcl.Graphics, Controls,
   fsl_testing,
   fcomp_graph;
 
