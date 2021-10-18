@@ -10,11 +10,15 @@ pushd $BUILDDIR
 
 # ---- install the compiler ----------
 
+echo "Get fpclazup"
+
 mkdir tools
 
 wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0b/fpclazup-x86_64-linux -O tools/fpclazup
 
 chmod +x tools/fpclazup
+
+echo "Build Lazarus"
 
 tools/fpclazup --noconfirm --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools
 
