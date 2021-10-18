@@ -39,11 +39,23 @@ echo "## compile packages/fhir_fui.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk --widgetset=cocoa -q -q
 
 echo "## compile console"
-$BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --widgetset=cocoa --build-mode=osx-m1 -q -q
+if [[ `uname -m` == 'arm64' ]]; then
+  $BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --widgetset=cocoa --build-mode=osx-m1 -q -q
+else
+  $BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --widgetset=cocoa --build-mode=osx -q -q
+fi 
 
 echo "## compile toolkit"
-$BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --widgetset=cocoa --build-mode=osx-m1 -q -q
+if [[ `uname -m` == 'arm64' ]]; then
+  $BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --widgetset=cocoa --build-mode=osx-m1 -q -q
+else
+  $BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpi --widgetset=cocoa --build-mode=osx -q -q
+fi 
 
 echo "## compile server"
-$BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --widgetset=cocoa --build-mode=osx-m1 -q -q
+if [[ `uname -m` == 'arm64' ]]; then
+  $BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --widgetset=cocoa --build-mode=osx-m1 -q -q
+else
+  $BUILD/tools/lazarus/lazbuild server/fhirserver.lpi --widgetset=cocoa --build-mode=osx -q -q
+fi 
 

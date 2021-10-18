@@ -14,7 +14,11 @@ mkdir tools
 
 echo "get fpcup"
 
-wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0c/fpclazup-aarch64-darwin -O tools/fpclazup
+if [[ `uname -m` == 'arm64' ]]; then
+  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0c/fpclazup-aarch64-darwin -O tools/fpclazup
+else 
+  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0c/fpclazup-x86_64-darwin -O tools/fpclazup
+fi
 
 echo sign it
 
