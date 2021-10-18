@@ -54,8 +54,8 @@ uses
   fsl_openssl, fsl_rdf, fsl_scim, fsl_scrypt, fsl_service, fsl_service_win, 
   fsl_shell, fsl_stream, fsl_threads, fsl_turtle, fsl_twilio, fsl_utilities, 
   fsl_websocket, fsl_wininet, fsl_xml, fsl_ucum, IdLogDebug, 
-  IdServerInterceptLogFile, fsl_htmlgen, fsl_diff, DelphiZXIngQRCode, uQRC, 
-  fsl_qrcode, LazarusPackageIntf;
+  IdServerInterceptLogFile, fsl_htmlgen, fsl_diff, uQRC, fsl_qrcode, 
+  LazarusPackageIntf;
 
 implementation
 

@@ -689,10 +689,6 @@
         <UnitName Value="fsl_diff"/>
       </Item>
       <Item>
-        <Filename Value="..\dependencies\barcode\DelphiZXIngQRCode.pas"/>
-        <UnitName Value="DelphiZXingQRCode"/>
-      </Item>
-      <Item>
         <Filename Value="..\dependencies\qrgen\uQRC.pas"/>
         <UnitName Value="uQRC"/>
       </Item>
