@@ -846,15 +846,14 @@ begin
     else
       openFile(ParamStr(i));
 
+  clearContentMenu;
   if pgEditors.PageCount > 0 then
   begin
     tab := pgEditors.Pages[0];
     pgEditors.ActivePage := tab;
     FContext.Focus := FContext.EditorForTab(tab);
     FContext.focus.getFocus(mnuContent);
-  end
-  else
-    clearContentMenu;
+  end;
   updateActionStatus(editor);
   FContext.ToolBarHeight := ToolBar1.Height;
   FServerView.refresh;
@@ -1347,6 +1346,7 @@ begin
       storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FContext.Focus := editor;
+      clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
       FProjectsView.refresh;
       updateActionStatus(editor);
@@ -1392,6 +1392,7 @@ begin
       FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
       FContext.Focus := editor;
+      clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
       editor.lastChangeChecked := true;
       editor.lastMoveChecked := true;
@@ -1484,6 +1485,7 @@ begin
       FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
       FContext.Focus := editor;
+      clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
       editor.lastChangeChecked := true;
       editor.lastMoveChecked := true;
@@ -1750,6 +1752,7 @@ begin
     storeOpenFileList;
     FTempStore.storeContent(worker.session.Guid, true, worker.getBytes);
     FContext.Focus := worker;
+    clearContentMenu;
     FContext.Focus.getFocus(mnuContent);
     FServerView.refresh;
     updateActionStatus(worker);
@@ -1811,6 +1814,7 @@ begin
       FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
       FContext.Focus := editor;
+      clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
       editor.lastChangeChecked := true;
       editor.lastMoveChecked := true;
@@ -1841,6 +1845,7 @@ begin
   storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
   FContext.Focus := editor;
+  clearContentMenu;
   FContext.Focus.getFocus(mnuContent);
   updateActionStatus(editor);
   checkWelcomePage;
@@ -1865,6 +1870,7 @@ begin
   storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
   FContext.Focus := editor;
+  clearContentMenu;
   FContext.Focus.getFocus(mnuContent);
   updateActionStatus(editor);
   checkWelcomePage;
@@ -2889,13 +2895,12 @@ begin
   if FContext.Focus <> nil then
     FContext.Focus.loseFocus();
   FContext.Focus := FContext.EditorForTab(pgEditors.ActivePage);
+  clearContentMenu;
   if FContext.Focus <> nil then
   begin
     FContext.Focus.getFocus(mnuContent);
     FContext.Focus.editPause;
-  end
-  else
-    clearContentMenu;
+  end;
   checkActiveTabCurrency;
   updateActionStatus(self);
   updateStatusBar;

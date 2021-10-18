@@ -91,6 +91,7 @@ Type
 
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
+    procedure listVersions(url : String; list : TStringList);
 
     property Languages : TIETFLanguageDefinitions read FLanguages;
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
@@ -207,6 +208,7 @@ Type
     function hasCodesystemUri(url : String; txResources : TFslMetadataResourceList = nil) : Boolean;
     function getConceptMapById(id : String) : TLoadedConceptMap;
     function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
+    procedure listVersions(url : String; list : TStringList);
 
     // publishing access
     procedure GetCodeSystemList(list : TFslList<TFHIRCodeSystemW>); overload;
@@ -1433,9 +1435,15 @@ begin
 end;
 
 Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
+var
+  defToLatest : boolean;
 begin
   result := nil;
   version := checkVersion(system, version, profile);
+  if (profile = nil) then
+    defToLatest := false
+  else
+    defToLatest := profile.defaultToLatestVersion;
 
   if ProviderClasses.ContainsKey(system) then
   begin
@@ -1443,17 +1451,19 @@ begin
     begin
       if ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
         result := ProviderClasses[system+URI_VERSION_BREAK+version].Link
-      else
+      else if defToLatest then
       begin
         // special support for SNOMED Editions
         if (system = 'http://snomed.info/sct') and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
           result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
         else
           result := ProviderClasses[system].Link;
-        if not result.defToThisVersion(version) then
+        if (result = nil) or not (result.defToThisVersion(version)) then
         begin
           result.Free;
-          raise ETerminologySetup.create('Unable to provide support for code system '+system+' version '+version);
+          result := nil;
+          if not noException then
+            raise ETerminologySetup.create('Unable to provide support for code system '+system+' version '+version);
         end;
       end;
     end
@@ -1640,6 +1650,22 @@ begin
   finally
     ts.Free;
   end;
+end;
+
+procedure TTerminologyServerStore.listVersions(url: String; list: TStringList);
+var
+  cs : TFHIRCodeSystemEntry;
+begin
+  FCommonTerminologies.listVersions(url, list);
+  FLock.Lock;
+  try
+    for cs in FCodeSystems.list do
+      if (cs.url = url) and (cs.version <> '') then
+        list.Add(cs.version);
+  finally
+    FLock.Unlock;
+  end;
+
 end;
 
 function TTerminologyServerStore.NextConceptKey: integer;
@@ -1961,6 +1987,15 @@ begin
 end;
 
 
+procedure TCommonTerminologies.listVersions(url: String; list: TStringList);
+var
+  pc : TCodeSystemProvider;
+begin
+  for pc in FProviderClasses.Values do
+    if (pc.systemUri(nil) = url) and (pc.version(nil) <> '') then
+      list.Add(pc.version(nil));
+end;
+
 procedure TCommonTerminologies.load(txlist: TFHIRServerConfigSection; testing : boolean);
 var
   tx : TFHIRServerConfigSection;
@@ -2032,8 +2067,12 @@ begin
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
         Loinc := TLoincServices.Create(FLanguages.link);
-        add(Loinc);
-        Loinc.Load(fixFile('loinc', tx['source'].value));
+        try
+          Loinc.Load(fixFile('loinc', tx['source'].value));
+          add(Loinc.link);
+        finally
+          Loinc.free;
+        end;
       end
       else if tx['type'].value = 'ucum' then
       begin

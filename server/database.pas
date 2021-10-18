@@ -7636,17 +7636,24 @@ end;
 function TFHIRNativeStorageService.LookupCode(system, version, code: String): String;
 var
   prov: TCodeSystemProvider;
+  params : TFHIRExpansionParams;
 begin
+  params := TFHIRExpansionParams.Create;
   try
-    prov := ServerContext.TerminologyServer.getProvider(system, version, nil);
+    params.defaultToLatestVersion := true;
     try
-      if prov <> nil then
-        result := prov.getDisplay(code, ServerContext.ValidatorContext.lang);
-    finally
-      prov.free;
+      prov := ServerContext.TerminologyServer.getProvider(system, version, params);
+      try
+        if prov <> nil then
+          result := prov.getDisplay(code, ServerContext.ValidatorContext.lang);
+      finally
+        prov.free;
+      end;
+    except
+      result := '';
     end;
-  except
-    result := '';
+  finally
+    params.Free;
   end;
 end;
 

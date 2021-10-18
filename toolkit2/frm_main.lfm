@@ -4734,7 +4734,7 @@ object MainToolkitForm: TMainToolkitForm
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
                 ColWidths = (
                   64
-                  182
+                  165
                 )
               end
             end

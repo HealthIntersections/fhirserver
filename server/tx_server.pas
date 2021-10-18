@@ -75,6 +75,7 @@ Type
     function workerGetDefinition(sender : TObject; url : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function workerGetExpansion(sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
+    procedure workerGetVersions(sender : TObject; url : String; list : TStringList);
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -190,6 +191,7 @@ var
   ctxt : TCodeSystemProviderContext;
   s : String;
   p : TFHIRLookupOpRespPropertyW;
+  params : TFHIRExpansionParams;
 
   function hasProp(name : String; def : boolean) : boolean;
   begin
@@ -199,34 +201,40 @@ var
       result := StringArrayExistsInsensitive(props, name);
   end;
 begin
-  provider := getProvider(coding.systemUri, coding.version, nil);
+  params := TFHIRExpansionParams.Create;
   try
-    resp.name := provider.name(nil);
-    s := provider.version(nil);
-    if (s <> '') then
-      resp.version := s;
-    ctxt := provider.locate(coding.code);
+    params.defaultToLatestVersion := true;
+    provider := getProvider(coding.systemUri, coding.version, nil);
     try
-      if ctxt = nil then
-        raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s);
+      resp.name := provider.name(nil);
+      s := provider.version(nil);
+      if (s <> '') then
+        resp.version := s;
+      ctxt := provider.locate(coding.code);
+      try
+        if ctxt = nil then
+          raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s);
 
-      if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
-      begin
-        p := resp.addProp('abstract');
-        try
-          p.value := Factory.makeBoolean(true);
-        finally
-          p.Free;
+        if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
+        begin
+          p := resp.addProp('abstract');
+          try
+            p.value := Factory.makeBoolean(true);
+          finally
+            p.Free;
+          end;
         end;
+        if (hasProp('display', true)) then
+          resp.display := provider.Display(ctxt, lang);
+        provider.extendLookup(Factory, ctxt, lang, props, resp);
+      finally
+        provider.Close(ctxt);
       end;
-      if (hasProp('display', true)) then
-        resp.display := provider.Display(ctxt, lang);
-      provider.extendLookup(Factory, ctxt, lang, props, resp);
     finally
-      provider.Close(ctxt);
+      provider.Free;
     end;
   finally
-    provider.Free;
+    params.Free;
   end;
 end;
 
@@ -332,7 +340,7 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, workerGetExpansion);
+    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, workerGetExpansion);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
@@ -491,7 +499,7 @@ function TTerminologyServer.MakeChecker(uri: string; profile : TFHIRExpansionPar
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, uri);
+  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, nil, CommonTerminologies.Languages.link, uri);
   try
     vs := getValueSetByUrl(uri);
     try
@@ -515,7 +523,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, vs.url);
     try
       check.prepare(vs, profile);
       result := check.check(coding, abstractOk, implySystem);
@@ -538,7 +546,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, vs.url);
     try
       check.prepare(vs, profile);
       result := check.check(coded, abstractOk, implySystem);
@@ -563,6 +571,11 @@ end;
 function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
 begin
   result := getProvider(url, version, params, nullOk);
+end;
+
+procedure TTerminologyServer.workerGetVersions(sender: TObject; url: String; list: TStringList);
+begin
+  listVersions(url, list);
 end;
 
 function TTerminologyServer.cacheSize(magic : integer) : UInt64;
@@ -1265,10 +1278,10 @@ begin
         profile := TFHIRExpansionParams.Create;
         try
           try
-            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, vs.url);
+            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, nil, CommonTerminologies.Languages.link, vs.url);
             try
               val.prepare(vs, profile);
-              if not val.check(URL, version, code, true, false) then
+              if not val.check(URL, version, code, true, false, nil) then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
                 conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
@@ -1307,7 +1320,7 @@ begin
       profile := TFHIRExpansionParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, vs.url);
+          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, nil, CommonTerminologies.Languages.link, vs.url);
           try
             val.prepare(vs, profile);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
@@ -1318,7 +1331,7 @@ begin
               begin
                 system := conn2.ColStringByName['URL'];
                 code := conn2.ColStringByName['Code'];
-                if not val.check(system, version, code, true, false) then
+                if not val.check(system, version, code, true, false, nil) then
                   conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
                 else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
                   conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');

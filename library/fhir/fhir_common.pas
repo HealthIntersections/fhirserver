@@ -275,6 +275,7 @@ type
     function code :  TFhirIssueType; virtual; abstract;
 
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); virtual; abstract;
+    function hasIssues : boolean; virtual; abstract;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; virtual; abstract;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; virtual; abstract;
     function error(source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean;

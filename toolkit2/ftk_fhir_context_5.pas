@@ -42,6 +42,9 @@ uses
   fhir_valuesets;
 
 Type
+
+  { TToolkitValidatorContextR5 }
+
   TToolkitValidatorContextR5 = class (TBaseWorkerContextR5)
   private
     FLanguages : TIETFLanguageDefinitions;
@@ -55,6 +58,7 @@ Type
     function validateInternally(system, version, code: String; vs: TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
+    procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
     procedure SeeResource(r : TFhirResource); override;
   public
@@ -122,6 +126,12 @@ begin
   if cs = nil then
     raise ETerminologyError.create('Unable to resolve code system '+url);
   result := TFhirCodeSystemProvider.create(FLanguages.link, Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+end;
+
+procedure TToolkitValidatorContextR5.doGetList(sender: TObject; url: String;
+  list: TStringList);
+begin
+  // todo
 end;
 
 function TToolkitValidatorContextR5.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
@@ -319,7 +329,7 @@ begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, nil, FLanguages.link, '');
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, FLanguages.link, '');
       try
         params := TFHIRExpansionParams.Create;
         try

@@ -119,6 +119,7 @@ type
     function text : String; override;
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); override;
+    function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
     function severity : TIssueSeverity; override;
@@ -1137,6 +1138,14 @@ end;
 function TFhirOperationOutcome5.hasErrors: boolean;
 begin
   result := (Fres as TFhirOperationOutcome).hasErrors;
+end;
+
+function TFhirOperationOutcome5.hasIssues: boolean;
+var
+  op : TFhirOperationOutcome;
+begin
+  op := Fres as TFhirOperationOutcome;
+  result := not op.issueList.IsEmpty;
 end;
 
 function TFhirOperationOutcome5.hasText: boolean;
