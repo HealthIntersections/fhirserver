@@ -1211,6 +1211,8 @@ begin
     result.excludeNotForUI := StrToBoolDef(params.str('excludeNotForUI'), false);
   if (params.str('excludePostCoordinated') <> '') then
     result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
+  if (params.str('default-to-latest-version') <> '') then
+    result.defaultToLatestVersion := StrToBoolDef(params.str('default-to-latest-version'), false);
   for p in params.parameterList do
   begin
     if (p.name = 'system-version') then
