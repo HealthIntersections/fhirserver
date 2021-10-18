@@ -443,7 +443,7 @@ procedure TNpmPackage.checkIndexed(desc: String);
 var
   folder : TNpmPackageFolder;
   indexer : TNpmPackageIndexBuilder;
-  n : string;
+  n, j : string;
   json : TJsonObject;
 begin
   for folder in FFolders.values do
@@ -454,10 +454,13 @@ begin
       try
         for n in folder.listFiles() do 
         begin
-          indexer.seeFile(n, folder.fetchFile(n));
+          if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('ig-r4.json')) then
+             indexer.seeFile(n, folder.fetchFile(n));
         end;
-        try 
-          json := TJsonParser.parse(indexer.build());
+        try
+          j := indexer.build();
+          StringToFile(j, FilePath([folder.FFolder, '.index.json']), TEncoding.UTF8);
+          json := TJsonParser.parse(j);
           try
             folder.readIndex(json);
           finally
