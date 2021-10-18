@@ -51,14 +51,6 @@ else
     cd lazarus-ide-tester && git pull && cd ..
 fi
 
-echo "## git qr-code"
-
-if [ ! -d "QRCodeGenLib4Pascal" ] ; then
-    git clone https://github.com/Xor-el/QRCodeGenLib4Pascal
-else
-    cd QRCodeGenLib4Pascal  && git pull && cd ..
-fi
-
 echo "## git test cases"
 
 if [ ! -d "fhir-test-cases" ] ; then
@@ -88,9 +80,6 @@ tools/lazarus/lazbuild source/lazarus-ide-tester/ide/idetester_dsgn.lpk -q --add
 
 echo "## compile package source/HtmlViewer/package/FrameViewer09.lpk"
 tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk -q --add-package
-
-echo "## compile package source/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk"
-tools/lazarus/lazbuild source/QRCodeGenLib4Pascal/QRCodeGenLib/src/Packages/FPC/QRCodeGenLib4PascalPackage.lpk -q
 
 echo "## compile package source/delphi-markdown/packages/markdownengine.lpk"
 tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q

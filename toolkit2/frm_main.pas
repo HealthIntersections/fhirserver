@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls, Math,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
-  lclintf, ValEdit, LCLType,
+  lclintf, ValEdit, LCLType, FPImage,
 
   IdOpenSSLLoader,
 
@@ -50,7 +50,7 @@ uses
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url;
+  dlg_new_resource, dlg_open_url, dlg_scanner;
 
 type
   {$IFDEF WINDOWS}
@@ -76,6 +76,8 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionFileQRFromImage: TAction;
+    actionFileQRFromCamera: TAction;
     actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
     actionViewsCopyLog: TAction;
@@ -191,6 +193,9 @@ type
     MenuItem119: TMenuItem;
     MenuItem120: TMenuItem;
     MenuItem54: TMenuItem;
+    MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
+    MenuItem58: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -443,6 +448,7 @@ type
     procedure actionFileNewExecute(Sender: TObject);
     procedure actionFileOpenExecute(Sender: TObject);
     procedure actionFileOpenUrlExecute(Sender: TObject);
+    procedure actionFileQRFromImageExecute(Sender: TObject);
     procedure actionFileSaveAllExecute(Sender: TObject);
     procedure actionFileSaveAs1Execute(Sender: TObject);
     procedure actionFileSaveExecute(Sender: TObject);
@@ -2564,6 +2570,45 @@ begin
     until mr <> mrNone;
   finally
     OpenURLForm.free;
+  end;
+end;
+
+procedure TMainToolkitForm.actionFileQRFromImageExecute(Sender: TObject);
+var
+  dlg : TOpenDialog;
+  bmp : TFPCustomImage;
+  s : String;
+begin
+  dlg := TOpenDialog.create(self);
+  try
+    dlg.Filter := 'All Known Images|*.bmp; *.jpg; *.gif; *.png; *.tiff|'+
+      'All Files|*.*';
+    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
+    if dlg.execute then
+    begin
+      bmp := TFPMemoryImage.create(10, 10);
+      try
+        bmp.LoadFromFile(dlg.filename);
+        QRCodeScannerForm := TQRCodeScannerForm.create(nil);
+        try
+          QRCodeScannerForm.useImage(bmp);
+          if QRCodeScannerForm.ShowModal = mrOk then
+          begin
+            s := QRCodeScannerForm.Memo1.Text;
+            if (s.StartsWith('shc:/')) then
+              createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
+            else
+              createNewFile(sekText, TEncoding.UTF8.getBytes(s));
+          end;
+        finally
+          QRCodeScannerForm.free;
+        end;
+      finally
+        bmp.free;
+      end;
+    end;
+  finally
+    dlg.free;
   end;
 end;
 

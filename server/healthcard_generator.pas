@@ -33,9 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, DateUtils, {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
-  QlpQRCodeGenLibTypes, QlpQrSegment, QlpQrCode, QlpIQrSegment, QlpIQrCode,
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto,
+  SysUtils, Classes, DateUtils, Graphics, {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto, fsl_qrcode,
   fhir_objects, fhir_common, fhir_healthcard, fhir_utilities,
   fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
   session, storage, server_context;
@@ -158,39 +157,42 @@ end;
 
 function THealthCardGenerator.generateImage(card: THealthcareCard): TBytes;
 var
-  bq : TQRCodeGenLibBitmap;
-  segs : TQRCodeGenLibGenericArray<IQrSegment>;
-  qr : IQrCode;
   mem : TBytesStream;
+  bmp : TBitmap;
   {$IFDEF DELPHI}
   png : TPngImage;
+  {$ELSE}
+  png : TFPCustomImage;
   {$ENDIF}
 begin
-  mem := TBytesStream.create;
+  bmp := TBitmap.Create;
   try
-    segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
-       TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
-       TQrSegment.MakeNumeric(card.qrSource(false)));
-    qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
-    bq := qr.ToBitmapImage(10, 4);
+    card.toBmp(bmp);
+    mem := TBytesStream.create;
     try
       {$IFDEF FPC}
-      bq.SaveToStream(mem, TFPWriterPNG.create);
+      png := TFPCustomImage.create(bmp.Width, bmp.Height);
+      try
+        png.Assign(bmp);
+        png.SaveToStream(mem, TFPWriterPNG.create);
+      finally
+        png.free;
+      end;
       {$ELSE}
       png := TPngImage.Create;
       try
-        png.Assign(bq);
+        png.Assign(bmp);
         png.SaveToStream(mem);
       finally
         png.Free;
       end;
-    {$ENDIF}
+      {$ENDIF}
+      result := mem.Bytes;
     finally
-      bq.free;
+      mem.free;
     end;
-    result := mem.Bytes;
   finally
-    mem.free;
+    bmp.Free;
   end;
 end;
 

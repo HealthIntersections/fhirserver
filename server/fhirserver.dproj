@@ -644,6 +644,8 @@
         <DCCReference Include="endpoint_folder.pas"/>
         <DCCReference Include="..\library\fcomp\fcomp_graph.pas"/>
         <DCCReference Include="..\library\fcomp\tests\fcomp_tests_graph.pas"/>
+        <DCCReference Include="..\dependencies\qrgen\uQRC.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

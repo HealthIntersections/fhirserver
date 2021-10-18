@@ -20,6 +20,7 @@ In addition, the windows installer performs the following tasks
 Other tasks performed by the install builder:
 * update the version number in the source
 * regenerate the .web file from /server/web
+* sign the binaries
 * upload to healthintersections.com.au/FhirServer and update the .rss and .inc files
 
 ## Linux

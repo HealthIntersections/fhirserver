@@ -163,7 +163,7 @@ begin
       'Markdown|*.md|'+
       'HTML|*.htm; *.html|'+
       'Text|*.txt|'+
-      'All Fles|*.*';
+      'All Files|*.*';
     dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
     dlg.InitialDir := FIni.ReadString('file-store', 'folder', dlg.InitialDir);
     result := dlg.execute;

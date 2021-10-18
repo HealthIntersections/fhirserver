@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json;
+  SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF} Graphics,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fsl_qrcode;
 
 Const
   ID_LENGTH = 64;
@@ -828,6 +828,7 @@ type
     function htmlReport(tx : TFHIRTerminologyService) : String; virtual; abstract;
 
     function qrSource(prefix : boolean) : String; // prefix = include the shc:/ at the start
+    procedure toBmp(bmp : TBitmap);
 
     property jws : String read FJws write FJws;
     property links : TFslStringDictionary read FLinks;
@@ -2813,6 +2814,20 @@ begin
   end;
 end;
 
+procedure THealthcareCard.toBmp(bmp: TBitmap);
+var
+  qr : TQRCodeGenerator;
+begin
+  qr := TQRCodeGenerator.create;
+  try
+    qr.start;
+    qr.addSegment(qrmBytes, 'shc:/');
+    qr.addSegment(qrmNumeric, qrSource(false));
+    qr.finish(bmp);
+  finally
+    qr.free;
+  end;
+end;
 
 initialization
   GMessages := nil;

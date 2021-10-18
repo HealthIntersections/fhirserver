@@ -36,9 +36,7 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Graphics,
   Menus, ExtDlgs, IntfGraphics, FPImage, FPWriteBMP,
   HtmlView,
-  QlpQRCodeGenLibTypes, QlpQrSegment, QlpQrCode, QlpIQrSegment, QlpIQrCode,
   fsl_utilities, fsl_json, fsl_crypto,
-
   fhir_objects, fhir_parser, fhir_healthcard, fhir_common, fui_lcl_managers,
   ftk_context, ftk_constants,
   ftk_frame_resource;
@@ -283,19 +281,13 @@ end;
 
 procedure TPatientFrame.mnuSaveQRClick(Sender: TObject);
 var
-  bmp : TQRCodeGenLibBitmap;
-  picture : TPicture;
-  segs : TQRCodeGenLibGenericArray<IQrSegment>;
-  qr : IQrCode;
+  bmp : TBitmap;
 begin
   if sd.execute then
   begin
-    segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
-       TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
-       TQrSegment.MakeNumeric(FCardManager.Focus.qrSource(false)));
-    qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
-    bmp := qr.ToBitmapImage(10, 4);
+    bmp := TBitmap.create;
     try
+      FCardManager.Focus.toBmp(bmp);
       bmp.SaveToFile(sd.filename);
     finally
       bmp.free;
@@ -310,42 +302,22 @@ end;
 procedure TPatientFrame.pbCardPaint(Sender: TObject);
 var
   bmp : TBitMap;
-  bq : TQRCodeGenLibBitmap;
   scale : double;
-  segs : TQRCodeGenLibGenericArray<IQrSegment>;
-  qr : IQrCode;
-  mem : TMemoryStream;
 begin
   pbCard.Canvas.Brush.Color := clWhite;
   pbCard.Canvas.FillRect(Rect(0, 0, pbCard.Width, pbCard.Height));
   if FCardManager.Focus <> nil then
   begin
-    mem := TMemoryStream.create;
+    bmp := TBitmap.create;
     try
-      segs := TQRCodeGenLibGenericArray<IQrSegment>.create(
-         TQrSegment.MakeBytes(TENcoding.UTF8.GetBytes('shc:/')),
-         TQrSegment.MakeNumeric(FCardManager.Focus.qrSource(false)));
-      qr := TQrCode.EncodeSegments(segs, TQrCode.TEcc.eccLow);
-      bq := qr.ToBitmapImage(10, 4);
-      try
-        bq.SaveToStream(mem, TFPWriterBMP.create);
-      finally
-        bq.free;
-      end;
-      mem.position := 0;
-      bmp := TBitmap.create;
-      try
-        bmp.LoadFromStream(mem);
-        if (pbCard.Width < pbCard.Height) then
-          scale := pbCard.Width / bmp.Width
-        else
-          scale := pbCard.Height / bmp.Height;
-        pbCard.Canvas.StretchDraw(Rect(0, 0, Trunc(scale * bmp.Width), Trunc(scale * bmp.Height)), bmp);
-      finally
-        bmp.free;
-      end;
+      FCardManager.Focus.toBmp(bmp);
+      if (pbCard.Width < pbCard.Height) then
+        scale := pbCard.Width / bmp.Width
+      else
+        scale := pbCard.Height / bmp.Height;
+      pbCard.Canvas.StretchDraw(Rect(0, 0, Trunc(scale * bmp.Width), Trunc(scale * bmp.Height)), bmp);
     finally
-      mem.free;
+      bmp.free;
     end;
   end;
 end;
