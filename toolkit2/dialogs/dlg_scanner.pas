@@ -5,8 +5,8 @@ unit dlg_scanner;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  FPImage,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
+  FPImage, LCLIntf, LCLType,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
   fui_lcl_utilities;
 
@@ -17,26 +17,26 @@ type
   TQRCodeScannerForm = class(TForm)
     btnCancel: TButton;
     btnOk: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
     Image1: TImage;
-    lblInfo: TLabel;
     Memo1: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    Panel5: TPanel;
+    pnlInfo: TPanel;
     Splitter1: TSplitter;
-    Timer1: TTimer;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormShow(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
   private
     FImage : TBitmap;
     FScanner : TScanManager;
+    procedure clear;
     procedure readImage;
-  public
-    procedure useImage(bmp : TFPCustomImage);
   end;
 
 var
@@ -81,6 +81,68 @@ begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  clear;
+end;
+
+procedure TQRCodeScannerForm.clear;
+begin
+  btnOk.Enabled := false;
+  Memo1.text := '';
+  pnlInfo.caption := '  QR Code';
+  Image1.Picture := nil;
+end;
+
+procedure TQRCodeScannerForm.Button1Click(Sender: TObject);
+var
+  dlg : TOpenDialog;
+  bmp : TFPCustomImage;
+  s : String;
+begin
+  dlg := TOpenDialog.create(self);
+  try
+    dlg.Filter := 'All Known Images|*.bmp; *.jpg; *.gif; *.png; *.tiff|'+
+      'All Files|*.*';
+    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
+    if dlg.execute then
+    begin
+      clear;
+      bmp := TFPMemoryImage.create(10, 10);
+      try
+        bmp.LoadFromFile(dlg.filename);
+        FImage.assign(bmp);
+        Image1.Picture.Assign(FImage);
+        Image1.Refresh;
+        Application.ProcessMessages;
+        readImage;
+      finally
+        bmp.free;
+      end;
+    end;
+  finally
+    dlg.free;
+  end;
+end;
+
+procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
+var
+  bmp : TBitmap;
+begin
+  if (Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap))) then
+  begin
+    bmp := TBitmap.Create;
+    try
+      bmp.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
+      FImage.assign(bmp);
+      Image1.Picture.Assign(FImage);
+      Image1.Refresh;
+      Application.ProcessMessages;
+      readImage;
+    finally
+      bmp.free;
+    end;
+  end
+  else
+    ShowMessage('No image is found on clipboard');
 end;
 
 procedure TQRCodeScannerForm.FormDestroy(Sender: TObject);
@@ -89,43 +151,31 @@ begin
   FScanner.free;
 end;
 
-procedure TQRCodeScannerForm.FormShow(Sender: TObject);
-begin
-  Timer1.enabled := true;
-end;
-
-procedure TQRCodeScannerForm.Timer1Timer(Sender: TObject);
-begin
-  readImage;
-  Timer1.Enabled := false;
-end;
-
 procedure TQRCodeScannerForm.readImage;
 var
   bc : TReadResult;
 begin
-  bc := FScanner.Scan(FImage);
+  screen.Cursor := crHourGlass;
   try
-    if (bc = nil) then
-    begin
-      btnOk.Enabled := false;
-      lblInfo.caption := 'No barcode found';
-    end
-    else
-    begin
-      btnOk.enabled := true;
-      lblInfo.caption := codesTBarcodeFormat(bc.BarcodeFormat)+' found';
-      memo1.Text := bc.text;
+    bc := FScanner.Scan(FImage);
+    try
+      if (bc = nil) then
+      begin
+        btnOk.Enabled := false;
+        pnlInfo.caption := '  QR code: No codes found';
+      end
+      else
+      begin
+        btnOk.enabled := true;
+        pnlInfo.caption := '  QR code: '+codesTBarcodeFormat(bc.BarcodeFormat)+' found';
+        memo1.Text := bc.text;
+      end;
+    finally
+      bc.free;
     end;
   finally
-    bc.free;
+    screen.cursor := crDefault;
   end;
-end;
-
-procedure TQRCodeScannerForm.useImage(bmp: TFPCustomImage);
-begin
-  FImage.assign(bmp);
-  Image1.Picture.Assign(FImage);
 end;
 
 end.

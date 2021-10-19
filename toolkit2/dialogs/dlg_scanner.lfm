@@ -10,7 +10,6 @@ object QRCodeScannerForm: TQRCodeScannerForm
   ClientWidth = 791
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.3.0.0'
   object Panel1: TPanel
@@ -49,13 +48,6 @@ object QRCodeScannerForm: TQRCodeScannerForm
       ParentFont = False
       TabOrder = 1
     end
-    object lblInfo: TLabel
-      Left = 12
-      Height = 15
-      Top = 16
-      Width = 34
-      Caption = 'lblInfo'
-    end
   end
   object Panel2: TPanel
     Left = 0
@@ -70,19 +62,47 @@ object QRCodeScannerForm: TQRCodeScannerForm
     TabOrder = 1
     object Panel4: TPanel
       Left = 0
-      Height = 34
+      Height = 42
       Top = 0
       Width = 403
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = '  Image'
+      ClientHeight = 42
+      ClientWidth = 403
       TabOrder = 0
+      object Button1: TButton
+        Left = 56
+        Height = 25
+        Top = 8
+        Width = 75
+        Caption = 'Load File'
+        OnClick = Button1Click
+        TabOrder = 0
+      end
+      object Button2: TButton
+        Left = 136
+        Height = 25
+        Top = 8
+        Width = 75
+        Caption = 'Paste'
+        OnClick = Button2Click
+        TabOrder = 1
+      end
+      object Button3: TButton
+        Left = 216
+        Height = 25
+        Top = 8
+        Width = 75
+        Caption = 'WebCam'
+        TabOrder = 2
+      end
     end
     object Image1: TImage
       Left = 0
-      Height = 438
-      Top = 34
+      Height = 430
+      Top = 42
       Width = 403
       Align = alClient
       Stretch = True
@@ -99,9 +119,9 @@ object QRCodeScannerForm: TQRCodeScannerForm
     ClientHeight = 472
     ClientWidth = 383
     TabOrder = 2
-    object Panel5: TPanel
+    object pnlInfo: TPanel
       Left = 0
-      Height = 34
+      Height = 42
       Top = 0
       Width = 383
       Align = alTop
@@ -112,8 +132,8 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
     object Memo1: TMemo
       Left = 0
-      Height = 438
-      Top = 34
+      Height = 430
+      Top = 42
       Width = 383
       Align = alClient
       Lines.Strings = (
@@ -127,12 +147,5 @@ object QRCodeScannerForm: TQRCodeScannerForm
     Height = 472
     Top = 0
     Width = 5
-  end
-  object Timer1: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer1Timer
-    Left = 16
-    Top = 46
   end
 end

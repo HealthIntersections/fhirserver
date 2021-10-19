@@ -22,6 +22,7 @@ git clone https://github.com/grahamegrieve/delphi-markdown
 git clone https://github.com/mriscoc/extrasyn 
 git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester 
+git clone https://github.com/grahamegrieve/ZXing.Delphi
 
 cd tzdb 
 git pull
@@ -43,6 +44,10 @@ cd lazarus-ide-tester
 git pull
 cd ..
 
+cd ZXing.Delphi
+git pull
+cd ..
+
 cd ..
 
 Rem -- now build 
@@ -50,10 +55,12 @@ Rem -- now build
 tools\lazarus\lazbuild.exe source\tzdb\dist\tzdb_fpc.lpk -q
 tools\lazarus\lazbuild.exe source\extrasyn\extrahighlighters.lpk  -q
 tools\lazarus\lazbuild.exe source\extrasyn\extrahighlighters_dsgn.lpk  -q
+tools\lazarus\lazbuild.exe source\ZXing.Delphi\Lazarus\Package\zxing.lpk -q
 tools\lazarus\lazbuild.exe source\lazarus-ide-tester\package\idetester.lpk  -q
 tools\lazarus\lazbuild.exe source\lazarus-ide-tester\ide\idetester_dsgn.lpk  -q
 tools\lazarus\lazbuild.exe source\HtmlViewer\package\FrameViewer09.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\packages\markdownengine.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\tests\markdowntests.lpk -q
+
 
 chdir /d %FSDIR% &rem restore current directory

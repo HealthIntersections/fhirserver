@@ -76,8 +76,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
-    actionFileQRFromImage: TAction;
-    actionFileQRFromCamera: TAction;
+    actionFileOpenQRCode: TAction;
     actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
     actionViewsCopyLog: TAction;
@@ -194,8 +193,6 @@ type
     MenuItem120: TMenuItem;
     MenuItem54: TMenuItem;
     MenuItem56: TMenuItem;
-    MenuItem57: TMenuItem;
-    MenuItem58: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -448,7 +445,7 @@ type
     procedure actionFileNewExecute(Sender: TObject);
     procedure actionFileOpenExecute(Sender: TObject);
     procedure actionFileOpenUrlExecute(Sender: TObject);
-    procedure actionFileQRFromImageExecute(Sender: TObject);
+    procedure actionFileOpenQRCodeExecute(Sender: TObject);
     procedure actionFileSaveAllExecute(Sender: TObject);
     procedure actionFileSaveAs1Execute(Sender: TObject);
     procedure actionFileSaveExecute(Sender: TObject);
@@ -2573,42 +2570,22 @@ begin
   end;
 end;
 
-procedure TMainToolkitForm.actionFileQRFromImageExecute(Sender: TObject);
+procedure TMainToolkitForm.actionFileOpenQRCodeExecute(Sender: TObject);
 var
-  dlg : TOpenDialog;
-  bmp : TFPCustomImage;
-  s : String;
-begin
-  dlg := TOpenDialog.create(self);
+  s : String
+;begin
+  QRCodeScannerForm := TQRCodeScannerForm.create(nil);
   try
-    dlg.Filter := 'All Known Images|*.bmp; *.jpg; *.gif; *.png; *.tiff|'+
-      'All Files|*.*';
-    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
-    if dlg.execute then
+    if QRCodeScannerForm.ShowModal = mrOk then
     begin
-      bmp := TFPMemoryImage.create(10, 10);
-      try
-        bmp.LoadFromFile(dlg.filename);
-        QRCodeScannerForm := TQRCodeScannerForm.create(nil);
-        try
-          QRCodeScannerForm.useImage(bmp);
-          if QRCodeScannerForm.ShowModal = mrOk then
-          begin
-            s := QRCodeScannerForm.Memo1.Text;
-            if (s.StartsWith('shc:/')) then
-              createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
-            else
-              createNewFile(sekText, TEncoding.UTF8.getBytes(s));
-          end;
-        finally
-          QRCodeScannerForm.free;
-        end;
-      finally
-        bmp.free;
-      end;
+      s := QRCodeScannerForm.Memo1.Text;
+      if (s.StartsWith('shc:/')) then
+      //  createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
+      //else
+        createNewFile(sekNull, TEncoding.UTF8.getBytes(s));
     end;
   finally
-    dlg.free;
+    QRCodeScannerForm.free;
   end;
 end;
 

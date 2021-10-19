@@ -527,6 +527,7 @@
         <Filename Value="dialogs\dlg_scanner.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="QRCodeScannerForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

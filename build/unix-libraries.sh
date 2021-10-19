@@ -59,6 +59,13 @@ else
     cd fhir-test-cases  && git pull && cd ..
 fi
 
+
+if [ ! -d "fhir-test-cases" ] ; then
+    git clone https://github.com/grahamegrieve/ZXing.Delphi
+else
+    cd ZXing.Delphi && git pull && cd ..
+fi
+
 cd ..
 
 # ---- register the source with lazarus ----------
@@ -71,6 +78,9 @@ tools/lazarus/lazbuild source/extrasyn/extrahighlighters.lpk -q
 
 echo "## compile package source/extrasyn/extrahighlighters_dsgn.lpk"
 tools/lazarus/lazbuild source/extrasyn/extrahighlighters_dsgn.lpk -q --add-package
+
+echo "## compile package source/ZXing.Delphi/Lazarus/Package/zxing.lpk"
+tools/lazarus/lazbuild source/ZXing.Delphi/Lazarus/Package/zxing.lpk -q --add-package --build-ide=
 
 echo "## compile package source/lazarus-ide-tester/package/idetester.lpk"
 tools/lazarus/lazbuild source/lazarus-ide-tester/package/idetester.lpk -q  --add-package
