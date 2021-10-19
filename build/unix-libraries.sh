@@ -60,7 +60,7 @@ else
 fi
 
 
-if [ ! -d "fhir-test-cases" ] ; then
+if [ ! -d "ZXing.Delphi" ] ; then
     git clone https://github.com/grahamegrieve/ZXing.Delphi
 else
     cd ZXing.Delphi && git pull && cd ..
