@@ -303,7 +303,7 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="17">
+    <RequiredPackages Count="16">
       <Item1>
         <PackageName Value="fcomp"/>
       </Item1>
@@ -311,50 +311,47 @@
         <PackageName Value="tzdb_fpc"/>
       </Item2>
       <Item3>
-        <PackageName Value="QRCodeGenLib4PascalPackage"/>
+        <PackageName Value="idetester"/>
       </Item3>
       <Item4>
-        <PackageName Value="idetester"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item4>
       <Item5>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="fhir_xver"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="fhir_fui"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_fsl"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir5"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir4"/>
       </Item9>
       <Item10>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir3"/>
       </Item10>
       <Item11>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir2"/>
       </Item11>
       <Item12>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir"/>
       </Item12>
       <Item13>
-        <PackageName Value="fhir"/>
+        <PackageName Value="MarkdownTests"/>
       </Item13>
       <Item14>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item14>
       <Item15>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item15>
       <Item16>
-        <PackageName Value="MarkdownEngine"/>
-      </Item16>
-      <Item17>
         <PackageName Value="LCL"/>
-      </Item17>
+      </Item16>
     </RequiredPackages>
     <Units Count="83">
       <Unit0>
