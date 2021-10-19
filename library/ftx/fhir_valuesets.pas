@@ -891,6 +891,8 @@ begin
           v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op);
           if not v and (message <> '') then
             msg(message);
+          if not v then
+            cause := itInvalid;
           ok := ok or v;
           message := '';
 
@@ -929,15 +931,8 @@ begin
                  if ctxt = nil then
                  begin
                    msg(message);
-                   if (c.systemUri = 'http://ncimeta.nci.nih.gov') then
-                   begin
-                     // cause := itInvali;
-                   end
-                   else
-                   begin
-                     msg('The code "'+c.code+'" is not valid in the system '+c.systemUri);
-                     cause := itInvalid;
-                   end;
+                   msg('The code "'+c.code+'" is not valid in the system '+c.systemUri);
+                   cause := itInvalid;
                  end
                  else
                  begin
