@@ -26,6 +26,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
+    Panel5: TPanel;
     pnlInfo: TPanel;
     Splitter1: TSplitter;
     procedure Button1Click(Sender: TObject);

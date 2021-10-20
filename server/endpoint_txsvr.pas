@@ -50,7 +50,7 @@ uses
   validator_r2, validator_r3, validator_r4, validator_r5,
 
   fhir_indexing, search_base, database_installer,
-  tx_manager, tx_server, tx_operations, operations, tx_icd10,
+  tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions,
   telnet_server,
@@ -585,7 +585,7 @@ begin
                 if isMatch and not matches(res.Resource, sp) then
                   isMatch := false;
               if isMatch then
-              filtered.add(res.link);
+                filtered.add(res.link);
             end;
 
             if (offset > 0) or (Count < filtered.count) then

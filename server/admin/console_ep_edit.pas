@@ -292,8 +292,8 @@ begin
     cbAutocreate.enabled := false;
     edtFolder.Enabled := hasSrcFolder(cbxType.items[cbxType.ItemIndex]);
   end;
-  btnDBTest.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
-  btnEPInstall.enabled := hasDatabase(cbxType.items[cbxType.ItemIndex]);
+  btnDBTest.enabled := (cbxType.ItemIndex > -1) and hasDatabase(cbxType.items[cbxType.ItemIndex]);
+  btnEPInstall.enabled := btnDBTest.enabled;
 end;
 
 

@@ -39,7 +39,7 @@ uses
   fdb_manager,
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
-  tx_icd10, tx_ndc, tx_rxnorm, tx_unii,
+  tx_ndc, tx_rxnorm, tx_unii,
   server_config, database_installer, utilities,
   console_tx_edit, console_ep_edit, console_id_edit, install_form;
 
@@ -262,8 +262,6 @@ begin
       s := TUcumServices.checkFile(item['source'].value)
     else if item['type'].value = 'lang' then
       s := TIETFLanguageCodeServices.checkFile(item['source'].value)
-    else if item['type'].value = 'icd10' then
-      s := TICD10Provider.checkFile(item['source'].value)
     else
       s := 'to do';
   end

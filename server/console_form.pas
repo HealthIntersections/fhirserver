@@ -451,6 +451,7 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
+    btnCopyConsole: TToolButton;
     procedure BitBtn1Click(Sender: TObject);
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
@@ -464,6 +465,7 @@ type
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
     procedure btnCombineGoClick(Sender: TObject);
+    procedure btnCopyConsoleClick(Sender: TObject);
     procedure btnDeleteEditionClick(Sender: TObject);
     procedure btnDestinationClick(Sender: TObject);
     procedure btnEPAddClick(Sender: TObject);
@@ -1691,6 +1693,11 @@ begin
       edtCombinedStore.enabled := true;
       cmbCallback(0, '');
     end;
+end;
+
+procedure TMainConsoleForm.btnCopyConsoleClick(Sender: TObject);
+begin
+  mConsole.CopyToClipboard;
 end;
 
 procedure TMainConsoleForm.btnDeleteEditionClick(Sender: TObject);

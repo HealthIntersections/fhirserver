@@ -39,7 +39,7 @@ uses
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
-  tx_uri, tx_icd10, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
+  tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs,
   utilities, server_config;
 
@@ -53,11 +53,9 @@ Type
     FLanguages : TIETFLanguageDefinitions;
     FLoinc : TLOINCServices;
     FSnomed : TFslList<TSnomedServices>;
-    FIcd10 : TFslList<TICD10Provider>;
     FDefSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
-    FNciMeta : TNciMetaServices;
     FUnii : TUniiServices;
     FACIR : TACIRServices;
     FProviderClasses : TFslMap<TCodeSystemProvider>;
@@ -68,7 +66,6 @@ Type
     procedure SetUcum(const Value: TUcumServices);
     procedure SetRxNorm(const Value: TRxNormServices);
     procedure SetNDC(const Value: TNDCServices);
-    procedure SetNciMeta(const Value: TNciMetaServices);
     procedure SetUnii(const Value: TUniiServices);
     procedure SetACIR(const Value: TACIRServices);
 
@@ -96,13 +93,11 @@ Type
     property Languages : TIETFLanguageDefinitions read FLanguages;
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
-    Property Icd10 : TFslList<TICD10Provider> read FIcd10;
     Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
     Property NDC : TNDCServices read FNDC write SetNDC;
     Property NDFRT : TNDFRTServices read FNDFRT write SetNDFRT;
-    Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
     Property Unii : TUniiServices read FUnii write SetUnii;
     Property ACIR : TACIRServices read FACIR write SetACIR;
   end;
@@ -268,7 +263,7 @@ Type
     actcode : TCodeSystemProviderFilterContext;
   end;
 
-  TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssNciMeta, acssActCode, acssUnii);
+  TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssActCode, acssUnii);
 
   TAllCodeSystemsProviderContext = class (TCodeSystemProviderContext)
   private
@@ -318,8 +313,6 @@ begin
   result := FStore.DefSnomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount;
   if FStore.RxNorm <> nil then
     result := result + FStore.RxNorm.TotalCount;
-  if FStore.NciMeta <> nil then
-    result := result + FStore.NciMeta.TotalCount;
 end;
 
 function TAllCodeSystemsProvider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
@@ -348,7 +341,6 @@ begin
       acssLoinc : result := FStore.Loinc.systemUri(c.context);
       acssSnomed : result := FStore.DefSnomed.systemUri(c.context);
       acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.systemUri(c.context) else result := '??';
-      acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.systemUri(c.context) else result := '??';
       acssUnii : result := FStore.Unii.systemUri(c.context);
       acssActCode : result := FActCode.systemUri(c.context);
     end;
@@ -368,8 +360,6 @@ begin
   try
     if FStore.RxNorm <> nil then
       ctxt.rxnorm := FStore.RxNorm.getPrepContext;
-    if FStore.NciMeta <> nil then
-      ctxt.NciMeta := FStore.NciMeta.getPrepContext;
     ctxt.unii := nil;
     ctxt.loinc := FStore.Loinc.getPrepContext;
     ctxt.snomed := FStore.DefSnomed.getPrepContext;
@@ -405,7 +395,6 @@ begin
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
     acssSnomed : result := FStore.DefSnomed.IsAbstract(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.IsAbstract(c.context) else result := false;
-    acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.IsAbstract(c.context) else result := false;
     acssUnii : result := FStore.Unii.IsAbstract(c.context);
     acssActCode : result := FActCode.IsAbstract(c.context);
   end;
@@ -420,7 +409,6 @@ begin
     acssLoinc : result := FStore.Loinc.Code(c.context);
     acssSnomed : result := FStore.DefSnomed.Code(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
-    acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Code(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Code(c.context);
     acssActCode : result := FActCode.Code(c.context);
   end;
@@ -447,7 +435,6 @@ begin
     acssLoinc : result := FStore.Loinc.Display(c.context, lang)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
     acssSnomed : result := FStore.DefSnomed.Display(c.context, lang)+' (S-CT: '+FStore.DefSnomed.Code(c.context)+')';
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Display(c.context, lang)+' (RxN: '+FStore.RxNorm.Code(c.context)+')' else result := '';
-    acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Display(c.context, lang)+' (RxN: '+FStore.NciMeta.Code(c.context)+')' else result := '';
     acssUnii : result := FStore.Unii.Display(c.context, lang)+' (Unii: '+FStore.Unii.Code(c.context)+')';
     acssActCode : result := FActCode.Display(c.context, lang)+' (ActCode: '+FActCode.Code(c.context)+')';
   end;
@@ -462,7 +449,6 @@ begin
     acssLoinc : result := FStore.Loinc.Definition(c.context);
     acssSnomed : result := FStore.DefSnomed.Definition(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
-    acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Definition(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Definition(c.context);
     acssActCode : result := FActCode.Definition(c.context);
   end;
@@ -501,8 +487,6 @@ begin
     try
       if FStore.RxNorm <> nil then
         ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm, sort);
-      if FStore.NciMeta <> nil then
-        ctxt.NciMeta := FStore.NciMeta.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).NciMeta, sort);
       ctxt.unii := nil; // FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
       ctxt.snomed := FStore.Defsnomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc, sort);
@@ -531,8 +515,6 @@ begin
     FStore.DefSnomed.prepare(ctxt.snomed);
     if FStore.RxNorm <> nil then
       FStore.RxNorm.prepare(ctxt.rxnorm);
-    if FStore.NciMeta <> nil then
-      FStore.NciMeta.prepare(ctxt.NciMeta);
 //    FStore.FUnii.prepare(ctxt.unii);
     FActCode.prepare(ctxt.actcode);
   end;
@@ -576,11 +558,6 @@ begin
               if not c.rxNormDone then
                 c.rxNormDone := not FStore.RxNorm.FilterMore(c.rxNorm);
               result := not c.rxnormDone;
-            end;
-            if not result and not c.ncimetaDone and (FStore.NciMeta <> nil) then
-            begin
-              c.ncimetaDone := not FStore.NciMeta.FilterMore(c.rxNorm);
-              result := not c.ncimetaDone;
             end;
           end;
         end;
@@ -648,8 +625,6 @@ begin
   c := ctxt as TAllCodeSystemsProviderFilterPreparationContext;
   if FStore.RxNorm <> nil then
     FStore.RxNorm.Close(c.rxnorm);
-  if FStore.NciMeta <> nil then
-    FStore.NciMeta.Close(c.NciMeta);
   FStore.unii.Close(c.unii);
   FStore.Loinc.Close(c.loinc);
   FStore.DefSnomed.Close(c.snomed);
@@ -666,8 +641,6 @@ begin
   begin
     if FStore.RxNorm <> nil then
       FStore.RxNorm.Close(c.rxnorm);
-    if FStore.NciMeta <> nil then
-      FStore.NciMeta.Close(c.NciMeta);
     FStore.Unii.Close(c.unii);
     FStore.Loinc.Close(c.loinc);
     FStore.DefSnomed.Close(c.snomed);
@@ -685,7 +658,6 @@ begin
     acssLoinc : FStore.Loinc.Close(c.context);
     acssSnomed : FStore.DefSnomed.Close(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
-    acssNciMeta : if FStore.NciMeta <> nil then FStore.NciMeta.Close(c.context);
     acssUnii : FStore.Unii.Close(c.context);
     acssActCode : FActCode.Close(c.context);
   end;
@@ -867,14 +839,11 @@ procedure TTerminologyServerStore.declareCodeSystems(list : TFslList<TFhirResour
   end;
 var
   sn : TSnomedServices;
-  icd : TICD10Provider;
 begin
   if FCommonTerminologies.FLoinc <> nil then
     addCodesystemUri('LOINC', 'loinc', FCommonTerminologies.FLoinc.systemUri(nil), FCommonTerminologies.FLoinc.version(nil), FCommonTerminologies.FLoinc.TotalCount);
   for sn in FCommonTerminologies.FSnomed do
     addCodesystemUri('SNOMED CT', 'sct', sn.systemUri(nil), sn.version(nil), sn.TotalCount);
-  for icd in FCommonTerminologies.FIcd10 do
-    addCodesystemUri(icd.title, tail(icd.systemUri(nil)), icd.systemUri(nil), icd.version(nil), icd.TotalCount);
   if FCommonTerminologies.FUcum <> nil then
     addCodesystemUri('Ucum', 'ucum', FCommonTerminologies.FUcum.systemUri(nil), FCommonTerminologies.FUcum.version(nil), FCommonTerminologies.FUcum.TotalCount);
   if FCommonTerminologies.FRxNorm <> nil then
@@ -1860,7 +1829,6 @@ begin
   inherited Create;
   FSettings := settings;
   FSnomed := TFslList<TSnomedServices>.create;
-  FIcd10 := TFslList<TICD10Provider>.create;
   p := TUriServices.Create(FLanguages.link);
   try
     FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
@@ -1881,8 +1849,6 @@ begin
     FUcum.defineFeatures(features);
   if FRxNorm <> nil then
     FRxNorm.defineFeatures(features);
-  if FNciMeta <> nil then
-    FNciMeta.defineFeatures(features);
   if FUnii <> nil then
     FUnii.defineFeatures(features);
   if FACIR <> nil then
@@ -1899,7 +1865,6 @@ begin
   FNDFRT.Free;
   FNDC.Free;
   FSettings.Free;
-  FIcd10.Free;
   FLoinc.free;
   FDefSnomed.Free;
   FSnomed.free;
@@ -1907,7 +1872,6 @@ begin
   FACIR.Free;
   FUcum.free;
   FRxNorm.Free;
-  FNciMeta.Free;
   FLanguages.Free;
   inherited;
 end;
@@ -1915,7 +1879,6 @@ end;
 procedure TCommonTerminologies.getCacheInfo(ci: TCacheInformation);
 var
   ss : TSnomedServices;
-  icd : TICD10Provider;
 begin
   if FLanguages <> nil then
     ci.Add('Languages', FLanguages.sizeInBytes(ci.magic));
@@ -1923,8 +1886,6 @@ begin
     ci.Add('Loinc', FLoinc.sizeInBytes(ci.magic));
   for ss in FSnomed do
     ci.Add('SCT/'+ss.EditionName+'/'+ss.VersionDate, ss.sizeInBytes(ci.magic));
-  for icd in FIcd10 do
-    ci.Add('Icd10', icd.sizeInBytes(ci.magic));
   if FUcum <> nil then
     ci.Add('Ucum', FUcum.sizeInBytes(ci.magic));
   if FACIR <> nil then
@@ -1965,11 +1926,6 @@ begin
   else
     b.append('<li>NDFRT: '+NDFRT.version(nil)+' ('+inttostr(NDFRT.UseCount)+' uses)');
 
-  if FNciMeta = nil then
-    b.append('<li>NciMeta: not loaded</li>')
-  else
-    b.append('<li>NciMeta: '+FNciMeta.version(nil)+' ('+inttostr(FNciMeta.UseCount)+' uses)');
-
   if FUnii = nil then
     b.append('<li>Unii: not loaded</li>')
   else
@@ -2002,7 +1958,6 @@ var
   s : string;
   sn: TSnomedServices;
 //  def : boolean;
-  icdX: TICD10Provider;
   function fixFile(name, fn : String) : String;
   begin
     if FileExists(fn) then
@@ -2036,18 +1991,7 @@ begin
     s := tx.Name;
     if tx['active'].valueBool and (not testing or (tx['when-testing'].readAsBool)) then
     begin
-      if tx['type'].value = 'icd10' then
-      begin
-        Logging.log('load '+s+' from '+tx['source'].value);
-        icdX := TICD10Provider.Create(FLanguages.link, true, fixFile('icd10', tx['source'].value));
-        try
-          add(icdX);
-          icd10.Add(icdX.link);
-        finally
-          icdX.free;
-        end;
-      end
-      else if tx['type'].value = 'snomed' then
+      if tx['type'].value = 'snomed' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
         sn := TSnomedServices.Create(FLanguages.link);
@@ -2095,11 +2039,6 @@ begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
         NDFRT := TNDFRTServices.create(FLanguages.link, connectToDatabase(tx))
       end
-      else if tx['type'].value = 'mcimeta' then
-      begin
-        Logging.log('load '+s+' from '+describeDatabase(tx));
-        NciMeta := TNciMetaServices.Create(FLanguages.link, connectToDatabase(tx))
-      end
       else if tx['type'].value = 'unii' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
@@ -2146,22 +2085,6 @@ begin
   begin
     FProviderClasses.add(FNDC.systemUri(nil), FNDC.Link);
     FProviderClasses.add(FNDC.systemUri(nil)+URI_VERSION_BREAK+FNDC.version(nil), FNDC.Link);
-  end;
-end;
-
-procedure TCommonTerminologies.SetNciMeta(const Value: TNciMetaServices);
-begin
-  if FNciMeta <> nil then
-  begin
-    FProviderClasses.Remove(FNciMeta.systemUri(nil));
-    FProviderClasses.Remove(FNciMeta.systemUri(nil)+URI_VERSION_BREAK+FNciMeta.version(nil));
-  end;
-  FNciMeta.Free;
-  FNciMeta := Value;
-  if FNciMeta <> nil then
-  begin
-    FProviderClasses.add(FNciMeta.systemUri(nil), FNciMeta.Link);
-    FProviderClasses.add(FNciMeta.systemUri(nil)+URI_VERSION_BREAK+FNciMeta.version(nil), FNciMeta.Link);
   end;
 end;
 

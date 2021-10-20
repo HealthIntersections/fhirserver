@@ -29,7 +29,7 @@ object QRCodeScannerForm: TQRCodeScannerForm
       Top = 13
       Width = 75
       Anchors = [akTop, akRight]
-      Caption = 'OK'
+      Caption = 'Open'
       Default = True
       Enabled = False
       ModalResult = 1
@@ -56,20 +56,19 @@ object QRCodeScannerForm: TQRCodeScannerForm
     Width = 403
     Align = alLeft
     BevelOuter = bvNone
-    Caption = 'Panel2'
     ClientHeight = 472
     ClientWidth = 403
     TabOrder = 1
     object Panel4: TPanel
       Left = 0
-      Height = 42
+      Height = 40
       Top = 0
       Width = 403
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = '  Image'
-      ClientHeight = 42
+      ClientHeight = 40
       ClientWidth = 403
       TabOrder = 0
       object Button1: TButton
@@ -99,13 +98,25 @@ object QRCodeScannerForm: TQRCodeScannerForm
         TabOrder = 2
       end
     end
-    object Image1: TImage
+    object Panel5: TPanel
       Left = 0
-      Height = 430
-      Top = 42
+      Height = 432
+      Top = 40
       Width = 403
       Align = alClient
-      Stretch = True
+      BevelOuter = bvLowered
+      BorderWidth = 6
+      ClientHeight = 432
+      ClientWidth = 403
+      TabOrder = 1
+      object Image1: TImage
+        Left = 7
+        Height = 418
+        Top = 7
+        Width = 389
+        Align = alClient
+        Stretch = True
+      end
     end
   end
   object Panel3: TPanel
@@ -121,7 +132,7 @@ object QRCodeScannerForm: TQRCodeScannerForm
     TabOrder = 2
     object pnlInfo: TPanel
       Left = 0
-      Height = 42
+      Height = 40
       Top = 0
       Width = 383
       Align = alTop
@@ -132,8 +143,8 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
     object Memo1: TMemo
       Left = 0
-      Height = 430
-      Top = 42
+      Height = 432
+      Top = 40
       Width = 383
       Align = alClient
       Lines.Strings = (

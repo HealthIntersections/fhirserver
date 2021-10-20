@@ -1433,7 +1433,6 @@ function TSnomedServices.defToThisVersion(specifiedVersion: String): boolean;
 var
   tv, sv : TArray<String>;
 begin
-  checkIsLoaded;
   tv := versionSplit(VersionUri);
   sv := versionSplit(specifiedVersion);
   if (tv[0] <> sv[0]) then

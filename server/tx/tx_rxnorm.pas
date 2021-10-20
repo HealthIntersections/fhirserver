@@ -145,15 +145,6 @@ type
     function description : String; override;
   end;
 
-  TNciMetaServices = class (TUMLSServices)
-  public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
-    function name(context : TCodeSystemProviderContext) : String; override;
-    function description : String; override;
-  end;
-
   { TUMLSImporter }
 
   TUMLSImporter = class (TFslObject)
@@ -1086,33 +1077,6 @@ begin
 end;
 
 function TRxNormServices.version(context: TCodeSystemProviderContext): String;
-begin
-  result := '??';
-end;
-
-{ TNciMetaServices }
-
-constructor TNciMetaServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
-begin
-  inherited create(languages, true, db);
-end;
-
-function TNciMetaServices.description: String;
-begin
-  result := 'NCI Metathesaurus';
-end;
-
-function TNciMetaServices.name(context: TCodeSystemProviderContext): String;
-begin
-  result := 'NCI Metathesaurus';
-end;
-
-function TNciMetaServices.systemUri(context: TCodeSystemProviderContext): String;
-begin
-  result := 'http://ncimeta.nci.nih.gov';
-end;
-
-function TNciMetaServices.version(context: TCodeSystemProviderContext): String;
 begin
   result := '??';
 end;
