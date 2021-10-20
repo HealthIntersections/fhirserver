@@ -30,7 +30,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
+            <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -119,7 +119,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
+            <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -150,7 +150,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
+            <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -173,7 +173,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
+            <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -314,7 +314,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="admin"/>
+      <OtherUnitFiles Value="admin;tx"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>
