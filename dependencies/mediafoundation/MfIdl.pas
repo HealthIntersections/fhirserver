@@ -53,6 +53,8 @@ unit MfIdl;
 
 interface
 
+{$IFDEF WINDOWS}
+
 Uses
   Windows, ActiveX, MFObjects, mftransform,
   PropSys;
@@ -2134,5 +2136,9 @@ implementation
   function MFEnumDeviceSources(const pAttributes: IMFAttributes; out pppSourceActivate: IMFActivate; out pcSourceActivate: UINT32): HResult; stdcall; external 'Mf.dll' name 'MFEnumDeviceSources';
   function MFCreateDeviceSource(const pAttributes: IMFAttributes; out ppSource: IMFMediaSource): HResult; stdcall; external 'Mf.dll' name 'MFCreateDeviceSource';
   function MFCreateDeviceSourceActivate(const pAttributes: IMFAttributes; out ppActivate: IMFActivate): HResult; stdcall; external 'Mf.dll' name 'MFCreateDeviceSourceActivate';
+
+{$ELSE}
+implementation
+{$ENDIF}
 
 end.

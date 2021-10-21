@@ -7,19 +7,23 @@ interface
 uses
   Classes, SysUtils, Graphics, ExtCtrls,
   {$IFDEF WINDOWS}
-  MfObjects, MfIdl, MfApi;
+  MfObjects, MfIdl, MfApi,
   {$ENDIF}
+  fsl_base;
 
+const
+  {$IFDEF WINDOWS}
+  WEB_CAM_SUPPORTED = true;
+  {$ELSE}
+  WEB_CAM_SUPPORTED = false;
+  {$ENDIF}
 
 type
   { TWebCamManager }
 
   TWebCamManager = class (TComponent)
-  private
-    FOnCameraListChange: TNotifyEvent;
   public
-    procedure listCameras(list : TStringList);
-    property OnCameraListChange : TNotifyEvent read FOnCameraListChange write FOnCameraListChange;
+    class procedure listCameras(list : TStringList);
   end;
 
   { TWebCamViewer }
@@ -42,7 +46,7 @@ implementation
 
 { TWebCamManager }
 
-procedure TWebCamManager.listCameras(list: TStringList);
+class procedure TWebCamManager.listCameras(list: TStringList);
 var
   attr : IMFAttributes;
 begin
@@ -52,6 +56,15 @@ begin
  // !
 end;
 
+{$ELSE}
+
+class procedure TWebCamManager.listCameras(list: TStringList);
+begin
+  // nothing yet
+end;
+
+
+{$ENDIF}
 { TWebCamViewer }
 
 procedure TWebCamViewer.SetActive(AValue: boolean);
@@ -70,7 +83,5 @@ function TWebCamViewer.snapshot: TBitmap;
 begin
 
 end;
-
-{$ENDIF}
 end.
 
