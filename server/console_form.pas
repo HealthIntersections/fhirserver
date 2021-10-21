@@ -2611,7 +2611,7 @@ begin
     sBar.Panels[4].Text := 'Server: '+ss;
   end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
-  sBar.Panels[3].Text := Logging.MemoryStatus;
+  sBar.Panels[3].Text := Logging.MemoryStatus(true);
   updateDoco;
 end;
 

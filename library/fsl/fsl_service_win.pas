@@ -360,7 +360,7 @@ begin
           end;
         postStart;
         repeat
-          SetConsoleTitle(pChar(FDisplayName+' '+Logging.MemoryStatus));
+          SetConsoleTitle(pChar(FDisplayName+' '+Logging.MemoryStatus(true)));
           if (LCheckTime < Now) then
             begin
             LCheckTime := now + 10 * DATETIME_SECOND_ONE;

@@ -167,7 +167,7 @@ Type
     function Counter : String;
 
     Function DescribeSize(b, min: Cardinal): String;
-    function MemoryStatus : String;
+    function MemoryStatus(full : boolean) : String;
 
     function InternalMem : UInt64;
   end;
@@ -554,14 +554,19 @@ begin
 {$ENDIF}
 end;
 
-function TLogging.MemoryStatus : String;
+function TLogging.MemoryStatus(full : boolean) : String;
 // memory status has 2 parts: internal and OS
 var
   os : UInt64;
 begin
+  if full then
+  begin
   os := OSMem;
   if os <> 0 then
     result := memToMB(Logging.InternalMem) + ' / '+memToMB(os)
+  else
+    result := memToMB(Logging.InternalMem);
+  end
   else
     result := memToMB(Logging.InternalMem);
 end;

@@ -160,6 +160,7 @@ Type
     FIOHandler: TIdOpenSSLIOHandlerServer {TIdServerIOHandlerSSLOpenSSL};
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
+    FSecureCount, FPlainCount : Integer;
 
     procedure logRequest(secure : boolean; id : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
@@ -328,9 +329,13 @@ begin
   begin
     SetThreadName('https:'+AContext.Binding.PeerIP);
     TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
+    InterlockedIncrement(FSecureCount);
   end
   else
+  begin
     SetThreadName('http:'+AContext.Binding.PeerIP);
+    InterlockedIncrement(FPlainCount);
+  end;
 
   AContext.Connection.IOHandler.ReadTimeout := 60*1000;
 
@@ -360,6 +365,10 @@ procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
   SetThreadStatus('Disconnecting');
   InterlockedDecrement(GCounterWebConnections);
+  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+    InterlockedDecrement(FSecureCount)
+  else
+    InterlockedDecrement(FPlainCount);
   Common.Lock.Lock;
   try
     FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
@@ -579,10 +588,12 @@ var
   t: cardinal;
   ep : TFhirWebServerEndpoint;
   ok : boolean;
+  epn : String;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
   SetThreadStatus('Processing '+request.Document);
+  epn := '??';
   MarkEntry(AContext, request, response);
   try
     id := FSettings.nextRequestId;
@@ -598,6 +609,8 @@ begin
       response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+      epn := '--';
+      summ := 'options?';
     end
     else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
     begin
@@ -608,7 +621,9 @@ begin
       // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-      FUsageServer.HandleRequest(AContext, request, response)
+      FUsageServer.HandleRequest(AContext, request, response);
+      epn := '--';
+      summ := 'options?';
     end
     else
     begin
@@ -617,11 +632,13 @@ begin
         if request.Document.StartsWith(ep.PathWithSlash) then
         begin
           ok := true;
+          epn := ep.logId;
           summ := ep.PlainRequest(AContext, request, response, id);
           break;
         end else if (request.Document = ep.PathNoSlash) then
         begin
           ok := true;
+          epn := ep.logId;
           response.Redirect(request.Document+'/');
           summ := '--> redirect to '+request.Document+'/';
           break;
@@ -630,15 +647,21 @@ begin
       if not ok then
       begin
         if request.Document = '/diagnostics' then
+        begin
+          epn := 'WS';
+          summ := 'diagnostics';
           summ := ReturnDiagnostics(AContext, request, response, false, false)
+        end
         else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
         begin
-          summ := 'Static File';
+          summ := 'Static File '+request.Document;
+          epn := 'WS';
           ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
         end
         else if request.Document = '/' then
         begin
-          summ := 'processed File';
+          epn := 'WS';
+          summ := 'processed File '+request.Document;
           ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
         end
         else
@@ -646,12 +669,19 @@ begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
           summ := 'Not Found';
+          epn := 'XX';
         end;
       end;
     end;
     logResponse(id, response);
     t := GetTickCount - t;
-    Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
+    if (summ <> '') then
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
+         inttostr(response.ResponseNo)+' p '+epn+': '+summ)
+    else
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
+         inttostr(response.ResponseNo)+' p '+epn+': '+request.RawHTTPCommand);
+
     response.CloseConnection := not PLAIN_KEEP_ALIVE;
   finally
     InterlockedDecrement(GCounterWebRequests);
@@ -705,6 +735,7 @@ var
   t: cardinal;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
+  epn : String;
 begin
   if NoUserAuthentication then // we treat this as if it's a plain request
     PlainRequest(AContext, request, response)
@@ -713,6 +744,7 @@ begin
     InterlockedIncrement(GCounterWebRequests);
     t := GetTickCount;
     cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
+    epn := '??';
 
     SetThreadStatus('Processing '+request.Document);
     MarkEntry(AContext, request, response);
@@ -730,6 +762,8 @@ begin
         response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
         if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
           response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+        summ := 'options?';
+        epn := '--';
       end
       else
       begin
@@ -738,29 +772,38 @@ begin
           if request.Document.StartsWith(ep.PathWithSlash) then
           begin
             ok := true;
+            epn := ep.logId;
             summ := ep.SecureRequest(AContext, request, response, cert, id);
           end
           else if request.Document = ep.PathNoSlash then
           begin
             ok := true;
+            epn := ep.logid;
             response.Redirect(ep.PathWithSlash);
+            summ := '--> redirect to '+request.Document+'/';
           end;
         if not ok then
         begin
           if request.Document = '/diagnostics' then
-            summ := ReturnDiagnostics(AContext, request, response, false, false)
+          begin
+            summ := ReturnDiagnostics(AContext, request, response, false, false);
+            epn := 'WS';
+          end
           else if SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
           begin
-            summ := 'Static File';
+            summ := 'Static File '+request.Document;
+            epn := 'WS';
             ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
           end
           else if request.Document = '/' then
           begin
-            summ := 'Processed File';
+            summ := 'Processed File '+request.Document;
+            epn := 'WS';
             ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), true)
           end
           else
           begin
+            epn := 'XX';
             response.ResponseNo := 404;
             response.ContentText := 'Document ' + request.Document + ' not found';
           end;
@@ -769,8 +812,13 @@ begin
 
       logResponse(id, response);
       t := GetTickCount - t;
-      Logging.log(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+Logging.MemoryStatus);
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
+      if (summ <> '') then
+        Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
+           inttostr(response.ResponseNo)+' s '+epn+': '+summ)
+      else
+        Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
+           inttostr(response.ResponseNo)+' s '+epn+': '+request.RawHTTPCommand);
+
       response.CloseConnection := not SECURE_KEEP_ALIVE;
     finally
       InterlockedDecrement(GCounterWebRequests);

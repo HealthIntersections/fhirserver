@@ -57,6 +57,7 @@ type
     destructor Destroy; override;
     function link : TFolderWebServer; overload;
     function description : String; override;
+    function logId : string; override;
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
@@ -150,6 +151,11 @@ end;
 function TFolderWebServer.link: TFolderWebServer;
 begin
   result := TFolderWebServer(inherited link);
+end;
+
+function TFolderWebServer.logId: string;
+begin
+  result := 'FF';
 end;
 
 function TFolderWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;

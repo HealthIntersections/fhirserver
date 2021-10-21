@@ -102,6 +102,7 @@ type
     property PathWithSlash : String read FPathWithSlash;
     property code : String read FCode;
     function ClientAddress(secure: boolean): String;
+    function logId : String; virtual; abstract;
 
     property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
     property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;

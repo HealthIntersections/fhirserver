@@ -175,6 +175,7 @@ Type
   public
     destructor Destroy; override;
     function link : TFullServerWebEndPoint; overload;
+    function logId : string; override;
     function description : String; override;
   end;
 
@@ -936,6 +937,11 @@ end;
 function TFullServerWebEndPoint.link: TFullServerWebEndPoint;
 begin
   result := TFullServerWebEndPoint(inherited link);
+end;
+
+function TFullServerWebEndPoint.logId: string;
+begin
+  result := factory.versionName;
 end;
 
 function TFullServerWebEndPoint.description: String;

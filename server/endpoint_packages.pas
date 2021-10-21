@@ -108,6 +108,7 @@ type
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function logId : string; override;
   end;
 
   TPackageServerEndPoint = class (TFHIRServerEndPoint)
@@ -605,6 +606,11 @@ end;
 function TFHIRPackageWebServer.link: TFHIRPackageWebServer;
 begin
   result := TFHIRPackageWebServer(inherited link);
+end;
+
+function TFHIRPackageWebServer.logId: string;
+begin
+  result := 'PK';
 end;
 
 procedure TFHIRPackageWebServer.serveDownload(id, version : String; response : TIdHTTPResponseInfo);

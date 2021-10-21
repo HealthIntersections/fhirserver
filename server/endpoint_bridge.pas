@@ -217,6 +217,7 @@ Type
     destructor Destroy; override;
     function link : TBridgeWebServer; overload;
     function description : String; override;
+    function logId : string; override;
   end;
 
   TBridgeEndPoint = class (TStorageEndPoint)
@@ -959,6 +960,11 @@ end;
 function TBridgeWebServer.link: TBridgeWebServer;
 begin
   result := TBridgeWebServer(inherited link);
+end;
+
+function TBridgeWebServer.logId: string;
+begin
+  result := 'BR';
 end;
 
 function TBridgeWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;

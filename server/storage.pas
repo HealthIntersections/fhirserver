@@ -677,7 +677,10 @@ begin
   try
     StartTransaction;
     try
-      result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.Id;
+      if Request.Id <> '' then
+        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName+'/'+Request.Id
+      else
+        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName;
       case request.CommandType of
         fcmdRead : ExecuteRead(request, response, false);
         fcmdUpdate : ExecuteUpdate(context, request, response);

@@ -50,10 +50,12 @@ type
     FVersion: TFHIRVersion;
     FFilename: String;
     FPackages: TStringList;
+    FKind: String;
   public
     constructor Create(version : TFHIRVersion); overload;
     destructor Destroy; override;
 
+    property kind : String read FKind write FKind;
     property filename : String read FFilename write FFilename;
     property version : TFHIRVersion read FVersion write FVersion;
     property Packages : TStringList read FPackages;
@@ -174,6 +176,7 @@ var
   i, rn : integer;
   sct : TFHIRServerConfigSection;
   ini : TIniFile;
+  ep, o : TJsonObject;
 begin
   rn := 1;
   if FileExists(fn) then
@@ -252,6 +255,18 @@ begin
       end;
     end;
 
+    ep := FJson.forceObj['endpoints'];
+    for n in ep.properties.keys do
+    begin
+      o := ep.obj[n];
+      sct := cfg.section['endpoints'].section[n];
+      sct['type'].value := o.str['type'];
+      sct['path'].value := o.str['path'];
+      sct['active'].value := 'true';
+      if o.has('folder') then
+        sct['folder'].value := o.str['folder'].Replace('{local}', FFolder);
+    end;
+
     cfg.Save;
   finally
     cfg.Free;
@@ -304,11 +319,12 @@ end;
 
 procedure TConfigurationBuilder.DownloadFiles;
 var
-  realm, files : TJsonObject;
+  content, realm, files : TJsonObject;
   r, i : String;
 begin
   Logging.log('Realm: uv');
-  realm := FJson.forceObj['uv'];
+  content := FJson.forceObj['content'];
+  realm := content.forceObj['uv'];
   SeePackages(realm);
   files := realm.forceObj['files'];
   DownloadFileList(files);
@@ -318,11 +334,11 @@ begin
 
   if (r = '*') then
   begin
-    for i in FJson.properties.Keys do
+    for i in content.properties.Keys do
       if i <> 'uv' then
       begin
         Logging.log('Realm: '+i);
-        realm := FJson.forceObj[i];
+        realm := content.forceObj[i];
         SeePackages(realm);
         files := realm.forceObj['files'];
         DownloadFileList(files);
@@ -333,7 +349,7 @@ begin
     for i in r.split([';', ',']) do
     begin
       Logging.log('Realm: '+i);
-      realm := FJson.forceObj[i];
+      realm := content.forceObj[i];
       SeePackages(realm);
       files := realm.forceObj['files'];
       DownloadFileList(files);
@@ -352,7 +368,7 @@ end;
 
 procedure TConfigurationBuilder.readConfig;
 var
-  json : TJsonObject;
+  f : TFileStream;
   src : String;
 begin
   src := URLPath([FUrl, 'config.json']);
@@ -361,6 +377,12 @@ begin
     FJson := TJSONParser.ParseFile(src.Substring(5))
   else
     FJson := TInternetFetcher.fetchJson(src);
+  f := TFileStream.Create(FilePath([FFolder, 'config.json']), fmCreate);
+  try
+    TJSONWriter.writeObject(f, FJson, true);
+  finally
+    f.Free;
+  end;
 end;
 
 procedure TConfigurationBuilder.seePackages(realm: TJsonObject);
