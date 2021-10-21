@@ -29,11 +29,15 @@
 **/lib
 
 # folders to ignore
+.DS_Store
 exec/32
 exec/64
 exec/certs
 library/r5gen
 utilities/generator/workspace/.metadata
+dependencies/mediafoundation/wip
+testcases/v2dict
+terminology
 
 # files to ignore
 tests.ini
@@ -41,12 +45,8 @@ exec/fhir.dev.local.cfg
 exec/pack/fhirserver.web
 server/fhirserver.testing.ini
 testcases/v2dict/hl7_94Jul2018.mdb
-testcases/snomed/test.cache
+testcases/snomed/snomed.cache
 
 
 
-/testcases/snomed/snomed.cache
-/testcases/v2dict
-terminology
 
-.DS_Store
