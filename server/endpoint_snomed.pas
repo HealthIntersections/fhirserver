@@ -55,6 +55,7 @@ type
   public
     destructor Destroy; override;
     function link : TSnomedWebServer; overload;
+    function logId : string; override;
 
     function description : String; override;
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
@@ -301,6 +302,11 @@ function TSnomedWebServer.link: TSnomedWebServer;
 begin
   result := TSnomedWebServer(inherited link);
 
+end;
+
+function TSnomedWebServer.logId: string;
+begin
+  result := 'SN';
 end;
 
 function TSnomedWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;

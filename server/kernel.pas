@@ -39,7 +39,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
@@ -697,7 +697,7 @@ end;
 procedure ExecuteFhirServerInner;
 var
   cfg : TFHIRServerConfigFile;
-  cfgName : String;
+  cfgName, s : String;
   fn : String;
   tz : TDateTime;
   zc : String;
@@ -773,7 +773,16 @@ begin
         Logging.Log('Config: '+cfgName);
 
         if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
-          cfgName := buildConfigFromSource(cfgName);
+          cfgName := buildConfigFromSource(cfgName)
+        else
+        begin
+          // zero config service support, where you don't easily get a parameter
+          s := FileToString(cfgName, TEncoding.UTF8);
+          if s.StartsWith('https://') or s.StartsWith('http://') or s.StartsWith('file:') then
+            cfgName := buildConfigFromSource(s);
+        end;
+
+
 
         cfg := TFHIRServerConfigFile.create(cfgName);
         try

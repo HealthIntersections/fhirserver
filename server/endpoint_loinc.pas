@@ -60,6 +60,7 @@ type
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function logId : string; override;
   end;
 
   TLoincWebEndPoint = class (TFHIRServerEndPoint)
@@ -252,6 +253,11 @@ function TLoincWebServer.link: TLoincWebServer;
 begin
   result := TLoincWebServer(inherited link);
 
+end;
+
+function TLoincWebServer.logId: string;
+begin
+  result := 'LN';
 end;
 
 function TLoincWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;

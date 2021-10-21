@@ -222,6 +222,7 @@ type
     destructor Destroy; override;
     function link : TTerminologyServerWebServer; overload;
     function description : String; override;
+    function logId : string; override;
   end;
 
 
@@ -1500,6 +1501,11 @@ end;
 function TTerminologyServerWebServer.link: TTerminologyServerWebServer;
 begin
   result := TTerminologyServerWebServer(inherited link);
+end;
+
+function TTerminologyServerWebServer.logId: string;
+begin
+  result := factory.versionName;
 end;
 
 function TTerminologyServerWebServer.AutoCache: boolean;

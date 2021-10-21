@@ -291,7 +291,7 @@ begin
     begin
       mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+DescribeBytes(mem)+' MB used');
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
@@ -345,10 +345,10 @@ begin
   end
   else if (s = '@cache') then
   begin
-    Logging.log('Clear Cache because of instruction from console: '+Logging.MemoryStatus);
+    Logging.log('Clear Cache because of instruction from console: '+Logging.MemoryStatus(true));
     for ep in FServer.FEndPoints do
       ep.clearCache;
-    Logging.log('Clear Cache finished: '+Logging.MemoryStatus);
+    Logging.log('Clear Cache finished: '+Logging.MemoryStatus(true));
     ci := TCacheInformation.create;
     try
       for ep in FServer.FEndPoints do
