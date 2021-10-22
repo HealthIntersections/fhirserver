@@ -582,7 +582,7 @@ begin
   FWeb := TFullServerWebEndPoint.Create(Config.name, Config['path'].value, common, self);
   FWeb.FEndPoint := self;
   FServerContext.userProvider.OnProcessFile := FWeb.ReturnProcessedFile;
-  FWeb.AuthServer := TAuth2Server.Create(makeFactory, Settings.ini, Common.Host, inttostr(Common.SslPort), FWeb.pathNoSlash);
+  FWeb.AuthServer := TAuth2Server.Create(makeFactory, Settings.ini, Common.Host, inttostr(Common.StatedSslPort), FWeb.pathNoSlash);
   FWeb.AuthServer.UserProvider := FServerContext.userProvider.Link;
   FWeb.AuthServer.ServerContext := FServerContext.Link;
   FWeb.AuthServer.EndPoint := FWeb.ClientAddress(true);
@@ -995,8 +995,8 @@ begin
   result := result + '<p><a href="' + AuthServer.BasePath + '/auth?client_id=c.1&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20' + SCIM_ADMINISTRATOR
     + '&redirect_uri=' + authurl + '/internal&aud=' + authurl + '&state=' + AuthServer.MakeLoginToken(path, apGoogle) + '">Login using OAuth</a></p>' + #13#10;
 
-  if Common.ActualSSLPort <> 0 then
-    result := result + '<p>Or use the <a href="http://' + Host + port(Common.ActualPort, 80) + PathNoSlash + '">unsecured API</a>.</p>'#13#10;
+  if Common.StatedSSLPort <> 0 then
+    result := result + '<p>Or use the <a href="http://' + Host + port(Common.StatedPort, 80) + PathNoSlash + '">unsecured API</a>.</p>'#13#10;
 
   result := result + '<p>&nbsp;</p>'#13#10 +
     '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
@@ -1053,10 +1053,10 @@ begin
         if Session <> nil then
           if secure then
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
-          else if Common.ActualSSLPort = 0 then
+          else if Common.StatedSSLPort = 0 then
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + Host + port(Common.ActualSSLPort, 443) + PathNoSlash +
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + Host + port(Common.StatedSSLPort, 443) + PathNoSlash +
               '">Secure API</a>)</p>'#13#10);
 
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
@@ -2058,10 +2058,10 @@ begin
   proc.Input := doc;
   proc.addParameter('useMicrosoft', 'true', '');
 
-  if Common.ActualPort <> 0 then
-    url := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort)
+  if Common.StatedPort <> 0 then
+    url := 'http://' + Common.Host + ':' + inttostr(Common.StatedPort)
   else
-    url := 'https://' + Common.Host + ':' + inttostr(Common.ActualSSLPort);
+    url := 'https://' + Common.Host + ':' + inttostr(Common.StatedSSLPort);
 
   if saveOnly then
     proc.addParameter('saveOnly', 'true', '');

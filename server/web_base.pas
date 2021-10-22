@@ -466,19 +466,27 @@ var
   p : word;
 begin
   if actual then
-    p := F
-  if Common.SSLPort = 443 then
+    p := common.workingSSLPort
+  else
+    p := common.statedSSLPort;
+  if p = 443 then
     result := ''
   else
-    result := ':'+inttostr(Common.SSLPort);
+    result := ':'+inttostr(p);
 end;
 
-function TFHIRWebServerBase.HTTPPort: String;
+function TFHIRWebServerBase.HTTPPort(actual : boolean): String;
+var
+  p : word;
 begin
-  if Common.ActualPort = 80 then
+  if actual then
+    p := common.workingPort
+  else
+    p := common.statedPort;
+  if p = 80 then
     result := ''
   else
-    result := ':'+inttostr(Common.ActualPort);
+    result := ':'+inttostr(p);
 end;
 
 

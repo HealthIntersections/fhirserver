@@ -168,6 +168,7 @@ type
     edtLoincVersion: TEdit;
     edtNDCSQLiteFile: TEdit;
     edtRXNSQLiteFile: TEdit;
+    edtSSLPortActual: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
     edtUNIISQLiteFile: TEdit;
@@ -198,7 +199,7 @@ type
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
-    edtWebPort1: TEdit;
+    edtWebPortActual: TEdit;
     FGraph1: TFGraph;
     FileNewAction: TAction;
     ActionList1: TActionList;
@@ -271,6 +272,8 @@ type
     Label74: TLabel;
     Label75: TLabel;
     Label76: TLabel;
+    Label77: TLabel;
+    Label78: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
@@ -515,12 +518,15 @@ type
     procedure edtPrivateKeyChange(Sender: TObject);
     procedure edtSSLCertChange(Sender: TObject);
     procedure edtSSLPasswordChange(Sender: TObject);
+    procedure edtSSLPortActualChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
+    procedure edtWebPortActualChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure edtWebMaxConnectionsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
@@ -839,6 +845,19 @@ begin
   FIni.Free;
 end;
 
+procedure TMainConsoleForm.FormResize(Sender: TObject);
+begin
+  edtWebPort.width := (ClientWidth div 2) - (112 + 20);
+  label77.left := edtWebPort.left + edtWebPort.width + 20;
+  edtWebPortActual.left := ClientWidth div 2+88;
+  edtWebPortActual.width := edtWebPort.width;
+
+  edtSSLPort.width := (ClientWidth div 2) - (112 + 20);
+  label78.left := edtSSLPort.left + edtSSLPort.width + 20;
+  edtSSLPortActual.left := ClientWidth div 2+88;
+  edtSSLPortActual.width := edtSSLPort.width;
+end;
+
 procedure TMainConsoleForm.FormShow(Sender: TObject);
 var
   fn : string;
@@ -1064,6 +1083,8 @@ begin
     edtHostName.Enabled := true;
     edtWebPort.Text := FConfig.web['http'].value;
     edtWebPort.Enabled := true;
+    edtWebPortActual.Text := FConfig.web['http-actual'].value;
+    edtWebPortActual.Enabled := true;
     edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
     edtWebMaxConnections.Enabled := true;
     edtCacheTime.Text := IntToStr(FConfig.web['http-cache-time'].readAsInt(0));
@@ -1074,6 +1095,8 @@ begin
     chkCaching.Enabled := true;
     edtSSLPort.Text := FConfig.web['https'].value;
     edtSSLPort.Enabled := true;
+    edtSSLPortActual.Text := FConfig.web['https-actual'].value;
+    edtSSLPortActual.Enabled := true;
     edtSSLCert.Text := FConfig.web['certname'].value;
     edtSSLCert.Enabled := true;
     edtCACert.Text := FConfig.web['cacertname'].value;
@@ -1130,6 +1153,8 @@ begin
     edtHostName.Enabled := false;
     edtWebPort.Text := '';
     edtWebPort.Enabled := false;
+    edtWebPortActual.Text := '';
+    edtWebPortActual.Enabled := false;
     edtWebMaxConnections.Text := '';
     edtWebMaxConnections.Enabled := false;
     edtCacheTime.Text := '';
@@ -1140,6 +1165,8 @@ begin
     chkCaching.Enabled := false;
     edtSSLPort.Text := '';
     edtSSLPort.Enabled := false;
+    edtSSLPortActual.Text := '';
+    edtSSLPortActual.Enabled := false;
     edtSSLCert.Text := '';
     edtSSLCert.Enabled := false;
     edtCACert.Text := '';
@@ -1236,10 +1263,14 @@ begin
     lblDoco.caption := 'The password for the SSL private key'
   else if ActiveControl = edtSSLPort then
     lblDoco.caption := 'The port to use for SSL services'
+  else if ActiveControl = edtSSLPort then
+    lblDoco.caption := 'The actual port to use for SSL services  (only give this a value if running behind a reverse proxy - this is the actual port, while the other value is the port that nginx runs on)'
   else if ActiveControl = edtHostName then
     lblDoco.caption := 'The host name by which clients know this server (normally, the server uses the Host details provided by the client, but there are places in the OAuth process and others where this is not available'
   else if ActiveControl = edtWebPort then
-    lblDoco.caption := 'The post to use for plain (unsecured) web services'
+    lblDoco.caption := 'The port to use for plain (unsecured) web services'
+  else if ActiveControl = edtWebPortActual then
+    lblDoco.caption := 'The actual port to use for plain (unsecured) web services (only give this a value if running behind a reverse proxy - this is the actual port, while the other value is the port that nginx runs on)'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
   else if ActiveControl = edtWebMaxConnections then
@@ -1452,6 +1483,16 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.edtSSLPortActualChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['https-actual'].value := edtSSLPortActual.Text;
+    FConfig.Save;
+  end;
+
+end;
+
 procedure TMainConsoleForm.edtSSLPortChange(Sender: TObject);
 begin
   if not FLoading then
@@ -1466,6 +1507,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['telnet-password'].value := edtTelnetPassword.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtWebPortActualChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http-actual'].value := edtWebPortActual.Text;
     FConfig.Save;
   end;
 end;

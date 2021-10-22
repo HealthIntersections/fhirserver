@@ -83,9 +83,9 @@ uses
   Classes,
   IdSSLOpenSSLHeaders,
   IdCustomHTTPServer,
-  MarkdownCommonMark in '..\..\pascal\markdown\source\MarkdownCommonMark.pas',
-  MarkdownDaringFireball in '..\..\pascal\markdown\source\MarkdownDaringFireball.pas',
-  MarkdownProcessor in '..\..\pascal\markdown\source\MarkdownProcessor.pas',
+  MarkdownCommonMark in '..\..\source\delphi-markdown\source\MarkdownCommonMark.pas',
+  MarkdownDaringFireball in '..\..\source\delphi-markdown\source\MarkdownDaringFireball.pas',
+  MarkdownProcessor in '..\..\source\delphi-markdown\source\MarkdownProcessor.pas',
   fhir_common in '..\library\fhir\fhir_common.pas',
   fhir_factory in '..\library\fhir\fhir_factory.pas',
   fhir_narrative in '..\library\fhir\fhir_narrative.pas',
@@ -349,7 +349,7 @@ uses
   fhir_oids in '..\library\fhir\fhir_oids.pas',
   fhir_elementmodel in '..\library\fhir\fhir_elementmodel.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
-  MarkdownHTMLEntities in '..\..\pascal\markdown\source\MarkdownHTMLEntities.pas',
+  MarkdownHTMLEntities in '..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas',
   consent_engine in 'consent_engine.pas',
   tx_ndc in 'tx\tx_ndc.pas',
   fsl_npm in '..\library\fsl\fsl_npm.pas',
@@ -420,7 +420,7 @@ uses
   fhir5_resources_financial in '..\library\fhir5\fhir5_resources_financial.pas',
   fhir5_resources_medications in '..\library\fhir5\fhir5_resources_medications.pas',
   fhir5_resources_other in '..\library\fhir5\fhir5_resources_other.pas',
-  MarkdownUnicodeUtils in '..\..\pascal\markdown\source\MarkdownUnicodeUtils.pas',
+  MarkdownUnicodeUtils in '..\..\source\delphi-markdown\source\MarkdownUnicodeUtils.pas',
   telnet_server in 'telnet_server.pas',
   gui_vcl in 'gui_vcl.pas' {ServerGUI},
   gui_controller in 'gui_controller.pas',
@@ -429,9 +429,9 @@ uses
   fsl_tests in '..\library\fsl\tests\fsl_tests.pas',
   fsl_testing in '..\library\fsl\tests\fsl_testing.pas',
   fsl_comparisons in '..\library\fsl\fsl_comparisons.pas',
-  MarkdownCommonMarkTests in '..\..\pascal\markdown\tests\MarkdownCommonMarkTests.pas',
-  MarkdownDaringFireballTests in '..\..\pascal\markdown\tests\MarkdownDaringFireballTests.pas',
-  CommonTestBase in '..\..\pascal\markdown\tests\CommonTestBase.pas',
+  MarkdownCommonMarkTests in '..\..\source\delphi-markdown\tests\MarkdownCommonMarkTests.pas',
+  MarkdownDaringFireballTests in '..\..\source\delphi-markdown\tests\MarkdownDaringFireballTests.pas',
+  CommonTestBase in '..\..\source\delphi-markdown\tests\CommonTestBase.pas',
   ftx_tests_lang in '..\library\ftx\tests\ftx_tests_lang.pas',
   ftx_tests_ucum in '..\library\ftx\tests\ftx_tests_ucum.pas',
   dicom_Objects in '..\library\dicom\dicom_Objects.pas',
@@ -523,7 +523,8 @@ uses
   fcomp_graph in '..\library\fcomp\fcomp_graph.pas',
   fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas',
   uQRC in '..\dependencies\qrgen\uQRC.pas',
-  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas';
+  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
+  TZDB in '..\..\source\tzdb\dist\TZDB.pas';
 
 begin
   ExecuteFhirServer;

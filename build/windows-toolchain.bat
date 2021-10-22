@@ -22,7 +22,7 @@ curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.
 
 rem -- run the installer- will finish with a full install of Lazarus 
 
-tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm 
+tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm --include=anchordocking,anchordockingdsgn,lazprojectgroups,laz.virtualtreeview_package,lazdebuggerfp,fpdebug
 
 Rem ----  back to the fhirserver directory ----------
 

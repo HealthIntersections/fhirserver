@@ -101,7 +101,7 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;C:\work\fhirserver\dependencies\Indy10;C:\work\fhirserver\dependencies\qrcode;C:\work\pascal\tzdb\dist;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;C:\work\fhirserver\dependencies\Indy10;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -204,9 +204,9 @@
         </DelphiCompile>
         <DCCReference Include="..\dependencies\FMM\FastMM4.pas"/>
         <DCCReference Include="..\dependencies\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\source\MarkdownProcessor.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownDaringFireball.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\library\fhir\fhir_common.pas"/>
         <DCCReference Include="..\library\fhir\fhir_factory.pas"/>
         <DCCReference Include="..\library\fhir\fhir_narrative.pas"/>
@@ -470,7 +470,7 @@
         <DCCReference Include="..\library\fhir\fhir_oids.pas"/>
         <DCCReference Include="..\library\fhir\fhir_elementmodel.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="consent_engine.pas"/>
         <DCCReference Include="tx\tx_ndc.pas"/>
         <DCCReference Include="..\library\fsl\fsl_npm.pas"/>
@@ -541,7 +541,7 @@
         <DCCReference Include="..\library\fhir5\fhir5_resources_financial.pas"/>
         <DCCReference Include="..\library\fhir5\fhir5_resources_medications.pas"/>
         <DCCReference Include="..\library\fhir5\fhir5_resources_other.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownUnicodeUtils.pas"/>
         <DCCReference Include="telnet_server.pas"/>
         <DCCReference Include="gui_vcl.pas">
             <Form>ServerGUI</Form>
@@ -552,9 +552,9 @@
         <DCCReference Include="..\library\fsl\tests\fsl_tests.pas"/>
         <DCCReference Include="..\library\fsl\tests\fsl_testing.pas"/>
         <DCCReference Include="..\library\fsl\fsl_comparisons.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\tests\MarkdownCommonMarkTests.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\tests\MarkdownDaringFireballTests.pas"/>
-        <DCCReference Include="..\..\pascal\markdown\tests\CommonTestBase.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\tests\MarkdownCommonMarkTests.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\tests\MarkdownDaringFireballTests.pas"/>
+        <DCCReference Include="..\..\source\delphi-markdown\tests\CommonTestBase.pas"/>
         <DCCReference Include="..\library\ftx\tests\ftx_tests_lang.pas"/>
         <DCCReference Include="..\library\ftx\tests\ftx_tests_ucum.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Objects.pas"/>
@@ -645,6 +645,7 @@
         <DCCReference Include="..\library\fcomp\tests\fcomp_tests_graph.pas"/>
         <DCCReference Include="..\dependencies\qrgen\uQRC.pas"/>
         <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
+        <DCCReference Include="..\..\source\tzdb\dist\TZDB.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -705,8 +706,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

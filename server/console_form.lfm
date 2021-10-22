@@ -9,6 +9,7 @@ object MainConsoleForm: TMainConsoleForm
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnResize = FormResize
   OnShow = FormShow
   Position = poDefault
   LCLVersion = '2.3.0.0'
@@ -58,10 +59,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 684
-      ActivePage = tbConsole
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -562,8 +563,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 32
-                  Width = 538
-                  Anchors = [akTop, akLeft, akRight]
+                  Width = 218
                   OnChange = edtWebPortChange
                   ParentFont = False
                   TabOrder = 1
@@ -640,6 +640,24 @@ object MainConsoleForm: TMainConsoleForm
                   Width = 16
                   Caption = 'ms'
                 end
+                object Label77: TLabel
+                  Left = -51
+                  Height = 15
+                  Top = 34
+                  Width = 34
+                  Caption = 'Actual'
+                  ParentFont = False
+                end
+                object edtWebPortActual: TEdit
+                  Left = 434
+                  Height = 23
+                  Top = 32
+                  Width = 218
+                  OnChange = edtWebPortActualChange
+                  ParentFont = False
+                  TabOrder = 6
+                  Text = 'edtWebPortActual'
+                end
               end
               object GroupBox2: TGroupBox
                 Left = 0
@@ -656,7 +674,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 0
-                  Width = 540
+                  Width = 212
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPortChange
                   ParentFont = False
@@ -881,6 +899,25 @@ object MainConsoleForm: TMainConsoleForm
                   }
                   OnClick = btnCertKeyClick
                   ParentFont = False
+                end
+                object Label78: TLabel
+                  Left = 335
+                  Height = 15
+                  Top = 4
+                  Width = 22
+                  Caption = 'Port'
+                  ParentFont = False
+                end
+                object edtSSLPortActual: TEdit
+                  Left = 439
+                  Height = 23
+                  Top = 0
+                  Width = 212
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtSSLPortActualChange
+                  ParentFont = False
+                  TabOrder = 5
+                  Text = 'edtSSLPortActual'
                 end
               end
               object GroupBox3: TGroupBox
