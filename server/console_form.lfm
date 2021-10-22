@@ -641,22 +641,22 @@ object MainConsoleForm: TMainConsoleForm
                   Caption = 'ms'
                 end
                 object Label77: TLabel
-                  Left = -51
+                  Left = 344
                   Height = 15
                   Top = 34
-                  Width = 34
-                  Caption = 'Actual'
+                  Width = 33
+                  Caption = 'Stated'
                   ParentFont = False
                 end
-                object edtWebPortActual: TEdit
-                  Left = 434
+                object edtWebPortStated: TEdit
+                  Left = 432
                   Height = 23
                   Top = 32
                   Width = 218
-                  OnChange = edtWebPortActualChange
+                  OnChange = edtWebPortStatedChange
                   ParentFont = False
                   TabOrder = 6
-                  Text = 'edtWebPortActual'
+                  Text = 'edtWebPortStated'
                 end
               end
               object GroupBox2: TGroupBox
@@ -904,20 +904,20 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 335
                   Height = 15
                   Top = 4
-                  Width = 22
-                  Caption = 'Port'
+                  Width = 33
+                  Caption = 'Stated'
                   ParentFont = False
                 end
-                object edtSSLPortActual: TEdit
+                object edtSSLPortStated: TEdit
                   Left = 439
                   Height = 23
                   Top = 0
                   Width = 212
                   Anchors = [akTop, akLeft, akRight]
-                  OnChange = edtSSLPortActualChange
+                  OnChange = edtSSLPortStatedChange
                   ParentFont = False
                   TabOrder = 5
-                  Text = 'edtSSLPortActual'
+                  Text = 'edtSSLPortStated'
                 end
               end
               object GroupBox3: TGroupBox

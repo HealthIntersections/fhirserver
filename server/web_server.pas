@@ -290,10 +290,10 @@ begin
   Common.Host := ini.web['host'].value;
 
   // web server configuration
-  Common.StatedPort := ini.web['http'].readAsInt;
-  Common.StatedSSLPort := ini.web['https'].readAsInt;
-  Common.workingPort := ini.web['http-actual'].readAsInt(Common.statedPort);
-  Common.workingSSLPort := ini.web['https-actual'].readAsInt(Common.statedSSLPort);
+  Common.workingPort := ini.web['http'].readAsInt;
+  Common.workingSSLPort := ini.web['https'].readAsInt;
+  Common.StatedPort := ini.web['http-stated'].readAsInt(Common.workingPort);
+  Common.StatedSSLPort := ini.web['https-stated'].readAsInt(Common.workingSSLPort);
 
   FCertFile := ini.web['certname'].value;
   FRootCertFile := ini.web['cacertname'].value;
@@ -330,21 +330,30 @@ var
   ci: TFHIRWebServerClientInfo;
 begin
   SetThreadStatus('Connecting');
-  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
-  begin
-    SetThreadName('https:'+AContext.Binding.PeerIP);
-    TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
-    InterlockedIncrement(FSecureCount);
-  end
-  else
-  begin
-    SetThreadName('http:'+AContext.Binding.PeerIP);
-    InterlockedIncrement(FPlainCount);
+  Common.Lock.Lock;
+  try
+    ci := TFHIRWebServerClientInfo.Create;
+    FClients.Add(ci);
+    AContext.Data := ci;
+    ci.Context := AContext;
+    if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+    begin
+      inc(FSecureCount);
+      SetThreadName('https:'+AContext.Binding.PeerIP);
+      TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
+    end
+    else
+    begin
+      inc(FPlainCount);
+      SetThreadName('http:'+AContext.Binding.PeerIP);
+    end;
+    inc(GCounterWebConnections);
+  finally
+    Common.Lock.Unlock;
   end;
-
   AContext.Connection.IOHandler.ReadTimeout := 60*1000;
+  AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
 
-  InterlockedIncrement(GCounterWebConnections);
 {$IFDEF WINDOWS}
   CoInitialize(nil);
 {$ENDIF}
@@ -353,41 +362,34 @@ begin
   Common.OnRegisterJs(self, GJsHost);
 {$ENDIF}
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
-  AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
-  Common.Lock.Lock;
-  try
-    ci := TFHIRWebServerClientInfo.Create;
-    FClients.Add(ci);
-    AContext.Data := ci;
-    ci.Context := AContext;
-  finally
-    Common.Lock.Unlock;
-  end;
   SetThreadStatus('Connected');
 end;
 
 procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
   SetThreadStatus('Disconnecting');
-  InterlockedDecrement(GCounterWebConnections);
-  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
-    InterlockedDecrement(FSecureCount)
-  else
-    InterlockedDecrement(FPlainCount);
-  Common.Lock.Lock;
-  try
-    FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
-    AContext.Data := nil;
-  finally
-    Common.Lock.Unlock;
-  end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJshost := nil;
+  if AContext.Data <> nil then
+  begin
+    Common.Lock.Lock;
+    try
+      FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
+      AContext.Data := nil;
+      InterlockedDecrement(GCounterWebConnections);
+      if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+        InterlockedDecrement(FSecureCount)
+      else
+        InterlockedDecrement(FPlainCount);
+    finally
+      Common.Lock.Unlock;
+    end;
+    {$IFNDEF NO_JS}
+    GJsHost.Free;
+    GJshost := nil;
+    {$ENDIF}
+  {$IFDEF WINDOWS}
+    CoUninitialize;
   {$ENDIF}
-{$IFDEF WINDOWS}
-  CoUninitialize;
-{$ENDIF}
+  end;
   SetThreadStatus('Disconnected');
 end;
 
@@ -442,14 +444,14 @@ Begin
   else if Common.workingPort = common.statedPort then
     Logging.log('  http: listen on ' + inttostr(Common.StatedPort)+s)
   else
-    Logging.log('  http: listen on ' + inttostr(Common.WorkingPort)+'for '+inttostr(common.statedPort)+s);
+    Logging.log('  http: listen on ' + inttostr(Common.WorkingPort)+' for '+inttostr(common.statedPort)+s);
 
   if (Common.StatedSSLPort = 0) then
     Logging.log('  https: not active')
   else if Common.workingSSLPort = common.statedSSLPort then
     Logging.log('  https: listen on ' + inttostr(Common.statedSSLPort)+s)
   else
-    Logging.log('  https: listen on ' + inttostr(Common.WorkingSSLPort)+'for '+inttostr(common.statedSSLPort)+s);
+    Logging.log('  https: listen on ' + inttostr(Common.WorkingSSLPort)+' for '+inttostr(common.statedSSLPort)+s);
   FActive := true;
   Common.Stats.Start;
   StartServer;
