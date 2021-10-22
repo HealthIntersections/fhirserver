@@ -1078,19 +1078,19 @@ begin
       else
         s := s.Replace('[%logout%]', '|&nbsp;User: ' + Session.SessionName + '&nbsp; <a href="'+PathNoSlash+'/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;',
           [rfReplaceAll]);
-      if Common.ActualPort = 80 then
+      if Common.StatedPort = 80 then
         s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
       else
-        s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.ActualPort), [rfReplaceAll]);
+        s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
       if (Session <> nil) and Session.canGetUser and (Session.User <> nil) then
         s := s.Replace('[%jwt%]', Session.JWTPacked, [rfReplaceAll])
       else
         s := s.Replace('[%jwt%]', 'JWT not available', [rfReplaceAll]);
 
-      if Common.ActualSSLPort = 443 then
+      if Common.StatedSSLPort = 443 then
         s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
       else
-        s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
+        s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
 
       s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
       if variables <> nil then
@@ -1639,7 +1639,7 @@ end;
 
 procedure TStorageWebEndpoint.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
 begin
-  if (FAuthServer <> nil) and (Common.ActualSSLPort <> 0) then
+  if (FAuthServer <> nil) and (Common.StatedSSLPort <> 0) then
     conf.addSmartExtensions(
       UrlPath([baseUrl, FAuthServer.AuthPath]),
       UrlPath([baseUrl, FAuthServer.TokenPath]),
@@ -1675,7 +1675,7 @@ Begin
     oRequest.secure := secure;
     aFormat := ffUnspecified;
     oRequest.baseUrl := sHost + AppendForwardSlash(sBaseURL);
-    oRequest.secureURL := 'https://'+sRawHost+SSLPort()+sBaseURL;
+    oRequest.secureURL := 'https://'+sRawHost+SSLPort(false)+sBaseURL;
     oRequest.url := sHost + sResource;
     oRequest.lastModifiedDate := 0; // Xml
     // oRequest.contentLocation := sContentLocation; // for version aware updates
@@ -2326,9 +2326,9 @@ begin
   result := '';
   if (secure) then
   begin
-    result := result + ' <li><a href="http://' + Common.Host + port(Common.ActualPort, 80) + PathNoSlash + '">Unsecured access at ' + PathNoSlash +
+    result := result + ' <li><a href="http://' + Common.Host + port(Common.StatedPort, 80) + PathNoSlash + '">Unsecured access at ' + PathNoSlash +
         '</a> - direct access with no security considerations</li>'#13#10;
-    if Common.ActualSSLPort <> 0 then
+    if Common.StatedSSLPort <> 0 then
       result := result + ' <li><a href="' + PathNoSlash + '">Secured access at ' + PathNoSlash +
         '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
   end
@@ -2337,7 +2337,7 @@ begin
     result := result + ' <li><a href="' + PathNoSlash + '">Unsecured access at ' + PathNoSlash +
         '</a> - direct access with no security considerations</li>'#13#10;
     if PathNoSlash <> '' then
-      result := result + ' <li><a href="https://' + Common.Host + port(Common.ActualSSLPort, 443) + PathNoSlash + '">Secured access at ' + PathNoSlash +
+      result := result + ' <li><a href="https://' + Common.Host + port(Common.StatedSSLPort, 443) + PathNoSlash + '">Secured access at ' + PathNoSlash +
         '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
   end;
 end;

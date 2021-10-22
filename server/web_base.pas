@@ -86,8 +86,6 @@ type
   private
     FSourceProvider : TFHIRWebServerSourceProvider;
     FHost : String;
-    FActualPort: integer;
-    FActualSSLPort: integer;
     FConnLimit : Integer;
     FAdminEmail: String; // stated administrator
     FName: String; // name of this server
@@ -99,6 +97,10 @@ type
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
     FCache: THTTPCacheManager;
+    FStatedPort: word;
+    FWorkingSSLPort: word;
+    FWorkingPort: word;
+    FStatedSSLPort: word;
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure SetCache(const Value: THTTPCacheManager);
   public
@@ -110,10 +112,13 @@ type
     property OwnerName : String read FOwnerName write FOwnerName;
     property Name : String read FName write FName;
     property AdminEmail: String read FAdminEmail write FAdminEmail;
-    property ActualSSLPort: integer read FActualSSLPort write FActualSSLPort;
+
     property host: String read FHost write FHost;
-    property SSLPort: integer read FActualSSLPort;
-    property ActualPort: integer read FActualPort write FActualPort;
+    property statedPort : word read FStatedPort write FStatedPort;
+    property statedSSLPort : word read FStatedSSLPort write FStatedSSLPort;
+    property workingPort : word read FWorkingPort write FWorkingPort;
+    property workingSSLPort : word read FWorkingSSLPort write FWorkingSSLPort;
+
     property ConnLimit : Integer read FConnLimit write FConnLimit;
     property Google : TGoogleAnalyticsProvider read FGoogle;
     Property Stats : TFHIRWebServerStats read FStats;
@@ -145,8 +150,8 @@ type
 
     function GetSourceProvider: TFHIRWebServerSourceProvider;
   protected
-    function HTTPPort : String;
-    function SSLPort : String;
+    function HTTPPort(actual : boolean) : String;
+    function SSLPort(actual : boolean) : String;
   public
     constructor Create(common : TFHIRWebServerCommon);
     destructor Destroy; override;
@@ -456,20 +461,32 @@ begin
   result := Common.SourceProvider;
 end;
 
-function TFHIRWebServerBase.SSLPort: String;
+function TFHIRWebServerBase.SSLPort(actual : boolean): String;
+var
+  p : word;
 begin
-  if Common.SSLPort = 443 then
+  if actual then
+    p := common.workingSSLPort
+  else
+    p := common.statedSSLPort;
+  if p = 443 then
     result := ''
   else
-    result := ':'+inttostr(Common.SSLPort);
+    result := ':'+inttostr(p);
 end;
 
-function TFHIRWebServerBase.HTTPPort: String;
+function TFHIRWebServerBase.HTTPPort(actual : boolean): String;
+var
+  p : word;
 begin
-  if Common.ActualPort = 80 then
+  if actual then
+    p := common.workingPort
+  else
+    p := common.statedPort;
+  if p = 80 then
     result := ''
   else
-    result := ':'+inttostr(Common.ActualPort);
+    result := ':'+inttostr(p);
 end;
 
 

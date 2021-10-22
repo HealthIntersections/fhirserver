@@ -40,6 +40,7 @@ uses
   IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
   fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
   fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  fui_lcl_utilities,
   ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
   server_constants, console_managers, frm_about;
@@ -167,6 +168,7 @@ type
     edtLoincVersion: TEdit;
     edtNDCSQLiteFile: TEdit;
     edtRXNSQLiteFile: TEdit;
+    edtSSLPortStated: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
     edtUNIISQLiteFile: TEdit;
@@ -197,7 +199,7 @@ type
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
-    edtWebPort1: TEdit;
+    edtWebPortStated: TEdit;
     FGraph1: TFGraph;
     FileNewAction: TAction;
     ActionList1: TActionList;
@@ -211,6 +213,7 @@ type
     FileExit1: TFileExit;
     FileOpenAction: TFileOpen;
     FileSaveAs1: TFileSaveAs;
+    fd: TFontDialog;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
@@ -269,6 +272,8 @@ type
     Label74: TLabel;
     Label75: TLabel;
     Label76: TLabel;
+    Label77: TLabel;
+    Label78: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
@@ -452,6 +457,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     btnCopyConsole: TToolButton;
+    btnConsoleFont: TToolButton;
     procedure BitBtn1Click(Sender: TObject);
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
@@ -465,6 +471,7 @@ type
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
     procedure btnCombineGoClick(Sender: TObject);
+    procedure btnConsoleFontClick(Sender: TObject);
     procedure btnCopyConsoleClick(Sender: TObject);
     procedure btnDeleteEditionClick(Sender: TObject);
     procedure btnDestinationClick(Sender: TObject);
@@ -511,12 +518,15 @@ type
     procedure edtPrivateKeyChange(Sender: TObject);
     procedure edtSSLCertChange(Sender: TObject);
     procedure edtSSLPasswordChange(Sender: TObject);
+    procedure edtSSLPortStatedChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
+    procedure edtWebPortStatedChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure edtWebMaxConnectionsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
@@ -755,6 +765,7 @@ begin
   FIni := TIniFile.create(FilePath([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
+  readFontFromIni(FIni, 'font', mConsole.font);
 
   FTelnet := TIdTelnet.create(nil);
   FTelnet.Port := 44123;
@@ -832,6 +843,19 @@ begin
   FStatistics.Free;
   FLock.Free;
   FIni.Free;
+end;
+
+procedure TMainConsoleForm.FormResize(Sender: TObject);
+begin
+  edtWebPort.width := (ClientWidth div 2) - (112 + 20);
+  label77.left := edtWebPort.left + edtWebPort.width + 20+40;
+  edtWebPortStated.left := ClientWidth div 2+92;
+  edtWebPortStated.width := edtWebPort.width;
+
+  edtSSLPort.width := (ClientWidth div 2) - (112 + 20);
+  label78.left := edtSSLPort.left + edtSSLPort.width + 20+40;
+  edtSSLPortStated.left := ClientWidth div 2+92;
+  edtSSLPortStated.width := edtSSLPort.width;
 end;
 
 procedure TMainConsoleForm.FormShow(Sender: TObject);
@@ -1059,6 +1083,8 @@ begin
     edtHostName.Enabled := true;
     edtWebPort.Text := FConfig.web['http'].value;
     edtWebPort.Enabled := true;
+    edtWebPortStated.Text := FConfig.web['http-stated'].value;
+    edtWebPortStated.Enabled := true;
     edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
     edtWebMaxConnections.Enabled := true;
     edtCacheTime.Text := IntToStr(FConfig.web['http-cache-time'].readAsInt(0));
@@ -1069,6 +1095,8 @@ begin
     chkCaching.Enabled := true;
     edtSSLPort.Text := FConfig.web['https'].value;
     edtSSLPort.Enabled := true;
+    edtSSLPortStated.Text := FConfig.web['https-stated'].value;
+    edtSSLPortStated.Enabled := true;
     edtSSLCert.Text := FConfig.web['certname'].value;
     edtSSLCert.Enabled := true;
     edtCACert.Text := FConfig.web['cacertname'].value;
@@ -1125,6 +1153,8 @@ begin
     edtHostName.Enabled := false;
     edtWebPort.Text := '';
     edtWebPort.Enabled := false;
+    edtWebPortStated.Text := '';
+    edtWebPortStated.Enabled := false;
     edtWebMaxConnections.Text := '';
     edtWebMaxConnections.Enabled := false;
     edtCacheTime.Text := '';
@@ -1135,6 +1165,8 @@ begin
     chkCaching.Enabled := false;
     edtSSLPort.Text := '';
     edtSSLPort.Enabled := false;
+    edtSSLPortStated.Text := '';
+    edtSSLPortStated.Enabled := false;
     edtSSLCert.Text := '';
     edtSSLCert.Enabled := false;
     edtCACert.Text := '';
@@ -1231,10 +1263,14 @@ begin
     lblDoco.caption := 'The password for the SSL private key'
   else if ActiveControl = edtSSLPort then
     lblDoco.caption := 'The port to use for SSL services'
+  else if ActiveControl = edtSSLPort then
+    lblDoco.caption := 'The claimed port to use for SSL services  (only give this a value if running behind a reverse proxy - this is the port that nginx is running on, where redirects etc must go)'
   else if ActiveControl = edtHostName then
     lblDoco.caption := 'The host name by which clients know this server (normally, the server uses the Host details provided by the client, but there are places in the OAuth process and others where this is not available'
   else if ActiveControl = edtWebPort then
-    lblDoco.caption := 'The post to use for plain (unsecured) web services'
+    lblDoco.caption := 'The port to use for plain (unsecured) web services'
+  else if ActiveControl = edtWebPortStated then
+    lblDoco.caption := 'The claimed port to use for plain (unsecured) web services (only give this a value if running behind a reverse proxy - this is the port that nginx is running on, where redirects etc must go)'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
   else if ActiveControl = edtWebMaxConnections then
@@ -1447,6 +1483,16 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.edtSSLPortStatedChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['https-stated'].value := edtSSLPortStated.Text;
+    FConfig.Save;
+  end;
+
+end;
+
 procedure TMainConsoleForm.edtSSLPortChange(Sender: TObject);
 begin
   if not FLoading then
@@ -1461,6 +1507,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['telnet-password'].value := edtTelnetPassword.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtWebPortStatedChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http-stated'].value := edtWebPortStated.Text;
     FConfig.Save;
   end;
 end;
@@ -1693,6 +1748,16 @@ begin
       edtCombinedStore.enabled := true;
       cmbCallback(0, '');
     end;
+end;
+
+procedure TMainConsoleForm.btnConsoleFontClick(Sender: TObject);
+begin
+  fd.font.Assign(mConsole.font);
+  if (fd.Execute) then
+  begin
+    mConsole.Font.Assign(fd.font);
+    writeFontToIni(FIni, 'font', mConsole.font);
+  end;
 end;
 
 procedure TMainConsoleForm.btnCopyConsoleClick(Sender: TObject);
@@ -2485,7 +2550,6 @@ begin
     FConfig.web['card-jwks'].value := edtCardPublic.Text;
     FConfig.Save;
   end;
-
 end;
 
 procedure TMainConsoleForm.edtConfigFileChange(Sender: TObject);
@@ -2493,7 +2557,15 @@ begin
   if (edtConfigFile.text <> '') and FileExists(edtConfigFile.text) then
   begin
     edtConfigFile.Color := clWhite;
-    SetConfigEditable;
+    try
+      SetConfigEditable;
+    except
+      on e : Exception do
+      begin
+        MessageDlg('Error Loading Configuration', 'Eror loading '+edtConfigFile.text+': '+e.message, mtError, [mbok], 0);
+        SetConfigReadOnly;
+      end;
+    end;
   end
   else
   begin

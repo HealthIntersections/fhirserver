@@ -198,6 +198,8 @@ begin
       cfg.web['host'].value := ini.ReadString('web', 'host', 'localhost');
       cfg.web['http'].value := inttostr(ini.ReadInteger('web', 'http', 80));
       cfg.web['https'].value := ini.ReadString('web', 'https', '');
+      cfg.web['http-stated'].value := ini.ReadString('web', 'http-stated', '');
+      cfg.web['https-stated'].value := ini.ReadString('web', 'https-stated', '');
       cfg.web['certname'].value := ini.ReadString('web', 'certname', '');
       cfg.web['cacertname'].value := ini.ReadString('web', 'cacertname', '');
       cfg.web['certkey'].value := ini.ReadString('web', 'certkey', '');

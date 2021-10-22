@@ -33,10 +33,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, Graphics, IniFiles,
   Controls, Forms;
 
 procedure setForOS(btnOk, btnCancel : TControl);
+procedure writeFontToIni(ini : TIniFile; section : String; font : TFont);
+procedure readFontFromIni(ini : TIniFile; section : String; font : TFont; defFontName : String = '');
 
 implementation
 
@@ -51,6 +53,33 @@ begin
   btnCancel.left := btnOk.left;
   btnOk.left := l;
   {$ENDIF}
+end;
+
+procedure writeFontToIni(ini : TIniFile; section : String; font : TFont);
+begin
+  ini.writeString('font', 'name', font.Name);
+  ini.writeInteger('font', 'size', font.Size);
+  ini.writeInteger('font', 'color', font.Color);
+  ini.WriteBool('font', 'bold', fsBold in font.Style);
+  ini.WriteBool('font', 'italic', fsItalic in font.Style);
+  ini.WriteBool('font', 'underline', fsUnderline in font.Style);
+  ini.WriteBool('font', 'strikeout', fsStrikeOut in font.Style);
+end;
+
+procedure readFontFromIni(ini : TIniFile; section : String; font : TFont; defFontName : String = '');
+begin
+  font.Name := ini.readString('font', 'name', defFontName);
+  font.Size := ini.readInteger('font', 'size', 10);
+  font.Color := ini.readInteger('font', 'color', clBlack);
+  font.Style := [];
+  if ini.readBool('font', 'bold', false) then
+    font.Style := font.Style + [fsBold];
+  if ini.readBool('font', 'italic', false) then
+    font.Style := font.Style + [fsItalic];
+  if ini.readBool('font', 'underline', false) then
+    font.Style := font.Style + [fsUnderline];
+  if ini.readBool('font', 'strikeout', false) then
+    font.Style := font.Style + [fsStrikeOut];
 end;
 
 end.

@@ -179,6 +179,8 @@ Type
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
 
+    function getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo) : String;
+
     procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
     procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     procedure ReturnFileSource(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
@@ -226,9 +228,9 @@ Uses
 function TFhirWebServer.AbsoluteURL(secure: boolean): String;
 begin
   if secure then
-    result := 'https://'+common.host+SSLPort+'/'
+    result := 'https://'+common.host+SSLPort(false)+'/'
   else
-    result := 'http://'+common.host+HTTPPort+'/'
+    result := 'http://'+common.host+HTTPPort(false)+'/'
 end;
 
 procedure TFhirWebServer.clearCache;
@@ -288,8 +290,11 @@ begin
   Common.Host := ini.web['host'].value;
 
   // web server configuration
-  Common.ActualPort := ini.web['http'].readAsInt;
-  Common.ActualSSLPort := ini.web['https'].readAsInt;
+  Common.workingPort := ini.web['http'].readAsInt;
+  Common.workingSSLPort := ini.web['https'].readAsInt;
+  Common.StatedPort := ini.web['http-stated'].readAsInt(Common.workingPort);
+  Common.StatedSSLPort := ini.web['https-stated'].readAsInt(Common.workingSSLPort);
+
   FCertFile := ini.web['certname'].value;
   FRootCertFile := ini.web['cacertname'].value;
   FSSLPassword := ini.web['password'].value;
@@ -312,10 +317,10 @@ begin
   if Common.AdminEmail = '' then
     raise EFHIRException.create('An admin email is required');
 
-  if Common.ActualPort = 80 then
+  if Common.StatedPort = 80 then
     txu := 'http://' + Common.Host
   else
-    txu := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort);
+    txu := 'http://' + Common.Host + ':' + inttostr(Common.StatedPort);
 
   Common.Google.serverId := ini.web['googleid'].value;
 end;
@@ -325,21 +330,30 @@ var
   ci: TFHIRWebServerClientInfo;
 begin
   SetThreadStatus('Connecting');
-  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
-  begin
-    SetThreadName('https:'+AContext.Binding.PeerIP);
-    TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
-    InterlockedIncrement(FSecureCount);
-  end
-  else
-  begin
-    SetThreadName('http:'+AContext.Binding.PeerIP);
-    InterlockedIncrement(FPlainCount);
+  Common.Lock.Lock;
+  try
+    ci := TFHIRWebServerClientInfo.Create;
+    FClients.Add(ci);
+    AContext.Data := ci;
+    ci.Context := AContext;
+    if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+    begin
+      inc(FSecureCount);
+      SetThreadName('https:'+AContext.Binding.PeerIP);
+      TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
+    end
+    else
+    begin
+      inc(FPlainCount);
+      SetThreadName('http:'+AContext.Binding.PeerIP);
+    end;
+    inc(GCounterWebConnections);
+  finally
+    Common.Lock.Unlock;
   end;
-
   AContext.Connection.IOHandler.ReadTimeout := 60*1000;
+  AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
 
-  InterlockedIncrement(GCounterWebConnections);
 {$IFDEF WINDOWS}
   CoInitialize(nil);
 {$ENDIF}
@@ -348,41 +362,34 @@ begin
   Common.OnRegisterJs(self, GJsHost);
 {$ENDIF}
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
-  AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
-  Common.Lock.Lock;
-  try
-    ci := TFHIRWebServerClientInfo.Create;
-    FClients.Add(ci);
-    AContext.Data := ci;
-    ci.Context := AContext;
-  finally
-    Common.Lock.Unlock;
-  end;
   SetThreadStatus('Connected');
 end;
 
 procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
   SetThreadStatus('Disconnecting');
-  InterlockedDecrement(GCounterWebConnections);
-  if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
-    InterlockedDecrement(FSecureCount)
-  else
-    InterlockedDecrement(FPlainCount);
-  Common.Lock.Lock;
-  try
-    FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
-    AContext.Data := nil;
-  finally
-    Common.Lock.Unlock;
-  end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJshost := nil;
+  if AContext.Data <> nil then
+  begin
+    Common.Lock.Lock;
+    try
+      FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
+      AContext.Data := nil;
+      InterlockedDecrement(GCounterWebConnections);
+      if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+        InterlockedDecrement(FSecureCount)
+      else
+        InterlockedDecrement(FPlainCount);
+    finally
+      Common.Lock.Unlock;
+    end;
+    {$IFNDEF NO_JS}
+    GJsHost.Free;
+    GJshost := nil;
+    {$ENDIF}
+  {$IFDEF WINDOWS}
+    CoUninitialize;
   {$ENDIF}
-{$IFDEF WINDOWS}
-  CoUninitialize;
-{$ENDIF}
+  end;
   SetThreadStatus('Disconnected');
 end;
 
@@ -401,14 +408,14 @@ end;
 
 function TFhirWebServer.WebDesc(secure : boolean): String;
 begin
-  if (Common.ActualPort = 0) then
-    result := 'Port ' + inttostr(Common.ActualSSLPort) + ' (https).'
-  else if Common.ActualSSLPort = 0 then
-    result := 'Port ' + inttostr(Common.ActualPort) + ' (http).'
+  if (Common.StatedPort = 0) then
+    result := 'Port ' + inttostr(Common.StatedSSLPort) + ' (https).'
+  else if Common.StatedSSLPort = 0 then
+    result := 'Port ' + inttostr(Common.StatedPort) + ' (http).'
   else if secure then
-    result := '<a href="'+absoluteUrl(false)+'">Port ' + inttostr(Common.ActualPort) + ' (http)</a> and Port ' + inttostr(Common.ActualSSLPort) + ' (https - this server).'
+    result := '<a href="'+absoluteUrl(false)+'">Port ' + inttostr(Common.StatedPort) + ' (http)</a> and Port ' + inttostr(Common.StatedSSLPort) + ' (https - this server).'
   else
-    result := 'Port ' + inttostr(Common.ActualPort) + ' (http - this server) and <a href="'+absoluteUrl(true)+'">Port ' + inttostr(Common.ActualSSLPort) + ' (https)</a>.'
+    result := 'Port ' + inttostr(Common.StatedPort) + ' (http - this server) and <a href="'+absoluteUrl(true)+'">Port ' + inttostr(Common.StatedSSLPort) + ' (https)</a>.'
 end;
 
 
@@ -432,19 +439,22 @@ Begin
     s := ', Limited to '+inttostr(Common.ConnLimit)+' connections';
 
   Logging.log('Start Web Server:');
-  if (Common.ActualPort = 0) then
+  if (Common.StatedPort = 0) then
     Logging.log('  http: not active')
+  else if Common.workingPort = common.statedPort then
+    Logging.log('  http: listen on ' + inttostr(Common.StatedPort)+s)
   else
-    Logging.log('  http: listen on ' + inttostr(Common.ActualPort)+s);
+    Logging.log('  http: listen on ' + inttostr(Common.WorkingPort)+' for '+inttostr(common.statedPort)+s);
 
-  if (Common.ActualSSLPort = 0) then
+  if (Common.StatedSSLPort = 0) then
     Logging.log('  https: not active')
+  else if Common.workingSSLPort = common.statedSSLPort then
+    Logging.log('  https: listen on ' + inttostr(Common.statedSSLPort)+s)
   else
-    Logging.log('  https: listen on ' + inttostr(Common.ActualSSLPort)+s);
+    Logging.log('  https: listen on ' + inttostr(Common.WorkingSSLPort)+' for '+inttostr(common.statedSSLPort)+s);
   FActive := true;
   Common.Stats.Start;
   StartServer;
-
 End;
 
 Procedure TFhirWebServer.Stop;
@@ -455,7 +465,7 @@ End;
 
 Procedure TFhirWebServer.StartServer();
 Begin
-  if Common.ActualPort > 0 then
+  if Common.WorkingPort > 0 then
   begin
     FPlainServer := TIdHTTPServer.Create(Nil);
 //    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
@@ -463,7 +473,7 @@ Begin
 //    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).RetainThreads := false;
     FPlainServer.ServerSoftware := 'Health Intersections FHIR Server';
     FPlainServer.ParseParams := false;
-    FPlainServer.DefaultPort := Common.ActualPort;
+    FPlainServer.DefaultPort := Common.WorkingPort;
     FPlainServer.KeepAlive := PLAIN_KEEP_ALIVE;
     FPlainServer.OnCreatePostStream := CreatePostStream;
     FPlainServer.OnCommandGet := PlainRequest;
@@ -474,7 +484,7 @@ Begin
     FPlainServer.MaxConnections := Common.ConnLimit;
     FPlainServer.active := true;
   end;
-  if Common.ActualSSLPort > 0 then
+  if Common.WorkingSSLPort > 0 then
   begin
     If Not FileExists(FCertFile) Then
       raise EIOException.create('SSL Certificate "' + FCertFile + ' could not be found');
@@ -487,7 +497,7 @@ Begin
 //    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
     FSSLServer.ServerSoftware := 'Health Intersections FHIR Server';
     FSSLServer.ParseParams := false;
-    FSSLServer.DefaultPort := Common.ActualSSLPort;
+    FSSLServer.DefaultPort := Common.WorkingSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdOpenSSLIOHandlerServer.Create(nil);
@@ -588,7 +598,7 @@ var
   t: cardinal;
   ep : TFhirWebServerEndpoint;
   ok : boolean;
-  epn : String;
+  epn, cid : String;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
@@ -668,19 +678,20 @@ begin
         begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
-          summ := 'Not Found';
+          summ := 'Not Found: '+request.Document;
           epn := 'XX';
         end;
       end;
     end;
     logResponse(id, response);
     t := GetTickCount - t;
+    cid := getClientId(aContext, request);
     if (summ <> '') then
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-         inttostr(response.ResponseNo)+' p '+epn+': '+summ)
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+summ)
     else
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-         inttostr(response.ResponseNo)+' p '+epn+': '+request.RawHTTPCommand);
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+request.RawHTTPCommand);
 
     response.CloseConnection := not PLAIN_KEEP_ALIVE;
   finally
@@ -701,15 +712,15 @@ begin
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  if Common.ActualPort = 80 then
+  if Common.StatedPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
-    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.ActualPort), [rfReplaceAll]);
+    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
 
-  if Common.ActualSSLPort = 443 then
+  if Common.StatedSSLPort = 443 then
     s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
   else
-    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
+    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
@@ -735,7 +746,7 @@ var
   t: cardinal;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
-  epn : String;
+  epn, cid : String;
 begin
   if NoUserAuthentication then // we treat this as if it's a plain request
     PlainRequest(AContext, request, response)
@@ -806,18 +817,20 @@ begin
             epn := 'XX';
             response.ResponseNo := 404;
             response.ContentText := 'Document ' + request.Document + ' not found';
+            summ := 'Not Found: '+request.Document;
           end;
         end;
       end;
 
       logResponse(id, response);
       t := GetTickCount - t;
+      cid := getClientId(aContext, request);
       if (summ <> '') then
         Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-           inttostr(response.ResponseNo)+' s '+epn+': '+summ)
+           inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+summ)
       else
         Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-           inttostr(response.ResponseNo)+' s '+epn+': '+request.RawHTTPCommand);
+           inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+request.RawHTTPCommand);
 
       response.CloseConnection := not SECURE_KEEP_ALIVE;
     finally
@@ -1053,7 +1066,6 @@ begin
     else
       for ep in FEndPoints do
         b.Append('<li><a href="'+ep.PathWithSlash+'">'+ep.PathNoSlash+'</a>: '+ep.description+'</li>');
-
     b.append('</ul>');
     result := b.toString;
   finally
@@ -1065,6 +1077,14 @@ procedure TFhirWebServer.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
   ci.Add('Common.cache', Common.cache.sizeInBytes(ci.magic));
+end;
+
+function TFhirWebServer.getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo): String;
+begin
+  result := AContext.Binding.PeerIP;
+  if request.UserAgent <> '' then
+    if request.UserAgent.StartsWith('fhir/') then
+      result := request.UserAgent.Substring(5);
 end;
 
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
@@ -1083,15 +1103,15 @@ begin
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  if Common.ActualPort = 80 then
+  if Common.StatedPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
-    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.ActualPort), [rfReplaceAll]);
+    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
 
-  if Common.ActualSSLPort = 443 then
+  if Common.StatedSSLPort = 443 then
     s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
   else
-    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
+    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);

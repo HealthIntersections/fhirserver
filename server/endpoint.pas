@@ -258,17 +258,17 @@ function TFhirWebServerEndPoint.OAuthPath(secure: boolean): String;
 begin
   if secure then
   begin
-    if Common.ActualSSLPort = 443 then
+    if Common.StatedSSLPort = 443 then
       result := 'https://' + Common.Host + FPathNoSlash
     else
-      result := 'https://' + Common.Host + ':' + inttostr(Common.ActualSSLPort) + FPathNoSlash;
+      result := 'https://' + Common.Host + ':' + inttostr(Common.StatedSSLPort) + FPathNoSlash;
   end
   else
   begin
-    if Common.ActualPort = 80 then
+    if Common.StatedPort = 80 then
       result := 'http://' + Common.Host + FPathNoSlash
     else
-      result := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort) + FPathNoSlash;
+      result := 'http://' + Common.Host + ':' + inttostr(Common.StatedPort) + FPathNoSlash;
   end;
 end;
 
@@ -307,17 +307,17 @@ end;
 function TFhirWebServerEndpoint.ClientAddress(secure: boolean): String;
 begin
   if secure then
-    result := 'https://'+Common.host+ port(Common.ActualSSLPort, 443) + FPathNoSlash
+    result := 'https://'+Common.host+ port(Common.StatedSSLPort, 443) + FPathNoSlash
   else
-    result := 'http://'+Common.host+port(Common.ActualPort, 80) + FPathNoSlash;
+    result := 'http://'+Common.host+port(Common.StatedPort, 80) + FPathNoSlash;
 end;
 
 function TFhirWebServerEndpoint.AbsoluteURL(secure: boolean): String;
 begin
   if secure then
-    result := 'https://'+common.host+SSLPort+FPathNoSlash
+    result := 'https://'+common.host+SSLPort(false)+FPathNoSlash
   else
-    result := 'http://'+common.host+HTTPPort+FPathNoSlash;
+    result := 'http://'+common.host+HTTPPort(false)+FPathNoSlash;
 end;
 
 procedure TFhirWebServerEndPoint.cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
