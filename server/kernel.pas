@@ -731,7 +731,7 @@ begin
     {$ENDIF}
   end
   else
-    Logging.log(commandLineAsString);
+    Logging.log(commandLineAsString+' (dir='+GetCurrentDir+')');
 
   try
     Logging.Log('Loading Dependencies');

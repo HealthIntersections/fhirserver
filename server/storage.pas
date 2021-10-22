@@ -203,9 +203,8 @@ type
     procedure CommitTransaction; virtual; abstract;
     procedure RollbackTransaction; virtual; abstract;
 
-    procedure ExecuteCapabilityStatement(request: TFHIRRequest; response : TFHIRResponse; full : boolean); virtual;
-    procedure ExecuteCapabilityStatement2(request: TFHIRRequest; response : TFHIRResponse; full : boolean); virtual;
-    procedure ExecuteTerminologyCapabilities(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteCapabilityStatement(request: TFHIRRequest; response : TFHIRResponse; full : boolean) : String; virtual;
+    function ExecuteTerminologyCapabilities(request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
@@ -215,7 +214,7 @@ type
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); virtual;
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; virtual;
-    procedure ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
@@ -679,8 +678,10 @@ begin
     try
       if Request.Id <> '' then
         result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName+'/'+Request.Id
+      else if Request.ResourceName <> '' then
+        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName
       else
-        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName;
+        result := CODES_TFHIRCommandType[request.CommandType];
       case request.CommandType of
         fcmdRead : ExecuteRead(request, response, false);
         fcmdUpdate : ExecuteUpdate(context, request, response);
@@ -689,7 +690,7 @@ begin
         fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-        fcmdMetadata : ExecuteMetadata(context, request, response);
+        fcmdMetadata : result := ExecuteMetadata(context, request, response);
         fcmdTransaction : result := ExecuteTransaction(context, request, response);
         fcmdBatch :
           begin
@@ -722,26 +723,24 @@ begin
   raise EFHIRException.create('This server does not implement the "Batch" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteMetadata(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteMetadata(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : string;
 begin
   if (context <> nil) then
     context.CacheResponse := true;
 
   if not request.Parameters.has('mode') then
-    ExecuteCapabilityStatement(request, response, true)
+    result := ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters['mode'] = 'full' then
-    ExecuteCapabilityStatement(request, response, true)
-  else if request.Parameters['mode'] = 'capabilities2' then
-    ExecuteCapabilityStatement2(request, response, true)
+    result := ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters['mode'] = 'normative' then
-    ExecuteCapabilityStatement(request, response, false)
+    result := ExecuteCapabilityStatement(request, response, false)
   else if request.Parameters['mode'] = 'terminology' then
-    ExecuteTerminologyCapabilities(request, response)
+    result := ExecuteTerminologyCapabilities(request, response)
   else
     raise EFHIRException.Create('unknown mode '+request.Parameters['mode']);
 end;
 
-procedure TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean);
+function TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean) : string;
 var
   oConf : TFhirCapabilityStatementW;
   res : TFhirCapabilityStatementRestResourceW;
@@ -752,6 +751,11 @@ var
 //  ct : TFhirConformanceContact;
   ServerContext : TFHIRServerContext;
 begin
+  if full then
+    result := 'Metadata (Full)'
+  else
+    result := 'Metadata (Summary)';
+
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;
@@ -928,221 +932,6 @@ begin
         factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
       finally
         html.free;
-      end;
-
-      if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
-        processGraphQL(request.Parameters['_graphql'], request, response);
-    finally
-      oConf.free;
-    end;
-
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, []);
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message, []);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
-procedure TFHIROperationEngine.ExecuteCapabilityStatement2(request: TFHIRRequest; response: TFHIRResponse; full : boolean);
-var
-  oConf : TFhirCapabilityStatementW;
-  res : TFhirCapabilityStatementRestResourceW;
-  a : String;
-  html : TFslStringBuilder;
-//  c : TFhirContactPoint;
-  i : integer;
-//  ct : TFhirConformanceContact;
-  ServerContext : TFHIRServerContext;
-  fl : TFslList<TFHIRFeature>;
-begin
-  ServerContext := TFHIRServerContext(FServerContext);
-  try
-    response.HTTPCode := 200;
-    oConf := factory.wrapCapabilityStatement2(factory.makeResource('CapabilityStatement2'));
-    try
-      response.Resource := oConf.Resource.link;
-
-      oConf.id := 'FhirServer';
-      oConf.contact(cpsOther, 'http://healthintersections.com.au/');
-      if ServerContext.FormalURLPlain <> '' then
-        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'metadata'
-      else
-        oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
-
-      oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
-      oConf.name := 'FHIR Reference Server Conformance Statement';
-      oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-      oConf.status := psActive;
-      oConf.kind := cskInstance;
-      oConf.acceptUnknown := csauBoth;
-
-      oConf.date := TFslDateTime.makeUTC;
-      oConf.software('Reference Server', SERVER_FULL_VERSION, SERVER_RELEASE_DATE);
-      if ServerContext.FormalURLPlain <> '' then
-        oConf.impl(ServerContext.FormalURLPlain, 'FHIR Server running at '+ServerContext.FormalURLPlain);
-      if assigned(OnPopulateConformance) then
-        OnPopulateConformance(self, oConf, request.secure, request.baseUrl, ['launch-standalone', 'launch-ehr', 'client-public', 'client-confidential-symmetric', 'sso-openid-connect', 'permission-offline', 'permission-patient', 'permission-user']);
-      if factory.version <> fhirVersionRelease2 then
-      begin
-        oConf.fmt('application/fhir+xml');
-        oConf.fmt('application/fhir+json');
-      end
-      else
-      begin
-        oConf.fmt('application/xml+fhir');
-        oConf.fmt('application/json+fhir');
-      end;
-
-      oConf.fhirVersion := factory.versionString;
-      if FStorage.SupportsSubscriptions then
-        oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets',
-          TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView, FStorage.SupportsTransactions, FStorage.SupportsSearch, FStorage.SupportsHistory)
-      else
-        oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', '',
-          TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView, FStorage.SupportsTransactions, FStorage.SupportsSearch, FStorage.SupportsHistory);
-
-      html := TFslStringBuilder.Create;
-      try
-        html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
-         'Server version '+SERVER_FULL_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
-        for a in ServerContext.ValidatorContext.allResourceNames do
-          if (a <> 'Custom') and (a <> 'Parameters') then
-          begin
-            if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
-            begin
-              if a = 'Binary' then
-                html.append('<tr><td>'+a+'</td>'+
-                '<td>--</td>')
-              else
-                html.append('<tr><td>'+a+'</td>'+
-                '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
-              res := oConf.addResource(a);
-              try
-                res.profile := request.baseUrl+'StructureDefinition/'+lowercase(a);
-                if (a <> 'MessageHeader') and (a <> 'Parameters') Then
-                begin
-                  if request.canRead(a) then
-                  begin
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                    res.addInteraction('read');
-                    if ServerContext.ResConfig[a].cmdVRead then
-                    begin
-                      html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                      res.addInteraction('vread');
-                      res.readHistory := true;
-                    end
-                    else
-                      html.append('<td></td>');
-                  end
-                  else
-                    html.append('<td align="center"></td><td align="center"></td>');
-                  if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
-                  begin
-                    res.addInteraction('search-type');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-                  if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
-                  begin
-                    res.addInteraction('update');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-                  if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
-                  begin
-                    res.addInteraction('history-type');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-                  if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
-                  begin
-                    res.addInteraction('create');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-                  if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
-                  begin
-                    res.addInteraction('delete');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-                  if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
-                  begin
-                    res.addInteraction('history-instance');
-                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  end
-                  else
-                    html.append('<td></td>');
-    //                html.append('<br/>search</td><td><ul>');
-                  for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
-                    if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
-                      if ServerContext.Indexes.Indexes[i].Name <> '_query' then
-                        res.addParam(html.AsString, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
-
-    //              addParam(res, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
-                  res.addParam(html.AsString, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', sptString, []);
-                  res.addParam(html.AsString, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', sptReference, []);
-                  res.addParam(html.AsString, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', sptReference, []);
-                  res.addParam(html.AsString, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', sptToken, []);
-                  res.addParam(html.AsString, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', sptNumber, []);
-                  res.addParam(html.AsString, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', sptNumber, []);
-                  res.addParam(html.AsString, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', sptToken, factory.ResourceNames);
-                  res.addParam(html.AsString, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', sptToken, factory.ResourceNames);
-                  res.addParam(html.AsString, '_filter', 'http://hl7.org/fhir/search', 'filter parameter as documented in the specification', sptToken, factory.ResourceNames);
-
-    //              html.append('</ul>');                                                                                                                               }
-                end;
-                html.append('</tr>'#13#10);
-                if (not res.hasInteraction) then
-                  raise EFslException.Create('No interactions for '+res.code+'?');
-
-                  //<th>Search/Updates Params</th>
-                  // html.append('n : offset<br/>');
-                  // html.append('count : # resources per request<br/>');
-                  // html.append(m.Indexes[i]+' : ?<br/>');
-              finally
-                res.free;
-              end;
-            end;
-          end;
-        html.append('</table>'#13#10);
-
-        html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
-        for i := 0 to FOperations.Count - 1 do
-        begin
-          if TFhirOperation(FOperations[i]).formalURL <> '' then
-            oConf.addOperation(TFhirOperation(FOperations[i]).Name, TFhirOperation(FOperations[i]).formalURL)
-          else
-            oConf.addOperation(TFhirOperation(FOperations[i]).Name, AppendForwardSlash(ServerContext.FormalURLPlain)+'OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name);
-          html.append(' <li>'+TFhirOperation(FOperations[i]).name+': see OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name+'</li>'#13#10);
-        end;
-        html.append('</ul>'#13#10);
-
-        if ServerContext.ResConfig.ContainsKey('CodeSystem') and ServerContext.ResConfig['CodeSystem'].Supported and ServerContext.ResConfig['CodeSystem'].Supported then
-          oConf.addInstantiates('http://hl7.org/fhir/CapabilityStatement/terminology-server');
-
-        html.append('</div>'#13#10);
-        // operations
-        // factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
-      finally
-        html.free;
-      end;
-      fl := Storage.FFeatures.sortedFeatures;
-      try
-        TFHIRServerContext(FServerContext).TerminologyServer.defineFeatures(fl);
-        fl.Sort;
-        oConf.defineFeatures(fl);
-      finally
-        fl.Free;
       end;
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
@@ -1354,12 +1143,14 @@ begin
   raise EFHIRException.create('This server does not implement the "Search" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteTerminologyCapabilities(request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteTerminologyCapabilities(request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   oConf : TFhirTerminologyCapabilitiesW;
   ServerContext : TFHIRServerContext;
   s : String;
 begin
+  result := 'Metadata (Terminology)';
+
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;

@@ -40,6 +40,7 @@ uses
   IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
   fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
   fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  fui_lcl_utilities,
   ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
   server_constants, console_managers, frm_about;
@@ -211,6 +212,7 @@ type
     FileExit1: TFileExit;
     FileOpenAction: TFileOpen;
     FileSaveAs1: TFileSaveAs;
+    fd: TFontDialog;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
@@ -452,6 +454,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     btnCopyConsole: TToolButton;
+    btnConsoleFont: TToolButton;
     procedure BitBtn1Click(Sender: TObject);
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
@@ -465,6 +468,7 @@ type
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
     procedure btnCombineGoClick(Sender: TObject);
+    procedure btnConsoleFontClick(Sender: TObject);
     procedure btnCopyConsoleClick(Sender: TObject);
     procedure btnDeleteEditionClick(Sender: TObject);
     procedure btnDestinationClick(Sender: TObject);
@@ -755,6 +759,7 @@ begin
   FIni := TIniFile.create(FilePath([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
+  readFontFromIni(FIni, 'font', mConsole.font);
 
   FTelnet := TIdTelnet.create(nil);
   FTelnet.Port := 44123;
@@ -1695,6 +1700,16 @@ begin
     end;
 end;
 
+procedure TMainConsoleForm.btnConsoleFontClick(Sender: TObject);
+begin
+  fd.font.Assign(mConsole.font);
+  if (fd.Execute) then
+  begin
+    mConsole.Font.Assign(fd.font);
+    writeFontToIni(FIni, 'font', mConsole.font);
+  end;
+end;
+
 procedure TMainConsoleForm.btnCopyConsoleClick(Sender: TObject);
 begin
   mConsole.CopyToClipboard;
@@ -2485,7 +2500,6 @@ begin
     FConfig.web['card-jwks'].value := edtCardPublic.Text;
     FConfig.Save;
   end;
-
 end;
 
 procedure TMainConsoleForm.edtConfigFileChange(Sender: TObject);
@@ -2493,7 +2507,15 @@ begin
   if (edtConfigFile.text <> '') and FileExists(edtConfigFile.text) then
   begin
     edtConfigFile.Color := clWhite;
-    SetConfigEditable;
+    try
+      SetConfigEditable;
+    except
+      on e : Exception do
+      begin
+        MessageDlg('Error Loading Configuration', 'Eror loading '+edtConfigFile.text+': '+e.message, mtError, [mbok], 0);
+        SetConfigReadOnly;
+      end;
+    end;
   end
   else
   begin

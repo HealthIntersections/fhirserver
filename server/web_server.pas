@@ -179,6 +179,8 @@ Type
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
 
+    function getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo) : String;
+
     procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
     procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     procedure ReturnFileSource(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
@@ -588,7 +590,7 @@ var
   t: cardinal;
   ep : TFhirWebServerEndpoint;
   ok : boolean;
-  epn : String;
+  epn, cid : String;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
@@ -668,19 +670,20 @@ begin
         begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
-          summ := 'Not Found';
+          summ := 'Not Found: '+request.Document;
           epn := 'XX';
         end;
       end;
     end;
     logResponse(id, response);
     t := GetTickCount - t;
+    cid := getClientId(aContext, request);
     if (summ <> '') then
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-         inttostr(response.ResponseNo)+' p '+epn+': '+summ)
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+summ)
     else
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-         inttostr(response.ResponseNo)+' p '+epn+': '+request.RawHTTPCommand);
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+request.RawHTTPCommand);
 
     response.CloseConnection := not PLAIN_KEEP_ALIVE;
   finally
@@ -735,7 +738,7 @@ var
   t: cardinal;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
-  epn : String;
+  epn, cid : String;
 begin
   if NoUserAuthentication then // we treat this as if it's a plain request
     PlainRequest(AContext, request, response)
@@ -806,18 +809,20 @@ begin
             epn := 'XX';
             response.ResponseNo := 404;
             response.ContentText := 'Document ' + request.Document + ' not found';
+            summ := 'Not Found: '+request.Document;
           end;
         end;
       end;
 
       logResponse(id, response);
       t := GetTickCount - t;
+      cid := getClientId(aContext, request);
       if (summ <> '') then
         Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-           inttostr(response.ResponseNo)+' s '+epn+': '+summ)
+           inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+summ)
       else
         Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-           inttostr(response.ResponseNo)+' s '+epn+': '+request.RawHTTPCommand);
+           inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+request.RawHTTPCommand);
 
       response.CloseConnection := not SECURE_KEEP_ALIVE;
     finally
@@ -1053,7 +1058,6 @@ begin
     else
       for ep in FEndPoints do
         b.Append('<li><a href="'+ep.PathWithSlash+'">'+ep.PathNoSlash+'</a>: '+ep.description+'</li>');
-
     b.append('</ul>');
     result := b.toString;
   finally
@@ -1065,6 +1069,14 @@ procedure TFhirWebServer.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
   ci.Add('Common.cache', Common.cache.sizeInBytes(ci.magic));
+end;
+
+function TFhirWebServer.getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo): String;
+begin
+  result := AContext.Binding.PeerIP;
+  if request.UserAgent <> '' then
+    if request.UserAgent.StartsWith('fhir/') then
+      result := request.UserAgent.Substring(5);
 end;
 
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
