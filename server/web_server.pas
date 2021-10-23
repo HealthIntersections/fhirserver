@@ -292,8 +292,10 @@ begin
   // web server configuration
   Common.workingPort := ini.web['http'].readAsInt;
   Common.workingSSLPort := ini.web['https'].readAsInt;
-  Common.StatedPort := ini.web['http-stated'].readAsInt(Common.workingPort);
-  Common.StatedSSLPort := ini.web['https-stated'].readAsInt(Common.workingSSLPort);
+  Common.StatedPort := ini.web['rproxy-http'].readAsInt(Common.workingPort);
+  Common.StatedSSLPort := ini.web['rproxy-https'].readAsInt(Common.workingSSLPort);
+  Common.CertHeader := ini.web['rproxy-cert-header'].value;
+  Common.SSLHeaderValue := ini.web['rproxy-ssl-value'].value;
 
   FCertFile := ini.web['certname'].value;
   FRootCertFile := ini.web['cacertname'].value;
@@ -409,13 +411,13 @@ end;
 function TFhirWebServer.WebDesc(secure : boolean): String;
 begin
   if (Common.StatedPort = 0) then
-    result := 'Port ' + inttostr(Common.StatedSSLPort) + ' (https).'
+    result := 'Port ' + inttostr(Common.StatedSSLPort) + ' (https)'
   else if Common.StatedSSLPort = 0 then
-    result := 'Port ' + inttostr(Common.StatedPort) + ' (http).'
+    result := 'Port ' + inttostr(Common.StatedPort) + ' (http)'
   else if secure then
-    result := '<a href="'+absoluteUrl(false)+'">Port ' + inttostr(Common.StatedPort) + ' (http)</a> and Port ' + inttostr(Common.StatedSSLPort) + ' (https - this server).'
+    result := '<a href="'+absoluteUrl(false)+'">Port ' + inttostr(Common.StatedPort) + ' (http)</a> and Port ' + inttostr(Common.StatedSSLPort) + ' (https - this server)'
   else
-    result := 'Port ' + inttostr(Common.StatedPort) + ' (http - this server) and <a href="'+absoluteUrl(true)+'">Port ' + inttostr(Common.StatedSSLPort) + ' (https)</a>.'
+    result := 'Port ' + inttostr(Common.StatedPort) + ' (http - this server) and <a href="'+absoluteUrl(true)+'">Port ' + inttostr(Common.StatedSSLPort) + ' (https)</a>'
 end;
 
 
@@ -600,104 +602,111 @@ var
   ok : boolean;
   epn, cid : String;
 begin
-  InterlockedIncrement(GCounterWebRequests);
-  t := GetTickCount;
-  SetThreadStatus('Processing '+request.Document);
-  epn := '??';
-  MarkEntry(AContext, request, response);
-  try
-    id := FSettings.nextRequestId;
-    logRequest(false, id, request);
-    response.CustomHeaders.Add('X-Request-Id: '+id);
-    if (request.CommandType = hcOption) then
-    begin
-      response.ResponseNo := 200;
-      response.ContentText := 'ok';
-      response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-      epn := '--';
-      summ := 'options?';
-    end
-    else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
-    begin
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-      FUsageServer.HandleRequest(AContext, request, response);
-      epn := '--';
-      summ := 'options?';
-    end
-    else
-    begin
-      ok := false;
-      for ep in FEndPoints do
-        if request.Document.StartsWith(ep.PathWithSlash) then
-        begin
-          ok := true;
-          epn := ep.logId;
-          summ := ep.PlainRequest(AContext, request, response, id);
-          break;
-        end else if (request.Document = ep.PathNoSlash) then
-        begin
-          ok := true;
-          epn := ep.logId;
-          response.Redirect(request.Document+'/');
-          summ := '--> redirect to '+request.Document+'/';
-          break;
-        end;
-
-      if not ok then
+  // when running with a reverse proxy, it's easier to let the reverse proxy just use non-ssl upstream, and pass through the certificate details se we know SSL is being used
+  if (Common.SSLHeaderValue <> '') and (request.RawHeaders.Values['X-Client-SSL'] = Common.SSLHeaderValue) then
+    SecureRequest(aContext, request, response)
+  else
+  begin
+    InterlockedIncrement(GCounterWebRequests);
+    t := GetTickCount;
+    SetThreadStatus('Processing '+request.Document);
+    epn := '??';
+    summ := request.document;
+    MarkEntry(AContext, request, response);
+    try
+      id := FSettings.nextRequestId;
+      logRequest(false, id, request);
+      response.CustomHeaders.Add('X-Request-Id: '+id);
+      if (request.CommandType = hcOption) then
       begin
-        if request.Document = '/diagnostics' then
+        response.ResponseNo := 200;
+        response.ContentText := 'ok';
+        response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+        epn := '--';
+        summ := 'options?';
+      end
+      else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
+      begin
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+        FUsageServer.HandleRequest(AContext, request, response);
+        epn := '--';
+        summ := 'options?';
+      end
+      else
+      begin
+        ok := false;
+        for ep in FEndPoints do
+          if request.Document.StartsWith(ep.PathWithSlash) then
+          begin
+            ok := true;
+            epn := ep.logId;
+            summ := ep.PlainRequest(AContext, request, response, id);
+            break;
+          end else if (request.Document = ep.PathNoSlash) then
+          begin
+            ok := true;
+            epn := ep.logId;
+            response.Redirect(request.Document+'/');
+            summ := '--> redirect to '+request.Document+'/';
+            break;
+          end;
+
+        if not ok then
         begin
-          epn := 'WS';
-          summ := 'diagnostics';
-          summ := ReturnDiagnostics(AContext, request, response, false, false)
-        end
-        else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
-        begin
-          summ := 'Static File '+request.Document;
-          epn := 'WS';
-          ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
-        end
-        else if request.Document = '/' then
-        begin
-          epn := 'WS';
-          summ := 'processed File '+request.Document;
-          ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
-        end
-        else
-        begin
-          response.ResponseNo := 404;
-          response.ContentText := 'Document ' + request.Document + ' not found';
-          summ := 'Not Found: '+request.Document;
-          epn := 'XX';
+          if request.Document = '/diagnostics' then
+          begin
+            epn := 'WS';
+            summ := 'diagnostics';
+            summ := ReturnDiagnostics(AContext, request, response, false, false)
+          end
+          else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
+          begin
+            summ := 'Static File '+request.Document;
+            epn := 'WS';
+            ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
+          end
+          else if request.Document = '/' then
+          begin
+            epn := 'WS';
+            summ := 'processed File '+request.Document;
+            ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
+          end
+          else
+          begin
+            response.ResponseNo := 404;
+            response.ContentText := 'Document ' + request.Document + ' not found';
+            summ := 'Not Found: '+request.Document;
+            epn := 'XX';
+          end;
         end;
       end;
-    end;
-    logResponse(id, response);
-    t := GetTickCount - t;
-    cid := getClientId(aContext, request);
-    if (summ <> '') then
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
-         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+summ)
-    else
-      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
-         inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+request.RawHTTPCommand);
+      logResponse(id, response);
+      t := GetTickCount - t;
+      cid := getClientId(aContext, request);
+      if (summ <> '') then
+        Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+           inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+summ)
+      else
+        Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+
+           inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+request.RawHTTPCommand);
 
-    response.CloseConnection := not PLAIN_KEEP_ALIVE;
-  finally
-    InterlockedDecrement(GCounterWebRequests);
-    MarkExit(AContext);
-    SetThreadStatus('Done');
+      response.CloseConnection := not PLAIN_KEEP_ALIVE;
+    finally
+      InterlockedDecrement(GCounterWebRequests);
+      MarkExit(AContext);
+      SetThreadStatus('Done');
+    end;
   end;
 end;
 

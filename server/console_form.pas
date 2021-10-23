@@ -167,8 +167,10 @@ type
     edtLoincSource: TEdit;
     edtLoincVersion: TEdit;
     edtNDCSQLiteFile: TEdit;
+    edtRProxySSLHeader: TEdit;
     edtRXNSQLiteFile: TEdit;
-    edtSSLPortStated: TEdit;
+    edtRProxySSLPort: TEdit;
+    edtRProxyCertHeader: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
     edtUNIISQLiteFile: TEdit;
@@ -199,7 +201,7 @@ type
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
-    edtWebPortStated: TEdit;
+    edtRProxyPort: TEdit;
     FGraph1: TFGraph;
     FileNewAction: TAction;
     ActionList1: TActionList;
@@ -221,6 +223,7 @@ type
     GroupBox5: TGroupBox;
     GroupBox6: TGroupBox;
     GroupBox7: TGroupBox;
+    GroupBox8: TGroupBox;
     HelpContents1: THelpContents;
     Image2: TImage;
     Image3: TImage;
@@ -274,7 +277,9 @@ type
     Label76: TLabel;
     Label77: TLabel;
     Label78: TLabel;
+    Label79: TLabel;
     Label8: TLabel;
+    Label80: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -436,6 +441,7 @@ type
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
+    TabSheet1: TTabSheet;
     tbUnii: TTabSheet;
     tbNDC: TTabSheet;
     tbRxNorm: TTabSheet;
@@ -516,12 +522,14 @@ type
     procedure edtHostNameChange(Sender: TObject);
     procedure edtLangFileChange(Sender: TObject);
     procedure edtPrivateKeyChange(Sender: TObject);
+    procedure edtRProxyCertHeaderChange(Sender: TObject);
+    procedure edtRProxySSLHeaderChange(Sender: TObject);
     procedure edtSSLCertChange(Sender: TObject);
     procedure edtSSLPasswordChange(Sender: TObject);
-    procedure edtSSLPortStatedChange(Sender: TObject);
+    procedure edtRProxySSLPortChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
-    procedure edtWebPortStatedChange(Sender: TObject);
+    procedure edtRProxyPortChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure edtWebMaxConnectionsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -847,15 +855,6 @@ end;
 
 procedure TMainConsoleForm.FormResize(Sender: TObject);
 begin
-  edtWebPort.width := (ClientWidth div 2) - (112 + 20);
-  label77.left := edtWebPort.left + edtWebPort.width + 20+40;
-  edtWebPortStated.left := ClientWidth div 2+92;
-  edtWebPortStated.width := edtWebPort.width;
-
-  edtSSLPort.width := (ClientWidth div 2) - (112 + 20);
-  label78.left := edtSSLPort.left + edtSSLPort.width + 20+40;
-  edtSSLPortStated.left := ClientWidth div 2+92;
-  edtSSLPortStated.width := edtSSLPort.width;
 end;
 
 procedure TMainConsoleForm.FormShow(Sender: TObject);
@@ -1083,8 +1082,8 @@ begin
     edtHostName.Enabled := true;
     edtWebPort.Text := FConfig.web['http'].value;
     edtWebPort.Enabled := true;
-    edtWebPortStated.Text := FConfig.web['http-stated'].value;
-    edtWebPortStated.Enabled := true;
+    edtRProxyPort.Text := FConfig.web['rproxy-http'].value;
+    edtRProxyPort.Enabled := true;
     edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
     edtWebMaxConnections.Enabled := true;
     edtCacheTime.Text := IntToStr(FConfig.web['http-cache-time'].readAsInt(0));
@@ -1095,8 +1094,12 @@ begin
     chkCaching.Enabled := true;
     edtSSLPort.Text := FConfig.web['https'].value;
     edtSSLPort.Enabled := true;
-    edtSSLPortStated.Text := FConfig.web['https-stated'].value;
-    edtSSLPortStated.Enabled := true;
+    edtRProxySSLPort.Text := FConfig.web['rproxy-https'].value;
+    edtRProxySSLPort.Enabled := true;
+    edtRProxyCertHeader.Text := FConfig.web['rproxy-cert-header'].value;
+    edtRProxyCertHeader.Enabled := true;
+    edtRProxySSLHeader.Text := FConfig.web['rproxy-ssl-value'].value;
+    edtRProxyCertHeader.Enabled := true;
     edtSSLCert.Text := FConfig.web['certname'].value;
     edtSSLCert.Enabled := true;
     edtCACert.Text := FConfig.web['cacertname'].value;
@@ -1153,8 +1156,8 @@ begin
     edtHostName.Enabled := false;
     edtWebPort.Text := '';
     edtWebPort.Enabled := false;
-    edtWebPortStated.Text := '';
-    edtWebPortStated.Enabled := false;
+    edtRProxyPort.Text := '';
+    edtRProxyPort.Enabled := false;
     edtWebMaxConnections.Text := '';
     edtWebMaxConnections.Enabled := false;
     edtCacheTime.Text := '';
@@ -1165,8 +1168,12 @@ begin
     chkCaching.Enabled := false;
     edtSSLPort.Text := '';
     edtSSLPort.Enabled := false;
-    edtSSLPortStated.Text := '';
-    edtSSLPortStated.Enabled := false;
+    edtRProxySSLPort.Text := '';
+    edtRProxySSLPort.Enabled := false;
+    edtRProxyCertHeader.Text := '';
+    edtRProxyCertHeader.Enabled := false;
+    edtRProxySSLHeader.Text := '';
+    edtRProxySSLHeader.Enabled := false;
     edtSSLCert.Text := '';
     edtSSLCert.Enabled := false;
     edtCACert.Text := '';
@@ -1263,14 +1270,22 @@ begin
     lblDoco.caption := 'The password for the SSL private key'
   else if ActiveControl = edtSSLPort then
     lblDoco.caption := 'The port to use for SSL services'
+
+  else if ActiveControl = edtRProxySSLHeader then
+    lblDoco.caption := 'The value that the reverse proxy puts in the X-Client-SSL header to pass the fact that the client used SSL. This is a setting in the reverse proxy configuration (for nginx, proxy_set_header X-Client-SSL "{uuid}")'
+  else if ActiveControl = edtRProxyCertHeader then
+    lblDoco.caption := 'The header that the reverse proxy uses to pass the client''s SSL certificate through to the server (if verifying the SSL certificate). This is a setting in the reverse proxy configuration (for nginx, proxy_set_header XXXX $ssl_client_escaped_cert, and you must turn SSL authentication one)'
+  else if ActiveControl = edtRProxyPort then
+    lblDoco.caption := 'The port the proxy is using for unsecured services (needed to make sure redirects for nginx/docker go to the right place)'
+  else if ActiveControl = edtRProxySSLPort then
+    lblDoco.caption := 'The port the proxy is using for SSL services (needed to make sure redirects for nginx/docker go to the right place)'
+
   else if ActiveControl = edtSSLPort then
     lblDoco.caption := 'The claimed port to use for SSL services  (only give this a value if running behind a reverse proxy - this is the port that nginx is running on, where redirects etc must go)'
   else if ActiveControl = edtHostName then
     lblDoco.caption := 'The host name by which clients know this server (normally, the server uses the Host details provided by the client, but there are places in the OAuth process and others where this is not available'
   else if ActiveControl = edtWebPort then
     lblDoco.caption := 'The port to use for plain (unsecured) web services'
-  else if ActiveControl = edtWebPortStated then
-    lblDoco.caption := 'The claimed port to use for plain (unsecured) web services (only give this a value if running behind a reverse proxy - this is the port that nginx is running on, where redirects etc must go)'
   else if ActiveControl = edtWebMaxConnections then
     lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
   else if ActiveControl = edtWebMaxConnections then
@@ -1465,6 +1480,24 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.edtRProxyCertHeaderChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['rproxy-cert-header'].value := edtRProxyCertHeader.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtRProxySSLHeaderChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['rproxy-ssl-value'].value := edtRProxySSLHeader.Text;
+    FConfig.Save;
+  end;
+end;
+
 procedure TMainConsoleForm.edtSSLCertChange(Sender: TObject);
 begin
   if not FLoading then
@@ -1483,11 +1516,11 @@ begin
   end;
 end;
 
-procedure TMainConsoleForm.edtSSLPortStatedChange(Sender: TObject);
+procedure TMainConsoleForm.edtRProxySSLPortChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['https-stated'].value := edtSSLPortStated.Text;
+    FConfig.web['rproxy-https'].value := edtRProxySSLPort.Text;
     FConfig.Save;
   end;
 
@@ -1511,11 +1544,11 @@ begin
   end;
 end;
 
-procedure TMainConsoleForm.edtWebPortStatedChange(Sender: TObject);
+procedure TMainConsoleForm.edtRProxyPortChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['http-stated'].value := edtWebPortStated.Text;
+    FConfig.web['rproxy-http'].value := edtRProxyPort.Text;
     FConfig.Save;
   end;
 end;
