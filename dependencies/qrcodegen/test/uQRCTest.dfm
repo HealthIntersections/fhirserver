@@ -45,7 +45,7 @@ object Form1: TForm1
     Left = 16
     Top = 175
     Width = 121
-    Height = 58
+    Height = 50
     Caption = 'btnVariety'
     TabOrder = 3
     OnClick = btnVarietyClick
@@ -85,19 +85,34 @@ object Form1: TForm1
         ScrollBars = ssVertical
         TabOrder = 0
         OnDblClick = Memo1DblClick
-        ExplicitLeft = 552
-        ExplicitWidth = 448
-        ExplicitHeight = 797
       end
     end
   end
   object btnMask: TButton
     Left = 16
-    Top = 239
+    Top = 231
     Width = 121
-    Height = 58
+    Height = 50
     Caption = 'btnMask'
     TabOrder = 5
     OnClick = btnMaskClick
+  end
+  object btnNewClass: TButton
+    Left = 16
+    Top = 287
+    Width = 121
+    Height = 50
+    Caption = 'btnNewClass'
+    TabOrder = 6
+    OnClick = btnNewClassClick
+  end
+  object btnNewClassSeg: TButton
+    Left = 16
+    Top = 343
+    Width = 121
+    Height = 50
+    Caption = 'btnNewClassSeg'
+    TabOrder = 7
+    OnClick = btnNewClassSegClick
   end
 end

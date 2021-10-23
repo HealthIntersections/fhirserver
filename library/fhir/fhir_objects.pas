@@ -2816,14 +2816,13 @@ end;
 
 procedure THealthcareCard.toBmp(bmp: TBitmap);
 var
-  qr : TQRCodeGenerator;
+  qr : TSegmentedQRCode;
 begin
-  qr := TQRCodeGenerator.create;
+  qr := TSegmentedQRCode.create;
   try
-    qr.start;
-    qr.addSegment(qrmBytes, 'shc:/');
-    qr.addSegment(qrmNumeric, qrSource(false));
-    qr.finish(bmp);
+    qr.AddBinarySegment('shc:/');
+    qr.AddNumericSegment(qrSource(false));
+    qr.saveToBitmap(bmp);
   finally
     qr.free;
   end;

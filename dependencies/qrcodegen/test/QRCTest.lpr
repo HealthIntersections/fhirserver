@@ -1,10 +1,14 @@
 program QRCTest;
 
-uses
-  Forms,
-  uQRCTest in 'uQRCTest.pas' {Form1};
+{$MODE Delphi}
 
-{$R *.res}
+uses
+  Forms, Interfaces,
+  uQRCTest in 'uQRCTest.pas' {Form1},
+  qrcodegen in 'qrcodegen.pas',
+  qrcodegen_demo in 'qrcodegen_demo.pas';
+
+{.$R *.res}
 
 begin
   Application.Initialize;
