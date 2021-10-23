@@ -101,6 +101,8 @@ type
     FWorkingSSLPort: word;
     FWorkingPort: word;
     FStatedSSLPort: word;
+    FCertHeader: String;
+    FSSLHeaderValue: String;
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure SetCache(const Value: THTTPCacheManager);
   public
@@ -118,6 +120,8 @@ type
     property statedSSLPort : word read FStatedSSLPort write FStatedSSLPort;
     property workingPort : word read FWorkingPort write FWorkingPort;
     property workingSSLPort : word read FWorkingSSLPort write FWorkingSSLPort;
+    property CertHeader : String read FCertHeader write FCertHeader;
+    property SSLHeaderValue : String read FSSLHeaderValue write FSSLHeaderValue;
 
     property ConnLimit : Integer read FConnLimit write FConnLimit;
     property Google : TGoogleAnalyticsProvider read FGoogle;

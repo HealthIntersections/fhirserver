@@ -198,8 +198,10 @@ begin
       cfg.web['host'].value := ini.ReadString('web', 'host', 'localhost');
       cfg.web['http'].value := inttostr(ini.ReadInteger('web', 'http', 80));
       cfg.web['https'].value := ini.ReadString('web', 'https', '');
-      cfg.web['http-stated'].value := ini.ReadString('web', 'http-stated', '');
-      cfg.web['https-stated'].value := ini.ReadString('web', 'https-stated', '');
+      cfg.web['rproxy-http'].value := ini.ReadString('web', 'rproxy-http', '');
+      cfg.web['rproxy-https'].value := ini.ReadString('web', 'rproxy-https', '');
+      cfg.web['rproxy-cert-header'].value := ini.ReadString('web', 'rproxy-cert-header', '');
+      cfg.web['rproxy-ssl-value'].value := ini.ReadString('web', 'rproxy-ssl-value', '');
       cfg.web['certname'].value := ini.ReadString('web', 'certname', '');
       cfg.web['cacertname'].value := ini.ReadString('web', 'cacertname', '');
       cfg.web['certkey'].value := ini.ReadString('web', 'certkey', '');
