@@ -134,7 +134,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -xcfg https://tx.fhir.org/config -cfg file:C:\temp\zero\fhir-server -realm * -xlocal c:\temp\zero -version *</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg http://tx.fhir.org/config -local c:\temp\zero</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -189,7 +189,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://tx.fhir.org/config -local c:\temp\zero -version 2,3,4</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
@@ -643,9 +643,9 @@
         <DCCReference Include="endpoint_folder.pas"/>
         <DCCReference Include="..\library\fcomp\fcomp_graph.pas"/>
         <DCCReference Include="..\library\fcomp\tests\fcomp_tests_graph.pas"/>
-        <DCCReference Include="..\dependencies\qrgen\uQRC.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
+        <DCCReference Include="..\dependencies\qrcodegen\qrcodegen.pas"/>
         <DCCReference Include="..\..\source\tzdb\dist\TZDB.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

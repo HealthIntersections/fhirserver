@@ -514,7 +514,6 @@ uses
   web_cache in 'web_cache.pas',
   fsl_diff in '..\library\fsl\fsl_diff.pas',
   fhir_features in '..\library\fhir\fhir_features.pas',
-
   tx_icd11 in 'tx\tx_icd11.pas',
   fhir_healthcard in '..\library\fhir\fhir_healthcard.pas',
   healthcard_generator in 'healthcard_generator.pas',
@@ -523,9 +522,9 @@ uses
   endpoint_folder in 'endpoint_folder.pas',
   fcomp_graph in '..\library\fcomp\fcomp_graph.pas',
   fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas',
-  uQRC in '..\dependencies\qrgen\uQRC.pas',
-  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
-  TZDB in '..\..\source\tzdb\dist\TZDB.pas';
+  qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
+  TZDB in '..\..\source\tzdb\dist\TZDB.pas',
+  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas';
 
 begin
   ExecuteFhirServer;
