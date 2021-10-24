@@ -70,7 +70,7 @@ type
   public
     constructor Create(version : TFHIRVersion);
     function makeIndexes : TFHIRIndexBuilder; override;
-    function makeValidator: TFHIRValidatorV; override;
+    function makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
     function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
@@ -134,7 +134,6 @@ type
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
     FData : TTerminologyServerData;
-    FNpm : TFHIRPackageManager;
     FServerContext : TFHIRServerContext; // free from owner
     function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
     procedure loadResource(res: TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
@@ -233,7 +232,7 @@ type
     FWeb : TTerminologyServerWebServer;
     function version : TFHIRVersion;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -270,13 +269,13 @@ begin
   end;
 end;
 
-function TTerminologyServerFactory.makeValidator: TFHIRValidatorV;
+function TTerminologyServerFactory.makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create));
-    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
-    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
-    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create));
+    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create, pc.link));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pc.link));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pc.link));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pc.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -878,7 +877,6 @@ end;
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
   FData.Free;
-  FNpm.Free;
   inherited;
 end;
 
@@ -908,7 +906,7 @@ end;
 
 function TTerminologyFhirServerStorage.cacheSize(magic: integer): UInt64;
 begin
-  result := inherited cacheSize(magic) + FData.sizeInBytes(magic) + FNpm.sizeInBytes(magic) + FServerContext.sizeInBytes(magic);
+  result := inherited cacheSize(magic) + FData.sizeInBytes(magic) + FServerContext.sizeInBytes(magic);
 end;
 
 procedure TTerminologyFhirServerStorage.CloseFhirSession(key: integer);
@@ -1015,13 +1013,11 @@ var
   i : integer;
   p : TFHIRParser;
 begin
-  if (FNpm = nil) then
-    FNpm := TFHIRPackageManager.Create(false);
   i := 0;
 
   p := factory.makeParser(FServerContext.ValidatorContext.Link, ffJson, THTTPLanguages.Create('en'));
   try
-    npm := FNpm.loadPackage(pid);
+    npm := FServerContext.pcm.loadPackage(pid);
     try
       Logging.start('Load package '+npm.name+'#'+npm.version);
       FData.FPackages.Add(npm.name+'#'+npm.version);
@@ -1318,9 +1314,9 @@ begin
   ServerContext.ClientCacheManager.clearCache;
 end;
 
-constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
 begin
-  inherited Create(config, settings, db, common);
+  inherited Create(config, settings, db, common, pcm);
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
@@ -1375,7 +1371,7 @@ var
   pid : String;
 begin
   FStore := TTerminologyFhirServerStorage.Create(makeTxFactory(version));
-  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(version));
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(version), FPcm.link);
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;

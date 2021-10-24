@@ -35,7 +35,7 @@ interface
 Uses
   SysUtils, Classes,
   fsl_utilities, fsl_threads,
-  fsl_base, fsl_stream,
+  fsl_base, fsl_stream, fsl_npm_cache,
   fhir_objects, fhir_factory, fhir_common,
   ftx_service,
   fhir2_types, fhir2_context, fhir2_profiles, fhir2_client,
@@ -54,7 +54,7 @@ Type
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
   public
-    constructor Create(factory : TFHIRFactory); Override;
+    constructor Create(factory : TFHIRFactory; pc : TFHIRPackageManager); Override;
     destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR2; overload;
@@ -86,7 +86,7 @@ begin
   Factory.checkNoModifiers(r, 'Repository.SeeResource', 'Resource');
 end;
 
-constructor TFHIRServerWorkerContextR2.Create(factory : TFHIRFactory);
+constructor TFHIRServerWorkerContextR2.Create(factory : TFHIRFactory; pc : TFHIRPackageManager);
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r2');

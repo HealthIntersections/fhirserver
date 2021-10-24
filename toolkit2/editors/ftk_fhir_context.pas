@@ -34,27 +34,27 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_lang,
+  fsl_lang, fsl_npm_cache,
   fhir_objects, fhir_factory,
   ftk_fhir_context_2, ftk_fhir_context_3, ftk_fhir_context_4, ftk_fhir_context_5;
 
 type
   TToolkitValidatorContext = class
   public
-    class function create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; TerminologyServer : String) : TFHIRWorkerContextWithFactory;
+    class function create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; TerminologyServer : String; pcm : TFHIRPackageManager) : TFHIRWorkerContextWithFactory;
   end;
 
 implementation
 
 { TToolkitValidatorContext }
 
-class function TToolkitValidatorContext.create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String): TFHIRWorkerContextWithFactory;
+class function TToolkitValidatorContext.create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String; pcm : TFHIRPackageManager): TFHIRWorkerContextWithFactory;
 begin
   case factory.version of
-    fhirVersionRelease2 : result := TToolkitValidatorContextR2.Create(factory, languages, TerminologyServer);
-    fhirVersionRelease3 : result := TToolkitValidatorContextR3.Create(factory, languages, TerminologyServer);
-    fhirVersionRelease4 : result := TToolkitValidatorContextR4.Create(factory, languages, TerminologyServer);
-    fhirVersionRelease5 : result := TToolkitValidatorContextR5.Create(factory, languages, TerminologyServer);
+    fhirVersionRelease2 : result := TToolkitValidatorContextR2.Create(factory, languages, TerminologyServer, pcm.link);
+    fhirVersionRelease3 : result := TToolkitValidatorContextR3.Create(factory, languages, TerminologyServer, pcm.link);
+    fhirVersionRelease4 : result := TToolkitValidatorContextR4.Create(factory, languages, TerminologyServer, pcm.link);
+    fhirVersionRelease5 : result := TToolkitValidatorContextR5.Create(factory, languages, TerminologyServer, pcm.link);
   else
     raise EFHIRException.create('Unexpected version');
   end;

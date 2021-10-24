@@ -48,7 +48,7 @@ type
   private
     FCache : TFHIRPackageManager;
   public
-    Constructor Create; override;
+    Constructor Create(pc : TFHIRPackageManager);
     destructor Destroy; override;
 
     function canSort : boolean; override;
@@ -110,8 +110,11 @@ type
     FStop : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
     procedure SetIni(AValue: TIniFile);
+    function GetCache: TFHIRPackageManager;
+    procedure SetCache(const Value: TFHIRPackageManager);
   public
     property Ini : TIniFile read FIni write SetIni;
+    property Cache : TFHIRPackageManager read GetCache write SetCache;
   end;
 
 var
@@ -123,10 +126,10 @@ implementation
 
 { TPackageListManager }
 
-constructor TPackageListManager.Create;
+constructor TPackageListManager.Create(pc : TFHIRPackageManager);
 begin
   inherited Create;
-  FCache := TFHIRPackageManager.create(true);
+  FCache := pc;
 end;
 
 destructor TPackageListManager.Destroy;
@@ -312,14 +315,28 @@ begin
   ListView1.Columns[5].width := ini.readInteger('package-manager-view', 'width-canonical', ListView1.Columns[5].width);
   width := ini.readInteger('package-manager-view', 'width', width);
   height := ini.readInteger('package-manager-view', 'height', height);
+  if FManager.FCache = nil then
+    FManager.FCache := TFHIRPackageManager.create(rbUserMode.checked);
+
   if not FManager.doLoad then
     Close;
+end;
+
+function TPackageCacheForm.GetCache: TFHIRPackageManager;
+begin
+  if FManager.FCache = nil then
+  begin
+    FManager.FCache := TFHIRPackageManager.create(rbUserMode.checked);
+    FManager.doLoad;
+  end;
+  result := FManager.FCache;
 end;
 
 procedure TPackageCacheForm.rbSystemChange(Sender: TObject);
 begin
   if FManager.FCache.UserMode then
   begin
+    FManager.FCache.Free;
     FManager.FCache := TFHIRPackageManager.create(false);
     FManager.doLoad;
   end;
@@ -329,6 +346,7 @@ procedure TPackageCacheForm.rbUserModeChange(Sender: TObject);
 begin
   if not FManager.FCache.UserMode then
   begin
+    FManager.FCache.Free;
     FManager.FCache := TFHIRPackageManager.create(true);
     FManager.doLoad;
   end;
@@ -368,6 +386,13 @@ begin
     end;
   end;
   Application.ProcessMessages;
+end;
+
+procedure TPackageCacheForm.SetCache(const Value: TFHIRPackageManager);
+begin
+  FManager.FCache := value;
+  rbUserMode.enabled := false;
+  rbSystem.enabled := false;
 end;
 
 procedure TPackageCacheForm.SetIni(AValue: TIniFile);

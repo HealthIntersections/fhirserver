@@ -5472,7 +5472,6 @@ var
   rn : String;
   implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
-  pcm : TFHIRPackageManager;
   li : TPackageLoadingInformation;
   res : TFslStringSet;
 begin
@@ -5622,22 +5621,17 @@ begin
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
         Logging.log('  .. Load Package '+ServerContext.Factory.corePackage+'#' + ServerContext.Factory.versionString);
-        pcm := TFHIRPackageManager.Create(false);
         li := TPackageLoadingInformation.create(ServerContext.Factory.versionString);
         try
           li.OnLoadEvent := ServerContext.ValidatorContext.loadResourceJson;
+          res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
           try
-            res := TFslStringSet.Create(['StructureDefinition', 'SearchParameter', 'CompartmentDefinition']); // we only load a few things; everything else is left to the database
-            try
-              pcm.loadPackage(ServerContext.Factory.corePackage, ServerContext.Factory.versionString, res, li);
-            finally
-              res.free;
-            end;
+            ServerContext.pcm.loadPackage(ServerContext.Factory.corePackage, ServerContext.Factory.versionString, res, li);
           finally
-            li.Free;
+            res.free;
           end;
         finally
-          pcm.Free;
+          li.Free;
         end;
         if ServerContext.Globals.forLoad then
         begin

@@ -248,15 +248,17 @@ type
   private
     FFactory : TFHIRFactory;
     FLoadInfo : TPackageLoadingInformation;
+    FPcm : TFHIRPackageManager;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(factory : TFHIRFactory); overload; virtual;
+    constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); overload; virtual;
     destructor Destroy; override;
 
     function link : TFHIRWorkerContextWithFactory;
 
     property Factory : TFHIRFactory read FFactory;
+    property pcm : TFHIRPackageManager read FPcm;
     property LoadInfo : TPackageLoadingInformation read FLoadInfo;
 
     procedure loadResourceJson(rType, id : String; json : TStream); override;
@@ -423,16 +425,18 @@ end;
 
 { TFHIRWorkerContextWithFactory }
 
-constructor TFHIRWorkerContextWithFactory.Create(factory: TFHIRFactory);
+constructor TFHIRWorkerContextWithFactory.Create(factory: TFHIRFactory; pcm : TFHIRPackageManager);
 begin
   inherited Create;
   FFactory := factory;
   FLoadInfo := TPackageLoadingInformation.Create(FFactory.versionString);
   FLoadInfo.OnLoadEvent := loadResourceJson;
+  FPcm := pcm;
 end;
 
 destructor TFHIRWorkerContextWithFactory.Destroy;
 begin
+  FPcm.free;
   FLoadInfo.Free;
   FFactory.free;
   inherited;

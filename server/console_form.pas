@@ -38,7 +38,7 @@ uses
   StdCtrls, Registry, Types, ExtCtrls, Menus, ActnList, StdActns, Buttons,
   DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, IniFiles, Math, IdTelnet,
   IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
-  fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
+  fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc, fsl_npm_cache,
   fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
   fui_lcl_utilities,
   ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
@@ -1001,6 +1001,8 @@ begin
   PackageCacheForm := TPackageCacheForm.create(self);
    try
      PackageCacheForm.Ini := FIni;
+     if (FConfig <> nil) and (FConfig.service['package-cache'].value <> '') then
+       PackageCacheForm.Cache := TFHIRPackageManager.create(FConfig.service['package-cache'].value);
      PackageCacheForm.showModal;
    finally
      PackageCacheForm.free;

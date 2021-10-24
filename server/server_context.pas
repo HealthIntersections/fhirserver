@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging,
+  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging, fsl_npm_cache,
   fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
@@ -112,6 +112,7 @@ Type
     FConsentEngine: TFHIRConsentEngine;
     FClientCacheManager: TClientCacheManager;
     FOnGetNamedContext : TGetNamedContextEvent;
+    FPcm: TFHIRPackageManager;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -124,12 +125,14 @@ Type
     procedure SetValidate(const Value: Boolean);
 
     procedure SetClientCacheManager(const Value: TClientCacheManager);
+    procedure SetPcm(const Value: TFHIRPackageManager);
   public
-    constructor Create(name : String; storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
+    constructor Create(name : String; storage : TFHIRStorageService; serverFactory : TFHIRServerFactory; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     Function Link : TFHIRServerContext; overload;
 
     property Name : string read FName;
+    property pcm : TFHIRPackageManager read FPcm;
     property Globals : TFHIRServerSettings read FGlobals write SetGlobals;
     property DatabaseId: String read FSystemId write FSystemId;
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
@@ -376,7 +379,7 @@ begin
   FClientCacheManager.clearCache;
 end;
 
-constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory);
+constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory; pcm : TFHIRPackageManager);
 var
   a: String;
   cfg : TFHIRResourceConfig;
@@ -385,6 +388,7 @@ begin
   FName := name;
   FLock := TFslLock.Create('ServerContext');
   FStorage := storage;
+  FPcm := pcm;
   FServerFactory := serverFactory;
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FResConfig := TFslMap<TFHIRResourceConfig>.create('res.config');
@@ -399,7 +403,7 @@ begin
   cfg.name := '';
   cfg.Supported := false;
   FResConfig.Add(cfg.name, cfg);
-  FValidator := serverFactory.makeValidator;
+  FValidator := serverFactory.makeValidator(pcm);
   FValidatorContext := FValidator.Context.link;
   FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link, ServerFactory.link);
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
@@ -418,6 +422,7 @@ end;
 
 destructor TFHIRServerContext.Destroy;
 begin
+  FPcm.free;
   FConsentEngine.Free;
   FGlobals.Free;
   FMaps.Free;
@@ -506,6 +511,12 @@ procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
   FJWTServices.Free;
   FJWTServices := Value;
+end;
+
+procedure TFHIRServerContext.SetPcm(const Value: TFHIRPackageManager);
+begin
+  FPcm.Free;
+  FPcm := Value;
 end;
 
 procedure TFHIRServerContext.SetCacheStatus(status: boolean);

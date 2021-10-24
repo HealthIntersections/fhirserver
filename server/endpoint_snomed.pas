@@ -101,7 +101,7 @@ end;
 
 constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, nil, common);
+  inherited create(config, settings, nil, common, nil);
 end;
 
 destructor TSnomedWebEndPoint.Destroy;
@@ -119,7 +119,7 @@ begin
   FSnomedServer := TSnomedWebServer.Create(config.name, config['path'].value, common);
   FSnomedServer.FTx := Terminologies.Link;
   WebEndPoint := FSnomedServer;
-  result := FSnomedServer.link;
+  result := FSnomedServer;
 end;
 
 procedure TSnomedWebEndPoint.SetCacheStatus(status: boolean);

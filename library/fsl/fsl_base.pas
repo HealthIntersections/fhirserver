@@ -753,7 +753,7 @@ begin
       t := GClassTracker[n];
       i := i + t.count;
       if t.count > 0 then
-        s := s + n+': '+inttostr(t.count)+#13#10;
+        s := s + n+': '+inttostr(t.count)+' [#='+inttostr(t.serial)+']'+#13#10;
       t.Free;
     end;
     if i > 0 then

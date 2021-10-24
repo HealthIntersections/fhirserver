@@ -78,7 +78,7 @@ interface
 
 Uses
   SysUtils, StrUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http, fsl_npm_cache,
   fdb_manager, fdb_dialects,
   ftx_ucum_services,
   fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
@@ -103,7 +103,7 @@ Type
  TExampleServerFactory = class (TFHIRServerFactory)
   public
     function makeIndexes : TFHIRIndexBuilder; override;
-    function makeValidator: TFHIRValidatorV; override;
+    function makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
     function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
@@ -223,7 +223,7 @@ Type
   TBridgeEndPoint = class (TStorageEndPoint)
   private
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -255,9 +255,9 @@ begin
   inherited;
 end;
 
-constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
 begin
-  inherited create(config, settings, db, common);
+  inherited create(config, settings, db, common, pcm);
 end;
 
 destructor TBridgeEndPoint.Destroy;
@@ -285,7 +285,7 @@ begin
     s := SystemTemp;
   store := TExampleFhirServerStorage.create(TFHIRFactoryR3.create);
   store.FDataBase := Database.Link;
-  FServerContext := TFHIRServerContext.Create(Config.name, store, TExampleServerFactory.create);
+  FServerContext := TFHIRServerContext.Create(Config.name, store, TExampleServerFactory.create, FPcm.link);
   store.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TExampleFHIRUserProvider.Create;
@@ -904,9 +904,9 @@ begin
   raise EFslException.Create('Not supported in this server');
 end;
 
-function TExampleServerFactory.makeValidator: TFHIRValidatorV;
+function TExampleServerFactory.makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV;
 begin
-  result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
+  result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pcm.link));
 end;
 
 procedure TExampleServerFactory.setTerminologyServer(validatorContext: TFHIRWorkerContextWithFactory; server: TFslObject);

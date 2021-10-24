@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Types, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_http, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_http, fsl_fpc, fsl_npm_cache,
   fhir_objects, fhir_parser, fhir_factory,  fhir_oids,
   fhir3_resources, fhir3_types, fhir3_context, fhir3_utilities, fhir3_constants, fhir3_factory, fhir3_resources_base;
 
@@ -120,7 +120,7 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
   public
-    constructor Create(factory : TFHIRFactory); Override;
+    constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR3; overload;
 
@@ -1529,7 +1529,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR3.Create(factory : TFHIRFactory);
+constructor TBaseWorkerContextR3.Create(factory : TFHIRFactory; pcm : TFHIRPackageManager);
 begin
   inherited;
   FNamingSystems := TFslMap<TFhirNamingSystem>.create('profiles.ns');

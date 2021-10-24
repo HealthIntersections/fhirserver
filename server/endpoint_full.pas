@@ -42,11 +42,10 @@ uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto,
+  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_xhtml, fhir_cdshooks,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
-  fsl_npm_cache,
 
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_context, fhir3_context, fhir4_context, fhir5_context,
@@ -80,7 +79,7 @@ Type
     constructor Create(version : TFHIRVersion);
 
     function makeIndexes : TFHIRIndexBuilder; override;
-    function makeValidator: TFHIRValidatorV; override;
+    function makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
     function makeEngine(context : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
@@ -200,7 +199,7 @@ Type
     procedure Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode : TOperationMode; logLevel : TOperationLoggingLevel);
     procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -230,13 +229,13 @@ begin
   FVersion := version;
 end;
 
-function TFullServerFactory.makeValidator: TFHIRValidatorV;
+function TFullServerFactory.makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create));
-    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
-    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
-    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create));
+    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create, pcm.link));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pcm.link));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pcm.link));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pcm.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -440,9 +439,9 @@ begin
   FStore.clearCache;
 end;
 
-constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
 begin
-  inherited create(config, settings, db, common);
+  inherited create(config, settings, db, common, pcm);
   FConfig := TFslStringDictionary.create;
 end;
 
@@ -663,7 +662,7 @@ begin
 
   dr := lookupConfig(CONFIG_DEFAULT_RIGHTS);
   FStore := makeStorage;
-  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeServerFactory);
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeServerFactory, FPcm.link);
   FStore.ServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := makeScimServer(dr, false);
@@ -844,55 +843,49 @@ var
   p, pi, pv : String;
   pl : TArray<String>;
   ploader : TPackageLoader;
-  pcm : TFHIRPackageManager;
   li : TPackageLoadingInformation;
   loadList : TArray<String>;
   logLevel : TOperationLoggingLevel;
 begin
   Logging.log('Getting ready to load Packages');
   Load;
-  pcm := TFHIRPackageManager.Create(false);
+  Logging.log('Load Packages');
+  li := TPackageLoadingInformation.Create(PF_CONST[version]);
   try
-    Logging.log('Load Packages');
-    li := TPackageLoadingInformation.Create(PF_CONST[version]);
-    try
-      pl := plist.Split([',']);
-      for p in pl do
+    pl := plist.Split([',']);
+    for p in pl do
+    begin
+      if p <> '' then
       begin
-        if p <> '' then
-        begin
-          StringSplit(p, '#', pi, pv);
-          Logging.log('Check Package '+p+' installed');
-          if not pcm.autoInstallPackage(pi, pv) then
-            raise EFHIRException.create('Package '+p+' not found');
-          Logging.log('ok. Loading to database');
-          ploader := TPackageLoader.create(factoryFactory(version));
-          try
-            li.OnLoadEvent := ploader.load;
-            loadList := ploader.FFactory.resourceNames;
-            pcm.loadPackage(pi, pv, loadList, li);
-            logLevel := ollHuman;
-            if hasCommandLineParam('installer') then
-              logLevel := ollInstaller;
-            Transaction(ploader.bundle, true, p, '', opmCmdLine, logLevel);
-          finally
-            ploader.Free;
-          end;
-          Logging.log('Done');
+        StringSplit(p, '#', pi, pv);
+        Logging.log('Check Package '+p+' installed');
+        if not FServerContext.pcm.autoInstallPackage(pi, pv) then
+          raise EFHIRException.create('Package '+p+' not found');
+        Logging.log('ok. Loading to database');
+        ploader := TPackageLoader.create(factoryFactory(version));
+        try
+          li.OnLoadEvent := ploader.load;
+          loadList := ploader.FFactory.resourceNames;
+          FServerContext.pcm.loadPackage(pi, pv, loadList, li);
+          logLevel := ollHuman;
+          if hasCommandLineParam('installer') then
+            logLevel := ollInstaller;
+          Transaction(ploader.bundle, true, p, '', opmCmdLine, logLevel);
+        finally
+          ploader.Free;
         end;
+        Logging.log('Done');
       end;
-    finally
-      li.Free;
     end;
-
-    Logging.log('All Packages Loaded');
-    Logging.log('Building Terminology Closure Tables');
-    FServerContext.TerminologyServer.BuildIndexes(true);
-    Logging.log('Finishing');
-    Unload;
   finally
-    pcm.Free;
+    li.Free;
   end;
+
+  Logging.log('All Packages Loaded');
+  Logging.log('Building Terminology Closure Tables');
+  FServerContext.TerminologyServer.BuildIndexes(true);
+  Logging.log('Finishing');
+  Unload;
 end;
 
 function TFullServerEndPoint.lookupConfig(id: integer): String;

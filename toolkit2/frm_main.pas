@@ -3136,8 +3136,8 @@ procedure TMainToolkitForm.startLoadingContexts;
     end;
   end;
 begin
-  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3')), 'hl7.fhir.r3.core');
-  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4')), 'hl7.fhir.r4.core');
+  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3'), FContext.pcm), 'hl7.fhir.r3.core');
+  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'), FContext.pcm), 'hl7.fhir.r4.core');
 end;
 
 procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);

@@ -91,6 +91,7 @@ type
     FIni : TIniFile;
     FOnWork : TWorkProgressEvent;
     FOnCheck : TCheckEvent;
+    FLock : TFslLock;
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
@@ -103,10 +104,12 @@ type
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
+    procedure init;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(user : boolean);
+    constructor Create(user : boolean); overload;
+    constructor Create(dir : String); overload;
     destructor Destroy; override;
     function Link : TFHIRPackageManager;
 
@@ -311,7 +314,6 @@ end;
 constructor TFHIRPackageManager.Create(user : boolean);
 begin
   inherited Create;
-  FCache := TFslMap<TNpmPackage>.create('Npm Package manager');
   FUser := user or MustBeUserMode;
   {$IFDEF WINDOWS}
   if FUser then
@@ -324,6 +326,30 @@ begin
   else
     FFolder := '/var/lib/.fhir/packages';
   {$ENDIF}
+  init;
+end;
+
+constructor TFHIRPackageManager.Create(dir: String);
+begin
+  inherited Create;
+  if (MustBeUserMode) then
+    raise Exception.Create('Unable to create PackageManager for a specific directory');
+  FFolder := dir;
+  init;
+end;
+
+destructor TFHIRPackageManager.Destroy;
+begin
+  FCache.Free;
+  FIni.Free;
+  FLock.Free;
+  Inherited;
+end;
+
+procedure TFHIRPackageManager.init;
+begin
+  FLock := TFslLock.Create('PackageManager');
+  FCache := TFslMap<TNpmPackage>.create('Npm Package manager');
   ForceFolder(FFolder);
   FIni := TIniFile.create(FilePath([FFolder, 'packages.ini']));
   if FIni.ReadInteger('cache', 'version', 0) <> CACHE_VERSION then
@@ -331,13 +357,6 @@ begin
     clearCache;
     FIni.WriteInteger('cache', 'version', CACHE_VERSION);
   end;
-end;
-
-destructor TFHIRPackageManager.Destroy;
-begin
-  FCache.Free;
-  FIni.Free;
-  Inherited;
 end;
 
 function TFHIRPackageManager.Link: TFHIRPackageManager;
@@ -383,7 +402,12 @@ begin
       FolderDelete(s);
       FIni.DeleteKey('packages', s);
     end;
-  FCache.Clear;
+  FLock.Lock;
+  try
+    FCache.Clear;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function TFHIRPackageManager.check(desc: String): boolean;
@@ -838,15 +862,29 @@ end;
 
 
 function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackage;
+var
+  found : boolean;
 begin
-  if FCache.TryGetValue(folder, result) then
-    result.Link
-  else
+  FLock.Lock;
+  try
+    found := FCache.TryGetValue(folder, result);
+    if found then
+      result.Link;
+  finally
+    FLock.Unlock;
+  end;
+
+  if not found then
   begin
     if not FileExists(FilePath([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
     result := TNpmPackage.fromFolder(folder);
-    FCache.add(folder, result.Link);
+    FLock.Lock;
+    try
+      FCache.add(folder, result.Link);
+    finally
+      FLock.Unlock;
+    end;
   end;
 end;
 

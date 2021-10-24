@@ -39,7 +39,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
@@ -102,6 +102,7 @@ type
     FWebServer : TFhirWebServer;
 
     FMaintenanceThread: TFhirServerMaintenanceThread;
+    FPcm : TFHIRPackageManager;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -243,11 +244,17 @@ begin
   FSettings.ForLoad := not hasCommandLineParam('noload');
   FSettings.load(FIni);
 
+  if FSettings.Ini.service['package-cache'].value <> '' then
+    FPcm := TFHIRPackageManager.Create(FSettings.Ini.service['package-cache'].value)
+  else
+    FPcm := TFHIRPackageManager.Create(false);
+
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FPcm.Free;
   Logging.removeListener(FTelnet);
   FEndPoints.Free;
   FIni.Free;
@@ -536,12 +543,12 @@ begin
   else if config['type'].value = 'snomed' then
     result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else

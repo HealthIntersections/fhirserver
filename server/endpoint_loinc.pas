@@ -101,7 +101,7 @@ end;
 
 constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, db, common);
+  inherited create(config, settings, db, common, nil);
 end;
 
 destructor TLoincWebEndPoint.Destroy;
@@ -119,7 +119,7 @@ begin
   FLoincServer := TLoincWebServer.Create(config.name, config['path'].value, common);
   FLoincServer.FTx := Terminologies.Link;
   WebEndPoint := FLoincServer;
-  result := FLoincServer.link;
+  result := FLoincServer;
 end;
 
 procedure TLoincWebEndPoint.SetCacheStatus(status: boolean);
