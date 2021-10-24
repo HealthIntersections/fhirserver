@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library;..\dependencies\jcl;..\dependencies\Indy10"/>
-        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\barcode;..\dependencies\qrgen"/>
+        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\qrcodegen"/>
         <UnitOutputDirectory Value="lib\fsl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -689,12 +689,12 @@
         <UnitName Value="fsl_diff"/>
       </Item>
       <Item>
-        <Filename Value="..\dependencies\qrgen\uQRC.pas"/>
-        <UnitName Value="uQRC"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fsl\fsl_qrcode.pas"/>
         <UnitName Value="fsl_qrcode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\qrcodegen\qrcodegen.pas"/>
+        <UnitName Value="qrcodegen"/>
       </Item>
     </Files>
     <RequiredPkgs>

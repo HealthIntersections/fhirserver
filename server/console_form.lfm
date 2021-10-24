@@ -1,10 +1,10 @@
 object MainConsoleForm: TMainConsoleForm
   Left = 229
-  Height = 693
+  Height = 625
   Top = 27
   Width = 691
   Caption = 'FHIRServer Console'
-  ClientHeight = 673
+  ClientHeight = 605
   ClientWidth = 691
   Menu = MainMenu1
   OnCreate = FormCreate
@@ -16,7 +16,7 @@ object MainConsoleForm: TMainConsoleForm
   object sBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 650
+    Top = 582
     Width = 691
     Panels = <    
       item
@@ -39,24 +39,24 @@ object MainConsoleForm: TMainConsoleForm
   end
   object Splitter2: TSplitter
     Left = 0
-    Height = 650
+    Height = 582
     Top = 0
     Width = 5
   end
   object Panel3: TPanel
     Left = 5
-    Height = 650
+    Height = 582
     Top = 0
     Width = 686
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 650
+    ClientHeight = 582
     ClientWidth = 686
     ParentFont = False
     TabOrder = 2
     object pgMain: TPageControl
       Left = 1
-      Height = 643
+      Height = 575
       Top = 1
       Width = 684
       ActivePage = tbManage
@@ -66,13 +66,13 @@ object MainConsoleForm: TMainConsoleForm
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
-        ClientHeight = 615
+        ClientHeight = 547
         ClientWidth = 676
         OnContextPopup = tbConsoleContextPopup
         ParentFont = False
         object mConsole: TMemo
           Left = 0
-          Height = 589
+          Height = 521
           Top = 26
           Width = 676
           Align = alClient
@@ -137,7 +137,7 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbThreads: TTabSheet
         Caption = 'Status'
-        ClientHeight = 615
+        ClientHeight = 547
         ClientWidth = 676
         ParentFont = False
         object Panel29: TPanel
@@ -214,7 +214,7 @@ object MainConsoleForm: TMainConsoleForm
         end
         object mThreads: TMemo
           Left = 0
-          Height = 581
+          Height = 513
           Top = 34
           Width = 676
           Align = alClient
@@ -226,12 +226,12 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbStatistics: TTabSheet
         Caption = 'Statistics'
-        ClientHeight = 615
+        ClientHeight = 547
         ClientWidth = 676
         ParentFont = False
         object Panel5: TPanel
           Left = 0
-          Height = 615
+          Height = 547
           Top = 0
           Width = 291
           Align = alLeft
@@ -241,18 +241,18 @@ object MainConsoleForm: TMainConsoleForm
         end
         object Splitter4: TSplitter
           Left = 291
-          Height = 615
+          Height = 547
           Top = 0
           Width = 5
         end
         object Panel53: TPanel
           Left = 296
-          Height = 615
+          Height = 547
           Top = 0
           Width = 380
           Align = alClient
           Caption = 'Panel53'
-          ClientHeight = 615
+          ClientHeight = 547
           ClientWidth = 380
           TabOrder = 2
           object mStats: TMemo
@@ -271,7 +271,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object FGraph1: TFGraph
             Left = 1
-            Height = 293
+            Height = 225
             Top = 321
             Width = 378
             Plotting = True
@@ -282,17 +282,17 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbManage: TTabSheet
         Caption = 'Manage Server'
-        ClientHeight = 615
+        ClientHeight = 547
         ClientWidth = 676
         ParentFont = False
         object Panel1: TPanel
           Left = 0
-          Height = 615
+          Height = 547
           Top = 0
           Width = 676
           Align = alClient
           Caption = 'Panel1'
-          ClientHeight = 615
+          ClientHeight = 547
           ClientWidth = 676
           ParentBackground = False
           ParentFont = False
@@ -377,7 +377,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pgManage: TPageControl
             Left = 1
-            Height = 509
+            Height = 441
             Top = 40
             Width = 674
             ActivePage = tbWebSettings
@@ -388,7 +388,7 @@ object MainConsoleForm: TMainConsoleForm
             TabOrder = 1
             object tbGeneral: TTabSheet
               Caption = 'General Settings'
-              ClientHeight = 481
+              ClientHeight = 413
               ClientWidth = 666
               object GroupBox5: TGroupBox
                 Left = 0
@@ -517,7 +517,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbWebSettings: TTabSheet
               Caption = 'Web Settings'
-              ClientHeight = 481
+              ClientHeight = 413
               ClientWidth = 666
               ImageIndex = 9
               ParentFont = False
@@ -563,7 +563,8 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 32
-                  Width = 218
+                  Width = 538
+                  Anchors = [akTop, akLeft, akRight]
                   OnChange = edtWebPortChange
                   ParentFont = False
                   TabOrder = 1
@@ -640,41 +641,115 @@ object MainConsoleForm: TMainConsoleForm
                   Width = 16
                   Caption = 'ms'
                 end
-                object Label77: TLabel
-                  Left = 344
-                  Height = 15
-                  Top = 34
-                  Width = 33
-                  Caption = 'Stated'
-                  ParentFont = False
-                end
-                object edtWebPortStated: TEdit
-                  Left = 432
-                  Height = 23
-                  Top = 32
-                  Width = 218
-                  OnChange = edtWebPortStatedChange
-                  ParentFont = False
-                  TabOrder = 6
-                  Text = 'edtWebPortStated'
-                end
               end
-              object GroupBox2: TGroupBox
+              object GroupBox8: TGroupBox
                 Left = 0
-                Height = 184
+                Height = 166
                 Top = 178
                 Width = 666
                 Align = alTop
+                Caption = '  Reverse Proxy  '
+                ClientHeight = 146
+                ClientWidth = 662
+                TabOrder = 1
+                object Label77: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 4
+                  Width = 22
+                  Caption = 'Port'
+                  ParentFont = False
+                end
+                object edtRProxyPort: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 0
+                  Width = 538
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtRProxyPortChange
+                  ParentFont = False
+                  TabOrder = 0
+                  Text = 'edtRProxyPort'
+                end
+                object Label78: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 32
+                  Width = 43
+                  Caption = 'SSL Port'
+                  ParentFont = False
+                end
+                object edtRProxySSLPort: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 32
+                  Width = 538
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtRProxySSLPortChange
+                  ParentFont = False
+                  TabOrder = 1
+                  Text = 'edtRProxySSLPort'
+                end
+                object Label79: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 96
+                  Width = 84
+                  Caption = 'SSL Cert Header'
+                  ParentFont = False
+                end
+                object edtRProxyCertHeader: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 96
+                  Width = 538
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtRProxyCertHeaderChange
+                  ParentFont = False
+                  TabOrder = 2
+                  Text = 'edtRProxyCertHeader'
+                end
+                object Label80: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 64
+                  Width = 59
+                  Caption = 'SSL Header'
+                  ParentFont = False
+                end
+                object edtRProxySSLHeader: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 64
+                  Width = 538
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtRProxySSLHeaderChange
+                  ParentFont = False
+                  TabOrder = 3
+                  Text = 'edtRProxySSLHeader'
+                end
+              end
+            end
+            object TabSheet1: TTabSheet
+              Caption = 'SSL / Certs'
+              ClientHeight = 413
+              ClientWidth = 666
+              object GroupBox2: TGroupBox
+                Left = 0
+                Height = 192
+                Top = 0
+                Width = 666
+                Align = alTop
                 Caption = '  SSL  '
-                ClientHeight = 164
+                ClientHeight = 172
                 ClientWidth = 662
                 ParentFont = False
-                TabOrder = 1
+                TabOrder = 0
                 object edtSSLPort: TEdit
                   Left = 112
                   Height = 23
                   Top = 0
-                  Width = 212
+                  Width = 534
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPortChange
                   ParentFont = False
@@ -689,19 +764,11 @@ object MainConsoleForm: TMainConsoleForm
                   Caption = 'Port'
                   ParentFont = False
                 end
-                object Label30: TLabel
-                  Left = 8
-                  Height = 15
-                  Top = 35
-                  Width = 54
-                  Caption = 'Certificate'
-                  ParentFont = False
-                end
                 object edtSSLCert: TEdit
                   Left = 112
                   Height = 23
                   Top = 32
-                  Width = 508
+                  Width = 504
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLCertChange
                   ParentFont = False
@@ -711,7 +778,7 @@ object MainConsoleForm: TMainConsoleForm
                 object Label31: TLabel
                   Left = 8
                   Height = 15
-                  Top = 66
+                  Top = 65
                   Width = 41
                   Caption = 'CA Cert'
                   ParentFont = False
@@ -720,7 +787,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 64
-                  Width = 508
+                  Width = 504
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtCACertChange
                   ParentFont = False
@@ -739,11 +806,11 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 96
-                  Width = 508
+                  Width = 504
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtPrivateKeyChange
                   ParentFont = False
-                  TabOrder = 3
+                  TabOrder = 4
                   Text = 'edtPrivateKey'
                 end
                 object Label33: TLabel
@@ -758,15 +825,15 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 112
                   Height = 23
                   Top = 128
-                  Width = 539
+                  Width = 535
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPasswordChange
                   ParentFont = False
-                  TabOrder = 4
+                  TabOrder = 3
                   Text = 'edtSSLPassword'
                 end
                 object btnCert: TSpeedButton
-                  Left = 629
+                  Left = 625
                   Height = 22
                   Top = 32
                   Width = 23
@@ -811,7 +878,7 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCACert: TSpeedButton
-                  Left = 629
+                  Left = 625
                   Height = 22
                   Top = 65
                   Width = 23
@@ -856,7 +923,7 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCertKey: TSpeedButton
-                  Left = 629
+                  Left = 625
                   Height = 22
                   Top = 96
                   Width = 23
@@ -900,36 +967,25 @@ object MainConsoleForm: TMainConsoleForm
                   OnClick = btnCertKeyClick
                   ParentFont = False
                 end
-                object Label78: TLabel
-                  Left = 335
+                object Label30: TLabel
+                  Left = 8
                   Height = 15
-                  Top = 4
-                  Width = 33
-                  Caption = 'Stated'
+                  Top = 35
+                  Width = 54
+                  Caption = 'Certificate'
                   ParentFont = False
-                end
-                object edtSSLPortStated: TEdit
-                  Left = 439
-                  Height = 23
-                  Top = 0
-                  Width = 212
-                  Anchors = [akTop, akLeft, akRight]
-                  OnChange = edtSSLPortStatedChange
-                  ParentFont = False
-                  TabOrder = 5
-                  Text = 'edtSSLPortStated'
                 end
               end
               object GroupBox3: TGroupBox
                 Left = 0
                 Height = 85
-                Top = 362
+                Top = 192
                 Width = 666
                 Align = alTop
                 Caption = ' Health Card Certificates '
                 ClientHeight = 65
                 ClientWidth = 662
-                TabOrder = 2
+                TabOrder = 1
                 object Label60: TLabel
                   Left = 8
                   Height = 15
@@ -1062,7 +1118,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbUserAdmin: TTabSheet
               Caption = 'User Admin'
-              ClientHeight = 481
+              ClientHeight = 413
               ClientWidth = 666
               ImageIndex = 8
               ParentFont = False
@@ -1156,12 +1212,12 @@ object MainConsoleForm: TMainConsoleForm
               end
               object GroupBox6: TGroupBox
                 Left = 0
-                Height = 327
+                Height = 259
                 Top = 154
                 Width = 666
                 Align = alClient
                 Caption = '  Identity Providers  '
-                ClientHeight = 307
+                ClientHeight = 239
                 ClientWidth = 662
                 ParentFont = False
                 TabOrder = 1
@@ -1268,7 +1324,7 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object lvID: TListView
                   Left = 0
-                  Height = 273
+                  Height = 205
                   Top = 34
                   Width = 662
                   Align = alClient
@@ -1298,7 +1354,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbTermload: TTabSheet
               Caption = 'Terminologies'
-              ClientHeight = 481
+              ClientHeight = 413
               ClientWidth = 666
               ImageIndex = 7
               ParentFont = False
@@ -1450,7 +1506,7 @@ object MainConsoleForm: TMainConsoleForm
               end
               object lvTx: TListView
                 Left = 0
-                Height = 447
+                Height = 379
                 Top = 34
                 Width = 666
                 Align = alClient
@@ -1492,7 +1548,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbEndPoints: TTabSheet
               Caption = 'End Points'
-              ClientHeight = 481
+              ClientHeight = 413
               ClientWidth = 666
               ImageIndex = 8
               ParentFont = False
@@ -1696,19 +1752,19 @@ object MainConsoleForm: TMainConsoleForm
               end
               object Panel38: TPanel
                 Left = 0
-                Height = 256
+                Height = 188
                 Top = 225
                 Width = 666
                 Align = alClient
                 BorderWidth = 4
                 Caption = 'Panel38'
-                ClientHeight = 256
+                ClientHeight = 188
                 ClientWidth = 666
                 ParentFont = False
                 TabOrder = 3
                 object lvPackages: TListView
                   Left = 5
-                  Height = 225
+                  Height = 157
                   Top = 26
                   Width = 656
                   Align = alClient
@@ -1735,7 +1791,7 @@ object MainConsoleForm: TMainConsoleForm
           object Panel17: TPanel
             Left = 1
             Height = 59
-            Top = 555
+            Top = 487
             Width = 674
             Align = alBottom
             BorderWidth = 6
@@ -1773,7 +1829,7 @@ object MainConsoleForm: TMainConsoleForm
             Cursor = crVSplit
             Left = 1
             Height = 6
-            Top = 549
+            Top = 481
             Width = 674
             Align = alBottom
             ResizeAnchor = akBottom
@@ -1782,20 +1838,20 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbTerminologies: TTabSheet
         Caption = 'Terminology Imports'
-        ClientHeight = 615
+        ClientHeight = 547
         ClientWidth = 676
         OnContextPopup = tbTerminologiesContextPopup
         ParentFont = False
         object Panel2: TPanel
           Left = 0
-          Height = 615
+          Height = 547
           Top = 0
           Width = 115
           Align = alLeft
           BevelInner = bvLowered
           BevelOuter = bvNone
           BorderWidth = 2
-          ClientHeight = 615
+          ClientHeight = 547
           ClientWidth = 115
           Color = clWhite
           ParentBackground = False
@@ -2590,7 +2646,7 @@ object MainConsoleForm: TMainConsoleForm
         end
         object pgTerminologies: TPageControl
           Left = 115
-          Height = 615
+          Height = 547
           Top = 0
           Width = 561
           ActivePage = tbRxNorm
@@ -2603,7 +2659,7 @@ object MainConsoleForm: TMainConsoleForm
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
             Caption = 'SNOMED Import'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             ParentFont = False
             object Panel4: TPanel
@@ -2625,7 +2681,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel6: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -2715,7 +2771,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel7: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 447
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -2754,12 +2810,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel8: TPanel
               Left = 0
-              Height = 414
+              Height = 346
               Top = 101
               Width = 553
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 414
+              ClientHeight = 346
               ClientWidth = 553
               ParentFont = False
               TabOrder = 3
@@ -3037,14 +3093,14 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbSnomedCombine: TTabSheet
             Caption = 'Snomed Combination'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             ImageIndex = 3
             ParentFont = False
             object Panel20: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -3134,7 +3190,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel21: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 447
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -3231,12 +3287,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel25: TPanel
               Left = 0
-              Height = 414
+              Height = 346
               Top = 101
               Width = 553
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 414
+              ClientHeight = 346
               ClientWidth = 553
               ParentFont = False
               TabOrder = 4
@@ -3499,7 +3555,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbLoinc: TTabSheet
             Caption = 'LOINC Import'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             ImageIndex = 1
             ParentFont = False
@@ -3564,7 +3620,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel14: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 447
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -3604,7 +3660,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel15: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -3693,12 +3749,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel16: TPanel
               Left = 0
-              Height = 370
+              Height = 302
               Top = 145
               Width = 553
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 370
+              ClientHeight = 302
               ClientWidth = 553
               ParentFont = False
               TabOrder = 4
@@ -3850,7 +3906,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbRxNorm: TTabSheet
             Caption = 'RxNorm'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             object Panel19: TPanel
               Left = 0
@@ -3913,7 +3969,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel28: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 447
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -3953,7 +4009,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel31: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -4280,7 +4336,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbNDC: TTabSheet
             Caption = 'tbNDC'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             OnContextPopup = tbNDCContextPopup
             object Panel36: TPanel
@@ -4344,7 +4400,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel42: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 447
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -4384,7 +4440,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel43: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -4710,7 +4766,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbUnii: TTabSheet
             Caption = 'tbUnii'
-            ClientHeight = 607
+            ClientHeight = 539
             ClientWidth = 553
             OnContextPopup = tbUniiContextPopup
             object Panel46: TPanel
@@ -4775,7 +4831,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel49: TPanel
               Left = 0
               Height = 51
-              Top = 515
+              Top = 459
               Width = 553
               Align = alBottom
               BevelInner = bvLowered
@@ -4815,7 +4871,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel50: TPanel
               Left = 0
               Height = 41
-              Top = 566
+              Top = 498
               Width = 553
               Align = alBottom
               BevelOuter = bvNone
@@ -5161,7 +5217,7 @@ object MainConsoleForm: TMainConsoleForm
       Cursor = crVSplit
       Left = 1
       Height = 5
-      Top = 644
+      Top = 576
       Width = 684
       Align = alBottom
       ResizeAnchor = akBottom

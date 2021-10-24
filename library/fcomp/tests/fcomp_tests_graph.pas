@@ -282,6 +282,7 @@ begin
     addMarks(graph);
     addSeries(graph);
     addBand(graph);
+    assertTrue(true);
   finally
     graph.free;
   end;
