@@ -215,7 +215,7 @@ type
   protected
     FServerContext : TFHIRServerContext;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     property ServerContext : TFHIRServerContext read FServerContext;
     function cacheSize(magic : integer) : UInt64; override;
@@ -294,9 +294,9 @@ begin
     (WebEndPoint as TStorageWebEndpoint).FContext.clearCache;
 end;
 
-constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
 begin
-  inherited create(config, settings, db, common);
+  inherited create(config, settings, db, common, pcm);
 end;
 
 destructor TStorageEndPoint.Destroy;
@@ -1292,11 +1292,13 @@ Begin
                       response.contentType := 'text/html; charset=UTF-8';
                       response.FreeContentStream := true;
                       response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
+                      result := 'Home Page';
                     end
                     else
                     begin
                       response.ResponseNo := 404;
                       response.ContentText := 'Document ' + request.Document + ' not found';
+                      result := 'Not found: '+request.document;
                     end;
                   end
                   else if (oRequest.CommandType = fcmdUpload) and (oRequest.resource = nil) Then
@@ -1306,6 +1308,7 @@ Begin
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
                     response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
+                    result := 'Upload page';
                   end
                   else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
                   begin
@@ -2405,7 +2408,6 @@ end;
 
 function TStorageWebEndpoint.buildPackageList: String;
 var
-  pcm : TFHIRPackageManager;
   list : TFslList<TFHIRPackageInfo>;
   i : TFHIRPackageInfo;
   loaded : TFslMap<TLoadedPackageInformation>;
@@ -2413,48 +2415,43 @@ var
   lp : TLoadedPackageInformation;
   links : String;
 begin
-  pcm := TFHIRPackageManager.Create(false);
+  list := TFslList<TFHIRPackageInfo>.create;
   try
-    list := TFslList<TFHIRPackageInfo>.create;
+    Context.pcm.listAllKnownPackages(list, self.Context.Factory.versionName);
+    loaded := self.Context.Storage.loadPackages;
     try
-      pcm.listAllKnownPackages(list, self.Context.Factory.versionName);
-      loaded := self.Context.Storage.loadPackages;
+      loaded.defaultValue := nil;
+      b := TFslStringBuilder.Create;
       try
-        loaded.defaultValue := nil;
-        b := TFslStringBuilder.Create;
-        try
-          b.append('<table>'#13#10);
-          b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
-          list.Sort(TPackageListSorter.create);
+        b.append('<table>'#13#10);
+        b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
+        list.Sort(TPackageListSorter.create);
 
-          for i in list do
+        for i in list do
+        begin
+          lp := loaded[i.id];
+          links := '';
+          if (lp <> nil) then
           begin
-            lp := loaded[i.id];
-            links := '';
-            if (lp <> nil) then
-            begin
-              links := '<a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a> ';
-            end;
-            links := links + '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
-
-            if lp <> nil then
-              b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
-            else
-              b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>-</td><td>'+links+'</td></tr>'#13#10);
+            links := '<a href="package-client.phs?handler=packageloader&reload='+i.id+'">reload</a> ';
           end;
-          b.append('</table>'#13#10);
-          result := b.toString;
-        finally
-          b.Free;
+          links := links + '<a href="package-client.phs?handler=packageloader&load='+i.id+'">load</a>';
+
+          if lp <> nil then
+            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>'+loaded[i.id].summary+'</td><td>'+links+'</td></tr>'#13#10)
+          else
+            b.append(' <tr><td>'+i.id+'</td><td>'+i.version+'</td><td>-</td><td>'+links+'</td></tr>'#13#10);
         end;
+        b.append('</table>'#13#10);
+        result := b.toString;
       finally
-        loaded.Free;
+        b.Free;
       end;
     finally
-      list.free;
+      loaded.Free;
     end;
   finally
-    pcm.Free;
+    list.free;
   end;
 end;
 

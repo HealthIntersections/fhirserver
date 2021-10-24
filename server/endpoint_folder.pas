@@ -83,7 +83,7 @@ implementation
 
 constructor TFolderWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
 begin
-  inherited create(config, settings, nil, nil);
+  inherited create(config, settings, nil, nil, nil);
 end;
 
 destructor TFolderWebEndPoint.Destroy;

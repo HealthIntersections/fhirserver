@@ -151,7 +151,7 @@ end;
 
 constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, db, common);
+  inherited create(config, settings, db, common, nil);
   upgradeDatabase;
   FSystemToken := settings.Ini.service.prop['system-token'].value;
 end;

@@ -137,6 +137,7 @@ type
   public
     property UserMode : boolean read FUserMode write FUserMode;
     property GoUrl : String read FGoUrl write FGoUrl;
+    property Cache : TFHIRPackageManager read FCache write SetCache;
   end;
 
   TLoadPackagesTask = class (TWorkerObject)

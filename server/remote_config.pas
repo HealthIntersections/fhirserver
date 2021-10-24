@@ -218,6 +218,7 @@ begin
     cfg.web['plain-mode'].value := 'false';
     cfg.web['caching'].value := 'true';
     cfg.service['langfile'].value := FilePath([ExtractFilePath(ParamStr(0)), 'lang.dat']);
+    cfg.service['package-cache'].value := ExtractFilePath(fn);
     cfg.admin['scim-salt'].value := NewGuidId;
 
     for n in FFiles.Keys do
@@ -326,7 +327,7 @@ var
   content, realm, files : TJsonObject;
   r, i : String;
 begin
-  Logging.log('Realm: uv');
+//  Logging.log('Realm: uv');
   content := FJson.forceObj['content'];
   realm := content.forceObj['uv'];
   SeePackages(realm);
@@ -341,7 +342,7 @@ begin
     for i in content.properties.Keys do
       if i <> 'uv' then
       begin
-        Logging.log('Realm: '+i);
+//        Logging.log('Realm: '+i);
         realm := content.forceObj[i];
         SeePackages(realm);
         files := realm.forceObj['files'];
@@ -352,7 +353,7 @@ begin
   begin
     for i in r.split([';', ',']) do
     begin
-      Logging.log('Realm: '+i);
+//      Logging.log('Realm: '+i);
       realm := content.forceObj[i];
       SeePackages(realm);
       files := realm.forceObj['files'];
@@ -419,21 +420,19 @@ begin
   tgt := FilePath([FFolder, fn]);
   if (src.StartsWith('file:')) then
   begin
-    if (FileExists(tgt)) then
-      Logging.log(fn+' already copied')
-    else
+    if not (FileExists(tgt)) then
     begin
       Logging.start('Copy '+fn);
       BytesToFile(FileToBytes(src.Substring(5)), tgt);
       Logging.finish(' Done');
     end;
+//    else
+//      Logging.log(fn+' already copied')
   end
   else
   begin
     FLastPct := 0;
-    if FileExists(tgt) then
-      Logging.log(fn+' already downloaded')
-    else
+    if not FileExists(tgt) then
     begin
       Logging.start('Download '+fn);
       try
@@ -455,6 +454,8 @@ begin
           raise;
         end;
       end;
+      //else
+      //  Logging.log(fn+' already downloaded')
     end;
   end;
 end;

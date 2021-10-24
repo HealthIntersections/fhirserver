@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_utilities, fsl_base, fsl_lang,
+  fsl_utilities, fsl_base, fsl_lang, fsl_npm_cache,
   fhir_objects, fhir_factory, fhir_client, fhir_common,
   ftx_service,
   fhir3_types, fhir3_resources, fhir3_resources_base, fhir3_context, fhir3_profiles, fhir3_client,
@@ -61,7 +61,7 @@ Type
   protected
     procedure SeeResource(r : TFhirResource); override;
   public
-    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String); virtual;
+    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager); virtual;
     destructor Destroy; Override;
 
     Function Link : TToolkitValidatorContextR3; overload;
@@ -98,9 +98,9 @@ begin
   end;
 end;
 
-constructor TToolkitValidatorContextR3.Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String);
+constructor TToolkitValidatorContextR3.Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager);
 begin
-  inherited Create(factory);
+  inherited Create(factory, pcm);
   FLanguages := languages;
   FValueSets := TFHIRMetadataResourceManager<TFHIRValueSet>.create;
   FCodeSystems := TFHIRMetadataResourceManager<TFHIRCodeSystem>.create;

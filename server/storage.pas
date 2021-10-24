@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json,
   fsl_http,
   fdb_dialects, fsl_graphql,
-  fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine,
+  fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine, fsl_npm_cache,
   fhir_client, fhir_cdshooks,
   session,
   fhir_indexing, fhir_graphql, fhir_features,

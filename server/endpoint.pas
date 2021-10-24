@@ -35,7 +35,7 @@ interface
 Uses
   SysUtils, Classes, Generics.Collections,
   IdCustomHTTPServer, IdContext, IdOpenSSLX509,
-  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json,
+  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache,
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager,
@@ -127,8 +127,10 @@ type
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
     FWebEndPoint : TFhirWebServerEndpoint;
+  protected
+    FPcm : TFHIRPackageManager;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     function link : TFHIRServerEndPoint; overload;
 
@@ -376,17 +378,19 @@ begin
   end;
 end;
 
-constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
 begin
   inherited create;
   FConfig := config;
   FSettings := settings;
   FDatabase := db;
   FTerminologies := common;
+  FPcm := pcm;
 end;
 
 destructor TFHIRServerEndPoint.Destroy;
 begin
+  FPcm.Free;
   FTerminologies.Free;
   FConfig.Free;
   FSettings.Free;

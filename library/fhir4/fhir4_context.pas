@@ -147,7 +147,7 @@ type
     property ResourceTypes : TArray<String> read FResourceTypes write FResourceTypes;
     property OnLog : TWorkProgressEvent read FOnLog write FOnLog;
 
-    procedure checkLoaded;
+    procedure checkLoaded(pc : TFHIRPackageManager);
   end;
 
 
@@ -238,7 +238,7 @@ procedure TFHIRWorkerContext.loadFromCache(cache: TResourceMemoryCache);
 var
   r : TFhirResource;
 begin
-  cache.checkLoaded;
+  cache.checkLoaded(pcm);
   for r in cache.List do
     SeeResource(r);
 end;
@@ -276,31 +276,25 @@ end;
 
 { TResourceMemoryCache }
 
-procedure TResourceMemoryCache.checkLoaded;
+procedure TResourceMemoryCache.checkLoaded(pc : TFHIRPackageManager);
 var
-  cache : TFHIRPackageManager;
   s, l, r : String;
 begin
   if FList.Empty then
   begin
-    cache := TFHIRPackageManager.Create(true);
-    try
-      cache.onWork := FOnLog;
-      for s in FPackages do
-      begin
-        FLoadPackage := s;
-        StringSplit(s, '#', l, r);
-        cache.loadPackage(l, r, FResourceTypes, FLoadInfo);
-      end;
-    finally
-      cache.Free;
+    pc.onWork := FOnLog;
+    for s in FPackages do
+    begin
+      FLoadPackage := s;
+      StringSplit(s, '#', l, r);
+      pc.loadPackage(l, r, FResourceTypes, FLoadInfo);
     end;
   end;
 end;
 
 constructor TResourceMemoryCache.Create;
 begin
-  inherited;
+  inherited Create;
   Flist := TFslList<TFhirResource>.create;
   FLoadInfo := TPackageLoadingInformation.Create('4.0');
   FLoadInfo.OnLoadEvent := load;

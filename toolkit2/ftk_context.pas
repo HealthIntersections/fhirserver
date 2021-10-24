@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList, IniFiles,
-  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang, fsl_npm_cache,
   fhir_objects, fhir_client, fhir_factory,
   fhir4_factory, fhir3_factory,
   ftk_store, ftk_console, ftk_utilities;
@@ -325,6 +325,7 @@ type
     FToolBarHeight: integer;
     FSettings : TiniFile;
     FContexts : Array [TFHIRVersion] of TFHIRWorkerContextWithFactory;
+    FPcm : TFHIRPackageManager;
 
     function GetContext(version : TFHIRVersion): TFHIRWorkerContextWithFactory;
     function GetFocus: TToolkitEditor;
@@ -359,6 +360,7 @@ type
     property Editors : TFslList<TToolkitEditor> read FEditors;
     property TerminologyService : TFHIRTerminologyService read FTerminologyService write SetTerminologyService;
     property Languages : TIETFLanguageDefinitions read FLanguages write SetLanguages;
+    property pcm : TFHIRPackageManager read FPcm;
 
     // global settings
     property SideBySide : boolean read FSideBySide write SetSideBySide;
@@ -763,12 +765,14 @@ begin
   Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
+  FPcm := TFHIRPackageManager.create(true);
 end;
 
 destructor TToolkitContext.Destroy;
 var
   a : TFHIRVersion;
 begin
+  FPcm.free;
   for a in TFHIRVersion do
     FContexts[a].Free;
   FTerminologyService.Free;
