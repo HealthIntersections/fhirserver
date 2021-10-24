@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "reduce frequency of email from package_spider"
+        as.returnvalue = "reverse proxy support"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -142,7 +142,7 @@ begin
         action.doscmd.execute
         begin
           captureoutput = true
-          command = "lazbuild -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
+          command = "C:\\work\\tools\\lazarus\\lazbuild.exe -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
           description = "Compile FHIRConsole"
           enablelivecapture = true
           enablereturncodecheck = true
@@ -154,7 +154,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "lazbuild -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
+          params = "C:\\work\\tools\\lazarus\\lazbuild.exe -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
           redirectstderr = true
           returncodecomparator = rcEqualTo
           returncodetocheck = 0
@@ -279,7 +279,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics
             unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\d64
             usedebugdcu = false
             usepackages = false
@@ -410,7 +410,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics
             unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\64
             usedebugdcu = false
             usepackages = false
