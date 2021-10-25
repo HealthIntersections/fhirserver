@@ -1090,7 +1090,9 @@ end;
 
 function TFhirWebServer.getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo): String;
 begin
-  result := AContext.Binding.PeerIP;
+  result := request.rawHeaders.Values['X-Real-IP'];
+  if result = '' then
+    result := AContext.Binding.PeerIP;
   if request.UserAgent <> '' then
     if request.UserAgent.StartsWith('fhir/') then
       result := request.UserAgent.Substring(5);

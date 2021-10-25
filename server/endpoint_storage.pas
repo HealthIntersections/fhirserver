@@ -1300,17 +1300,17 @@ Begin
                     cacheResponse(response, oResponse.CacheControl);
                     if oResponse.format = ffXhtml then
                     begin
+                      result := 'Home Page';
                       response.ResponseNo := 200;
                       response.contentType := 'text/html; charset=UTF-8';
                       response.FreeContentStream := true;
                       response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
-                      result := 'Home Page';
                     end
                     else
                     begin
+                      result := 'Not found: '+request.document;
                       response.ResponseNo := 404;
                       response.ContentText := 'Document ' + request.Document + ' not found';
-                      result := 'Not found: '+request.document;
                     end;
                   end
                   else if (oRequest.CommandType = fcmdUpload) and (oRequest.resource = nil) Then
@@ -1319,11 +1319,12 @@ Begin
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                     result := 'Upload page';
+                    response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                   end
                   else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
                   begin
+                    result := 'Metadata ('+oRequest.ResourceName+')';
                     cacheResponse(response, oResponse.CacheControl);
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
@@ -1331,7 +1332,6 @@ Begin
                     response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
                     response.FreeContentStream := true;
                     response.ContentStream := StringToUTF8Stream('OK');
-                    result := 'Metadata ('+oRequest.ResourceName+')';
                   end
                   else
                   begin
@@ -1367,14 +1367,14 @@ Begin
                       begin
                         if oResponse.HTTPCode < 300 then
                         begin
-                          result := result + ' (ex: Abort)';
+                          result := result + ' (err: Abort)';
                           recordStack(e);
                           raise;
                         end;
                       end;
                       on e: exception do
                       begin
-                        result := result + ' (ex: '+e.message+')';
+                        result := result + ' (err: '+e.message+')';
                         recordStack(e);
                         raise;
                       end;
@@ -1451,7 +1451,7 @@ Begin
       end;
       on e: ETerminologySetup do
       begin
-        result := result + ' (ex: '+e.message+')';
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1460,7 +1460,7 @@ Begin
       end;
       on e: ETooCostly do
       begin
-        result := result + ' (ex: Too-Costly)';
+        result := result + ' (err: Too-Costly)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly)
         else
@@ -1469,7 +1469,7 @@ Begin
       end;
       on e: ERestfulException do
       begin
-        result := result + ' (ex: '+e.message+')';
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
@@ -1477,7 +1477,7 @@ Begin
       end;
       on e: exception do
       begin
-        result := result + ' (ex: '+e.message+')';
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull)
         else
