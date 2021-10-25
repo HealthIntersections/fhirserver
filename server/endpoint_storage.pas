@@ -1158,6 +1158,7 @@ Begin
   noErrCode := false;
   mode := opmRestful;
   cache := false;
+  redirect := false;
 
   Session := nil;
   try
@@ -1266,39 +1267,50 @@ Begin
                       FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
                       cacheResponse(response, cacheNotAtAll);
                       response.redirect(oRequest.Session.OriginalUrl);
+                      result := 'Redirect#1 -> '+oRequest.Session.OriginalUrl;
                     end
                     else if request.unparsedParams.contains('error=') then // oAuth failure
-                      response.redirect(oRequest.baseUrl+'?'+request.unparsedParams)
+                    begin
+                      response.redirect(oRequest.baseUrl+'?'+request.unparsedParams);
+                      result := 'Redirect#2 -> '+oRequest.baseUrl+'?'+request.unparsedParams;
+                    end
                     else
                     begin
                       token := oRequest.parameters['state'];
                       if FTokenRedirects.getRedirect(token, url) then
-                        response.redirect(url)
+                      begin
+                        response.redirect(url);
+                        result := 'Redirect#4 -> '+url;
+                      end
                       else
+                      begin
                         response.redirect(oRequest.baseUrl);
+                        result := 'Redirect#5 -> '+oRequest.baseUrl;
+                      end;
                     end;
                   end
                   else if oRequest.CommandType = fcmdNull then
                   begin
                     response.CustomHeaders.Add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
                     cacheResponse(response, cacheNormal);
+                    result := 'Null';
                   end
                   else if oRequest.CommandType = fcmdUnknown then
                   begin
                     cacheResponse(response, oResponse.CacheControl);
                     if oResponse.format = ffXhtml then
                     begin
+                      result := 'Home Page';
                       response.ResponseNo := 200;
                       response.contentType := 'text/html; charset=UTF-8';
                       response.FreeContentStream := true;
                       response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
-                      result := 'Home Page';
                     end
                     else
                     begin
+                      result := 'Not found: '+request.document;
                       response.ResponseNo := 404;
                       response.ContentText := 'Document ' + request.Document + ' not found';
-                      result := 'Not found: '+request.document;
                     end;
                   end
                   else if (oRequest.CommandType = fcmdUpload) and (oRequest.resource = nil) Then
@@ -1307,11 +1319,12 @@ Begin
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                     result := 'Upload page';
+                    response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                   end
                   else if (oRequest.CommandType = fcmdMetadata) and (oRequest.ResourceName <> '') then
                   begin
+                    result := 'Metadata ('+oRequest.ResourceName+')';
                     cacheResponse(response, oResponse.CacheControl);
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
@@ -1354,12 +1367,14 @@ Begin
                       begin
                         if oResponse.HTTPCode < 300 then
                         begin
+                          result := result + ' (err: Abort)';
                           recordStack(e);
                           raise;
                         end;
                       end;
                       on e: exception do
                       begin
+                        result := result + ' (err: '+e.message+')';
                         recordStack(e);
                         raise;
                       end;
@@ -1420,12 +1435,14 @@ Begin
           response.contentType := 'text/html; charset=UTF-8';
           response.FreeContentStream := true;
           response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, logId, e.Msg, ssl, request.unparsedParams));
+          result := result + ' (Auth needed)';
         end
         else
           SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, itLogin);
       end;
       on e: ETerminologyError do
       begin
+        result := result + ' (Auth needed)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1434,6 +1451,7 @@ Begin
       end;
       on e: ETerminologySetup do
       begin
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1442,6 +1460,7 @@ Begin
       end;
       on e: ETooCostly do
       begin
+        result := result + ' (err: Too-Costly)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly)
         else
@@ -1450,6 +1469,7 @@ Begin
       end;
       on e: ERestfulException do
       begin
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
@@ -1457,6 +1477,7 @@ Begin
       end;
       on e: exception do
       begin
+        result := result + ' (err: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull)
         else
