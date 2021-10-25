@@ -173,7 +173,7 @@ procedure TConfigurationBuilder.buildConfig(fn: String);
 var
   cfg : TFHIRServerConfigFile;
   n, v : String;
-  i, rn : integer;
+  rn : integer;
   sct : TFHIRServerConfigSection;
   ini : TIniFile;
   ep, o : TJsonObject;
@@ -313,7 +313,7 @@ end;
 
 procedure TConfigurationBuilder.DownloadFileList(files : TJsonObject);
 var
-  fn, r : String;
+  fn : String;
 begin
   for fn in files.properties.Keys do
   begin
@@ -474,10 +474,10 @@ begin
     try
       cb.FUrl := src;
       cb.FFolder := ExtractFilePath(result);
-      Logging.log('Local Config in '+cb.FFolder);
       if not FolderExists(cb.FFolder) then
         ForceDirectories(cb.FFolder);
       cb.readConfig;
+      Logging.log('Local Config in '+cb.FFolder);
       cb.DownloadFiles;
       cb.buildEndPoints;
       cb.buildConfig(result);
