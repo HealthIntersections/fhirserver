@@ -13,10 +13,10 @@ set "tmp=%1"
 :No1
 
 call windows-toolchain.bat %tmp%
-pause
+rem pause
 
 call windows-libraries.bat %tmp%
-pause
+rem pause
 
 call windows-fhirserver.bat %tmp%
-pause
+rem pause
