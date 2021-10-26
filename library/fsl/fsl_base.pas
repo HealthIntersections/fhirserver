@@ -140,6 +140,9 @@ var
   GetThreadNameStatusDelegate : TGetThreadNameStatus = nil;
   ShowObjectLeaks : boolean;
 
+const
+  NULL_THREAD = {$IFDEF OSX} nil {$ELSE} 0 {$ENDIF};
+
 Type
   TFslObjectClass = Class Of TFslObject;
   TFslClass = TFslObjectClass;
@@ -1172,7 +1175,7 @@ Begin
   Begin
     Assert(Invariants('_AddRef', TFslObject));
 
-    FOwningThread := 0;
+    FOwningThread := NULL_THREAD;
     Result := InterlockedIncrement(FFslObjectReferenceCount);
   End
   Else
@@ -1187,7 +1190,7 @@ Begin
   Begin
     Assert(Invariants('_Release', TFslObject));
 
-    FOwningThread := 0;
+    FOwningThread := NULL_THREAD;
     Result := InterlockedDecrement(FFslObjectReferenceCount);
 
     If Result < 0 Then
@@ -1295,14 +1298,14 @@ function TFslObject.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
 begin
-  if FOwningThread = 0 then
+  if FOwningThread = NULL_THREAD then
     result := true
   else
   begin
     t := GetCurrentThreadId;
     result := t <> FOwningThread;
     if result then
-      FOwningThread := 0;
+      FOwningThread := NULL_THREAD;
   end;
 end;
 
@@ -2462,14 +2465,14 @@ function TFslMap<T>.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
 begin
-  if FOwningThread = 0 then
+  if FOwningThread = NULL_THREAD then
     result := true
   else
   begin
     t := GetCurrentThreadId;
     result := t <> FOwningThread;
     if result then
-      FOwningThread := 0;
+      FOwningThread := NULL_THREAD;
   end;
 end;
 
@@ -3065,14 +3068,14 @@ function TFslStringDictionary.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
 begin
-  if FOwningThread = 0 then
+  if FOwningThread = NULL_THREAD then
     result := true
   else
   begin
     t := GetCurrentThreadId;
     result := t <> FOwningThread;
     if result then
-      FOwningThread := 0;
+      FOwningThread := NULL_THREAD;
   end;
 end;
 

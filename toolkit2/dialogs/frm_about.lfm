@@ -1,25 +1,25 @@
 object ToolkitAboutForm: TToolkitAboutForm
   Left = 438
-  Height = 223
+  Height = 252
   Top = 305
-  Width = 415
+  Width = 404
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'FHIR Toolkit'
-  ClientHeight = 223
-  ClientWidth = 415
+  ClientHeight = 252
+  ClientWidth = 404
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 223
+    Height = 252
     Top = 0
-    Width = 415
+    Width = 404
     Align = alClient
     BevelInner = bvLowered
-    ClientHeight = 223
-    ClientWidth = 415
+    ClientHeight = 252
+    ClientWidth = 404
     Color = clWhite
     ParentColor = False
     TabOrder = 0
@@ -35,7 +35,6 @@ object ToolkitAboutForm: TToolkitAboutForm
       Font.Height = -32
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
-      ParentColor = False
       ParentFont = False
     end
     object lblVersion: TLabel
@@ -50,7 +49,6 @@ object ToolkitAboutForm: TToolkitAboutForm
       Font.Height = -21
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
-      ParentColor = False
       ParentFont = False
     end
     object lblAge: TLabel
@@ -65,7 +63,6 @@ object ToolkitAboutForm: TToolkitAboutForm
       Font.Height = -16
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
-      ParentColor = False
       ParentFont = False
     end
     object Button1: TButton
@@ -683,5 +680,33 @@ object ToolkitAboutForm: TToolkitAboutForm
         6082
       }
     end
+    object lblSysInfo: TLabel
+      Left = 4
+      Height = 29
+      Top = 220
+      Width = 400
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Released 4 days ago'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+    end
+  end
+  object lblAge1: TLabel
+    Left = 2
+    Height = 29
+    Top = 192
+    Width = 400
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'Released 4 days ago'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -16
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentFont = False
   end
 end

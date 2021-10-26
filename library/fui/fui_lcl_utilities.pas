@@ -39,6 +39,9 @@ uses
   {$IFDEF LINUX}
   LCLIntf, LCLType,
   {$ENDIF}
+   {$IFDEF OSX}
+  LCLIntf, LCLType,
+  {$ENDIF}
   Classes, SysUtils, Graphics, IniFiles,
   Controls, Forms,
   fsl_utilities;
@@ -114,8 +117,15 @@ begin
   end;
 end;
 {$ELSE}
+var
+  ScreenDC: HDC;
 begin
-  raise exception.create('Not implemented on '+SystemPlatform);
+  ScreenDC := GetDC(0);
+  try
+    bmp.LoadFromDevice(ScreenDC);
+  finally
+    ReleaseDC(0,ScreenDC);
+  end;
 end;
 {$ENDIF}
 {$ENDIF}

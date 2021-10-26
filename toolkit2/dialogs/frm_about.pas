@@ -46,6 +46,8 @@ type
     Image1: TImage;
     Image2: TImage;
     Label1: TLabel;
+    lblAge1: TLabel;
+    lblSysInfo: TLabel;
     lblVersion: TLabel;
     lblAge: TLabel;
     Panel1: TPanel;
@@ -78,6 +80,7 @@ begin
     lblAge.Caption := 'Development Version'
   else
     lblAge.Caption := 'Released '+DescribePeriod(now - TFslDateTime.fromHL7(TOOLKIT_RELEASE_DATE).DateTime)+'Ago';
+  lblSysInfo.Caption := SystemPlatform+' '+DescribeBytes(SystemMemory.physicalMem)+'/' + DescribeBytes(SystemMemory.virtualMem);
 end;
 
 end.

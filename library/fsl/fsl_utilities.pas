@@ -41,6 +41,9 @@ Uses
   {$IFDEF LINUX}
   Linux, Unix,
   {$ENDIF}
+  {$IFDEF OSX}
+  unix,sysctl,
+  {$ENDIF}
 
   {$IFDEF FPC}
   base64,
@@ -4124,12 +4127,8 @@ end;
 {$ENDIF}
 
 Function SystemPlatform: String;
-{$IFDEF LINUX}
-var
-  ts : TStringList;
-{$ENDIF}
+{$IFDEF WINDOWS}
 Begin
-  {$IFDEF WINDOWS}
   Case gOSInfo.dwPlatformId Of
     VER_PLATFORM_WIN32s :
     Begin
@@ -4170,10 +4169,30 @@ Begin
     gOSInfo.dwBuildNumber := gOSInfo.dwBuildNumber And $FFFF;
 
   Result := Result + StringFormat(' [%d.%d.%d]', [gOSInfo.dwMajorVersion, gOSInfo.dwMinorVersion, gOSInfo.dwBuildNumber]);
-  {$ELSE}
-    {$IFDEF OSX}
-    Result := 'OSX';
-    {$ELSE}
+End;
+{$ELSE}
+{$IFDEF OSX}
+var
+  status : Integer;
+  len	  : size_t;
+  p	  : PChar;
+begin
+  status := fpSysCtlByName('kern.osproductversion', Nil, @len, Nil, 0);
+  if status <> 0 then RaiseLastOSError;
+  GetMem(p, len);
+  try
+    status := fpSysCtlByName('kern.osproductversion', p, @len, Nil, 0);
+    if status <> 0 then RaiseLastOSError;
+    Result := 'OSX '+p;
+  finally
+    FreeMem(p);
+  end;
+end;
+{$ELSE}
+{$IFDEF LINUX}
+var
+  ts : TStringList;
+{$ENDIF}
     // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
     ts := TStringList.create;
     try
@@ -4182,9 +4201,9 @@ Begin
     finally
       ts.free;
     end;
+    End;
     {$ENDIF}
   {$ENDIF}
-End;
 
 {$IFDEF WINDOWS}
 Function SystemTimezone : String;
@@ -4296,9 +4315,22 @@ begin
 end;
 {$ENDIF}
 {$IFDEF OSX}
+var
+  mib: array[0..1] of Integer;
+  status : Integer;
+  len : size_t;
+  size : UInt64;
 begin
-  result.physicalMem := 0;
-  result.virtualMem := 0;
+  mib[0] := CTL_HW;
+  mib[1] := HW_PHYSMEM;
+
+  len := SizeOf(size);
+  status := fpSysCtl(pcint(@mib), Length(mib), @size, @len, Nil, 0);
+  if status <> 0 then RaiseLastOSError;
+  result.physicalMem := size;
+  status := fpSysCtl(pcint(@mib), Length(mib), @size, @len, Nil, 0);
+  if status <> 0 then RaiseLastOSError;
+  result.virtualMem := size;
 end;
 {$ENDIF}
 
@@ -4317,7 +4349,7 @@ End;
 {$ENDIF}
 {$IFDEF OSX}
 Begin
-  Result := 'TODO';
+  Result := GetHostName;
 End;
 {$ENDIF}
 {$IFDEF LINUX}
