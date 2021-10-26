@@ -194,6 +194,7 @@ Type
 
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure logOutput(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : string; tt : TTimeTracker; secure : boolean; epn, summ : string);
 
     Procedure StartServer();
     Procedure StopServer;
@@ -594,6 +595,56 @@ begin
   VPassword := AAuthData;
 end;
 
+Procedure TFhirWebServer.logOutput(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : string; tt : TTimeTracker; secure : boolean; epn, summ : string);
+  function mimeType(mt : String) : String;
+  var
+    f : TFHIRFormat;
+  begin
+    if mt = '' then
+      result := '-'
+    else
+    begin
+      f := mimeTypeToFormat(mt, ffUnspecified);
+      case f of
+        ffUnspecified: result := '?';
+        ffXml: result := 'x';
+        ffJson: result := 'j';
+        ffTurtle: result := 'r';
+        ffText: result := 't';
+        ffNDJson: result := 'n';
+        ffXhtml: result := 'h';
+      end;
+    end;
+  end;
+var
+  s : String;
+begin
+  s := id + ' ' +
+       StringPadLeft(inttostr(tt.total), ' ', 4) + ' ' +
+       Logging.MemoryStatus(false) + ' ';
+  if (FPlainServer <> nil) and (FSSLServer <> nil) then
+    s := s + StringPadLeft(inttostr(FPlainServer.Contexts.count)+':'+inttostr(FSSLServer.Contexts.count), ' ', 5) + ' '
+  else if (FPlainServer <> nil) then
+    s := s + StringPadLeft(inttostr(FPlainServer.Contexts.count), ' ', 2) + ' '
+  else // (FSSLServer <> nil)
+    s := s + StringPadLeft(inttostr(FSSLServer.Contexts.count), ' ', 2) + ' ';
+
+  if secure then
+    s := s + 's'
+  else
+    s := s + 'p';
+  s := s + mimeType(request.ContentType);
+  s := s + mimeType(response.ContentType)+' ';
+  s := s + inttostr(response.ResponseNo)+' '+
+           epn+' '+
+           getClientId(aContext, request)+' ';
+  if (summ = '') then
+    s := s + '('+request.RawHTTPCommand+')'
+  else
+    s := s + summ;
+  Logging.log(s);
+end;
+
 Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   id, summ : string;
@@ -693,16 +744,7 @@ begin
           end;
         end;
         logResponse(id, response);
-        cid := getClientId(aContext, request);
-        if (summ <> '') then
-          Logging.log(StringPadLeft(id, ' ', 6)+' '+StringPadLeft(inttostr(tt.total), ' ', 5)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+
-             StringPadLeft(inttostr(FPlainCount)+':'+inttostr(FPlainServer.Contexts.count), ' ', 7)+' '+
-             inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+tt.log) // summ)
-        else
-          Logging.log(StringPadLeft(id, ' ', 6)+' '+StringPadLeft(inttostr(tt.total), ' ', 5)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+
-             StringPadLeft(inttostr(FPlainCount)+':'+inttostr(FPlainServer.Contexts.count), ' ', 7)+' '+
-             inttostr(response.ResponseNo)+' p '+cid+' '+epn+': '+tt.log); // request.RawHTTPCommand);
-
+        logOutput(AContext, request, response, id, tt, false, epn, summ);
         response.CloseConnection := not PLAIN_KEEP_ALIVE;
       finally
         InterlockedDecrement(GCounterWebRequests);
@@ -760,7 +802,7 @@ var
   tt : TTimeTracker;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
-  epn, cid : String;
+  epn : String;
 begin
   if NoUserAuthentication then // we treat this as if it's a plain request
     PlainRequest(AContext, request, response)
@@ -838,13 +880,7 @@ begin
         end;
 
         logResponse(id, response);
-        cid := getClientId(aContext, request);
-        if (summ <> '') then
-          Logging.log(id+' '+StringPadLeft(inttostr(tt.total), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-             inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+summ)
-        else
-          Logging.log(id+' '+StringPadLeft(inttostr(tt.total), ' ', 3)+'ms '+Logging.MemoryStatus(false)+' #'+inttostr(GCounterWebRequests)+' '+inttostr(FPlainCount)+':'+inttostr(FSecureCount)+' '+{AContext.Binding.PeerIP+' '+}
-             inttostr(response.ResponseNo)+' s '+cid+' '+epn+': '+request.RawHTTPCommand);
+        logOutput(AContext, request, response, id, tt, true, epn, summ);
 
         response.CloseConnection := not SECURE_KEEP_ALIVE;
       finally

@@ -310,7 +310,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\exec\64\fhirconsole"/>
+      <Filename Value="..\exec\64\fhirconsole.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>

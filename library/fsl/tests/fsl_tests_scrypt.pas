@@ -93,9 +93,9 @@ type
     {$IFNDEF FPC}procedure Test_HMAC_SHA256_Cng;{$ENDIF}
 
     //Test PBKDF implementations; test with known SHA1 and SHA256 test vectors
-    procedure Test_PBKDF2_SHA1;
+    {$IFNDEF FPC}procedure Test_PBKDF2_SHA1;
     procedure Test_PBKDF2_SHA1_PurePascal;
-    {$IFNDEF FPC}procedure Test_PBKDF2_SHA1_Cng;{$ENDIF}
+    procedure Test_PBKDF2_SHA1_Cng;{$ENDIF}
 
     procedure Test_PBKDF2_SHA256;
     procedure Test_PBKDF2_SHA256_PurePascal;
@@ -1746,7 +1746,6 @@ begin
   Tester_PBKDF2_SHA1(db);
   assertPass();
 end;
-{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA1_PurePascal;
 var
@@ -1765,6 +1764,7 @@ begin
   Tester_PBKDF2_SHA256(db);
   assertPass();
 end;
+{$ENDIF}
 
 {$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA256_Cng;
