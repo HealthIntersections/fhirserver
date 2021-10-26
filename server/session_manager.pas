@@ -170,6 +170,15 @@ begin
         session.originalUrl := '';
         session.email := '';
         session.userkey := 0;
+        if server then
+          session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_SYSTEM_USER, key)
+        else
+          session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
+        session.UserName := session.User.username;
+        session.SessionName := session.UserName+' ('+session.SystemName+')';
+        session.UserKey := key;
+        session.scopes := TFHIRSecurityRights.allScopes;
+        // though they'll only actually get what the user allows
 
         FSessions.Add(session.Cookie, session.Link);
         result := session.Link as TFhirSession;
@@ -179,15 +188,6 @@ begin
     end;
     if new then
     begin
-      if server then
-        session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_SYSTEM_USER, key)
-      else
-        session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
-      session.UserName := session.User.username;
-      session.SessionName := session.UserName+' ('+session.SystemName+')';
-      session.UserKey := key;
-      session.scopes := TFHIRSecurityRights.allScopes;
-      // though they'll only actually get what the user allows
       TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
       se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
       try

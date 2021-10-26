@@ -1443,17 +1443,26 @@ end;
 
 function TFhirSession.canRead(resourceName : String): boolean;
 begin
-  result := FSecurity.canRead(resourceName);
+  if FSecurity = nil then // initialization sequence error
+    result := false
+  else
+    result := FSecurity.canRead(resourceName);
 end;
 
 function TFhirSession.canReadAll: boolean;
 begin
-  result := FSecurity.canReadAll;
+  if FSecurity = nil then // initialization sequence error
+    result := false
+  else
+    result := FSecurity.canReadAll;
 end;
 
 function TFhirSession.canWrite(resourceName : String): boolean;
 begin
-  result := FSecurity.canWrite(resourceName);
+  if FSecurity = nil then // initialization sequence error
+    result := false
+  else
+    result := FSecurity.canWrite(resourceName);
 end;
 
 constructor TFhirSession.Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
