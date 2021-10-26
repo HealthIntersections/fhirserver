@@ -2655,9 +2655,9 @@ begin
     if result = '' then
       result := msg.FMessages['en'];
     if result = '' then
-      result := '??';
-    if result = '' then
       result := def;
+    if result = '' then
+      result := '??';
   end;
 end;
 
