@@ -140,6 +140,7 @@ Type
     FLastday : integer;
     FWorkingLine : String;
     FCount : integer;
+    FHeld : TStringlist;
     FLock : TFslLock;
 
     procedure checkDay;
@@ -468,11 +469,13 @@ begin
   FStarting := true;
   FStartTime := now;
   FLastDay := 0;
+  FHeld := TStringList.create;
 end;
 
 destructor TLogging.Destroy;
 begin
   close;
+  FHeld.Free;
   FFileLogger.Free;
   FListeners.Free;
   FLock.Free;
@@ -625,6 +628,17 @@ procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
+  FLock.Lock;
+  try
+    if FWorkingLine <> '' then
+    begin
+      FHeld.add(s);
+      exit;
+    end;
+  finally
+    FLock.unlock;
+  end;
+
   checkDay;
   if FStarting then
     s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
@@ -715,7 +729,7 @@ end;
 procedure TLogging.finish(s : String = '');
 var
   listener : TLogListener;
-  msg : String;
+  msg, h : String;
 begin
   if FLogToConsole then
   begin
@@ -730,9 +744,9 @@ begin
   msg := FWorkingLine + s;
   FWorkingLine := '';
   if FStarting then
-    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+msg
   else
-    msg := FormatDateTime('hh:nn:ss', now)+ ' '+s;
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+msg;
 
   if FFileLogger <> nil then
     FFileLogger.WriteToLog(s+#13#10);
@@ -745,6 +759,14 @@ begin
         listener.log(msg);
     except
     end;
+  end;
+  FLock.Lock;
+  try
+    for h in FHeld do
+      log(h);
+    FHeld.clear;
+  finally
+    FLock.unlock;
   end;
 end;
 
