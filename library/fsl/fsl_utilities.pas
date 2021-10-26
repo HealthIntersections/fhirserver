@@ -4236,7 +4236,7 @@ End;
 {$ENDIF}
 
 {$IFDEF FPC}
-
+{$IFDEF WINDOWS}
 type
   PMemoryStatusEx = ^TMemoryStatusEx;
   _MEMORYSTATUSEX = record
@@ -4259,7 +4259,7 @@ type
 
 function GlobalMemoryStatusEx(var lpBuffer : TMEMORYSTATUSEX): BOOL; stdcall; external kernel32 name 'GlobalMemoryStatusEx';
 
-
+{$ENDIF}
 {$ENDIF}
 
 Function SystemMemory : TSystemMemory;

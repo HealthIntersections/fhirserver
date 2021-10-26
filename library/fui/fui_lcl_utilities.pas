@@ -36,6 +36,9 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   {$ENDIF}
+  {$IFDEF LINUX}
+  LCLIntf, LCLType,
+  {$ENDIF}
   Classes, SysUtils, Graphics, IniFiles,
   Controls, Forms,
   fsl_utilities;
@@ -92,17 +95,30 @@ procedure screenshot(bmp : TBitmap);
 {$IFDEF WINDOWS}
 var
   DCDesk : hDC;
-  {$ENDIF}
 begin
-  {$IFDEF WINDOWS}
   bmp.Height := Screen.DesktopHeight;
   bmp.Width := Screen.DesktopWidth;
   DCDesk := GetWindowDC(GetDesktopWindow);
   BitBlt(bmp.Canvas.Handle, 0, 0, bmp.Width, bmp.Height, GetWindowDC(GetDesktopWindow), Screen.DesktopLeft, Screen.DesktopTop, SRCCOPY);
-  {$ELSE}
-  raise exception.create('Not implemented on '+SystemPlatform);
-  {$ENDIF}
 end;
+{$ELSE}
+{$IFDEF LINUX}
+var
+  ScreenDC: HDC;
+begin
+  ScreenDC := GetDC(0);
+  try
+    bmp.LoadFromDevice(ScreenDC);
+  finally
+    ReleaseDC(0,ScreenDC);
+  end;
+end;
+{$ELSE}
+begin
+  raise exception.create('Not implemented on '+SystemPlatform);
+end;
+{$ENDIF}
+{$ENDIF}
 
 end.
 
