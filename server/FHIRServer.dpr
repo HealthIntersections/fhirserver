@@ -1,3 +1,4 @@
+
 // JCL_DEBUG_EXPERT_INSERTJDBG ON
 program FHIRServer;
 
@@ -348,7 +349,6 @@ uses
   cda_narrative in '..\library\cda\cda_narrative.pas',
   fhir_oids in '..\library\fhir\fhir_oids.pas',
   fhir_elementmodel in '..\library\fhir\fhir_elementmodel.pas',
-  Compat in '..\dependencies\chakracore-delphi\Compat.pas',
   MarkdownHTMLEntities in '..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas',
   consent_engine in 'consent_engine.pas',
   tx_ndc in 'tx\tx_ndc.pas',
@@ -458,23 +458,6 @@ uses
   cda_objects in '..\library\cda\cda_objects.pas',
   test_registry in 'test_registry.pas',
   cda_documents in '..\library\cda\cda_documents.pas',
-  {$IFNDEF NO_JS}
-  ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
-  ChakraCoreUtils in '..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
-  ChakraCoreClasses in '..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
-  ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
-  ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
-  event_js in 'event_js.pas',
-  fhir_js_client in '..\library\fhir\fhir_js_client.pas',
-  fhir_javascript in '..\library\fhir\fhir_javascript.pas',
-  fhir4_javascript in '..\library\fhir4\fhir4_javascript.pas',
-  server_javascript in 'server_javascript.pas',
-  fsl_javascript in '..\library\fsl\fsl_javascript.pas',
-  fhir2_javascript in '..\library\fhir2\fhir2_javascript.pas',
-  fhir3_javascript in '..\library\fhir3\fhir3_javascript.pas',
-  v2_javascript in '..\library\v2\v2_javascript.pas',
-  fhir5_javascript in '..\library\fhir5\fhir5_javascript.pas',
-  {$ENDIF }
   cda_base in '..\library\cda\cda_base.pas',
   cda_writer in '..\library\cda\cda_writer.pas',
   cda_types in '..\library\cda\cda_types.pas',
@@ -483,7 +466,6 @@ uses
   fdb_tests in '..\library\fdb\tests\fdb_tests.pas',
   server_testing in 'server_testing.pas',
   fsl_tests_web in '..\library\fsl\tests\fsl_tests_web.pas',
-  fhir_tests_javascript in '..\library\fhir\tests\fhir_tests_javascript.pas',
   fhir4_tests_Parser in '..\library\fhir4\tests\fhir4_tests_Parser.pas',
   fhir4_tests_worker in '..\library\fhir4\tests\fhir4_tests_worker.pas',
   tx_areacode in 'tx\tx_areacode.pas',
@@ -524,7 +506,8 @@ uses
   fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas',
   qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
   TZDB in '..\..\source\tzdb\dist\TZDB.pas',
-  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas';
+  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
+  time_tracker in 'time_tracker.pas';
 
 begin
   ExecuteFhirServer;

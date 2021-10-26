@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
-  FPImage, LCLIntf, LCLType,
+  FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
   fui_lcl_utilities;
 
@@ -20,6 +20,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     Image1: TImage;
     Memo1: TMemo;
     Panel1: TPanel;
@@ -31,6 +32,7 @@ type
     Splitter1: TSplitter;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -78,10 +80,23 @@ end;
 { TQRCodeScannerForm }
 
 procedure TQRCodeScannerForm.FormCreate(Sender: TObject);
+var
+  i : integer;
+  m : TMenuItem;
 begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  //FScreens := TStringList.create;
+  //listScreens(FScreens);
+  //pmScreens.Items.Clear;
+  //for i := 0 to FScreens.count - 1 do
+  //begin
+  //  m := TMenuItem.create;
+  //  pmScreens.Items.Add(m);
+  //  m.Caption := FScreens[i];
+  //  m.Tag := i;
+  //end;
   clear;
 end;
 
@@ -144,6 +159,23 @@ begin
   end
   else
     ShowMessage('No image is found on clipboard');
+end;
+
+procedure TQRCodeScannerForm.Button4Click(Sender: TObject);
+var
+  bmp : TBitmap;
+begin
+  bmp := TBitmap.Create;
+  try
+    screenshot(bmp);
+    FImage.assign(bmp);
+    Image1.Picture.Assign(FImage);
+    Image1.Refresh;
+    Application.ProcessMessages;
+    readImage;
+  finally
+    bmp.free;
+  end;
 end;
 
 procedure TQRCodeScannerForm.FormDestroy(Sender: TObject);

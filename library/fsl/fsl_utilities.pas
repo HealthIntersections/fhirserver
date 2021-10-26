@@ -4299,6 +4299,37 @@ Begin
 End;
 {$ENDIF}
 
+{$IFDEF WINDOWS}
+Function SystemCentralProcessorStringRegistryValue(Const Value : String) : String;
+Const
+  CENTRAL_PROCESSOR_KEY = 'HARDWARE\DESCRIPTION\System\CentralProcessor\0';
+//Var
+//  oRegistry : TFslRegistry;
+Begin
+//  Result := '';
+//
+//  oRegistry := TFslRegistry.Create;
+//  Try
+//    oRegistry.ReadMode;
+//    oRegistry.UseLocalMachineAsRootKey;
+//
+//    If oRegistry.KeyExists(CENTRAL_PROCESSOR_KEY) Then
+//    Begin
+//      oRegistry.Key := CENTRAL_PROCESSOR_KEY;
+//
+//      If oRegistry.ValueExists(Value) Then
+//      Begin
+//        oRegistry[Value];
+//        oRegistry.DefineString(Result);
+//      End;
+//    End;
+//  Finally
+//    oRegistry.Free;
+//  End;
+End;
+{$ENDIF}
+
+
 Function SystemProcessorName : String;
 {$IFDEF WINDOWS}
 Begin
@@ -4361,34 +4392,6 @@ Const
   MODE_ACCESS : Array[TRegistryMode] Of Cardinal = (KEY_READ, KEY_ALL_ACCESS);
 
 
-
-Function SystemCentralProcessorStringRegistryValue(Const Value : String) : String;
-Const
-  CENTRAL_PROCESSOR_KEY = 'HARDWARE\DESCRIPTION\System\CentralProcessor\0';
-//Var
-//  oRegistry : TFslRegistry;
-Begin
-//  Result := '';
-//
-//  oRegistry := TFslRegistry.Create;
-//  Try
-//    oRegistry.ReadMode;
-//    oRegistry.UseLocalMachineAsRootKey;
-//
-//    If oRegistry.KeyExists(CENTRAL_PROCESSOR_KEY) Then
-//    Begin
-//      oRegistry.Key := CENTRAL_PROCESSOR_KEY;
-//
-//      If oRegistry.ValueExists(Value) Then
-//      Begin
-//        oRegistry[Value];
-//        oRegistry.DefineString(Result);
-//      End;
-//    End;
-//  Finally
-//    oRegistry.Free;
-//  End;
-End;
 
 
 Function SystemProcessorIdentifier : String;

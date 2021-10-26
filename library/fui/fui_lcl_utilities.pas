@@ -33,12 +33,18 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  {$IFDEF WINDOWS}
+  Windows,
+  {$ENDIF}
   Classes, SysUtils, Graphics, IniFiles,
-  Controls, Forms;
+  Controls, Forms,
+  fsl_utilities;
 
 procedure setForOS(btnOk, btnCancel : TControl);
 procedure writeFontToIni(ini : TIniFile; section : String; font : TFont);
 procedure readFontFromIni(ini : TIniFile; section : String; font : TFont; defFontName : String = '');
+
+procedure screenshot(bmp : TBitmap);
 
 implementation
 
@@ -80,6 +86,22 @@ begin
     font.Style := font.Style + [fsUnderline];
   if ini.readBool('font', 'strikeout', false) then
     font.Style := font.Style + [fsStrikeOut];
+end;
+
+procedure screenshot(bmp : TBitmap);
+{$IFDEF WINDOWS}
+var
+  DCDesk : hDC;
+  {$ENDIF}
+begin
+  {$IFDEF WINDOWS}
+  bmp.Height := Screen.DesktopHeight;
+  bmp.Width := Screen.DesktopWidth;
+  DCDesk := GetWindowDC(GetDesktopWindow);
+  BitBlt(bmp.Canvas.Handle, 0, 0, bmp.Width, bmp.Height, GetWindowDC(GetDesktopWindow), Screen.DesktopLeft, Screen.DesktopTop, SRCCOPY);
+  {$ELSE}
+  raise exception.create('Not implemented on '+SystemPlatform);
+  {$ENDIF}
 end;
 
 end.

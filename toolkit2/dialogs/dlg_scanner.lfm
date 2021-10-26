@@ -97,6 +97,15 @@ object QRCodeScannerForm: TQRCodeScannerForm
         Caption = 'WebCam'
         TabOrder = 2
       end
+      object Button4: TButton
+        Left = 296
+        Height = 25
+        Top = 8
+        Width = 75
+        Caption = 'Screen'
+        OnClick = Button4Click
+        TabOrder = 3
+      end
     end
     object Panel5: TPanel
       Left = 0

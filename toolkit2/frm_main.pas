@@ -2580,8 +2580,8 @@ var
     begin
       s := QRCodeScannerForm.Memo1.Text;
       if (s.StartsWith('shc:/')) then
-      //  createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
-      //else
+        createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
+      else
         createNewFile(sekNull, TEncoding.UTF8.getBytes(s));
     end;
   finally
