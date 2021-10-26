@@ -38,6 +38,9 @@ Uses
   {$ELSE}
   Process,
   {$ENDIF}
+  {$IFDEF LINUX}
+  Linux, Unix,
+  {$ENDIF}
 
   {$IFDEF FPC}
   base64,
@@ -52,6 +55,7 @@ Uses
 type
   TEqualityTriState = (equalNull, equalFalse, equalTrue);
   TComparisonQuadState = (compNull, compLess, compEqual, compGreater);
+  TTime = System.TTime;
 
 Function IntegerCompare(Const iA, iB : Byte) : Integer; Overload;
 Function IntegerCompare(Const iA, iB : Word) : Integer; Overload;
@@ -840,38 +844,10 @@ Type
   TCurrencyCents = Int64;
   TCurrencyDollars = Int64;
 
- {$IFDEF FPC}
- {$IFDEF WINDOWS}
- TSystemMemory = Windows.MEMORYSTATUS;
- {$ENDIF}
- {$ELSE}
-{$IFDEF CPUx86}
-  TSystemMemory = Record   // Windows.MEMORYSTATUS
-    Length : Cardinal;
-    TotalLoad : Cardinal;
-    TotalPhysical : Cardinal;
-    AvailablePhysical : Cardinal;
-    TotalPageFile : Cardinal;
-    AvailablePageFile : Cardinal;
-    TotalVirtual : Cardinal;
-    AvailableVirtual : Cardinal;
-  End;
-{$ELSE}
-  {$IFDEF CPUx64}
-  TSystemMemory = Record
-    Length : Cardinal;
-    MemoryLoad : Cardinal;
-    TotalPhysical : UInt64;
-    AvailablePhysical : UInt64;
-    TotalPageFile : UInt64;
-    AvailablePageFile : UInt64;
-    TotalVirtual : UInt64;
-    AvailableVirtual : UInt64;
-    AvailableExtendedVirtual : UInt64;
-  End;
-  {$ENDIF}
-  {$ENDIF}
-  {$ENDIF}
+  TSystemMemory = record
+    physicalMem : UInt64;
+    virtualMem : UInt64;
+  end;
 
 
 Function CurrencyCompare(Const rA, rB : TCurrency) : Integer; Overload;
@@ -908,7 +884,13 @@ Function CurrencyApplyPercentages(Const rAmount : TCurrency; Const rPercentageBe
 Function CurrencyTruncateToCents(Const rAmount : TCurrency) : TCurrency;
 Function CurrencyTruncateToDollars(Const rAmount : TCurrency) : TCurrency;
 
-  {$IFDEF WINDOWS}
+Function SystemPlatform : String;
+Function SystemName : String;
+Function SystemMemory : TSystemMemory;
+Function SystemArchitecture : String;
+Function SystemProcessorName : String;
+
+{$IFDEF WINDOWS}
 
 Function SystemIsWindowsNT : Boolean;
 Function SystemIsWindows2K : Boolean;
@@ -917,9 +899,6 @@ Function SystemIsWindowsVista : Boolean;
 Function SystemIsWindows7 : Boolean;
 
 Function SystemIsWin64 : Boolean;
-Function SystemName : String;
-Function SystemPlatform : String;
-Function SystemArchitecture : String;
 Function SystemResolution : String;
 Function SystemBootStatus : String;
 Function SystemInformation : String;
@@ -928,14 +907,6 @@ Function SystemTimezone : String;
 Function SystemLanguage : String;
 Function SystemProcessors : Cardinal;
 Function SystemPageSize : Cardinal;
-{$IFDEF CPUx86}
-Function SystemMemory : TSystemMemory;
-{$ELSE}
-  {$IFDEF CPUx64}
-Function SystemMemory : TSystemMemory;
-  {$ENDIF}
-{$ENDIF}
-Function SystemProcessorName : String;
 Function SystemProcessorIdentifier : String;
 Function SystemProcessorVendorIdentifier : String;
 Function ProcessName : String; Overload;
@@ -4074,8 +4045,8 @@ Begin
   {$ENDIF}
 End;
 
-{$IFDEF WINDOWS}
 Function SystemArchitecture : String;
+{$IFDEF WINDOWS}
 Const
   PROCESSOR_ARCHITECTURE_INTEL = 0;
   PROCESSOR_ARCHITECTURE_MIPS = 1;
@@ -4141,8 +4112,22 @@ Begin
   End;
 End;
 {$ENDIF}
+{$IFDEF OSX}
+begin
+  result := '';
+end;
+{$ENDIF}
+{$IFDEF LINUX}
+begin
+  result := '';
+end;
+{$ENDIF}
 
 Function SystemPlatform: String;
+{$IFDEF LINUX}
+var
+  ts : TStringList;
+{$ENDIF}
 Begin
   {$IFDEF WINDOWS}
   Case gOSInfo.dwPlatformId Of
@@ -4186,7 +4171,18 @@ Begin
 
   Result := Result + StringFormat(' [%d.%d.%d]', [gOSInfo.dwMajorVersion, gOSInfo.dwMinorVersion, gOSInfo.dwBuildNumber]);
   {$ELSE}
-  Result := 'OSX';
+    {$IFDEF OSX}
+    Result := 'OSX';
+    {$ELSE}
+    // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
+    ts := TStringList.create;
+    try
+      ts.text := FileToString('/etc/os-release', TEncoding.UTF8);
+      result := ts.Values['NAME']+' v'+ts.Values['VERSION'];
+    finally
+      ts.free;
+    end;
+    {$ENDIF}
   {$ENDIF}
 End;
 
@@ -4239,33 +4235,48 @@ Begin
 End;
 {$ENDIF}
 
+Function SystemMemory : TSystemMemory;
 {$IFDEF WINDOWS}
 {$IFDEF CPUx86}
-Function SystemMemory : TSystemMemory;
+var
+  mem : Windows.MEMORYSTATUS;
 Begin
-  FillChar(Result, SizeOf(Result), 0);
-  Result.{$IFDEF FPC}dwLength{$ELSE}Length{$ENDIF} := SizeOf(Result);
-
-  GlobalMemoryStatus(TMemoryStatus(Result));
+  FillChar(mem, SizeOf(mem), 0);
+  mem.dwLength := SizeOf(mem);
+  GlobalMemoryStatus(mem);
+  result.physicalMem := mem.dwTotalPhys;
+  result.virtualMem := mem.dwTotalVirtual;
 End;
 {$ELSE}
-  {$IFDEF CPUx64}
-Function SystemMemory : TSystemMemory;
+var
+  mem : Windows.MEMORYSTATUSEX;
 Begin
-  FillChar(Result, SizeOf(Result), 0);
-  {$IFDEF FPC}
-  GlobalMemoryStatus(Result);
-  {$ELSE}
-  GlobalMemoryStatusEx(TMemoryStatusEx(Result));
-  {$ENDIF}
+  FillChar(mem, SizeOf(mem), 0);
+  mem.dwLength := SizeOf(mem);
+  GlobalMemoryStatusEx(mem);
+  result.physicalMem := mem.ullTotalPhys;
+  result.virtualMem := mem.ullTotalVirtual;
 End;
-  {$ENDIF}
 {$ENDIF}
 {$ENDIF}
-
-{$IFDEF WINDOWS}
+{$IFDEF LINUX}
+var
+  si : TSysInfo;
+begin
+  Linux.SysInfo(@si);
+  result.physicalMem := si.totalram;
+  result.virtualMem := si.totalhigh;
+end;
+{$ENDIF}
+{$IFDEF OSX}
+begin
+  result.physicalMem := 0;
+  result.virtualMem := 0;
+end;
+{$ENDIF}
 
 Function SystemName : String;
+{$IFDEF WINDOWS}
 Var
   aBuffer : Array[0..255] Of Char;
   iLength : Cardinal;
@@ -4276,6 +4287,37 @@ Begin
 
   Result := aBuffer;
 End;
+{$ENDIF}
+{$IFDEF OSX}
+Begin
+  Result := 'TODO';
+End;
+{$ENDIF}
+{$IFDEF LINUX}
+Begin
+  Result := GetHostName;
+End;
+{$ENDIF}
+
+Function SystemProcessorName : String;
+{$IFDEF WINDOWS}
+Begin
+  Result := SystemCentralProcessorStringRegistryValue('ProcessorNameString');
+End;
+{$ENDIF}
+{$IFDEF OSX}
+Begin
+  Result := '';
+End;
+{$ENDIF}
+{$IFDEF LINUX}
+Begin
+  Result := '';
+End;
+{$ENDIF}
+
+
+{$IFDEF WINDOWS}
 
 
 Function SystemBootStatus: String;
@@ -4385,11 +4427,6 @@ Begin
   End;
 
   SetLength(Result, iLength);
-End;
-
-Function SystemProcessorName : String;
-Begin
-  Result := SystemCentralProcessorStringRegistryValue('ProcessorNameString');
 End;
 
 Function ProcessName : String;
