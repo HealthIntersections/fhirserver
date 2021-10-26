@@ -687,7 +687,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
+      <Filename Value="..\exec\64\fhirserver"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>

@@ -4189,21 +4189,21 @@ begin
   end;
 end;
 {$ELSE}
-{$IFDEF LINUX}
 var
   ts : TStringList;
+begin
+  // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
+  ts := TStringList.create;
+  try
+    ts.text := FileToString('/etc/os-release', TEncoding.UTF8);
+    result := ts.Values['NAME']+' v'+ts.Values['VERSION'];
+  finally
+    ts.free;
+  end;
+end;
 {$ENDIF}
-    // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
-    ts := TStringList.create;
-    try
-      ts.text := FileToString('/etc/os-release', TEncoding.UTF8);
-      result := ts.Values['NAME']+' v'+ts.Values['VERSION'];
-    finally
-      ts.free;
-    end;
-    End;
-    {$ENDIF}
-  {$ENDIF}
+{$ENDIF}
+
 
 {$IFDEF WINDOWS}
 Function SystemTimezone : String;
