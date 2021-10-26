@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.403 2021-10-26</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.403.exe</link>
+			<description>2021-10-26 (v1.0.403): remove javascript support for stability</description>
+		</item>
+<item><title>FHIRServer release 1.0.402 2021-10-25</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.402.exe</link>
+			<description>2021-10-25 (v1.0.402): More reverse proxy support</description>
+		</item>
 		<item><title>FHIRServer release 1.0.401 2021-10-23</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.401.exe</link>
 			<description>2021-10-23 (v1.0.401): reverse proxy support</description>
 		</item>
-<item><title>FHIRServer release 1.0.396 2021-10-16</title>
+		<item><title>FHIRServer release 1.0.396 2021-10-16</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.396.exe</link>
 			<description>2021-10-16 (v1.0.396): reduce frequency of email from package_spider</description>
 		</item>
