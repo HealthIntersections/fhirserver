@@ -38,7 +38,6 @@ uses
   fdb_manager,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
-  {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
 
   ftx_service, ftx_sct_services,
 
@@ -52,7 +51,7 @@ uses
   fhir_indexing, search_base, database_installer,
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
-  utilities, security, indexing, server_factory, subscriptions,
+  utilities, security, indexing, server_factory, subscriptions, time_tracker,
   telnet_server,
   web_server, web_base, endpoint, endpoint_storage;
 
@@ -648,6 +647,7 @@ var
   oplist : TStringList;
   s : String;
   i : integer;
+  tt : TTimeTracker;
 begin
   opList := TStringList.create;
   try
@@ -657,6 +657,7 @@ begin
       begin
         req := factory.wrapBundle(request.resource.Link);
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
+        tt := TTimeTracker.create;
         try
           resp.type_ := btBatchResponse;
           resp.id := NewGuidId;
@@ -681,7 +682,7 @@ begin
                 request.IfMatch := src.requestIfMatch;
                 request.IfNoneExist := src.requestIfNoneExist;
                 request.resource := src.resource.link;
-                s := Execute(context, request, response);
+                s := Execute(context, request, response, tt);
                 if s.contains('#') then
                   s := s.substring(0, s.indexof('#'));
                 i := oplist.IndexOf(s);
@@ -720,6 +721,7 @@ begin
         finally
           req.free;
           resp.free;
+          tt.free;
         end;
       end;
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);

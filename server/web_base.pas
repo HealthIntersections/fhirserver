@@ -38,7 +38,7 @@ uses
   IdContext, IdCustomHTTPServer,
   fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
   fhir_objects,
-  session, {$IFNDEF NO_JS} server_javascript, {$ENDIF}
+  session,
   storage,
   web_source, web_event, web_cache, analytics;
 
@@ -93,9 +93,6 @@ type
     FGoogle : TGoogleAnalyticsProvider;
     FStats : TFHIRWebServerStats;
     FLock: TFslLock;
-    {$IFNDEF NO_JS}
-    FOnRegisterJs: TRegisterJavascriptEvent;
-    {$ENDIF}
     FCache: THTTPCacheManager;
     FStatedPort: word;
     FWorkingSSLPort: word;
@@ -128,10 +125,6 @@ type
     Property Stats : TFHIRWebServerStats read FStats;
     property Lock : TFslLock read FLock;
     property cache : THTTPCacheManager read FCache write SetCache;
-
-    {$IFNDEF NO_JS}
-    property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
-    {$ENDIF}
   end;
 
   TFHIRWebServerBase = class (TFslObject)

@@ -39,8 +39,7 @@ Uses
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager,
-  {$IFNDEF NO_JS} server_javascript, {$ENDIF}
-  web_event, web_base, web_cache;
+  web_event, web_base, web_cache, time_tracker;
 
 type
   TFHIRWebServerClientInfo = class(TFslObject)
@@ -108,8 +107,8 @@ type
     property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;
     property OnProcessFile : TWebProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; virtual; abstract;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; virtual; abstract;
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; virtual; abstract;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; virtual; abstract;
     function description : string; virtual; abstract;
   end;
 
@@ -123,9 +122,6 @@ type
     FConfig : TFHIRServerConfigSection;
     FSettings : TFHIRServerSettings;
     FTerminologies : TCommonTerminologies;
-    {$IFNDEF NO_JS}
-    FOnRegisterJs: TRegisterJavascriptEvent;
-    {$ENDIF}
     FWebEndPoint : TFhirWebServerEndpoint;
   protected
     FPcm : TFHIRPackageManager;
@@ -139,9 +135,6 @@ type
     property Settings : TFHIRServerSettings read FSettings;
     property Terminologies : TCommonTerminologies read FTerminologies;
     property WebEndPoint : TFhirWebServerEndpoint read FWebEndPoint write FWebEndPoint;
-    {$IFNDEF NO_JS}
-    property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
-    {$ENDIF}
 
     function summary : String; virtual; abstract;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;

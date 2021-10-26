@@ -43,7 +43,7 @@ uses
   ftx_loinc_services, ftx_loinc_publisher,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server,
+  tx_manager, telnet_server, time_tracker,
   web_base, endpoint;
 
 type
@@ -58,8 +58,8 @@ type
     function link : TLoincWebServer; overload;
     function description : String; override;
 
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
     function logId : string; override;
   end;
 
@@ -260,7 +260,7 @@ begin
   result := 'LN';
 end;
 
-function TLoincWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;
+function TLoincWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
 begin
   result := doRequest(AContext, request, response, id, false);
 end;
@@ -279,7 +279,7 @@ begin
   end;
 end;
 
-function TLoincWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String): String;
+function TLoincWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
   result := doRequest(AContext, request, response, id, true);
 end;

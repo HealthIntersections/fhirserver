@@ -46,8 +46,7 @@ uses
   fdb_manager,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
-  {$IFNDEF NO_JS} server_javascript, {$ENDIF}
-  tx_manager, tx_webserver, telnet_server,
+  tx_manager, tx_webserver, telnet_server, time_tracker,
   web_base, web_cache, endpoint;
 
 type
@@ -145,7 +144,7 @@ type
 
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
+    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
     procedure ReturnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
@@ -156,7 +155,7 @@ type
     function readVersion(mt : String) : TFHIRVersion;
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
-      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
+      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker): TFHIRRequest;
     Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
@@ -183,11 +182,10 @@ type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); virtual; abstract;
     Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; virtual; abstract;
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; virtual; abstract;
-    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
+    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
     function processContent(path: String; secure : boolean; title, content : String) : String;
-    procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
 
     function AutoCache : boolean; virtual;
@@ -206,8 +204,8 @@ type
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     procedure CheckAsyncTasks;
 
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
   TStorageEndPoint = class abstract (TFHIRServerEndPoint)
@@ -481,6 +479,7 @@ var
   req : TFHIRRequest;
   resp : TFHIRResponse;
   dummy : integer;
+  tt : TTimeTracker;
   l, r : String;
 begin
   ctxt := TOperationContext.Create(opmInternal);
@@ -497,12 +496,14 @@ begin
       req.resource := resource.link;
 
       resp := TFHIRResponse.Create(FEndPoint.Context.ValidatorContext.link);
+      tt := TTimeTracker.Create;
       try
-        FEndPoint.ProcessRequest(ctxt, req, resp);
+        FEndPoint.ProcessRequest(ctxt, req, resp, tt);
         result := resp.Resource.link;
         if resp.HTTPCode >= 300 then
           raise EFslException.Create(FEndPoint.Context.Factory.getXhtml(result).AsPlainText);
       finally
+        tt.free;
         resp.free;
       end;
     finally
@@ -561,18 +562,13 @@ var
   t: UInt64;
   us, cs: String;
   ctxt : TOperationContext;
+  tt : TTimeTracker;
 begin
   t := 0;
 
   SetThreadName('Server Async Thread');
   SetThreadStatus('Working');
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  {$ENDIF}
   try
-    {$IFNDEF NO_JS}
-    FServer.Common.OnRegisterJs(self, GJsHost);
-    {$ENDIF}
     status(atsWaiting, 'Waiting to start');
     sleep(100);
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);
@@ -591,22 +587,27 @@ begin
       status(atsProcessing, 'Processing');
       Logging.log('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
       op := FServer.Context.Storage.createOperationContext(request.lang);
+      tt := TTimeTracker.Create;
       try
-        op.OnPopulateConformance := FServer.PopulateConformance;
-        op.OnCreateBuilder := doGetBundleBuilder;
-        ctxt := TOperationContext.create(opmRestful, ollNone);
         try
-          op.Execute(ctxt, request, response);
-        finally
-          ctxt.Free;
+          op.OnPopulateConformance := FServer.PopulateConformance;
+          op.OnCreateBuilder := doGetBundleBuilder;
+          ctxt := TOperationContext.create(opmRestful, ollNone);
+          try
+            op.Execute(ctxt, request, response, tt);
+          finally
+            ctxt.Free;
+          end;
+          FServer.Context.Storage.yield(op, nil);
+        except
+          on e: exception do
+          begin
+            FServer.Context.Storage.yield(op, e);
+            raise;
+          end;
         end;
-        FServer.Context.Storage.yield(op, nil);
-      except
-        on e: exception do
-        begin
-          FServer.Context.Storage.yield(op, e);
-          raise;
-        end;
+      finally
+        tt.Free;
       end;
       details;
       saveOutcome(response);
@@ -629,10 +630,6 @@ begin
   finally
     FServer.Common.Lock.Unlock;
   end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
   SetThreadStatus('Done');
 end;
 
@@ -776,7 +773,7 @@ begin
   FTerminologyWebServer := Value;
 end;
 
-function TStorageWebEndpoint.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
+function TStorageWebEndpoint.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
 var
   Session: TFHIRSession;
   c: integer;
@@ -839,7 +836,7 @@ begin
     end
     else if request.Document.StartsWith(PathWithSlash, false) then
     begin
-      result := HandleRequest(AContext, request, response, false, false, PathWithSlash, id, Session, nil);
+      result := HandleRequest(AContext, request, response, false, false, PathWithSlash, id, Session, nil, tt);
     end
     else
     // todo: extensions go here
@@ -907,7 +904,7 @@ begin
   end;
 end;
 
-function TStorageWebEndpoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String;
+function TStorageWebEndpoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String;
 var
   Session: TFHIRSession;
   check: boolean;
@@ -983,7 +980,7 @@ begin
       returnFile(request, response, session, 'jwks.json', ServerContext.JWTServices.CardJWKSFile, false);
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
-      result := HandleRequest(AContext, request, response, true, FAuthServer <> nil, PathNoSlash, id, Session, cert)
+      result := HandleRequest(AContext, request, response, true, FAuthServer <> nil, PathNoSlash, id, Session, cert, tt)
     else if OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([PathNoSlash, OWIN_TOKEN_PATH]))) then
     begin
       response.ResponseNo := 401;
@@ -993,7 +990,7 @@ begin
       result := 'Unauthorized';
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
-      result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, session, cert)
+      result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, session, cert, tt)
     else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestVersion(request.Document) then
       result := TerminologyWebServer.ProcessVersion(AContext, request, Session, response, true)
     else if request.Document = PathNoSlash then
@@ -1126,7 +1123,7 @@ begin
   end;
 end;
 
-function TStorageWebEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
+function TStorageWebEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
 var
   sHost, sRawHost, token, url: string;
   oRequest: TFHIRRequest;
@@ -1153,6 +1150,7 @@ var
   cache : boolean;
   start : UInt64;
 Begin
+//  tt.track('req');
   start := GetTickCount64;
   result := '??';
   noErrCode := false;
@@ -1237,7 +1235,7 @@ Begin
                 oRequest := BuildRequest(lang, path, sHost, sRawHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
                   request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
                   request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
-                  esession, cert);
+                  esession, cert, tt);
                 try
                   oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
                   oRequest.internalRequestId := logId;
@@ -1254,11 +1252,6 @@ Begin
                     StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['_nohttperr']);
                   ReadTags(request.RawHeaders.Values['Category'], oRequest);
                   Session := oRequest.Session.link;
-
-                  // allow scripting to change anything about the request
-                  {$IFNDEF NO_JS}
-                  GJsHost.previewRequest(Session, oRequest);
-                  {$ENDIF}
 
                   if redirect then
                   begin
@@ -1341,12 +1334,13 @@ Begin
                         if AutoCache then
                           Context.CacheResponse := true;
                         Context.mode := mode;
-                        checkRequestByJs(context, oRequest);
+
                         if (oRequest.CommandType = fcmdOperation) then
                           Common.Google.recordEvent(request.Document, '$'+oRequest.OperationName, oRequest.Session.UserName, request.RemoteIP, request.UserAgent)
                         else
                           Common.Google.recordEvent(request.Document, CODES_TFHIRCommandType[oRequest.CommandType], oRequest.Session.UserName, request.RemoteIP, request.UserAgent);
 
+//                        tt.track('pr4');
                         if oRequest.CommandType = fcmdWebUI then
                         begin
                           result := 'Web Request';
@@ -1357,7 +1351,7 @@ Begin
                         else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters['_async'] = 'true') then
                           result := ProcessAsyncRequest(Context, oRequest, oResponse)
                         else
-                          result := ProcessRequest(Context, oRequest, oResponse);
+                          result := ProcessRequest(Context, oRequest, oResponse, tt);
                         cache := context.CacheResponse;
                       finally
                         Context.Free;
@@ -1381,7 +1375,9 @@ Begin
                     end;
                     cacheResponse(response, oResponse.CacheControl);
                     self.Context.Storage.RecordExchange(oRequest, oResponse, nil);
+//                    tt.track('poi');
                     ProcessOutput(start, oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
+//                     tt.track('poo');
                     // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                     // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                     if oResponse.versionId <> '' then
@@ -1626,7 +1622,7 @@ begin
     self.Context.SessionManager.EndSession(Session.Cookie, ip);
 end;
 
-function TStorageWebEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
+function TStorageWebEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 var
   op: TFHIROperationEngine;
   t: UInt64;
@@ -1636,12 +1632,11 @@ begin
   t := GetTickCount64;
   if request.internalRequestId = '' then
     request.internalRequestId := self.Context.Globals.nextRequestId;
-
   op := self.Context.Storage.createOperationContext(request.lang);
   try
     op.OnPopulateConformance := PopulateConformance;
     op.OnCreateBuilder := doGetBundleBuilder;
-    result := op.Execute(Context, request, response);
+    result := op.Execute(Context, request, response, tt);
     self.Context.Storage.yield(op, nil);
   except
     on e: exception do
@@ -1675,7 +1670,7 @@ end;
 
 Function TStorageWebEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
   sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
-  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509)
+  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker)
   : TFHIRRequest;
 Var
   sURL, Msg: String;
@@ -1688,7 +1683,6 @@ Var
   bundle: TFHIRBundleW;
   b : TBytes;
 Begin
-
   relativeReferenceAdjustment := 0;
   oRequest := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   try
@@ -2479,11 +2473,6 @@ end;
 function TStorageWebEndpoint.buildSessionsTable: String;
 begin
   result := self.Context.SessionManager.buildTable;
-end;
-
-procedure TStorageWebEndpoint.checkRequestByJs(context: TOperationContext; request: TFHIRRequest);
-begin
-  // js-todo - figure out which scripts to run, and then run them
 end;
 
 function TStorageWebEndpoint.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;

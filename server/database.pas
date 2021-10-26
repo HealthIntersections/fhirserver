@@ -45,9 +45,8 @@ uses
   fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
   fsl_scim, scim_server,
-  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder,
+  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker,
   closuremanager, graph_definition, tags, utilities,
-  {$IFNDEF NO_JS}server_javascript,{$ENDIF}
   database_installer, mpi_search, server_context, storage, server_constants;
 
 const
@@ -208,7 +207,7 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
-    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
 
     procedure registerOperations; virtual; abstract;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); virtual; abstract;
@@ -811,17 +810,6 @@ begin
           begin
             checkProposedContent(request.Session, request, request.Resource, tags);
             Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-            {$IFNDEF NO_JS}
-            if GJsHost.HasScripts(ttDataAdded, request.ResourceName) then
-            begin
-              client := createClient(request.Lang, request.Session);
-              try
-                GJsHost.checkChanges(ttDataAdded, request.Session, nil, request.Resource, client);
-              finally
-                client.Free;
-              end;
-            end;
-           {$ENDIF}
             result := sId;
             request.id := sId;
             key := Repository.NextVersionKey;
@@ -984,22 +972,6 @@ begin
 
         checkProposedDeletion(request.session, request, request.Resource, tags);
         Repository.checkDropResource(request.session, request, request.Resource, tags);
-        {$IFNDEF NO_JS}
-        if GJsHost.HasScripts(ttDataRemoved, request.ResourceName) then
-        begin
-          current := loadResourceVersion(versionKey, true);
-          try
-            client := createClient(request.Lang, request.Session);
-            try
-              GJsHost.checkChanges(ttDataRemoved, request.Session, current, nil, client);
-            finally
-              client.Free;
-            end;
-          finally
-            current.Free;
-          end;
-        end;
-        {$ENDIF}
 
         for i := 0 to tags.count - 1 do
           Repository.RegisterTag(tags[i], FConnection);
@@ -2161,22 +2133,6 @@ begin
 
           checkProposedContent(request.session, request, request.Resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-          {$IFNDEF  NO_JS}
-          if GJsHost.HasScripts(ttDataModified, request.ResourceName) then
-          begin
-            current := loadResourceVersion(versionKey, true);
-            try
-              client := createClient(request.Lang, request.Session);
-              try
-                GJsHost.checkChanges(ttDataModified, request.Session, current, request.Resource, client);
-              finally
-                client.Free;
-              end;
-            finally
-              current.Free;
-            end;
-          end;
-          {$ENDIF}
 
           for i := 0 to tags.count - 1 do
             Repository.RegisterTag(tags[i], FConnection);
@@ -2464,22 +2420,6 @@ begin
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request.session, request, request.resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-          {$IFNDEF NO_JS}
-          if GJsHost.HasScripts(ttDataModified, request.ResourceName) then
-          begin
-            current := loadResourceVersion(versionKey, true);
-            try
-              client := createClient(request.Lang, request.Session);
-              try
-                GJsHost.checkChanges(ttDataModified, request.Session, current, request.Resource, client);
-              finally
-                client.Free;
-              end;
-            finally
-              current.Free;
-            end;
-          end;
-          {$ENDIF}
 
           for i := 0 to tags.count - 1 do
             Repository.RegisterTag(tags[i], FConnection);
@@ -3905,10 +3845,12 @@ var
   mem : TFslMemoryStream;
   comp : TFHIRComposer;
   m : TVCLStream;
+  tt : TTimeTracker;
 begin
   try
     req := factory.wrapBundle(request.resource.Link);
     resp := factory.wrapBundle(factory.makeResource('Bundle'));
+    tt := TTimeTracker.Create;
     try
       resp.type_ := btBatchResponse;
       resp.id := NewGuidId;
@@ -3953,7 +3895,7 @@ begin
               mem.Free;
             end;
           end;
-          Execute(context, request, response);
+          Execute(context, request, response, tt);
           dest.responseStatus := inttostr(response.HTTPCode);
           dest.responseLocation := response.Location;
           dest.responseEtag := 'W/'+response.versionId;
@@ -3979,6 +3921,7 @@ begin
     finally
       req.free;
       resp.free;
+      tt.free;
     end;
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
   except
@@ -3991,7 +3934,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
+function TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
   if request.OperationName = 'graphql' then
   begin
@@ -4000,7 +3943,7 @@ begin
   end
   else
   begin
-    result := inherited ExecuteOperation(context, request, response);
+    result := inherited ExecuteOperation(context, request, response, tt);
     if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
     begin
       processGraphQL(request.Parameters['_graphql'], request, response);
@@ -4891,6 +4834,7 @@ var
   request: TFHIRRequest;
   response : TFHIRResponse;
   context : TOperationContext;
+  tt : TTimeTracker;
 begin
   CreateIndexer;
   context := TOperationContext.create;
@@ -4899,6 +4843,7 @@ begin
     // cut us off from the external request
     request := TFHIRRequest.create(ServerContext.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
     response := TFHIRResponse.create(ServerContext.ValidatorContext.link);
+    tt := TTimeTracker.create;
     try
       for i := 0 to list.count - 1 do
       begin
@@ -4919,9 +4864,10 @@ begin
         if list[i].Resource.Tag <> nil then
           request.lastModifiedDate := TFslDateTimeWrapper(list[i].Resource.Tag).Value.DateTime;
         request.Session := list[i].Session.Link;
-        Execute(context, request, response);
+        Execute(context, request, response, tt);
       end;
     finally
+      tt.Free;
       response.Free;
       request.free;
     end;
@@ -5800,6 +5746,7 @@ procedure TFHIRNativeStorageService.DoExecuteOperation(request: TFHIRRequest; re
 var
   storage: TFHIRNativeOperationEngine;
   context : TOperationContext;
+  tt : TTimeTracker;
 begin
   if bWantSession then
     request.session := ServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.Globals.OwnerName, 'subscripion manager', systemInternal, true, false);
@@ -5809,7 +5756,12 @@ begin
     try
       storage.Connection.StartTransact;
       try
-        storage.Execute(context, request, response);
+        tt := TTimeTracker.create;
+        try
+          storage.Execute(context, request, response, tt);
+        finally
+          tt.Free;
+        end;
         storage.Connection.Commit;
         storage.Connection.Release;
       except

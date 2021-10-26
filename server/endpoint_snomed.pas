@@ -40,7 +40,7 @@ uses
   ftx_service, ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server,
+  tx_manager, telnet_server, time_tracker,
   web_base, endpoint;
 
 type
@@ -58,8 +58,8 @@ type
     function logId : string; override;
 
     function description : String; override;
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
   TSnomedWebEndPoint = class (TFHIRServerEndPoint)
@@ -309,7 +309,7 @@ begin
   result := 'SN';
 end;
 
-function TSnomedWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;
+function TSnomedWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
 begin
   result := doRequest(AContext, request, response, id, false);
 end;
@@ -328,7 +328,7 @@ begin
   end;
 end;
 
-function TSnomedWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String): String;
+function TSnomedWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
   result := doRequest(AContext, request, response, id, true);
 end;

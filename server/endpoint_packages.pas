@@ -42,7 +42,7 @@ uses
 
   server_config, utilities,
   database_installer, telnet_server,
-  tx_manager,
+  tx_manager, time_tracker,
   web_event, web_base, endpoint, session;
 
 type
@@ -106,8 +106,8 @@ type
     property scanning : boolean read FScanning write SetScanning;
     property SystemToken : String read FSystemToken write FSystemToken;
 
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
     function logId : string; override;
   end;
 
@@ -1135,7 +1135,7 @@ begin
   end;
 end;
 
-function TFHIRPackageWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
+function TFHIRPackageWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
 begin
   result := doRequest(AContext, request, response, id, false);
 end;
@@ -1279,7 +1279,7 @@ begin
   end;
 end;
 
-function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String): String;
+function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
   result := doRequest(AContext, request, response, id, true);
 end;

@@ -39,8 +39,7 @@ uses
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
   subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine,
-  client_cache_manager
-  {$IFNDEF NO_JS}, server_javascript {$ENDIF};
+  client_cache_manager;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -92,9 +91,6 @@ Type
     FSessionManager : TFHIRSessionManager;
     FTagManager : TFHIRTagManager;
     FNamingSystems : TFslMap<TFHIRNamingSystemW>;
-    {$IFNDEF NO_JS}
-    FEventScriptRegistry : TEventScriptRegistry;
-    {$ENDIF}
     FMaps : TFslMap<TFHIRStructureMapW>;
     FSystemId: String;
 
@@ -147,9 +143,6 @@ Type
     property ConsentEngine : TFHIRConsentEngine read FConsentEngine write SetConsentEngine;
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
-    {$IFNDEF NO_JS}
-    property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
-    {$ENDIF}
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
     property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
@@ -409,9 +402,6 @@ begin
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
   FTagManager := TFHIRTagManager.create(storage.Factory.link);
   FNamingSystems := TFslMap<TFHIRNamingSystemW>.create('naming');
-  {$IFNDEF NO_JS}
-  FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
-  {$ENDIF}
   FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
   FClientCacheManager := TClientCacheManager.Create;
 
@@ -426,9 +416,6 @@ begin
   FConsentEngine.Free;
   FGlobals.Free;
   FMaps.Free;
-  {$IFNDEF NO_JS}
-  FEventScriptRegistry.Free;
-  {$ENDIF}
   FJWTServices.Free;
   FNamingSystems.Free;
   FTagManager.Free;

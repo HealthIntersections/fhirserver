@@ -45,7 +45,6 @@ uses
   fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_xhtml, fhir_cdshooks,
-  {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
 
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_context, fhir3_context, fhir4_context, fhir5_context,
@@ -55,7 +54,6 @@ uses
   operations_r2, operations_r3, operations_r4, operations_r5,
   fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
   validator_r2, validator_r3, validator_r4, validator_r5,
-  {$IFNDEF NO_JS} fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript, {$ENDIF}
   fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
 
   fdb_manager,
@@ -64,8 +62,7 @@ uses
   scim_server, telnet_server, session, security, jwt,
   database_installer, server_version, server_config, utilities, bundlebuilder, html_builder, server_constants,
   server_context, auth_manager,
-  {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  storage, database,
+  storage, database, time_tracker,
   server_factory, indexing, subscriptions,
   web_base, endpoint, endpoint_storage;
 
@@ -359,11 +356,6 @@ end;
 
 procedure TFhirServerSubscriptionThread.Initialise;
 begin
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  FServer.OnRegisterJs(self, GJsHost);
-  {$ENDIF}
-//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   TimePeriod := 1000;
 end;
 
@@ -380,10 +372,6 @@ begin
       FServer.FSubscriptionThread := nil;
   except
   end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
 end;
 
 { TFhirServerEmailThread }
@@ -395,11 +383,6 @@ end;
 
 procedure TFhirServerEmailThread.Initialise;
 begin
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  FServer.OnRegisterJs(self, GJsHost);
-  {$ENDIF}
-//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   Logging.log('Starting TFhirServerEmailThread');
   TimePeriod := 60000;
 end;
@@ -417,10 +400,6 @@ begin
       FServer.FEmailThread := nil;
   except
   end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
 end;
 
 { TFHIRServerThread }
@@ -479,6 +458,7 @@ var
   Context: TOperationContext;
   op: TFHIROperationEngine;
   t: UInt64;
+  tt : TTimeTracker;
 begin
   Context := TOperationContext.Create(mode, logLevel);
   try
@@ -494,13 +474,14 @@ begin
 
       // GJSHost.registry := FContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create(FServerContext.ValidatorContext.link);
+      tt := TTimeTracker.create;
       try
         t := GetTickCount64;
         req.internalRequestId := FServerContext.Globals.nextRequestId;
         op := FStore.createOperationContext(req.lang);
         try
           op.OnCreateBuilder := doGetBundleBuilder;
-          op.Execute(Context, req, resp);
+          op.Execute(Context, req, resp, tt);
           FStore.yield(op, nil);
         except
           on e: exception do
@@ -511,6 +492,7 @@ begin
         end;
         Logging.log('Upload took '+inttostr((GetTickCount64 - t) div 1000)+' seconds');
       finally
+        tt.free;
         resp.Free;
       end;
     finally
@@ -1202,21 +1184,23 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
   Context: TOperationContext;
+  tt : TTimeTracker;
 begin
   request := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   Context := TOperationContext.Create;
   try
     response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
+    tt := TTimeTracker.Create;
     try
       request.Session := Session.link;
       request.ResourceName := rtype;
       request.lang := lang;
       request.LoadParams(params);
       request.CommandType := fcmdSearch;
-      checkRequestByJs(context, request);
-      ProcessRequest(Context, request, response);
+      ProcessRequest(Context, request, response, tt);
       result := factory.wrapBundle(response.resource.link);
     finally
+      tt.Free;
       response.Free;
       request.Free;
     end;
@@ -1458,6 +1442,7 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
   Context: TOperationContext;
+  tt : TTimeTracker;
 begin
   request := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
@@ -1480,10 +1465,11 @@ begin
       request.SubId := ver;
     end;
     Context := TOperationContext.Create;
+    tt := TTimeTracker.create;
     try
-      checkRequestByJs(context, request);
-      ProcessRequest(Context, request, response);
+      ProcessRequest(Context, request, response, tt);
     finally
+      tt.Free;
       Context.Free;
     end;
     if response.resource <> nil then
@@ -1625,6 +1611,7 @@ var
   p: THTTPParameters;
   prsr: TFHIRParser;
   Context: TOperationContext;
+  tt : TTimeTracker;
 begin
   StringSplit(request.id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1645,11 +1632,11 @@ begin
       try
         s := p['source'];
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
+        tt := TTimeTracker.create;
         try
           prsr.Parse;
           request.resource := prsr.resource.link;
-          checkRequestByJs(context, request);
-          ProcessRequest(Context, request, response);
+          ProcessRequest(Context, request, response, tt);
           if response.HTTPCode < 300 then
           begin
             response.HTTPCode := 303;
@@ -1657,6 +1644,7 @@ begin
           end;
         finally
           prsr.Source.Free;
+          tt.Free;
         end;
       finally
         prsr.Free;
