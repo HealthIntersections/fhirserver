@@ -144,7 +144,6 @@ unit IdThread;
   -TIdThreadOptions
 }
 
-
 interface
 
 {$I IdCompilerDefines.inc}
@@ -175,8 +174,8 @@ interface
 {$ENDIF}
 
 uses
-  SysUtils, Types, Classes,
-  IdGlobal, IdException, IdYarn, IdTask, IdThreadSafe;
+  Classes,
+  IdGlobal, IdException, IdYarn, IdTask, IdThreadSafe, SysUtils;
 
 const
   IdWaitAllThreadsTerminatedCount = 1 * 60 * 1000;
@@ -248,7 +247,9 @@ type
     procedure Start; {$IFDEF DEPRECATED_TThread_SuspendResume}reintroduce;{$ENDIF} virtual;
     procedure Stop; virtual;
     procedure Synchronize(Method: TThreadMethod); overload;
-//BGO:TODO    procedure Synchronize(Method: TMethod); overload;
+    {$IFDEF HAS_TThreadProcedure}
+    procedure Synchronize(Method: TThreadProcedure); overload;
+    {$ENDIF}
     // Here to make virtual
     procedure Terminate; virtual;
     procedure TerminateAndWaitFor; virtual;
@@ -309,7 +310,7 @@ var
   // finalization can run and thus when the finalization accesses GThreadCount
   // in TerminateAll an error occurs. Moving this declaration to the interface
   // "fixes" it.
-  GThreadCount: TIdThreadSafeInteger = nil;
+  GThreadCount: TIdThreadSafeInteger = nil{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
 
 // FHIR Server Additions
 type
@@ -335,6 +336,7 @@ uses
   {$ENDIF}
   {$IFDEF VCL_XE3_OR_ABOVE}
   System.SyncObjs,
+  System.Types,
   {$ENDIF}
   {$IFDEF PLATFORM_CLEANUP_NEEDED}
     {$IFDEF MACOS}
@@ -718,11 +720,13 @@ procedure TIdThread.Synchronize(Method: TThreadMethod);
 begin
   inherited Synchronize(Method);
 end;
-//BGO:TODO
-//procedure TIdThread.Synchronize(Method: TMethod);
-//begin
-//  inherited Synchronize(TThreadMethod(Method));
-//end;
+
+{$IFDEF HAS_TThreadProcedure}
+procedure TIdThread.Synchronize(Method: TThreadProcedure);
+begin
+  inherited Synchronize(Method);
+end;
+{$ENDIF}
 
 { TIdThreadWithTask }
 

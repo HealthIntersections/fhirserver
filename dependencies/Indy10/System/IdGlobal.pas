@@ -551,6 +551,7 @@ uses
       BaseUnix, Unix, Sockets, UnixType, 
       {$ENDIF}
       {$IFDEF USE_ICONV_ENC}iconvenc, {$ENDIF}
+      {$IFDEF USE_LCONVENC}LConvEncoding, {$ENDIF}
     {$ENDIF}
     {$IFDEF OSX}
       {$IFNDEF FPC}
@@ -763,9 +764,14 @@ const
   INFINITE = UInt32($FFFFFFFF);     { Infinite timeout }
   {$ENDIF}
 
-  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause, only
-  // in the implementation's 'uses' clause, so map to what DynLibs.NilHandle maps to...
-  IdNilHandle = {$IFDEF FPC}{DynLibs.NilHandle}PtrInt(0){$ELSE}THandle(0){$ENDIF};
+  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause on
+  // all platforms, so map to what DynLibs.NilHandle maps to...
+  {$IFDEF FPC}
+  IdNilHandle = {DynLibs.NilHandle}{$IFDEF WINDOWS}PtrUInt(0){$ELSE}PtrInt(0){$ENDIF};
+  {$ELSE}
+  IdNilHandle = THandle(0);
+  {$ENDIF}
+
   LF = #10;
   CR = #13;
 
@@ -1028,11 +1034,12 @@ type
   // RLebeau 12/1/2018: FPC's System unit defines an HMODULE type as a PtrUInt. But,
   // the DynLibs unit defines its own HModule type that is a TLibHandle, which is a
   // PtrInt instead. And to make matters worse, although FPC's System.THandle is a
-  // platform-dependant type, it is not always defined as 8 bytes on 64bit platforms,
-  // which has been known to cause overflows when dynamic libraries are loaded at
-  // high addresses! (FPC bug?)  So, we can't rely on THandle to hold correct handles
-  // for libraries that we load dynamically at runtime (which is probably why FPC
-  // defines TLibHandle in the first place, but why is it signed instead of unsigned?).
+  // platform-dependant type, it is not always defined as 8 bytes on 64bit platforms
+  // (https://bugs.freepascal.org/view.php?id=21669), which has been known to cause
+  // overflows when dynamic libraries are loaded at high addresses! (FPC bug?)  So,
+  // we can't rely on THandle to hold correct handles for libraries that we load
+  // dynamically at runtime (which is probably why FPC defines TLibHandle in the first
+  // place, but why is it signed instead of unsigned?).
   //
   // Delphi's HMODULE is a System.THandle, which is a NativeUInt, and so is defined
   // with a proper byte size across all 32bit and 64bit platforms.
@@ -1042,9 +1049,23 @@ type
   // signed vs unsigned library handles.  I would prefer to use unsigned everywhere,
   // but we should use what is more natural for each compiler...
 
-  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause, only
-  // in the implementation's 'uses' clause, so map to what DynLibs.TLibHandle maps to...
-  TIdLibHandle = {$IFDEF FPC}{DynLibs.TLibHandle}PtrInt{$ELSE}THandle{$ENDIF};
+  // FPC's DynLibs unit is not included in this unit's interface 'uses' clause on all
+  // platforms, so map to what DynLibs.TLibHandle maps to...
+
+  // RLebeau 4/29/2020: to make metters worse, FPC defines TLibHandle as System.THandle
+  // on Windows, not as PtrInt as previously observed!  And FPC's Windows.GetProcAddress()
+  // uses HINST, which is also defined as System.THandle.  But, as we know from above,
+  // FPC's System.THandle has problems on some 64bit systems! But does that apply on
+  // Windows?  I THINK the latest FPC uses QWord/DWord (aka PtrUInt) for all Windows
+  // platforms, which is good...
+
+  {$IFDEF FPC}
+  // TODO: use the THANDLE_(32|64|CPUBITS) defines in IdCompilerDefines.inc to decide
+  // how to define TIdLibHandle when not using the DynLibs unit?
+  TIdLibHandle = {DynLibs.TLibHandle}{$IFDEF WINDOWS}PtrUInt{$ELSE}PtrInt{$ENDIF};
+  {$ELSE}
+  TIdLibHandle = THandle;
+  {$ENDIF}
 
   { IMPORTANT!!!
 
@@ -1828,11 +1849,9 @@ function IndyMax(const AValueOne, AValueTwo: Int32): Int32; overload;
 function IndyMax(const AValueOne, AValueTwo: UInt16): UInt16; overload;
 function IPv4MakeUInt32InRange(const AInt: Int64; const A256Power: Integer): UInt32;
 function IPv4MakeLongWordInRange(const AInt: Int64; const A256Power: Integer): UInt32; {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use IPv4MakeUInt32InRange()'{$ENDIF};{$ENDIF}
-{$IFNDEF DOTNET}
   {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
 function IndyRegisterExpectedMemoryLeak(AAddress: Pointer): Boolean;
   {$ENDIF}
-{$ENDIF}
 function LoadLibFunction(const ALibHandle: TIdLibHandle; const AProcName: TIdLibFuncName): Pointer;
 {$IFDEF UNIX}
 function HackLoad(const ALibName : String; const ALibVersions : array of String) : TIdLibHandle;
@@ -1844,6 +1863,9 @@ function MemoryPos(const ASubStr: string; MemBuff: PChar; MemorySize: Integer): 
 // then use DateUtils.IncMinutes() when adding the offset to a TDateTime...
 function OffsetFromUTC: TDateTime;
 function UTCOffsetToStr(const AOffset: TDateTime; const AUseGMTStr: Boolean = False): string;
+
+function LocalTimeToUTCTime(const Value: TDateTime): TDateTime;
+function UTCTimeToLocalTime(const Value: TDateTime): TDateTime;
 
 function PosIdx(const ASubStr, AStr: string; AStartPos: UInt32 = 0): UInt32; //For "ignoreCase" use AnsiUpperCase
 function PosInSmallIntArray(const ASearchInt: Int16; const AArray: array of Int16): Integer;
@@ -1920,6 +1942,11 @@ function IndyCheckWindowsVersion(const AMajor: Integer; const AMinor: Integer = 
 // For Nextgen compilers: IdDisposeAndNil calls TObject.DisposeOf() to ensure
 // the object is freed immediately even if it has active references to it,
 // for instance when freeing an Owned component
+
+// Embarcadero changed the signature of FreeAndNil() in 10.4 Denali:
+// procedure FreeAndNil(const [ref] Obj: TObject); inline;
+
+// TODO: Change the signature of IdDisposeAndNil() to match FreeAndNil() in 10.4+...
 procedure IdDisposeAndNil(var Obj); {$IFDEF USE_INLINE}inline;{$ENDIF}
 
 //RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
@@ -2008,7 +2035,17 @@ uses
     {$ENDIF}
   {$ENDIF}
   {$IFDEF USE_LIBC}Libc,{$ENDIF}
-  {$IFDEF HAS_UNIT_DateUtils}DateUtils,{$ENDIF}
+  {$IFDEF HAS_UNIT_DateUtils}
+    // to facilitate inlining
+    {$IFNDEF DOTNET}
+      {$IFNDEF HAS_GetLocalTimeOffset}
+        {$IFDEF HAS_DateUtils_TTimeZone}
+  {$IFDEF VCL_XE2_OR_ABOVE}System.TimeSpan{$ELSE}TimeSpan{$ENDIF},
+        {$ENDIF}
+      {$ENDIF}
+    {$ENDIF}
+  DateUtils,
+  {$ENDIF}
   //do not bring in our IdIconv unit if we are using the libc unit directly.
   {$IFDEF USE_ICONV_UNIT}IdIconv, {$ENDIF}
   IdResourceStrings,
@@ -2306,8 +2343,16 @@ type
     function GetString(const ABytes: PByte; AByteCount: Integer): TIdUnicodeString; overload;
   end;
 
+  {$UNDEF SUPPORTS_CHARSET_ENCODING}
+  {$IFDEF USE_ICONV}
+    {$DEFINE SUPPORTS_CHARSET_ENCODING}
+  {$ENDIF}
+  {$IFDEF USE_LCONVENC}
+    {$DEFINE SUPPORTS_CHARSET_ENCODING}
+  {$ENDIF}
+
   {$UNDEF SUPPORTS_CODEPAGE_ENCODING}
-  {$IFNDEF USE_ICONV}
+  {$IFNDEF SUPPORTS_CHARSET_ENCODING}
     {$IFDEF WINDOWS}
       {$DEFINE SUPPORTS_CODEPAGE_ENCODING}
     {$ENDIF}
@@ -2318,7 +2363,7 @@ type
 
   TIdMBCSEncoding = class(TIdTextEncodingBase)
   private
-    {$IFDEF USE_ICONV}
+    {$IFDEF SUPPORTS_CHARSET_ENCODING}
     FCharSet: String;
     {$ELSE}
       {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
@@ -2329,7 +2374,7 @@ type
     {$ENDIF}
   public
     constructor Create; overload; virtual;
-    {$IFDEF USE_ICONV}
+    {$IFDEF SUPPORTS_CHARSET_ENCODING}
     constructor Create(const CharSet: String); overload; virtual;
     {$ELSE}
       {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
@@ -2810,7 +2855,7 @@ begin
       ], False) <> -1;
 end;
 
-{$IFNDEF USE_ICONV}
+{$IFNDEF SUPPORTS_CHARSET_ENCODING}
   {$IFNDEF HAS_LocaleCharsFromUnicode}
     {$IFDEF WINDOWS}
 {$IFNDEF HAS_PLongBool}
@@ -2828,9 +2873,7 @@ end;
       {$DEFINE HAS_LocaleCharsFromUnicode}
     {$ENDIF}
   {$ENDIF}
-{$ENDIF}
 
-{$IFNDEF USE_ICONV}
   {$IFNDEF HAS_UnicodeFromLocaleChars}
     {$IFDEF WINDOWS}
 function UnicodeFromLocaleChars(CodePage, Flags: Cardinal; LocaleStr: PAnsiChar;
@@ -2849,15 +2892,19 @@ begin
   {$IFDEF USE_ICONV}
   Create(iif(GIdIconvUseLocaleDependantAnsiEncoding, 'char', 'ASCII')); {do not localize}
   {$ELSE}
+    {$IFDEF USE_LCONVENC}
+  Create(GetDefaultTextEncoding());
+    {$ELSE}
     {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
   Create(CP_ACP, 0, 0);
     {$ELSE}
   ToDo('Constructor of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
     {$ENDIF}
  {$ENDIF}
+ {$ENDIF}
 end;
 
-{$IFDEF USE_ICONV}
+{$IFDEF SUPPORTS_CHARSET_ENCODING}
 constructor TIdMBCSEncoding.Create(const CharSet: String);
 const
   // RLebeau: iconv() does not provide a maximum character byte size like
@@ -2879,6 +2926,8 @@ begin
   // codepoint a charset supports, let alone the max bytes needed to encode such
   // a codepoint, so use known values for select charsets, and calculate
   // MaxCharSize dynamically for the rest...
+
+  // TODO: normalize the FCharSet to make comparisons easier...
 
   case PosInStrArray(CharSet, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE', 'UTF-32', 'UTF32', 'UTF-32LE', 'UTF32LE', 'UTF-32BE', 'UTF32BE'], False) of {Do not Localize}
     0, 1: begin
@@ -2939,6 +2988,7 @@ end;
 
 {$IFDEF WINDOWS}
   // TODO: move this into IdCompilerDefines.inc?
+  {$IFNDEF WINCE}
   {$IFDEF DCC}
     {$IFDEF VCL_2009_OR_ABOVE}
       {$DEFINE HAS_GetCPInfoEx}
@@ -2951,6 +3001,7 @@ end;
   {$ENDIF}
 
   {$IFNDEF HAS_GetCPInfoEx}
+// TODO: implement GetCPInfoEx() as a stub that falls back to GetCPInfo() if needed
 type
   TCPInfoEx = record
     MaxCharSize: UINT;                       { max length (bytes) of a char }
@@ -2964,6 +3015,7 @@ type
 function GetCPInfoEx(CodePage: UINT; dwFlags: DWORD; var lpCPInfoEx: TCPInfoEx): BOOL; stdcall; external 'KERNEL32' name {$IFDEF UNICODE}'GetCPInfoExW'{$ELSE}'GetCPInfoExA'{$ENDIF};
   {$ENDIF}
 {$ENDIF}
+{$ENDIF}
 
 constructor TIdMBCSEncoding.Create(CodePage, MBToWCharFlags, WCharToMBFlags: Integer);
 {$IFNDEF WINDOWS}
@@ -2975,7 +3027,7 @@ const
   cValue: array[0..1] of UInt16 = ($DBFF, $DFFF);
 {$ELSE}
 var
-  LCPInfo: TCPInfoEx;
+  LCPInfo: {$IFDEF WINCE}TCPInfo{$ELSE}TCPInfoEx{$ENDIF};
   LError: Boolean;
 {$ENDIF}
 begin
@@ -2985,30 +3037,36 @@ begin
   FMBToWCharFlags := MBToWCharFlags;
   FWCharToMBFlags := WCharToMBFlags;
 
-  {$IFDEF FPC}
+  {$IFDEF FPC} // TODO: do this for Delphi 2009+, too...
   if FCodePage = CP_ACP then begin
     FCodePage := DefaultSystemCodePage;
   end;
   {$ENDIF}
 
   {$IFDEF WINDOWS}
-  LError := not GetCPInfoEx(FCodePage, 0, LCPInfo);
+
+  LError := not {$IFDEF WINCE}GetCPInfo(FCodePage, LCPInfo){$ELSE}GetCPInfoEx(FCodePage, 0, LCPInfo){$ENDIF};
   if LError and (FCodePage = 20127) then begin
     // RLebeau: 20127 is the official codepage for ASCII, but not
     // all OS versions support that codepage, so fallback to 1252
     // or even 437...
-    LError := not GetCPInfoEx(1252, 0, LCPInfo);
+    LError := not {$IFDEF WINCE}GetCPInfo(1252, LCPInfo){$ELSE}GetCPInfoEx(1252, 0, LCPInfo){$ENDIF};
     // just in case...
     if LError then begin
-      LError := not GetCPInfoEx(437, 0, LCPInfo);
+      LError := not {$IFDEF WINCE}GetCPInfo(437, LCPInfo){$ELSE}GetCPInfoEx(437, 0, LCPInfo){$ENDIF};
     end;
   end;
   if LError then begin
     raise EIdException.CreateResFmt(PResStringRec(@RSInvalidCodePage), [FCodePage]);
   end;
+
+  {$IFNDEF WINCE}
   FCodePage := LCPInfo.CodePage;
+  {$ENDIF}
   FMaxCharSize := LCPInfo.MaxCharSize;
+
   {$ELSE}
+
   case FCodePage of
     65000: begin
       FMaxCharSize := 5;
@@ -3034,11 +3092,13 @@ begin
     // FMaxCharSize gets set to 0, preventing any character conversions.  So
     // force FMaxCharSize to 1 if GetByteCount() fails, until a better solution
     // can be found.  Maybe loop through the codepoints until we find the largest
-    // one that is supported by this codepage (though that will take time)...
+    // one that is supported by this codepage (though that will take time). Or
+    // at least implement a lookup table for the more commonly used charsets...
     if FMaxCharSize = 0 then begin
       FMaxCharSize := 1;
     end;
   end;
+
   {$ENDIF}
 
   FIsSingleByte := (FMaxCharSize = 1);
@@ -3156,7 +3216,7 @@ var
 begin
   Result := 0;
 
-  if (AChars = nil) or (ACharCount = 0) then begin
+  if (AChars = nil) or (ACharCount < 1) or ((ABytes <> nil) and (AByteCount < 1)) then begin
     Exit;
   end;
 
@@ -3231,6 +3291,58 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF USE_LCONVENC}
+function DoLconvCharsToBytes(const ACharset: string; AChars: PIdWideChar; ACharCount: Integer;
+  ABytes: PByte; AByteCount: Integer): Integer;
+var
+  LTmpStr : TIdUnicodeString;
+  LUTF8, LConverted : RawByteString;
+  LEncoded : Boolean;
+begin
+  Result := 0;
+
+  if (AChars = nil) or (ACharCount < 1) or ((ABytes <> nil) and (AByteCount < 1)) then begin
+    Exit;
+  end;
+  
+  // TODO: encode the input chars directly to UTF-8 without
+  // having to create a temp UnicodeString first...
+  SetString(LTmpStr, PIdWideChar(AChars), ACharCount);
+  LUTF8 := UTF8Encode(LTmpStr);
+
+  case PosInStrArray(ACharSet, ['UTF-8', 'UTF8', EncodingAnsi], False) of {do not localize}
+    0, 1: begin
+      // For UTF-8 to UTF-8, ConvertEncodingFromUTF8() does nothing and returns False (FPC bug?).
+      // The input has already been converted above, so let's just use the existing bytes as-is...
+      LConverted := LUTF8;
+    end;
+    2: begin
+      // For UTF-8 to ANSI (system enc), ConvertEncodingFromUTF8() does nothing and returns False
+      // if ConvertUTF8ToAnsi is not assigned, so let's just assume UTF-8 for now...
+      LConverted := ConvertEncodingFromUTF8(LUTF8, ACharSet, LEncoded);
+      if not LEncoded then begin
+        LConverted := LUTF8;
+      end;
+    end;
+  else
+    LConverted := ConvertEncodingFromUTF8(LUTF8, ACharSet, LEncoded);
+    if not LEncoded then begin
+      // TODO: uncomment this?
+      //raise EIdException.CreateResFmt(@RSInvalidCharSetConv, [ACharSet, cUTF16CharSet]);
+      Exit;
+    end;
+  end;
+
+  Result := Length(LConverted);
+
+  if (ABytes <> nil) and (Result > 0) then begin
+    Result := IndyMin(Result, AByteCount);
+    // TODO: don't output partial character sequences...
+    Move(PIdAnsiChar(LConverted)^, ABytes^, Result * SizeOf(TIdAnsiChar));
+  end;
+end;
+{$ENDIF}
+
 function TIdMBCSEncoding.GetByteCount(const AChars: PIdWideChar; ACharCount: Integer): Integer;
 {$IFDEF USE_ICONV}
 var
@@ -3241,12 +3353,16 @@ begin
   {$IFDEF USE_ICONV}
   Result := DoIconvCharsToBytes(FCharset, AChars, ACharCount, @LBytes[0], Length(LBytes), True);
   {$ELSE}
+    {$IFDEF USE_LCONVENC}
+  Result := DoLconvCharsToBytes(FCharset, AChars, ACharCount, nil, 0);
+    {$ELSE}
     {$IFDEF HAS_LocaleCharsFromUnicode}
   Result := LocaleCharsFromUnicode(FCodePage, FWCharToMBFlags, AChars, ACharCount, nil, 0, nil, nil);
     {$ELSE}
   Result := 0;
   ToDo('GetByteCount() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
     {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3257,12 +3373,16 @@ begin
   Assert (ABytes <> nil, 'TIdMBCSEncoding.GetBytes Bytes can not be nil');
   Result := DoIconvCharsToBytes(FCharset, AChars, ACharCount, ABytes, AByteCount, False);
   {$ELSE}
+    {$IFDEF USE_LCONVENC}
+  Result := DoLconvCharsToBytes(FCharset, AChars, ACharCount, ABytes, AByteCount);
+    {$ELSE}
     {$IFDEF HAS_LocaleCharsFromUnicode}
   Result := LocaleCharsFromUnicode(FCodePage, FWCharToMBFlags, AChars, ACharCount, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, nil, nil);
     {$ELSE}
   Result := 0;
   ToDo('GetBytes() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
     {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3279,7 +3399,7 @@ var
 begin
   Result := 0;
 
-  if (ABytes = nil) or (AByteCount = 0) then begin
+  if (ABytes = nil) or (AByteCount = 0) or ((AChars <> nil) and (ACharCount < 1)) then begin
     Exit;
   end;
 
@@ -3377,6 +3497,65 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF USE_LCONVENC}
+function DoLconvBytesToChars(const ACharset: string; const ABytes: PByte; AByteCount: Integer;
+  AChars: PWideChar; ACharCount: Integer): Integer;
+var
+  LBytes, LConverted: RawByteString;
+  LDecoded : TIdUnicodeString;
+  LEncoded : Boolean;
+  C: TIdWideChar;
+begin
+  Result := 0;
+
+  if (ABytes = nil) or (AByteCount < 1) or ((AChars <> nil) and (ACharCount < 1)) then begin
+    Exit;
+  end;
+
+  SetString(LBytes, PIdAnsiChar(ABytes), AByteCount);
+
+  case PosInStrArray(ACharSet, ['UTF-8', 'UTF8', EncodingAnsi], False) of {do not localize}
+    0, 1: begin
+      // For UTF-8 to UTF-8, ConvertEncodingToUTF8() does nothing and returns False (FPC bug?).
+      // The input is already in UTF-8, so let's just use the existing bytes as-is...
+      LConverted := LBytes;
+    end;
+    2: begin
+      // For ANSI (system enc) to UTF-8, ConvertEncodingToUTF8() does nothing and returns False
+      // if ConvertAnsiToUTF8 is not assigned, so let's just assume UTF-8 for now...
+      LConverted := ConvertEncodingToUTF8(LBytes, ACharSet, LEncoded);
+      if not LEncoded then begin
+        LConverted := LBytes;
+      end;
+    end;
+  else
+    LConverted := ConvertEncodingToUTF8(LBytes, ACharSet, LEncoded);
+    if not LEncoded then begin
+      // TODO: uncomment this?
+      //raise EIdException.CreateResFmt(@RSInvalidCharSetConv, [ACharSet, cUTF16CharSet]);
+      Exit;
+    end;
+  end;
+
+  // TODO: decode the UTF-8 directly to the output chars without
+  // having to create a temp UnicodeString first...
+  LDecoded := UTF8Decode(LConverted);
+  Result := Length(LDecoded);
+
+  if (AChars <> nil) and (Result > 0) then begin
+    Result := IndyMin(Result, ACharCount);
+    // RLebeau: if the last encoded character is a UTF-16 high surrogate, don't output it...
+    if Result > 0 then begin
+      C := LDecoded[Result];
+      if (C >= #$D800) and (C <= #$DBFF) then begin
+        Dec(Result);
+      end;
+    end;
+    Move(PIdWideChar(LDecoded)^, AChars^, Result * SizeOf(TIdWideChar));
+  end;
+end;
+{$ENDIF}
+
 function TIdMBCSEncoding.GetCharCount(const ABytes: PByte; AByteCount: Integer): Integer;
 {$IFDEF USE_ICONV}
 var
@@ -3386,12 +3565,16 @@ begin
   {$IFDEF USE_ICONV}
   Result := DoIconvBytesToChars(FCharSet, ABytes, AByteCount, @LChars[0], Length(LChars), FMaxCharSize, True);
   {$ELSE}
+    {$IFDEF USE_LCONVENC}
+  Result := DoLconvBytesToChars(FCharSet, ABytes, AByteCount, nil, 0);
+    {$ELSE}
     {$IFDEF HAS_UnicodeFromLocaleChars}
   Result := UnicodeFromLocaleChars(FCodePage, FMBToWCharFlags, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, nil, 0);
     {$ELSE}
   Result := 0;
   ToDo('GetCharCount() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
     {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3401,12 +3584,16 @@ begin
   {$IFDEF USE_ICONV}
   Result := DoIconvBytesToChars(FCharSet, ABytes, AByteCount, AChars, ACharCount, FMaxCharSize, False);
   {$ELSE}
+    {$IFDEF USE_LCONVENC}
+  Result := DoLconvBytesToChars(FCharSet, ABytes, AByteCount, AChars, ACharCount);
+    {$ELSE}
     {$IFDEF HAS_UnicodeFromLocaleChars}
   Result := UnicodeFromLocaleChars(FCodePage, FMBToWCharFlags, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, AChars, ACharCount);
     {$ELSE}
   Result := 0;
   ToDo('GetChars() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
     {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3422,11 +3609,13 @@ end;
 
 function TIdMBCSEncoding.GetPreamble: TIdBytes;
 begin
-  {$IFDEF USE_ICONV}
+  {$IFDEF SUPPORTS_CHARSET_ENCODING}
   // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
   // instead of 'utf-8', so let's check for that...
 
   // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+  // TODO: normalize the FCharSet to make comparisons easier...
 
   case PosInStrArray(FCharSet, ['UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE', 'UTF-32', 'UTF32', 'UTF-32LE', 'UTF32LE', 'UTF-32BE', 'UTF32BE'], False) of {do not localize}
     0, 1: begin
@@ -3509,7 +3698,7 @@ end;
 
 constructor TIdUTF7Encoding.Create;
 begin
-  {$IFDEF USE_ICONV}
+  {$IFDEF SUPPORTS_CHARSET_ENCODING}
   // RLebeau 7/6/2018: iconv does not have a way to query the highest Unicode codepoint
   // a charset supports, let alone the max bytes needed to encode such a codepoint, so
   // the inherited constructor tries to calculate MaxCharSize dynamically, which doesn't
@@ -3545,7 +3734,7 @@ end;
 
 constructor TIdUTF8Encoding.Create;
 begin
-  {$IFDEF USE_ICONV}
+  {$IFDEF SUPPORTS_CHARSET_ENCODING}
   // RLebeau 7/6/2018: iconv does not have a way to query the highest Unicode codepoint
   // a charset supports, let alone the max bytes needed to encode such a codepoint, so
   // the inherited constructor tries to calculate MaxCharSize dynamically, which doesn't
@@ -3604,6 +3793,7 @@ function TIdUTF16LittleEndianEncoding.GetBytes(const AChars: PIdWideChar; ACharC
 var
   I: Integer;
   LChars: PIdWideChar;
+  C: UInt16;
 {$ENDIF}
 begin
   // TODO: verify UTF-16 sequences
@@ -3611,9 +3801,10 @@ begin
   LChars := AChars;
   for I := ACharCount - 1 downto 0 do
   begin
-    ABytes^ := Hi(UInt16(LChars^));
+    C := UInt16(LChars^);
+    ABytes^ := Hi(C);
     Inc(ABytes);
-    ABytes^ := Lo(UInt16(LChars^));
+    ABytes^ := Lo(C);
     Inc(ABytes);
     Inc(LChars);
   end;
@@ -3682,15 +3873,17 @@ function TIdUTF16BigEndianEncoding.GetBytes(const AChars: PIdWideChar; ACharCoun
 var
   I: Integer;
   P: PIdWideChar;
+  C: UInt16;
 {$ENDIF}
 begin
   {$IFDEF ENDIAN_LITTLE}
   P := AChars;
   for I := ACharCount - 1 downto 0 do
   begin
-    ABytes^ := Hi(UInt16(P^));
+    C := UInt16(P^);
+    ABytes^ := Hi(C);
     Inc(ABytes);
-    ABytes^ := Lo(UInt16(P^));
+    ABytes^ := Lo(C);
     Inc(ABytes);
     Inc(P);
   end;
@@ -3932,6 +4125,8 @@ begin
 
   // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
 
+  // normalize ACharset for easier comparisons...
+
   case PosInStrArray(ACharset, ['UTF7', 'UTF8', 'UTF16', 'UTF16LE', 'UTF16BE', 'UTF32', 'UTF32LE', 'UTF32BE'], False) of {Do not Localize}
     0:   LCharset := 'UTF-7';    {Do not Localize}
     1:   LCharset := 'UTF-8';    {Do not Localize}
@@ -4060,14 +4255,16 @@ begin
 
     // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
 
-    case PosInStrArray(ACharset, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE'], False) of {Do not Localize}
+    // TODO: normalize ACharSet for easier comparisons...
+
+    case PosInStrArray(ACharSet, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE'], False) of {Do not Localize}
       0, 1: Result := IndyTextEncoding_UTF7;
       2, 3: Result := IndyTextEncoding_UTF8;
       4..7: Result := IndyTextEncoding_UTF16LE;
       8, 9: Result := IndyTextEncoding_UTF16BE;
       // TODO: add support for UTF-32...
     else
-      {$IFDEF USE_ICONV}
+      {$IFDEF SUPPORTS_CHARSET_ENCODING}
       Result := TIdMBCSEncoding.Create(ACharSet);
       {$ELSE}
         {$IFDEF HAS_TEncoding_GetEncoding_ByEncodingName}
@@ -4398,9 +4595,10 @@ begin
 
   // RLebeau 2/15/2019: AEncoding is checked this way until IIdTextEncoding is updated to expose its assigned CodePage...
 
-  {$IFDEF USE_ICONV}
+  {$IFDEF SUPPORTS_CHARSET_ENCODING}
   {
   if AEncoding is TIdMBCSEncoding then begin
+    // TODO: normalize FCharSet for easier comparisons...
     case PosInStrArray(TIdMBCSEncoding(AEncoding).FCharSet, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE', 'char', 'ISO-8859-1'], False) of
       0, 1: Result := 65000;
       2, 3: Result := 65001;
@@ -4467,7 +4665,9 @@ end;
 
 function LoadLibFunction(const ALibHandle: TIdLibHandle; const AProcName: TIdLibFuncName): Pointer;
 begin
+  {$I IdRangeCheckingOff.inc}
   Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(ALibHandle, PIdLibFuncNameChar(AProcName));
+  {$I IdRangeCheckingOn.inc}
 end;
 
 {$IFDEF UNIX}
@@ -4971,16 +5171,13 @@ begin
 end;
 
 constructor TIdAppendFileStream.Create(const AFile : String);
-var
-  LFlags: Word;
 begin
-  LFlags := fmOpenReadWrite or fmShareDenyWrite;
-  if not FileExists(AFile) then begin
-    LFlags := LFLags or fmCreate;
-  end;
-  inherited Create(AFile, LFlags);
-  if (LFlags and fmCreate) = 0 then begin
+  if FileExists(AFile) then begin
+    inherited Create(AFile, fmOpenReadWrite or fmShareDenyWrite);
     TIdStreamHelper.Seek(Self, 0, soEnd);
+  end
+  else begin
+    inherited Create(AFile, fmCreate or fmOpenReadWrite or fmShareDenyWrite);
   end;
 end;
 
@@ -5148,31 +5345,37 @@ function ToHex(const AValue: TIdBytes; const ACount: Integer = -1;
  {$IFDEF USE_INLINE}inline;{$ENDIF}
 var
   I, LCount: Integer;
+  CH1, CH2: Char;
   {$IFDEF STRING_IS_IMMUTABLE}
   LSB: TIdStringBuilder;
+  {$ELSE}
+  LOffset: Integer;
   {$ENDIF}
 begin
+  Result := '';
   LCount := IndyLength(AValue, ACount, AIndex);
   if LCount > 0 then begin
     {$IFDEF STRING_IS_IMMUTABLE}
     LSB := TIdStringBuilder.Create(LCount*2);
     {$ELSE}
     SetLength(Result, LCount*2);
+    LOffset := 0;
     {$ENDIF}
     for I := 0 to LCount-1 do begin
+      CH1 := IdHexDigits[(AValue[AIndex+I] and $F0) shr 4];
+      CH2 := IdHexDigits[AValue[AIndex+I] and $F];
       {$IFDEF STRING_IS_IMMUTABLE}
-      LSB.Append(IdHexDigits[(AValue[AIndex+I] and $F0) shr 4]);
-      LSB.Append(IdHexDigits[AValue[AIndex+I] and $F]);
+      LSB.Append(CH1);
+      LSB.Append(CH2);
       {$ELSE}
-      Result[I*2+1] := IdHexDigits[(AValue[AIndex+I] and $F0) shr 4];
-      Result[I*2+2] := IdHexDigits[AValue[AIndex+I] and $F];
+      Result[LOffset+1] := CH1;
+      Result[LOffset+2] := CH2;
+      Inc(LOffset, 2);
       {$ENDIF}
     end;
     {$IFDEF STRING_IS_IMMUTABLE}
     Result := LSB.ToString;
     {$ENDIF}
-  end else begin
-    Result := '';
   end;
 end;
 
@@ -5296,6 +5499,7 @@ begin
   //if these asserts fail, then it indicates an attempted buffer overrun.
   Assert(ASourceIndex >= 0);
   Assert((ASourceIndex+ALength) <= Length(ASource));
+  if ALength > 0 then
   Move(ASource[ASourceIndex], VDest[ADestIndex], ALength);
   {$ENDIF}
 end;
@@ -6259,7 +6463,7 @@ end;
 function IsHexidecimal(const AChar: Char): Boolean; overload;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := IsNumeric(AChar)
+  Result := ((AChar >= '0') and (AChar <= '9'))  {Do not Localize}
    or ((AChar >= 'A') and (AChar <= 'F')) {Do not Localize}
    or ((AChar >= 'a') and (AChar <= 'f')); {Do not Localize}
 end;
@@ -7562,37 +7766,19 @@ end;
 function LocalDateTimeToHttpStr(const Value: TDateTime) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToHttpStr(
-    {$IFDEF HAS_LocalTimeToUniversal}
-    LocalTimeToUniversal(Value)
-    {$ELSE}
-    Value - OffsetFromUTC
-    {$ENDIF}
-  );
+  Result := DateTimeGMTToHttpStr(LocalTimeToUTCTime(Value));
 end;
 
 function LocalDateTimeToCookieStr(const Value: TDateTime; const AUseNetscapeFmt: Boolean = True) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToCookieStr(
-    {$IFDEF HAS_LocalTimeToUniversal}
-    LocalTimeToUniversal(Value)
-    {$ELSE}
-    Value - OffsetFromUTC
-    {$ENDIF}
-    , AUseNetscapeFmt);
+  Result := DateTimeGMTToCookieStr(LocalTimeToUTCTime(Value), AUseNetscapeFmt);
 end;
 
 function LocalDateTimeToImapStr(const Value: TDateTime) : String;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  Result := DateTimeGMTToImapStr(
-    {$IFDEF HAS_LocalTimeToUniversal}
-    LocalTimeToUniversal(Value)
-    {$ELSE}
-    Value - OffsetFromUTC
-    {$ENDIF}
-  );
+  Result := DateTimeGMTToImapStr(LocalTimeToUTCTime(Value));
 end;
 
 {$I IdDeprecatedImplBugOff.inc}
@@ -7626,12 +7812,13 @@ function OffsetFromUTC: TDateTime;
 {$IFDEF DOTNET}
   {$IFDEF USE_INLINE}inline;{$ENDIF}
 {$ELSE}
+  {$IFNDEF HAS_GetLocalTimeOffset}
+    {$IFNDEF HAS_DateUtils_TTimeZone}
   {$IFDEF WINDOWS}
 var
   iBias: Integer;
   tmez: TTimeZoneInformation;
   {$ELSE}
-    {$IFNDEF HAS_GetLocalTimeOffset}
       {$IFDEF UNIX}
         {$IFDEF USE_VCL_POSIX}
 var
@@ -7656,10 +7843,20 @@ var
     {$ENDIF}
   {$ENDIF}
 {$ENDIF}
+{$ENDIF}
 begin
   {$IFDEF DOTNET}
   Result := System.Timezone.CurrentTimezone.GetUTCOffset(DateTime.FromOADate(Now)).TotalDays;
   {$ELSE}
+    {$IFDEF HAS_GetLocalTimeOffset}
+  // RLebeau: Note that on Linux/Unix, this information may be inaccurate around
+  // the DST time changes (for optimization). In that case, the unix.ReReadLocalTime()
+  // function must be used to re-initialize the timezone information...
+  Result := GetLocalTimeOffset() / 60 / 24;
+    {$ELSE}
+      {$IFDEF HAS_DateUtils_TTimeZone}
+  Result := TTimeZone.Local.UtcOffset.TotalMinutes / 60 / 24;
+      {$ELSE}
     {$IFDEF WINDOWS}
   case GetTimeZoneInformation({$IFDEF WINCE}@{$ENDIF}tmez) of
     TIME_ZONE_ID_INVALID  :
@@ -7693,12 +7890,6 @@ begin
     Result := 0.0 - Result;
   end;
     {$ELSE}
-      {$IFDEF HAS_GetLocalTimeOffset}
-  // RLebeau: Note that on Linux/Unix, this information may be inaccurate around
-  // the DST time changes (for optimization). In that case, the unix.ReReadLocalTime()
-  // function must be used to re-initialize the timezone information...
-  Result := -1 * (GetLocalTimeOffset() / 60 / 24);
-      {$ELSE}
         {$IFDEF UNIX}
 
   // TODO: raise EIdFailedToRetreiveTimeZoneInfo if gettimeofday() fails...
@@ -7726,6 +7917,7 @@ begin
         {$ENDIF}
       {$ENDIF}
     {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -7762,6 +7954,32 @@ begin
     end;
     {$ENDIF}
   end;
+end;
+
+function LocalTimeToUTCTime(const Value: TDateTime): TDateTime;
+begin
+  {$IFDEF HAS_LocalTimeToUniversal}
+  Result := LocalTimeToUniversal(Value);
+  {$ELSE}
+    {$IFDEF HAS_DateUtils_TTimeZone}
+  Result := TTimeZone.Local.ToUniversalTime(Value);
+    {$ELSE}
+  Result := Value - OffsetFromUTC;
+    {$ENDIF}
+  {$ENDIF}
+end;
+
+function UTCTimeToLocalTime(const Value: TDateTime): TDateTime;
+begin
+  {$IFDEF HAS_UniversalTimeToLocal}
+  Result := UniversalTimeToLocal(Value);
+  {$ELSE}
+    {$IFDEF HAS_DateUtils_TTimeZone}
+  Result := TTimeZone.Local.ToLocalTime(Value);
+    {$ELSE}
+  Result := Value + OffsetFromUTC;
+    {$ENDIF}
+  {$ENDIF}
 end;
 
 function IndyIncludeTrailingPathDelimiter(const S: string): string;
@@ -9527,7 +9745,6 @@ begin
   Result := True;
 end;
 
-{$IFNDEF DOTNET}
   {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
 function IndyRegisterExpectedMemoryLeak(AAddress: Pointer): Boolean;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
@@ -9583,7 +9800,6 @@ begin
   {$ENDIF}
 end;
   {$ENDIF}
-{$ENDIF}
 
 function IndyAddPair(AStrings: TStrings; const AName, AValue: String): TStrings;
   {$IFDEF USE_INLINE}inline;{$ENDIF}
@@ -9798,6 +10014,16 @@ begin
 end;
 {$ENDIF}
 
+// Embarcadero changed the signature of FreeAndNil() in 10.4 Denali...
+{$UNDEF HAS_FreeAndNil_TObject_Param}
+{$IFNDEF USE_OBJECT_ARC}
+  {$IFDEF DCC}
+    {$IFDEF VCL_10_4_OR_ABOVE}
+      {$DEFINE HAS_FreeAndNil_TObject_Param}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 procedure IdDisposeAndNil(var Obj);
 {$IFDEF USE_OBJECT_ARC}
 var
@@ -9820,7 +10046,7 @@ begin
   Temp.DisposeOf;
   // __ObjRelease() is called when Temp goes out of scope
   {$ELSE}
-  FreeAndNil(TObject(Obj));
+  FreeAndNil({$IFDEF HAS_FreeAndNil_TObject_Param}TObject(Obj){$ELSE}Obj{$ENDIF});
   {$ENDIF}
 end;
 
