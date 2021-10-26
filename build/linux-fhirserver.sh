@@ -6,7 +6,7 @@ BUILD=${1:-"/tmp/fsbuild"}
 
 mkdir -p exec/64/
 cp exec/pack/*.cfg exec/pack/*.dat exec/64/
-cp exec/pack/linux/*.so exec/64/
+# cp exec/pack/linux/*.so exec/64/
 
 echo compile libraries
 

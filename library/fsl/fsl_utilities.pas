@@ -4235,6 +4235,33 @@ Begin
 End;
 {$ENDIF}
 
+{$IFDEF FPC}
+
+type
+  PMemoryStatusEx = ^TMemoryStatusEx;
+  _MEMORYSTATUSEX = record
+    dwLength: DWORD;
+    dwMemoryLoad: DWORD;
+    ullTotalPhys: DWORDLONG;
+    ullAvailPhys: DWORDLONG;
+    ullTotalPageFile: DWORDLONG;
+    ullAvailPageFile: DWORDLONG;
+    ullTotalVirtual: DWORDLONG;
+    ullAvailVirtual: DWORDLONG;
+    ullAvailExtendedVirtual: DWORDLONG;
+  end;
+  {$EXTERNALSYM _MEMORYSTATUSEX}
+  TMemoryStatusEx = _MEMORYSTATUSEX;
+  MEMORYSTATUSEX = _MEMORYSTATUSEX;
+  {$EXTERNALSYM MEMORYSTATUSEX}
+  LPMEMORYSTATUSEX = PMemoryStatusEx;
+  {$EXTERNALSYM LPMEMORYSTATUSEX}
+
+function GlobalMemoryStatusEx(var lpBuffer : TMEMORYSTATUSEX): BOOL; stdcall; external kernel32 name 'GlobalMemoryStatusEx';
+
+
+{$ENDIF}
+
 Function SystemMemory : TSystemMemory;
 {$IFDEF WINDOWS}
 {$IFDEF CPUx86}
@@ -4249,7 +4276,7 @@ Begin
 End;
 {$ELSE}
 var
-  mem : Windows.MEMORYSTATUSEX;
+  mem : {$IFNDEF FPC}Windows.{$ENDIF}MEMORYSTATUSEX;
 Begin
   FillChar(mem, SizeOf(mem), 0);
   mem.dwLength := SizeOf(mem);

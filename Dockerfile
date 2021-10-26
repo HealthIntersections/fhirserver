@@ -20,7 +20,6 @@ RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
-RUN cp exec/pack/linux/*.so /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 
 ENV DISPLAY :99
