@@ -7,6 +7,11 @@ set FSDIR=%CD%
 setlocal
 set "tmp=r:\fsbuild"
 
+md ..\exec\64
+copy ..\exec\pack\*.cfg ..\exec\64\
+copy ..\exec\pack\*.dat ..\exec\64\
+copy ..\exec\pack\w64\*.dll ..\exec\64\
+
 IF %1.==. GOTO No1
 set "tmp=%1"
 
