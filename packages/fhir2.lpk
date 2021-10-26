@@ -51,10 +51,6 @@
         <UnitName Value="fhir2_indexinfo"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir2\fhir2_javascript.pas"/>
-        <UnitName Value="fhir2_javascript"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir2\fhir2_json.pas"/>
         <UnitName Value="fhir2_json"/>
       </Item>

@@ -53,7 +53,6 @@ uses
   fcomp_tests_graph,
   v2_tests, cda_tests, fdb_tests,
   ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
-  {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
 
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid,
   fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
@@ -147,9 +146,6 @@ begin
   ftx_tests_ucum.registerTests;
   ftx_tests_sct.registerTests;
   v2_tests.registerTests;
-  {$IFNDEF NO_JS}
-  fhir_tests_javascript.registerTests;
-  {$ENDIF}
   fsl_tests_npm.registerTests;
   fcomp_tests_graph.registerTests;
   fhir4_tests_Parser.registerTests;

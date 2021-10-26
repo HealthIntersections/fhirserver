@@ -174,14 +174,13 @@
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-        <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
+        <DCC_PentiumSafeDivide>true</DCC_PentiumSafeDivide>
         <Debugger_RunParams>-tests -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
-        <DCC_Optimize>false</DCC_Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win32)'!=''">
         <DCC_UnitSearchPath>C:\Program Files (x86)\Embarcadero\Studio\21.0\source\DunitX;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -189,7 +188,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version 4</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
@@ -197,6 +196,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
         <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -469,7 +469,6 @@
         <DCCReference Include="..\library\cda\cda_narrative.pas"/>
         <DCCReference Include="..\library\fhir\fhir_oids.pas"/>
         <DCCReference Include="..\library\fhir\fhir_elementmodel.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
         <DCCReference Include="..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="consent_engine.pas"/>
         <DCCReference Include="tx\tx_ndc.pas"/>
@@ -581,21 +580,6 @@
         <DCCReference Include="..\library\cda\cda_objects.pas"/>
         <DCCReference Include="test_registry.pas"/>
         <DCCReference Include="..\library\cda\cda_documents.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
-        <DCCReference Include="event_js.pas"/>
-        <DCCReference Include="..\library\fhir\fhir_js_client.pas"/>
-        <DCCReference Include="..\library\fhir\fhir_javascript.pas"/>
-        <DCCReference Include="..\library\fhir4\fhir4_javascript.pas"/>
-        <DCCReference Include="server_javascript.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_javascript.pas"/>
-        <DCCReference Include="..\library\fhir2\fhir2_javascript.pas"/>
-        <DCCReference Include="..\library\fhir3\fhir3_javascript.pas"/>
-        <DCCReference Include="..\library\v2\v2_javascript.pas"/>
-        <DCCReference Include="..\library\fhir5\fhir5_javascript.pas"/>
         <DCCReference Include="..\library\cda\cda_base.pas"/>
         <DCCReference Include="..\library\cda\cda_writer.pas"/>
         <DCCReference Include="..\library\cda\cda_types.pas"/>
@@ -604,7 +588,6 @@
         <DCCReference Include="..\library\fdb\tests\fdb_tests.pas"/>
         <DCCReference Include="server_testing.pas"/>
         <DCCReference Include="..\library\fsl\tests\fsl_tests_web.pas"/>
-        <DCCReference Include="..\library\fhir\tests\fhir_tests_javascript.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_Parser.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_worker.pas"/>
         <DCCReference Include="tx\tx_areacode.pas"/>
@@ -646,6 +629,7 @@
         <DCCReference Include="..\dependencies\qrcodegen\qrcodegen.pas"/>
         <DCCReference Include="..\..\source\tzdb\dist\TZDB.pas"/>
         <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
+        <DCCReference Include="time_tracker.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -706,8 +690,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

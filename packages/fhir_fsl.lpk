@@ -25,34 +25,6 @@
     </CompilerOptions>
     <Files>
       <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
-        <UnitName Value="ChakraCommon"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
-        <UnitName Value="ChakraCore"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
-        <UnitName Value="ChakraCoreClasses"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
-        <UnitName Value="ChakraCoreUtils"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreVersion.pas"/>
-        <UnitName Value="ChakraCoreVersion"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
-        <UnitName Value="ChakraDebug"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\chakracore-delphi\Compat.pas"/>
-        <UnitName Value="Compat"/>
-      </Item>
-      <Item>
         <Filename Value="..\dependencies\Indy10\Protocols\IdHeaderList.pas"/>
         <UnitName Value="IdHeaderList"/>
       </Item>
@@ -551,30 +523,6 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_http.pas"/>
         <UnitName Value="fsl_http"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_jni.pas"/>
-        <UnitName Value="fsl_java_jni"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_runtime.pas"/>
-        <UnitName Value="fsl_java_runtime"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_strings.pas"/>
-        <UnitName Value="fsl_java_strings"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_utilities.pas"/>
-        <UnitName Value="fsl_java_utilities"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_wrapper.pas"/>
-        <UnitName Value="fsl_java_wrapper"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_javascript.pas"/>
-        <UnitName Value="fsl_javascript"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_json.pas"/>

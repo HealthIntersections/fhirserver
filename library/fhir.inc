@@ -29,9 +29,6 @@
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
-  {$IFNDEF WINDOWS}
-    {$DEFINE NO_JS} // still working on getting this compiling
-  {$ENDIF}
 {$ELSE}
   {$IFNDEF MSWINDOWS}
     only windows is supported under delphi

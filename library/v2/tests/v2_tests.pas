@@ -43,9 +43,6 @@ uses
   fsl_utilities, fsl_testing, fsl_stream,
   fhir_objects,
   fhir4_pathnode, fhir4_pathengine,
-  {$IFNDEF NO_JS}
-  fsl_javascript, fhir_javascript, fhir4_javascript, v2_javascript,
-  {$ENDIF}
   v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_database, v2_objects, v2_message, v2_protocol;
 
 const
@@ -86,9 +83,6 @@ type
     Procedure TestSimple;
     Procedure TestFHIRPath;
     Procedure TestIndexOffsets;
-    {$IFNDEF NO_JS}
-    Procedure TestJavascript;
-    {$ENDIF}
   end;
 
 
@@ -698,40 +692,6 @@ begin
   end;
 end;
 
-{$IFNDEF NO_JS}
-
-const
-  JS_TEST_SCRIPT =
-    'function test() {'+#13#10+
-    '  var msg = v2.parse("MSH|^~\\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4\rPID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD '+
-       'DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520\rOBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| '+
-       '555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD\rOBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r");'+#13#10+
-    '  v2.checkEquals(msg.segment(1).field(3).element(1).text, "GHH LAB");'+#13#10+
-    '  v2.checkEquals(msg.segment(1).element(3).text, "GHH LAB");'+#13#10+
-    '  v2.checkEquals(v2.query(msg, "segment[1].element(3).text()"), "GHH LAB");'+#13#10+
-    '}'+#13#10;
-
-procedure Tv2ParserTests.TestJavascript;
-var
-  js : TFHIRJavascript;
-  fpe : TFHIRPathEngine;
-begin
-  fpe := TFHIRPathEngine.Create(nil, nil);
-  try
-    fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.acquire;
-    try
-      TV2JavascriptHelper.registerv2Objects(js, fpe);
-      js.execute(JS_TEST_SCRIPT, '', 'test', []);
-      assertPass();
-    finally
-      js.yield;
-    end;
-  finally
-    fpe.free;
-  end;
-end;
-{$ENDIF}
 
 procedure Tv2ParserTests.TestSimple;
 begin

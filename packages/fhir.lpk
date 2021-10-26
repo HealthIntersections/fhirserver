@@ -84,14 +84,6 @@
         <UnitName Value="fhir_indexing"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir\fhir_javascript.pas"/>
-        <UnitName Value="fhir_javascript"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fhir\fhir_js_client.pas"/>
-        <UnitName Value="fhir_js_client"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir\fhir_narrative.pas"/>
         <UnitName Value="fhir_narrative"/>
       </Item>
@@ -342,10 +334,6 @@
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_versions.pas"/>
         <UnitName Value="v2_dictionary_Versions"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\v2\v2_javascript.pas"/>
-        <UnitName Value="v2_javascript"/>
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_message.pas"/>

@@ -44,14 +44,12 @@ Uses
   fdb_manager,
   fhir_objects,
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
-  fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
 
   {$IFDEF FPC}
   fui_fake_console,
   {$ENDIF}
 
   server_constants, server_config, utilities, server_context,
-  {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder;
@@ -111,10 +109,6 @@ type
     procedure stopWebServer;
     procedure unloadEndpoints;
     procedure unloadTerminologies;
-
-    {$IFNDEF NO_JS}
-    procedure registerJs(sender: TObject; js: TJsHost); virtual;
-    {$ENDIF}
 
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
@@ -184,10 +178,6 @@ begin
   {$IFDEF WINDOWS}
   CoInitialize(nil);
   {$ENDIF}
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  //  todo, once eventing is sorted out  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  {$ENDIF}
   TimePeriod := 5000;
 end;
 
@@ -221,10 +211,6 @@ end;
 
 procedure TFhirServerMaintenanceThread.Finalise;
 begin
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
   {$IFDEF WINDOWS}
   CoUninitialize;
   {$ENDIF}
@@ -324,19 +310,6 @@ begin
     raise EFslException.Create('No endpoint parameter supplied');
 end;
 
-{$IFNDEF NO_JS}
-
-procedure TFHIRServiceKernel.registerJs(sender : TObject; js : TJsHost);
-begin
-  js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
-  js.engine.registerFactory(fhir3_javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
-  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
-  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
-  js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
-end;
-
-{$ENDIF}
-
 procedure TFHIRServiceKernel.SetCacheStatus(status: boolean);
 var
   ep : TFhirServerEndpoint;
@@ -375,9 +348,6 @@ begin
   begin
     Logging.log('Load End Point '+ep.config.name+': '+ep.summary);
     FTelnet.addEndPoint(ep);
-    {$IFNDEF NO_JS}
-    ep.OnRegisterJs := registerJs;
-    {$ENDIF}
     ep.Load;
   end;
 end;
@@ -389,9 +359,6 @@ begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
 
-  {$IFNDEF NO_JS}
-  FWebServer.Common.OnRegisterJs := registerJs;
-  {$ENDIF}
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
   begin
@@ -661,6 +628,26 @@ begin
   end;
 end;
 
+procedure logSystemInfo;
+var
+  l, s : string;
+begin
+  l := 'Running on "'+SystemName+'": '+SystemPlatform;
+  s := SystemArchitecture;
+  if (s <> '') and not sameText(s, 'Unknown') then
+  begin
+    l := l + ' (';
+    l := l + s;
+    s := SystemProcessorName;
+    if s <> '' then
+      l := l + '/'+s;
+    l := l + ')';
+  end;
+  l := l + '. ';
+  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
+  Logging.log(l);
+end;
+
 procedure logCompileInfo;
 var
   compiler, os, cpu, s : String;
@@ -728,6 +715,7 @@ begin
     Logging.LogToConsole := true;
 
   logCompileInfo;
+  logSystemInfo;
 
   if ParamCount = 0 then
   begin
@@ -758,6 +746,7 @@ begin
     JclStartExceptionTracking;
     CoInitialize(nil);
     {$ENDIF}
+    fhir_objects.loadMessages;
     tz := TimeZoneBias;
     if tz = 0 then
       Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
@@ -767,41 +756,32 @@ begin
       Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
 
     try
-      {$IFNDEF NO_JS}
-      GJsHost := TJsHost.Create;
-      try
+      if not getCommandLineParam('cfg', cfgName) then
+      {$IFDEF OSX}
+        cfgName := GetAppConfigDir(false)+'fhirserver.cfg';
+      {$ELSE}
+        cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
       {$ENDIF}
-        if not getCommandLineParam('cfg', cfgName) then
-        {$IFDEF OSX}
-          cfgName := GetAppConfigDir(false)+'fhirserver.cfg';
-        {$ELSE}
-          cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
-        {$ENDIF}
-        Logging.Log('Config: '+cfgName);
+      Logging.Log('Config: '+cfgName);
 
-        if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
-          cfgName := buildConfigFromSource(cfgName)
-        else
-        begin
-          // zero config service support, where you don't easily get a parameter
-          s := FileToString(cfgName, TEncoding.UTF8);
-          if s.StartsWith('https://') or s.StartsWith('http://') or s.StartsWith('file:') then
-            cfgName := buildConfigFromSource(s);
-        end;
-
-
-
-        cfg := TFHIRServerConfigFile.create(cfgName);
-        try
-          ExecuteFhirServer(cfg);
-        finally
-          cfg.free;
-        end;
-      {$IFNDEF NO_JS}
-      finally
-        GJsHost.free;
+      if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
+        cfgName := buildConfigFromSource(cfgName)
+      else
+      begin
+        // zero config service support, where you don't easily get a parameter
+        s := FileToString(cfgName, TEncoding.UTF8);
+        if s.StartsWith('https://') or s.StartsWith('http://') or s.StartsWith('file:') then
+          cfgName := buildConfigFromSource(s);
       end;
-      {$ENDIF}
+
+
+
+      cfg := TFHIRServerConfigFile.create(cfgName);
+      try
+        ExecuteFhirServer(cfg);
+      finally
+        cfg.free;
+      end;
     finally
     {$IFDEF WINDOWS}
     CoUninitialize();
