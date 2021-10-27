@@ -1728,6 +1728,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA1;
 var
   db: IPBKDF2Algorithm;
@@ -1737,7 +1738,6 @@ begin
   assertPass();
 end;
 
-{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA1_Cng;
 var
   db: IPBKDF2Algorithm;
@@ -1755,6 +1755,7 @@ begin
   Tester_PBKDF2_SHA1(db);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA256;
 var
@@ -1764,7 +1765,6 @@ begin
   Tester_PBKDF2_SHA256(db);
   assertPass();
 end;
-{$ENDIF}
 
 {$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA256_Cng;
