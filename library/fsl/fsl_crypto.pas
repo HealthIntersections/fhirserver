@@ -92,6 +92,12 @@ Type
     class function HMAC_Base64(alg : TIdHMACClass; aKey, aMessage: TBytes): AnsiString;
   end;
 
+  TX509Certificate = class (TIdOpenSSLX509)
+  public
+    constructor Create(src : TBytes);
+    destructor Destroy; override;
+  end;
+
   // 1st, JWK
 
   { TJWK }
@@ -139,6 +145,7 @@ Type
     constructor Create(obj : TJsonObject); overload;
     constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
     constructor Create(pkey : PDSA; loadPrivate : Boolean); overload;
+    constructor Create(cert : TX509Certificate; loadPrivate : Boolean); overload;
     destructor Destroy; override;
 
     function link : TJWK; overload;
@@ -390,6 +397,9 @@ Type
 function InflateRfc1951(b : TBytes) : TBytes;
 function DeflateRfc1951(b : TBytes) : TBytes;
 
+function Base64URL(s : TBytes) : String;
+function unBase64URL(s : String) : TBytes;
+
 implementation
 
 // utilities
@@ -440,6 +450,15 @@ begin
   result := TEncoding.UTF8.GetString(JWTDeBase64URL(s));
 end;
 
+function Base64URL(s : TBytes) : String;
+begin
+  result := JWTBase64URLStr(s);
+end;
+
+function unBase64URL(s : String) : TBytes;
+begin
+  result := JWTDeBase64URL(s);
+end;
 procedure check(test: boolean; failmsg: string);
 var
   e: integer;
@@ -549,6 +568,25 @@ end;
 procedure TJWK.clearPublicKey;
 begin
   FObj.clear('n');
+end;
+
+constructor TJWK.Create(cert: TX509Certificate; loadPrivate: Boolean);
+var
+  pkey : PEVP_PKey;
+  key : PEC_KEY;
+begin
+  assert(loadPrivate = false);
+
+  if cert.SignatureAlgorithmAsNID = NID_sha256WithRSAEncryption then
+  begin
+    pkey := X509_get_pubkey(cert.X509);
+    if pkey = nil then raise EFslException.Create('Can''t read key information');
+    key := EVP_PKEY_get1_EC_KEY(pkey);
+    if key = nil then raise EFslException.Create('Can''t read RSA key information');
+// todo    Create(key, loadPrivate);
+  end
+  else
+    raise Exception.Create('Unsupported algorithm type loading JWK from X509 cert');
 end;
 
 constructor TJWK.Create(pkey: PRSA; loadPrivate: Boolean);
@@ -2499,6 +2537,22 @@ begin
   result := inherited sizeInBytesV(magic);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FTransforms.sizeInBytes(magic));
+end;
+
+{ TX509Certificate }
+
+constructor TX509Certificate.Create(src: TBytes);
+var
+  pCert : PX509;
+begin
+  pCert := d2i_X509(nil, @src, length(src));
+  inherited create(pcert);
+end;
+
+destructor TX509Certificate.Destroy;
+begin
+  X509_free(X509);
+  inherited;
 end;
 
 end.

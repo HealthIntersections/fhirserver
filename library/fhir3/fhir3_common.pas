@@ -919,13 +919,23 @@ type
   end;
 
   TFhirPatient3 = class (TFhirPatientW)
+  protected
+    function pat : TFHIRPatient;
+    function GetActive: boolean; override;
+    procedure SetActive(const Value: boolean); override;
+    function GetFamily: String; override;
+    procedure SetFamily(const Value: String); override;
+    function GetDob: String; override;
+    procedure SetDob(const Value: String); override;
+    function GetIdentifier(systemUri: String): String; override;
+    procedure SetIdentifier(systemUri: String; const Value: String); override;
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
+    procedure addGiven(name : String); override;
     function nameSummary : String; override;
-    function active : String; override;
+    function activeStr : String; override;
     function gender : String; override;
-    function dob : String; override;
     function identifierSummary : String; override;
     function contactSummary : String; override;
   end;
@@ -1051,6 +1061,33 @@ type
     procedure clearSignatures; override;
     procedure addTarget(url : String); override;
   end;
+
+  TFhirImmunization3 = class (TFhirImmunizationW)
+  private
+    function imm : TFhirImmunization;
+  protected
+    function GetLotNumber: String; override;
+    function GetPatient: String; override;
+    function GetPerformerDisplay: String; override;
+    function GetStatus: string; override;
+    procedure SetLotNumber(const Value: String); override;
+    procedure SetPatient(const Value: String); override;
+    procedure SetPerformerDisplay(const Value: String); override;
+    procedure SetStatus(const Value: string); override;
+    function GetManufacturerIdSystem: String; override;
+    function GetManufacturerIdValue: String; override;
+    procedure SetManufacturerIdSystem(const Value: String); override;
+    procedure SetManufacturerIdValue(const Value: String); override;
+    function GetDate: TFslDateTime; override;
+    procedure SetDate(const Value: TFslDateTime); override;
+  public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
+    function code(systemUri : String) : String; override;
+    function hasCode(systemUri, code : String) : boolean; override;
+    procedure setCodeBySystem(systemUri : String; code : String); override;
+  end;
+
 
 implementation
 
@@ -5282,6 +5319,11 @@ end;
 
 { TFhirPatient3 }
 
+function TFhirPatient3.pat : TFhirPatient;
+begin
+  result := resource as TFhirPatient;
+end;
+
 function TFhirPatient3.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
@@ -5289,37 +5331,148 @@ end;
 
 function TFhirPatient3.nameSummary: String;
 begin
-  result := HumanNamesAsText((resource as TFhirPatient).nameList);
+  result := HumanNamesAsText(pat.nameList);
 end;
 
-function TFhirPatient3.active: String;
+function TFhirPatient3.activeStr: String;
 begin
-  if (resource as TFhirPatient).activeElement = nil then
+  if pat.activeElement = nil then
     result := ''
-  else if (resource as TFhirPatient).active then
+  else if pat.active then
     result := 'true'
   else
     result := 'false';
 end;
 
-function TFhirPatient3.gender: String;
+function TFhirPatient3.getActive: boolean;
 begin
-  result := CODES_TFhirAdministrativeGenderEnum[(resource as TFhirPatient).gender];
+  result := pat.active;
 end;
 
-function TFhirPatient3.dob: String;
+procedure TFhirPatient3.setActive(const value : boolean);
 begin
-  result := (resource as TFhirPatient).birthDate.toXML;
+  pat.active := value;
+end;
+
+
+function TFhirPatient3.gender: String;
+begin
+  result := CODES_TFhirAdministrativeGenderEnum[pat.gender];
+end;
+
+function TFhirPatient3.GetFamily: String;
+var
+  n : TFhirHumanName;
+begin
+  result := '';
+  for n in pat.nameList do
+    if (n.use = NameUseNull) and (n.family <> '') then
+      exit(n.family);
+  for n in pat.nameList do
+    if (n.use = NameUseUsual) and (n.family <> '') then
+      exit(n.family);
+  for n in pat.nameList do
+    if (n.use = NameUseOfficial) and (n.family <> '') then
+      exit(n.family);
+  for n in pat.nameList do
+    if (n.family <> '') then
+      exit(n.family);
+end;
+
+procedure TFhirPatient3.SetFamily(const Value: String);
+var
+  n : TFhirHumanName;
+begin
+  for n in pat.nameList do
+    if (n.use = NameUseNull) then
+    begin
+      n.family := value;
+      exit();
+    end;
+  for n in pat.nameList do
+    if (n.use = NameUseUsual) then
+    begin
+      n.family := value;
+      exit();
+    end;
+  for n in pat.nameList do
+    if (n.use = NameUseOfficial) then
+    begin
+      n.family := value;
+      exit();
+    end;
+  pat.nameList.append.family := value;
+end;
+
+function TFhirPatient3.getdob: String;
+begin
+  result := pat.birthDate.toXML;
+end;
+
+procedure TFhirPatient3.setdob(const value : String);
+begin
+  pat.birthDate := TFslDateTime.fromXML(value);
+end;
+
+function TFhirPatient3.GetIdentifier(systemUri: String): String;
+var
+  id : TFhirIdentifier;
+begin
+  result := '';
+  for id in pat.identifierList do
+    if id.system = systemUri then
+      exit(id.value);
+end;
+
+procedure TFhirPatient3.SetIdentifier(systemUri: String; const Value: String);
+var
+  id : TFhirIdentifier;
+begin
+  for id in pat.identifierList do
+    if id.system = systemUri then
+    begin
+      id.value := value;
+      exit();
+    end;
+  id := pat.identifierList.Append;
+  id.system := systemUri;
+  id.value := Value;
 end;
 
 function TFhirPatient3.identifierSummary: String;
 begin
-  result := IdentifiersAsText((resource as TFhirPatient).identifierList);
+  result := IdentifiersAsText(pat.identifierList);
+end;
+
+procedure TFhirPatient3.addGiven(name: String);
+var
+  n : TFhirHumanName;
+begin
+  for n in pat.nameList do
+    if (n.use = NameUseNull) then
+    begin
+      n.givenList.add(name);
+      exit();
+    end;
+  for n in pat.nameList do
+    if (n.use = NameUseUsual) then
+    begin
+      n.givenList.add(name);
+      exit();
+    end;
+  for n in pat.nameList do
+    if (n.use = NameUseOfficial) then
+    begin
+      n.givenList.add(name);
+      exit();
+    end;
+  n := pat.nameList.Append;
+  n.givenList.add(name);
 end;
 
 function TFhirPatient3.contactSummary: String;
 begin
-  result := ContactsAsText((resource as TFhirPatient).telecomList);
+  result := ContactsAsText(pat.telecomList);
 end;
 
 procedure TFhirPatient3.SetLanguage(const Value: String);
@@ -5684,6 +5837,157 @@ end;
 function TFHIRAttachment3.renderText: String;
 begin
   result := '??';
+end;
+
+{ TFhirImmunization3 }
+
+function TFhirImmunization3.code(systemUri: String): String;
+var
+  c : TFHIRCoding;
+begin
+  result := '';
+  for c in imm.vaccineCode.codingList do
+    if (c.system = systemUri) then
+      exit(c.code);
+end;
+
+function TFhirImmunization3.GetDate: TFslDateTime;
+begin
+  result := imm.date;
+end;
+
+function TFhirImmunization3.GetLanguage: String;
+begin
+  result := imm.language;
+end;
+
+function TFhirImmunization3.GetLotNumber: String;
+begin
+  result := imm.lotNumber;
+end;
+
+function TFhirImmunization3.GetManufacturerIdSystem: String;
+begin
+  if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
+    result := imm.manufacturer.identifier.system
+  else
+    result := '';
+end;
+
+function TFhirImmunization3.GetManufacturerIdValue: String;
+begin
+  if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
+    result := imm.manufacturer.identifier.value
+  else
+    result := '';
+end;
+
+function TFhirImmunization3.GetPatient: String;
+begin
+  if imm.patient = nil then
+    result := ''
+  else
+    result := imm.patient.reference;
+end;
+
+function TFhirImmunization3.GetPerformerDisplay: String;
+begin
+  result := '';
+  if (imm.practitionerList.Count > 0) and (imm.practitionerList[0].actor <> nil) then
+    result := imm.practitionerList[0].actor.display;
+end;
+
+function TFhirImmunization3.GetStatus: string;
+begin
+  result := imm.statusElement.value;
+end;
+
+function TFhirImmunization3.hasCode(systemUri, code: String): boolean;
+var
+  c : TFHIRCoding;
+begin
+  result := false;
+  for c in imm.vaccineCode.codingList do
+    if (c.system = systemUri) and (c.code = code) then
+      exit(true);
+end;
+
+function TFhirImmunization3.imm: TFhirImmunization;
+begin
+  result := resource as TFhirImmunization;
+end;
+
+procedure TFhirImmunization3.setCodeBySystem(systemUri, code: String);
+var
+  c : TFHIRCoding;
+begin
+  for c in imm.vaccineCode.codingList do
+    if (c.system = systemUri) then
+    begin
+      c.code := code;
+      exit;
+    end;
+  c := imm.vaccineCode.codingList.Append;
+  c.system := systemUri;
+  c.code := code;
+end;
+
+procedure TFhirImmunization3.SetDate(const Value: TFslDateTime);
+begin
+  imm.date := value;
+end;
+
+procedure TFhirImmunization3.SetLanguage(const Value: String);
+begin
+  imm.language := value;
+end;
+
+procedure TFhirImmunization3.SetLotNumber(const Value: String);
+begin
+  imm.lotNumber := value;
+end;
+
+procedure TFhirImmunization3.SetManufacturerIdSystem(const Value: String);
+begin
+  if imm.manufacturer = nil then
+    imm.manufacturer := TFhirReference.Create;
+  if imm.manufacturer.identifier = nil then
+    imm.manufacturer.identifier := TFhirIdentifier.Create;
+  imm.manufacturer.identifier.system := value;
+end;
+
+procedure TFhirImmunization3.SetManufacturerIdValue(const Value: String);
+begin
+  if imm.manufacturer = nil then
+    imm.manufacturer := TFhirReference.Create;
+  if imm.manufacturer.identifier = nil then
+    imm.manufacturer.identifier := TFhirIdentifier.Create;
+  imm.manufacturer.identifier.value := value;
+end;
+
+procedure TFhirImmunization3.SetPatient(const Value: String);
+begin
+  if (imm.patient = nil) then
+    imm.patient := TFhirReference.Create;
+  imm.patient.reference := value;
+end;
+
+procedure TFhirImmunization3.SetPerformerDisplay(const Value: String);
+var
+  p : TFhirImmunizationPractitioner;
+begin
+  if imm.practitionerList.Count > 0 then
+    p := imm.practitionerList[0]
+  else
+    p := imm.practitionerList.Append;
+  if p.actor = nil then
+    p.actor := TFhirReference.Create;
+  p.actor.display := value;
+end;
+
+procedure TFhirImmunization3.SetStatus(const Value: string);
+begin
+  imm.statusElement.value := value;
 end;
 
 end.
