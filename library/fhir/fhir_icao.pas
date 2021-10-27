@@ -106,6 +106,7 @@ end;
 function TICAOCardImporter.makePatient(pid: TJsonObject): TFHIRResourceV;
 var
   pat : TFhirPatientW;
+  fn, fam, giv : String;
   n : TArray<string>;
   i : integer;
 begin
@@ -113,10 +114,15 @@ begin
   try
     pat.dob := pid['dob'];
     pat.identifier[URI_AUSTRALIAN_PASSPORT_NUMBER] := pid['i'];
-    n := pid['n'].split([' ']); // note that Australia ICAO cards are not conformant with the spec, which say that a comma comes after family name; they have a double space
-    if length(n) > 0 then
-      pat.family := n[0];
-    for i := 1 to length(n)-1 do
+    // Australian ICAO cards are not conformant with the spec, which say that a comma comes after family name; they have a double space
+    fn := pid['n'];
+    if fn.Contains('  ') then
+      StringSplit(fn, '  ', fam, giv)
+    else
+      StringSplit(fn, ',', fam, giv);
+    pat.family := fam;
+    n := giv.split([' ']);
+    for i := 0 to length(n)-1 do
       if (n[i] <> '') and (n[i] <> ',') then
         pat.addGiven(n[i]);
     pat.active := true;
