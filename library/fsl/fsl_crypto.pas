@@ -145,6 +145,7 @@ Type
     constructor Create(obj : TJsonObject); overload;
     constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
     constructor Create(pkey : PDSA; loadPrivate : Boolean); overload;
+    constructor Create(eckey : PEC_KEY; loadPrivate : Boolean); overload;
     constructor Create(cert : TX509Certificate; loadPrivate : Boolean); overload;
     destructor Destroy; override;
 
@@ -249,16 +250,12 @@ Type
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
     class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
-    class function Verify_Hmac_SHA256(input : TBytes; sig : TBytes; key: TJWK) : string;
     class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
     class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
-    class function Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String;
-    class function Verify_Hmac_ES256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String;
     class function checks(method: TJWTAlgorithm; key : TJWK): String;
 
   public
     class function Sign_Hmac_RSA256(input : TBytes; pemfile, pempassword : String) : TBytes; overload;
-
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
     class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
@@ -281,6 +278,11 @@ Type
     // having got a JWT, and examined it for key information, and sourced the keys, verify
     class function verifyJWT(jwt : TJWT; keys : TJWKList; exception : boolean) : boolean; overload;
     class function verifyJWT(jwt : TJWT; key : TJWK; exception : boolean) : boolean; overload;
+
+    class function Verify_Hmac_SHA256(input : TBytes; sig : TBytes; key: TJWK) : string;
+    class function Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String;
+    class function Verify_Hmac_ES256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList) : String; overload;
+    class function Verify_Hmac_ES256(input: TBytes; sig: TBytes; key : TJWK): String; overload;
 
     // load the publi key details from the provided filename
     class function loadKeyFromDSACert(filename, password : AnsiString) : TJWK;
@@ -570,6 +572,61 @@ begin
   FObj.clear('n');
 end;
 
+constructor TJWK.Create(eckey: PEC_KEY; loadPrivate: Boolean);
+var
+  b : TBytes;
+  px, py, pd : PBIGNUM;
+  pub : PEC_POINT;
+  grp : PEC_GROUP;
+  res : integer;
+  ctx : PBN_CTX;
+begin
+  create;
+
+  obj := TJsonObject.Create;
+  keyType := 'EC';
+
+  ctx := BN_CTX_new();
+  try
+    BN_CTX_start(ctx);
+
+    px := BN_CTX_get(ctx);
+    py := BN_CTX_get(ctx);
+    pd := BN_CTX_get(ctx);
+
+    grp := EC_KEY_get0_group(eckey);
+    check(grp <> nil, 'EC_KEY_get0_group = nil');
+    pub := EC_KEY_get0_public_key(eckey);
+    check(pub <> nil, 'EC_POINT_new = nil');
+    res := EC_POINT_get_affine_coordinates_GFp(grp, pub, px, py, ctx);
+    check(res = 1, 'EC_POINT_get_affine_coordinates_GFp != 0');
+
+    if (px <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(px));
+      BN_bn2bin(px, @b[0]);
+      X := b;
+    end;
+    if (py <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(py));
+      BN_bn2bin(py, @b[0]);
+      Y := b;
+    end;
+    if loadPrivate then
+    begin
+      pd := EC_KEY_get0_private_key(eckey);
+      check(pd <> nil, 'EC_KEY_get0_private_key');
+      setlength(b,  BN_num_bytes(px));
+      BN_bn2bin(px, @b[0]);
+      privateKey := b;
+    end;
+  finally
+    BN_CTX_end(ctx);
+    BN_CTX_free(ctx);
+  end;
+end;
+
 constructor TJWK.Create(cert: TX509Certificate; loadPrivate: Boolean);
 var
   pkey : PEVP_PKey;
@@ -583,7 +640,7 @@ begin
     if pkey = nil then raise EFslException.Create('Can''t read key information');
     key := EVP_PKEY_get1_EC_KEY(pkey);
     if key = nil then raise EFslException.Create('Can''t read RSA key information');
-// todo    Create(key, loadPrivate);
+    Create(key, loadPrivate);
   end
   else
     raise Exception.Create('Unsupported algorithm type loading JWK from X509 cert');
@@ -1609,13 +1666,8 @@ begin
   end;
 end;
 
-class function TJWTUtils.Verify_Hmac_ES256(input: TBytes; sig: TBytes;
-  header: TJsonObject; keys: TJWKList): String;
+class function TJWTUtils.Verify_Hmac_ES256(input: TBytes; sig: TBytes; header: TJsonObject; keys: TJWKList): String;
 var
-  ctx : PEVP_MD_CTX;
-  e: integer;
-  pkey: PEVP_PKEY;
-  rkey: PEC_KEY;
   key : TJWK;
   i : integer;
 begin
@@ -1638,6 +1690,17 @@ begin
       exit;
     key := keys[0];
   end;
+  result := Verify_Hmac_ES256(input, sig, key);
+end;
+
+class function TJWTUtils.Verify_Hmac_ES256(input: TBytes; sig: TBytes; key : TJWK): String;
+var
+  ctx : PEVP_MD_CTX;
+  pkey: PEVP_PKEY;
+  rkey: PEC_KEY;
+  e: integer;
+begin
+  result := '';
 
   // 1. Load the RSA private Key from FKey
   rkey := key.LoadEC(false);

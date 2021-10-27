@@ -20,7 +20,7 @@ type
 
     function makePatient(pid : TJsonObject) : TFHIRResourceV;
     function makeImmunization(cvxCode : String; vd : TJsonObject) : TFHIRResourceV;
-    function addEntry(bundle : TFHIRBundleW; i : integer) : TFhirBundleEntryW;
+    procedure addEntry(bundle : TFHIRBundleW; i : integer; res : TFHIRResourceV);
 
     procedure checkSignature(sig, data : TJsonObject);
     procedure checkheader(hdr : TJsonObject);
@@ -63,7 +63,7 @@ begin
 
   bundle := makeBundle;
   try
-    addEntry(bundle, 0).resource := makePatient(childReq(msg, 'pid'));
+    addEntry(bundle, 0, makePatient(childReq(msg, 'pid')));
     i := 1;
     if (msg.arr['ve'] = nil) or (msg.arr['ve'].Count = 0) then
       raise EFHIRException.Create('Unable to find ve in VDS');
@@ -71,7 +71,7 @@ begin
     cvxCode := processVaccineCode(ve);
     for vd in ve.forceArr['vd'] do
     begin
-      addEntry(bundle, i).resource := makeImmunization(cvxCode, vd as TJsonObject);
+      addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
       inc(i);
     end;
 
@@ -178,7 +178,8 @@ begin
 
   cert := unBase64URL(sig['cer']);
   vl := unBase64URL(sig['sigvl']);
-  src := TJsonWriterCanonical.writeObject(data);
+  src := TJsonWriterCanonical.canonicaliseObject(data);
+  BytesToFile(src, 'c:\temp\canonical.json');
 
   x := TX509Certificate.create(cert);
   try
@@ -191,7 +192,9 @@ begin
 
     jwk := TJWK.Create(x, false);
     try
-      s := jwk.alg;
+     s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
+     if s <> '' then
+       raise EFHIRException.Create(s);
     finally
       jwk.Free;
     end;
@@ -242,10 +245,17 @@ begin
   result.type_ := btCollection;
 end;
 
-function TICAOCardImporter.addEntry(bundle : TFHIRBundleW; i: integer): TFhirBundleEntryW;
+procedure TICAOCardImporter.addEntry(bundle : TFHIRBundleW; i: integer; res : TFHIRResourceV);
+var
+  be : TFhirBundleEntryW;
 begin
-  result := bundle.addEntry;
-  result.url := 'resource:'+inttostr(i);
+  be := bundle.addEntry;
+  try
+    be.url := 'resource:'+inttostr(i);
+    be.resource := res;
+  finally
+    be.free;
+  end;
 end;
 
 

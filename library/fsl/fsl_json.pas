@@ -412,6 +412,10 @@ Type
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
     procedure ValueNullInArray; override;
+
+    class Function canonicaliseObject(obj : TJsonObject) : TBytes; overload;
+    class Procedure canonicaliseObject(stream : TStream; obj : TJsonObject); overload;
+    class Procedure canonicaliseObject(stream : TFslStream; obj : TJsonObject); overload;
   end;
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
@@ -3176,6 +3180,49 @@ begin
 end;
 
 { TJsonWriterCanonical }
+
+class function TJsonWriterCanonical.canonicaliseObject(obj: TJsonObject): TBytes;
+var
+  mem : TBytesStream;
+begin
+  mem := TBytesStream.Create;
+  try
+    canonicaliseObject(mem, obj);
+    result := mem.Bytes;
+    SetLength(result, mem.size);
+  finally
+    mem.Free
+  end;
+end;
+
+class procedure TJsonWriterCanonical.canonicaliseObject(stream: TStream; obj: TJsonObject);
+var
+  s : TFslVCLStream;
+begin
+  s := TFslVCLStream.Create;
+  try
+    s.Stream := stream;
+    canonicaliseObject(s, obj);
+  finally
+    s.Free;
+  end;
+end;
+
+class procedure TJsonWriterCanonical.canonicaliseObject(stream: TFslStream; obj: TJsonObject);
+var
+  this : TJsonWriterCanonical;
+begin
+  this := TJsonWriterCanonical.Create;
+  try
+    this.HasWhitespace := false;
+    this.Stream := stream.Link;
+    this.Start(true);
+    this.writeObjectInner(obj);
+    this.Finish(true);
+  finally
+    this.Free;
+  end;
+end;
 
 procedure TJsonWriterCanonical.commitArray(node: TCanonicalJsonNode);
 var
