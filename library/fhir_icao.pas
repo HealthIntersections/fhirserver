@@ -28,9 +28,9 @@ type
 
     procedure SetFactory(const Value: TFHIRFactory);
 
-    function childReq(json : TJsonObject; name : String) : TJsonObject;
     function makeBundle : TFHIRBundleW;
     function processVaccineCode(ve: TJsonObject): String;
+
     procedure SetJWK(const Value: TJWK);
   public
     destructor Destroy; override;
@@ -57,17 +57,17 @@ var
   cvxCode : String;
   util : THealthcareCardUtilities;
 begin
-  data := childReq(json, 'data');
-  hdr := childReq(data, 'hdr');
-  msg := childReq(data, 'msg');
-  sig := childReq(json, 'sig');
+  data := json.objReq['data'];
+  hdr := json.objReq['hdr'];
+  msg := json.objReq['msg'];
+  sig := json.objReq['sig'];
 
   checkheader(hdr);
   checkSignature(sig, data);
 
   bundle := makeBundle;
   try
-    addEntry(bundle, 0, makePatient(childReq(msg, 'pid')));
+    addEntry(bundle, 0, makePatient(msg.objReq['pid']));
     i := 1;
     if (msg.arr['ve'] = nil) or (msg.arr['ve'].Count = 0) then
       raise EFHIRException.Create('Unable to find ve in VDS');
@@ -249,13 +249,6 @@ end;
 function TICAOCardImporter.import(image: TBytes): THealthcareCard;
 begin
   raise Exception.Create('Not done yet');
-end;
-
-function TICAOCardImporter.childReq(json: TJsonObject; name: String): TJsonObject;
-begin
-  result := json.obj[name];
-  if result = nil then
-    raise EFHIRException.Create('Unable to find '+name+' in VDS');
 end;
 
 function TICAOCardImporter.makeBundle: TFHIRBundleW;

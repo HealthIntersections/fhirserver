@@ -205,6 +205,7 @@ Type
     function GetInteger(name: String): Int64;
 
     procedure SetInteger(name: String; const Value: Int64);
+    function GetRequiredObject(name: String): TJsonObject;
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
@@ -236,6 +237,7 @@ Type
 
     Property forceObj[name : String] : TJsonObject read GetForcedObject;
     Property forceArr[name : String] : TJsonArray read GetForcedArray;
+    Property objReq[name : String] : TJsonObject read GetRequiredObject;
     procedure clear(name : String = '');
 
     function str2(n1, n2 : String) : String;
@@ -2523,6 +2525,13 @@ begin
   end
   else
     result := nil;
+end;
+
+function TJsonObject.GetRequiredObject(name: String): TJsonObject;
+begin
+  result := obj[name];
+  if result = nil then
+    raise EJsonException.Create('Unable to find '+name+' in JsonObject');
 end;
 
 function TJsonObject.GetString(name: String): String;
