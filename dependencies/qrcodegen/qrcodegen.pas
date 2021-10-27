@@ -31,6 +31,11 @@ unit qrcodegen;
 *)
 
 (*
+The code translation was done by Paul Jervois and Lachlan Gemmell of The Continuity Group
+on behalf of Health Intersections Pty Ltd - thanks.
+*)
+
+(*
   This library creates QR Code symbols, which is a type of two-dimension barcode.
   Invented by Denso Wave and described in the ISO/IEC 18004 standard.
   A QR Code structure is an immutable square grid of dark and light cells.
