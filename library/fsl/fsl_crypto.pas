@@ -143,10 +143,6 @@ Type
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(obj : TJsonObject); overload;
-    constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
-    constructor Create(pkey : PDSA; loadPrivate : Boolean); overload;
-    constructor Create(eckey : PEC_KEY; loadPrivate : Boolean); overload;
-    constructor Create(cert : TX509Certificate; loadPrivate : Boolean); overload;
     destructor Destroy; override;
 
     function link : TJWK; overload;
@@ -191,6 +187,10 @@ Type
     function LoadEC(privkey : boolean) : PEC_KEY;
 
     class function loadFromFile(filename : String) : TJWK;
+    class function loadFromRSA(pkey : PRSA; loadPrivate : Boolean) : TJWK;
+    class function loadFromDSA(pkey : PDSA; loadPrivate : Boolean) : TJWK;
+    class function loadFromEC(eckey : PEC_KEY; loadPrivate : Boolean) : TJWK;
+    class function loadFromX509(cert : TX509Certificate; loadPrivate : Boolean) : TJWK;
   end;
 
   TJWKList = class (TFslList<TJWK>)
@@ -543,6 +543,183 @@ begin
   FObj := obj;
 end;
 
+destructor TJWK.Destroy;
+begin
+  FObj.Free;
+  inherited;
+end;
+
+class function TJWK.loadFromEC(eckey : PEC_KEY; loadPrivate : Boolean) : TJWK;
+var
+  b : TBytes;
+  px, py, pd : PBIGNUM;
+  pub : PEC_POINT;
+  grp : PEC_GROUP;
+  res : integer;
+  ctx : PBN_CTX;
+begin
+  result := create( TJsonObject.Create);
+  try
+    result.keyType := 'EC';
+
+    ctx := BN_CTX_new();
+    try
+      BN_CTX_start(ctx);
+
+      px := BN_CTX_get(ctx);
+      py := BN_CTX_get(ctx);
+      pd := BN_CTX_get(ctx);
+
+      grp := EC_KEY_get0_group(eckey);
+      check(grp <> nil, 'EC_KEY_get0_group = nil');
+      pub := EC_KEY_get0_public_key(eckey);
+      check(pub <> nil, 'EC_POINT_new = nil');
+      res := EC_POINT_get_affine_coordinates_GFp(grp, pub, px, py, ctx);
+      check(res = 1, 'EC_POINT_get_affine_coordinates_GFp != 0');
+
+      if (px <> nil) then
+      begin
+        setlength(b,  BN_num_bytes(px));
+        BN_bn2bin(px, @b[0]);
+        result.X := b;
+      end;
+      if (py <> nil) then
+      begin
+        setlength(b,  BN_num_bytes(py));
+        BN_bn2bin(py, @b[0]);
+        result.Y := b;
+      end;
+      if loadPrivate then
+      begin
+        pd := EC_KEY_get0_private_key(eckey);
+        check(pd <> nil, 'EC_KEY_get0_private_key');
+        setlength(b,  BN_num_bytes(px));
+        BN_bn2bin(px, @b[0]);
+        result.privateKey := b;
+      end;
+    finally
+      BN_CTX_end(ctx);
+      BN_CTX_free(ctx);
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+
+class function TJWK.loadFromX509(cert : TX509Certificate; loadPrivate : Boolean) : TJWK;
+var
+  pkey : PEVP_PKey;
+  key : PEC_KEY;
+begin
+  assert(loadPrivate = false);
+
+  if cert.SignatureAlgorithmAsNID = NID_sha256WithRSAEncryption then
+  begin
+    pkey := X509_get_pubkey(cert.X509);
+    if pkey = nil then raise EFslException.Create('Can''t read key information');
+    key := EVP_PKEY_get1_EC_KEY(pkey);
+    if key = nil then raise EFslException.Create('Can''t read RSA key information');
+    result := loadFromEC(key, loadPrivate);
+  end
+  else
+    raise Exception.Create('Unsupported algorithm type loading JWK from X509 cert');
+end;
+
+class function TJWK.loadFromRSA(pkey : PRSA; loadPrivate : Boolean) : TJWK;
+var
+  b : TBytes;
+  pe, pn, pd : PBIGNUM;
+begin
+  result := create(TJsonObject.Create);
+  try
+    result.keyType := 'RSA';
+
+    RSA_get0_key(pKey, @pn, @pe, @pd);
+    if (pe <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pe));
+      BN_bn2bin(pe, @b[0]);
+      result.exponent := b;
+    end;
+    if (pn <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pn));
+      BN_bn2bin(pn, @b[0]);
+      result.publicKey := b;
+    end;
+    if (pd <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pd));
+      BN_bn2bin(pd, @b[0]);
+      result.privateKey := b;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+class function TJWK.loadFromFile(filename: String): TJWK;
+var
+  json : TJsonObject;
+begin
+  json := TJSONParser.ParseFile(filename);
+  try
+    result := TJWK.Create(json.link);
+  finally
+    json.Free;
+  end;
+end;
+
+class function TJWK.loadFromDSA(pkey : PDSA; loadPrivate : Boolean) : TJWK;
+var
+  b : TBytes;
+  pp, pq, pg, pPub, pPriv : PBIGNUM;
+begin
+  result := create(TJsonObject.Create);
+  try
+    result.keyType := 'DSA';
+    DSA_get0_pqg(pkey, @pp, @pq, @pg);
+    if (pp <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pp));
+      BN_bn2bin(pp, @b[0]);
+      result.P := b;
+    end;
+    if (pq <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pq));
+      BN_bn2bin(pq, @b[0]);
+      result.Q := b;
+    end;
+    if (pg <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pg));
+      BN_bn2bin(pg, @b[0]);
+      result.G := b;
+    end;
+    DSA_get0_key(pkey, @pPub, @pPriv);
+    if (pPub <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pPub));
+      BN_bn2bin(pPub, @b[0]);
+      result.Y := b;
+    end;
+    if loadPrivate and (pPriv <> nil) then
+    begin
+      setlength(b,  BN_num_bytes(pPriv));
+      BN_bn2bin(pPriv, @b[0]);
+      result.X := b;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+
 procedure TJWK.checkThumbprintIsSHA256Hash;
 var
   hash : String;
@@ -570,116 +747,6 @@ end;
 procedure TJWK.clearPublicKey;
 begin
   FObj.clear('n');
-end;
-
-constructor TJWK.Create(eckey: PEC_KEY; loadPrivate: Boolean);
-var
-  b : TBytes;
-  px, py, pd : PBIGNUM;
-  pub : PEC_POINT;
-  grp : PEC_GROUP;
-  res : integer;
-  ctx : PBN_CTX;
-begin
-  create;
-
-  obj := TJsonObject.Create;
-  keyType := 'EC';
-
-  ctx := BN_CTX_new();
-  try
-    BN_CTX_start(ctx);
-
-    px := BN_CTX_get(ctx);
-    py := BN_CTX_get(ctx);
-    pd := BN_CTX_get(ctx);
-
-    grp := EC_KEY_get0_group(eckey);
-    check(grp <> nil, 'EC_KEY_get0_group = nil');
-    pub := EC_KEY_get0_public_key(eckey);
-    check(pub <> nil, 'EC_POINT_new = nil');
-    res := EC_POINT_get_affine_coordinates_GFp(grp, pub, px, py, ctx);
-    check(res = 1, 'EC_POINT_get_affine_coordinates_GFp != 0');
-
-    if (px <> nil) then
-    begin
-      setlength(b,  BN_num_bytes(px));
-      BN_bn2bin(px, @b[0]);
-      X := b;
-    end;
-    if (py <> nil) then
-    begin
-      setlength(b,  BN_num_bytes(py));
-      BN_bn2bin(py, @b[0]);
-      Y := b;
-    end;
-    if loadPrivate then
-    begin
-      pd := EC_KEY_get0_private_key(eckey);
-      check(pd <> nil, 'EC_KEY_get0_private_key');
-      setlength(b,  BN_num_bytes(px));
-      BN_bn2bin(px, @b[0]);
-      privateKey := b;
-    end;
-  finally
-    BN_CTX_end(ctx);
-    BN_CTX_free(ctx);
-  end;
-end;
-
-constructor TJWK.Create(cert: TX509Certificate; loadPrivate: Boolean);
-var
-  pkey : PEVP_PKey;
-  key : PEC_KEY;
-begin
-  assert(loadPrivate = false);
-
-  if cert.SignatureAlgorithmAsNID = NID_sha256WithRSAEncryption then
-  begin
-    pkey := X509_get_pubkey(cert.X509);
-    if pkey = nil then raise EFslException.Create('Can''t read key information');
-    key := EVP_PKEY_get1_EC_KEY(pkey);
-    if key = nil then raise EFslException.Create('Can''t read RSA key information');
-    Create(key, loadPrivate);
-  end
-  else
-    raise Exception.Create('Unsupported algorithm type loading JWK from X509 cert');
-end;
-
-constructor TJWK.Create(pkey: PRSA; loadPrivate: Boolean);
-var
-  b : TBytes;
-  pe, pn, pd : PBIGNUM;
-begin
-  create;
-  obj := TJsonObject.Create;
-  keyType := 'RSA';
-
-  RSA_get0_key(pKey, @pn, @pe, @pd);
-  if (pe <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pe));
-    BN_bn2bin(pe, @b[0]);
-    exponent := b;
-  end;
-  if (pn <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pn));
-    BN_bn2bin(pn, @b[0]);
-    publicKey := b;
-  end;
-  if (pd <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pd));
-    BN_bn2bin(pd, @b[0]);
-    privateKey := b;
-  end;
-end;
-
-destructor TJWK.Destroy;
-begin
-  FObj.Free;
-  inherited;
 end;
 
 function TJWK.GetExponent: TBytes;
@@ -926,60 +993,6 @@ begin
 end;
 
 
-class function TJWK.loadFromFile(filename: String): TJWK;
-var
-  json : TJsonObject;
-begin
-  json := TJSONParser.ParseFile(filename);
-  try
-    result := TJWK.Create(json.link);
-  finally
-    json.Free;
-  end;
-end;
-
-constructor TJWK.Create(pkey: PDSA; loadPrivate: Boolean);
-var
-  b : TBytes;
-  pp, pq, pg, pPub, pPriv : PBIGNUM;
-begin
-  create;
-  obj := TJsonObject.Create;
-  keyType := 'DSA';
-  DSA_get0_pqg(pkey, @pp, @pq, @pg);
-  if (pp <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pp));
-    BN_bn2bin(pp, @b[0]);
-    P := b;
-  end;
-  if (pq <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pq));
-    BN_bn2bin(pq, @b[0]);
-    Q := b;
-  end;
-  if (pg <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pg));
-    BN_bn2bin(pg, @b[0]);
-    G := b;
-  end;
-  DSA_get0_key(pkey, @pPub, @pPriv);
-  if (pPub <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pPub));
-    BN_bn2bin(pPub, @b[0]);
-    Y := b;
-  end;
-  if loadPrivate and (pPriv <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pPriv));
-    BN_bn2bin(pPriv, @b[0]);
-    X := b;
-  end;
-end;
-
 function TJWK.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -1155,7 +1168,7 @@ var
 begin
   key := PRSA(LoadRSAPublicKey(filename));
   try
-    result := TJWK.create(key, false);
+    result := TJWK.loadFromRSA(key, false);
   finally
     RSA_free(key);
   end;
@@ -1167,7 +1180,7 @@ var
 begin
   key := PDSA(LoadDSAPublicKey(filename, password));
   try
-    result := TJWK.create(key, true);
+    result := TJWK.loadFromDSA(key, true);
   finally
     DSA_free(key);
   end;
@@ -1179,7 +1192,7 @@ var
 begin
   key := PRSA(LoadRSAPublicKey(content));
   try
-    result := TJWK.create(key, false);
+    result := TJWK.loadFromRSA(key, false);
   finally
     RSA_free(key);
   end;

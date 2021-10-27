@@ -209,7 +209,7 @@ begin
     if x.SignatureAlgorithmAsString <> 'sha256WithRSAEncryption' then
       raise EFHIRException.Create('Australian certificate is not valid - wrong algorithm type (must be sha256WithRSAEncryption)');
 
-    jwk := TJWK.Create(x, false);
+    jwk := TJWK.loadFromX509(x, false);
     try
      s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
      if s <> '' then
