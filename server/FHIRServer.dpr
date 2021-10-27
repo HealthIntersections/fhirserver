@@ -510,7 +510,8 @@ uses
   time_tracker in 'time_tracker.pas',
   fhir_icao in '..\library\fhir_icao.pas',
   fhir_uris in '..\library\fhir\fhir_uris.pas',
-  fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas';
+  fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas',
+  endpoint_icao in 'endpoint_icao.pas';
 
 begin
   ExecuteFhirServer;

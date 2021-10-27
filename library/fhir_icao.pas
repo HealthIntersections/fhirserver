@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_json, fsl_crypto,
-  fhir_objects,fhir_factory, fhir_common, fhir_uris;
+  fhir_objects, fhir_factory, fhir_common, fhir_healthcard, fhir_uris;
 
 const
   AUS_KNOWN_THUMBPRINT = 'B9A66AC5A2D60D8766B38EEC181B3F13F3375BD32C3E66A6F9E0975290AB92F9';
@@ -17,6 +17,7 @@ type
   private
     FFactory: TFHIRFactory;
     FIssuer: string;
+    FJWK: TJWK;
 
     function makePatient(pid : TJsonObject) : TFHIRResourceV;
     function makeImmunization(cvxCode : String; vd : TJsonObject) : TFHIRResourceV;
@@ -30,11 +31,13 @@ type
     function childReq(json : TJsonObject; name : String) : TJsonObject;
     function makeBundle : TFHIRBundleW;
     function processVaccineCode(ve: TJsonObject): String;
+    procedure SetJWK(const Value: TJWK);
   public
     destructor Destroy; override;
 
     property factory : TFHIRFactory read FFactory write SetFactory;
     property issuer : string read FIssuer write FIssuer;
+    property jwk : TJWK read FJWK write SetJWK;
 
     function import(json : TJsonObject) : THealthcareCard; overload;
     function import(source : String) : THealthcareCard; overload;
@@ -52,6 +55,7 @@ var
   vd : TJsonNode;
   i : integer;
   cvxCode : String;
+  util : THealthcareCardUtilities;
 begin
   data := childReq(json, 'data');
   hdr := childReq(data, 'hdr');
@@ -81,9 +85,17 @@ begin
       result.issueDate := TFslDateTime.makeUTC; // or is in the signature?
       result.issuer := issuer;
       result.types := [ctHealthCard, ctCovidCard, ctImmunizationCard];
+      util := THealthcareCardUtilities.create;
+      try
+        util.Factory := FFactory.link;
+        util.sign(result, FJwk);
+        result.image := util.generateImage(result);
+      finally
+        util.Free;
+      end;
       result.link;
     finally
-      result.free;
+      result.Free;
     end;
   finally
     bundle.free;
@@ -205,6 +217,7 @@ end;
 
 destructor TICAOCardImporter.Destroy;
 begin
+  FJWK.Free;
   FFactory.Free;
   inherited;
 end;
@@ -213,6 +226,12 @@ procedure TICAOCardImporter.SetFactory(const Value: TFHIRFactory);
 begin
   FFactory.Free;
   FFactory := Value;
+end;
+
+procedure TICAOCardImporter.SetJWK(const Value: TJWK);
+begin
+  FJWK.Free;
+  FJWK := Value;
 end;
 
 function TICAOCardImporter.import(source: String): THealthcareCard;

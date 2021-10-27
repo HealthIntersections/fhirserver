@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, DateUtils,
+  SysUtils, Classes, DateUtils, Graphics,  {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
   fsl_base, fsl_utilities, fsl_http, fsl_crypto, fsl_json, fsl_fetcher,
   fhir_objects, fhir_factory, fhir_parser, fhir_utilities;
 
@@ -54,6 +54,7 @@ type
 
     { also packs as well - output in card.jws }
     procedure sign(card : THealthcareCard; jwk : TJWK);
+    function generateImage(card : THealthcareCard) : TBytes;
 
     { unpacks, and verifies, and sets isValid to true }
     function verify(token : String) : THealthcareCard;
@@ -153,6 +154,47 @@ begin
     finally
       json.free;
     end;
+  end;
+end;
+
+function THealthcareCardUtilities.generateImage(card: THealthcareCard): TBytes;
+var
+  mem : TBytesStream;
+  bmp : TBitmap;
+  {$IFDEF DELPHI}
+  png : TPngImage;
+  {$ELSE}
+  png : TFPCustomImage;
+  {$ENDIF}
+begin
+  bmp := TBitmap.Create;
+  try
+    card.toBmp(bmp);
+    mem := TBytesStream.create;
+    try
+      {$IFDEF FPC}
+      png := TFPCustomImage.create(bmp.Width, bmp.Height);
+      try
+        png.Assign(bmp);
+        png.SaveToStream(mem, TFPWriterPNG.create);
+      finally
+        png.free;
+      end;
+      {$ELSE}
+      png := TPngImage.Create;
+      try
+        png.Assign(bmp);
+        png.SaveToStream(mem);
+      finally
+        png.Free;
+      end;
+      {$ENDIF}
+      result := mem.Bytes;
+    finally
+      mem.free;
+    end;
+  finally
+    bmp.Free;
   end;
 end;
 

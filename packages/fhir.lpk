@@ -379,6 +379,10 @@
         <Filename Value="..\library\fhir\fhir_context.pas"/>
         <UnitName Value="fhir_context"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_icao.pas"/>
+        <UnitName Value="fhir_icao"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

@@ -1,7 +1,7 @@
 object EditEPForm: TEditEPForm
-  Left = 1139
+  Left = 639
   Height = 475
-  Top = -712
+  Top = 263
   Width = 626
   Caption = 'Edit EndPoint'
   ClientHeight = 475
@@ -11,7 +11,7 @@ object EditEPForm: TEditEPForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object cbxVersion: TComboBox
     Left = 80
     Height = 23
@@ -253,6 +253,7 @@ object EditEPForm: TEditEPForm
       'snomed'
       'loinc'
       'folder'
+      'icao'
     )
     OnChange = cbxTypeChange
     ParentFont = False
@@ -275,7 +276,6 @@ object EditEPForm: TEditEPForm
     Top = 36
     Width = 24
     Caption = 'Type'
-    ParentColor = False
     ParentFont = False
   end
   object Label4: TLabel
@@ -284,7 +284,6 @@ object EditEPForm: TEditEPForm
     Top = 67
     Width = 38
     Caption = 'Version'
-    ParentColor = False
     ParentFont = False
   end
   object Label5: TLabel
@@ -293,7 +292,6 @@ object EditEPForm: TEditEPForm
     Top = 94
     Width = 24
     Caption = 'Path'
-    ParentColor = False
     ParentFont = False
   end
   object Label1: TLabel
@@ -302,7 +300,6 @@ object EditEPForm: TEditEPForm
     Top = 8
     Width = 40
     Caption = 'Identity'
-    ParentColor = False
     ParentFont = False
   end
   object cbxDriver: TComboBox
@@ -362,7 +359,6 @@ object EditEPForm: TEditEPForm
     Top = 184
     Width = 48
     Caption = 'Database'
-    ParentColor = False
     ParentFont = False
   end
   object Label7: TLabel
@@ -371,7 +367,6 @@ object EditEPForm: TEditEPForm
     Top = 210
     Width = 31
     Caption = 'Driver'
-    ParentColor = False
     ParentFont = False
   end
   object Label8: TLabel
@@ -380,7 +375,6 @@ object EditEPForm: TEditEPForm
     Top = 238
     Width = 32
     Caption = 'Server'
-    ParentColor = False
     ParentFont = False
   end
   object Label9: TLabel
@@ -389,7 +383,6 @@ object EditEPForm: TEditEPForm
     Top = 268
     Width = 50
     Caption = 'DB Name'
-    ParentColor = False
     ParentFont = False
   end
   object Label10: TLabel
@@ -398,7 +391,6 @@ object EditEPForm: TEditEPForm
     Top = 294
     Width = 53
     Caption = 'Username'
-    ParentColor = False
     ParentFont = False
   end
   object Label11: TLabel
@@ -407,7 +399,6 @@ object EditEPForm: TEditEPForm
     Top = 322
     Width = 50
     Caption = 'Password'
-    ParentColor = False
     ParentFont = False
   end
   object rbMSSQL: TRadioButton
@@ -446,14 +437,13 @@ object EditEPForm: TEditEPForm
     Top = 122
     Width = 33
     Caption = 'Active'
-    ParentColor = False
     ParentFont = False
   end
   object chkActive: TCheckBox
     Left = 80
     Height = 19
     Top = 120
-    Width = 198
+    Width = 196
     Caption = 'Load this when starting the Server'
     ParentFont = False
     TabOrder = 12
@@ -464,7 +454,6 @@ object EditEPForm: TEditEPForm
     Top = 348
     Width = 24
     Caption = 'Path'
-    ParentColor = False
     ParentFont = False
   end
   object edtSQLiteFile: TEdit
@@ -492,7 +481,7 @@ object EditEPForm: TEditEPForm
     Left = 79
     Height = 19
     Top = 378
-    Width = 239
+    Width = 237
     Caption = 'Automatically create File if it doesn''t exist'
     TabOrder = 15
   end
@@ -502,7 +491,6 @@ object EditEPForm: TEditEPForm
     Top = 158
     Width = 36
     Caption = 'Source'
-    ParentColor = False
     ParentFont = False
   end
   object edtFolder: TEdit

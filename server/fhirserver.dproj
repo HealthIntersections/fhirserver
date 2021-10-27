@@ -188,7 +188,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -testinsight -version 4</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\exec\64\fhirserver.cfg -local c:\temp\zero -xtestinsight -version 4</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
@@ -632,6 +632,7 @@
         <DCCReference Include="..\library\fhir_icao.pas"/>
         <DCCReference Include="..\library\fhir\fhir_uris.pas"/>
         <DCCReference Include="..\library\fhir\tests\fhir_tests_icao.pas"/>
+        <DCCReference Include="endpoint_icao.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
