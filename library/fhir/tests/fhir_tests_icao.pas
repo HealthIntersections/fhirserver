@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_testing, fsl_stream,
+  fsl_testing, fsl_stream, fsl_crypto,
   fhir_objects, fhir_icao,
   fhir4_factory;
 
@@ -14,7 +14,11 @@ type
   TFHIRICAOTests = Class (TFslTestCase)
   public
   published
-    // Procedure TestIcaoCertAu;
+    {$IFDEF WINDOWS}
+    // this is labelled as windows only in order to prevent the ci-build failing because the certificate - a real one - isn't in git (todo: sort this out)
+    Procedure TestIcaoCertAu;
+    {$ENDIF}
+    Procedure TestIcaoCertAuBroken;
   end;
 
 procedure registerTests;
@@ -27,27 +31,53 @@ begin
 end;
 
 
-//{ TFHIRICAOTests }
-//
-//procedure TFHIRICAOTests.TestIcaoCertAu;
-//var
-//  imp : TICAOCardImporter;
-//  card : THealthcareCard;
-//begin
-//  imp := TICAOCardImporter.Create;
-//  try
-//    imp.factory := TFHIRFactoryR4.Create;
-//    imp.issuer := 'http://test.fhir.org';
-//
-//    card := imp.import(FileToString('C:\work\fhirserver\testcases\icao\fhir-test-icao.json', TEncoding.UTF8));
-//    try
-//      assertTrue(card <> nil);
-//    finally
-//      card.Free;
-//    end;
-//  finally
-//    imp.Free;
-//  end;
-//end;
+{ TFHIRICAOTests }
+
+{$IFDEF WINDOWS}
+procedure TFHIRICAOTests.TestIcaoCertAu;
+var
+  imp : TICAOCardImporter;
+  card : THealthcareCard;
+begin
+  imp := TICAOCardImporter.Create;
+  try
+    imp.factory := TFHIRFactoryR4.Create;
+    imp.issuer := 'http://test.fhir.org';
+    imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
+
+    card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao.json']), TEncoding.UTF8));
+    try
+      assertTrue(card <> nil);
+    finally
+      card.Free;
+    end;
+  finally
+    imp.Free;
+  end;
+end;
+{$ENDIF}
+
+procedure TFHIRICAOTests.TestIcaoCertAuBroken;
+var
+  imp : TICAOCardImporter;
+  card : THealthcareCard;
+begin
+  imp := TICAOCardImporter.Create;
+  try
+    imp.factory := TFHIRFactoryR4.Create;
+    imp.issuer := 'http://test.fhir.org';
+    imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
+
+    try
+      card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao-broken.json']), TEncoding.UTF8));
+      assertFail('Should have blown up');
+    except
+      on e : Exception do
+        assertEqual('The Covid Passport Signature is not valid', e.message, 'Exception Message is wrong for signature validation fail');
+    end;
+  finally
+    imp.Free;
+  end;
+end;
 
 end.

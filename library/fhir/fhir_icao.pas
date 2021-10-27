@@ -207,7 +207,7 @@ begin
     try
      s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
      if s <> '' then
-       raise EFHIRException.Create(s);
+       raise EFHIRException.Create('The Covid Passport Signature is not valid');
     finally
       jwk.Free;
     end;
