@@ -14,7 +14,7 @@ type
   TFHIRICAOTests = Class (TFslTestCase)
   public
   published
-    Procedure TestIcaoCertAu;
+    // Procedure TestIcaoCertAu;
   end;
 
 procedure registerTests;
@@ -27,27 +27,27 @@ begin
 end;
 
 
-{ TFHIRICAOTests }
-
-procedure TFHIRICAOTests.TestIcaoCertAu;
-var
-  imp : TICAOCardImporter;
-  card : THealthcareCard;
-begin
-  imp := TICAOCardImporter.Create;
-  try
-    imp.factory := TFHIRFactoryR4.Create;
-    imp.issuer := 'http://test.fhir.org';
-
-    card := imp.import(FileToString('C:\work\fhirserver\testcases\icao\fhir-test-icao.json', TEncoding.UTF8));
-    try
-      assertTrue(card <> nil);
-    finally
-      card.Free;
-    end;
-  finally
-    imp.Free;
-  end;
-end;
+//{ TFHIRICAOTests }
+//
+//procedure TFHIRICAOTests.TestIcaoCertAu;
+//var
+//  imp : TICAOCardImporter;
+//  card : THealthcareCard;
+//begin
+//  imp := TICAOCardImporter.Create;
+//  try
+//    imp.factory := TFHIRFactoryR4.Create;
+//    imp.issuer := 'http://test.fhir.org';
+//
+//    card := imp.import(FileToString('C:\work\fhirserver\testcases\icao\fhir-test-icao.json', TEncoding.UTF8));
+//    try
+//      assertTrue(card <> nil);
+//    finally
+//      card.Free;
+//    end;
+//  finally
+//    imp.Free;
+//  end;
+//end;
 
 end.
