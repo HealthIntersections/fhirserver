@@ -58,8 +58,8 @@ var
   util : THealthcareCardUtilities;
 begin
   data := json.objReq['data'];
-  hdr := json.objReq['hdr'];
-  msg := json.objReq['msg'];
+  hdr := data.objReq['hdr'];
+  msg := data.objReq['msg'];
   sig := json.objReq['sig'];
 
   checkheader(hdr);
@@ -85,6 +85,7 @@ begin
       result.issueDate := TFslDateTime.makeUTC; // or is in the signature?
       result.issuer := issuer;
       result.types := [ctHealthCard, ctCovidCard, ctImmunizationCard];
+      result.id := msg['uvci'];
       util := THealthcareCardUtilities.create;
       try
         util.Factory := FFactory.link;
@@ -155,7 +156,7 @@ begin
     imm.status := 'completed';
     imm.cvxCode := cvxCode;
     imm.performerDisplay := vd['adm'];
-    imm.lotNumber := vd['adm'];
+    imm.lotNumber := vd['lot'];
     imm.patient := 'resource:0';
 
     result := imm.Resource.link;

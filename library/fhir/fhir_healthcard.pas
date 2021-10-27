@@ -86,8 +86,11 @@ function THealthcareCardUtilities.buildPayload(card: THealthcareCard): String;
 var
   json : TFHIRComposer;
 begin
-  result := '{"iss":"'+card.Issuer+'",'+
-     '"nbf":'+IntToStr(SecondsBetween(card.IssueDate.DateTime, EncodeDate(1970, 1, 1)))+','+
+  result := '{"iss":"'+jsonEscape(card.Issuer, true)+'",'+
+     '"nbf":'+IntToStr(SecondsBetween(card.IssueDate.DateTime, EncodeDate(1970, 1, 1)))+',';
+  if card.id <> '' then
+    result := result +'"id":"'+jsonEscape(card.id, true)+'",';
+  result := result +
      '"vc":{'+
       '"type":["https://smarthealth.cards#health-card"';
   if ctCovidCard in card.types then

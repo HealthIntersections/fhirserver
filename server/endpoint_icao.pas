@@ -52,6 +52,7 @@ type
   TICAOWebServer = class (TFhirWebServerEndpoint)
   private
     FJWK : TJWK;
+    FJWKSFile : String;
     function processCard(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
   public
@@ -68,6 +69,7 @@ type
   private
     FICAOServer : TICAOWebServer;
     FJWK : TJWK;
+    FJWKSFile : String;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
     destructor Destroy; override;
@@ -86,6 +88,7 @@ constructor TICAOWebEndPoint.Create(config : TFHIRServerConfigSection; settings 
 begin
   inherited create(config, settings, nil, nil, nil);
   FJWK :=  TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
+  FJWKSFile := Settings.Ini.web['card-jwks'].value;
 end;
 
 destructor TICAOWebEndPoint.Destroy;
@@ -109,6 +112,7 @@ function TICAOWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWe
 begin
   FICAOServer := TICAOWebServer.Create(config.name, config['path'].value, common);
   FICAOServer.FJWK := FJWK.link;
+  FICAOServer.FJWKSFile := FJWKSFile;
   WebEndPoint := FICAOServer;
   result := FICAOServer.link;
 end;
@@ -135,6 +139,14 @@ function TICAOWebServer.doRequest(AContext: TIdContext; request: TIdHTTPRequestI
 begin
   if (request.Command = 'POST') and (request.ContentType = 'application/json') then
     result := processCard(request.PostStream, request.Accept, response)
+  else if (request.Command = 'GET') and (request.document = URLPath([PathNoSlash, '.well-known/jwks.json'])) then
+  begin
+    result := 'Health card JKWS';
+    response.ContentStream := TFileStream.Create(FJWKSFile, fmOpenRead + fmShareDenyWrite);
+    response.Expires := Now + 1;
+    response.FreeContentStream := true;
+    response.contentType := 'application/json';
+  end
   else
   begin
     response.ResponseNo := 404;
@@ -155,7 +167,7 @@ begin
     conv.jwk := FJWK.link;
     card := conv.import(StreamToString(stream, TEncoding.UTF8));
     try
-      result := 'Convert ICAO card to SHC';
+      result := 'Convert ICAO card "'+card.id+'" to SHC';
       if accept = 'image/png' then
       begin
         response.ContentType := 'image/png';
