@@ -107,8 +107,6 @@ type
 
     procedure SetParams(const Value: TFhirParameters);
 
-    function generateImage(card : THealthcareCard) : TBytes;
-
     function signCard(bundle : TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 
     procedure makeImmunizationCard(covid : boolean);
@@ -153,47 +151,6 @@ begin
   FParams.Free;
   FManager.free;
   inherited;
-end;
-
-function THealthCardGenerator.generateImage(card: THealthcareCard): TBytes;
-var
-  mem : TBytesStream;
-  bmp : TBitmap;
-  {$IFDEF DELPHI}
-  png : TPngImage;
-  {$ELSE}
-  png : TFPCustomImage;
-  {$ENDIF}
-begin
-  bmp := TBitmap.Create;
-  try
-    card.toBmp(bmp);
-    mem := TBytesStream.create;
-    try
-      {$IFDEF FPC}
-      png := TFPCustomImage.create(bmp.Width, bmp.Height);
-      try
-        png.Assign(bmp);
-        png.SaveToStream(mem, TFPWriterPNG.create);
-      finally
-        png.free;
-      end;
-      {$ELSE}
-      png := TPngImage.Create;
-      try
-        png.Assign(bmp);
-        png.SaveToStream(mem);
-      finally
-        png.Free;
-      end;
-      {$ENDIF}
-      result := mem.Bytes;
-    finally
-      mem.free;
-    end;
-  finally
-    bmp.Free;
-  end;
 end;
 
 procedure THealthCardGenerator.makeImmunizationCard(covid : boolean);
@@ -322,7 +279,7 @@ begin
     try
       util.Factory := TFHIRFactoryR4.Create;
       util.sign(result, FJwk);
-      result.image := generateImage(result);
+      result.image := util.generateImage(result);
     finally
       util.Free;
     end;

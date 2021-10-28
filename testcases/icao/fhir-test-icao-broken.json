@@ -1,0 +1,47 @@
+{
+  "explanation" : "this is broken by de-identifying the data, so the signature is not valid",
+  "data" : {
+    "hdr" : {
+      "is" : "AUS",
+      "t" : "icao.vacc",
+      "v" : 1
+    },
+    "msg" : {
+      "pid" : {
+        "dob" : "1961-01-01",
+        "i" : "PANNNNNNN",
+        "n" : "GRIEVE  GRAHAME DAVID",
+        "sex" : "M"
+      },
+      "uvci" : "VA0010262XXX",
+      "ve" : [
+        {
+          "des" : "XM68M6",
+          "dis" : "RA01.0",
+          "nam" : "AstraZeneca Vaxzevria",
+          "vd" : [
+            {
+              "adm" : "General Practitioner",
+              "ctr" : "AUS",
+              "dvc" : "2021-06-05",
+              "lot" : "305592P",
+              "seq" : 1
+            },
+            {
+              "adm" : "General Practitioner",
+              "ctr" : "AUS",
+              "dvc" : "2021-08-28",
+              "lot" : "308978P",
+              "seq" : 2
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sig" : {
+    "alg" : "ES256",
+    "cer" : "MIIDhDCCAWygAwIBAgICGMkwDQYJKoZIhvcNAQELBQAwZTELMAkGA1UEBhMCQVUxDDAKBgNVBAoMA0dPVjENMAsGA1UECwwEREZBVDEMMAoGA1UECwwDQVBPMSswKQYDVQQDDCJQYXNzcG9ydCBDb3VudHJ5IFNpZ25pbmcgQXV0aG9yaXR5MB4XDTIxMDkzMDE0MDAwMFoXDTMxMTAzMTEyNTk1OVowHDELMAkGA1UEBhMCQVUxDTALBgNVBAMTBERGQVQwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATc5tWUh8cnqT2JMJRqwOb4eqooPo2K36p9r9aXW7A5n_eXLv6c5_TVvDUaX4bslfwmRxtUzzARCuTMo5lcXp_Wo1IwUDAWBgdngQgBAQYCBAswCQIBADEEEwJOVjAVBgNVHSUBAf8ECzAJBgdngQgBAQ4CMB8GA1UdIwQYMBaAFDYXwef1Z5VxLjd1cI5VgzGG6TgOMA0GCSqGSIb3DQEBCwUAA4ICAQBr9XvPP3NRKyLDPQWZjA-_2InLI72SNEiYbwnw4beq4lMl1Y-Oueli44hquwDJD13cxUyunRVcpuKPSThQYkZq6wHLWtAHNTXKF_nAdXGpXV-5RbaqTCfu-1ZQS5LpU62MByUVOmoGKf4uNkUdsMektolQHwAq6PwAG1HpPGDey3ZRbAvuDCi4ovVoffdAxuvuEUkr4_UgdcqfQ35mTx074doYubeCH6CduA_V_Xq76tA5X6CF_wW2TI_npdVL0KCel3L1BKbmXjOAmRVEioOItMAF0RmN4s78CdDBGfsv7dOsCCQl1TWVX6ZqIlkXt5xOU-mDDt8hvsloS9hkUTqfUuBcM13YmYfymKCQ_xMXAzDHH5pI8xn-MyNaYe9V5_BqQ2XOWDh5-VYyRWwyn_zdRdgUo2AboKZzZi34po57Bpkt-_u6sHJxzoqDWn9FxY18hThvFh_EKsY7pr7_gL04bCE17PJzKmbGmKppBEhle0X7K0NF9KyX5T3nzNY0q59JJkfAApXrE207zY6KboJjdc_weAnB8P38Kq8SgY4cc1MiKCM7Pz7uWEEynA1LG6vvAkjchSrLnu5e0QMW2Rc94wccfZOcx0xs9clHydcZ_ITGrRvq6tfgad73pcMJ0GRW9jqq6KCdqYa8h_DXrlyYcJTXqbgw1JIBTdOU6pHT5g==",
+    "sigvl" : "kOz5jiwN5RZwERz3GWQfWv8yG82QlSWuxHmjQCBzg1-DQtcwQt6J496QXbKlbY4pdloaVQPJllDpOA5Lj4I0cA=="
+  }
+}

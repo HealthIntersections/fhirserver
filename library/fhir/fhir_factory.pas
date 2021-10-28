@@ -215,6 +215,7 @@ type
     function wrapConsent(o : TFHIRResourceV) : TFHIRConsentW; virtual; abstract;
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; virtual; abstract;
     function wrapProvenance(o : TFHIRResourceV) : TFhirProvenanceW; virtual; abstract;
+    function wrapImmunization(o : TFHIRResourceV) : TFhirImmunizationW; virtual; abstract;
 
     function makeOpReqLookup : TFHIRLookupOpRequestW; virtual; abstract;
     function makeOpRespLookup : TFHIRLookupOpResponseW; virtual; abstract;

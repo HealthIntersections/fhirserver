@@ -380,11 +380,11 @@ object MainConsoleForm: TMainConsoleForm
             Height = 441
             Top = 40
             Width = 674
-            ActivePage = tbWebSettings
+            ActivePage = TabSheet1
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 1
+            TabIndex = 2
             TabOrder = 1
             object tbGeneral: TTabSheet
               Caption = 'General Settings'

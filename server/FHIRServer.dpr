@@ -507,7 +507,12 @@ uses
   qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
   TZDB in '..\..\source\tzdb\dist\TZDB.pas',
   fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
-  time_tracker in 'time_tracker.pas';
+  time_tracker in 'time_tracker.pas',
+  fhir_icao in '..\library\fhir\fhir_icao.pas',
+  fhir_uris in '..\library\fhir\fhir_uris.pas',
+  fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas',
+  endpoint_icao in 'endpoint_icao.pas',
+  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas';
 
 begin
   ExecuteFhirServer;

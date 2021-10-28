@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "remove javascript support for stability"
+        as.returnvalue = "web interface for icao certificate support"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -166,7 +166,7 @@ begin
         action.delphi.build
         begin
           allowimplicitimport = true
-          alwaysuseconditionalsfromdof = false
+          alwaysuseconditionalsfromdof = true
           autoincbuild = true
           autoupdatefileversion = true
           autoupdateproductversion = false
@@ -231,7 +231,7 @@ begin
           workaroundd5bug = false
           delphi.compileroptions
           begin
-            alwaysuseconditionalsfromdof = false
+            alwaysuseconditionalsfromdof = true
             alwaysusedelphilibrarypath = true
             alwaysusedofsearchpath = true
             assertions = true
@@ -297,7 +297,7 @@ begin
         action.delphi.build
         begin
           allowimplicitimport = true
-          alwaysuseconditionalsfromdof = false
+          alwaysuseconditionalsfromdof = true
           autoincbuild = true
           autoupdatefileversion = true
           autoupdateproductversion = false
@@ -362,7 +362,7 @@ begin
           workaroundd5bug = false
           delphi.compileroptions
           begin
-            alwaysuseconditionalsfromdof = false
+            alwaysuseconditionalsfromdof = true
             alwaysusedelphilibrarypath = true
             alwaysusedofsearchpath = true
             assertions = false

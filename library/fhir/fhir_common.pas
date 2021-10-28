@@ -860,12 +860,26 @@ type
   end;
 
   TFhirPatientW = class (TFHIRXVersionResourceWrapper)
+  protected
+    function GetActive: boolean; virtual; abstract;
+    procedure SetActive(const Value: boolean); virtual; abstract;
+    function GetFamily: String; virtual; abstract;
+    procedure SetFamily(const Value: String); virtual; abstract;
+    function GetDob: String; virtual; abstract;
+    procedure SetDob(const Value: String); virtual; abstract;
+    function GetIdentifier(systemUri: String): String; virtual; abstract;
+    procedure SetIdentifier(systemUri: String; const Value: String); virtual; abstract;
   public
     function Link : TFhirPatientW; overload;
+    property family : String read GetFamily write SetFamily;
+    procedure addGiven(name : String); virtual; abstract;
     function nameSummary : String; virtual; abstract;
-    function active : String; virtual; abstract;
+    property active : boolean read GetActive write SetActive;
+    function activeStr : String; virtual; abstract;
     function gender : String; virtual; abstract;
-    function dob : String; virtual; abstract;
+    property dob : String read GetDob write SetDob;
+    property identifier[systemUri : String] : String read GetIdentifier write SetIdentifier;
+
     function identifierSummary : String; virtual; abstract;
     function contactSummary : String; virtual; abstract;
   end;
@@ -1315,6 +1329,50 @@ type
     procedure clear;
     procedure listAll(list: TFslList<T>);
     procedure listAllM(list: TFslMetadataResourceList);
+  end;
+
+  TFHIRImmunizationW = class abstract (TFHIRXVersionResourceWrapper)
+  private
+    function  GetCvxCode: String;
+    procedure SetCvxCode(const Value: String);
+    function  GetIcd11Code: String;
+    procedure SetIcd11Code(const Value: String);
+    function  GetSctCode: String;
+    procedure SetSctCode(const Value: String);
+  protected
+    function GetLotNumber: String; virtual; abstract;
+    function GetPatient: String; virtual; abstract;
+    function GetPerformerDisplay: String; virtual; abstract;
+    function GetStatus: string; virtual; abstract;
+    procedure SetLotNumber(const Value: String); virtual; abstract;
+    procedure SetPatient(const Value: String); virtual; abstract;
+    procedure SetPerformerDisplay(const Value: String); virtual; abstract;
+    procedure SetStatus(const Value: string); virtual; abstract;
+    function GetManufacturerIdSystem: String; virtual; abstract;
+    function GetManufacturerIdValue: String; virtual; abstract;
+    procedure SetManufacturerIdSystem(const Value: String); virtual; abstract;
+    procedure SetManufacturerIdValue(const Value: String); virtual; abstract;
+    function GetDate: TFslDateTime; virtual; abstract;
+    procedure SetDate(const Value: TFslDateTime); virtual; abstract;
+  public
+    property status : string read GetStatus write SetStatus;
+    function code(systemUri : String) : String; virtual; abstract;
+    function hasCode(systemUri, code : String) : boolean; virtual; abstract;
+    procedure setCodeBySystem(systemUri : String; code : String); virtual; abstract;
+
+    property cvxCode : String read GetCvxCode write SetCvxCode;
+    property sctCode : String read GetCvxCode write SetSctCode;
+    property icd11Code : String read GetIcd11Code write SetIcd11Code;
+
+    property date : TFslDateTime read GetDate write SetDate;
+    property patient : String read GetPatient write SetPatient;
+    property manufacturerIdSystem : String read GetManufacturerIdSystem write SetManufacturerIdSystem;
+    property manufacturerIdValue : String read GetManufacturerIdValue write SetManufacturerIdValue;
+
+    property lotNumber : String read GetLotNumber write SetLotNumber;
+    property performerDisplay : String read GetPerformerDisplay write SetPerformerDisplay;
+
+
   end;
 
 implementation
@@ -2441,8 +2499,36 @@ begin
   result := TFslMetadataResourceList(inherited link);
 end;
 
+{ TFHIRImmunizationW }
+
+function TFHIRImmunizationW.GetCvxCode: String;
+begin
+  result := code('http://hl7.org/fhir/sid/cvx');
+end;
+
+function TFHIRImmunizationW.GetIcd11Code: String;
+begin
+  result := code('http://id.who.int/icd/release/11/mms');
+end;
+
+function TFHIRImmunizationW.GetSctCode: String;
+begin
+  result := code('http://snomed.info/sct');
+end;
+
+procedure TFHIRImmunizationW.SetCvxCode(const Value: String);
+begin
+  setCodeBySystem('http://hl7.org/fhir/sid/cvx', Value);
+end;
+
+procedure TFHIRImmunizationW.SetIcd11Code(const Value: String);
+begin
+  setCodeBySystem('http://id.who.int/icd/release/11/mms', Value);
+end;
+
+procedure TFHIRImmunizationW.SetSctCode(const Value: String);
+begin
+  setCodeBySystem('http://snomed.info/sct', Value);
+end;
 
 end.
-
-
-
