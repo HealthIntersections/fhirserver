@@ -104,6 +104,7 @@ type
     btnCacheInfo: TButton;
     btnCardKey: TSpeedButton;
     btnCardKey1: TSpeedButton;
+    btnCertificatesFolder: TSpeedButton;
     btnImportUNII: TBitBtn;
     btnImportUNIIStop: TBitBtn;
     btnLockStatus: TButton;
@@ -151,6 +152,7 @@ type
     chkWebMode: TCheckBox;
     edtCacheTime: TEdit;
     edtCACert: TEdit;
+    edtCertificatesFolder: TEdit;
     edtCardPublic: TEdit;
     edtConfigFile: TEdit;
     edtBase: TEdit;
@@ -224,6 +226,7 @@ type
     GroupBox6: TGroupBox;
     GroupBox7: TGroupBox;
     GroupBox8: TGroupBox;
+    GroupBox9: TGroupBox;
     HelpContents1: THelpContents;
     Image2: TImage;
     Image3: TImage;
@@ -280,6 +283,7 @@ type
     Label79: TLabel;
     Label8: TLabel;
     Label80: TLabel;
+    Label81: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -472,6 +476,7 @@ type
     procedure btnCardKey1Click(Sender: TObject);
     procedure btnCardKeyClick(Sender: TObject);
     procedure btnCertClick(Sender: TObject);
+    procedure btnCertificatesFolderClick(Sender: TObject);
     procedure btnCertKeyClick(Sender: TObject);
     procedure btnClearCacheClick(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
@@ -516,6 +521,7 @@ type
     procedure edtCACertChange(Sender: TObject);
     procedure edtCardPrivateChange(Sender: TObject);
     procedure edtCardPublicChange(Sender: TObject);
+    procedure edtCertificatesFolderChange(Sender: TObject);
     procedure edtConfigFileChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
     procedure edtGoogleIdChange(Sender: TObject);
@@ -1120,6 +1126,8 @@ begin
     edtCardPrivate.Enabled := true;
     edtCardPublic.Text := FConfig.web['card-jwks'].value;
     edtCardPublic.Enabled := true;
+    edtCertificatesFolder.Text := FConfig.web['cert-store'].value;
+    edtCertificatesFolder.Enabled := true;
 
     edtAdminEmail.Text := FConfig.admin['email'].value;
     edtAdminEmail.Enabled := true;
@@ -1188,6 +1196,8 @@ begin
     edtCardPrivate.Enabled := false;
     edtCardPublic.Text := '';
     edtCardPublic.Enabled := false;
+    edtCertificatesFolder.Text := '';
+    edtCertificatesFolder.Enabled := false;
     edtGoogleId.Text := '';
     edtGoogleId.Enabled := false;
     edtLangFile.Text := '';
@@ -1296,6 +1306,8 @@ begin
     lblDoco.caption := 'The JWK to use for signing health cards (ECDSA P-256 SHA-256). Must have a "d" value'
   else if ActiveControl = edtCardPublic then
     lblDoco.caption := 'The public JWK to use for signing health cards (ECDSA P-256 SHA-256) - available at .well-known/jwks.json. No "d" value, and may be a list of previously used JWKs.'
+  else if ActiveControl = edtCertificatesFolder then
+    lblDoco.caption := 'The folder that contains trusted certificates used to verify externally signed content (e.g. ICAO cards)'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
   else if ActiveControl = edtGoogleId then
@@ -1665,6 +1677,13 @@ begin
   dlgOpen.filename := edtSSLCert.text;
   if dlgOpen.Execute then;
     edtSSLCert.text := dlgOpen.filename;
+end;
+
+procedure TMainConsoleForm.btnCertificatesFolderClick(Sender: TObject);
+begin
+  dlgFolder.filename := edtCertificatesFolder.text;
+  if dlgFolder.Execute then;
+    edtCertificatesFolder.text := dlgFolder.filename;
 end;
 
 procedure TMainConsoleForm.btnCertKeyClick(Sender: TObject);
@@ -2583,6 +2602,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['card-jwks'].value := edtCardPublic.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtCertificatesFolderChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['cert-store'].value := edtCertificatesFolder.Text;
     FConfig.Save;
   end;
 end;

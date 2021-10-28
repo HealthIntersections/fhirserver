@@ -74,11 +74,11 @@ certificate you nominate
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, ZLib,
+  SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} ZLib, IOUtils, {$ENDIF}
   IdGlobal, IdCTypes, IdHMAC, IdHash, IdHashSHA, IdHMACSHA1,
-  IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_hmac,
-  IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_x509, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
+  IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_asn1,
+  IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
+  IdOpenSSLHeaders_x509, IdOpenSSLHeaders_x509v3, IdOpenSSLHeaders_x509_vfy,
   IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc,
   fsl_openssl, fsl_fetcher;
@@ -93,11 +93,46 @@ Type
   end;
 
   TX509Certificate = class (TIdOpenSSLX509)
+  private
+    function GetAuthorityKeyIdentifier: String;
+    function GetSubjectKeyIdentifier: String;
   public
     constructor Create(src : TBytes);
     destructor Destroy; override;
+
+    property AuthorityKeyIdentifier: String read GetAuthorityKeyIdentifier;
+    property SubjectKeyIdentifier: String read GetSubjectKeyIdentifier;
   end;
 
+  // indexed by key identifier
+  // not thread safe to modify - assumed that store is loaded at start up
+  TX509CertificateStore = class (TFslObject)
+  private
+    FList : TObjectList<TX509Certificate>;
+    function GetCertificate(id: String): TX509Certificate;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function link : TX509CertificateStore; overload;
+
+    property ByKeyId[id : String] : TX509Certificate read GetCertificate;
+
+    procedure addCert(cert : TX509Certificate);
+    procedure addFile(name : String);
+    procedure addFolder(name : String);
+  end;
+
+  TX509CertificateVerifier = class (TFslObject)
+  private
+    FStore : PX509_STORE;
+
+    procedure prepare;
+    procedure registerCert(c : TX509Certificate);
+    procedure verify(cert : TX509Certificate);
+    procedure cleanUp;
+  public
+    class procedure verifyCert(cert : TX509Certificate; chain : Array of TX509Certificate);
+  end;
   // 1st, JWK
 
   { TJWK }
@@ -2629,6 +2664,166 @@ destructor TX509Certificate.Destroy;
 begin
   X509_free(X509);
   inherited;
+end;
+
+function TX509Certificate.GetAuthorityKeyIdentifier: String;
+var
+  LString: PASN1_OCTET_STRING;
+  LBuffer: System.PByte;
+  i, l : integer;
+begin
+  LString := X509_get0_authority_key_id(X509);
+  l := ASN1_STRING_length(PASN1_STRING(LString));
+  LBuffer := ASN1_STRING_get0_data(PASN1_STRING(LString));
+  result := '';
+  for i := 0 to l - 1 do
+  begin
+    result := result + IntToHex(LBuffer^);
+    inc(LBuffer);
+  end;
+end;
+
+function TX509Certificate.GetSubjectKeyIdentifier: String;
+var
+  LString: PASN1_OCTET_STRING;
+  LBuffer: System.PByte;
+  i, l : integer;
+begin
+  LString := X509_get0_subject_key_id(X509);
+  l := ASN1_STRING_length(PASN1_STRING(LString));
+  LBuffer := ASN1_STRING_get0_data(PASN1_STRING(LString));
+  result := '';
+  for i := 0 to l - 1 do
+  begin
+    result := result + IntToHex(LBuffer^);
+    inc(LBuffer);
+  end;
+end;
+
+{ TX509CertificateStore }
+
+constructor TX509CertificateStore.Create;
+begin
+  inherited Create;
+  FList := TObjectList<TX509Certificate>.create;
+  FList.OwnsObjects := true;
+end;
+
+destructor TX509CertificateStore.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TX509CertificateStore.GetCertificate(id: String): TX509Certificate;
+var
+  cert : TX509Certificate;
+begin
+  result := nil;
+  for cert in FList do
+    if (cert.SubjectKeyIdentifier = id) then
+      exit(cert);
+end;
+
+function TX509CertificateStore.link: TX509CertificateStore;
+begin
+  result := TX509CertificateStore(inherited Link);
+end;
+
+procedure TX509CertificateStore.addFolder(name: String);
+var
+  s : String;
+begin
+  for s in TDirectory.GetFiles(name) do
+    addFile(s);
+end;
+
+procedure TX509CertificateStore.addFile(name: String);
+var
+  b : TBytes;
+  s : String;
+begin
+  b := FileToBytes(name);
+  s := TEncoding.ANSI.GetString(b);
+  if s.StartsWith('--') then
+  begin
+    s := s.Substring(s.IndexOf(#10));
+    s := s.Substring(0, s.lastIndexOf(#10));
+    b := DecodeBase64(s);
+  end;
+  addCert(TX509Certificate.Create(b));
+end;
+
+procedure TX509CertificateStore.addCert(cert: TX509Certificate);
+begin
+  FList.Add(cert);
+end;
+
+{ TX509CertificateVerifier }
+
+function verify_cb(v1: TIdC_INT; v2: PX509_STORE_CTX): TIdC_INT;
+begin
+
+end;
+
+procedure TX509CertificateVerifier.prepare;
+begin
+  FStore := X509_STORE_new;
+  X509_STORE_set_verify_cb(FStore, verify_cb);
+  X509_STORE_set_flags(FStore, 0);   // todo: what flags are appropriate?
+end;
+
+procedure TX509CertificateVerifier.registerCert(c: TX509Certificate);
+begin
+  check(X509_STORE_add_cert(FStore, c.X509) = 1, 'X509_STORE_add_cert');
+end;
+
+procedure TX509CertificateVerifier.verify(cert : TX509Certificate);
+var
+  ctx : PX509_STORE_CTX;
+  ret : integer;
+begin
+  ctx := X509_STORE_CTX_new;
+  try
+    check(X509_STORE_CTX_init(ctx, FStore, cert.X509, nil) = 1, 'X509_STORE_CTX_init');
+//    check(X509_STORE_CTX_set_purpose(ctx, X509_PURPOSE_ANY) = 1, 'X509_STORE_CTX_set_purpose');
+    ret := X509_verify_cert(ctx);
+    if ret <> 1 then
+    begin
+      if ret = 0 then
+        raise EFslException.Create('Certificate is not valid')
+      else
+        raise EFslException.Create('Error validating Certificate')
+    end;
+  finally
+    X509_STORE_CTX_cleanup(ctx);
+    X509_STORE_CTX_free(ctx);
+  end;
+end;
+
+procedure TX509CertificateVerifier.cleanUp;
+begin
+  X509_STORE_free(FStore);
+end;
+
+class procedure TX509CertificateVerifier.verifyCert(cert: TX509Certificate; chain: array of TX509Certificate);
+var
+  this : TX509CertificateVerifier;
+  c : TX509Certificate;
+begin
+  this := TX509CertificateVerifier.create;
+  try
+    this.prepare;
+    try
+      for c in chain do
+        this.registerCert(c);
+      this.verify(cert);
+    finally
+      this.cleanUp;
+    end;
+  finally
+    this.free;
+  end;
 end;
 
 end.
