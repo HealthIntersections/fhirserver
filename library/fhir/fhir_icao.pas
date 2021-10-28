@@ -5,7 +5,7 @@ unit fhir_icao;
 interface
 
 uses
-  SysUtils, Classes, Graphics, {$IFDEF DELPHI} pngimage, GIFImg, {$ENDIF}
+  SysUtils, Classes, Graphics, {$IFDEF DELPHI} Vcl.Imaging.pngimage, Vcl.Imaging.GIFImg, {$ENDIF}
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
   fsl_base, fsl_utilities, fsl_json, fsl_crypto,
   fhir_objects, fhir_factory, fhir_common, fhir_healthcard, fhir_uris;
