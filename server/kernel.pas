@@ -818,12 +818,14 @@ begin
   end
   else
   begin
+    {$IFDEF WINDOWS}
     AllocConsole;
     IsConsole := True;
     StdInputHandle  := 0;
     StdOutputHandle := 0;
     StdErrorHandle  := 0;
     SysInitStdIO;
+    {$ENDIF}
     ExecuteFhirServerInner;
   end;
 end;
