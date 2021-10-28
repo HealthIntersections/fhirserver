@@ -817,7 +817,15 @@ begin
     fc.free;
   end
   else
+  begin
+    AllocConsole;
+    IsConsole := True;
+    StdInputHandle  := 0;
+    StdOutputHandle := 0;
+    StdErrorHandle  := 0;
+    SysInitStdIO;
     ExecuteFhirServerInner;
+  end;
 end;
 {$ELSE}
 begin

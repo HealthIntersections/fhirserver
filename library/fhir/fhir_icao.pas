@@ -5,12 +5,10 @@ unit fhir_icao;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Graphics, {$IFDEF DELPHI}Jpeg, pngimage, GIFImg, {$ENDIF}
+  ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
   fsl_base, fsl_utilities, fsl_json, fsl_crypto,
   fhir_objects, fhir_factory, fhir_common, fhir_healthcard, fhir_uris;
-
-const
-  AUS_KNOWN_THUMBPRINT = 'B9A66AC5A2D60D8766B38EEC181B3F13F3375BD32C3E66A6F9E0975290AB92F9';
 
 type
   TICAOCardImporter = class (TFslObject)
@@ -18,6 +16,7 @@ type
     FFactory: TFHIRFactory;
     FIssuer: string;
     FJWK: TJWK;
+    FLog : TFslStringBuilder;
 
     function makePatient(pid : TJsonObject) : TFHIRResourceV;
     function makeImmunization(cvxCode : String; vd : TJsonObject) : TFHIRResourceV;
@@ -32,15 +31,20 @@ type
     function processVaccineCode(ve: TJsonObject): String;
 
     procedure SetJWK(const Value: TJWK);
+    function GetHtmlReport: String;
+    function displayCvx(code: String): String;
   public
+    constructor Create; override;
     destructor Destroy; override;
 
     property factory : TFHIRFactory read FFactory write SetFactory;
     property issuer : string read FIssuer write FIssuer;
     property jwk : TJWK read FJWK write SetJWK;
 
+    property htmlReport : String read GetHtmlReport;
     function import(json : TJsonObject) : THealthcareCard; overload;
     function import(source : String) : THealthcareCard; overload;
+    function import(image: TBitmap): THealthcareCard; overload;
     function import(image : TBytes) : THealthcareCard; overload;
   end;
 
@@ -57,13 +61,15 @@ var
   cvxCode : String;
   util : THealthcareCardUtilities;
 begin
+  Flog.Append('<p>Processing Content</p>');
   data := json.objReq['data'];
   hdr := data.objReq['hdr'];
   msg := data.objReq['msg'];
   sig := json.objReq['sig'];
 
   checkheader(hdr);
-  checkSignature(sig, data);
+
+  Flog.Append('<p>Build Smart Health card for VDS id = '+encodeXml(msg['uvci'])+'</p>');
 
   bundle := makeBundle;
   try
@@ -79,17 +85,23 @@ begin
       inc(i);
     end;
 
+    checkSignature(sig, data);
+
+    Flog.Append('<p>Build Smart Health Card</p>');
+
     result := factory.makeHealthcareCard;
     try
       result.bundle := bundle.Resource.link;
-      result.issueDate := TFslDateTime.makeUTC; // or is in the signature?
+      result.issueDate := TFslDateTime.makeUTC;
       result.issuer := issuer;
       result.types := [ctHealthCard, ctCovidCard, ctImmunizationCard];
       result.id := msg['uvci'];
       util := THealthcareCardUtilities.create;
       try
         util.Factory := FFactory.link;
+        Flog.Append('<p>Sign with Certificate '+FJwk.id+' ('+FJwk.thumbprint+')</p>');
         util.sign(result, FJwk);
+        Flog.Append('<p>Build QR Code</p>');
         result.image := util.generateImage(result);
       finally
         util.Free;
@@ -126,6 +138,7 @@ begin
       if (n[i] <> '') and (n[i] <> ',') then
         pat.addGiven(n[i]);
     pat.active := true;
+    Flog.Append('<p>The card is for '+encodeXml(giv)+' '+encodeXml(fam)+', dob = '+encodeXml(pat.dob)+'. Passport # = '+encodeXml(pid['i'])+'</p>');
     // we ignore gender.
     result := pat.Resource.link;
   finally
@@ -152,6 +165,16 @@ begin
     raise Exception.Create('Unknown vaccine code '+ve['des']+'/"'+nam+'"');
 end;
 
+function TICAOCardImporter.displayCvx(code : String) : String;
+begin
+  if code = '210' then
+    result := 'AstraZeneca Vaxzevria'
+  else if code = '208' then
+    result := 'Pfizer Comirnaty'
+  else
+    result := '??';
+end;
+
 function TICAOCardImporter.makeImmunization(cvxCode : String; vd: TJsonObject): TFHIRResourceV;
 var
   imm : TFHIRImmunizationW;
@@ -164,7 +187,8 @@ begin
     imm.performerDisplay := vd['adm'];
     imm.lotNumber := vd['lot'];
     imm.patient := 'resource:0';
-
+    imm.date := TFslDateTime.fromXML(vd['dvc']);
+    Flog.Append('<p>Vaccinated with CVX#'+cvxCode+' ('+displayCvx(cvxCode)+') on '+encodeXml(vd['dvc'])+' by '+encodeXml(vd['adm'])+', lot# = '+encodeXml(imm.lotNumber)+'</p>');
     result := imm.Resource.link;
   finally
     imm.Free;
@@ -175,6 +199,7 @@ procedure TICAOCardImporter.checkheader(hdr: TJsonObject);
 begin
   if hdr['t'] <> 'icao.vacc' then
     raise EFHIRException.Create('Unsupported card type = only type: icao.vacc cards are supported');
+  Flog.Append('<p>Importing an ICAO VDS, version "'+encodeXml(hdr['v'])+'" issued by '+encodeXml(hdr['is']));
   if hdr['v'] <> '1' then
     raise EFHIRException.Create('Unsupported card version = only v: 1 cards are supported');
   if hdr['is'] <> 'AUS' then
@@ -198,12 +223,18 @@ begin
   cert := unBase64URL(sig['cer']);
   vl := unBase64URL(sig['sigvl']);
   src := TJsonWriterCanonical.canonicaliseObject(data);
-  BytesToFile(src, 'c:\temp\canonical.json');
 
   x := TX509Certificate.create(cert);
   try
-    if x.ThumbprintAsSHA256 <> AUS_KNOWN_THUMBPRINT then
-      raise EFHIRException.Create('Wrong certificate for Australia: expected a thumbprint of '+AUS_KNOWN_THUMBPRINT+' but found '+x.ThumbprintAsSHA256);
+    Flog.Append('<p>Check Certificate # '+encodeXml(x.SerialNumber)+'</p>');
+    Flog.Append('<p>Issuer = '+encodeXml(x.Issuer.AsString)+'</p>');
+    Flog.Append('<p>Subject = '+encodeXml(x.Subject.AsString)+'</p>');
+    Flog.Append('<p>Expires = '+FormatDateTime('c', x.ValidToInGMT)+'</p>');
+    Flog.Append('<p>Algorithm = '+encodeXml(x.SignatureAlgorithmAsString)+'</p>');
+
+    Flog.Append('<p>todo: verify the certificate</p>');
+    // todo: how do we verify that the certificate is a real one issued by the Australian passport office?
+
     if now > x.ValidToInGMT then
       raise EFHIRException.Create('Australian certificate is no longer valid - expired '+FormatDateTime('c', x.ValidToInGMT));
     if x.SignatureAlgorithmAsString <> 'sha256WithRSAEncryption' then
@@ -211,9 +242,10 @@ begin
 
     jwk := TJWK.loadFromX509(x, false);
     try
-     s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
-     if s <> '' then
-       raise EFHIRException.Create('The Covid Passport Signature is not valid');
+      Flog.Append('<p>Check Signature ('+Base64URL(vl)+'/'+Base64URL(src)+'</p>');
+      s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
+      if s <> '' then
+        raise EFHIRException.Create('The Covid Passport Signature is not valid');
     finally
       jwk.Free;
     end;
@@ -222,11 +254,23 @@ begin
   end;
 end;
 
+constructor TICAOCardImporter.Create;
+begin
+  inherited;
+  FLog := TFslStringBuilder.create;
+end;
+
 destructor TICAOCardImporter.Destroy;
 begin
+  FLog.Free;
   FJWK.Free;
   FFactory.Free;
   inherited;
+end;
+
+function TICAOCardImporter.GetHtmlReport: String;
+begin
+  result := FLog.ToString;
 end;
 
 procedure TICAOCardImporter.SetFactory(const Value: TFHIRFactory);
@@ -245,6 +289,7 @@ function TICAOCardImporter.import(source: String): THealthcareCard;
 var
   json : TJsonObject;
 begin
+  Flog.Append('<p>Reading JSON ('+inttostr(source.Length)+'bytes)</p>');
   json := TJSONParser.Parse(source);
   try
     result := import(json);
@@ -254,8 +299,55 @@ begin
 end;
 
 function TICAOCardImporter.import(image: TBytes): THealthcareCard;
+var
+  picture : TPicture;
+  bitmap : TBitmap;
+  stream : TBytesStream;
 begin
-  raise Exception.Create('Not done yet');
+  Flog.Append('<p>Importing from an image format ('+inttostr(length(image))+'bytes)</p>');
+  picture := TPicture.create;
+  try
+    stream := TBytesStream.Create(image);
+    try
+      picture.LoadFromStream(stream);
+      bitmap := TBitmap.Create;
+      try
+        bitmap.Width := Picture.Width;
+        bitmap.Height := Picture.Height;
+        bitmap.Canvas.Draw(0, 0, Picture.Graphic);
+        result := import(bitmap);
+      finally
+        bitmap.Free;
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    picture.Free;
+  end;
+end;
+
+function TICAOCardImporter.import(image: TBitmap): THealthcareCard;
+var
+  scanner : TScanManager;
+  bc : TReadResult;
+begin
+  Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>');
+  scanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  try
+    bc := scanner.Scan(image);
+    try
+      if (bc = nil) then
+      begin
+        raise Exception.Create('Unable to read a barcode from the image supplied');
+      end;
+      result := import(bc.text);
+    finally
+      bc.free;
+    end;
+  finally
+    scanner.free;
+  end;
 end;
 
 function TICAOCardImporter.makeBundle: TFHIRBundleW;

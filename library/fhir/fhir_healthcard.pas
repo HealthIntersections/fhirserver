@@ -167,7 +167,7 @@ var
   {$IFDEF DELPHI}
   png : TPngImage;
   {$ELSE}
-  png : TFPCustomImage;
+  png : TPortableNetworkGraphic;
   {$ENDIF}
 begin
   bmp := TBitmap.Create;
@@ -176,10 +176,10 @@ begin
     mem := TBytesStream.create;
     try
       {$IFDEF FPC}
-      png := TFPCustomImage.create(bmp.Width, bmp.Height);
+      png := TPortableNetworkGraphic.create; //((bmp.Width, bmp.Height);
       try
         png.Assign(bmp);
-        png.SaveToStream(mem, TFPWriterPNG.create);
+        png.SaveToStream(mem); //, TFPWriterPNG.create);
       finally
         png.free;
       end;

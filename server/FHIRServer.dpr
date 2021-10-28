@@ -511,7 +511,8 @@ uses
   fhir_icao in '..\library\fhir\fhir_icao.pas',
   fhir_uris in '..\library\fhir\fhir_uris.pas',
   fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas',
-  endpoint_icao in 'endpoint_icao.pas';
+  endpoint_icao in 'endpoint_icao.pas',
+  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas';
 
 begin
   ExecuteFhirServer;

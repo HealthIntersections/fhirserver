@@ -386,6 +386,9 @@
     </Files>
     <RequiredPkgs>
       <Item>
+        <PackageName Value="ZXing"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>
       <Item>
