@@ -56,7 +56,7 @@ uses
 
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid,
   fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
-  fxver_tests,
+  fxver_tests, fhir_tests_icao,
 
   tests_search_syntax, test_server_config;
 
@@ -158,6 +158,7 @@ begin
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
   test_server_config.registerTests;
+  fhir_tests_icao.registerTests;
 end;
 
 end.

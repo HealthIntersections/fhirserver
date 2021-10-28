@@ -52,7 +52,8 @@ Uses
   server_constants, server_config, utilities, server_context,
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing,
-  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder;
+  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao;
 
 
 // how the kernel works:
@@ -505,6 +506,8 @@ begin
     result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
   else if config['type'].value = 'folder' then
     result := TFolderWebEndPoint.Create(config.link, FSettings.Link)
+  else if config['type'].value = 'icao' then
+    result := TICAOWebEndPoint.Create(config.link, FSettings.Link)
   else if config['type'].value = 'loinc' then
     result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link)
   else if config['type'].value = 'snomed' then
@@ -814,7 +817,17 @@ begin
     fc.free;
   end
   else
+  begin
+    {$IFDEF WINDOWS}
+    AllocConsole;
+    IsConsole := True;
+    StdInputHandle  := 0;
+    StdOutputHandle := 0;
+    StdErrorHandle  := 0;
+    SysInitStdIO;
+    {$ENDIF}
     ExecuteFhirServerInner;
+  end;
 end;
 {$ELSE}
 begin

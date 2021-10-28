@@ -133,6 +133,7 @@ type
     function wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW; override;
     function makeValueSetContains : TFhirValueSetExpansionContainsW; override;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
+    function wrapImmunization(o : TFHIRResourceV) : TFhirImmunizationW; override;
   end;
   TFHIRFactoryX = TFHIRFactoryR4;
 
@@ -656,6 +657,14 @@ begin
     result := TFhirGroup4.Create(r);
 end;
 
+function TFHIRFactoryR4.wrapImmunization(o: TFHIRResourceV): TFhirImmunizationW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFhirImmunization4.Create(o);
+end;
+
 function TFHIRFactoryR4.wrapMeta(r: TFHIRObject): TFhirMetaW;
 begin
   if r = nil then
@@ -813,9 +822,12 @@ var
 begin
   bnd := TFHIRBundle.Create(BundleTypeCollection);
   try
-    for r in list do
+    if list <> nil then
     begin
-      bnd.entryList.Append.resource := r.link as TFhirResource;
+      for r in list do
+      begin
+        bnd.entryList.Append.resource := r.link as TFhirResource;
+      end;
     end;
     result := TFHIRBundle4.Create(bnd.link);
   finally

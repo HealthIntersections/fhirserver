@@ -805,6 +805,7 @@ type
     FBundle: TFHIRResourceV;
     FValidationMessage: String;
     FImage: TBytes;
+    FId: String;
     procedure SetBundle(const Value: TFHIRResourceV);
   protected
     FSummary: String;
@@ -819,6 +820,7 @@ type
     property isValid : boolean read FIsValid write FIsValid;
     property validationMessage : String read FValidationMessage write FValidationMessage;
     property summary : String read FSummary write FSummary;
+    property id : String read FId write FId;
 
     property bundle : TFHIRResourceV read FBundle write SetBundle;
 

@@ -5,36 +5,46 @@ unit fhir_icao;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Graphics, {$IFDEF DELPHI} Vcl.Imaging.pngimage, Vcl.Imaging.GIFImg, {$ENDIF}
+  ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
   fsl_base, fsl_utilities, fsl_json, fsl_crypto,
-  fhir_objects,fhir_factory, fhir_common, fhir_uris;
+  fhir_objects, fhir_factory, fhir_common, fhir_healthcard, fhir_uris;
 
 type
   TICAOCardImporter = class (TFslObject)
   private
     FFactory: TFHIRFactory;
     FIssuer: string;
+    FJWK: TJWK;
+    FLog : TFslStringBuilder;
 
     function makePatient(pid : TJsonObject) : TFHIRResourceV;
     function makeImmunization(cvxCode : String; vd : TJsonObject) : TFHIRResourceV;
-    function addEntry(bundle : TFHIRBundleW; i : integer) : TFhirBundleEntryW;
+    procedure addEntry(bundle : TFHIRBundleW; i : integer; res : TFHIRResourceV);
 
     procedure checkSignature(sig, data : TJsonObject);
     procedure checkheader(hdr : TJsonObject);
 
     procedure SetFactory(const Value: TFHIRFactory);
 
-    function childReq(json : TJsonObject; name : String) : TJsonObject;
     function makeBundle : TFHIRBundleW;
     function processVaccineCode(ve: TJsonObject): String;
+
+    procedure SetJWK(const Value: TJWK);
+    function GetHtmlReport: String;
+    function displayCvx(code: String): String;
   public
+    constructor Create; override;
     destructor Destroy; override;
 
     property factory : TFHIRFactory read FFactory write SetFactory;
     property issuer : string read FIssuer write FIssuer;
+    property jwk : TJWK read FJWK write SetJWK;
 
+    property htmlReport : String read GetHtmlReport;
     function import(json : TJsonObject) : THealthcareCard; overload;
     function import(source : String) : THealthcareCard; overload;
+    function import(image: TBitmap): THealthcareCard; overload;
     function import(image : TBytes) : THealthcareCard; overload;
   end;
 
@@ -49,18 +59,21 @@ var
   vd : TJsonNode;
   i : integer;
   cvxCode : String;
+  util : THealthcareCardUtilities;
 begin
-  data := childReq(json, 'data');
-  hdr := childReq(data, 'hdr');
-  msg := childReq(data, 'msg');
-  sig := childReq(json, 'sig');
+  Flog.Append('<p>Processing Content</p>');
+  data := json.objReq['data'];
+  hdr := data.objReq['hdr'];
+  msg := data.objReq['msg'];
+  sig := json.objReq['sig'];
 
   checkheader(hdr);
-  checkSignature(sig, data);
+
+  Flog.Append('<p>Build Smart Health card for VDS id = '+encodeXml(msg['uvci'])+'</p>');
 
   bundle := makeBundle;
   try
-    addEntry(bundle, 0).resource := makePatient(childReq(msg, 'pid'));
+    addEntry(bundle, 0, makePatient(msg.objReq['pid']));
     i := 1;
     if (msg.arr['ve'] = nil) or (msg.arr['ve'].Count = 0) then
       raise EFHIRException.Create('Unable to find ve in VDS');
@@ -68,19 +81,34 @@ begin
     cvxCode := processVaccineCode(ve);
     for vd in ve.forceArr['vd'] do
     begin
-      addEntry(bundle, i).resource := makeImmunization(cvxCode, vd as TJsonObject);
+      addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
       inc(i);
     end;
+
+    checkSignature(sig, data);
+
+    Flog.Append('<p>Build Smart Health Card</p>');
 
     result := factory.makeHealthcareCard;
     try
       result.bundle := bundle.Resource.link;
-      result.issueDate := TFslDateTime.makeUTC; // or is in the signature?
+      result.issueDate := TFslDateTime.makeUTC;
       result.issuer := issuer;
       result.types := [ctHealthCard, ctCovidCard, ctImmunizationCard];
+      result.id := msg['uvci'];
+      util := THealthcareCardUtilities.create;
+      try
+        util.Factory := FFactory.link;
+        Flog.Append('<p>Sign with Certificate '+FJwk.id+' ('+FJwk.thumbprint+')</p>');
+        util.sign(result, FJwk);
+        Flog.Append('<p>Build QR Code</p>');
+        result.image := util.generateImage(result);
+      finally
+        util.Free;
+      end;
       result.link;
     finally
-      result.free;
+      result.Free;
     end;
   finally
     bundle.free;
@@ -90,6 +118,7 @@ end;
 function TICAOCardImporter.makePatient(pid: TJsonObject): TFHIRResourceV;
 var
   pat : TFhirPatientW;
+  fn, fam, giv : String;
   n : TArray<string>;
   i : integer;
 begin
@@ -97,13 +126,19 @@ begin
   try
     pat.dob := pid['dob'];
     pat.identifier[URI_AUSTRALIAN_PASSPORT_NUMBER] := pid['i'];
-    n := pid['n'].split([' ']); // note that Australia ICAO cards are not conformant with the spec, which say that a comma comes after family name; they have a double space
-    if length(n) > 0 then
-      pat.family := n[0];
-    for i := 1 to length(n)-1 do
+    // Australian ICAO cards are not conformant with the spec, which say that a comma comes after family name; they have a double space
+    fn := pid['n'];
+    if fn.Contains('  ') then
+      StringSplit(fn, '  ', fam, giv)
+    else
+      StringSplit(fn, ',', fam, giv);
+    pat.family := fam;
+    n := giv.split([' ']);
+    for i := 0 to length(n)-1 do
       if (n[i] <> '') and (n[i] <> ',') then
         pat.addGiven(n[i]);
     pat.active := true;
+    Flog.Append('<p>The card is for '+encodeXml(giv)+' '+encodeXml(fam)+', dob = '+encodeXml(pat.dob)+'. Passport # = '+encodeXml(pid['i'])+'</p>');
     // we ignore gender.
     result := pat.Resource.link;
   finally
@@ -115,10 +150,9 @@ function TICAOCardImporter.processVaccineCode(ve : TJsonObject) : String;
 var
   nam : String;
 begin
-  // Australian ICAO VDS appear to use XM68M6 for AstraZeneca and XY64M3 for Cominirty
+  // VDS appear to use XM68M6 for all vaccines.
   // the ICD-11 definition of XM68M6 is 'COVID-19 vaccines' (https://icd.who.int/dev11/f/en#/http%3A%2F%2Fid.who.int%2Ficd%2Fentity%2F894585096)
   // the ICAO documentation uses XM68M6 for all vaccine types.
-  // XY64M3 is not valid?
   //  the cominirty code is XM8NQ0 and the AstraZenaca code is XM4YL8
   // so... we don't use the code.
 
@@ -131,6 +165,16 @@ begin
     raise Exception.Create('Unknown vaccine code '+ve['des']+'/"'+nam+'"');
 end;
 
+function TICAOCardImporter.displayCvx(code : String) : String;
+begin
+  if code = '210' then
+    result := 'AstraZeneca Vaxzevria'
+  else if code = '208' then
+    result := 'Pfizer Comirnaty'
+  else
+    result := '??';
+end;
+
 function TICAOCardImporter.makeImmunization(cvxCode : String; vd: TJsonObject): TFHIRResourceV;
 var
   imm : TFHIRImmunizationW;
@@ -141,9 +185,10 @@ begin
     imm.status := 'completed';
     imm.cvxCode := cvxCode;
     imm.performerDisplay := vd['adm'];
-    imm.lotNumber := vd['adm'];
+    imm.lotNumber := vd['lot'];
     imm.patient := 'resource:0';
-
+    imm.date := TFslDateTime.fromXML(vd['dvc']);
+    Flog.Append('<p>Vaccinated with CVX#'+cvxCode+' ('+displayCvx(cvxCode)+') on '+encodeXml(vd['dvc'])+' by '+encodeXml(vd['adm'])+', lot# = '+encodeXml(imm.lotNumber)+'</p>');
     result := imm.Resource.link;
   finally
     imm.Free;
@@ -154,6 +199,7 @@ procedure TICAOCardImporter.checkheader(hdr: TJsonObject);
 begin
   if hdr['t'] <> 'icao.vacc' then
     raise EFHIRException.Create('Unsupported card type = only type: icao.vacc cards are supported');
+  Flog.Append('<p>Importing an ICAO VDS, version "'+encodeXml(hdr['v'])+'" issued by '+encodeXml(hdr['is']));
   if hdr['v'] <> '1' then
     raise EFHIRException.Create('Unsupported card version = only v: 1 cards are supported');
   if hdr['is'] <> 'AUS' then
@@ -163,6 +209,9 @@ end;
 procedure TICAOCardImporter.checkSignature(sig, data: TJsonObject);
 var
   cert, vl, src : TBytes;
+  x : TX509Certificate;
+  jwk : TJWK;
+  s : String;
 begin
   if sig['alg'] <> 'ES256' then
     raise EFHIRException.Create('Unsupported signature algorithm - only ES256 is supported');
@@ -173,15 +222,55 @@ begin
 
   cert := unBase64URL(sig['cer']);
   vl := unBase64URL(sig['sigvl']);
-  src := TJsonWriterCanonical.writeObject(data);
+  src := TJsonWriterCanonical.canonicaliseObject(data);
 
-  raise Exception.Create('Todo: actual validation');
+  x := TX509Certificate.create(cert);
+  try
+    Flog.Append('<p>Check Certificate # '+encodeXml(x.SerialNumber)+'</p>');
+    Flog.Append('<p>Issuer = '+encodeXml(x.Issuer.AsString)+'</p>');
+    Flog.Append('<p>Subject = '+encodeXml(x.Subject.AsString)+'</p>');
+    Flog.Append('<p>Expires = '+FormatDateTime('c', x.ValidToInGMT)+'</p>');
+    Flog.Append('<p>Algorithm = '+encodeXml(x.SignatureAlgorithmAsString)+'</p>');
+
+    Flog.Append('<p>todo: verify the certificate</p>');
+    // todo: how do we verify that the certificate is a real one issued by the Australian passport office?
+
+    if now > x.ValidToInGMT then
+      raise EFHIRException.Create('Australian certificate is no longer valid - expired '+FormatDateTime('c', x.ValidToInGMT));
+    if x.SignatureAlgorithmAsString <> 'sha256WithRSAEncryption' then
+      raise EFHIRException.Create('Australian certificate is not valid - wrong algorithm type (must be sha256WithRSAEncryption)');
+
+    jwk := TJWK.loadFromX509(x, false);
+    try
+      Flog.Append('<p>Check Signature ('+Base64URL(vl)+'/'+Base64URL(src)+'</p>');
+      s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
+      if s <> '' then
+        raise EFHIRException.Create('The Covid Passport Signature is not valid');
+    finally
+      jwk.Free;
+    end;
+  finally
+    x.Free;
+  end;
+end;
+
+constructor TICAOCardImporter.Create;
+begin
+  inherited;
+  FLog := TFslStringBuilder.create;
 end;
 
 destructor TICAOCardImporter.Destroy;
 begin
+  FLog.Free;
+  FJWK.Free;
   FFactory.Free;
   inherited;
+end;
+
+function TICAOCardImporter.GetHtmlReport: String;
+begin
+  result := FLog.ToString;
 end;
 
 procedure TICAOCardImporter.SetFactory(const Value: TFHIRFactory);
@@ -190,10 +279,17 @@ begin
   FFactory := Value;
 end;
 
+procedure TICAOCardImporter.SetJWK(const Value: TJWK);
+begin
+  FJWK.Free;
+  FJWK := Value;
+end;
+
 function TICAOCardImporter.import(source: String): THealthcareCard;
 var
   json : TJsonObject;
 begin
+  Flog.Append('<p>Reading JSON ('+inttostr(source.Length)+'bytes)</p>');
   json := TJSONParser.Parse(source);
   try
     result := import(json);
@@ -203,15 +299,55 @@ begin
 end;
 
 function TICAOCardImporter.import(image: TBytes): THealthcareCard;
+var
+  picture : TPicture;
+  bitmap : TBitmap;
+  stream : TBytesStream;
 begin
-  raise Exception.Create('Not done yet');
+  Flog.Append('<p>Importing from an image format ('+inttostr(length(image))+'bytes)</p>');
+  picture := TPicture.create;
+  try
+    stream := TBytesStream.Create(image);
+    try
+      picture.LoadFromStream(stream);
+      bitmap := TBitmap.Create;
+      try
+        bitmap.Width := Picture.Width;
+        bitmap.Height := Picture.Height;
+        bitmap.Canvas.Draw(0, 0, Picture.Graphic);
+        result := import(bitmap);
+      finally
+        bitmap.Free;
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    picture.Free;
+  end;
 end;
 
-function TICAOCardImporter.childReq(json: TJsonObject; name: String): TJsonObject;
+function TICAOCardImporter.import(image: TBitmap): THealthcareCard;
+var
+  scanner : TScanManager;
+  bc : TReadResult;
 begin
-  result := json.obj[name];
-  if result = nil then
-    raise EFHIRException.Create('Unable to find '+name+' in VDS');
+  Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>');
+  scanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  try
+    bc := scanner.Scan(image);
+    try
+      if (bc = nil) then
+      begin
+        raise Exception.Create('Unable to read a barcode from the image supplied');
+      end;
+      result := import(bc.text);
+    finally
+      bc.free;
+    end;
+  finally
+    scanner.free;
+  end;
 end;
 
 function TICAOCardImporter.makeBundle: TFHIRBundleW;
@@ -220,10 +356,17 @@ begin
   result.type_ := btCollection;
 end;
 
-function TICAOCardImporter.addEntry(bundle : TFHIRBundleW; i: integer): TFhirBundleEntryW;
+procedure TICAOCardImporter.addEntry(bundle : TFHIRBundleW; i: integer; res : TFHIRResourceV);
+var
+  be : TFhirBundleEntryW;
 begin
-  result := bundle.addEntry;
-  result.url := 'resource:'+inttostr(i);
+  be := bundle.addEntry;
+  try
+    be.url := 'resource:'+inttostr(i);
+    be.resource := res;
+  finally
+    be.free;
+  end;
 end;
 
 

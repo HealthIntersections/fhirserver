@@ -23,6 +23,7 @@ git clone https://github.com/mriscoc/extrasyn
 git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester 
 git clone https://github.com/grahamegrieve/ZXing.Delphi
+git clone https://github.com/FHIR/fhir-test-cases
 
 cd tzdb 
 git pull
@@ -45,6 +46,10 @@ git pull
 cd ..
 
 cd ZXing.Delphi
+git pull
+cd ..
+
+cd fhir-test-cases
 git pull
 cd ..
 

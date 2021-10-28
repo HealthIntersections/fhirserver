@@ -164,7 +164,7 @@ function TPatientSearchManager.getCellText(item: TFHIRPatientW; col: integer): S
 begin
   case col of
     0: result := item.id;
-    1: result := item.active;
+    1: result := item.activeStr;
     2: result := item.nameSummary;
     3: result := item.gender;
     4: result := item.dob;
@@ -184,7 +184,7 @@ function TPatientSearchManager.compareItem(left, right: TFHIRPatientW; col: inte
 begin
   case col of
     0: result := String.Compare(left.id, right.id);
-    1: result := String.Compare(left.active, right.active);
+    1: result := String.Compare(left.activeStr, right.activeStr);
     2: result := String.Compare(left.nameSummary, right.nameSummary);
     3: result := String.Compare(left.gender, right.gender);
     4: result := String.Compare(left.dob, right.dob);
