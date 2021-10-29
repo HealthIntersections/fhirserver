@@ -1,7 +1,7 @@
 object QRCodeScannerForm: TQRCodeScannerForm
-  Left = 1047
+  Left = 556
   Height = 518
-  Top = -709
+  Top = 241
   Width = 791
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
@@ -30,7 +30,6 @@ object QRCodeScannerForm: TQRCodeScannerForm
       Width = 75
       Anchors = [akTop, akRight]
       Caption = 'Open'
-      Default = True
       Enabled = False
       ModalResult = 1
       ParentFont = False
@@ -47,6 +46,18 @@ object QRCodeScannerForm: TQRCodeScannerForm
       ModalResult = 2
       ParentFont = False
       TabOrder = 1
+    end
+    object btnReset: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'Reset'
+      Default = True
+      Enabled = False
+      OnClick = btnResetClick
+      ParentFont = False
+      TabOrder = 2
     end
   end
   object Panel2: TPanel
@@ -89,22 +100,14 @@ object QRCodeScannerForm: TQRCodeScannerForm
         OnClick = Button2Click
         TabOrder = 1
       end
-      object Button3: TButton
+      object Button4: TButton
         Left = 216
         Height = 25
         Top = 8
-        Width = 75
-        Caption = 'WebCam'
-        TabOrder = 2
-      end
-      object Button4: TButton
-        Left = 296
-        Height = 25
-        Top = 8
-        Width = 75
-        Caption = 'Screen'
+        Width = 112
+        Caption = 'Screenshot'
         OnClick = Button4Click
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     object Panel5: TPanel
@@ -124,6 +127,10 @@ object QRCodeScannerForm: TQRCodeScannerForm
         Top = 7
         Width = 389
         Align = alClient
+        OnMouseDown = Image1MouseDown
+        OnMouseMove = Image1MouseMove
+        OnMouseUp = Image1MouseUp
+        Proportional = True
         Stretch = True
       end
     end
