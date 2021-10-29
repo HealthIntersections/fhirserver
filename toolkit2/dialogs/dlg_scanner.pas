@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
   FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
+  fsl_utilities,
   fui_lcl_utilities;
 
 type
@@ -17,9 +18,9 @@ type
   TQRCodeScannerForm = class(TForm)
     btnCancel: TButton;
     btnOk: TButton;
+    btnReset: TButton;
     Button1: TButton;
     Button2: TButton;
-    Button3: TButton;
     Button4: TButton;
     Image1: TImage;
     Memo1: TMemo;
@@ -30,15 +31,25 @@ type
     Panel5: TPanel;
     pnlInfo: TPanel;
     Splitter1: TSplitter;
+    procedure btnResetClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Image1MouseDown(Sender: TObject; Button: TMouseButton;Shift: TShiftState; X, Y: Integer);
+    procedure Image1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure Image1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     FImage : TBitmap;
+    FOriginalImage : TBitmap;
     FScanner : TScanManager;
+    FStart, FEnd : TPoint;
+    FHasImage, FDragging : boolean;
     procedure clear;
+    procedure DrawRect;
+    function ImageScale: Double;
+    function IsInImage(p: TPoint): boolean;
     procedure readImage;
   end;
 
@@ -86,6 +97,7 @@ var
 begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
+  FOriginalImage := TBitmap.create;
   FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
   //FScreens := TStringList.create;
   //listScreens(FScreens);
@@ -102,6 +114,14 @@ end;
 
 procedure TQRCodeScannerForm.clear;
 begin
+  if FDragging then
+  begin
+    DrawRect;
+    FDragging := false;
+  end;
+  Image1.Cursor := crDefault;
+  FHasImage := false;
+  btnReset.enabled := false;
   btnOk.Enabled := false;
   Memo1.text := '';
   pnlInfo.caption := '  QR Code';
@@ -126,6 +146,7 @@ begin
       try
         bmp.LoadFromFile(dlg.filename);
         FImage.assign(bmp);
+        FHasImage := true;
         Image1.Picture.Assign(FImage);
         Image1.Refresh;
         Application.ProcessMessages;
@@ -139,6 +160,17 @@ begin
   end;
 end;
 
+procedure TQRCodeScannerForm.btnResetClick(Sender: TObject);
+begin
+  clear;
+  FImage.assign(FOriginalImage);
+  FHasImage := true;
+  Image1.Picture.Assign(FImage);
+  Image1.Refresh;
+  Application.ProcessMessages;
+  readImage;
+end;
+
 procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
 var
   bmp : TBitmap;
@@ -149,6 +181,7 @@ begin
     try
       bmp.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
       FImage.assign(bmp);
+      FHasImage := true;
       Image1.Picture.Assign(FImage);
       Image1.Refresh;
       Application.ProcessMessages;
@@ -169,6 +202,7 @@ begin
   try
     screenshot(bmp);
     FImage.assign(bmp);
+    FHasImage := true;
     Image1.Picture.Assign(FImage);
     Image1.Refresh;
     Application.ProcessMessages;
@@ -181,7 +215,118 @@ end;
 procedure TQRCodeScannerForm.FormDestroy(Sender: TObject);
 begin
   FImage.free;
+  FOriginalImage.Free;
   FScanner.free;
+end;
+
+
+procedure TQRCodeScannerForm.DrawRect;
+begin
+  Image1.Canvas.Pen.Color := clAqua;
+  Image1.Canvas.Pen.Width := trunc(2 * ImageScale);
+  Image1.Canvas.pen.Mode := pmXor;
+  Image1.Canvas.Brush.Style := bsClear;
+  Image1.Canvas.Rectangle(trunc(FStart.X * ImageScale), trunc(FStart.Y * ImageScale), trunc(FEnd.X * ImageScale), trunc(FEnd.Y * ImageScale));
+end;
+
+function TQRCodeScannerForm.ImageScale : Double;
+var
+  hi, wi, hp, wp : integer;
+  rw, rh : Double;
+begin
+  hi := Image1.Height;
+  wi := Image1.Width;
+  hp := Image1.Picture.Height;
+  wp := Image1.Picture.Width;
+  rw := wp/wi;
+  rh := hp/hi;
+  if rh > rw then
+    result := rh
+  else
+    result := rw;
+end;
+
+function TQRCodeScannerForm.IsInImage(p : TPoint) : boolean;
+begin
+  if not FHasImage then
+    result := false
+  else
+    result := (p.y <= Image1.picture.height / ImageScale) and (p.x < Image1.picture.width / ImageScale);
+end;
+
+procedure TQRCodeScannerForm.Image1MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FStart.X := X;
+  FStart.Y := Y;
+  FStart := Image1.ParentToClient(FStart);
+  if isInImage(FStart) then
+  begin
+    FDragging := true;
+    FEnd := FStart;
+    DrawRect;
+  end;
+end;
+
+procedure TQRCodeScannerForm.Image1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+var
+  p : TPoint;
+begin
+  p.X := X;
+  p.Y := Y;
+  p := Image1.ParentToClient(p);
+  if FDragging then
+  begin
+    DrawRect;
+    if IsInImage(p) then
+    begin
+      FEnd := p;
+      DrawRect;
+    end;
+  end
+  else if IsInImage(p) then
+    Image1.Cursor := crCross
+  else
+    Image1.Cursor := crDefault;
+end;
+
+procedure TQRCodeScannerForm.Image1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  bmp : TBitmap;
+  src, dst : TRect;
+begin
+  if FDragging then
+  begin
+    DrawRect;
+    FDragging := false;
+    if (abs(FStart.x - FEnd.x) > 10) and (abs(FStart.y - FEnd.y) > 10) then
+    begin
+      if not btnReset.enabled then
+        FOriginalImage.assign(Image1.picture);
+      bmp := TBitmap.create;
+      try
+        src.Top := Trunc(IntegerMin(FStart.y, FEnd.Y) * ImageScale);
+        src.Bottom := Trunc(IntegerMax(FStart.y, FEnd.Y) * ImageScale);
+        src.Left := Trunc(IntegerMin(FStart.x, FEnd.x) * ImageScale);
+        src.Right := Trunc(IntegerMax(FStart.x, FEnd.x) * ImageScale);
+        dst.Top := 0;
+        dst.Left := 0;
+        dst.Bottom := src.Height;
+        dst.right := src.width;
+        bmp.height := dst.Height;
+        bmp.Width := dst.Width;
+        bmp.Canvas.CopyRect(dst, Image1.Canvas, src);
+        FImage.assign(bmp);
+        FHasImage := true;
+        Image1.Picture.Assign(FImage);
+        Image1.Refresh;
+        Application.ProcessMessages;
+        readImage;
+      finally
+        bmp.free;
+      end;
+      btnReset.enabled := true;
+    end;
+  end;
 end;
 
 procedure TQRCodeScannerForm.readImage;
