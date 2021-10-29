@@ -103,7 +103,7 @@ begin
     imp.Store := TX509CertificateStore.create;
 
     try
-      card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao.json']), TEncoding.UTF8));
+      card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao-broken.json']), TEncoding.UTF8));
       assertFail('Should have blown up');
     except
       on e : Exception do
