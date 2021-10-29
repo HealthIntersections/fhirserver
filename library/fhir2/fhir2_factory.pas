@@ -94,6 +94,7 @@ type
     function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; override;
     function wrapExtension(o : TFHIRObject) : TFhirExtensionW; override;
     function wrapCoding(o : TFHIRObject) : TFhirCodingW; override;
+    function wrapIdentifier(o : TFHIRObject) : TFhirIdentifierW; override;
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; override;
     function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; override;
     function wrapConceptMap(r : TFHIRResourceV) : TFhirConceptMapW; override;
@@ -643,6 +644,14 @@ begin
     result := nil
   else
     result := TFhirGroup2.Create(r);
+end;
+
+function TFHIRFactoryR2.wrapIdentifier(o: TFHIRObject): TFhirIdentifierW;
+begin
+  if o = nil then
+    result := nil
+  else
+    result := TFhirIdentifier2.create(o);
 end;
 
 function TFHIRFactoryR2.wrapImmunization(o: TFHIRResourceV): TFhirImmunizationW;
