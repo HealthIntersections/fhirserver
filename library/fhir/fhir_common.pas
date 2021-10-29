@@ -48,6 +48,7 @@ Type
   TSubscriptionMethod = (smNull, smRestHook, smEmail, smSms, smWebsocket, smChangeScript);
   TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
+  TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
 
 const
   CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf');
@@ -89,12 +90,12 @@ type
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
-  TFhirDatTypeW = class (TFHIRXVersionElementWrapper)
+  TFhirDataTypeW = class (TFHIRXVersionElementWrapper)
   public
     function renderText : String; virtual; abstract;
   end;
 
-  TFhirCodingW = class (TFhirDatTypeW)
+  TFhirCodingW = class (TFhirDataTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getDisplay: String; virtual; abstract;
@@ -112,7 +113,7 @@ type
     property display : String read GetDisplay write SetDisplay;
   end;
 
-  TFhirQuantityW = class (TFhirDatTypeW)
+  TFhirQuantityW = class (TFhirDataTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getSystem: String; virtual; abstract;
@@ -131,7 +132,7 @@ type
     function asDuration : TDateTime; virtual; abstract;
   end;
 
-  TFHIRPeriodW = class (TFhirDatTypeW)
+  TFHIRPeriodW = class (TFhirDataTypeW)
   protected
     function GetEnd: TFslDateTime; virtual; abstract;
     function GetStart: TFslDateTime; virtual; abstract;
@@ -143,7 +144,7 @@ type
     property end_ : TFslDateTime read GetEnd write SetEnd;
   end;
 
-  TFHIRAttachmentW = class abstract (TFhirDatTypeW)
+  TFHIRAttachmentW = class abstract (TFhirDataTypeW)
   protected
     function GetContentType: String; virtual; abstract;
     function GetData: TBytes; virtual; abstract;
@@ -230,14 +231,14 @@ type
   end;
 
   // types....
-  TFhirExtensionW = class (TFhirDatTypeW)
+  TFhirExtensionW = class (TFhirDataTypeW)
   public
     function link : TFhirExtensionW; overload;
     function url : String; virtual; abstract;
     function value : TFHIRObject; virtual; abstract;
   end;
 
-  TFhirCodeableConceptW = class (TFhirDatTypeW)
+  TFhirCodeableConceptW = class (TFhirDataTypeW)
   protected
     function GetText: String; virtual; abstract;
     procedure SetText(const Value: String); virtual; abstract;
@@ -251,6 +252,29 @@ type
     function fromSystem(systemUri : String; required : boolean = false) : String; overload; virtual; abstract;
     function fromSystem(systems : TArray<String>; required : boolean = false) : String; overload; virtual; abstract;
     property text : String read GetText write SetText;
+  end;
+
+  TFhirIdentifierW = class (TFhirDataTypeW)
+  private
+    FType: TFhirCodeableConceptW;
+    function GetType: TFhirCodeableConceptW;
+    procedure SetType(const Value: TFhirCodeableConceptW);
+  protected
+    function GetSystem: String; virtual; abstract;
+    function GetUse: TIdentifierUse; virtual; abstract;
+    function GetValue: String; virtual; abstract;
+    procedure SetSystem(const Value: String); virtual; abstract;
+    procedure SetUse(const Value: TIdentifierUse); virtual; abstract;
+    procedure SetValue(const Value: String); virtual; abstract;
+    function GetTypeV: TFhirCodeableConceptW; virtual; abstract;
+    procedure SetTypeV(const Value: TFhirCodeableConceptW); virtual; abstract;
+  public
+    destructor Destroy; override;
+    function link : TFhirIdentifierW; overload;
+    property type_ : TFhirCodeableConceptW read GetType write SetType;
+    property use : TIdentifierUse read GetUse write SetUse;
+    property systemUri : String read GetSystem write SetSystem;
+    property value : String read GetValue write SetValue;
   end;
 
   TFhirOperationOutcomeIssueW = class (TFHIRXVersionElementWrapper)
@@ -2529,6 +2553,34 @@ end;
 procedure TFHIRImmunizationW.SetSctCode(const Value: String);
 begin
   setCodeBySystem('http://snomed.info/sct', Value);
+end;
+
+
+{ TFhirIdentifierW }
+
+destructor TFhirIdentifierW.Destroy;
+begin
+  FType.Free;
+  inherited;
+end;
+
+function TFhirIdentifierW.GetType: TFhirCodeableConceptW;
+begin
+  if FType = nil then
+    FType := GetTypeV;
+  result := FType;
+end;
+
+function TFhirIdentifierW.link: TFhirIdentifierW;
+begin
+  result := TFhirIdentifierW(inherited Link);
+end;
+
+procedure TFhirIdentifierW.SetType(const Value: TFhirCodeableConceptW);
+begin
+  FType.Free;
+  FType := Value;
+  SetTypeV(value);
 end;
 
 end.

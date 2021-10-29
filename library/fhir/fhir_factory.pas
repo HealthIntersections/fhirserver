@@ -192,6 +192,7 @@ type
     function wrapExtension(o : TFHIRObject) : TFhirExtensionW; virtual; abstract;
     function wrapCoding(o : TFHIRObject) : TFhirCodingW; virtual; abstract;
     function wrapCodeableConcept(o : TFHIRObject) : TFhirCodeableConceptW; virtual; abstract;
+    function wrapIdentifier(o : TFHIRObject) : TFhirIdentifierW; virtual; abstract;
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; virtual; abstract;
     function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; virtual; abstract;
     function wrapParams(r : TFHIRResourceV) : TFHIRParametersW; virtual; abstract;

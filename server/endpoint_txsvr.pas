@@ -105,6 +105,10 @@ type
     function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
     function matches(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
     function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
+    function tokenMatchesCodeableConcept(obj: TFhirObject; sp: TSearchParameter): boolean;
+    function tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
+    function tokenMatchesCoding(c: TFhirCodingW; sp: TSearchParameter): boolean; overload;
+    function tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -798,6 +802,78 @@ begin
   end;
 end;
 
+function TTerminologyServerOperationEngine.tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  c : TFhirCodingW;
+begin
+  c := factory.wrapCoding(obj.link);
+  try
+    result := tokenMatchesCoding(c, sp);
+  finally
+    c.Free;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesCoding(c : TFhirCodingW; sp: TSearchParameter): boolean;
+begin
+  case sp.modifier of
+    spmNull, spmExact: result := ((sp.namespace = '') or (sp.namespace = c.systemUri)) and
+                ((sp.value = '') or (sp.value = c.code));
+    spmText: result := c.display.ToLower.Contains(sp.value.ToLower);
+//    spmIn: ; todo: we're a terminology server so we should really implement these!
+//    spmBelow: ;
+//    spmAbove: ;
+//    spmNotIn: ;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesCodeableConcept(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  cc : TFhirCodeableConceptW;
+  cl : TFslList<TFhirCodingW>;
+  c : TFhirCodingW;
+begin
+  cc := factory.wrapCodeableConcept(obj.link);
+  try
+    if sp.modifier = spmText then
+      result := cc.text.ToLower.Contains(sp.value.ToLower)
+    else
+    begin
+      result := false;
+      cl := cc.codings;
+      try
+        for c in cl do
+          if tokenMatchesCoding(c, sp) then
+            exit(true);
+      finally
+        cl.Free;
+      end;
+    end;
+  finally
+    cc.Free;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  id : TFhirIdentifierW;
+begin
+  id := factory.wrapIdentifier(obj.link);
+  try
+    case sp.modifier of
+      spmNull, spmExact : result := ((sp.namespace = '') or (sp.namespace = id.systemUri)) and
+                ((sp.value = '') or (sp.value = id.value));
+      spmText : result := id.type_.text.ToLower.Contains(sp.value.ToLower);
+      spmType : result := tokenMatchesCodeableConcept(id.type_.Element, sp);
+    else
+      result := false;
+    end;
+  finally
+    id.Free;
+  end;
+end;
+
+
 function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: TSearchParameter): boolean;
 var
   date : TFslDateTime;
@@ -830,7 +906,13 @@ begin
       else
         raise EFHIRException.create('Modifier is not supported');
     sptToken:
-      if not obj.isPrimitive then
+      if obj.fhirType = 'Coding' then
+        result := tokenMatchesCoding(obj, sp)
+      else if obj.fhirType = 'CodeableConcept' then
+        result := tokenMatchesCodeableConcept(obj, sp)
+      else if obj.fhirType = 'Identifier' then
+        result := tokenMatchesIdentifier(obj, sp)
+      else if not obj.isPrimitive then
         result := false
       else if sp.modifier = spmNull then
         result := obj.primitiveValue = sp.value
