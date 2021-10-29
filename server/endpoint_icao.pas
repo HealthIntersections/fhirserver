@@ -49,6 +49,7 @@ type
   private
     FJWK : TJWK;
     FJWKSFile : String;
+    FStore : TX509CertificateStore;
     function processSHC(card : THealthcareCard; accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
     function processCard(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function processQRCode(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
@@ -72,6 +73,7 @@ type
     FICAOServer : TICAOWebServer;
     FJWK : TJWK;
     FJWKSFile : String;
+    FStore : TX509CertificateStore;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
     destructor Destroy; override;
@@ -91,12 +93,16 @@ begin
   inherited create(config, settings, nil, nil, nil);
   FJWK :=  TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   FJWKSFile := Settings.Ini.web['card-jwks'].value;
+  FStore := TX509CertificateStore.create;
+  if Settings.Ini.web['cert-store'].value <> '' then
+    FStore.addFolder(Settings.Ini.web['cert-store'].value);
 end;
 
 destructor TICAOWebEndPoint.Destroy;
 begin
   FJWK.Free;
   FICAOServer.free;
+  FStore.Free;
   inherited;
 end;
 
@@ -115,6 +121,7 @@ begin
   FICAOServer := TICAOWebServer.Create(config.name, config['path'].value, common);
   FICAOServer.FJWK := FJWK.link;
   FICAOServer.FJWKSFile := FJWKSFile;
+  FICAOServer.FStore := FStore.Link;
   WebEndPoint := FICAOServer;
   result := FICAOServer.link;
 end;
@@ -134,6 +141,7 @@ end;
 destructor TICAOWebServer.Destroy;
 begin
   FJWK.free;
+  FStore.free;
   inherited;
 end;
 
@@ -218,11 +226,16 @@ begin
     response.ContentType := 'text/html';
     response.ContentText := render(card, htmlLog);
   end
+  else if accept.Contains('text/qrcode') then
+  begin
+    response.ContentType := 'text/qrcode';
+    response.ContentText := card.qrSource(true);
+  end
   else
   begin
     response.ContentType := 'application/smart-health-card';
-    response.ContentText := card.qrSource(true);
-  end;
+    response.ContentText := '{"verifiableCredential": ["'+card.jws+'"]}';
+  end
 end;
 
 function TICAOWebServer.processError(message, accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
@@ -251,6 +264,8 @@ begin
   try
     conv.factory := TFHIRFactoryR4.create;
     conv.issuer := AbsoluteURL(true);
+    conv.store := FStore.Link;
+    conv.mustVerify := true;
     conv.jwk := FJWK.link;
     try
       card := conv.import(StreamToString(stream, TEncoding.UTF8));
@@ -277,6 +292,8 @@ begin
   try
     conv.factory := TFHIRFactoryR4.create;
     conv.issuer := AbsoluteURL(true);
+    conv.store := FStore.Link;
+    conv.mustVerify := true;
     conv.jwk := FJWK.link;
     try
       card := conv.import(StreamToBytes(stream));

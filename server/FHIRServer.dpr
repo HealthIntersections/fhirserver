@@ -1,5 +1,3 @@
-
-// JCL_DEBUG_EXPERT_INSERTJDBG ON
 program FHIRServer;
 
 {
