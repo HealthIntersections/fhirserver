@@ -636,6 +636,9 @@
         <DCCReference Include="..\library\fhir\tests\fhir_tests_icao.pas"/>
         <DCCReference Include="endpoint_icao.pas"/>
         <DCCReference Include="..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumCore.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumCtrl.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumLib.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

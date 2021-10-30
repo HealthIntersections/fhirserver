@@ -22,6 +22,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button4: TButton;
+    btnPDF: TButton;
     Image1: TImage;
     Memo1: TMemo;
     Panel1: TPanel;
@@ -31,6 +32,7 @@ type
     Panel5: TPanel;
     pnlInfo: TPanel;
     Splitter1: TSplitter;
+    procedure btnPDFClick(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -169,6 +171,15 @@ begin
   Image1.Refresh;
   Application.ProcessMessages;
   readImage;
+end;
+
+procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+begin
+  load pdf in pdfium
+  for each page
+    render page into bitmap
+    until scanner finds qr code
+
 end;
 
 procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
@@ -333,6 +344,13 @@ procedure TQRCodeScannerForm.readImage;
 var
   bc : TReadResult;
 begin
+  pnlInfo.caption := '  Looking for images...';
+  pnlInfo.update;
+  memo1.Color := clBtnFace;
+  memo1.Text := '';
+  memo1.Update;
+  Application.ProcessMessages;
+
   screen.Cursor := crHourGlass;
   try
     bc := FScanner.Scan(FImage);
@@ -347,6 +365,7 @@ begin
         btnOk.enabled := true;
         pnlInfo.caption := '  QR code: '+codesTBarcodeFormat(bc.BarcodeFormat)+' found';
         memo1.Text := bc.text;
+        memo1.Color := clWhite;
       end;
     finally
       bc.free;
