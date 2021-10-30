@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
   FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
+  PDFiumCore,
   fsl_utilities,
   fui_lcl_utilities;
 
@@ -52,6 +53,8 @@ type
     procedure DrawRect;
     function ImageScale: Double;
     function IsInImage(p: TPoint): boolean;
+    procedure processPDF(pdf: TPdfDocument);
+    function processPDFPage(pg: TPdfPage; openAnyway: boolean): boolean;
     procedure readImage;
   end;
 
@@ -173,13 +176,71 @@ begin
   readImage;
 end;
 
-procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+function TQRCodeScannerForm.processPDFPage(pg : TPdfPage; openAnyway : boolean) : boolean;
+var
+  bmp : TBitmap;
+  rr : TReadResult;
 begin
-  load pdf in pdfium
-  for each page
-    render page into bitmap
-    until scanner finds qr code
+  bmp := TBitmap.create;
+  try
+    bmp.width := 2400;
+    bmp.height := 4800;
+    pg.Draw(bmp.Canvas.Handle, 0, 0, bmp.width, bmp.height);
+    bmp.SaveToFile('c:\temp\bmp.bmp');
+    rr := FScanner.Scan(bmp);
+    if (rr <> nil) or openAnyway then
+    begin
+      FImage.assign(bmp);
+      FHasImage := true;
+      Image1.Picture.Assign(FImage);
+      Image1.Refresh;
+      Application.ProcessMessages;
+      readImage;
+    end;
+  finally
+    bmp.free;
+  end;
+end;
 
+procedure TQRCodeScannerForm.processPDF(pdf : TPdfDocument);
+var
+  i : integer;
+  pg : TPdfPage;
+begin
+  for i := 0 to pdf.PageCount - 1 do
+  begin
+    pg := pdf.Pages[i];
+    if processPDFPage(pg, false) then
+      exit;
+  end;
+  if pdf.PageCount > 0 then
+    processPDFPage(pg, true);
+end;
+
+procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+var
+  dlg : TOpenDialog;
+  pdf : TPdfDocument;
+begin
+  dlg := TOpenDialog.create(self);
+  try
+    dlg.Filter := 'PDF Files|*.pdf|'+
+      'All Files|*.*';
+    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
+    if dlg.execute then
+    begin
+      clear;
+      pdf := TPdfDocument.Create;
+      try
+        pdf.LoadFromFile(dlg.filename, '', dloMemory);
+        processPDF(pdf);
+      finally
+        pdf.free;
+      end;
+    end;
+  finally
+    dlg.free;
+  end;
 end;
 
 procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
