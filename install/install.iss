@@ -95,11 +95,11 @@ Name: envPath;   Description: "Add FHIR Server to the system path"
 Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\64\FHIRServer.debug.exe";                    DestDir: "{app}\debug"; Flags: ignoreversion
 Source: "..\exec\64\fhirconsole.exe";                         DestDir: "{app}";       Flags: ignoreversion
-Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";        DestDir: "{app}\debug"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libsqlite3.dll";                    DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\libcrypto-1_1-x64.dll";             DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\libssl-1_1-x64.dll";                DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libpdf.dll";                        DestDir: "{app}";       Flags: ignoreversion
 
 ; 3. Data Files
 Source: "..\exec\pack\fhirserver.cfg";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full

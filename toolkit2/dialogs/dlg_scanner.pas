@@ -103,7 +103,7 @@ begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FOriginalImage := TBitmap.create;
-  FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  FScanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
   //FScreens := TStringList.create;
   //listScreens(FScreens);
   //pmScreens.Items.Clear;
@@ -183,10 +183,9 @@ var
 begin
   bmp := TBitmap.create;
   try
-    bmp.width := 2400;
-    bmp.height := 4800;
-    pg.Draw(bmp.Canvas.Handle, 0, 0, bmp.width, bmp.height);
-    bmp.SaveToFile('c:\temp\bmp.bmp');
+    bmp.width := 1500;
+    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
+    pg.Draw(bmp);
     rr := FScanner.Scan(bmp);
     if (rr <> nil) or openAnyway then
     begin
@@ -436,5 +435,9 @@ begin
   end;
 end;
 
+initialization
+  {$IFDEF WINDOWS}
+  PDFiumDllFileName := 'libpdf.dll';
+  {$ENDIF}
 end.
 
