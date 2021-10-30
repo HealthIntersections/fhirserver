@@ -111,6 +111,21 @@ type
     function renderText : String; override;
   end;
 
+  TFhirIdentifier5 = class (TFhirIdentifierW)
+  private
+    function id : TFHIRIdentifier;
+  protected
+    function GetSystem: String; override;
+    function GetUse: TIdentifierUse; override;
+    function GetValue: String; override;
+    procedure SetSystem(const Value: String); override;
+    procedure SetUse(const Value: TIdentifierUse); override;
+    procedure SetValue(const Value: String); override;
+    function GetTypeV: TFhirCodeableConceptW; override;
+    procedure SetTypeV(const Value: TFhirCodeableConceptW); override;
+    function renderText : String; override;
+  end;
+
   TFhirOperationOutcome5 = class (TFhirOperationOutcomeW)
   public
     function GetLanguage: String; override;
@@ -6404,6 +6419,68 @@ end;
 procedure TFhirImmunization5.SetStatus(const Value: string);
 begin
   imm.statusElement.value := value;
+end;
+
+{ TFhirIdentifier5 }
+
+function TFhirIdentifier5.id: TFHIRIdentifier;
+begin
+  result := FElement as TFHIRIdentifier;
+end;
+
+function TFhirIdentifier5.renderText: String;
+begin
+  result := gen(element as TFhirIdentifier);
+end;
+
+function TFhirIdentifier5.GetSystem: String;
+begin
+  result := id.system;
+end;
+
+function TFhirIdentifier5.GetValue: String;
+begin
+  result := id.value;
+end;
+
+procedure TFhirIdentifier5.SetSystem(const Value: String);
+begin
+  id.system := value;
+end;
+
+procedure TFhirIdentifier5.SetValue(const Value: String);
+begin
+  id.value := value;
+end;
+
+const
+  identifier_use_version_to_general : array [TFhirIdentifierUseEnum] of TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
+  identifier_use_general_to_version : array [TIdentifierUse] of TFhirIdentifierUseEnum = (IdentifierUseNull, IdentifierUseUsual, IdentifierUseOfficial, IdentifierUseTemp, IdentifierUseSecondary, IdentifierUseOld);
+
+function TFhirIdentifier5.GetUse: TIdentifierUse;
+begin
+  result := identifier_use_version_to_general[id.use];
+end;
+
+procedure TFhirIdentifier5.SetUse(const Value: TIdentifierUse);
+begin
+  id.use := identifier_use_general_to_version[value];
+end;
+
+function TFhirIdentifier5.GetTypeV: TFhirCodeableConceptW;
+begin
+  if id.type_ = nil then
+    result := nil
+  else
+    result := TFhirCodeableConcept5.Create(id.type_.Link);
+end;
+
+procedure TFhirIdentifier5.SetTypeV(const Value: TFhirCodeableConceptW);
+begin
+  if value = nil then
+    id.type_ := nil
+  else
+    id.type_ := ((Value as TFhirCodeableConcept5).FElement as TFhirCodeableConcept).link;
 end;
 
 end.

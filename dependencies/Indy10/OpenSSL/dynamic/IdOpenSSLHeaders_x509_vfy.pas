@@ -361,7 +361,7 @@ var
   X509_STORE_CTX_get1_issuer: function(issuer: PPX509; ctx: PX509_STORE_CTX; x: PX509): TIdC_INT cdecl = nil;
 
   X509_STORE_CTX_free: procedure(ctx: PX509_STORE_CTX) cdecl = nil;
-//  TIdC_INT X509_STORE_CTX_init(ctx: PX509_STORE_CTX; store: PX509_STORE; x509: PX509; chain: P STACK_OF(X509));
+  X509_STORE_CTX_init: function(ctx: PX509_STORE_CTX; store: PX509_STORE; x509: PX509; chain: pSTACK_OFX509) : TIdC_INT cdecl = nil;
 //  procedure X509_STORE_CTX_set0_trusted_stack(ctx: PX509_STORE_CTX; sk: P STACK_OF(X509));
   X509_STORE_CTX_cleanup: procedure(ctx: PX509_STORE_CTX) cdecl = nil;
 
@@ -619,6 +619,7 @@ begin
   X509_STORE_CTX_new := LoadFunction('X509_STORE_CTX_new', AFailed);
   X509_STORE_CTX_get1_issuer := LoadFunction('X509_STORE_CTX_get1_issuer', AFailed);
   X509_STORE_CTX_free := LoadFunction('X509_STORE_CTX_free', AFailed);
+  X509_STORE_CTX_init := LoadFunction('X509_STORE_CTX_init', AFailed);
   X509_STORE_CTX_cleanup := LoadFunction('X509_STORE_CTX_cleanup', AFailed);
   X509_STORE_CTX_get0_store := LoadFunction('X509_STORE_CTX_get0_store', AFailed);
   X509_STORE_CTX_get0_cert := LoadFunction('X509_STORE_CTX_get0_cert', AFailed);

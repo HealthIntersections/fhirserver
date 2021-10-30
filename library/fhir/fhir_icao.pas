@@ -17,6 +17,8 @@ type
     FIssuer: string;
     FJWK: TJWK;
     FLog : TFslStringBuilder;
+    FStore: TX509CertificateStore;
+    FMustVerify: boolean;
 
     function makePatient(pid : TJsonObject) : TFHIRResourceV;
     function makeImmunization(cvxCode : String; vd : TJsonObject) : TFHIRResourceV;
@@ -33,12 +35,15 @@ type
     procedure SetJWK(const Value: TJWK);
     function GetHtmlReport: String;
     function displayCvx(code: String): String;
+    procedure SetStore(const Value: TX509CertificateStore);
   public
     constructor Create; override;
     destructor Destroy; override;
 
     property factory : TFHIRFactory read FFactory write SetFactory;
     property issuer : string read FIssuer write FIssuer;
+    property store : TX509CertificateStore read FStore write SetStore;
+    property mustVerify : boolean read FMustVerify write FMustVerify;
     property jwk : TJWK read FJWK write SetJWK;
 
     property htmlReport : String read GetHtmlReport;
@@ -209,7 +214,7 @@ end;
 procedure TICAOCardImporter.checkSignature(sig, data: TJsonObject);
 var
   cert, vl, src : TBytes;
-  x : TX509Certificate;
+  x, ca : TX509Certificate;
   jwk : TJWK;
   s : String;
 begin
@@ -231,14 +236,27 @@ begin
     Flog.Append('<p>Subject = '+encodeXml(x.Subject.AsString)+'</p>');
     Flog.Append('<p>Expires = '+FormatDateTime('c', x.ValidToInGMT)+'</p>');
     Flog.Append('<p>Algorithm = '+encodeXml(x.SignatureAlgorithmAsString)+'</p>');
+    Flog.Append('<p>Authority Key Id = '+encodeXml(x.AuthorityKeyIdentifier)+'</p>');
 
-    Flog.Append('<p>todo: verify the certificate</p>');
+    ca := FStore.ByKeyId[x.AuthorityKeyIdentifier];
+    if ca <> nil then
+    begin
+      Flog.Append('<p>Found Authority Certificate, verifying against it</p>');
+      TX509CertificateVerifier.verifyCert(x, [ca]);
+    end
+    else
+    begin
+      Flog.Append('<p>No matching certificate found for Authority Key Id</p>');
+      if FMustVerify then
+        raise EFHIRException.Create('Cannot verify certificate - no match for key "'+x.AuthorityKeyIdentifier+'"');
+    end;
     // todo: how do we verify that the certificate is a real one issued by the Australian passport office?
 
     if now > x.ValidToInGMT then
       raise EFHIRException.Create('Australian certificate is no longer valid - expired '+FormatDateTime('c', x.ValidToInGMT));
     if x.SignatureAlgorithmAsString <> 'sha256WithRSAEncryption' then
       raise EFHIRException.Create('Australian certificate is not valid - wrong algorithm type (must be sha256WithRSAEncryption)');
+
 
     jwk := TJWK.loadFromX509(x, false);
     try
@@ -262,6 +280,7 @@ end;
 
 destructor TICAOCardImporter.Destroy;
 begin
+  FStore.Free;
   FLog.Free;
   FJWK.Free;
   FFactory.Free;
@@ -283,6 +302,12 @@ procedure TICAOCardImporter.SetJWK(const Value: TJWK);
 begin
   FJWK.Free;
   FJWK := Value;
+end;
+
+procedure TICAOCardImporter.SetStore(const Value: TX509CertificateStore);
+begin
+  FStore.Free;
+  FStore := Value;
 end;
 
 function TICAOCardImporter.import(source: String): THealthcareCard;

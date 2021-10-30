@@ -46,14 +46,6 @@
         <Filename Value="..\library\fui\fui_fake_console.pas"/>
         <UnitName Value="fui_fake_console"/>
       </Item>
-      <Item>
-        <Filename Value="..\library\fui\fui_lcl_webcam.pas"/>
-        <UnitName Value="fui_lcl_webcam"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\mediafoundation\MfIdl.pas"/>
-        <UnitName Value="MfIdl"/>
-      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
