@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache,
-  fsl_ucum, fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml, fhir_elementmodel, fhir_client;
+  fsl_ucum, fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml, fhir_elementmodel, fhir_client, fhir_uris;
 
 type
   TFhirReferenceValidationPolicy = (rvpIGNORE, rvpCHECK_VALID);
@@ -130,6 +130,7 @@ type
     function canonicalResources : TArray<String>; virtual; abstract;
     function isResourceName(name : String) : boolean; virtual;
     function resCategory(name: String) : TTokenCategory; virtual; abstract;
+    function URLs : TCommonURLs; virtual; abstract;
 
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; virtual; abstract;
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;

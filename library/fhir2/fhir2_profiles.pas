@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_threads, fsl_collections, fsl_stream, fsl_fpc, fsl_npm_cache,
   fsl_http,
-  fhir_objects, fhir_parser, fhir_factory,  fhir_oids,
+  fhir_objects, fhir_parser, fhir_factory, fhir_uris,
   fhir2_resources, fhir2_types, fhir2_utilities, fhir2_constants, fhir2_context,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_other;
 
@@ -1568,7 +1568,7 @@ var
   uri : String;
   ns : TFhirNamingSystem;
 begin
-  uri := getUriForOid(oid);
+  uri := UriForKnownOid(oid);
   if (uri <> '') then
     exit(uri);
   for ns in FNamingSystems.Values do

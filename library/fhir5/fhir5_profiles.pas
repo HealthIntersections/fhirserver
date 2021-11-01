@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_fpc, fsl_npm_cache,
-  fhir_objects, fhir_parser, fhir_factory,  fhir_oids,
+  fhir_objects, fhir_parser, fhir_factory, fhir_uris,
   fhir5_resources, fhir5_resources_base, fhir5_parser, fhir5_enums, fhir5_types, fhir5_context, fhir5_utilities, fhir5_constants;
 
 Const
@@ -1586,7 +1586,7 @@ var
   uri : String;
   ns : TFhirNamingSystem;
 begin
-  uri := getUriForOid(oid);
+  uri := UriForKnownOid(oid);
   if (uri <> '') then
     exit(uri);
   for ns in FNamingSystems.Values do

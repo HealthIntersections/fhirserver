@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
-  fhir_objects,  fhir4_parser, fhir_factory, ftx_service, fhir_utilities, fhir_common,
+  fhir_objects,  fhir4_parser, fhir_factory, ftx_service, fhir_utilities, fhir_common, fhir_uris,
   fhir4_resources, fhir4_types, fhir4_constants, fhir4_utilities, fhir4_profiles;
 
 Const
@@ -283,7 +283,7 @@ begin
   if FPrebuiltQuestionnaire = nil then
   begin
     id := FQuestionnaire.identifierList.Append;
-    id.System := 'urn:ietf:rfc:3986';
+    id.System := URI_URIs;
     id.Value := FQuestionnaireId;
     FQuestionnaire.Version := profile.Version;
     FQuestionnaire.Status := profile.Status;

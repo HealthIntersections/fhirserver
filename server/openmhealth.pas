@@ -327,13 +327,13 @@ begin
     obs.value := readQuantity(body.obj['distance']);
 
   if body.has('kcal_burned') then
-    obs.addComp('http://loinc.org', '41981-2').value := readQuantity(body.obj['kcal_burned']);
+    obs.addComp(URI_LOINC, '41981-2').value := readQuantity(body.obj['kcal_burned']);
 
   if body.has('reported_activity_intensity') then
     obs.addComp('http://openmhealth.org/codes', 'reported_activity_intensity').value := FFactory.makeString(body['reported_activity_intensity']);
 
   if body.has('met_value') then
-    obs.addComp('http://snomed.info/sct', '698834005').value := readQuantity(body.obj['met_value']);
+    obs.addComp(URI_SNOMED, '698834005').value := readQuantity(body.obj['met_value']);
 end;
 
 function TOpenMHealthAdaptor.readQuantity(obj: TJsonObject): TFHIRQuantityW;
@@ -341,7 +341,7 @@ begin
   result := FFactory.wrapQuantity(FFactory.makeByName('Quantity'));
   try
     result.value := obj['value'];
-    result.systemUri := 'http://unitsofmeasure.org';
+    result.systemUri := URI_UCUM;
     result.units := obj['unit'];
     result.code := convertUCUMUnit(result.units);
     result.Link;
@@ -593,7 +593,7 @@ begin
   if obs.value.fhirType = 'Quantity' then
     body.obj['distance'] := writeQuantity(obs.valueW as TFhirQuantityW);
 
-  if obs.getComponent('http://loinc.org', '41981-2', comp) then
+  if obs.getComponent(URI_LOINC, '41981-2', comp) then
   begin
     try
       body.obj['kcal_burned'] := writeQuantity(comp.valueW as TFhirQuantityW);
@@ -611,7 +611,7 @@ begin
     end;
   end;
 
-  if obs.getComponent('http://snomed.info/sct', '698834005', comp) then
+  if obs.getComponent(URI_SNOMED, '698834005', comp) then
   begin
     try
       body.obj['met_value'] := writeQuantity(comp.value as TFhirQuantityW);
@@ -700,9 +700,9 @@ begin
   obs.value := qty;
 
   if (qty.code = 'mg/dL') then
-    obs.setCode('http://loinc.org', '2339-0', 'Glucose [Mass/volume] in Blood')
+    obs.setCode(URI_LOINC, '2339-0', 'Glucose [Mass/volume] in Blood')
   else
-    obs.setCode('http://loinc.org', '15074-8', 'Glucose [Moles/volume] in Blood');
+    obs.setCode(URI_LOINC, '15074-8', 'Glucose [Moles/volume] in Blood');
 
   // specimen_source --> observation.specimen.code
 //  if (body.has('specimen_source')) then
@@ -728,9 +728,9 @@ begin
 
   // temporal_relationship_to_meal/sleep --> component.value
   if (body.has('temporal_relationship_to_meal')) then
-    obs.addComp('http://snomed.info/sct', '309602000').value := FFactory.makeString(body['temporal_relationship_to_meal']);
+    obs.addComp(URI_SNOMED, '309602000').value := FFactory.makeString(body['temporal_relationship_to_meal']);
   if (body.has('temporal_relationship_to_sleep')) then
-    obs.addComp('http://snomed.info/sct', '309609009').value := FFactory.makeString(body['temporal_relationship_to_sleep']);
+    obs.addComp(URI_SNOMED, '309609009').value := FFactory.makeString(body['temporal_relationship_to_sleep']);
 
   // descriptive stat- follow the $stats patterns
   if (body.has('descriptive_statistic')) then
@@ -769,13 +769,13 @@ begin
       body.forceObj['effective_time_frame']['date_time'] := obs.effectiveDateTime.toXML
   end;
 
-  if obs.getComponent('http://snomed.info/sct', '309602000', comp) then
+  if obs.getComponent(URI_SNOMED, '309602000', comp) then
     try
       body['temporal_relationship_to_meal'] := comp.valueString;
     finally
       comp.Free;
     end;
-  if obs.getComponent('http://snomed.info/sct', '309609009', comp) then
+  if obs.getComponent(URI_SNOMED, '309609009', comp) then
     try
       body['temporal_relationship_to_sleep'] := comp.valueString;
     finally

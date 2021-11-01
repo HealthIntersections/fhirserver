@@ -582,7 +582,7 @@ begin
           // first, we have to identify the Code System
           if request.Id <> '' then // and it must exist, because of the check above
             raise ETerminologyError.create('Specifying a code system is not supported (only snomed-ct is supported)');
-          if req.system <> 'http://snomed.info/sct' then
+          if req.system <> URI_SNOMED then
             raise ETerminologyError.create('Only snomed-ct is supported)');
           // ok, it's snomed
           resp := TFHIRComposeOpResponse.Create;

@@ -423,7 +423,7 @@ begin
   end
   else if (system.startsWith('http://hl7.org/fhir')) then
   begin
-    if (StringArrayExistsSensitive(['http://hl7.org/fhir/sid/icd-10', 'http://hl7.org/fhir/sid/cvx', 'http://hl7.org/fhir/sid/icd-10-cm', 'http://hl7.org/fhir/sid/icd-9', 'http://hl7.org/fhir/sid/ndc', 'http://hl7.org/fhir/sid/srt'], system)) then
+    if (StringArrayExistsSensitive([URI_ICD10, URI_CVX, 'http://hl7.org/fhir/sid/icd-10-cm', URI_ICD9, URI_NDC, 'http://hl7.org/fhir/sid/srt'], system)) then
       exit(true)
     else
     begin
@@ -437,7 +437,7 @@ begin
       exit(false);
     end
   end
-  else if (startsWithButIsNot(system, ['http://snomed.info/sct', 'http://loinc.org', 'http://unitsofmeasure.org', 'http://www.nlm.nih.gov/research/umls/rxnorm'])) then
+  else if (startsWithButIsNot(system, [URI_SNOMED, URI_LOINC, URI_UCUM, URI_RXNORM])) then
   begin
     rule(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'Invalid System URI: ' + system);
     exit(false);

@@ -162,24 +162,27 @@ function TICAOWebServer.readPDF(stream : TStream): TBitmap;
 var
   pdf : TPdfDocument;
   pg : TPdfPage;
+  i, t : integer;
+  obj : TPDFObject;
 begin
   FPDFLock.Lock; // pdfium is not thread safe
   try
     pdf := TPdfDocument.Create;
     try
       pdf.LoadFromStream(stream);
-      if pdf.PageCount = 0 then
-        raise Exception.Create('No content in PDF');
-      pg := pdf.pages[0];
-      result := TBitmap.create;
-      try
-        result.width := 1500;
-        result.height := trunc((result.width / pg.Width) * pg.Height);
-        pg.Draw(result);
-      except
-        result.free;
-        raise
+      t := 0;
+      for i := 0 to pdf.PageCount - 1 do
+      begin
+        pg := pdf.Pages[i];
+        for obj in pg.Objects do
+        begin
+          if obj.kind = potImage then
+            exit(obj.AsBitmap);
+          inc(t);
+        end;
       end;
+      raise Exception.Create('No image found in PDF ('+inttostr(t)+' objects scanned');
+      pg := pdf.pages[0];
     finally
       pdf.free;
     end;

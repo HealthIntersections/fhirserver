@@ -37,7 +37,7 @@ uses
   IdGlobal,
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_crypto, fsl_scim, fsl_xml,
   fsl_http, fsl_graphql,
-  fhir_objects,  fhir_xhtml, fhir_common, fhir_factory,
+  fhir_objects,  fhir_xhtml, fhir_common, fhir_factory, fhir_uris,
   fhir_indexing, security, tags, bundlebuilder;
 
 Type
@@ -811,7 +811,7 @@ begin
     CommandType := fcmdValidate;
     ForceMethod('POST');
     if Parameters.has('profile') and (Parameters['profile'] <> '') then
-      tags.AddTag(0, tcProfile, 'urn:ietf:rfc:3986', 'http://localhost/'+Parameters['profile'], '');
+      tags.AddTag(0, tcProfile, URI_URIs, 'http://localhost/'+Parameters['profile'], '');
   end
   else if (sType = '_search') then
   begin

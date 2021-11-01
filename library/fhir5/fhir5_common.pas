@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   fhir5_types, fhir5_resources, fhir5_operations, fhir5_opbase, fhir5_enums;
 
 const
@@ -4063,7 +4063,7 @@ begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
   ae.event.action := AuditEventActionE;
-  ae.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '0');
+  ae.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
   ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 
