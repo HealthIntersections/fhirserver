@@ -104,7 +104,7 @@ echo "## compile package source/PdfiumLib/Package/Pdfium.lpk"
 tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk -q --add-package
 
 echo "## compile package source/delphi-markdown/tests/markdowntests.lpk"
-tools/lazarus/lazbuild source/delphi-markdown/tests/tests.lpk -q
+tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk -q
 
 
 # ----  back to the server ----------
