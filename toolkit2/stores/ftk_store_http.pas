@@ -36,7 +36,7 @@ uses
   Classes, SysUtils,
   IdUri,
   fsl_fetcher,
-  fhir_client,
+  fhir_objects, fhir_client,
   ftk_store;
 
 {
