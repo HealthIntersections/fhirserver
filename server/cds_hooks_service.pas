@@ -426,7 +426,7 @@ begin
 //        end;
 //      end;
 //      }
-//      if (id.system = 'urn:ietf:rfc:3986') then
+//      if (id.system = URI_URIs) then
 //        addSystemCard(result, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
 
       for card in result.cards do

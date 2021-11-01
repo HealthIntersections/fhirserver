@@ -2908,7 +2908,7 @@ begin
   end
   // else if (system.startsWith('http://hl7.org/fhir')) then
   // begin
-  // if (system = 'http://hl7.org/fhir/sid/icd-10') then
+  // if (system = URI_ICD10) then
   // result := true // else don"t check ICD-10 (for now)
   // else
   // begin
@@ -2923,9 +2923,9 @@ begin
   // end;
   // return false;
   // end;
-  // end; else if (system.startsWith('http://loinc.org')) begin
+  // end; else if (system.startsWith(URI_LOINC)) begin
   // return true;
-  // end; else if (system.startsWith('http://unitsofmeasure.org')) begin
+  // end; else if (system.startsWith(URI_UCUM)) begin
   // return true;
   // end;
   else

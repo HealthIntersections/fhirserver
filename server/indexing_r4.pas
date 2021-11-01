@@ -48,7 +48,7 @@ combinations to enable:
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_xml,
-  fhir_objects, fhir_xhtml, fhir_common,  fhir_utilities, fhir_pathengine,
+  fhir_objects, fhir_xhtml, fhir_common, fhir_utilities, fhir_pathengine, fhir_uris,
   fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_constants, fhir4_indexinfo, fhir4_utilities, fhir4_pathengine, fhir4_context,
   fhir_indexing,
   ftx_ucum_services,
@@ -721,7 +721,7 @@ begin
   end;
 
   // ok, if there's a ucum code:
-  if (value.low.code <> '') and (value.low.system = 'http://unitsofmeasure.org') and (FTerminologyServer.CommonTerminologies.Ucum <> nil) then
+  if (value.low.code <> '') and (value.low.system = URI_UCUM) and (FTerminologyServer.CommonTerminologies.Ucum <> nil) then
   begin
     specified := TUcumPair.create;
     try
@@ -784,7 +784,7 @@ begin
 
   // ok, if there's a ucum code:
   try
-    if (value.code <> '') and (value.system = 'http://unitsofmeasure.org') and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
+    if (value.code <> '') and (value.system = URI_UCUM) and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
     begin
       specified := TUcumPair.create;
       try

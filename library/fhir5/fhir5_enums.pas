@@ -40,7 +40,7 @@ interface
 uses
   Classes, SysUtils,
   fsl_base, fsl_utilities, fsl_crypto, fsl_stream, 
-  fhir_objects, fhir_xhtml,  
+  fhir_objects, fhir_xhtml, fhir_uris,
   fhir5_base;
 
 type
@@ -4070,7 +4070,7 @@ const
   CODES_TFhirUDIEntryTypeEnum : Array[TFhirUDIEntryTypeEnum] of String = ('', 'barcode', 'rfid', 'manual', 'card', 'self-reported', 'electronic-transmission', 'unknown');
   SYSTEMS_TFhirUDIEntryTypeEnum : Array[TFhirUDIEntryTypeEnum] of String = ('', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type', 'http://hl7.org/fhir/udi-entry-type');
   CODES_TFhirUnitsOfTimeEnum : Array[TFhirUnitsOfTimeEnum] of String = ('', 's', 'min', 'h', 'd', 'wk', 'mo', 'a');
-  SYSTEMS_TFhirUnitsOfTimeEnum : Array[TFhirUnitsOfTimeEnum] of String = ('', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org', 'http://unitsofmeasure.org');
+  SYSTEMS_TFhirUnitsOfTimeEnum : Array[TFhirUnitsOfTimeEnum] of String = ('', URI_UCUM, URI_UCUM, URI_UCUM, URI_UCUM, URI_UCUM, URI_UCUM, URI_UCUM);
   CODES_TFhirUseEnum : Array[TFhirUseEnum] of String = ('', 'claim', 'preauthorization', 'predetermination');
   SYSTEMS_TFhirUseEnum : Array[TFhirUseEnum] of String = ('', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use');
   CODES_TFhirVisionBaseEnum : Array[TFhirVisionBaseEnum] of String = ('', 'up', 'down', 'in', 'out');

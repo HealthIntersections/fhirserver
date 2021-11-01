@@ -36,6 +36,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
   FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
+  PdfiumCore,
   fsl_utilities,
   fui_lcl_utilities;
 
@@ -80,6 +81,9 @@ type
     procedure DrawRect;
     function ImageScale: Double;
     function IsInImage(p: TPoint): boolean;
+    procedure processPDF(pdf: TPdfDocument);
+    function processPDFPageObjects(pg: TPdfPage): boolean;
+    //procedure processPDFPage(pg: TPdfPage);
     procedure readImage;
   end;
 
@@ -128,7 +132,7 @@ begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FOriginalImage := TBitmap.create;
-  FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  FScanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
   //FScreens := TStringList.create;
   //listScreens(FScreens);
   //pmScreens.Items.Clear;
@@ -201,13 +205,99 @@ begin
   readImage;
 end;
 
-procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+function TQRCodeScannerForm.processPDFPageObjects(pg : TPdfPage) : boolean;
+var
+  obj : TPDFObject;
+  bmp : TBitmap;
+  rr : TReadResult;
 begin
-  load pdf in pdfium
-  for each page
-    render page into bitmap
-    until scanner finds qr code
+  result := false;
+  for obj in pg.Objects do
+  begin
+    if obj.kind = potImage then
+    begin
+      bmp := obj.AsBitmap;
+      try
+        rr := FScanner.Scan(bmp);
+        if (rr <> nil) then
+        begin
+          clear;
+          FImage.assign(bmp);
+          FHasImage := true;
+          Image1.Picture.Assign(FImage);
+          Image1.Refresh;
+          Application.ProcessMessages;
+          readImage;
+          exit(true);
+        end;
+      finally
+        bmp.free;
+      end;
+    end;
+  end;
+end;
 
+//procedure TQRCodeScannerForm.processPDFPage(pg : TPdfPage);
+//var
+//  bmp : TBitmap;
+//  rr : TReadResult;
+//begin
+//  bmp := TBitmap.create;
+//  try
+//    bmp.width := 1500;
+//    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
+//    pg.Draw(bmp);
+//    clear;
+//    FImage.assign(bmp);
+//    FHasImage := true;
+//    Image1.Picture.Assign(FImage);
+//    Image1.Refresh;
+//    Application.ProcessMessages;
+//    readImage;
+//  finally
+//    bmp.free;
+//  end;
+//end;
+
+procedure TQRCodeScannerForm.processPDF(pdf : TPdfDocument);
+var
+  i : integer;
+  pg : TPdfPage;
+begin
+  for i := 0 to pdf.PageCount - 1 do
+  begin
+    pg := pdf.Pages[i];
+    if processPDFPageObjects(pg) then
+      exit;
+  end;
+  //if pdf.PageCount > 0 then
+  //  processPDFPage(pg);
+end;
+
+procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+var
+  dlg : TOpenDialog;
+  pdf : TPdfDocument;
+begin
+  dlg := TOpenDialog.create(self);
+  try
+    dlg.Filter := 'PDF Files|*.pdf|'+
+      'All Files|*.*';
+    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
+    if dlg.execute then
+    begin
+      clear;
+      pdf := TPdfDocument.Create;
+      try
+        pdf.LoadFromFile(dlg.filename, '', dloMemory);
+        processPDF(pdf);
+      finally
+        pdf.free;
+      end;
+    end;
+  finally
+    dlg.free;
+  end;
 end;
 
 procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
@@ -391,7 +481,7 @@ begin
       else
       begin
         btnOk.enabled := true;
-        pnlInfo.caption := '  QR code: '+codesTBarcodeFormat(bc.BarcodeFormat)+' found';
+        pnlInfo.caption := '  QR code found';
         memo1.Text := bc.text;
         memo1.Color := clWhite;
       end;
@@ -403,5 +493,9 @@ begin
   end;
 end;
 
+initialization
+  {$IFDEF WINDOWS}
+  PdfiumDllFileName := 'libpdf.dll';
+  {$ENDIF}
 end.
 

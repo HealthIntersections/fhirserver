@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
   fdb_manager, fdb_dialects,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -1073,7 +1073,7 @@ end;
 
 function TRxNormServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
-  result := 'http://www.nlm.nih.gov/research/umls/rxnorm';
+  result := URI_RXNORM;
 end;
 
 function TRxNormServices.version(context: TCodeSystemProviderContext): String;
@@ -1110,7 +1110,7 @@ end;
 
 function TNDFRTServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
-  result := 'http://hl7.org/fhir/ndfrt';
+  result := URI_NDFRT;
 end;
 
 function TNDFRTServices.version(context: TCodeSystemProviderContext): String;

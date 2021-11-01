@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads,
   fdb_manager,
-  fhir_features,
+  fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -181,7 +181,7 @@ end;
 
 function TUniiServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'http://fdasis.nlm.nih.gov';
+  result := URI_UNII;
 end;
 
 function TUniiServices.getDefinition(code: String): String;

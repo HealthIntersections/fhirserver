@@ -42,7 +42,7 @@ uses
 
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads,
   fdb_manager,
-  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
+  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
@@ -599,9 +599,9 @@ var
   d : String;
 begin
   result := false;
-  if (system = 'http://hl7.org/fhir/sid/icd-10') then
+  if (system = URI_ICD10) then
     result := true// nothing for now....
-  else if (system = 'http://snomed.info/sct') and (CommonTerminologies.DefSnomed <> nil) then
+  else if (system = URI_SNOMED) and (CommonTerminologies.DefSnomed <> nil) then
   begin
     if op.warning('InstanceValidator', itInvalid, path, CommonTerminologies.DefSnomed.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
     begin
@@ -609,13 +609,13 @@ begin
       result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = d), 'Display for SNOMED-CT term "'+code+'" should be "'+d+'"');
     end;
   end
-  else if system.StartsWith('http://loinc.org') and (CommonTerminologies.Loinc <> nil) then
+  else if system.StartsWith(URI_LOINC) and (CommonTerminologies.Loinc <> nil) then
   begin
     d := CommonTerminologies.Loinc.GetDisplayByName(code, CommonTerminologies.Loinc.LangsForLang(lang));
     if op.warning('InstanceValidator', itInvalid, path, d <> '', 'The LOINC code "'+code+'" is unknown') then
       result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = d), 'Display for Loinc Code "'+code+'" should be "'+d+'"');
   end
-  else if system.StartsWith('http://unitsofmeasure.org') and (CommonTerminologies.Ucum <> nil) then
+  else if system.StartsWith(URI_UCUM) and (CommonTerminologies.Ucum <> nil) then
   begin
     d := CommonTerminologies.Ucum.validate(code);
     result := op.warning('InstanceValidator', itInvalid, path, d = '', 'The UCUM code "'+code+'" is not valid: '+d);
@@ -758,7 +758,7 @@ end;
 //        begin
 //          match := TFHIRComposeOpRespMatch.Create;
 //          resp.matchList.add(match);
-//          match.code := TFHIRCodingW.Create('http://snomed.info/sct', mc.matched);
+//          match.code := TFHIRCodingW.Create(URI_SNOMED, mc.matched);
 //          match.code.display := cs.getDisplay(mc.matched, '');
 //          for ref in mc.Unmatched do
 //          begin

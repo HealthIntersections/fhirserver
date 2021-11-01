@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang, fsl_logging,
   fdb_manager,
-  fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
+  fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
@@ -1423,7 +1423,7 @@ begin
       else if defToLatest then
       begin
         // special support for SNOMED Editions
-        if (system = 'http://snomed.info/sct') and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
+        if (system = URI_SNOMED) and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
           result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
         else
           result := ProviderClasses[system].Link;

@@ -74,6 +74,7 @@ type
     property mustVerify : boolean read FMustVerify write FMustVerify;
     property jwk : TJWK read FJWK write SetJWK;
 
+    procedure log(s : String);
     property htmlReport : String read GetHtmlReport;
     function import(json : TJsonObject) : THealthcareCard; overload;
     function import(source : String) : THealthcareCard; overload;
@@ -378,6 +379,11 @@ begin
   finally
     picture.Free;
   end;
+end;
+
+procedure TICAOCardImporter.log(s: String);
+begin
+  Flog.Append('<p>'+encodeXml(s)+'</p>');
 end;
 
 function TICAOCardImporter.import(image: TBitmap): THealthcareCard;

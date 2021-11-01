@@ -52,3 +52,4 @@ testcases/snomed/snomed.cache
 
 /server/js
 /testcases/icao/fhir-test-icao.json
+/dependencies/Indy10/Protocols/__recovery
