@@ -1955,7 +1955,7 @@ Begin
 End;
 
 
-Procedure TWPRendererParagraphContext.AddItem(oItem : TWPMapItem);
+function TWPRendererParagraphContext.AddItem(oItem : TWPMapItem): TWPMapItem;
 Begin
   Case oItem.BreakState Of
     bsText :
@@ -1968,6 +1968,7 @@ Begin
       AddToBuffer(oItem);
       AddBufferToRow;
       StartNewLine;
+  result := value;
       End;
     bsWhitespace :
       Begin

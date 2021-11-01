@@ -302,7 +302,7 @@ type
     
     
     // Add an already existing FhirResource to the end of the list.
-    procedure AddItem(value : TFhirResource); overload;
+function AddItem(value : TFhirResource): TFhirResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirResource) : Integer;
@@ -732,10 +732,10 @@ end;
 
 { TFhirResourceList }
 
-procedure TFhirResourceList.AddItem(value: TFhirResource);
+function TFhirResourceList.AddItem(value: TFhirResource): TFhirResource;
 begin
-  assert(value.ClassName = 'TFhirResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirResourceList.ClearItems;

@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdTCPConnection,
   fsl_testing,
-  fsl_stream, fsl_xml,
+  fsl_base, fsl_stream, fsl_xml,
   fhir_objects,
   cda_objects, cda_parser, cda_writer;
 
@@ -50,6 +50,7 @@ type
     procedure compose(filename : String; doc : TcdaClinicalDocument);
   published
     Procedure TestParseDocument;
+    Procedure TestLeaks;
   end;
 
 procedure RegisterTests;
@@ -96,6 +97,55 @@ begin
   finally
     x.Free;
   end;
+end;
+
+procedure TCdaTests.TestLeaks;
+var
+  lFslXmlBuilder: TFslXmlBuilder;
+  lCDAWriter: TCDAWriter;
+  lcdaClinicalDocument: TcdaClinicalDocument;
+  c1, c2, c3, c4, c5, c6, c7 : integer;
+begin
+  c1 := TFslObject.classInstanceCount('TcdaClinicalDocument');
+  c2 := TFslObject.classInstanceCount('TcdaRecordTarget');
+  c3 := TFslObject.classInstanceCount('Tv3ListAD');
+  c4 := TFslObject.classInstanceCount('TcdaPatient');
+  c5 := TFslObject.classInstanceCount('Tv3ListEN');
+  c6 := TFslObject.classInstanceCount('Tv3ListCS');
+  c7 := TFslObject.classInstanceCount('TcdaGuardianList');
+
+  lFslXmlBuilder := TFslXmlBuilder.Create;
+  try
+    lFslXmlBuilder.Start;
+    lCDAWriter := TCDAWriter.Create;
+    try
+      lcdaClinicalDocument := TcdaClinicalDocument.Create;
+      try
+        lcdaClinicalDocument.recordTarget.AddItem(TcdaRecordTarget.Create);
+        lcdaClinicalDocument.recordTarget.Item(0).patientRole := TcdaPatientRole.Create;
+        lcdaClinicalDocument.recordTarget.Item(0).patientRole.patient := TcdaPatient.Create;
+        lcdaClinicalDocument.recordTarget.Item(0).patientRole.patient.birthplace := TcdaBirthPlace.Create;
+
+        lCDAWriter.WriteCDA(lFslXmlBuilder, lcdaClinicalDocument);
+      finally
+        lcdaClinicalDocument.Free;
+      end;
+    finally
+      lCDAWriter.Free;
+    end;
+    lFslXmlBuilder.Finish;
+    lFslXmlBuilder.Build;
+  finally
+    lFslXmlBuilder.Free;
+  end;
+
+  assertEqual(c1, TFslObject.classInstanceCount('TcdaClinicalDocument'), 'TcdaClinicalDocument');
+  assertEqual(c2, TFslObject.classInstanceCount('TcdaRecordTarget'), 'TcdaRecordTarget');
+  assertEqual(c3, TFslObject.classInstanceCount('Tv3ListAD'), 'Tv3ListAD');
+  assertEqual(c4, TFslObject.classInstanceCount('TcdaPatient'), 'TcdaPatient');
+  assertEqual(c5, TFslObject.classInstanceCount('Tv3ListEN'), 'Tv3ListEN');
+  assertEqual(c6, TFslObject.classInstanceCount('Tv3ListCS'), 'Tv3ListCS');
+  assertEqual(c7, TFslObject.classInstanceCount('TcdaGuardianList'), 'TcdaGuardianList');
 end;
 
 procedure TCdaTests.TestParseDocument;

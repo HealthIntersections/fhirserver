@@ -976,7 +976,7 @@ Type
     {
       Add an already existing CMGeneral to the end of the list
     }
-    Procedure AddItem(value : TsnCMGeneral);
+    Function AddItem(value : TsnCMGeneral): TsnCMGeneral;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1028,7 +1028,7 @@ Type
     {
       Add an already existing CMTitle to the end of the list
     }
-    Procedure AddItem(value : TsnCMTitle);
+    Function AddItem(value : TsnCMTitle): TsnCMTitle;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1080,7 +1080,7 @@ Type
     {
       Add an already existing CMFootnotes to the end of the list
     }
-    Procedure AddItem(value : TsnCMFootnotes);
+    Function AddItem(value : TsnCMFootnotes): TsnCMFootnotes;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1132,7 +1132,7 @@ Type
     {
       Add an already existing CMInline to the end of the list
     }
-    Procedure AddItem(value : TsnCMInline);
+    Function AddItem(value : TsnCMInline): TsnCMInline;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1184,7 +1184,7 @@ Type
     {
       Add an already existing CMContent to the end of the list
     }
-    Procedure AddItem(value : TsnCMContent);
+    Function AddItem(value : TsnCMContent): TsnCMContent;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1236,7 +1236,7 @@ Type
     {
       Add an already existing Item to the end of the list
     }
-    Procedure AddItem(value : TsnItem);
+    Function AddItem(value : TsnItem): TsnItem;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1288,7 +1288,7 @@ Type
     {
       Add an already existing Col to the end of the list
     }
-    Procedure AddItem(value : TsnCol);
+    Function AddItem(value : TsnCol): TsnCol;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1340,7 +1340,7 @@ Type
     {
       Add an already existing TRowPart to the end of the list
     }
-    Procedure AddItem(value : TsnTRowPart);
+    Function AddItem(value : TsnTRowPart): TsnTRowPart;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1392,7 +1392,7 @@ Type
     {
       Add an already existing TRow to the end of the list
     }
-    Procedure AddItem(value : TsnTRow);
+    Function AddItem(value : TsnTRow): TsnTRow;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1444,7 +1444,7 @@ Type
     {
       Add an already existing ColGroup to the end of the list
     }
-    Procedure AddItem(value : TsnColGroup);
+    Function AddItem(value : TsnColGroup): TsnColGroup;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1496,7 +1496,7 @@ Type
     {
       Add an already existing TRowGroup to the end of the list
     }
-    Procedure AddItem(value : TsnTRowGroup);
+    Function AddItem(value : TsnTRowGroup): TsnTRowGroup;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -4036,9 +4036,10 @@ begin
   Result := TsnTRowGroup;
 end;
 
-procedure TsnTRowGroupList.AddItem(value: TsnTRowGroup);
+function TsnTRowGroupList.AddItem(value: TsnTRowGroup): TsnTRowGroup;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowGroupList.IndexOf(Value: TsnTRowGroup): Integer;
@@ -4124,9 +4125,10 @@ begin
   result := TsnCMGeneral;
 end;
 
-procedure TsnCMGeneralList.AddItem(value: TsnCMGeneral);
+function TsnCMGeneralList.AddItem(value: TsnCMGeneral): TsnCMGeneral;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMGeneralList.IndexOf(Value: TsnCMGeneral): Integer;
@@ -4166,9 +4168,10 @@ begin
   Result := TsnCMTitle;
 end;
 
-procedure TsnCMTitleList.AddItem(value: TsnCMTitle);
+function TsnCMTitleList.AddItem(value: TsnCMTitle): TsnCMTitle;
 begin
-  Add(value.Link)
+  Add(value.Link);
+  result := value;
 end;
 
 function TsnCMTitleList.IndexOf(Value: TsnCMTitle): Integer;
@@ -4298,9 +4301,10 @@ begin
   Result := TsnCMFootnotes;
 end;
 
-procedure TsnCMFootnotesList.AddItem(value: TsnCMFootnotes);
+function TsnCMFootnotesList.AddItem(value: TsnCMFootnotes): TsnCMFootnotes;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMFootnotesList.IndexOf(Value: TsnCMFootnotes): Integer;
@@ -4385,9 +4389,10 @@ begin
   Result := TsnCMInline;
 end;
 
-procedure TsnCMInlineList.AddItem(value: TsnCMInline);
+function TsnCMInlineList.AddItem(value: TsnCMInline): TsnCMInline;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMInlineList.IndexOf(Value: TsnCMInline): Integer;
@@ -4472,9 +4477,10 @@ begin
   Result := TsnCMContent;
 end;
 
-procedure TsnCMContentList.AddItem(value: TsnCMContent);
+function TsnCMContentList.AddItem(value: TsnCMContent): TsnCMContent;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMContentList.IndexOf(Value: TsnCMContent): Integer;
@@ -4514,9 +4520,10 @@ begin
   Result := TsnItem;
 end;
 
-procedure TsnItemList.AddItem(value: TsnItem);
+function TsnItemList.AddItem(value: TsnItem): TsnItem;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnItemList.IndexOf(Value: TsnItem): Integer;
@@ -4601,9 +4608,10 @@ begin
   Result := TsnCol;
 end;
 
-procedure TsnColList.AddItem(value: TsnCol);
+function TsnColList.AddItem(value: TsnCol): TsnCol;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnColList.IndexOf(Value: TsnCol): Integer;
@@ -4735,9 +4743,10 @@ begin
   Result := TsnTRowPart;
 end;
 
-procedure TsnTRowPartList.AddItem(value: TsnTRowPart);
+function TsnTRowPartList.AddItem(value: TsnTRowPart): TsnTRowPart;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowPartList.IndexOf(Value: TsnTRowPart): Integer;
@@ -4777,9 +4786,10 @@ begin
   Result := TsnTRow;
 end;
 
-procedure TsnTRowList.AddItem(value: TsnTRow);
+function TsnTRowList.AddItem(value: TsnTRow): TsnTRow;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowList.IndexOf(Value: TsnTRow): Integer;
@@ -4864,9 +4874,10 @@ begin
   Result := TsnColGroup;
 end;
 
-procedure TsnColGroupList.AddItem(value: TsnColGroup);
+function TsnColGroupList.AddItem(value: TsnColGroup): TsnColGroup;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnColGroupList.IndexOf(Value: TsnColGroup): Integer;

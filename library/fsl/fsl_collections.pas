@@ -6083,7 +6083,7 @@ End;
 
 Destructor TFslItemList.Destroy;
 Begin
-  InternalResize(0);
+  InternalResize(0); // because emptying out the list happens in BeforeDestruction
 
   Inherited;
 End;

@@ -112,7 +112,7 @@ Type
     {
       Add an already existing Attachment to the end of the list.
     }
-    Procedure AddItem(value : TcdaAttachment);
+    Function AddItem(value : TcdaAttachment): TcdaAttachment;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -928,9 +928,10 @@ Begin
   End;
 End;
 
-Procedure TcdaAttachmentList.AddItem(value : TcdaAttachment);
+function TcdaAttachmentList.AddItem(value : TcdaAttachment): TcdaAttachment;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAttachmentList.IndexOf(value : TcdaAttachment) : Integer;

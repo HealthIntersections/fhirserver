@@ -282,7 +282,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3Base);
+    Function AddItem(value : Tv3Base): Tv3Base;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -380,7 +380,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3Extension);
+    Function AddItem(value : Tv3Extension): Tv3Extension;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -1219,9 +1219,10 @@ Begin
 End;
 
 
-Procedure Tv3BaseList.AddItem(value : Tv3Base);
+function Tv3BaseList.AddItem(value : Tv3Base): Tv3Base;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3BaseList.SetItemByIndex(iIndex: Integer; value: Tv3Base);
@@ -1383,9 +1384,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ExtensionList.AddItem(value : Tv3Extension);
+function Tv3ExtensionList.AddItem(value : Tv3Extension): Tv3Extension;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ExtensionList.SetItemByIndex(iIndex: Integer; value: Tv3Extension);

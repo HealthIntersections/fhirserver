@@ -263,7 +263,7 @@ Type
     {
       Add an already existing Xhtml Node to the end of the list.
     }
-    Procedure AddItem(value : TFHIRXHtmlNode);
+    Function AddItem(value : TFHIRXHtmlNode): TFHIRXHtmlNode;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -581,9 +581,10 @@ end;
 
 { TFHIRXHtmlNodeList }
 
-procedure TFHIRXHtmlNodeList.AddItem(value: TFHIRXHtmlNode);
+function TFHIRXHtmlNodeList.AddItem(value: TFHIRXHtmlNode): TFHIRXHtmlNode;
 begin
-  add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TFHIRXHtmlNodeList.Append: TFHIRXHtmlNode;

@@ -5470,7 +5470,7 @@ Type
     {
       Add an already existing Author to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthor);
+    Function AddItem(value : TcdaAuthor): TcdaAuthor;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5526,7 +5526,7 @@ Type
     {
       Add an already existing EntryRelationship to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntryRelationship);
+    Function AddItem(value : TcdaEntryRelationship): TcdaEntryRelationship;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5581,7 +5581,7 @@ Type
     {
       Add an already existing Informant12 to the end of the list.
     }
-    Procedure AddItem(value : TcdaInformant12);
+    Function AddItem(value : TcdaInformant12): TcdaInformant12;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5637,7 +5637,7 @@ Type
     {
       Add an already existing Participant2 to the end of the list.
     }
-    Procedure AddItem(value : TcdaParticipant2);
+    Function AddItem(value : TcdaParticipant2): TcdaParticipant2;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5692,7 +5692,7 @@ Type
     {
       Add an already existing Performer2 to the end of the list.
     }
-    Procedure AddItem(value : TcdaPerformer2);
+    Function AddItem(value : TcdaPerformer2): TcdaPerformer2;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5747,7 +5747,7 @@ Type
     {
       Add an already existing Precondition to the end of the list.
     }
-    Procedure AddItem(value : TcdaPrecondition);
+    Function AddItem(value : TcdaPrecondition): TcdaPrecondition;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5802,7 +5802,7 @@ Type
     {
       Add an already existing Reference to the end of the list.
     }
-    Procedure AddItem(value : TcdaReference);
+    Function AddItem(value : TcdaReference): TcdaReference;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5857,7 +5857,7 @@ Type
     {
       Add an already existing Specimen to the end of the list.
     }
-    Procedure AddItem(value : TcdaSpecimen);
+    Function AddItem(value : TcdaSpecimen): TcdaSpecimen;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5912,7 +5912,7 @@ Type
     {
       Add an already existing MaintainedEntity to the end of the list.
     }
-    Procedure AddItem(value : TcdaMaintainedEntity);
+    Function AddItem(value : TcdaMaintainedEntity): TcdaMaintainedEntity;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5967,7 +5967,7 @@ Type
     {
       Add an already existing Authenticator to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthenticator);
+    Function AddItem(value : TcdaAuthenticator): TcdaAuthenticator;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6022,7 +6022,7 @@ Type
     {
       Add an already existing Authorization to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthorization);
+    Function AddItem(value : TcdaAuthorization): TcdaAuthorization;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6077,7 +6077,7 @@ Type
     {
       Add an already existing DocumentationOf to the end of the list.
     }
-    Procedure AddItem(value : TcdaDocumentationOf);
+    Function AddItem(value : TcdaDocumentationOf): TcdaDocumentationOf;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6132,7 +6132,7 @@ Type
     {
       Add an already existing TcdaInformationRecipient to the end of the list.
     }
-    Procedure AddItem(value : TcdaInformationRecipient);
+    Function AddItem(value : TcdaInformationRecipient): TcdaInformationRecipient;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6187,7 +6187,7 @@ Type
     {
       Add an already existing InFulfillmentOf to the end of the list.
     }
-    Procedure AddItem(value : TcdaInFulfillmentOf);
+    Function AddItem(value : TcdaInFulfillmentOf): TcdaInFulfillmentOf;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6242,7 +6242,7 @@ Type
     {
       Add an already existing Participant1 to the end of the list.
     }
-    Procedure AddItem(value : TcdaParticipant1);
+    Function AddItem(value : TcdaParticipant1): TcdaParticipant1;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6297,7 +6297,7 @@ Type
     {
       Add an already existing RecordTarget to the end of the list.
     }
-    Procedure AddItem(value : TcdaRecordTarget);
+    Function AddItem(value : TcdaRecordTarget): TcdaRecordTarget;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6352,7 +6352,7 @@ Type
     {
       Add an already existing RelatedDocument to the end of the list.
     }
-    Procedure AddItem(value : TcdaRelatedDocument);
+    Function AddItem(value : TcdaRelatedDocument): TcdaRelatedDocument;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6407,7 +6407,7 @@ Type
     {
       Add an already existing EncounterParticipant to the end of the list.
     }
-    Procedure AddItem(value : TcdaEncounterParticipant);
+    Function AddItem(value : TcdaEncounterParticipant): TcdaEncounterParticipant;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6462,7 +6462,7 @@ Type
     {
       Add an already existing ReferenceRange to the end of the list.
     }
-    Procedure AddItem(value : TcdaReferenceRange);
+    Function AddItem(value : TcdaReferenceRange): TcdaReferenceRange;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6518,7 +6518,7 @@ Type
     {
       Add an already existing Component4 to the end of the list.
     }
-    Procedure AddItem(value : TcdaComponent4);
+    Function AddItem(value : TcdaComponent4): TcdaComponent4;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6573,7 +6573,7 @@ Type
     {
       Add an already existing Guardian to the end of the list.
     }
-    Procedure AddItem(value : TcdaGuardian);
+    Function AddItem(value : TcdaGuardian): TcdaGuardian;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6628,7 +6628,7 @@ Type
     {
       Add an already existing LanguageCommunicaion to the end of the list.
     }
-    Procedure AddItem(value : TcdaLanguageCommunication);
+    Function AddItem(value : TcdaLanguageCommunication): TcdaLanguageCommunication;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6683,7 +6683,7 @@ Type
     {
       Add an already existing LanguageCommunicaion to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntityIdentifier);
+    Function AddItem(value : TcdaEntityIdentifier): TcdaEntityIdentifier;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6740,7 +6740,7 @@ Type
     {
       Add an already existing Entry to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntry);
+    Function AddItem(value : TcdaEntry): TcdaEntry;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6795,7 +6795,7 @@ Type
     {
       Add an already existing Performer1 to the end of the list.
     }
-    Procedure AddItem(value : TcdaPerformer1);
+    Function AddItem(value : TcdaPerformer1): TcdaPerformer1;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6850,7 +6850,7 @@ Type
     {
       Add an already existing ComponentSect to the end of the list.
     }
-    Procedure AddItem(value : TcdaComponentSect);
+    Function AddItem(value : TcdaComponentSect): TcdaComponentSect;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6905,7 +6905,7 @@ Type
       {
         Add an already existing RegionOfInterest_value to the end of the list.
       }
-    Procedure AddItem(value : TcdaRegionOfInterest_value);
+    Function AddItem(value : TcdaRegionOfInterest_value): TcdaRegionOfInterest_value;
       {
         See if an item is already in the list. returns -1 if not in the list
       }
@@ -20278,9 +20278,10 @@ Begin
   End;
 End;
 
-Procedure TcdaAuthorList.AddItem(value : TcdaAuthor);
+function TcdaAuthorList.AddItem(value : TcdaAuthor): TcdaAuthor;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthorList.IndexOf(value : TcdaAuthor) : Integer;
@@ -20349,9 +20350,10 @@ Begin
   End;
 End;
 
-Procedure TcdaEntryRelationshipList.AddItem(value : TcdaEntryRelationship);
+function TcdaEntryRelationshipList.AddItem(value : TcdaEntryRelationship): TcdaEntryRelationship;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntryRelationshipList.IndexOf(value : TcdaEntryRelationship) : Integer;
@@ -20440,9 +20442,10 @@ Begin
   End;
 End;
 
-Procedure TcdaInformant12List.AddItem(value : TcdaInformant12);
+function TcdaInformant12List.AddItem(value : TcdaInformant12): TcdaInformant12;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInformant12List.IndexOf(value : TcdaInformant12) : Integer;
@@ -20527,9 +20530,10 @@ Begin
   End;
 End;
 
-Procedure TcdaParticipant2List.AddItem(value : TcdaParticipant2);
+function TcdaParticipant2List.AddItem(value : TcdaParticipant2): TcdaParticipant2;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaParticipant2List.IndexOf(value : TcdaParticipant2) : Integer;
@@ -20618,9 +20622,10 @@ Begin
   End;
 End;
 
-Procedure TcdaPerformer2List.AddItem(value : TcdaPerformer2);
+function TcdaPerformer2List.AddItem(value : TcdaPerformer2): TcdaPerformer2;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPerformer2List.IndexOf(value : TcdaPerformer2) : Integer;
@@ -20704,9 +20709,10 @@ Begin
   End;
 End;
 
-Procedure TcdaPreconditionList.AddItem(value : TcdaPrecondition);
+function TcdaPreconditionList.AddItem(value : TcdaPrecondition): TcdaPrecondition;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPreconditionList.IndexOf(value : TcdaPrecondition) : Integer;
@@ -20790,9 +20796,10 @@ Begin
   End;
 End;
 
-Procedure TcdaReferenceList.AddItem(value : TcdaReference);
+function TcdaReferenceList.AddItem(value : TcdaReference): TcdaReference;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaReferenceList.IndexOf(value : TcdaReference) : Integer;
@@ -20876,9 +20883,10 @@ Begin
   End;
 End;
 
-Procedure TcdaSpecimenList.AddItem(value : TcdaSpecimen);
+function TcdaSpecimenList.AddItem(value : TcdaSpecimen): TcdaSpecimen;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaSpecimenList.IndexOf(value : TcdaSpecimen) : Integer;
@@ -20962,9 +20970,10 @@ Begin
   End;
 End;
 
-Procedure TcdaMaintainedEntityList.AddItem(value : TcdaMaintainedEntity);
+function TcdaMaintainedEntityList.AddItem(value : TcdaMaintainedEntity): TcdaMaintainedEntity;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaMaintainedEntityList.IndexOf(value : TcdaMaintainedEntity) : Integer;
@@ -21048,9 +21057,10 @@ Begin
   End;
 End;
 
-Procedure TcdaAuthenticatorList.AddItem(value : TcdaAuthenticator);
+function TcdaAuthenticatorList.AddItem(value : TcdaAuthenticator): TcdaAuthenticator;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthenticatorList.IndexOf(value : TcdaAuthenticator) : Integer;
@@ -21134,9 +21144,10 @@ Begin
   End;
 End;
 
-Procedure TcdaAuthorizationList.AddItem(value : TcdaAuthorization);
+function TcdaAuthorizationList.AddItem(value : TcdaAuthorization): TcdaAuthorization;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthorizationList.IndexOf(value : TcdaAuthorization) : Integer;
@@ -21220,9 +21231,10 @@ Begin
   End;
 End;
 
-Procedure TcdaDocumentationOfList.AddItem(value : TcdaDocumentationOf);
+function TcdaDocumentationOfList.AddItem(value : TcdaDocumentationOf): TcdaDocumentationOf;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaDocumentationOfList.IndexOf(value : TcdaDocumentationOf) : Integer;
@@ -21306,9 +21318,10 @@ Begin
   End;
 End;
 
-Procedure TcdaInformationRecipientList.AddItem(value : TcdaInformationRecipient);
+function TcdaInformationRecipientList.AddItem(value : TcdaInformationRecipient): TcdaInformationRecipient;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInformationRecipientList.IndexOf(value : TcdaInformationRecipient) : Integer;
@@ -21392,9 +21405,10 @@ Begin
   End;
 End;
 
-Procedure TcdaInFulfillmentOfList.AddItem(value : TcdaInFulfillmentOf);
+function TcdaInFulfillmentOfList.AddItem(value : TcdaInFulfillmentOf): TcdaInFulfillmentOf;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInFulfillmentOfList.IndexOf(value : TcdaInFulfillmentOf) : Integer;
@@ -21478,9 +21492,10 @@ Begin
   End;
 End;
 
-Procedure TcdaParticipant1List.AddItem(value : TcdaParticipant1);
+function TcdaParticipant1List.AddItem(value : TcdaParticipant1): TcdaParticipant1;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaParticipant1List.IndexOf(value : TcdaParticipant1) : Integer;
@@ -21564,9 +21579,10 @@ Begin
   End;
 End;
 
-Procedure TcdaRecordTargetList.AddItem(value : TcdaRecordTarget);
+function TcdaRecordTargetList.AddItem(value : TcdaRecordTarget): TcdaRecordTarget;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRecordTargetList.IndexOf(value : TcdaRecordTarget) : Integer;
@@ -21650,9 +21666,10 @@ Begin
   End;
 End;
 
-Procedure TcdaRelatedDocumentList.AddItem(value : TcdaRelatedDocument);
+function TcdaRelatedDocumentList.AddItem(value : TcdaRelatedDocument): TcdaRelatedDocument;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRelatedDocumentList.IndexOf(value : TcdaRelatedDocument) : Integer;
@@ -21736,9 +21753,10 @@ Begin
   End;
 End;
 
-Procedure TcdaEncounterParticipantList.AddItem(value : TcdaEncounterParticipant);
+function TcdaEncounterParticipantList.AddItem(value : TcdaEncounterParticipant): TcdaEncounterParticipant;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEncounterParticipantList.IndexOf(value : TcdaEncounterParticipant) : Integer;
@@ -21822,9 +21840,10 @@ Begin
   End;
 End;
 
-Procedure TcdaReferenceRangeList.AddItem(value : TcdaReferenceRange);
+function TcdaReferenceRangeList.AddItem(value : TcdaReferenceRange): TcdaReferenceRange;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaReferenceRangeList.IndexOf(value : TcdaReferenceRange) : Integer;
@@ -21908,9 +21927,10 @@ Begin
   End;
 End;
 
-Procedure TcdaComponent4List.AddItem(value : TcdaComponent4);
+function TcdaComponent4List.AddItem(value : TcdaComponent4): TcdaComponent4;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaComponent4List.IndexOf(value : TcdaComponent4) : Integer;
@@ -21999,9 +22019,10 @@ Begin
   End;
 End;
 
-Procedure TcdaGuardianList.AddItem(value : TcdaGuardian);
+function TcdaGuardianList.AddItem(value : TcdaGuardian): TcdaGuardian;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaGuardianList.IndexOf(value : TcdaGuardian) : Integer;
@@ -22085,9 +22106,10 @@ Begin
   End;
 End;
 
-Procedure TcdaLanguageCommunicationList.AddItem(value : TcdaLanguageCommunication);
+function TcdaLanguageCommunicationList.AddItem(value : TcdaLanguageCommunication): TcdaLanguageCommunication;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaLanguageCommunicationList.IndexOf(value : TcdaLanguageCommunication) : Integer;
@@ -22171,9 +22193,10 @@ Begin
   End;
 End;
 
-Procedure TcdaEntityIdentifierList.AddItem(value : TcdaEntityIdentifier);
+function TcdaEntityIdentifierList.AddItem(value : TcdaEntityIdentifier): TcdaEntityIdentifier;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntityIdentifierList.IndexOf(value : TcdaEntityIdentifier) : Integer;
@@ -22258,9 +22281,10 @@ Begin
   End;
 End;
 
-Procedure TcdaEntryList.AddItem(value : TcdaEntry);
+function TcdaEntryList.AddItem(value : TcdaEntry): TcdaEntry;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntryList.IndexOf(value : TcdaEntry) : Integer;
@@ -22349,9 +22373,10 @@ Begin
   End;
 End;
 
-Procedure TcdaPerformer1List.AddItem(value : TcdaPerformer1);
+function TcdaPerformer1List.AddItem(value : TcdaPerformer1): TcdaPerformer1;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPerformer1List.IndexOf(value : TcdaPerformer1) : Integer;
@@ -22435,9 +22460,10 @@ Begin
   End;
 End;
 
-Procedure TcdaComponentSectList.AddItem(value : TcdaComponentSect);
+function TcdaComponentSectList.AddItem(value : TcdaComponentSect): TcdaComponentSect;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaComponentSectList.IndexOf(value : TcdaComponentSect) : Integer;
@@ -22580,9 +22606,10 @@ Begin
   End;
 End;
 
-Procedure TcdaRegionOfInterest_valueList.AddItem(value : TcdaRegionOfInterest_value);
+function TcdaRegionOfInterest_valueList.AddItem(value : TcdaRegionOfInterest_value): TcdaRegionOfInterest_value;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRegionOfInterest_valueList.IndexOf(value : TcdaRegionOfInterest_value) : Integer;
