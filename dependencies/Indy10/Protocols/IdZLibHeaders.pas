@@ -895,7 +895,7 @@ const
   {$IFDEF WIN32}
   //Note that this is the official ZLIB1 .DLL from the http://www.zlib.net/
 const
-  libzlib = 'libz1.dll';
+  libzlib = 'zlib1.dll';
   {$ENDIF}
   {$IFDEF WIN64}
   //Note that this is not an official ZLIB .DLL.  It was obtained from:

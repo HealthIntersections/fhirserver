@@ -54,7 +54,8 @@ type
     function ImageScale: Double;
     function IsInImage(p: TPoint): boolean;
     procedure processPDF(pdf: TPdfDocument);
-    function processPDFPage(pg: TPdfPage; openAnyway: boolean): boolean;
+    function processPDFPageObjects(pg: TPdfPage): boolean;
+    //procedure processPDFPage(pg: TPdfPage);
     procedure readImage;
   end;
 
@@ -176,30 +177,59 @@ begin
   readImage;
 end;
 
-function TQRCodeScannerForm.processPDFPage(pg : TPdfPage; openAnyway : boolean) : boolean;
+function TQRCodeScannerForm.processPDFPageObjects(pg : TPdfPage) : boolean;
 var
+  obj : TPDFObject;
   bmp : TBitmap;
   rr : TReadResult;
 begin
-  bmp := TBitmap.create;
-  try
-    bmp.width := 1500;
-    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
-    pg.Draw(bmp);
-    rr := FScanner.Scan(bmp);
-    if (rr <> nil) or openAnyway then
+  result := false;
+  for obj in pg.Objects do
+  begin
+    if obj.kind = potImage then
     begin
-      FImage.assign(bmp);
-      FHasImage := true;
-      Image1.Picture.Assign(FImage);
-      Image1.Refresh;
-      Application.ProcessMessages;
-      readImage;
+      bmp := obj.AsBitmap;
+      try
+        rr := FScanner.Scan(bmp);
+        if (rr <> nil) then
+        begin
+          clear;
+          FImage.assign(bmp);
+          FHasImage := true;
+          Image1.Picture.Assign(FImage);
+          Image1.Refresh;
+          Application.ProcessMessages;
+          readImage;
+          exit(true);
+        end;
+      finally
+        bmp.free;
+      end;
     end;
-  finally
-    bmp.free;
   end;
 end;
+
+//procedure TQRCodeScannerForm.processPDFPage(pg : TPdfPage);
+//var
+//  bmp : TBitmap;
+//  rr : TReadResult;
+//begin
+//  bmp := TBitmap.create;
+//  try
+//    bmp.width := 1500;
+//    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
+//    pg.Draw(bmp);
+//    clear;
+//    FImage.assign(bmp);
+//    FHasImage := true;
+//    Image1.Picture.Assign(FImage);
+//    Image1.Refresh;
+//    Application.ProcessMessages;
+//    readImage;
+//  finally
+//    bmp.free;
+//  end;
+//end;
 
 procedure TQRCodeScannerForm.processPDF(pdf : TPdfDocument);
 var
@@ -209,11 +239,11 @@ begin
   for i := 0 to pdf.PageCount - 1 do
   begin
     pg := pdf.Pages[i];
-    if processPDFPage(pg, false) then
+    if processPDFPageObjects(pg) then
       exit;
   end;
-  if pdf.PageCount > 0 then
-    processPDFPage(pg, true);
+  //if pdf.PageCount > 0 then
+  //  processPDFPage(pg);
 end;
 
 procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
@@ -423,7 +453,7 @@ begin
       else
       begin
         btnOk.enabled := true;
-        pnlInfo.caption := '  QR code: '+codesTBarcodeFormat(bc.BarcodeFormat)+' found';
+        pnlInfo.caption := '  QR code found';
         memo1.Text := bc.text;
         memo1.Color := clWhite;
       end;
