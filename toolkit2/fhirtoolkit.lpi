@@ -226,7 +226,7 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="pdfium"/>
+        <PackageName Value="Pdfium"/>
       </Item>
       <Item>
         <PackageName Value="ZXing"/>

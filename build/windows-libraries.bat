@@ -72,7 +72,7 @@ tools\lazarus\lazbuild.exe source\lazarus-ide-tester\ide\idetester_dsgn.lpk  -q
 tools\lazarus\lazbuild.exe source\HtmlViewer\package\FrameViewer09.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\packages\markdownengine.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\tests\markdowntests.lpk -q
-tools\lazarus\lazbuild.exe source\PdfiumLib\Package\pdfium.lpk -q
+tools\lazarus\lazbuild.exe source\PdfiumLib\Package\Pdfium.lpk -q
 
 
 chdir /d %FSDIR% &rem restore current directory

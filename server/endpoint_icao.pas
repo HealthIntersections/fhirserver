@@ -142,7 +142,7 @@ constructor TICAOWebServer.Create(code, path : String; common : TFHIRWebServerCo
 begin
   inherited;
   FPDFLock := TFslLock.create;
-  PDFiumDllFileName := 'libpdf.dll';
+  PdfiumDllFileName := 'libpdf.dll';
 end;
 
 destructor TICAOWebServer.Destroy;
@@ -165,7 +165,7 @@ var
   i, t : integer;
   obj : TPDFObject;
 begin
-  FPDFLock.Lock; // pdfium is not thread safe
+  FPDFLock.Lock; // Pdfium is not thread safe
   try
     pdf := TPdfDocument.Create;
     try

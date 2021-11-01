@@ -100,11 +100,11 @@ tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk -q --add-pack
 echo "## compile package source/delphi-markdown/packages/markdownengine.lpk"
 tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q
 
-echo "## compile package source/PdfiumLib/Package/pdfium.lpk"
-tools/lazarus/lazbuild source/PdfiumLib/Package/pdfium.lpk -q --add-package --build-ide=
+echo "## compile package source/PdfiumLib/Package/Pdfium.lpk"
+tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk -q --add-package
 
-echo "## compile package source/delphi-markdown/packages/markdownengine.lpk"
-tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q
+echo "## compile package source/delphi-markdown/tests/markdowntests.lpk"
+tools/lazarus/lazbuild source/delphi-markdown/tests/tests.lpk -q
 
 
 # ----  back to the server ----------

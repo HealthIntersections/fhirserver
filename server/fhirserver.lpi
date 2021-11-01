@@ -305,7 +305,7 @@
     </RunParams>
     <RequiredPackages Count="17">
       <Item1>
-        <PackageName Value="pdfium"/>
+        <PackageName Value="Pdfium"/>
       </Item1>
       <Item2>
         <PackageName Value="fcomp"/>

@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
   FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
-  PDFiumCore,
+  PdfiumCore,
   fsl_utilities,
   fui_lcl_utilities;
 
@@ -467,7 +467,7 @@ end;
 
 initialization
   {$IFDEF WINDOWS}
-  PDFiumDllFileName := 'libpdf.dll';
+  PdfiumDllFileName := 'libpdf.dll';
   {$ENDIF}
 end.
 
