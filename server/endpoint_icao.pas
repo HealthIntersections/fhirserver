@@ -36,9 +36,10 @@ convert from icao certificate to smart on FHIR certificate
 interface
 
 uses
-  Sysutils, Classes, {$IFDEF DELPHI}IOUtils, {$ENDIF}
+  Sysutils, Classes, Graphics, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_utilities, fsl_stream, fsl_crypto, fsl_http,
+  PdfiumCore,
+  fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads,
   fhir_objects, fhir_icao,
   fhir4_factory,
   utilities, server_config, time_tracker, storage,
@@ -50,15 +51,19 @@ type
     FJWK : TJWK;
     FJWKSFile : String;
     FStore : TX509CertificateStore;
+    FPDFLock : TFslLock;
+    function readPDF(stream : TStream) : TBitmap;
     function processSHC(card : THealthcareCard; accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
     function processCard(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function processQRCode(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
+    function processPDF(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function render(card: THealthcareCard; log: String): String;
     function processError(message, accept, htmlLog: String;  response: TIdHTTPResponseInfo): String;
     function renderError(message, log: String): String;
     function renderStartPage(path: string): String;
-    function extractFile(request: TIdHTTPRequestInfo): TStream;
+    function extractFile(request: TIdHTTPRequestInfo; var ct : String): TStream;
   public
+    constructor Create(code, path : String; common : TFHIRWebServerCommon);
     destructor Destroy; override;
     function link : TICAOWebServer; overload;
     function description : String; override;
@@ -133,16 +138,57 @@ end;
 
 { TICAOWebServer }
 
-function TICAOWebServer.description: String;
+constructor TICAOWebServer.Create(code, path : String; common : TFHIRWebServerCommon);
 begin
-  result := 'ICAO -> SHC Convertor';
+  inherited;
+  FPDFLock := TFslLock.create;
+  PdfiumDllFileName := 'libpdf.dll';
 end;
 
 destructor TICAOWebServer.Destroy;
 begin
   FJWK.free;
   FStore.free;
+  FPDFLock.Free;
   inherited;
+end;
+
+function TICAOWebServer.description: String;
+begin
+  result := 'ICAO -> SHC Convertor';
+end;
+
+function TICAOWebServer.readPDF(stream : TStream): TBitmap;
+var
+  pdf : TPdfDocument;
+  pg : TPdfPage;
+  i, t : integer;
+  obj : TPDFObject;
+begin
+  FPDFLock.Lock; // Pdfium is not thread safe
+  try
+    pdf := TPdfDocument.Create;
+    try
+      pdf.LoadFromStream(stream);
+      t := 0;
+      for i := 0 to pdf.PageCount - 1 do
+      begin
+        pg := pdf.Pages[i];
+        for obj in pg.Objects do
+        begin
+          if obj.kind = potImage then
+            exit(obj.AsBitmap);
+          inc(t);
+        end;
+      end;
+      raise Exception.Create('No image found in PDF ('+inttostr(t)+' objects scanned');
+      pg := pdf.pages[0];
+    finally
+      pdf.free;
+    end;
+  finally
+    FPDFLock.Unlock;
+  end;
 end;
 
 function TICAOWebServer.render(card : THealthcareCard; log : String): String;
@@ -195,12 +241,16 @@ begin
 '  </head>'+#13#10+
 '  <body>'+#13#10+
 '    <h1>Convert an ICAO VDS to a Smart Health Card</h1>'+#13#10+
-'    <p>Choose your VDS from an image file (png etc)</p>'+#13#10+
+'    <p>Choose the PDF file that is your Australian International Covid Passport, or choose your VDS QR code directly from an image file (png etc).</p>'+#13#10+
 '    <form method="POST" enctype="multipart/form-data" action="'+path+'">'+#13#10+
 '      <input type="file" id="myFile" name="filename"><hr>'+#13#10+
 '      <input type="submit">'+#13#10+
 '    </form>'+#13#10+
-'    <p>Note: The server does not retain any information from the posted VDS, except for the card id.</p>'+#13#10+
+'    <p>Notes</p>'+#13#10+
+'    <ul>'+#13#10+
+'     <li>The VDS QR code is a big one, and scanning with ZXing is hit and miss - you might have to try various resolutions</li>'+#13#10+
+'     <li>The server does not retain any information from the posted VDS, except for the card id.</li>'+#13#10+
+'    </ul>'+#13#10+
 '  </body>'+#13#10+
 '</html>'+#13#10;
 end;
@@ -252,6 +302,41 @@ begin
   begin
     response.ContentType := 'text/plain';
     response.ContentText := 'Error Processing ICAO VDS: '+message;
+  end;
+end;
+
+function TICAOWebServer.processPDF(stream: TStream; accept: String; response: TIdHTTPResponseInfo): String;
+var
+  bmp : TBitmap;
+  conv : TICAOCardImporter;
+  card : THealthcareCard;
+begin
+  conv := TICAOCardImporter.create;
+  try
+    conv.factory := TFHIRFactoryR4.create;
+    conv.issuer := AbsoluteURL(true);
+    conv.store := FStore.Link;
+    conv.mustVerify := true;
+    conv.jwk := FJWK.link;
+    conv.log('Loading PDF');
+    bmp := readPDF(stream);
+    try
+      try
+        card := conv.import(bmp);
+        try
+          processSHC(card, accept, conv.htmlReport, response);
+        finally
+          card.free;
+        end;
+      except
+        on e : Exception do
+          result := processError(e.message, accept, conv.htmlReport, response);
+      end;
+    finally
+      bmp.Free;
+    end;
+  finally
+    conv.free;
   end;
 end;
 
@@ -330,15 +415,14 @@ begin
   response.redirect(tgt);
 end;
 
-function TICAOWebServer.extractFile(request: TIdHTTPRequestInfo) : TStream;
+function TICAOWebServer.extractFile(request: TIdHTTPRequestInfo; var ct : String) : TStream;
 var
   form: TMimeMessage;
   mode: TOperationMode;
-  sContentType : String;
 begin
   form := loadMultipartForm(request.PostStream, request.contentType, mode);
   try
-    result := extractFileData(defLang, form, 'file', sContentType);
+    result := extractFileData(defLang, form, 'file', ct);
   finally
     form.Free;
   end;
@@ -347,16 +431,22 @@ end;
 function TICAOWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 var
   s : TStream;
+  ct : String;
 begin
   if (request.Command = 'POST') and (request.ContentType = 'application/json') then
     result := processCard(request.PostStream, request.Accept, response)
   else if (request.Command = 'POST') and (request.ContentType.startsWith('image/')) then
     result := processQRCode(request.PostStream, request.Accept, response)
+  else if (request.Command = 'POST') and (request.ContentType = 'application/pdf') then
+    result := processPDF(request.PostStream, request.Accept, response)
   else if (request.Command = 'POST') and request.ContentType.StartsWith('multipart/') then
   begin
-    s := extractFile(request);
+    s := extractFile(request, ct);
     try
-      result := processQRCode(s, request.Accept, response)
+      if ct = 'application/pdf' then
+        result := processPDF(s, request.Accept, response)
+      else
+        result := processQRCode(s, request.Accept, response)
     finally
        s.Free;
     end;

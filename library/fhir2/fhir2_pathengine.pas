@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
   fsl_ucum,
-  fhir_objects, fhir_factory, fhir_pathengine, 
+  fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
   fhir2_pathnode, fhir2_types, fhir2_utilities, fhir2_context, fhir2_constants,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
 
@@ -3183,11 +3183,11 @@ end;
 function TFHIRPathEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
 begin
   if s = '%sct' then
-    result := TFhirString.Create('http://snomed.info/sct')
+    result := TFhirString.Create(URI_SNOMED)
   else if s = '%loinc' then
-    result := TFhirString.Create('http://loinc.org')
+    result := TFhirString.Create(URI_LOINC)
   else if s = '%ucum' then
-    result := TFhirString.Create('http://unitsofmeasure.org')
+    result := TFhirString.Create(URI_UCUM)
   else if s = '%resource' then
   begin
     if (context.resource = nil) then

@@ -39,7 +39,7 @@ uses
   fdb_manager, fdb_dialects,
   fsl_http, fsl_graphql,
   fsl_npm_cache,
-  fhir_objects, fhir_parser, fhir_xhtml,  fhir_utilities, fhir_cdshooks,
+  fhir_objects, fhir_parser, fhir_xhtml, fhir_uris, fhir_utilities, fhir_cdshooks,
   fhir_validator, fhir_common, fhir_factory, fhir_narrative, fhir_indexing,
   fhir_client,
   fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
@@ -4782,9 +4782,9 @@ end;
 //    begin
 //      inc := result.compose.includeList.append;
 //      if (s = 'snomed') then
-//        inc.systemUri := 'http://snomed.info/sct'
+//        inc.systemUri := URI_SNOMED
 //      else if (s = 'loinc') then
-//        inc.systemUri := 'http://loinc.org'
+//        inc.systemUri := URI_LOINC
 //      else
 //        inc.systemUri := s;
 //      if UseParam('code', s) then
@@ -7050,14 +7050,14 @@ begin
   begin
     val := TFslDecimal.ValueOf(value.value);
     vu := resolveConcept(conn, value.systemUri, value.code);
-    if (value.systemUri = 'http://unitsofmeasure.org') then
+    if (value.systemUri = URI_UCUM) then
     begin
       upS := TUcumPair.Create(val, value.code);
       try
         upC := ServerContext.TerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(upS);
         try
           cval := upC.Value;
-          cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+          cu := resolveConcept(conn, URI_UCUM, upC.UnitCode);
         finally
           upC.Free;
         end;

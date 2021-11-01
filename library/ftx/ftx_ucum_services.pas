@@ -36,7 +36,7 @@ Uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
-  fhir_common, fhir_features,
+  fhir_common, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -1016,7 +1016,7 @@ end;
 
 function TUcumServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
-  result := 'http://unitsofmeasure.org';
+  result := URI_UCUM;
 end;
 
 function TUcumServices.TotalCount: integer;

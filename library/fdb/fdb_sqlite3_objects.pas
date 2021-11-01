@@ -59,7 +59,7 @@ type
 
 const
 {$IFDEF WINDOWS}
-  sqlite3_lib = 'sqlite3.dll';
+  sqlite3_lib = 'libsqlite3.dll';
 {$ENDIF}
 {$IFDEF LINUX}
   sqlite3_lib = 'libsqlite3.so';

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
   ftx_service,
-  fhir_objects,  fhir_factory, fhir_utilities, fhir_common,
+  fhir_objects,  fhir_factory, fhir_utilities, fhir_common, fhir_uris,
   fhir3_parser, fhir3_resources, fhir3_types, fhir3_constants, fhir3_utilities, fhir3_profiles;
 
 Const
@@ -285,7 +285,7 @@ begin
   if FPrebuiltQuestionnaire = nil then
   begin
     id := FQuestionnaire.identifierList.Append;
-    id.System := 'urn:ietf:rfc:3986';
+    id.System := URI_URIs;
     id.Value := FQuestionnaireId;
     FQuestionnaire.Version := profile.Version;
     FQuestionnaire.Status := profile.Status;

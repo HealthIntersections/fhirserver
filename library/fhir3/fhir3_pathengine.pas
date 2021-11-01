@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_xml, fsl_json,
   fsl_ucum,
-  fhir_objects, fhir_factory, fhir_pathengine, 
+  fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
   fhir3_pathnode, fhir3_types, fhir3_resources, fhir3_utilities, fhir3_context, fhir3_constants, fhir3_resources_base;
 
 const
@@ -784,7 +784,7 @@ begin
           q.unit_ := unit_;
           if (ucum <> '') then
           begin
-          q.system := 'http://unitsofmeasure.org';
+          q.system := URI_UCUM;
           q.code := ucum;
           end;
           result.constant := q.Link;
@@ -1081,9 +1081,9 @@ begin
   begin
     q := item as TFHIRQuantity;
     if (StringArrayExistsSensitive(['year', 'years', 'month', 'months', 'week', 'weeks', 'day', 'days', 'hour', 'hours', 'minute', 'minutes', 'second', 'seconds', 'millisecond', 'milliseconds'], q.unit_)
-          and ((q.system ='') or (q.system = 'http://unitsofmeasure.org'))) then
+          and ((q.system ='') or (q.system = URI_UCUM))) then
         exit(q.value+' '+q.unit_);
-    if (q.system = 'http://unitsofmeasure.org') then
+    if (q.system = URI_UCUM) then
     begin
       u := ''''+q.code+'''';
       result := q.value+' '+u;
@@ -5316,7 +5316,7 @@ function TFHIRPathEngine.qtyToCanonical(q: TFHIRQuantity): TUcumPair;
 var
   p, c : TUcumPair;
 begin
-  if ('http://unitsofmeasure.org' <> q.system) or (FUcum = nil) or not (FUcum.isConfigured) then
+  if (URI_UCUM <> q.system) or (FUcum = nil) or not (FUcum.isConfigured) then
     exit(nil);
   try
     if q.code = '' then
@@ -5343,7 +5343,7 @@ begin
   result := TFHIRQuantity.Create;
   try
     result.value := p.value.AsString;
-    result.system := 'http://unitsofmeasure.org';
+    result.system := URI_UCUM;
     result.code := p.UnitCode;
     result.noExtensions;
     result.link;
@@ -5354,7 +5354,7 @@ end;
 
 function TFHIRPathEngine.qtyToPair(q : TFHIRQuantity) : TUcumPair;
 begin
-  if ('http://unitsofmeasure.org' <> q.system) then
+  if (URI_UCUM <> q.system) then
     exit(nil);
   result := TUcumPair.Create;
   try
@@ -5409,11 +5409,11 @@ var
   ext : TFHIRPathEngineExtension;
 begin
   if (s = '%sct') then
-    result := TFHIRString.create('http://snomed.info/sct').noExtensions()
+    result := TFHIRString.create(URI_SNOMED).noExtensions()
   else if (s = '%loinc') then
-    result := TFHIRString.create('http://loinc.org').noExtensions()
+    result := TFHIRString.create(URI_LOINC).noExtensions()
   else if (s = '%ucum') then
-    result := TFHIRString.create('http://unitsofmeasure.org').noExtensions()
+    result := TFHIRString.create(URI_UCUM).noExtensions()
   else if (s = '%resource') then
   begin
     if (context.resource = nil) then
@@ -6316,11 +6316,11 @@ end;
 //function TFHIRPathEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
 //begin
 //  if s = '%sct' then
-//    result := TFhirString.Create('http://snomed.info/sct').noExtensions
+//    result := TFhirString.Create(URI_SNOMED).noExtensions
 //  else if s = '%loinc' then
-//    result := TFhirString.Create('http://loinc.org').noExtensions
+//    result := TFhirString.Create(URI_LOINC).noExtensions
 //  else if s = '%ucum' then
-//    result := TFhirString.Create('http://unitsofmeasure.org').noExtensions
+//    result := TFhirString.Create(URI_UCUM).noExtensions
 //  else if s = '%resource' then
 //  begin
 //    if (context.resource = nil) then

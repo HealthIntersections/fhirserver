@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang,
   fdb_manager, fdb_dialects,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -1083,7 +1083,7 @@ end;
 
 function TNDCServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
-  result := 'http://hl7.org/fhir/sid/ndc';
+  result := URI_NDC;
 end;
 
 function TNDCServices.TotalCount: integer;

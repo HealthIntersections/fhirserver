@@ -407,8 +407,6 @@ Const
 Function isOid(oid : String) : Boolean;
 Function isUUid(oid : String) : Boolean;
 
-function UriForKnownOid(oid : String) : String;
-
 type
   TAnsiStringBuilder = Class(TFslObject)
   Private
@@ -6301,57 +6299,6 @@ Begin
   result := regex.IsMatch(oid);
   {$ENDIF}
 End;
-
-function UriForKnownOid(oid : String) : String;
-begin
-  if oid = '2.16.840.1.113883.6.96' then
-    exit('http://snomed.info/sct');
-  if oid = '2.16.840.1.113883.6.1' then
-    exit('http://loinc.org');
-  if oid = '2.16.840.1.113883.6.8' then
-    exit('http://unitsofmeasure.org');
-  if oid = '2.16.840.1.113883.6.3' then
-    exit('http://hl7.org/fhir/sid/icd-10');
-  if oid = '2.16.840.1.113883.6.42' then
-    exit('http://hl7.org/fhir/sid/icd-9');
-  if oid = '2.16.840.1.113883.6.104' then
-    exit('http://hl7.org/fhir/sid/icd-9');
-  if oid = '2.16.840.1.113883.6.103' then
-    exit('http://hl7.org/fhir/sid/icd-9'); //todo: confirm this
-  if oid = '2.16.840.1.113883.6.73' then
-    exit('http://hl7.org/fhir/sid/atc');
-  if oid = '2.16.840.1.113883.3.26.1.1' then
-    exit('http://ncimeta.nci.nih.gov');
-  if oid = '2.16.840.1.113883.3.26.1.1.1' then
-    exit('http://ncimeta.nci.nih.gov');
-  if oid = '2.16.840.1.113883.6.88' then
-    exit('http://www.nlm.nih.gov/research/umls/rxnorm'); // todo: confirm this
-
-  if oid = '2.16.840.1.113883.5.1008' then
-    exit('http://hl7.org/fhir/v3/NullFlavor');
-  if oid = '2.16.840.1.113883.5.111' then
-    exit('http://hl7.org/fhir/v3/RoleCode');
-  if oid = '2.16.840.1.113883.5.4' then
-    exit('http://hl7.org/fhir/v3/ActCode');
-  if oid = '2.16.840.1.113883.5.8' then
-    exit('http://hl7.org/fhir/v3/ActReason');
-  if oid = '2.16.840.1.113883.5.83' then
-    exit('http://hl7.org/fhir/v3/ObservationInterpretation');
-  if oid = '2.16.840.1.113883.6.238' then
-    exit('http://hl7.org/fhir/v3/Race');
-
-  if oid = '2.16.840.1.113883.6.59' then
-    exit('http://hl7.org/fhir/sid/cvx');
-  if oid = '2.16.840.1.113883.12.292' then
-    exit('http://hl7.org/fhir/sid/cvx');
-
-  if oid = '2.16.840.1.113883.6.12' then
-    exit('http://www.ama-assn.org/go/cpt');
-
-  if oid = '2.16.840.1.113883.12.' then
-    exit('http://hl7.org/fhir/sid/v2-'+oid.substring(21));
-  result := '';
-end;
 
 
 Const

@@ -24,6 +24,7 @@ git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester 
 git clone https://github.com/grahamegrieve/ZXing.Delphi
 git clone https://github.com/FHIR/fhir-test-cases
+git clone https://github.com/grahamegrieve/PdfiumLib
 
 cd tzdb 
 git pull
@@ -53,6 +54,11 @@ cd fhir-test-cases
 git pull
 cd ..
 
+cd PdfiumLib
+git pull
+cd ..
+
+
 cd ..
 
 Rem -- now build 
@@ -66,6 +72,7 @@ tools\lazarus\lazbuild.exe source\lazarus-ide-tester\ide\idetester_dsgn.lpk  -q
 tools\lazarus\lazbuild.exe source\HtmlViewer\package\FrameViewer09.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\packages\markdownengine.lpk  -q
 tools\lazarus\lazbuild.exe source\delphi-markdown\tests\markdowntests.lpk -q
+tools\lazarus\lazbuild.exe source\PdfiumLib\Package\Pdfium.lpk -q
 
 
 chdir /d %FSDIR% &rem restore current directory

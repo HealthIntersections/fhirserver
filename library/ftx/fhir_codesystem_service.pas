@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang,
-  fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features,
+  fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -1278,7 +1278,7 @@ end;
 
 procedure TFHIRCodeSystemManager.see(r : TFHIRCodeSystemEntry);
 begin
-  if r.url = 'http://hl7.org/fhir/sid/cvx' then
+  if r.url = URI_CVX then
     r.id := r.id;
 
   if (r.id = '') then

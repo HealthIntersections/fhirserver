@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher,
-  fhir_objects;
+  fhir_objects, fhir_uris;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -459,33 +459,33 @@ function csName(url : string) : String;
 begin
   if url = '' then
     result := '[not stated]'
-  else if url = 'http://snomed.info/sct' then
+  else if url = URI_SNOMED then
     result := 'SNOMED CT'
-  else if url = 'http://loinc.org' then
+  else if url = URI_LOINC then
     result := 'LOINC'
   else if url = 'http://www.nlm.nih.gov/research/umls/rxnorm"))' then
     result := 'RxNorm'
-  else if url = 'http://hl7.org/fhir/sid/icd-9' then
+  else if url = URI_ICD9 then
     result := 'ICD-9'
-  else if url = 'http://hl7.org/fhir/sid/icd-10' then
+  else if url = URI_ICD10 then
     result := 'ICD-10'
   else if url = 'http://id.who.int/icd/release/11/mms' then
     result := 'ICD-11'
-  else if url = 'http://dicom.nema.org/resources/ontology/DCM' then
+  else if url = URI_DICOM then
     result := 'DICOM'
-  else if url = 'http://unitsofmeasure.org' then
+  else if url = URI_UCUM then
     result := 'UCUM'
-  else if url = 'urn:ietf:bcp:47' then
+  else if url = URI_BCP47 then
     result := 'lang'
-  else if url = 'urn:ietf:bcp:13' then
+  else if url = URI_BCP13 then
     result := 'mimetypes'
-  else if url = 'urn:iso:std:iso:11073:10101' then
+  else if url = URI_11073 then
     result := '11073'
-  else if url = 'http://dicom.nema.org/resources/ontology/DCM' then
+  else if url = URI_DICOM then
     result := 'dicom'
-  else if url = 'http://hl7.org/fhir/sid/cvx' then
+  else if url = URI_CVX then
     result := 'CVX'
-  else if url = 'https://www.gs1.org/gtin' then
+  else if url = URI_GTIN then
     result := 'GTIN'
   else if url = 'https://www.humanservices.gov.au/organisations/health-professionals/enablers/air-vaccine-code-formats' then
     result := 'AIR'

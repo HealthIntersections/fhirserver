@@ -510,7 +510,10 @@ uses
   fhir_uris in '..\library\fhir\fhir_uris.pas',
   fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas',
   endpoint_icao in 'endpoint_icao.pas',
-  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas';
+  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas',
+  PdfiumCore in '..\..\source\PdfiumLib\Source\PdfiumCore.pas',
+  PdfiumCtrl in '..\..\source\PdfiumLib\Source\PdfiumCtrl.pas',
+  PdfiumLib in '..\..\source\PdfiumLib\Source\PdfiumLib.pas';
 
 begin
   ExecuteFhirServer;

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_json, fsl_stream,
-  fhir_objects, fhir_common, fhir_factory;
+  fhir_objects, fhir_common, fhir_factory, fhir_uris;
 
 const
   TAG_FHIR_SYSTEM = 'http://healthintersections.com.au/fhir/tags';
@@ -289,8 +289,8 @@ begin
       addTag(0, tcSecurity, c.systemUri, c.code, c.display);
   if meta <> nil then
     for u in meta.profiles do
-      if not hasTag(tcProfile, 'urn:ietf:rfc:3986', u) then
-        addTag(0, tcProfile, 'urn:ietf:rfc:3986', u, '');
+      if not hasTag(tcProfile, URI_URIs, u) then
+        addTag(0, tcProfile, URI_URIs, u, '');
 end;
 
 procedure TFHIRTagList.removeTag(category: TFHIRTagCategory; system, code: String);
@@ -312,7 +312,7 @@ begin
   for c in meta.labels.forEnum do
     removeTag(tcSecurity, c.systemUri, c.code);
   for u in meta.profiles do
-    removeTag(tcProfile, 'urn:ietf:rfc:3986', u);
+    removeTag(tcProfile, URI_URIs, u);
 end;
 
 procedure TFHIRTagList.writeTags(meta: TFhirMetaW);

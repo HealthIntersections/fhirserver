@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections, Character,
   fsl_http,
   fsl_base, fsl_utilities, fsl_fpc,
-  fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client,
+  fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client, fhir_uris,
   fdb_manager, fdb_dialects,
   fhir_indexing,
   indexing, search_syntax, session, utilities, server_context, server_constants,
@@ -629,13 +629,13 @@ begin
       if (ref = '') then
         ref := n + '.SpaceKey is null and '
       else if (ref = 'loinc') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://loinc.org'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_LOINC+') and '
       else if (ref = 'snomed') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://snomed.info/sct'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_SNOMED+') and '
       else if (ref = 'rxnorm') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://www.nlm.nih.gov/research/umls/rxnorm'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_RXNORM+') and '
       else if (ref = 'ucum') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://unitsofmeasure.org'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_UCUM+') and '
       else
         ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(ref) + ''') and ';
     end
@@ -883,11 +883,11 @@ begin
   end;
 
   if (ns = 'ucum') then
-    ns := 'http://unitsofmeasure.org'
+    ns := URI_UCUM
   else if ns  = 'snomed' then
-    ns := 'http://snomed.info/sct';
+    ns := URI_SNOMED;
 
-  if (ns = 'http://unitsofmeasure.org') then
+  if (ns = URI_UCUM) then
   begin
     specified := TUcumPair.create;
     try

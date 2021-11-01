@@ -59,7 +59,7 @@ The content loads and works extremely quickly.
 Uses
   SysUtils, Classes, Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
 
@@ -3444,7 +3444,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://snomed.info/sct';
+        inc.systemUri := URI_SNOMED;
         // get the list of reference sets
         for i := 0 to RefSetIndex.Count - 1 Do
         begin
@@ -3477,7 +3477,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://snomed.info/sct';
+        inc.systemUri := URI_SNOMED;
       finally
         inc.Free;
       end;
@@ -3499,7 +3499,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://snomed.info/sct';
+        inc.systemUri := URI_SNOMED;
         filt := inc.addFilter;
         try
           filt.prop := 'concept';
@@ -3528,7 +3528,7 @@ begin
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
-      inc.systemUri := 'http://snomed.info/sct';
+      inc.systemUri := URI_SNOMED;
       filt := inc.addFilter;
       filt.prop := 'concept';
       filt.op := foIsA;
@@ -3852,7 +3852,7 @@ begin
         Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
         if Active and (kind <> 0) Then
         Begin
-          resp.addDesignation('http://snomed.info/sct', GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
+          resp.addDesignation(URI_SNOMED, GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
         End;
       End;
     End;
@@ -3995,7 +3995,7 @@ end;
 
 function TSnomedServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
-  result := 'http://snomed.info/sct';
+  result := URI_SNOMED;
 end;
 
 function TSnomedServices.TotalCount: integer;
