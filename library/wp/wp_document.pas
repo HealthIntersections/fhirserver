@@ -330,7 +330,7 @@ Type
     {
       Add an already existing Content Item to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentContent);
+    Function AddItem(value : TWPDocumentContent): TWPDocumentContent;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -393,7 +393,7 @@ Type
     {
       Add an already existing Simple Content Item to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentSimpleContent);
+    Function AddItem(value : TWPDocumentSimpleContent): TWPDocumentSimpleContent;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -825,7 +825,7 @@ Type
     {
       Add an already existing Block to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentBlock);
+    Function AddItem(value : TWPDocumentBlock): TWPDocumentBlock;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -948,7 +948,7 @@ Type
     {
       Add an already existing Paragraph to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentParagraph);
+    Function AddItem(value : TWPDocumentParagraph): TWPDocumentParagraph;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -1398,7 +1398,7 @@ Type
     {
       Add an already existing Cell to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentTableCell);
+    Function AddItem(value : TWPDocumentTableCell): TWPDocumentTableCell;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -1532,7 +1532,7 @@ Type
     {
       Add an already existing Row to the end of the list.
     }
-    Procedure AddItem(value : TWPDocumentTableRow);
+    Function AddItem(value : TWPDocumentTableRow): TWPDocumentTableRow;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -4857,9 +4857,10 @@ end;
 
 { TWPDocumentContents }
 
-Procedure TWPDocumentContents.AddItem(value : TWPDocumentContent);
+function TWPDocumentContents.AddItem(value : TWPDocumentContent): TWPDocumentContent;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentContents.IndexOf(value : TWPDocumentContent) : Integer;
@@ -4900,9 +4901,10 @@ end;
 
 { TWPDocumentSimpleContents }
 
-Procedure TWPDocumentSimpleContents.AddItem(value : TWPDocumentSimpleContent);
+function TWPDocumentSimpleContents.AddItem(value : TWPDocumentSimpleContent): TWPDocumentSimpleContent;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentSimpleContents.IndexOf(value : TWPDocumentSimpleContent) : Integer;
@@ -4943,9 +4945,10 @@ end;
 
 { TWPDocumentBlocks }
 
-Procedure TWPDocumentBlocks.AddItem(value : TWPDocumentBlock);
+function TWPDocumentBlocks.AddItem(value : TWPDocumentBlock): TWPDocumentBlock;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentBlocks.IndexOf(value : TWPDocumentBlock) : Integer;
@@ -4995,9 +4998,10 @@ Begin
   End;
 End;
 
-Procedure TWPDocumentParagraphs.AddItem(value : TWPDocumentParagraph);
+function TWPDocumentParagraphs.AddItem(value : TWPDocumentParagraph): TWPDocumentParagraph;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentParagraphs.IndexOf(value : TWPDocumentParagraph) : Integer;
@@ -5057,9 +5061,10 @@ Begin
   End;
 End;
 
-Procedure TWPDocumentTableCells.AddItem(value : TWPDocumentTableCell);
+function TWPDocumentTableCells.AddItem(value : TWPDocumentTableCell): TWPDocumentTableCell;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentTableCells.IndexOf(value : TWPDocumentTableCell) : Integer;
@@ -5119,9 +5124,10 @@ Begin
   End;
 End;
 
-Procedure TWPDocumentTableRows.AddItem(value : TWPDocumentTableRow);
+function TWPDocumentTableRows.AddItem(value : TWPDocumentTableRow): TWPDocumentTableRow;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPDocumentTableRows.IndexOf(value : TWPDocumentTableRow) : Integer;

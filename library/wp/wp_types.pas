@@ -1326,7 +1326,7 @@ Type
     {
       Add an already existing Row to the end of the list.
     }
-    Procedure AddItem(value : TWPStyle);
+    Function AddItem(value : TWPStyle): TWPStyle;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -4290,9 +4290,10 @@ Begin
   End;
 End;
 
-Procedure TWPStyles.AddItem(value : TWPStyle);
+function TWPStyles.AddItem(value : TWPStyle): TWPStyle;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TWPStyles.IndexOf(value : TWPStyle) : Integer;

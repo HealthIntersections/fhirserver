@@ -88,7 +88,7 @@ uses
 
 { TQuestionnairePanel }
 
-procedure TQuestionnairePanel.addItem(panel: TQuestionnaireItemPanel);
+function TQuestionnairePanel.addItem(panel: TQuestionnaireItemPanel): TQuestionnaireItemPanel;
 var
   item, new, next, prev : TFhirQuestionnaireItem;
   index : integer;
@@ -109,6 +109,7 @@ begin
     else
       list := Questionnaire.itemList;
     index := list.IndexByReference(item);
+  result := value;
   end;
   new := TFhirQuestionnaireItem.Create;
   try

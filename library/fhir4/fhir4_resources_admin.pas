@@ -274,7 +274,7 @@ Type
 
     
     // Add an already existing FhirBiologicallyDerivedProductCollection to the end of the list.
-    procedure AddItem(value : TFhirBiologicallyDerivedProductCollection); overload;
+function AddItem(value : TFhirBiologicallyDerivedProductCollection): TFhirBiologicallyDerivedProductCollection; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -396,7 +396,7 @@ Type
 
     
     // Add an already existing FhirBiologicallyDerivedProductProcessing to the end of the list.
-    procedure AddItem(value : TFhirBiologicallyDerivedProductProcessing); overload;
+function AddItem(value : TFhirBiologicallyDerivedProductProcessing): TFhirBiologicallyDerivedProductProcessing; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -504,7 +504,7 @@ Type
 
     
     // Add an already existing FhirBiologicallyDerivedProductManipulation to the end of the list.
-    procedure AddItem(value : TFhirBiologicallyDerivedProductManipulation); overload;
+function AddItem(value : TFhirBiologicallyDerivedProductManipulation): TFhirBiologicallyDerivedProductManipulation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -629,7 +629,7 @@ Type
 
     
     // Add an already existing FhirBiologicallyDerivedProductStorage to the end of the list.
-    procedure AddItem(value : TFhirBiologicallyDerivedProductStorage); overload;
+function AddItem(value : TFhirBiologicallyDerivedProductStorage): TFhirBiologicallyDerivedProductStorage; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -803,7 +803,7 @@ Type
 
     
     // Add an already existing FhirBiologicallyDerivedProduct to the end of the list.
-    procedure AddItem(value : TFhirBiologicallyDerivedProduct); overload;
+function AddItem(value : TFhirBiologicallyDerivedProduct): TFhirBiologicallyDerivedProduct; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -914,7 +914,7 @@ Type
 
     
     // Add an already existing FhirCatalogEntryRelatedEntry to the end of the list.
-    procedure AddItem(value : TFhirCatalogEntryRelatedEntry); overload;
+function AddItem(value : TFhirCatalogEntryRelatedEntry): TFhirCatalogEntryRelatedEntry; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1105,7 +1105,7 @@ Type
 
     
     // Add an already existing FhirCatalogEntry to the end of the list.
-    procedure AddItem(value : TFhirCatalogEntry); overload;
+function AddItem(value : TFhirCatalogEntry): TFhirCatalogEntry; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1254,7 +1254,7 @@ Type
 
     
     // Add an already existing FhirDeviceUdiCarrier to the end of the list.
-    procedure AddItem(value : TFhirDeviceUdiCarrier); overload;
+function AddItem(value : TFhirDeviceUdiCarrier): TFhirDeviceUdiCarrier; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1363,7 +1363,7 @@ Type
 
     
     // Add an already existing FhirDeviceDeviceName to the end of the list.
-    procedure AddItem(value : TFhirDeviceDeviceName); overload;
+function AddItem(value : TFhirDeviceDeviceName): TFhirDeviceDeviceName; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1471,7 +1471,7 @@ Type
 
     
     // Add an already existing FhirDeviceSpecialization to the end of the list.
-    procedure AddItem(value : TFhirDeviceSpecialization); overload;
+function AddItem(value : TFhirDeviceSpecialization): TFhirDeviceSpecialization; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1586,7 +1586,7 @@ Type
 
     
     // Add an already existing FhirDeviceVersion to the end of the list.
-    procedure AddItem(value : TFhirDeviceVersion); overload;
+function AddItem(value : TFhirDeviceVersion): TFhirDeviceVersion; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1699,7 +1699,7 @@ Type
 
     
     // Add an already existing FhirDeviceProperty to the end of the list.
-    procedure AddItem(value : TFhirDeviceProperty); overload;
+function AddItem(value : TFhirDeviceProperty): TFhirDeviceProperty; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1993,7 +1993,7 @@ Type
 
     
     // Add an already existing FhirDevice to the end of the list.
-    procedure AddItem(value : TFhirDevice); overload;
+function AddItem(value : TFhirDevice): TFhirDevice; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2114,7 +2114,7 @@ Type
 
     
     // Add an already existing FhirDeviceMetricCalibration to the end of the list.
-    procedure AddItem(value : TFhirDeviceMetricCalibration); overload;
+function AddItem(value : TFhirDeviceMetricCalibration): TFhirDeviceMetricCalibration; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2280,7 +2280,7 @@ Type
 
     
     // Add an already existing FhirDeviceMetric to the end of the list.
-    procedure AddItem(value : TFhirDeviceMetric); overload;
+function AddItem(value : TFhirDeviceMetric): TFhirDeviceMetric; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2391,7 +2391,7 @@ Type
 
     
     // Add an already existing FhirEncounterStatusHistory to the end of the list.
-    procedure AddItem(value : TFhirEncounterStatusHistory); overload;
+function AddItem(value : TFhirEncounterStatusHistory): TFhirEncounterStatusHistory; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2497,7 +2497,7 @@ Type
 
     
     // Add an already existing FhirEncounterClassHistory to the end of the list.
-    procedure AddItem(value : TFhirEncounterClassHistory); overload;
+function AddItem(value : TFhirEncounterClassHistory): TFhirEncounterClassHistory; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2610,7 +2610,7 @@ Type
 
     
     // Add an already existing FhirEncounterParticipant to the end of the list.
-    procedure AddItem(value : TFhirEncounterParticipant); overload;
+function AddItem(value : TFhirEncounterParticipant): TFhirEncounterParticipant; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2725,7 +2725,7 @@ Type
 
     
     // Add an already existing FhirEncounterDiagnosis to the end of the list.
-    procedure AddItem(value : TFhirEncounterDiagnosis); overload;
+function AddItem(value : TFhirEncounterDiagnosis): TFhirEncounterDiagnosis; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2880,7 +2880,7 @@ Type
 
     
     // Add an already existing FhirEncounterHospitalization to the end of the list.
-    procedure AddItem(value : TFhirEncounterHospitalization); overload;
+function AddItem(value : TFhirEncounterHospitalization): TFhirEncounterHospitalization; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3001,7 +3001,7 @@ Type
 
     
     // Add an already existing FhirEncounterLocation to the end of the list.
-    procedure AddItem(value : TFhirEncounterLocation); overload;
+function AddItem(value : TFhirEncounterLocation): TFhirEncounterLocation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3256,7 +3256,7 @@ Type
 
     
     // Add an already existing FhirEncounter to the end of the list.
-    procedure AddItem(value : TFhirEncounter); overload;
+function AddItem(value : TFhirEncounter): TFhirEncounter; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3435,7 +3435,7 @@ Type
 
     
     // Add an already existing FhirEndpoint to the end of the list.
-    procedure AddItem(value : TFhirEndpoint); overload;
+function AddItem(value : TFhirEndpoint): TFhirEndpoint; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3546,7 +3546,7 @@ Type
 
     
     // Add an already existing FhirEpisodeOfCareStatusHistory to the end of the list.
-    procedure AddItem(value : TFhirEpisodeOfCareStatusHistory); overload;
+function AddItem(value : TFhirEpisodeOfCareStatusHistory): TFhirEpisodeOfCareStatusHistory; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3661,7 +3661,7 @@ Type
 
     
     // Add an already existing FhirEpisodeOfCareDiagnosis to the end of the list.
-    procedure AddItem(value : TFhirEpisodeOfCareDiagnosis); overload;
+function AddItem(value : TFhirEpisodeOfCareDiagnosis): TFhirEpisodeOfCareDiagnosis; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3839,7 +3839,7 @@ Type
 
     
     // Add an already existing FhirEpisodeOfCare to the end of the list.
-    procedure AddItem(value : TFhirEpisodeOfCare); overload;
+function AddItem(value : TFhirEpisodeOfCare): TFhirEpisodeOfCare; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3965,7 +3965,7 @@ Type
 
     
     // Add an already existing FhirGroupCharacteristic to the end of the list.
-    procedure AddItem(value : TFhirGroupCharacteristic); overload;
+function AddItem(value : TFhirGroupCharacteristic): TFhirGroupCharacteristic; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4080,7 +4080,7 @@ Type
 
     
     // Add an already existing FhirGroupMember to the end of the list.
-    procedure AddItem(value : TFhirGroupMember); overload;
+function AddItem(value : TFhirGroupMember): TFhirGroupMember; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4252,7 +4252,7 @@ Type
 
     
     // Add an already existing FhirGroup to the end of the list.
-    procedure AddItem(value : TFhirGroup); overload;
+function AddItem(value : TFhirGroup): TFhirGroup; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4364,7 +4364,7 @@ Type
 
     
     // Add an already existing FhirHealthcareServiceEligibility to the end of the list.
-    procedure AddItem(value : TFhirHealthcareServiceEligibility); overload;
+function AddItem(value : TFhirHealthcareServiceEligibility): TFhirHealthcareServiceEligibility; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4492,7 +4492,7 @@ Type
 
     
     // Add an already existing FhirHealthcareServiceAvailableTime to the end of the list.
-    procedure AddItem(value : TFhirHealthcareServiceAvailableTime); overload;
+function AddItem(value : TFhirHealthcareServiceAvailableTime): TFhirHealthcareServiceAvailableTime; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4600,7 +4600,7 @@ Type
 
     
     // Add an already existing FhirHealthcareServiceNotAvailable to the end of the list.
-    procedure AddItem(value : TFhirHealthcareServiceNotAvailable); overload;
+function AddItem(value : TFhirHealthcareServiceNotAvailable): TFhirHealthcareServiceNotAvailable; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4873,7 +4873,7 @@ Type
 
     
     // Add an already existing FhirHealthcareService to the end of the list.
-    procedure AddItem(value : TFhirHealthcareService); overload;
+function AddItem(value : TFhirHealthcareService): TFhirHealthcareService; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4996,7 +4996,7 @@ Type
 
     
     // Add an already existing FhirLocationPosition to the end of the list.
-    procedure AddItem(value : TFhirLocationPosition); overload;
+function AddItem(value : TFhirLocationPosition): TFhirLocationPosition; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5124,7 +5124,7 @@ Type
 
     
     // Add an already existing FhirLocationHoursOfOperation to the end of the list.
-    procedure AddItem(value : TFhirLocationHoursOfOperation); overload;
+function AddItem(value : TFhirLocationHoursOfOperation): TFhirLocationHoursOfOperation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5344,7 +5344,7 @@ Type
 
     
     // Add an already existing FhirLocation to the end of the list.
-    procedure AddItem(value : TFhirLocation); overload;
+function AddItem(value : TFhirLocation): TFhirLocation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5468,7 +5468,7 @@ Type
 
     
     // Add an already existing FhirOrganizationContact to the end of the list.
-    procedure AddItem(value : TFhirOrganizationContact); overload;
+function AddItem(value : TFhirOrganizationContact): TFhirOrganizationContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5635,7 +5635,7 @@ Type
 
     
     // Add an already existing FhirOrganization to the end of the list.
-    procedure AddItem(value : TFhirOrganization); overload;
+function AddItem(value : TFhirOrganization): TFhirOrganization; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5818,7 +5818,7 @@ Type
 
     
     // Add an already existing FhirOrganizationAffiliation to the end of the list.
-    procedure AddItem(value : TFhirOrganizationAffiliation); overload;
+function AddItem(value : TFhirOrganizationAffiliation): TFhirOrganizationAffiliation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5964,7 +5964,7 @@ Type
 
     
     // Add an already existing FhirPatientContact to the end of the list.
-    procedure AddItem(value : TFhirPatientContact); overload;
+function AddItem(value : TFhirPatientContact): TFhirPatientContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6072,7 +6072,7 @@ Type
 
     
     // Add an already existing FhirPatientCommunication to the end of the list.
-    procedure AddItem(value : TFhirPatientCommunication); overload;
+function AddItem(value : TFhirPatientCommunication): TFhirPatientCommunication; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6179,7 +6179,7 @@ Type
 
     
     // Add an already existing FhirPatientLink to the end of the list.
-    procedure AddItem(value : TFhirPatientLink); overload;
+function AddItem(value : TFhirPatientLink): TFhirPatientLink; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6389,7 +6389,7 @@ Type
 
     
     // Add an already existing FhirPatient to the end of the list.
-    procedure AddItem(value : TFhirPatient); overload;
+function AddItem(value : TFhirPatient): TFhirPatient; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6500,7 +6500,7 @@ Type
 
     
     // Add an already existing FhirPersonLink to the end of the list.
-    procedure AddItem(value : TFhirPersonLink); overload;
+function AddItem(value : TFhirPersonLink): TFhirPersonLink; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6668,7 +6668,7 @@ Type
 
     
     // Add an already existing FhirPerson to the end of the list.
-    procedure AddItem(value : TFhirPerson); overload;
+function AddItem(value : TFhirPerson): TFhirPerson; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6792,7 +6792,7 @@ Type
 
     
     // Add an already existing FhirPractitionerQualification to the end of the list.
-    procedure AddItem(value : TFhirPractitionerQualification); overload;
+function AddItem(value : TFhirPractitionerQualification): TFhirPractitionerQualification; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6960,7 +6960,7 @@ Type
 
     
     // Add an already existing FhirPractitioner to the end of the list.
-    procedure AddItem(value : TFhirPractitioner); overload;
+function AddItem(value : TFhirPractitioner): TFhirPractitioner; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7092,7 +7092,7 @@ Type
 
     
     // Add an already existing FhirPractitionerRoleAvailableTime to the end of the list.
-    procedure AddItem(value : TFhirPractitionerRoleAvailableTime); overload;
+function AddItem(value : TFhirPractitionerRoleAvailableTime): TFhirPractitionerRoleAvailableTime; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7200,7 +7200,7 @@ Type
 
     
     // Add an already existing FhirPractitionerRoleNotAvailable to the end of the list.
-    procedure AddItem(value : TFhirPractitionerRoleNotAvailable); overload;
+function AddItem(value : TFhirPractitionerRoleNotAvailable): TFhirPractitionerRoleNotAvailable; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7395,7 +7395,7 @@ Type
 
     
     // Add an already existing FhirPractitionerRole to the end of the list.
-    procedure AddItem(value : TFhirPractitionerRole); overload;
+function AddItem(value : TFhirPractitionerRole): TFhirPractitionerRole; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7507,7 +7507,7 @@ Type
 
     
     // Add an already existing FhirRelatedPersonCommunication to the end of the list.
-    procedure AddItem(value : TFhirRelatedPersonCommunication); overload;
+function AddItem(value : TFhirRelatedPersonCommunication): TFhirRelatedPersonCommunication; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7689,7 +7689,7 @@ Type
 
     
     // Add an already existing FhirRelatedPerson to the end of the list.
-    procedure AddItem(value : TFhirRelatedPerson); overload;
+function AddItem(value : TFhirRelatedPerson): TFhirRelatedPerson; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7846,7 +7846,7 @@ Type
 
     
     // Add an already existing FhirSchedule to the end of the list.
-    procedure AddItem(value : TFhirSchedule); overload;
+function AddItem(value : TFhirSchedule): TFhirSchedule; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8029,7 +8029,7 @@ Type
 
     
     // Add an already existing FhirSlot to the end of the list.
-    procedure AddItem(value : TFhirSlot); overload;
+function AddItem(value : TFhirSlot): TFhirSlot; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8281,10 +8281,10 @@ begin
 end;
 
 { TFhirBiologicallyDerivedProductCollectionList }
-procedure TFhirBiologicallyDerivedProductCollectionList.AddItem(value: TFhirBiologicallyDerivedProductCollection);
+function TFhirBiologicallyDerivedProductCollectionList.AddItem(value: TFhirBiologicallyDerivedProductCollection): TFhirBiologicallyDerivedProductCollection;
 begin
-  assert(value.ClassName = 'TFhirBiologicallyDerivedProductCollection', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBiologicallyDerivedProductCollection');
   add(value);
+  result := value;
 end;
 
 function TFhirBiologicallyDerivedProductCollectionList.Append: TFhirBiologicallyDerivedProductCollection;
@@ -8627,10 +8627,10 @@ begin
 end;
 
 { TFhirBiologicallyDerivedProductProcessingList }
-procedure TFhirBiologicallyDerivedProductProcessingList.AddItem(value: TFhirBiologicallyDerivedProductProcessing);
+function TFhirBiologicallyDerivedProductProcessingList.AddItem(value: TFhirBiologicallyDerivedProductProcessing): TFhirBiologicallyDerivedProductProcessing;
 begin
-  assert(value.ClassName = 'TFhirBiologicallyDerivedProductProcessing', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBiologicallyDerivedProductProcessing');
   add(value);
+  result := value;
 end;
 
 function TFhirBiologicallyDerivedProductProcessingList.Append: TFhirBiologicallyDerivedProductProcessing;
@@ -8928,10 +8928,10 @@ begin
 end;
 
 { TFhirBiologicallyDerivedProductManipulationList }
-procedure TFhirBiologicallyDerivedProductManipulationList.AddItem(value: TFhirBiologicallyDerivedProductManipulation);
+function TFhirBiologicallyDerivedProductManipulationList.AddItem(value: TFhirBiologicallyDerivedProductManipulation): TFhirBiologicallyDerivedProductManipulation;
 begin
-  assert(value.ClassName = 'TFhirBiologicallyDerivedProductManipulation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBiologicallyDerivedProductManipulation');
   add(value);
+  result := value;
 end;
 
 function TFhirBiologicallyDerivedProductManipulationList.Append: TFhirBiologicallyDerivedProductManipulation;
@@ -9309,10 +9309,10 @@ begin
 end;
 
 { TFhirBiologicallyDerivedProductStorageList }
-procedure TFhirBiologicallyDerivedProductStorageList.AddItem(value: TFhirBiologicallyDerivedProductStorage);
+function TFhirBiologicallyDerivedProductStorageList.AddItem(value: TFhirBiologicallyDerivedProductStorage): TFhirBiologicallyDerivedProductStorage;
 begin
-  assert(value.ClassName = 'TFhirBiologicallyDerivedProductStorage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBiologicallyDerivedProductStorage');
   add(value);
+  result := value;
 end;
 
 function TFhirBiologicallyDerivedProductStorageList.Append: TFhirBiologicallyDerivedProductStorage;
@@ -9939,10 +9939,10 @@ begin
 end;
 
 { TFhirBiologicallyDerivedProductList }
-procedure TFhirBiologicallyDerivedProductList.AddItem(value: TFhirBiologicallyDerivedProduct);
+function TFhirBiologicallyDerivedProductList.AddItem(value: TFhirBiologicallyDerivedProduct): TFhirBiologicallyDerivedProduct;
 begin
-  assert(value.ClassName = 'TFhirBiologicallyDerivedProduct', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBiologicallyDerivedProduct');
   add(value);
+  result := value;
 end;
 
 function TFhirBiologicallyDerivedProductList.Append: TFhirBiologicallyDerivedProduct;
@@ -10240,10 +10240,10 @@ begin
 end;
 
 { TFhirCatalogEntryRelatedEntryList }
-procedure TFhirCatalogEntryRelatedEntryList.AddItem(value: TFhirCatalogEntryRelatedEntry);
+function TFhirCatalogEntryRelatedEntryList.AddItem(value: TFhirCatalogEntryRelatedEntry): TFhirCatalogEntryRelatedEntry;
 begin
-  assert(value.ClassName = 'TFhirCatalogEntryRelatedEntry', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCatalogEntryRelatedEntry');
   add(value);
+  result := value;
 end;
 
 function TFhirCatalogEntryRelatedEntryList.Append: TFhirCatalogEntryRelatedEntry;
@@ -10944,10 +10944,10 @@ begin
 end;
 
 { TFhirCatalogEntryList }
-procedure TFhirCatalogEntryList.AddItem(value: TFhirCatalogEntry);
+function TFhirCatalogEntryList.AddItem(value: TFhirCatalogEntry): TFhirCatalogEntry;
 begin
-  assert(value.ClassName = 'TFhirCatalogEntry', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCatalogEntry');
   add(value);
+  result := value;
 end;
 
 function TFhirCatalogEntryList.Append: TFhirCatalogEntry;
@@ -11435,10 +11435,10 @@ begin
 end;
 
 { TFhirDeviceUdiCarrierList }
-procedure TFhirDeviceUdiCarrierList.AddItem(value: TFhirDeviceUdiCarrier);
+function TFhirDeviceUdiCarrierList.AddItem(value: TFhirDeviceUdiCarrier): TFhirDeviceUdiCarrier;
 begin
-  assert(value.ClassName = 'TFhirDeviceUdiCarrier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceUdiCarrier');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceUdiCarrierList.Append: TFhirDeviceUdiCarrier;
@@ -11751,10 +11751,10 @@ begin
 end;
 
 { TFhirDeviceDeviceNameList }
-procedure TFhirDeviceDeviceNameList.AddItem(value: TFhirDeviceDeviceName);
+function TFhirDeviceDeviceNameList.AddItem(value: TFhirDeviceDeviceName): TFhirDeviceDeviceName;
 begin
-  assert(value.ClassName = 'TFhirDeviceDeviceName', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDeviceName');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceDeviceNameList.Append: TFhirDeviceDeviceName;
@@ -12052,10 +12052,10 @@ begin
 end;
 
 { TFhirDeviceSpecializationList }
-procedure TFhirDeviceSpecializationList.AddItem(value: TFhirDeviceSpecialization);
+function TFhirDeviceSpecializationList.AddItem(value: TFhirDeviceSpecialization): TFhirDeviceSpecialization;
 begin
-  assert(value.ClassName = 'TFhirDeviceSpecialization', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceSpecialization');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceSpecializationList.Append: TFhirDeviceSpecialization;
@@ -12376,10 +12376,10 @@ begin
 end;
 
 { TFhirDeviceVersionList }
-procedure TFhirDeviceVersionList.AddItem(value: TFhirDeviceVersion);
+function TFhirDeviceVersionList.AddItem(value: TFhirDeviceVersion): TFhirDeviceVersion;
 begin
-  assert(value.ClassName = 'TFhirDeviceVersion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceVersion');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceVersionList.Append: TFhirDeviceVersion;
@@ -12717,10 +12717,10 @@ begin
 end;
 
 { TFhirDevicePropertyList }
-procedure TFhirDevicePropertyList.AddItem(value: TFhirDeviceProperty);
+function TFhirDevicePropertyList.AddItem(value: TFhirDeviceProperty): TFhirDeviceProperty;
 begin
-  assert(value.ClassName = 'TFhirDeviceProperty', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceProperty');
   add(value);
+  result := value;
 end;
 
 function TFhirDevicePropertyList.Append: TFhirDeviceProperty;
@@ -13908,10 +13908,10 @@ begin
 end;
 
 { TFhirDeviceList }
-procedure TFhirDeviceList.AddItem(value: TFhirDevice);
+function TFhirDeviceList.AddItem(value: TFhirDevice): TFhirDevice;
 begin
-  assert(value.ClassName = 'TFhirDevice', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDevice');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceList.Append: TFhirDevice;
@@ -14261,10 +14261,10 @@ begin
 end;
 
 { TFhirDeviceMetricCalibrationList }
-procedure TFhirDeviceMetricCalibrationList.AddItem(value: TFhirDeviceMetricCalibration);
+function TFhirDeviceMetricCalibrationList.AddItem(value: TFhirDeviceMetricCalibration): TFhirDeviceMetricCalibration;
 begin
-  assert(value.ClassName = 'TFhirDeviceMetricCalibration', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceMetricCalibration');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceMetricCalibrationList.Append: TFhirDeviceMetricCalibration;
@@ -14808,10 +14808,10 @@ begin
 end;
 
 { TFhirDeviceMetricList }
-procedure TFhirDeviceMetricList.AddItem(value: TFhirDeviceMetric);
+function TFhirDeviceMetricList.AddItem(value: TFhirDeviceMetric): TFhirDeviceMetric;
 begin
-  assert(value.ClassName = 'TFhirDeviceMetric', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceMetric');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceMetricList.Append: TFhirDeviceMetric;
@@ -15108,10 +15108,10 @@ begin
 end;
 
 { TFhirEncounterStatusHistoryList }
-procedure TFhirEncounterStatusHistoryList.AddItem(value: TFhirEncounterStatusHistory);
+function TFhirEncounterStatusHistoryList.AddItem(value: TFhirEncounterStatusHistory): TFhirEncounterStatusHistory;
 begin
-  assert(value.ClassName = 'TFhirEncounterStatusHistory', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterStatusHistory');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterStatusHistoryList.Append: TFhirEncounterStatusHistory;
@@ -15389,10 +15389,10 @@ begin
 end;
 
 { TFhirEncounterClassHistoryList }
-procedure TFhirEncounterClassHistoryList.AddItem(value: TFhirEncounterClassHistory);
+function TFhirEncounterClassHistoryList.AddItem(value: TFhirEncounterClassHistory): TFhirEncounterClassHistory;
 begin
-  assert(value.ClassName = 'TFhirEncounterClassHistory', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterClassHistory');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterClassHistoryList.Append: TFhirEncounterClassHistory;
@@ -15712,10 +15712,10 @@ begin
 end;
 
 { TFhirEncounterParticipantList }
-procedure TFhirEncounterParticipantList.AddItem(value: TFhirEncounterParticipant);
+function TFhirEncounterParticipantList.AddItem(value: TFhirEncounterParticipant): TFhirEncounterParticipant;
 begin
-  assert(value.ClassName = 'TFhirEncounterParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterParticipant');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterParticipantList.Append: TFhirEncounterParticipant;
@@ -16036,10 +16036,10 @@ begin
 end;
 
 { TFhirEncounterDiagnosisList }
-procedure TFhirEncounterDiagnosisList.AddItem(value: TFhirEncounterDiagnosis);
+function TFhirEncounterDiagnosisList.AddItem(value: TFhirEncounterDiagnosis): TFhirEncounterDiagnosis;
 begin
-  assert(value.ClassName = 'TFhirEncounterDiagnosis', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterDiagnosis');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterDiagnosisList.Append: TFhirEncounterDiagnosis;
@@ -16530,10 +16530,10 @@ begin
 end;
 
 { TFhirEncounterHospitalizationList }
-procedure TFhirEncounterHospitalizationList.AddItem(value: TFhirEncounterHospitalization);
+function TFhirEncounterHospitalizationList.AddItem(value: TFhirEncounterHospitalization): TFhirEncounterHospitalization;
 begin
-  assert(value.ClassName = 'TFhirEncounterHospitalization', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterHospitalization');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterHospitalizationList.Append: TFhirEncounterHospitalization;
@@ -16871,10 +16871,10 @@ begin
 end;
 
 { TFhirEncounterLocationList }
-procedure TFhirEncounterLocationList.AddItem(value: TFhirEncounterLocation);
+function TFhirEncounterLocationList.AddItem(value: TFhirEncounterLocation): TFhirEncounterLocation;
 begin
-  assert(value.ClassName = 'TFhirEncounterLocation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounterLocation');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterLocationList.Append: TFhirEncounterLocation;
@@ -17880,10 +17880,10 @@ begin
 end;
 
 { TFhirEncounterList }
-procedure TFhirEncounterList.AddItem(value: TFhirEncounter);
+function TFhirEncounterList.AddItem(value: TFhirEncounter): TFhirEncounter;
 begin
-  assert(value.ClassName = 'TFhirEncounter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEncounter');
   add(value);
+  result := value;
 end;
 
 function TFhirEncounterList.Append: TFhirEncounter;
@@ -18519,10 +18519,10 @@ begin
 end;
 
 { TFhirEndpointList }
-procedure TFhirEndpointList.AddItem(value: TFhirEndpoint);
+function TFhirEndpointList.AddItem(value: TFhirEndpoint): TFhirEndpoint;
 begin
-  assert(value.ClassName = 'TFhirEndpoint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEndpoint');
   add(value);
+  result := value;
 end;
 
 function TFhirEndpointList.Append: TFhirEndpoint;
@@ -18819,10 +18819,10 @@ begin
 end;
 
 { TFhirEpisodeOfCareStatusHistoryList }
-procedure TFhirEpisodeOfCareStatusHistoryList.AddItem(value: TFhirEpisodeOfCareStatusHistory);
+function TFhirEpisodeOfCareStatusHistoryList.AddItem(value: TFhirEpisodeOfCareStatusHistory): TFhirEpisodeOfCareStatusHistory;
 begin
-  assert(value.ClassName = 'TFhirEpisodeOfCareStatusHistory', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEpisodeOfCareStatusHistory');
   add(value);
+  result := value;
 end;
 
 function TFhirEpisodeOfCareStatusHistoryList.Append: TFhirEpisodeOfCareStatusHistory;
@@ -19143,10 +19143,10 @@ begin
 end;
 
 { TFhirEpisodeOfCareDiagnosisList }
-procedure TFhirEpisodeOfCareDiagnosisList.AddItem(value: TFhirEpisodeOfCareDiagnosis);
+function TFhirEpisodeOfCareDiagnosisList.AddItem(value: TFhirEpisodeOfCareDiagnosis): TFhirEpisodeOfCareDiagnosis;
 begin
-  assert(value.ClassName = 'TFhirEpisodeOfCareDiagnosis', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEpisodeOfCareDiagnosis');
   add(value);
+  result := value;
 end;
 
 function TFhirEpisodeOfCareDiagnosisList.Append: TFhirEpisodeOfCareDiagnosis;
@@ -19797,10 +19797,10 @@ begin
 end;
 
 { TFhirEpisodeOfCareList }
-procedure TFhirEpisodeOfCareList.AddItem(value: TFhirEpisodeOfCare);
+function TFhirEpisodeOfCareList.AddItem(value: TFhirEpisodeOfCare): TFhirEpisodeOfCare;
 begin
-  assert(value.ClassName = 'TFhirEpisodeOfCare', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEpisodeOfCare');
   add(value);
+  result := value;
 end;
 
 function TFhirEpisodeOfCareList.Append: TFhirEpisodeOfCare;
@@ -20142,10 +20142,10 @@ begin
 end;
 
 { TFhirGroupCharacteristicList }
-procedure TFhirGroupCharacteristicList.AddItem(value: TFhirGroupCharacteristic);
+function TFhirGroupCharacteristicList.AddItem(value: TFhirGroupCharacteristic): TFhirGroupCharacteristic;
 begin
-  assert(value.ClassName = 'TFhirGroupCharacteristic', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGroupCharacteristic');
   add(value);
+  result := value;
 end;
 
 function TFhirGroupCharacteristicList.Append: TFhirGroupCharacteristic;
@@ -20461,10 +20461,10 @@ begin
 end;
 
 { TFhirGroupMemberList }
-procedure TFhirGroupMemberList.AddItem(value: TFhirGroupMember);
+function TFhirGroupMemberList.AddItem(value: TFhirGroupMember): TFhirGroupMember;
 begin
-  assert(value.ClassName = 'TFhirGroupMember', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGroupMember');
   add(value);
+  result := value;
 end;
 
 function TFhirGroupMemberList.Append: TFhirGroupMember;
@@ -21067,10 +21067,10 @@ begin
 end;
 
 { TFhirGroupList }
-procedure TFhirGroupList.AddItem(value: TFhirGroup);
+function TFhirGroupList.AddItem(value: TFhirGroup): TFhirGroup;
 begin
-  assert(value.ClassName = 'TFhirGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGroup');
   add(value);
+  result := value;
 end;
 
 function TFhirGroupList.Append: TFhirGroup;
@@ -21372,10 +21372,10 @@ begin
 end;
 
 { TFhirHealthcareServiceEligibilityList }
-procedure TFhirHealthcareServiceEligibilityList.AddItem(value: TFhirHealthcareServiceEligibility);
+function TFhirHealthcareServiceEligibilityList.AddItem(value: TFhirHealthcareServiceEligibility): TFhirHealthcareServiceEligibility;
 begin
-  assert(value.ClassName = 'TFhirHealthcareServiceEligibility', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHealthcareServiceEligibility');
   add(value);
+  result := value;
 end;
 
 function TFhirHealthcareServiceEligibilityList.Append: TFhirHealthcareServiceEligibility;
@@ -21793,10 +21793,10 @@ begin
 end;
 
 { TFhirHealthcareServiceAvailableTimeList }
-procedure TFhirHealthcareServiceAvailableTimeList.AddItem(value: TFhirHealthcareServiceAvailableTime);
+function TFhirHealthcareServiceAvailableTimeList.AddItem(value: TFhirHealthcareServiceAvailableTime): TFhirHealthcareServiceAvailableTime;
 begin
-  assert(value.ClassName = 'TFhirHealthcareServiceAvailableTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHealthcareServiceAvailableTime');
   add(value);
+  result := value;
 end;
 
 function TFhirHealthcareServiceAvailableTimeList.Append: TFhirHealthcareServiceAvailableTime;
@@ -22094,10 +22094,10 @@ begin
 end;
 
 { TFhirHealthcareServiceNotAvailableList }
-procedure TFhirHealthcareServiceNotAvailableList.AddItem(value: TFhirHealthcareServiceNotAvailable);
+function TFhirHealthcareServiceNotAvailableList.AddItem(value: TFhirHealthcareServiceNotAvailable): TFhirHealthcareServiceNotAvailable;
 begin
-  assert(value.ClassName = 'TFhirHealthcareServiceNotAvailable', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHealthcareServiceNotAvailable');
   add(value);
+  result := value;
 end;
 
 function TFhirHealthcareServiceNotAvailableList.Append: TFhirHealthcareServiceNotAvailable;
@@ -23275,10 +23275,10 @@ begin
 end;
 
 { TFhirHealthcareServiceList }
-procedure TFhirHealthcareServiceList.AddItem(value: TFhirHealthcareService);
+function TFhirHealthcareServiceList.AddItem(value: TFhirHealthcareService): TFhirHealthcareService;
 begin
-  assert(value.ClassName = 'TFhirHealthcareService', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHealthcareService');
   add(value);
+  result := value;
 end;
 
 function TFhirHealthcareServiceList.Append: TFhirHealthcareService;
@@ -23643,10 +23643,10 @@ begin
 end;
 
 { TFhirLocationPositionList }
-procedure TFhirLocationPositionList.AddItem(value: TFhirLocationPosition);
+function TFhirLocationPositionList.AddItem(value: TFhirLocationPosition): TFhirLocationPosition;
 begin
-  assert(value.ClassName = 'TFhirLocationPosition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirLocationPosition');
   add(value);
+  result := value;
 end;
 
 function TFhirLocationPositionList.Append: TFhirLocationPosition;
@@ -24063,10 +24063,10 @@ begin
 end;
 
 { TFhirLocationHoursOfOperationList }
-procedure TFhirLocationHoursOfOperationList.AddItem(value: TFhirLocationHoursOfOperation);
+function TFhirLocationHoursOfOperationList.AddItem(value: TFhirLocationHoursOfOperation): TFhirLocationHoursOfOperation;
 begin
-  assert(value.ClassName = 'TFhirLocationHoursOfOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirLocationHoursOfOperation');
   add(value);
+  result := value;
 end;
 
 function TFhirLocationHoursOfOperationList.Append: TFhirLocationHoursOfOperation;
@@ -24887,10 +24887,10 @@ begin
 end;
 
 { TFhirLocationList }
-procedure TFhirLocationList.AddItem(value: TFhirLocation);
+function TFhirLocationList.AddItem(value: TFhirLocation): TFhirLocation;
 begin
-  assert(value.ClassName = 'TFhirLocation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirLocation');
   add(value);
+  result := value;
 end;
 
 function TFhirLocationList.Append: TFhirLocation;
@@ -25236,10 +25236,10 @@ begin
 end;
 
 { TFhirOrganizationContactList }
-procedure TFhirOrganizationContactList.AddItem(value: TFhirOrganizationContact);
+function TFhirOrganizationContactList.AddItem(value: TFhirOrganizationContact): TFhirOrganizationContact;
 begin
-  assert(value.ClassName = 'TFhirOrganizationContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOrganizationContact');
   add(value);
+  result := value;
 end;
 
 function TFhirOrganizationContactList.Append: TFhirOrganizationContact;
@@ -25864,10 +25864,10 @@ begin
 end;
 
 { TFhirOrganizationList }
-procedure TFhirOrganizationList.AddItem(value: TFhirOrganization);
+function TFhirOrganizationList.AddItem(value: TFhirOrganization): TFhirOrganization;
 begin
-  assert(value.ClassName = 'TFhirOrganization', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOrganization');
   add(value);
+  result := value;
 end;
 
 function TFhirOrganizationList.Append: TFhirOrganization;
@@ -26540,10 +26540,10 @@ begin
 end;
 
 { TFhirOrganizationAffiliationList }
-procedure TFhirOrganizationAffiliationList.AddItem(value: TFhirOrganizationAffiliation);
+function TFhirOrganizationAffiliationList.AddItem(value: TFhirOrganizationAffiliation): TFhirOrganizationAffiliation;
 begin
-  assert(value.ClassName = 'TFhirOrganizationAffiliation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOrganizationAffiliation');
   add(value);
+  result := value;
 end;
 
 function TFhirOrganizationAffiliationList.Append: TFhirOrganizationAffiliation;
@@ -26990,10 +26990,10 @@ begin
 end;
 
 { TFhirPatientContactList }
-procedure TFhirPatientContactList.AddItem(value: TFhirPatientContact);
+function TFhirPatientContactList.AddItem(value: TFhirPatientContact): TFhirPatientContact;
 begin
-  assert(value.ClassName = 'TFhirPatientContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPatientContact');
   add(value);
+  result := value;
 end;
 
 function TFhirPatientContactList.Append: TFhirPatientContact;
@@ -27286,10 +27286,10 @@ begin
 end;
 
 { TFhirPatientCommunicationList }
-procedure TFhirPatientCommunicationList.AddItem(value: TFhirPatientCommunication);
+function TFhirPatientCommunicationList.AddItem(value: TFhirPatientCommunication): TFhirPatientCommunication;
 begin
-  assert(value.ClassName = 'TFhirPatientCommunication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPatientCommunication');
   add(value);
+  result := value;
 end;
 
 function TFhirPatientCommunicationList.Append: TFhirPatientCommunication;
@@ -27582,10 +27582,10 @@ begin
 end;
 
 { TFhirPatientLinkList }
-procedure TFhirPatientLinkList.AddItem(value: TFhirPatientLink);
+function TFhirPatientLinkList.AddItem(value: TFhirPatientLink): TFhirPatientLink;
 begin
-  assert(value.ClassName = 'TFhirPatientLink', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPatientLink');
   add(value);
+  result := value;
 end;
 
 function TFhirPatientLinkList.Append: TFhirPatientLink;
@@ -28392,10 +28392,10 @@ begin
 end;
 
 { TFhirPatientList }
-procedure TFhirPatientList.AddItem(value: TFhirPatient);
+function TFhirPatientList.AddItem(value: TFhirPatient): TFhirPatient;
 begin
-  assert(value.ClassName = 'TFhirPatient', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPatient');
   add(value);
+  result := value;
 end;
 
 function TFhirPatientList.Append: TFhirPatient;
@@ -28692,10 +28692,10 @@ begin
 end;
 
 { TFhirPersonLinkList }
-procedure TFhirPersonLinkList.AddItem(value: TFhirPersonLink);
+function TFhirPersonLinkList.AddItem(value: TFhirPersonLink): TFhirPersonLink;
 begin
-  assert(value.ClassName = 'TFhirPersonLink', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPersonLink');
   add(value);
+  result := value;
 end;
 
 function TFhirPersonLinkList.Append: TFhirPersonLink;
@@ -29294,10 +29294,10 @@ begin
 end;
 
 { TFhirPersonList }
-procedure TFhirPersonList.AddItem(value: TFhirPerson);
+function TFhirPersonList.AddItem(value: TFhirPerson): TFhirPerson;
 begin
-  assert(value.ClassName = 'TFhirPerson', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPerson');
   add(value);
+  result := value;
 end;
 
 function TFhirPersonList.Append: TFhirPerson;
@@ -29643,10 +29643,10 @@ begin
 end;
 
 { TFhirPractitionerQualificationList }
-procedure TFhirPractitionerQualificationList.AddItem(value: TFhirPractitionerQualification);
+function TFhirPractitionerQualificationList.AddItem(value: TFhirPractitionerQualification): TFhirPractitionerQualification;
 begin
-  assert(value.ClassName = 'TFhirPractitionerQualification', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPractitionerQualification');
   add(value);
+  result := value;
 end;
 
 function TFhirPractitionerQualificationList.Append: TFhirPractitionerQualification;
@@ -30281,10 +30281,10 @@ begin
 end;
 
 { TFhirPractitionerList }
-procedure TFhirPractitionerList.AddItem(value: TFhirPractitioner);
+function TFhirPractitionerList.AddItem(value: TFhirPractitioner): TFhirPractitioner;
 begin
-  assert(value.ClassName = 'TFhirPractitioner', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPractitioner');
   add(value);
+  result := value;
 end;
 
 function TFhirPractitionerList.Append: TFhirPractitioner;
@@ -30706,10 +30706,10 @@ begin
 end;
 
 { TFhirPractitionerRoleAvailableTimeList }
-procedure TFhirPractitionerRoleAvailableTimeList.AddItem(value: TFhirPractitionerRoleAvailableTime);
+function TFhirPractitionerRoleAvailableTimeList.AddItem(value: TFhirPractitionerRoleAvailableTime): TFhirPractitionerRoleAvailableTime;
 begin
-  assert(value.ClassName = 'TFhirPractitionerRoleAvailableTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPractitionerRoleAvailableTime');
   add(value);
+  result := value;
 end;
 
 function TFhirPractitionerRoleAvailableTimeList.Append: TFhirPractitionerRoleAvailableTime;
@@ -31007,10 +31007,10 @@ begin
 end;
 
 { TFhirPractitionerRoleNotAvailableList }
-procedure TFhirPractitionerRoleNotAvailableList.AddItem(value: TFhirPractitionerRoleNotAvailable);
+function TFhirPractitionerRoleNotAvailableList.AddItem(value: TFhirPractitionerRoleNotAvailable): TFhirPractitionerRoleNotAvailable;
 begin
-  assert(value.ClassName = 'TFhirPractitionerRoleNotAvailable', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPractitionerRoleNotAvailable');
   add(value);
+  result := value;
 end;
 
 function TFhirPractitionerRoleNotAvailableList.Append: TFhirPractitionerRoleNotAvailable;
@@ -31762,10 +31762,10 @@ begin
 end;
 
 { TFhirPractitionerRoleList }
-procedure TFhirPractitionerRoleList.AddItem(value: TFhirPractitionerRole);
+function TFhirPractitionerRoleList.AddItem(value: TFhirPractitionerRole): TFhirPractitionerRole;
 begin
-  assert(value.ClassName = 'TFhirPractitionerRole', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPractitionerRole');
   add(value);
+  result := value;
 end;
 
 function TFhirPractitionerRoleList.Append: TFhirPractitionerRole;
@@ -32062,10 +32062,10 @@ begin
 end;
 
 { TFhirRelatedPersonCommunicationList }
-procedure TFhirRelatedPersonCommunicationList.AddItem(value: TFhirRelatedPersonCommunication);
+function TFhirRelatedPersonCommunicationList.AddItem(value: TFhirRelatedPersonCommunication): TFhirRelatedPersonCommunication;
 begin
-  assert(value.ClassName = 'TFhirRelatedPersonCommunication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRelatedPersonCommunication');
   add(value);
+  result := value;
 end;
 
 function TFhirRelatedPersonCommunicationList.Append: TFhirRelatedPersonCommunication;
@@ -32745,10 +32745,10 @@ begin
 end;
 
 { TFhirRelatedPersonList }
-procedure TFhirRelatedPersonList.AddItem(value: TFhirRelatedPerson);
+function TFhirRelatedPersonList.AddItem(value: TFhirRelatedPerson): TFhirRelatedPerson;
 begin
-  assert(value.ClassName = 'TFhirRelatedPerson', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRelatedPerson');
   add(value);
+  result := value;
 end;
 
 function TFhirRelatedPersonList.Append: TFhirRelatedPerson;
@@ -33296,10 +33296,10 @@ begin
 end;
 
 { TFhirScheduleList }
-procedure TFhirScheduleList.AddItem(value: TFhirSchedule);
+function TFhirScheduleList.AddItem(value: TFhirSchedule): TFhirSchedule;
 begin
-  assert(value.ClassName = 'TFhirSchedule', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSchedule');
   add(value);
+  result := value;
 end;
 
 function TFhirScheduleList.Append: TFhirSchedule;
@@ -33942,10 +33942,10 @@ begin
 end;
 
 { TFhirSlotList }
-procedure TFhirSlotList.AddItem(value: TFhirSlot);
+function TFhirSlotList.AddItem(value: TFhirSlot): TFhirSlot;
 begin
-  assert(value.ClassName = 'TFhirSlot', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSlot');
   add(value);
+  result := value;
 end;
 
 function TFhirSlotList.Append: TFhirSlot;

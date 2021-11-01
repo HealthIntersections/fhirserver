@@ -270,7 +270,7 @@ Type
     function GetEnumerator : TFhirResourceListEnumerator;
 
     // Add an already existing FhirResource to the end of the list.
-    procedure AddItem(value : TFhirResource); overload;
+function AddItem(value : TFhirResource): TFhirResource; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirResource) : Integer;
@@ -386,7 +386,7 @@ Type
     function GetEnumerator : TFhirDomainResourceListEnumerator;
 
     // Add an already existing FhirDomainResource to the end of the list.
-    procedure AddItem(value : TFhirDomainResource); overload;
+function AddItem(value : TFhirDomainResource): TFhirDomainResource; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDomainResource) : Integer;
@@ -758,10 +758,10 @@ begin
 end;
 
 { TFhirResourceList }
-procedure TFhirResourceList.AddItem(value: TFhirResource);
+function TFhirResourceList.AddItem(value: TFhirResource): TFhirResource;
 begin
-  assert(value.ClassName = 'TFhirResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirResourceList.ClearItems;
@@ -1191,10 +1191,10 @@ begin
 end;
 
 { TFhirDomainResourceList }
-procedure TFhirDomainResourceList.AddItem(value: TFhirDomainResource);
+function TFhirDomainResourceList.AddItem(value: TFhirDomainResource): TFhirDomainResource;
 begin
-  assert(value.ClassName = 'TFhirDomainResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDomainResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirDomainResourceList.ClearItems;

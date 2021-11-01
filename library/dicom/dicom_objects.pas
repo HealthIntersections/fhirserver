@@ -357,7 +357,7 @@ Type
     {
       Add an already existing TDicomValue to the End of the list.
     }
-    Procedure AddItem(value : TDicomValue);
+    Function AddItem(value : TDicomValue): TDicomValue;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -488,7 +488,7 @@ type
     {
       Add an already existing TDicomString to the End of the list.
     }
-    Procedure AddItem(value : TDicomString);
+    Function AddItem(value : TDicomString): TDicomString;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -697,7 +697,7 @@ type
     {
       Add an already existing TDicomDataElement to the End of the list.
     }
-    Procedure AddItem(value : TDicomDataElement);
+    Function AddItem(value : TDicomDataElement): TDicomDataElement;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -938,7 +938,7 @@ type
     {
       Add an already existing TDicomObject to the End of the list.
     }
-    Procedure AddItem(value : TDicomObject);
+    Function AddItem(value : TDicomObject): TDicomObject;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1104,7 +1104,7 @@ type
     {
       Add an already existing TDicomPresentationContextInfo to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationContextInfo);
+    Function AddItem(value : TDicomPresentationContextInfo): TDicomPresentationContextInfo;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1214,7 +1214,7 @@ type
     {
       Add an already existing TDicomPresentationAcceptContextInfo to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationAcceptContextInfo);
+    Function AddItem(value : TDicomPresentationAcceptContextInfo): TDicomPresentationAcceptContextInfo;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1300,7 +1300,7 @@ type
     {
       Add an already existing TDicomUserData to the End of the list.
     }
-    Procedure AddItem(value : TDicomUserData);
+    Function AddItem(value : TDicomUserData): TDicomUserData;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1639,7 +1639,7 @@ type
     {
       Add an already existing TDicomPresentationDataValue to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationDataValue);
+    Function AddItem(value : TDicomPresentationDataValue): TDicomPresentationDataValue;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -2028,7 +2028,7 @@ type
     {
       Add an already existing TDicomMessage to the End of the list.
     }
-    Procedure AddItem(value : TDicomMessage);
+    Function AddItem(value : TDicomMessage): TDicomMessage;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -2343,9 +2343,10 @@ end;
 
 { TDicomDataElementList }
 
-Procedure TDicomDataElementList.AddItem(value: TDicomDataElement);
+function TDicomDataElementList.AddItem(value: TDicomDataElement): TDicomDataElement;
 Begin
   Add(value);
+  result := value;
 End;
 
 Procedure TDicomDataElementList.ClearItems;
@@ -2796,9 +2797,10 @@ Begin
   Inherited;
 End;
 
-Procedure TDicomObjectList.AddItem(value: TDicomObject);
+function TDicomObjectList.AddItem(value: TDicomObject): TDicomObject;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomObjectList.Append: TDicomObject;
@@ -3240,9 +3242,10 @@ end;
 
 { TDicomPresentationContextInfoList }
 
-Procedure TDicomPresentationContextInfoList.AddItem(value: TDicomPresentationContextInfo);
+function TDicomPresentationContextInfoList.AddItem(value: TDicomPresentationContextInfo): TDicomPresentationContextInfo;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationContextInfoList.Append: TDicomPresentationContextInfo;
@@ -3312,9 +3315,10 @@ End;
 
 { TDicomPresentationAcceptContextInfoList }
 
-Procedure TDicomPresentationAcceptContextInfoList.AddItem(value: TDicomPresentationAcceptContextInfo);
+function TDicomPresentationAcceptContextInfoList.AddItem(value: TDicomPresentationAcceptContextInfo): TDicomPresentationAcceptContextInfo;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationAcceptContextInfoList.Append: TDicomPresentationAcceptContextInfo;
@@ -3628,9 +3632,10 @@ Begin
   result := TDicomUserData;
 End;
 
-Procedure TDicomUserDataList.AddItem(value: TDicomUserData);
+function TDicomUserDataList.AddItem(value: TDicomUserData): TDicomUserData;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomUserDataList.Append: TDicomUserData;
@@ -3710,9 +3715,10 @@ End;
 
 { TDicomPresentationDataValueList }
 
-Procedure TDicomPresentationDataValueList.AddItem(value: TDicomPresentationDataValue);
+function TDicomPresentationDataValueList.AddItem(value: TDicomPresentationDataValue): TDicomPresentationDataValue;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationDataValueList.Append: TDicomPresentationDataValue;
@@ -3967,9 +3973,10 @@ Begin
   result := TDicomStringList(Inherited Link);
 End;
 
-Procedure TDicomStringList.AddItem(value: TDicomString);
+function TDicomStringList.AddItem(value: TDicomString): TDicomString;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomStringList.Append: TDicomString;
@@ -4125,9 +4132,10 @@ end;
 
 { TDicomMessageList }
 
-Procedure TDicomMessageList.AddItem(value: TDicomMessage);
+function TDicomMessageList.AddItem(value: TDicomMessage): TDicomMessage;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomMessageList.Append: TDicomMessage;
@@ -4287,9 +4295,10 @@ Begin
   End;
 End;
 
-Procedure TDicomValueList.AddItem(value: TDicomValue);
+function TDicomValueList.AddItem(value: TDicomValue): TDicomValue;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TDicomValueList.Append: TDicomValue;

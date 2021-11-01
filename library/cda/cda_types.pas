@@ -1586,7 +1586,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ADXP);
+    Function AddItem(value : Tv3ADXP): Tv3ADXP;
     {
       Get the iIndexth ADXP (0 = first item)
     }
@@ -1640,7 +1640,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ENXP);
+    Function AddItem(value : Tv3ENXP): Tv3ENXP;
     {
       Get the iIndexth ENXP (0 = first item)
     }
@@ -1880,7 +1880,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CS);
+    Function AddItem(value : Tv3CS): Tv3CS;
     {
       Get the iIndexth CS (0 = first item)
     }
@@ -1934,7 +1934,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3II);
+    Function AddItem(value : Tv3II): Tv3II;
     {
       Get the iIndexth II (0 = first item)
     }
@@ -1988,7 +1988,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3AD);
+    Function AddItem(value : Tv3AD): Tv3AD;
     {
       Get the iIndexth AD (0 = first item)
     }
@@ -2042,7 +2042,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3TEL);
+    Function AddItem(value : Tv3TEL): Tv3TEL;
     {
       Get the iIndexth TEL (0 = first item)
     }
@@ -2096,7 +2096,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ANY);
+    Function AddItem(value : Tv3ANY): Tv3ANY;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -2150,7 +2150,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CD);
+    Function AddItem(value : Tv3CD): Tv3CD;
     {
       Get the iIndexth CD (0 = first item)
     }
@@ -2204,7 +2204,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3EN);
+    Function AddItem(value : Tv3EN): Tv3EN;
     {
       Get the iIndexth EN (0 = first item)
     }
@@ -2258,7 +2258,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CR);
+    Function AddItem(value : Tv3CR): Tv3CR;
     {
       Get the iIndexth CR (0 = first item)
     }
@@ -2312,7 +2312,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3PQ);
+    Function AddItem(value : Tv3PQ): Tv3PQ;
     {
       Get the iIndexth PQ (0 = first item)
     }
@@ -6535,9 +6535,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListADXP.AddItem(value : Tv3ADXP);
+function Tv3ListADXP.AddItem(value : Tv3ADXP): Tv3ADXP;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListADXP.SetItemByIndex(iIndex: Integer; value: Tv3ADXP);
@@ -6622,9 +6623,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListENXP.AddItem(value : Tv3ENXP);
+function Tv3ListENXP.AddItem(value : Tv3ENXP): Tv3ENXP;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListENXP.SetItemByIndex(iIndex: Integer; value: Tv3ENXP);
@@ -7021,9 +7023,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCS.AddItem(value : Tv3CS);
+function Tv3ListCS.AddItem(value : Tv3CS): Tv3CS;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCS.SetItemByIndex(iIndex: Integer; value: Tv3CS);
@@ -7108,9 +7111,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListII.AddItem(value : Tv3II);
+function Tv3ListII.AddItem(value : Tv3II): Tv3II;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListII.SetItemByIndex(iIndex: Integer; value: Tv3II);
@@ -7194,9 +7198,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListAD.AddItem(value : Tv3AD);
+function Tv3ListAD.AddItem(value : Tv3AD): Tv3AD;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListAD.SetItemByIndex(iIndex: Integer; value: Tv3AD);
@@ -7280,9 +7285,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListTEL.AddItem(value : Tv3TEL);
+function Tv3ListTEL.AddItem(value : Tv3TEL): Tv3TEL;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListTEL.SetItemByIndex(iIndex: Integer; value: Tv3TEL);
@@ -7366,9 +7372,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListANY.AddItem(value : Tv3ANY);
+function Tv3ListANY.AddItem(value : Tv3ANY): Tv3ANY;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListANY.SetItemByIndex(iIndex: Integer; value: Tv3ANY);
@@ -7453,9 +7460,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCD.AddItem(value : Tv3CD);
+function Tv3ListCD.AddItem(value : Tv3CD): Tv3CD;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCD.SetItemByIndex(iIndex: Integer; value: Tv3CD);
@@ -7539,9 +7547,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListEN.AddItem(value : Tv3EN);
+function Tv3ListEN.AddItem(value : Tv3EN): Tv3EN;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListEN.SetItemByIndex(iIndex: Integer; value: Tv3EN);
@@ -7625,9 +7634,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCR.AddItem(value : Tv3CR);
+function Tv3ListCR.AddItem(value : Tv3CR): Tv3CR;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCR.SetItemByIndex(iIndex: Integer; value: Tv3CR);
@@ -7713,9 +7723,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListPQ.AddItem(value : Tv3PQ);
+function Tv3ListPQ.AddItem(value : Tv3PQ): Tv3PQ;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListPQ.SetItemByIndex(iIndex: Integer; value: Tv3PQ);

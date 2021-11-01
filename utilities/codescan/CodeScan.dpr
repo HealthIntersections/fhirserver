@@ -35,6 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 uses
   System.SysUtils,
+  Classes,
   IOUtils,
   fsl_collections in '..\..\library\fsl\fsl_collections.pas',
   fsl_base in '..\..\library\fsl\fsl_base.pas',
@@ -122,6 +123,83 @@ begin
   end;
 end;
 
+//procedure fixCollections(filename : String);
+//var
+//  ts : TStringList;
+//  s, t : string;
+//  i : integer;
+//  del, ins, cl, ct, inAddItem, ovr : boolean;
+//begin
+//  ts := TStringList.create;
+//  try
+//    ts.LoadFromFile(filename);
+//    i := 0;
+//    ct := false;
+//    inAddItem := false;
+//    while i < ts.count do
+//    begin
+//      s := ts[i];
+//      cl := false;
+//      ins := false;
+//      del := false;
+//
+//      if s.trim.ToLower.StartsWith('procedure additem(value : t') then
+//      begin
+//        cl := true;
+//        if s.TrimRight.ToLower.EndsWith('overload;') then
+//        begin
+//          s := s.TrimRight;
+//          s := s.Substring(0, s.Length-9).trim;
+//        end;
+//
+//        t := s.Substring(s.IndexOf(':')+1).trim;
+//        t := t.Substring(0, t.Length-2);
+//        s := (s.Substring(0, length(s)-1)+': '+t+';').Replace('procedure ', 'function ')+' overload;';
+//      end;
+//      if s.StartsWith('  assert(value.ClassName = ') then
+//        del := true;
+//      if s.toLower.trim.StartsWith('procedure t') and s.toLower.contains('.additem(') then
+//      begin
+//        t := s.Substring(s.IndexOf(':')+1).trim;
+//        t := t.Substring(0, t.Length-2);
+//        if t.StartsWith('T') then
+//        begin
+//          cl := true;
+//          inAddItem := true;
+//          s := (s.Substring(0, length(s)-1)+': '+t+';').Replace('procedure ', 'function ').Replace('Procedure ', 'function ');
+//        end;
+//      end;
+//      if (s.Trim.ToLower = 'end;') and (inAddItem) then
+//      begin
+//        ts.Insert(i, '  result := value;');
+//        ins := true;
+//        inAddItem := false;
+//      end;
+//      if inAddItem and (s.Trim.ToLower = 'add(value.link);') then
+//      begin
+//        cl := true;
+//        s := '  add(value);';
+//      end;
+//      if (del) then
+//      begin
+//        ts.Delete(i);
+//        ct := true;
+//      end
+//      else if (cl) then
+//      begin
+//        assert(not ins);
+//        ts[i] := s;
+//        ct := true;
+//      end;
+//      inc(i);
+//    end;
+//    if (ct) then
+//      ts.SaveToFile(filename);
+//  finally
+//    ts.free;
+//  end;
+//end;
+//
 function scanPascalUnit(filename : String) : boolean;
 var
   u, src, srcns : String;
@@ -158,6 +236,7 @@ begin
     result := false;
     writeln('Unit '+filename+' subclasses Exception (should be (EFslException)');
   end;
+
   if not result then
     ExecuteLaunch('open', filename);
 end;
@@ -193,7 +272,7 @@ end;
 function isExemptFolder(s : String) : boolean;
 begin
   result := StringArrayExistsInsensitive([
-   'C:\work\fhirserver\dependencies', 'c:\work\fhirserver\utilities\generator', 'c:\work\fhirserver\packages'], s) or s.Contains('backup');
+   'C:\work\fhirserver\dependencies',  'C:\work\fhirserver\server\js', 'c:\work\fhirserver\utilities\generator', 'c:\work\fhirserver\packages'], s) or s.Contains('backup');
 end;
 
 function scanPascalUnits(folder : String) : boolean;
