@@ -4,6 +4,7 @@ unit fsl_scrypt;
 
 
 (*
+
   Sample Usage
   ============
 
@@ -114,7 +115,7 @@ unit fsl_scrypt;
       - TODO: Do the same thing canonical scrypt.c does, and do a benchmark before generation to determine parameters.
 
   Version 1.0   20150408
-      - Inital release. Public domain.  Ian Boyd.
+      - Inital release. Public domain.  Ian Boyd. Copyright (c) none
         This is free and unencumbered software released into the public domain.
         Anyone is free to copy, modify, publish, use, compile, sell, or
         distribute this software, either in source code form or as a compiled
@@ -293,7 +294,7 @@ type
     class function CreateObject(ObjectName: string): IInterface;
   end;
 
-  EScryptException = class(Exception);
+  EScryptException = class(EFslException);
 
 implementation
 

@@ -644,6 +644,10 @@
         <Filename Value="..\dependencies\qrcodegen\qrcodegen.pas"/>
         <UnitName Value="qrcodegen"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_unicode.pas"/>
+        <UnitName Value="fsl_unicode"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

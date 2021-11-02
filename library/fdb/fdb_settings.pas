@@ -46,7 +46,7 @@ type
 
   }
 
-  ESettingsError = class(Exception);
+  ESettingsError = class(EFslException);
 
 (*  TSettingsAdapter = class(TFslObject)
   Private

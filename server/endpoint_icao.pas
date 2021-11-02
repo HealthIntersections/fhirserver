@@ -181,8 +181,7 @@ begin
           inc(t);
         end;
       end;
-      raise Exception.Create('No image found in PDF ('+inttostr(t)+' objects scanned');
-      pg := pdf.pages[0];
+      raise EFHIRException.Create('No image found in PDF ('+inttostr(t)+' objects scanned');
     finally
       pdf.free;
     end;

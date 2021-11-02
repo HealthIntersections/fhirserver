@@ -69,7 +69,7 @@ type
 {$ENDIF}
 
 Type
-  EODBCExpress = Class(Exception);
+  EODBCExpress = Class(EFslException);
 
   SQLINTEGERPtr=^SQLINTEGER;
   SQLUSMALLINTPtr=^SQLUSMALLINT;

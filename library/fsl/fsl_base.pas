@@ -122,7 +122,7 @@ Type
     Constructor Create(place : String);
   End;
 
-  EWebServerException = Class(Exception)
+  EWebServerException = Class(EFslException)
   Private
     FCode : Integer;
   Public

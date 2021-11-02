@@ -999,7 +999,7 @@ type
 type
   TYear = Word;
 
-  EDateFormatError = class(Exception);
+  EDateFormatError = class(EFslException);
 
   TTimeStamp = record
     year: Smallint;
@@ -1070,6 +1070,7 @@ type
     class function fromXML(value : String) : TFslDateTime; static; // load from XML format
     class function fromTS(value : TTimestamp; tz : TFslDateTimeTimezone = dttzLocal) : TFslDateTime; overload; static; // load from classic SQL format
     class function fromDB(value : String; tz : TFslDateTimeTimezone = dttzUTC) : TFslDateTime; static; // mainly for SQLite support
+    class function makeDay(d, m, y : word) : TFslDateTime; overload; static; // stated time and timezone
       {
          Read a date (date) given the specified format. The specified
          format can be any combination of YYYY, YYY, YY, MM, MMM, DD, HH, NN, SS.
@@ -8238,6 +8239,11 @@ class function TFslDateTime.fromDB(value: String; tz : TFslDateTimeTimezone = dt
 begin
   result := fromFormat('yyyy-mm-dd hh:nn:ss.sss', value, true, true, false);
   result.TimezoneType := tz;
+end;
+
+class function TFslDateTime.makeDay(d, m, y: word): TFslDateTime;
+begin
+  result := make(Encodedate(y,m,d), dttzUnknown);
 end;
 
 class function TFslDateTime.fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TFslDateTime;

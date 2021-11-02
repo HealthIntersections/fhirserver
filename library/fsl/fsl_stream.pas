@@ -4780,7 +4780,14 @@ var
 begin
   LFileStream := TFileStream.Create(filename, fmCreate);
   try
-    bytes := encoding.GetBytes(content);
+    if encoding = nil then // special case
+    begin
+      SetLength(bytes, content.length);
+      if (content.length > 0) then
+        move(content[1], bytes[0], content.length);
+    end
+    else
+      bytes := encoding.GetBytes(content);
     LFileStream.write(bytes[0], length(bytes));
   finally
     LFileStream.Free;
@@ -4820,8 +4827,14 @@ begin
     finally
       LFileStream.Free;
     end;
-      result := encoding.GetString(bytes);
+    if encoding = nil then // special case
+    begin
+      SetLength(result, length(bytes));
+      move(bytes[0], result[1], length(bytes));
     end
+    else
+      result := encoding.GetString(bytes);
+  end
   else
     raise ELibraryException.create('File "' + filename + '" not found');
 end;

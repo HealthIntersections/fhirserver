@@ -968,7 +968,7 @@ Begin
   sIp := (AThread.Connection.IOHandler as TIdIOHandlerSocket).Binding.PeerIP;
   iIp := ConvertIPtoCardinal(sIp);
   If (iIp Xor FIPRestrictionVal) And FIPMaskVal <> 0 Then
-    raise exception.Create('Denied');
+    raise EFslException.Create('Denied');
 
   FLock.Enter;
   Try

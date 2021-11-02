@@ -75,6 +75,11 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+    </RequiredPackages>
     <Units>
       <Unit>
         <Filename Value="codescan.lpr"/>
@@ -92,6 +97,11 @@
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions>
