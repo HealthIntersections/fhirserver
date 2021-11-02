@@ -77,6 +77,12 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="LCLBase"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>
     </RequiredPackages>
@@ -101,6 +107,11 @@
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>
