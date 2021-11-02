@@ -44,48 +44,48 @@ uses
   This is primarily based on some correspondances and samples I got from Steeve Howe.
   His correspondance is here and I'm noting it in case I need to refer back later:
 
-  What are the rules for acceptable filenames on the Tandem?  
+  What are the rules for acceptable filenames on the Tandem?  
   >>Must start with a character and must be at least on character long.
 
   What charactors can be used?
   >>Alpha characters and numerals.
 
   What's the length?
-  >>  8 characters max.
+  >>  8 characters max.
 
   Can you have file extensions, if so how many and what's the length for
   those?
-  >> No file extensions.
+  >> No file extensions.
 
   Is the system case insensitive or case-sensitive?
   >>All filenames are converted to uppercase (from what I can tell)
 
   What's Code? Is it always a number?
-  >> Code is the type of file.  101 is an editable file, 100 is an
+  >> Code is the type of file.  101 is an editable file, 100 is an
     exacutable, 1000 is an user defined executable, there is a type 1600
     and I have seen type 0 (which I think is an unknown binary type of
     file)
 
-  What's EOF?  Is that the file size?  I don't know.
-  >> Yes,  That is the file size.
+  What's EOF?  Is that the file size?  I don't know.
+  >> Yes,  That is the file size.
 
-  In the Owner column, you have something like this "155, 76".  Are
+  In the Owner column, you have something like this "155, 76".  Are
   their only numbers and what do the numbers in the column mean (I
-  assume that there is two).  Will the Owner column ever have letters?
-  >> Never letters.
-    first byte is group, second is user
-    it describes user and security level
+  assume that there is two).  Will the Owner column ever have letters?
+  >> Never letters.
+    first byte is group, second is user
+    it describes user and security level
 
   What is valid for "RWEP" and what do the letters in that mean and what
   letters are there?
-  >> Read, Write, Execute, Purge
+  >> Read, Write, Execute, Purge
 
   some valid letters (there are about 7 and I don't know them all):
   N - anyone across system has access
   U - only the user has this priviledge
   A - anyone on local system has priviledge
   G - anyone belonging to same group
-  - (dash)  - only local super.super has access
+  - (dash)  - only local super.super has access
 
   some further references from Tandem that might help:
 
@@ -123,7 +123,7 @@ type
     U - only the user has this priviledge
     A - anyone on local system has priviledge
     G - anyone belonging to same group
-    - (dash)  - only local super.super has access
+    - (dash)  - only local super.super has access
 
     }
     FPermissions : String;
@@ -210,13 +210,13 @@ begin
   //
   { Note from Steeve Howe:
   ===
-The directories are flat.  The Guardian system appears like this:
+The directories are flat.  The Guardian system appears like this:
 
 \<server>.$<volume>.<subvolume>
 
 you can change from server to server, volume to volume, subvolume to
 subvolume, but
-nothing deeper.  what you get from a directory listing then is just the
+nothing deeper.  what you get from a directory listing then is just the
 files within that
 subvolume of the volume on the server.
 ===

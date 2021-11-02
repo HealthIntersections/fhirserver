@@ -613,7 +613,7 @@ begin
   Buf[2] := TargetDeviceID;    // ID of target device (?)
   Buf[3] := 8;                 // sub-ID#1 (MIDI Tuning)
   Buf[4] := 2;                 // sub-ID#2 (note change)
-  Buf[5] := TuningProgramNum;  // tuning program number (0 – 127)
+  Buf[5] := TuningProgramNum;  // tuning program number (0  127)
   Buf[6] := Count;
   Move(TuningData, Buf[7], Count * SizeOf(TSingleNoteTuningData));
   Buf[BufSize - 1] := MIDIMsgEOX;

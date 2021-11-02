@@ -23,7 +23,7 @@
   Attempt to add MD5 coder support for partial streams.  THis is needed for the
   XMD5 command in the FTP Server.
 
-  Rev 1.1    2003-10-12 22:36:40  HHellström
+  Rev 1.1    2003-10-12 22:36:40  HHellstrvm
   Reimplemented, optimized and tested for both Win32 and dotNET.
 
   Rev 1.0    11/13/2002 07:53:40 AM  JPMugaas
@@ -32,7 +32,7 @@
   Implementation of the MD2, MD4 and MD5 Message-Digest Algorithm
   as specified in RFC 1319 (1115), 1320 (1186), 1321
 
-  Author: Henrick Hellström <henrick@streamsec.se>
+  Author: Henrick Hellstrvm <henrick@streamsec.se>
 
   Original Intellectual Property Statement:
     Author: Pete Mee
@@ -298,7 +298,7 @@ begin
       (x and y) or ( (not x) and z)
     is equivalent to
       (((z xor y) and x) xor z)
-    -HHellström }
+    -HHellstrvm }
   for i := 0 to 3 do
   begin
     A := ROL((((D xor C) and B) xor D) + A + buff[i*4+0],  3);
@@ -312,7 +312,7 @@ begin
       (x and y) or (x and z) or (y and z)
     is equivalent to
       ((x and y) or (z and (x or y)))
-    -HHellström }
+    -HHellstrvm }
   for i := 0 to 3 do
   begin
     A := ROL(((B and C) or (D and (B or C))) + A + buff[0*4+i] + $5A827999,  3);
@@ -483,7 +483,7 @@ begin
       (x and y) or ( (not x) and z)
     is equivalent to
       (((z xor y) and x) xor z)
-    -HHellström }
+    -HHellstrvm }
   A := ROL(A + (((D xor C) and B) xor D) + x[ 0] + MD5_SINE[ 1],  7) + B;
   D := ROL(D + (((C xor B) and A) xor C) + x[ 1] + MD5_SINE[ 2], 12) + A;
   C := ROL(C + (((B xor A) and D) xor B) + x[ 2] + MD5_SINE[ 3], 17) + D;
@@ -506,7 +506,7 @@ begin
       (x and z) or (y and (not z) )
     is equivalent to
       (((y xor x) and z) xor y)
-    -HHellström }
+    -HHellstrvm }
   A := ROL(A + (C xor (D and (B xor C))) + x[ 1] + MD5_SINE[17],  5) + B;
   D := ROL(D + (B xor (C and (A xor B))) + x[ 6] + MD5_SINE[18],  9) + A;
   C := ROL(C + (A xor (B and (D xor A))) + x[11] + MD5_SINE[19], 14) + D;

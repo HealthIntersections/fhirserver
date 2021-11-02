@@ -103,7 +103,7 @@ begin
 
                               Directory of . 11:44:44
     Owner   Last modified  Attributes Sector Bytecount Name
-  –––––––   –––––––––––––  –––––––––– –––––– ––––––––– ––––
+          
   }
   LWrds := TStringList.Create;
   try

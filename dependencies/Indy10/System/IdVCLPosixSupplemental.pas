@@ -1,4 +1,4 @@
-﻿unit IdVCLPosixSupplemental;
+o;?unit IdVCLPosixSupplemental;
 
 interface
 
@@ -1083,7 +1083,7 @@ const
   {$EXTERNALSYM notLockedErr}
   notLockedErr                  = -623; //*specified range of memory is not locked*/
   {$EXTERNALSYM interruptsMaskedErr}
-  interruptsMaskedErr           = -624; //*don’t call with interrupts masked*/
+  interruptsMaskedErr           = -624; //*donb t call with interrupts masked*/
   {$EXTERNALSYM cannotDeferErr}
   cannotDeferErr                = -625; //*unable to defer additional functions*/
   {$EXTERNALSYM noMMUErr}
@@ -1845,11 +1845,11 @@ const
   {$EXTERNALSYM noMoreKeyColorsErr}
   noMoreKeyColorsErr            = -2205; //* all key indexes in use */
   {$EXTERNALSYM notExactSizeErr}
-  notExactSizeErr               = -2206; //* Can’t do exact size requested */
+  notExactSizeErr               = -2206; //* Canb t do exact size requested */
   {$EXTERNALSYM badDepthErr}
-  badDepthErr                   = -2207; //* Can’t digitize into this depth */
+  badDepthErr                   = -2207; //* Canb t digitize into this depth */
   {$EXTERNALSYM noDMAErr}
-  noDMAErr                      = -2208; //* Can’t do DMA digitizing (i.e. can't go to requested dest */
+  noDMAErr                      = -2208; //* Canb t do DMA digitizing (i.e. can't go to requested dest */
   {$EXTERNALSYM badCallOrderErr}
   badCallOrderErr               = -2209; //* Usually due to a status call being called prior to being setup first */
 //};
@@ -1928,7 +1928,7 @@ const
   {$EXTERNALSYM tsmNoOpenTSErr}
   tsmNoOpenTSErr                = -2508; //* no open text service */
   {$EXTERNALSYM tsmCantOpenComponentErr}
-  tsmCantOpenComponentErr       = -2509; //* can’t open the component */
+  tsmCantOpenComponentErr       = -2509; //* canb t open the component */
   {$EXTERNALSYM tsmTextServiceNotFoundErr}
   tsmTextServiceNotFoundErr     = -2510; //* no text service found */
   {$EXTERNALSYM tsmDocumentOpenErr}
@@ -2533,7 +2533,7 @@ const
   {$EXTERNALSYM kEHOSTUNREACHErr}
   kEHOSTUNREACHErr              = -3264; //* No route to host               */
   {$EXTERNALSYM kEPROTOErr}
-  kEPROTOErr                    = -3269; //* ••• fill out missing codes •••     */
+  kEPROTOErr                    = -3269; //* b "b "b " fill out missing codes b "b "b "     */
   {$EXTERNALSYM kETIMEErr}
   kETIMEErr                     = -3270; //*                          */
   {$EXTERNALSYM kENOSRErr}
@@ -3121,7 +3121,7 @@ const
   {$EXTERNALSYM errUnsupportedWindowAttributesForClass}
   errUnsupportedWindowAttributesForClass = -5601; //* tried to create a window with WindowAttributes not supported by the WindowClass*/
   {$EXTERNALSYM errWindowDoesNotHaveProxy}
-  errWindowDoesNotHaveProxy     = -5602; //* tried to do something requiring a proxy to a window which doesn’t have a proxy*/
+  errWindowDoesNotHaveProxy     = -5602; //* tried to do something requiring a proxy to a window which doesnb t have a proxy*/
   {$EXTERNALSYM errInvalidWindowProperty}
   errInvalidWindowProperty      = -5603; //* tried to access a property tag with private creator*/
   {$EXTERNALSYM errWindowPropertyNotFound}
@@ -3217,7 +3217,7 @@ const
   {$EXTERNALSYM kDMMirroringBlocked}
   kDMMirroringBlocked           = -6223; //*DMBlockMirroring() has been called.*/
   {$EXTERNALSYM kDMCantBlock}
-  kDMCantBlock                  = -6224; //*Mirroring is already on, can’t Block now (call DMUnMirror() first).*/
+  kDMCantBlock                  = -6224; //*Mirroring is already on, canb t Block now (call DMUnMirror() first).*/
   {$EXTERNALSYM kDMMirroringNotOn}
   kDMMirroringNotOn             = -6225; //*Returned by all calls that need mirroring to be on to do their thing.*/
                                         //* Other Display Manager Errors */
@@ -3643,7 +3643,7 @@ const
   kATSUInvalidCacheErr          = -8800; //*    Used when an attempt was made to read in style data */
                                         //*    from an invalid cache.  Either the format of the */
                                         //*    cached data doesn't match that used by Apple Type */
-                                        //*    Services for Unicode™ Imaging, or the cached data */
+                                        //*    Services for Unicodeb" Imaging, or the cached data */
                                         //*    is corrupt.  */
   {$EXTERNALSYM kATSUNotSetErr}
   kATSUNotSetErr                = -8801; //*    Used when the client attempts to retrieve an attribute, */
@@ -4206,7 +4206,7 @@ const
   {$EXTERNALSYM telUnknownErr}
   telUnknownErr                 = -10103; //* unable to set config */
   {$EXTERNALSYM telNoCommFolder}
-  telNoCommFolder               = -10106; //* Communications/Extensions ƒ not found */
+  telNoCommFolder               = -10106; //* Communications/Extensions F not found */
   {$EXTERNALSYM telInitFailed}
   telInitFailed                 = -10107; //* initialization failed */
   {$EXTERNALSYM telBadCodeResource}
@@ -5243,7 +5243,7 @@ const
   {$EXTERNALSYM dsBadSANEOpcode}
   dsBadSANEOpcode               = 81;   //*bad opcode given to SANE Pack4*/
   {$EXTERNALSYM dsBadPatchHeader}
-  dsBadPatchHeader              = 83;   //*SetTrapAddress saw the “come-from” header*/
+  dsBadPatchHeader              = 83;   //*SetTrapAddress saw the b come-fromb  header*/
   {$EXTERNALSYM menuPrgErr}
   menuPrgErr                    = 84;   //*happens when a menu is purged*/
   {$EXTERNALSYM dsMBarNFnd}
@@ -5260,7 +5260,7 @@ const
 
 //enum {
   {$EXTERNALSYM dsNoFPU}
-  dsNoFPU                       = 90;   //*an FPU instruction was executed and the machine doesn’t have one*/
+  dsNoFPU                       = 90;   //*an FPU instruction was executed and the machine doesnb t have one*/
   {$EXTERNALSYM dsNoPatch}
   dsNoPatch                     = 98;   //*Can't patch for particular Model Mac*/
   {$EXTERNALSYM dsBadPatch}
@@ -5342,16 +5342,16 @@ const
   {$EXTERNALSYM dsNoExtsDisassembler}
   dsNoExtsDisassembler          = -2;   //*not a SysErr, just a placeholder */
   {$EXTERNALSYM dsMacsBugInstalled}
-  dsMacsBugInstalled            = -10;  //*say “MacsBug Installed”*/
+  dsMacsBugInstalled            = -10;  //*say b MacsBug Installedb */
   {$EXTERNALSYM dsDisassemblerInstalled}
-  dsDisassemblerInstalled       = -11;  //*say “Disassembler Installed”*/
+  dsDisassemblerInstalled       = -11;  //*say b Disassembler Installedb */
   {$EXTERNALSYM dsExtensionsDisabled}
-  dsExtensionsDisabled          = -13;  //*say “Extensions Disabled”*/
+  dsExtensionsDisabled          = -13;  //*say b Extensions Disabledb */
   {$EXTERNALSYM dsGreeting}
   dsGreeting                    = 40;   //*welcome to Macintosh greeting*/
   {$EXTERNALSYM dsSysErr}
   dsSysErr                      = 32767; //*general system error*/
-                                        //*old names here for compatibility’s sake*/
+                                        //*old names here for compatibilityb s sake*/
   {$EXTERNALSYM WDEFNFnd}
   WDEFNFnd                      = dsWDEFNotFound;
 //};
@@ -5364,9 +5364,9 @@ const
   {$EXTERNALSYM dsBadStartupDisk}
   dsBadStartupDisk              = 42;   //*unable to mount boot volume (sad Mac only)*/
   {$EXTERNALSYM dsSystemFileErr}
-  dsSystemFileErr               = 43;   //*can’t find System file to open (sad Mac only)*/
+  dsSystemFileErr               = 43;   //*canb t find System file to open (sad Mac only)*/
   {$EXTERNALSYM dsHD20Installed}
-  dsHD20Installed               = -12;  //*say “HD20 Startup”*/
+  dsHD20Installed               = -12;  //*say b HD20 Startupb */
   {$EXTERNALSYM mBarNFnd}
   mBarNFnd                      = -126; //*system error code for MBDF not found*/
   {$EXTERNALSYM fsDSIntErr}

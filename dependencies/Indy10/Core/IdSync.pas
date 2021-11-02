@@ -52,7 +52,7 @@
   Rev 1.2    2003.09.18 5:42:14 PM  czhower
   Removed TIdThreadBase
 
-  Rev 1.1    05.6.2003 ã. 11:30:12  DBondzhev
+  Rev 1.1    05.6.2003 c. 11:30:12  DBondzhev
   Mem leak fix for notifiers created in main thread. Also WaitFor for waiting
   notification to be executed.
 

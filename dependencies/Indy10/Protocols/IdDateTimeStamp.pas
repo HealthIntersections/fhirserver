@@ -867,7 +867,7 @@ function TIdDateTimeStamp.GetDayOfWeek : Integer;
 var
   a, y, m, d, mnth : Integer;
 begin
-  // Thanks to the "FAQ About Calendars" by Claus Tøndering for this algorithm
+  // Thanks to the "FAQ About Calendars" by Claus Txndering for this algorithm
   // http://www.tondering.dk/claus/calendar.html
   mnth := MonthOfYear;
   a := (14 - mnth) div 12;

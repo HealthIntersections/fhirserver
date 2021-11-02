@@ -410,7 +410,7 @@ type
 //See: http://tangentsoft.net/wskfaq/intermediate.html#disable-nagle and
 //   http://tangentsoft.net/wskfaq/articles/lame-list.html#item19
 //The Nagle algorithm reduces the amount of needless traffic.  Disabling Nagle
-//program’s throughput to degrade.
+//programs throughput to degrade.
     property UseNagle: boolean read FUseNagle write FUseNagle default true;
     property TerminateWaitTime: Integer read FTerminateWaitTime write FTerminateWaitTime default 5000;
     property Scheduler: TIdScheduler read FScheduler write SetScheduler;

@@ -280,7 +280,7 @@ begin
   Result := (((FahrenheitBoilingPoint-FahrenheitFreezingPoint) /
     CelsiusBoilingPoint) * Temperature) + FahrenheitFreezingPoint;
 
-  // °F = °C × 1.8 + 32
+  // 0F = 0C W 1.8 + 32
   // Alternative:  Result := Temperature * 1.8 + 32;
 end;
 
@@ -289,7 +289,7 @@ begin
   if Temperature < CelsiusAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // K = °C + 273.15
+  // K = 0C + 273.15
   Result := Temperature + KelvinFreezingPoint;
 end;
 
@@ -298,7 +298,7 @@ begin
   if Temperature < CelsiusAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °R = (°C × 1.8) + 32 + 459.67
+  // 0R = (0C W 1.8) + 32 + 459.67
   if Temperature = CelsiusAbsoluteZero then
   begin
     Result := RankineAbsoluteZero;
@@ -314,7 +314,7 @@ begin
   if Temperature < CelsiusAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °R = °C × 0.8
+  // 0R = 0C W 0.8
   Result := Temperature * 0.8;
 end;
 
@@ -323,7 +323,7 @@ begin
   if Temperature < FahrenheitAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °C = (°F - 32) / 1.8
+  // 0C = (0F - 32) / 1.8
   Result := (CelsiusBoilingPoint /
     (FahrenheitBoilingPoint-FahrenheitFreezingPoint)) *
     (Temperature - FahrenheitFreezingPoint);
@@ -334,7 +334,7 @@ begin
   if Temperature < FahrenheitAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // K = (°F + 459.67) / 1.8
+  // K = (0F + 459.67) / 1.8
   Result := FahrenheitToCelsius(Temperature) + KelvinFreezingPoint;
 end;
 
@@ -343,7 +343,7 @@ begin
   if Temperature < FahrenheitAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °Ra = °F + 459.67
+  // 0Ra = 0F + 459.67
   Result := Temperature + RankineAtFahrenheitZero;
 end;
 
@@ -352,7 +352,7 @@ begin
   if Temperature < FahrenheitAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °R = (°F - 32) / 2.25
+  // 0R = (0F - 32) / 2.25
   Result := (Temperature - FahrenheitFreezingPoint) / 2.25;
 end;
 
@@ -361,7 +361,7 @@ begin
   if Temperature < KelvinAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °C = K - 273.15
+  // 0C = K - 273.15
   Result := Temperature - KelvinFreezingPoint;
 end;
 
@@ -370,7 +370,7 @@ begin
   if Temperature < KelvinAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °F = K × 1.8 - 459.67
+  // 0F = K W 1.8 - 459.67
   Result := FahrenheitToCelsius(Temperature - KelvinFreezingPoint);
 end;
 
@@ -379,7 +379,7 @@ begin
   if Temperature < KelvinAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °Ra = K × 1.8
+  // 0Ra = K W 1.8
   Result := Temperature * 1.8;
 end;
 
@@ -388,7 +388,7 @@ begin
   if Temperature < KelvinAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °R = (K - 273.15) × 0.8
+  // 0R = (K - 273.15) W 0.8
   Result := (Temperature - KelvinFreezingPoint) * 0.8;
 end;
 
@@ -397,7 +397,7 @@ begin
   if Temperature < RankineAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °C = (°R - 32 - 459.67) / 1.8
+  // 0C = (0R - 32 - 459.67) / 1.8
   Result := (Temperature - RankineFreezingPoint) / 1.8;
 end;
 
@@ -406,7 +406,7 @@ begin
   if Temperature < RankineAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °F = °R - 459.67
+  // 0F = 0R - 459.67
   Result := Temperature - RankineAtFahrenheitZero;
 end;
 
@@ -415,7 +415,7 @@ begin
   if Temperature < RankineAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // K = °R / 1.8
+  // K = 0R / 1.8
   Result := Temperature / 1.8;
 end;
 
@@ -424,7 +424,7 @@ begin
   if Temperature < RankineAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °R = (°Ra - 32 - 459.67) / 2.25
+  // 0R = (0Ra - 32 - 459.67) / 2.25
   Result := (Temperature - RankineFreezingPoint) / 2.25;
 end;
 
@@ -433,7 +433,7 @@ begin
   if Temperature < ReaumurAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °C = °R × 1.25
+  // 0C = 0R W 1.25
   Result := Temperature * 1.25;
 end;
 
@@ -442,7 +442,7 @@ begin
   if Temperature < ReaumurAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °F = °R × 2.25 + 32
+  // 0F = 0R W 2.25 + 32
   Result := (Temperature * 2.25) + FahrenheitFreezingPoint;
 end;
 
@@ -451,7 +451,7 @@ begin
   if Temperature < ReaumurAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // K = °R × 1.25 + 273.15
+  // K = 0R W 1.25 + 273.15
   Result := (Temperature * 1.25) + KelvinFreezingPoint;
 end;
 
@@ -460,7 +460,7 @@ begin
   if Temperature < ReaumurAbsoluteZero then
     TemperatureBelowAbsoluteError;
 
-  // °Ra = °R × 2.25 + 32 + 459.67
+  // 0Ra = 0R W 2.25 + 32 + 459.67
   Result := (Temperature * 2.25) + RankineFreezingPoint;
 end;
 
@@ -674,7 +674,7 @@ var
   S: Float;
 begin
   DegToDMS(Degrees, D, M, S);
-  Result := Format('%d° %d'' %.*f"', [D, M, SecondPrecision, S]);
+  Result := Format('%d0 %d'' %.*f"', [D, M, SecondPrecision, S]);
 end;
 
 //=== Coordinate conversion ==================================================
