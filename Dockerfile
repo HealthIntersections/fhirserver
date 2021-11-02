@@ -30,7 +30,11 @@ VOLUME /terminology
 RUN printf '#!/bin/bash \n\
 Xvfb  :99 -screen 0 1024x768x8 -nolisten tcp & \n\
 echo "[web]" > /work/fhirserver/exec/64/web.ini; \n\
+
 echo "http=${PORT}" >> /work/fhirserver/exec/64/web.ini; \n\
+echo "## check code"
+/work/fhirserver/utilities/codescan/codescan /work/bootstrap
+echo "## run tests"
 /work/fhirserver/exec/64/fhirserver $(eval echo "$@")'> /bin/entrypoint.sh && \
 chmod +x /bin/entrypoint.sh
 
