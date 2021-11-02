@@ -22,7 +22,7 @@ It assumes that the root of the FHIRServer repository is two folders up from the
 
 }
 
-{$i fhir.inc}
+{$MODE DELPHI}
 
 uses
   {$IFDEF UNIX}
