@@ -44,7 +44,7 @@ Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   Classes, Contnrs, SyncObjs, SysUtils,
   IdContext, IdBaseComponent, IdException, IdGlobal, IdStackConsts, IdIOHandlerSocket, IdTCPClient, IdTCPConnection, IdTCPServer,
-  fsl_threads;
+  fsl_base, fsl_threads;
 
 Const
   MSG_START : AnsiString = #11;

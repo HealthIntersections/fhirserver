@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, IOUtils,
+  SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
