@@ -44,6 +44,7 @@ jobs:
           --cache-from "type=local,src=/tmp/.buildx-cache" \
           --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
           --tag fhirserver \
+        .
     - name: Scan Code
       run: |
         docker run --entrypoint /work/fhir server/codescan/codescan /work/bootstrap
