@@ -47,7 +47,7 @@ jobs:
         .
     - name: Scan Code
       run: |
-        docker run --entrypoint /work/fhirserver/codescan/lib/x86_64-linux/codescan /work/bootstrap
+        docker run --entrypoint /work/fhirserver/codescan/codescan fhirserver /work/bootstrap
     - name: Prepare ini file
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
