@@ -12,8 +12,8 @@ unit fui_gfx_color;
 //
 // The initial developer of the original code is Dipl. Ing. Mike Lischke (Pleiﬂa, Germany, www.delphi-gems.com),
 //
-// Portions created by Dipl. Ing. Mike Lischke are Copyright
-// (C) 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
+// Portions created by Dipl. Ing. Mike Lischke are Copyright (c)
+// 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
 //----------------------------------------------------------------------------------------------------------------------
 // This file is part of the image library GraphicEx.
 //
@@ -57,7 +57,9 @@ interface
 {$I fui_gfx.inc}
 
 uses
-  Windows, Graphics, fui_gfx_strings;
+  Windows, Graphics,
+  fsl_base,
+  fui_gfx_strings;
 
 const
   // this is the value for average CRT monitors, adjust it if your monitor differs
@@ -203,7 +205,7 @@ uses
   Math, SysUtils;
 
 type
-  EColorConversionError = class(Exception);
+  EColorConversionError = class(EFslException);
 
   PCMYK = ^TCMYK;
   TCMYK = packed record

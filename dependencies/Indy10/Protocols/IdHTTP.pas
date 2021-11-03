@@ -183,7 +183,7 @@
   Rev 1.17    7/13/2003 11:29:06 AM  JPMugaas
   Made sure some GZIP decompression stub code is in IdHTTP.
 
-  Rev 1.15    10.7.2003 ã. 21:03:02  DBondzhev
+  Rev 1.15    10.7.2003 c. 21:03:02  DBondzhev
   Fixed NTML proxy authorization
 
   Rev 1.14    6/19/2003 02:36:56 PM  JPMugaas

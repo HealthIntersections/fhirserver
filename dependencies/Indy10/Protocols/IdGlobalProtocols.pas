@@ -2560,16 +2560,16 @@ const
     (TimeZone:'GST';  Offset:'+0400'), // Gulf Standard Time                                     {do not localize}
     (TimeZone:'GYT';  Offset:'-0400'), // Guyana Time                                            {do not localize}
     (TimeZone:'H';    Offset:'+0800'), // Hotel Time Zone - Military                             {do not localize}
-    (TimeZone:'HAA';  Offset:'-0300'), // Heure Avancée de l'Atlantique - North America          {do not localize}
-    (TimeZone:'HAC';  Offset:'-0500'), // Heure Avancée du Centre - North America                {do not localize}
+    (TimeZone:'HAA';  Offset:'-0300'), // Heure Avancie de l'Atlantique - North America          {do not localize}
+    (TimeZone:'HAC';  Offset:'-0500'), // Heure Avancie du Centre - North America                {do not localize}
     (TimeZone:'HADT'; Offset:'-0900'), // Hawaii-Aleutian Daylight Time - North America          {do not localize}
-    (TimeZone:'HAE';  Offset:'-0400'), // Heure Avancée de l'Est - North America                 {do not localize}
-    (TimeZone:'HAEC'; Offset:'+0200'), // Heure Avancée d'Europe Centrale francised name for CEST {do not localize}
-    (TimeZone:'HAP';  Offset:'-0700'), // Heure Avancée du Pacifique - North America             {do not localize}
-    (TimeZone:'HAR';  Offset:'-0600'), // Heure Avancée des Rocheuses - North America            {do not localize}
+    (TimeZone:'HAE';  Offset:'-0400'), // Heure Avancie de l'Est - North America                 {do not localize}
+    (TimeZone:'HAEC'; Offset:'+0200'), // Heure Avancie d'Europe Centrale francised name for CEST {do not localize}
+    (TimeZone:'HAP';  Offset:'-0700'), // Heure Avancie du Pacifique - North America             {do not localize}
+    (TimeZone:'HAR';  Offset:'-0600'), // Heure Avancie des Rocheuses - North America            {do not localize}
     (TimeZone:'HAST'; Offset:'-1000'), // Hawaii-Aleutian Standard Time - North America          {do not localize}
-    (TimeZone:'HAT';  Offset:'-0230'), // Heure Avancée de Terre-Neuve - North America           {do not localize}
-    (TimeZone:'HAY';  Offset:'-0800'), // Heure Avancée du Yukon - North America                 {do not localize}
+    (TimeZone:'HAT';  Offset:'-0230'), // Heure Avancie de Terre-Neuve - North America           {do not localize}
+    (TimeZone:'HAY';  Offset:'-0800'), // Heure Avancie du Yukon - North America                 {do not localize}
     (TimeZone:'HKT';  Offset:'+0800'), // Hong Kong Time                                         {do not localize}
     (TimeZone:'HMT';  Offset:'+0500'), // Heard and McDonald Islands Time                        {do not localize}
     (TimeZone:'HNA';  Offset:'-0400'), // Heure Normale de l'Atlantique - North America          {do not localize}
@@ -2606,11 +2606,11 @@ const
     (TimeZone:'MART'; Offset:'-0930'), // Marquesas Islands Time                                 {do not localize}
     (TimeZone:'MAWT'; Offset:'+0500'), // Mawson Station Time                                    {do not localize}
     (TimeZone:'MDT';  Offset:'-0600'), // Mountain Daylight Time - North America                 {do not localize}
-    (TimeZone:'MEHSZ';Offset:'+0300'), // Mitteleuropäische Hochsommerzeit - Europe              {do not localize}
+    (TimeZone:'MEHSZ';Offset:'+0300'), // Mitteleuropdische Hochsommerzeit - Europe              {do not localize}
     (TimeZone:'MEST'; Offset:'+0200'), // Middle European Saving Time Same zone as CEST          {do not localize}
-    (TimeZone:'MESZ'; Offset:'+0200'), // Mitteleuroäische Sommerzeit - Europe                   {do not localize}
+    (TimeZone:'MESZ'; Offset:'+0200'), // Mitteleurodische Sommerzeit - Europe                   {do not localize}
     (TimeZone:'MET';  Offset:'+0100'), // Middle European Time Same zone as CET                  {do not localize}
-    (TimeZone:'MEZ';  Offset:'+0100'), // Mitteleuropäische Zeit - Europe                        {do not localize}
+    (TimeZone:'MEZ';  Offset:'+0100'), // Mitteleuropdische Zeit - Europe                        {do not localize}
     (TimeZone:'MHT';  Offset:'+1200'), // Marshall Islands                                       {do not localize}
     (TimeZone:'MIST'; Offset:'+1100'), // Macquarie Island Station Time                          {do not localize}
     (TimeZone:'MIT';  Offset:'-0930'), // Marquesas Islands Time                                 {do not localize}
@@ -2652,7 +2652,7 @@ const
     (TimeZone:'PYT';  Offset:'-0400'), // Paraguay Time (South America)                          {do not localize}
     (TimeZone:'Q';    Offset:'-0400'), // Quebec Time Zone - Military                            {do not localize}
     (TimeZone:'R';    Offset:'-0500'), // Romeo Time Zone - Military                             {do not localize}
-    (TimeZone:'RET';  Offset:'+0400'), // Réunion Time                                           {do not localize}
+    (TimeZone:'RET';  Offset:'+0400'), // Riunion Time                                           {do not localize}
     (TimeZone:'ROTT'; Offset:'-0300'), // Rothera Research Station Time                          {do not localize}
     (TimeZone:'S';    Offset:'-0600'), // Sierra Time Zone - Military                            {do not localize}
     (TimeZone:'SAKT'; Offset:'+1100'), // Sakhalin Island time                                   {do not localize}

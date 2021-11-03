@@ -544,7 +544,7 @@ Stratus Computer, Inc.
 
 Marlboro, Massachusetts 01752
 
-© 1990 by Stratus Computer, Inc. All rights reserved.
+) 1990 by Stratus Computer, Inc. All rights reserved.
 
 A name is an ASCII character string that contains no more than 32 characters. The characters must be chosen from the following set of 81 characters:
 the upper-case letters 

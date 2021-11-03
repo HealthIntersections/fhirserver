@@ -31,18 +31,18 @@
   Should compile.
 
 
-    Rev 1.25    2005/1/28 下午 12:40:08  DChang
+    Rev 1.25    2005/1/28 $U$H 12:40:08  DChang
   Add a new method for TIdTextModeResourceRecord to clean the created FAnswer,
   then while the record updated, new data can be used in the FAnswer.
 
 
-    Rev 1.23    2005/1/25 下午 12:24:14  DChang
+    Rev 1.23    2005/1/25 $U$H 12:24:14  DChang
   For speeding up the query, one private variable is added into all TIdRR_
   series object, only first time query will generate the binary codes, the
   others will read the result form the first time generated.
 
 
-    Rev 1.22    2004/12/15 上午 11:12:18  DChang    Version: 1.22
+    Rev 1.22    2004/12/15 $W$H 11:12:18  DChang    Version: 1.22
   Fix all BinQueryRecord method of TIdRR_*,
   TIdRR_TXT.BinQueryRecord is completed,
   and remark the comment of TIdTextModeResourceRecord.BinQueryRecord,
@@ -57,7 +57,7 @@
   Added localization comments.
 
 
-    Rev 1.19    2004/7/19 下午 09:43:40  DChang
+    Rev 1.19    2004/7/19 $U$H 09:43:40  DChang
   1. Move the TIdTextModeResourceRecords which was defined in
   IdDNSServer.pas to here.
   2. Add a QueryType (DqtIXFR) in TDNSQueryRecordTypes.
@@ -115,7 +115,7 @@
   Compile todos
 
 
-    Rev 1.6    2003/5/8 下午 08:07:12  DChang
+    Rev 1.6    2003/5/8 $U$H 08:07:12  DChang
   Add several constants for IdDNSServer
 
 

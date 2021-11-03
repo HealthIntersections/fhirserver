@@ -64,7 +64,7 @@
   Checked in for Dennies Chang
 
 
-    Rev 1.20    2004/7/19 ¤U¤È 09:40:52  DChang
+    Rev 1.20    2004/7/19 $U$H 09:40:52  DChang
   1. fix the TIdResolver.ParseAnswers, add 2 parameters for the function to
   check if QueryResult should be clear or not, TIdResolver.FillResult  is
   modified at the same time. 
@@ -146,7 +146,7 @@
   Compile todos
 
 
-    Rev 1.5    2003/4/30 ¤U¤È 12:39:54  DChang
+    Rev 1.5    2003/4/30 $U$H 12:39:54  DChang
   fix the TIdResolver.ParseAnswers, add 2 parameters for the function
   to check if QueryResult should be clear or not, TIdResolver.FillResult
   is modified at the same time.

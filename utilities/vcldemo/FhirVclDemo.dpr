@@ -3,7 +3,10 @@ program FhirVclDemo;
 uses
   FastMM4,
   Vcl.Forms,
-  MainApplicationWindow in 'MainApplicationWindow.pas' {MainWindowForm};
+  MainApplicationWindow in 'MainApplicationWindow.pas' {MainWindowForm},
+  TZDB in '..\..\..\source\tzdb\dist\TZDB.pas',
+  MarkdownHTMLEntities in '..\..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas',
+  qrcodegen in '..\..\dependencies\qrcodegen\qrcodegen.pas';
 
 {$R *.res}
 

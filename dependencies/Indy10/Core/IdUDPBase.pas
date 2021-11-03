@@ -37,7 +37,7 @@
   Rev 1.10    2004.02.03 4:17:00 PM  czhower
   For unit name changes.
 
-  Rev 1.9    21.1.2004 ã. 12:31:00  DBondzhev
+  Rev 1.9    21.1.2004 c. 12:31:00  DBondzhev
   Fix for Indy source. Workaround for dccil bug
   now it can be compiled using Compile instead of build
 

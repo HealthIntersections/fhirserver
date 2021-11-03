@@ -54,7 +54,7 @@
   Rev 1.3    2004.01.21 2:35:40 PM  czhower
   Removed illegal characters from file.
 
-  Rev 1.2    21.1.2004 ã. 12:31:02  DBondzhev
+  Rev 1.2    21.1.2004 c. 12:31:02  DBondzhev
   Fix for Indy source. Workaround for dccil bug
   now it can be compiled using Compile instead of build
 

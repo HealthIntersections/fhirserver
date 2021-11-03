@@ -40,7 +40,7 @@
   Rev 1.5    1/22/2004 7:10:08 AM  JPMugaas
   Tried to fix AnsiSameText depreciation.
 
-  Rev 1.4    13.1.2004 ã. 17:17:44  DBondzhev
+  Rev 1.4    13.1.2004 c. 17:17:44  DBondzhev
   moved few methods into protected section to remove some warnings
 
   Rev 1.3    10/17/2003 12:09:28 AM  DSiders

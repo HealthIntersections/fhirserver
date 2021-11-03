@@ -31,7 +31,7 @@ unit IdFTPListParseUnisysClearPath;
   FTP Services for ClearPath
   OS 2200 User's Guide
   ClearPath OS 2200 Release 8.0 January 2003
-  © 2003 Unisys Corporation.
+  ) 2003 Unisys Corporation.
   All rights reserved.
 
   and
@@ -39,7 +39,7 @@ unit IdFTPListParseUnisysClearPath;
   ClearPath Enterprise Servers
   TCP/IP Distributed Systems Services Operations Guide
   ClearPath MCP Release 9.0 April 2004
-  © 2004 Unisys Corporation.
+  ) 2004 Unisys Corporation.
   All rights reserved.
 
   With a sample showing a multiline response from:

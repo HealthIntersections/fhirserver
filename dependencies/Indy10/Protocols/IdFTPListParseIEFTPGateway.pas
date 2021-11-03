@@ -11,11 +11,11 @@ uses
 {This is based on:
 
 Information Exchange
-via TCP/IP FTP Gateway User’s
+via TCP/IP FTP Gateway Users
 Guide
 Version 1 Release 4
 
-© Copyright GXS, Inc. 1998, 2005. All rights reserved.
+) Copyright GXS, Inc. 1998, 2005. All rights reserved.
 
 and is available at:
 https://www.gxsolc.com/public/EDI/us/support/Library/Publications/IEtcpipFTPGatewayUserGuide_c3423452.pdf

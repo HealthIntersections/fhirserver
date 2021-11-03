@@ -75,7 +75,7 @@
   Rev 1.2    6/13/2003 06:17:06 AM  JPMugaas
   Should now compil,e.
 
-  Rev 1.1    12.6.2003 ã. 12:00:28  DBondzhev
+  Rev 1.1    12.6.2003 c. 12:00:28  DBondzhev
   Fix for . at the begining of new line
 
   Rev 1.0    11/14/2002 02:15:00 PM  JPMugaas

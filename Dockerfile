@@ -15,11 +15,12 @@ RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite
 
 COPY build/linux-toolchain.sh build/unix-libraries.sh /work/bootstrap/
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
-RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
 
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
+RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
+RUN cp exec/pack/linux/*.so /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 
 ENV DISPLAY :99

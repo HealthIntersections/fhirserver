@@ -40,6 +40,7 @@ uses
   IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
   fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc, fsl_npm_cache,
   fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  fhir_colour_utils,
   fui_lcl_utilities,
   ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,

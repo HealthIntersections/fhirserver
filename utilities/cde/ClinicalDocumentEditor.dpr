@@ -112,8 +112,10 @@ uses
   JPG in '..\..\dependencies\ui\JPG.pas',
   MZLib in '..\..\dependencies\ui\MZLib.pas',
   wp_printing_base in '..\..\library\wp\wp_printing_base.pas',
-  MarkdownHTMLEntities in '..\..\..\pascal\markdown\source\MarkdownHTMLEntities.pas',
-  fsl_logging in '..\..\library\fsl\fsl_logging.pas';
+  MarkdownHTMLEntities in '..\..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas',
+  fsl_logging in '..\..\library\fsl\fsl_logging.pas',
+  TZDB in '..\..\..\source\tzdb\dist\TZDB.pas',
+  fhir_colour_utils in '..\..\library\fhir\fhir_colour_utils.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

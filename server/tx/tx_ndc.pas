@@ -33,14 +33,75 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang,
+  SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} IOUtils, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
+const
+  LOOP_STEP_COUNT = 500;
+
 type
+  { TNdcObject }
+
+  TNdcObject = class (TFslObject)
+  private
+    Factive: boolean;
+    FCode: String;
+    FDateSeen : String;
+    function GetKey: String;
+  public
+    property dateSeen : String read FDateSeen write FDateSeen;
+    property code : String read FCode write FCode;
+    property key : String read GetKey;
+    property active : boolean read Factive write FActive;
+  end;
+
+  { TNdcPackage }
+
+  TNdcPackage = class (TNdcObject)
+  private
+    FCode11: String;
+    FDescription: String;
+    FProductCode: String;
+  public
+    function link : TNdcPackage; overload;
+
+    property code11 : String read FCode11 write Fcode11;
+    property productCode : String read FProductCode write FProductCode;
+    property description : String read FDescription write FDescription;
+  end;
+
+  { TNdcProduct }
+
+  TNdcProduct = class (TNdcObject)
+  private
+    FDosageFormName: String;
+    FEndMarketingDate: TFslDateTime;
+    FLabelerName: String;
+    FMarketingCategoryName: String;
+    FNonProprietaryName: String;
+    FProductTypeName: String;
+    FProprietaryName: String;
+    FProprietaryNameSuffix: String;
+    FRouteName: String;
+    FStartMarketingDate: TFslDateTime;
+  public
+    function link : TNdcProduct; overload;
+
+    property productTypeName : String read FProductTypeName write FProductTypeName;
+    property proprietaryName : String read FProprietaryName write FProprietaryName;
+    property proprietaryNameSuffix : String read FProprietaryNameSuffix write FProprietaryNameSuffix;
+    property nonProprietaryName : String read FNonProprietaryName write FNonProprietaryName;
+    property dosageFormName : String read FDosageFormName write FDosageFormName;
+    property routeName : String read FRouteName write FRouteName;
+    property startMarketingDate : TFslDateTime read FStartMarketingDate write FStartMarketingDate;
+    property endMarketingDate : TFslDateTime read FEndMarketingDate write FEndMarketingDate;
+    property marketingCategoryName : String read FMarketingCategoryName write FMarketingCategoryName;
+    property labelerName : String read FLabelerName write FLabelerName;
+  end;
 
   { TNdcImporter }
 
@@ -54,12 +115,52 @@ type
     FRoutes : TDictionary<String, integer>;
     FDoseforms : TDictionary<String, integer>;
     FKey : integer;
-    procedure importProducts(callback: TWorkProgressEvent);
-    procedure importPackages(callback: TWorkProgressEvent);
-    procedure importVersion;
-    procedure processProduct(fields: TFslStringList);
-    procedure processPackage(fields: TFslStringList);
+    FStepBase, FStepSpan : Double;
+
+    FFieldProductNDC : integer;
+    FFieldProductTypeName : integer;
+    FFieldProprietaryName : integer;
+    FFieldProprietaryNameSuffix : integer;
+    FFieldNonProprietaryName : integer;
+    FFieldDosageFormName : integer;
+    FFieldRouteName : integer;
+    FFieldStartMarketingDate : integer;
+    FFieldEndMarketingDate : integer;
+    FFieldMarketingCategoryName : integer;
+    FFieldApplicationNumber : integer;
+    FFieldLabelerName : integer;
+    FFieldSubstanceName : integer;
+    FFieldStrengthNumber : integer;
+    FFieldStrengthUnit : integer;
+    FFieldPharm_Classes : integer;
+    FFieldDEASchedule : integer;
+    FFieldNDC_Exclude_Flag : integer;
+//    FFieldListing_Record_Certified_Through : integer;
+
+    FPckFieldProductNDC : integer;
+    FPckFieldNDCPackageCode : integer;
+    FPckFieldPackageDescription : integer;
+    FPckFieldNDC_Exclude_Flag : integer;
+
+    FProducts : TFslMap<TNdcProduct>;
+    FPackages : TFslMap<TNdcPackage>;
+
+    function prog(pct : integer) : integer; overload;
+    function prog(i, t : integer) : integer; overload;
+    procedure step;
+
+    function findVersions : TArray<String>;
+    procedure readPackages(v : String; callback: TWorkProgressEvent);
+    procedure readProducts(v : String; callback: TWorkProgressEvent);
+    procedure readVersion(v : string; callback: TWorkProgressEvent);
+    procedure checkMissingCodes;
+
     procedure prepareDatabase;
+    procedure processVersion(v : String);
+    procedure processProduct(p : TNDCProduct);
+    procedure processPackage(p : TNDCPackage);
+    procedure processProducts(callback: TWorkProgressEvent);
+    procedure processPackages(callback: TWorkProgressEvent);
     procedure finishDatabase;
   public
     constructor Create(source : String; conn : TFDBConnection);
@@ -67,7 +168,6 @@ type
 
     property source : String read FSource write FSource;
 
-    procedure process(callback : TInstallerCallback);
     procedure Doinstall(sender : TObject; callback : TWorkProgressEvent);
   end;
 
@@ -171,33 +271,27 @@ type
 
 implementation
 
-const
-  PROD_FIELD_ProductID = 0;
-  PROD_FIELD_ProductNDC = 1;
-  PROD_FIELD_ProductTypeName = 2;
-  PROD_FIELD_ProprietaryName = 3;
-  PROD_FIELD_ProprietaryNameSuffix = 4;
-  PROD_FIELD_NonProprietaryName = 5;
-  PROD_FIELD_DosageFormName = 6;
-  PROD_FIELD_RouteName = 7;
-  PROD_FIELD_StartMarketingDate = 8;
-  PROD_FIELD_EndMarketingDate = 9;
-  PROD_FIELD_MarketingCategoryName = 10;
-  PROD_FIELD_ApplicationNumber = 11;
-  PROD_FIELD_LabelerName = 12;
-  PROD_FIELD_SubstanceName = 13;
-  PROD_FIELD_StrengthNumber = 14;
-  PROD_FIELD_StrengthUnit = 15;
-  PROD_FIELD_Pharm_Classes = 16;
-  PROD_FIELD_DEASchedule = 17;
-  PROD_FIELD_NDC_Exclude_Flag = 18;
-  PROD_FIELD_Listing_Record_Certified_Through = 19;
+{ TNdcObject }
 
-  PACK_FIELD_ProductID = 0;
-  PACK_FIELD_ProductNDC = 1;
-  PACK_FIELD_NDCPackageCode = 2;
-  PACK_FIELD_PackageDescription = 3;
-  PACK_FIELD_NDC_Exclude_Flag = 4;
+function TNdcObject.GetKey: String;
+begin
+  result := StringPadLeft(code.Replace('-', ''), '0', 11);
+end;
+
+{ TNdcPackage }
+
+function TNdcPackage.link: TNdcPackage;
+begin
+  result := TNdcPackage(inherited link);
+end;
+
+{ TNdcProduct }
+
+function TNdcProduct.link: TNdcProduct;
+begin
+  result := TNdcProduct(inherited link);
+end;
+
 
 { TNdcImporter }
 
@@ -211,10 +305,16 @@ begin
   FOrgs := TDictionary<String, integer>.create;
   FRoutes := TDictionary<String, integer>.create;
   FDoseForms := TDictionary<String, integer>.create;
+
+  FProducts := TFslMap<TNdcProduct>.create;
+  FPackages := TFslMap<TNdcPackage>.create;
 end;
 
 destructor TNdcImporter.Destroy;
 begin
+  FProducts.Free;
+  FPackages.Free;
+
   FConn.Free;
   FDoseForms.Free;
   FRoutes.Free;
@@ -224,10 +324,345 @@ begin
   inherited;
 end;
 
-procedure TNdcImporter.process(callback: TInstallerCallback);
+procedure TNdcImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
+var
+  s, v : String;
 begin
+  // 1. load all the versions
+  for s in findVersions do
+  begin
+    readVersion(s, callback);
+    v := s;
+  end;
+  checkMissingCodes;
 
+  // 2. do the install
+  FOrgs.Clear;
+  FTypes.Clear;
+  prepareDatabase;
+  processVersion(v);
+  processProducts(callback);
+  Step;
+  processPackages(callback);
+  Step;
+  finishDatabase;
 end;
+
+function fixDate(date : string) : String;
+begin
+  if date.startsWith('2388') then
+    result := '2018'+date.Substring(4)
+  else if date.startsWith('3030') then
+      result := '2020'+date.Substring(4)
+  else
+    result := date;
+end;
+
+function fixEndDate(date : string) : String;
+begin
+  if date.startsWith('3031') then
+    result := '2031'+date.Substring(4)
+  else
+    result := fixDate(date);
+end;
+
+function parseDate(s : String) : TFslDateTime;
+var
+  d : TArray<string>;
+begin
+  result := TFslDateTime.makeNull;
+  s := fixDate(s);
+  if s.contains('/') then
+  begin
+    d := s.Split(['/']);
+    if length(d) = 3 then
+      exit(TFslDateTime.makeDay(StrToInt(d[1]), StrToInt(d[0]), StrToInt(d[2])));
+  end;
+  if s.contains('-') then
+  begin
+    d := s.Split(['-']);
+    if length(d) = 3 then
+      exit(TFslDateTime.makeDay(StrToInt(d[1]), StrToInt(d[0]), StrToInt(d[2])));
+  end;
+  result := TFslDateTime.fromHL7(s);
+end;
+
+function genCode11(s : String) : String;
+var
+  p : TArray<String>;
+begin
+  p := s.Split(['-']);
+  result := StringPadLeft(p[0], '0', 5)+
+            StringPadLeft(p[1], '0', 4)+
+            StringPadLeft(p[2], '0', 2);
+end;
+
+function TNdcImporter.prog(pct: integer): integer;
+begin
+  result := trunc(FStepBase + FStepSpan * (pct / 100));
+end;
+
+function TNdcImporter.prog(i, t: integer): integer;
+begin
+  result := prog(trunc((i / t) * 100));
+end;
+
+procedure TNdcImporter.step;
+begin
+  FStepBase := FStepBase + FStepSpan;
+end;
+
+function TNdcImporter.findVersions : TArray<String>;
+var
+  ts : TStringList;
+  s : String;
+begin
+  ts := TStringList.create;
+  try
+    for s in TDirectory.getDirectories(FSource) do
+      ts.add(ExtractFileName(s));
+    ts.sort;
+    result := ts.ToStringArray;
+    FStepBase := 0;
+    FStepSpan := 100 / ((ts.count + 1) * 2)
+  finally
+    ts.free;
+  end;
+end;
+
+var
+  tttt : integer = 0;
+
+function findField(fields : TFslStringList; field, v : String) : integer;
+begin
+  result := fields.IndexOf(field);
+  if (result = -1) and not StringArrayExists(['NDC_EXCLUDE_FLAG'], field) then
+    inc(tttt); // nothing - for debugging
+end;
+
+procedure TNdcImporter.readProducts(v: String; callback: TWorkProgressEvent);
+var
+  f : TFslCSVExtractor;
+  fields : TFslStringList;
+  p : TNdcProduct;
+  lc : integer;
+begin
+  fields := TFslStringList.create;
+  try
+    f := TFslCSVExtractor.Create(Path([FSource, v, 'product.txt']), TEncoding.ASCII, false, 8192);
+    try
+      f.Separator := #9;
+      f.IgnoreWhitespace := false;
+      f.ConsumeEntries(fields); // headers
+      FFieldProductNDC := findField(fields, 'PRODUCTNDC', v);
+      FFieldProductTypeName := findField(fields, 'PRODUCTTYPENAME', v);
+      FFieldProprietaryName := findField(fields, 'PROPRIETARYNAME', v);
+      FFieldProprietaryNameSuffix := findField(fields, 'PROPRIETARYNAMESUFFIX', v);
+      FFieldNonProprietaryName := findField(fields, 'NONPROPRIETARYNAME', v);
+      FFieldDosageFormName := findField(fields, 'DOSAGEFORMNAME', v);
+      FFieldRouteName := findField(fields, 'ROUTENAME', v);
+      FFieldStartMarketingDate := findField(fields, 'STARTMARKETINGDATE', v);
+      FFieldEndMarketingDate := findField(fields, 'ENDMARKETINGDATE', v);
+      FFieldMarketingCategoryName := findField(fields, 'MARKETINGCATEGORYNAME', v);
+      FFieldApplicationNumber := findField(fields, 'APPLICATIONNUMBER', v);
+      FFieldLabelerName := findField(fields, 'LABELERNAME', v);
+      FFieldSubstanceName := findField(fields, 'SUBSTANCENAME', v);
+      FFieldStrengthNumber := findField(fields, 'ACTIVE_NUMERATOR_STRENGTH', v);
+      FFieldStrengthUnit := findField(fields, 'ACTIVE_INGRED_UNIT', v);
+      FFieldPharm_Classes := findField(fields, 'PHARM_CLASSES', v);
+      FFieldDEASchedule := findField(fields, 'DEASCHEDULE', v);
+      FFieldNDC_Exclude_Flag := findField(fields, 'NDC_EXCLUDE_FLAG', v);
+//      FFieldListing_Record_Certified_Through := findField(fields, 'LISTING_RECORD_CERTIFIED_THROUGH', v);
+
+      lc := 0;
+      while f.More do
+      begin
+        inc(lc);
+        if (lc mod LOOP_STEP_COUNT = 0) then
+          callback(self, prog(f.percent), false, 'Processing Products for '+v+' ('+inttostr(FProducts.Count)+'|'+inttostr(FPackages.Count)+')');
+        f.ConsumeEntries(fields);
+        if fields.count >= 10 then
+        begin
+          p := TNdcProduct.create;
+          try
+            p.dateSeen := v;
+            p.code := fields[FFieldProductNDC];
+            if (FFieldNDC_Exclude_Flag > -1) and (fields.Count > FFieldNDC_Exclude_Flag) then
+              p.active := fields[FFieldNDC_Exclude_Flag] = 'Y'
+            else
+              p.active := true;
+
+            p.productTypeName := fields[FFieldProductTypeName];
+            p.proprietaryName := fields[FFieldProprietaryName];
+            p.proprietaryNameSuffix := fields[FFieldProprietaryNameSuffix];
+            p.nonProprietaryName := fields[FFieldNonProprietaryName];
+            p.dosageFormName := fields[FFieldDosageFormName];
+            p.routeName := fields[FFieldRouteName];
+            p.startMarketingDate := parseDate(fields[FFieldStartMarketingDate]);
+            p.endMarketingDate := parseDate(fixEndDate(fields[FFieldEndMarketingDate]));
+            p.marketingCategoryName := fields[FFieldMarketingCategoryName];
+            p.labelerName := fields[FFieldLabelerName];
+            FProducts.AddOrSetValue(p.key, p.link);
+          finally
+            p.free;
+          end;
+        end;
+      end;
+    finally
+      f.free;
+    end;
+  finally
+    fields.free;
+  end;
+end;
+
+
+procedure TNdcImporter.readPackages(v : String; callback: TWorkProgressEvent);
+var
+  f : TFslCSVExtractor;
+  fields : TFslStringList;
+  p : TNdcPackage;
+  lc : integer;
+begin
+  fields := TFslStringList.create;
+  try
+    f := TFslCSVExtractor.Create(Path([FSource, v, 'package.txt']), TEncoding.ASCII, false, 8192);
+    try
+      f.Separator := #9;
+      f.IgnoreWhitespace := false;
+      f.ConsumeEntries(fields); // headers
+      FPckFieldProductNDC := findField(fields, 'PRODUCTNDC', v);
+      FPckFieldNDCPackageCode := findField(fields, 'NDCPACKAGECODE', v);
+      FPckFieldPackageDescription := findField(fields, 'PACKAGEDESCRIPTION', v);
+      FPckFieldNDC_Exclude_Flag := findField(fields, 'NDC_EXCLUDE_FLAG', v);
+
+      lc := 0;
+      while f.More do
+      begin
+        inc(lc);
+        if (lc mod LOOP_STEP_COUNT = 0) then
+          callback(self, prog(f.percent), false, 'Processing Packages for '+v+' ('+inttostr(FProducts.Count)+'|'+inttostr(FPackages.Count)+')');
+        f.ConsumeEntries(fields);
+        if fields.count >= 4 then
+        begin
+          p := TNdcPackage.create;
+          try
+            p.dateSeen := v;
+            p.code := fields[FPckFieldNDCPackageCode];
+            if (FPckFieldNDC_Exclude_Flag > -1) and (fields.Count > FPckFieldNDC_Exclude_Flag) then
+              p.active := fields[FPckFieldNDC_Exclude_Flag] = 'Y'
+            else
+              p.active := true;
+            p.code11 := fields[FPckFieldNDCPackageCode];
+            p.description := fields[FPckFieldPackageDescription];
+            p.productCode := fields[FPckFieldProductNDC];
+            if (p.code.length <= 12) then
+              FPackages.AddOrSetValue(p.Key, p.link);
+          finally
+            p.free;
+          end;
+        end;
+      end;
+    finally
+      f.free;
+    end;
+  finally
+    fields.free;
+  end;
+end;
+
+procedure TNdcImporter.readVersion(v: string; callback: TWorkProgressEvent);
+begin
+  readPackages(v, callback);
+  Step;
+  readProducts(v, callback);
+  Step;
+end;
+
+procedure TNdcImporter.checkMissingCodes;
+var
+  json, j2 : TJsonObject;
+  a, a2 : TJsonArray;
+  i, t, tt : integer;
+  c : String;
+begin
+  json := TJsonParser.ParseFile(FilePath([FSource, 'all-ndc-codes.json']));
+  try
+    j2 := TJsonObject.create;
+    try
+      a := json.forceObj['ndcList'].forceArr['ndc'];
+      a2 := j2.forceObj['ndcList'].forceArr['ndc'];
+      t := 0;
+      tt := a.count;
+      for i := 0 to a.Count - 1 do
+      begin
+        c := a.Value[i];
+        if (not FProducts.ContainsKey(c)) and (not FPackages.ContainsKey(c)) then
+          a2.add(c);
+      end;
+      BytesToFile(TJSONWriter.WriteObject(j2, false), FilePath([FSource, 'unknown-ndc-codes.json']));
+    finally
+      j2.free;
+    end;
+  finally
+    json.free;
+  end;
+end;
+
+procedure TNdcImporter.prepareDatabase;
+var
+  md : TFDBMetaData;
+begin
+  md := FConn.FetchMetaData;
+  try
+    if md.HasTable('NDCProducts') then
+      FConn.DropTable('NDCProducts');
+    if md.HasTable('NDCPackages') then
+      FConn.DropTable('NDCPackages');
+    if md.HasTable('NDCProductTypes') then
+      FConn.DropTable('NDCProductTypes');
+    if md.HasTable('NDCOrganizations') then
+      FConn.DropTable('NDCOrganizations');
+    if md.HasTable('NDCDoseForms') then
+      FConn.DropTable('NDCDoseForms');
+    if md.HasTable('NDCRoutes') then
+      FConn.DropTable('NDCRoutes');
+    FConn.ExecSQL('CREATE TABLE NDCProducts ('+
+        'NDCKey int NOT NULL, '+
+        'Code nchar(11) NOT NULL, '+
+        'LastSeen '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
+        'Active int NOT NULL, '+
+        'Type int NOT NULL, '+
+        'TradeName nchar(255) NOT NULL, '+
+        'Suffix nchar(180) NOT NULL, '+
+//        'Generic nchar(80) NOT NULL, '+
+        'DoseForm int NOT NULL, '+
+        'Route int NOT NULL, '+
+        'StartDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
+        'EndDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
+        'Category nchar(40) NOT NULL, '+
+        'Company int NOT NULL, '+
+        'Generics '+DBBlobType(FConn.Owner.Platform)+' NULL, '+
+        'CONSTRAINT PK_NDCProducts PRIMARY KEY (NDCKey ASC))');
+    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCProductsCode] ON NDCProducts ( Code ASC )');
+    FConn.ExecSQL('CREATE TABLE NDCPackages ('+
+        'NDCKey int NOT NULL, '+
+        'ProductKey int NOT NULL, '+
+        'Code nchar(12) NOT NULL, '+
+        'Code11 nchar(11) NOT NULL, '+
+        'LastSeen '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
+        'Active int NOT NULL, '+
+        'Description nchar(255) NOT NULL, '+
+        'CONSTRAINT PK_NDCPackages PRIMARY KEY (NDCKey ASC))');
+    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
+    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
+    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
+    FConn.ExecSQL('CREATE TABLE NDCVersion (Version String NOT NULL)');
+  finally
+    md.Free;
+  end;
+end;
+
 
 procedure TNdcImporter.finishDatabase;
 var
@@ -264,159 +699,68 @@ begin
     FConn.ExecSQL('Insert into NDCRoutes (NDCKey, Name) values ('+inttostr(FRoutes[s])+', '''+SQLWrapString(s)+''')');
 end;
 
-procedure TNdcImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
-begin
-  FOrgs.Clear;
-  FTypes.Clear;
-  prepareDatabase;
-  importVersion;
-  importProducts(callback);
-  importPackages(callback);
-  finishDatabase;
-end;
-
-procedure TNdcImporter.prepareDatabase;
-var
-  md : TFDBMetaData;
-begin
-  md := FConn.FetchMetaData;
-  try
-    if md.HasTable('NDCProducts') then
-      FConn.DropTable('NDCProducts');
-    if md.HasTable('NDCPackages') then
-      FConn.DropTable('NDCPackages');
-    if md.HasTable('NDCProductTypes') then
-      FConn.DropTable('NDCProductTypes');
-    if md.HasTable('NDCOrganizations') then
-      FConn.DropTable('NDCOrganizations');
-    if md.HasTable('NDCDoseForms') then
-      FConn.DropTable('NDCDoseForms');
-    if md.HasTable('NDCRoutes') then
-      FConn.DropTable('NDCRoutes');
-    FConn.ExecSQL('CREATE TABLE NDCProducts ('+
-        'NDCKey int NOT NULL, '+
-        'Code nchar(11) NOT NULL, '+
-        'Active int NOT NULL, '+
-        'Type int NOT NULL, '+
-        'TradeName nchar(255) NOT NULL, '+
-        'Suffix nchar(180) NOT NULL, '+
-//        'Generic nchar(80) NOT NULL, '+
-        'DoseForm int NOT NULL, '+
-        'Route int NOT NULL, '+
-        'StartDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
-        'EndDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
-        'Category nchar(40) NOT NULL, '+
-        'Company int NOT NULL, '+
-        'Generics '+DBBlobType(FConn.Owner.Platform)+' NULL, '+
-        'CONSTRAINT PK_NDCProducts PRIMARY KEY (NDCKey ASC))');
-    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCProductsCode] ON NDCProducts ( Code ASC )');
-    FConn.ExecSQL('CREATE TABLE NDCPackages ('+
-        'NDCKey int NOT NULL, '+
-        'ProductKey int NOT NULL, '+
-        'Code nchar(12) NOT NULL, '+
-        'Code11 nchar(11) NOT NULL, '+
-        'Active int NOT NULL, '+
-        'Description nchar(255) NOT NULL, '+
-        'CONSTRAINT PK_NDCPackages PRIMARY KEY (NDCKey ASC))');
-    FConn.ExecSQL('CREATE UNIQUE INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
-    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
-    FConn.ExecSQL('CREATE INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
-    FConn.ExecSQL('CREATE TABLE NDCVersion (Version String NOT NULL)');
-  finally
-    md.Free;
-  end;
-end;
-
 function checkLength(s : String; name : String; len : integer) : String;
 begin
   if (s.length > 255) and (len = 255) then
     exit(copy(s, 1, 255));
 
   if s.Length > len then
-    raise EFslException.Create(name+' Too long ('+inttostr(s.Length)+')');
+    raise EFslException.Create(name+' Too long ('+inttostr(s.Length)+'): '+s);
   result := s;
 end;
 
-function fixEndDate(date : string) : String;
+procedure TNdcImporter.processPackage(p: TNDCPackage);
 begin
-  if date.startsWith('3031') then
-    result := '2031'+date.Substring(4)
-  else
-    result := date;
-end;
-
-function genCode11(s : String) : String;
-var
-  p : TArray<String>;
-begin
-  p := s.Split(['-']);
-  result := StringPadLeft(p[0], '0', 5)+
-            StringPadLeft(p[1], '0', 4)+
-            StringPadLeft(p[2], '0', 2);
-end;
-
-procedure TNdcImporter.processPackage(fields: TFslStringList);
-begin
-  if fields.count < 4 then
+  if not FCodes.containsKey(p.productCode) then
     exit;
-  if not FCodes.containsKey(fields[PACK_FIELD_ProductNDC]) then
-    exit;
-  if FCodes.containsKey(fields[PACK_FIELD_NDCPackageCode]) then
+  if FCodes.containsKey(p.code) then
     exit;
   inc(FKey);
-  FCodes.add(fields[PACK_FIELD_NDCPackageCode], FKey);
+  FCodes.add(p.code, FKey);
   FConn.BindInteger('NDCKey', FKey);
-  FConn.BindInteger('ProductKey', FCodes[fields[PACK_FIELD_ProductNDC]]);
-  FConn.BindString('Code', checklength(fields[PACK_FIELD_NDCPackageCode], 'PACK_FIELD_NDCPackageCode', 12));
-  FConn.BindString('Code11', genCode11(fields[PACK_FIELD_NDCPackageCode]));
-
-  FConn.BindString('Description', checklength(fields[PACK_FIELD_PackageDescription], 'ProprietaryName', 255));
-  if fields.Count > PACK_FIELD_NDC_Exclude_Flag then
-    FConn.BindIntegerFromBoolean('Active', fields[PACK_FIELD_NDC_Exclude_Flag] = 'Y')
-  else
-    FConn.BindIntegerFromBoolean('Active', true);
+  FConn.BindInteger('ProductKey', FCodes[p.productCode]);
+  FConn.BindString('Code', checklength(p.code, 'PACK_FIELD_NDCPackageCode', 12));
+  FConn.BindString('Code11', genCode11(p.code));
+  FConn.BindString('Description', p.description);
+  FConn.BindIntegerFromBoolean('Active', p.active);
   FConn.Execute;
 end;
 
-procedure TNdcImporter.processProduct(fields : TFslStringList);
+procedure TNdcImporter.processProduct(p: TNDCProduct);
 begin
-  if fields.count < 10 then
-    exit;
-  if FCodes.containsKey(fields[PROD_FIELD_ProductNDC]) then
+  if FCodes.containsKey(p.code) then
     exit;
   inc(FKey);
   FConn.BindInteger('NDCKey', FKey);
-  FConn.BindString('Code', checklength(fields[PROD_FIELD_ProductNDC], 'ProductNDC', 11));
-  FCodes.Add(fields[PROD_FIELD_ProductNDC], FKey);
-  if fields.Count > PROD_FIELD_NDC_Exclude_Flag then
-    FConn.BindIntegerFromBoolean('Active', fields[PROD_FIELD_NDC_Exclude_Flag] = 'Y')
-  else
-    FConn.BindIntegerFromBoolean('Active', true);
-  if not FTypes.containsKey(fields[PROD_FIELD_ProductTypeName]) then
-    FTypes.Add(fields[PROD_FIELD_ProductTypeName], FTypes.Count+1);
-  FConn.BindInteger('Type', FTypes[fields[PROD_FIELD_ProductTypeName]]);
-  FConn.BindString('TradeName', checklength(fields[PROD_FIELD_ProprietaryName], 'ProprietaryName', 255));
-  FConn.BindString('Suffix', checklength(fields[PROD_FIELD_ProprietaryNameSuffix], 'ProprietaryNameSuffix', 180));
-  FConn.BindBlobFromString('Generics', fields[PROD_FIELD_NonProprietaryName]);
-  if not FDoseforms.containsKey(fields[PROD_FIELD_DosageFormName]) then
-    FDoseforms.Add(fields[PROD_FIELD_DosageFormName], FDoseforms.Count+1);
-  FConn.BindInteger('DoseForm', FDoseforms[fields[PROD_FIELD_DosageFormName]]);
-  if not FRoutes.containsKey(fields[PROD_FIELD_RouteName]) then
-    FRoutes.Add(fields[PROD_FIELD_RouteName], FRoutes.Count+1);
-  FConn.BindInteger('Route', FRoutes[fields[PROD_FIELD_RouteName]]);
-  FConn.BindDateTimeEx('StartDate', TFslDateTime.fromHL7(fields[PROD_FIELD_StartMarketingDate]));
-  FConn.BindDateTimeEx('EndDate', TFslDateTime.fromHL7(fixEndDate(fields[PROD_FIELD_EndMarketingDate])));
-  FConn.BindString('Category', checklength(fields[PROD_FIELD_MarketingCategoryName], 'MarketingCategoryName', 40));
-  if not FOrgs.containsKey(fields[PROD_FIELD_LabelerName]) then
-    FOrgs.Add(fields[PROD_FIELD_LabelerName], FOrgs.Count+1);
-  FConn.BindInteger('Company', FOrgs[fields[PROD_FIELD_LabelerName]]);
+  FConn.BindString('Code', checklength(p.code, 'ProductNDC', 11));
+  FCodes.Add(p.code, FKey);
+  FConn.BindIntegerFromBoolean('Active', p.active);
+  if not FTypes.containsKey(p.productTypeName) then
+    FTypes.Add(p.productTypeName, FTypes.Count+1);
+  FConn.BindInteger('Type', FTypes[p.productTypeName]);
+  FConn.BindString('TradeName', checklength(p.ProprietaryName, 'ProprietaryName', 255));
+  FConn.BindString('Suffix', checklength(p.ProprietaryNameSuffix, 'ProprietaryNameSuffix', 180));
+  FConn.BindBlobFromString('Generics', p.NonProprietaryName);
+  if not FDoseforms.containsKey(p.DosageFormName) then
+    FDoseforms.Add(p.DosageFormName, FDoseforms.Count+1);
+  FConn.BindInteger('DoseForm', FDoseforms[p.DosageFormName]);
+  if not FRoutes.containsKey(p.RouteName) then
+    FRoutes.Add(p.RouteName, FRoutes.Count+1);
+  FConn.BindInteger('Route', FRoutes[p.RouteName]);
+  FConn.BindDateTimeEx('StartDate', p.StartMarketingDate);
+  FConn.BindDateTimeEx('EndDate', p.EndMarketingDate);
+  FConn.BindString('Category', checklength(p.MarketingCategoryName, 'MarketingCategoryName', 40));
+  if not FOrgs.containsKey(p.LabelerName) then
+    FOrgs.Add(p.LabelerName, FOrgs.Count+1);
+  FConn.BindInteger('Company', FOrgs[p.LabelerName]);
   FConn.Execute;
 end;
 
-procedure TNdcImporter.importPackages(callback: TWorkProgressEvent);
+
+procedure TNdcImporter.processPackages(callback: TWorkProgressEvent);
 var
-  f : TFslCSVExtractor;
-  fields : TFslStringList;
+  i, lc : integer;
+  p : TNdcPackage;
 begin
   if FConn.Owner.Platform = kdbSQLite then
     FConn.StartTransact;
@@ -425,45 +769,33 @@ begin
                  ':NDCKey, :Code, :Code11, :ProductKey, :Active, :Description)';
     FConn.prepare;
     FKey := 0;
-    fields := TFslStringList.create;
-    try
-      f := TFslCSVExtractor.Create(Path([FSource, 'package.txt']), TEncoding.ASCII, false, 8192);
-      try
-        f.Separator := #9;
-        f.IgnoreWhitespace := false;
-        f.ConsumeEntries(fields); // headers
-        while f.More do
-        begin
-          callback(self, 50 + f.percent div 2, false, 'Processing Packages');
-          f.ConsumeEntries(fields);
-          processPackage(fields);
-        end;
-      finally
-        f.free;
-      end;
-    finally
-      fields.free;
+    i := 0;
+    lc := 0;
+    for p in FPackages.values do
+    begin
+      inc(lc);
+      if (lc mod LOOP_STEP_COUNT = 0) then
+        callback(self,  prog(i, FPackages.Count), false, 'Processing Packages');
+      processPackage(p);
+      inc(i);
     end;
     FConn.Terminate;
   finally
     if FConn.Owner.Platform = kdbSQLite then
       FConn.commit;
   end;
-  callback(self, 100, true, 'Finished Processing');
+  callback(self, prog(100), true, 'Finished Processing');
 end;
 
-procedure TNdcImporter.importVersion;
-var
-  v : String;
+procedure TNdcImporter.processVersion(v : String);
 begin
-  v := FileToString(Path([FSource, 'version.txt']), TEncoding.UTF8).trim();
   FConn.ExecSQL('Insert into NDCVersion (Version) values ('''+SQLWrapString(v)+''')');
 end;
 
-procedure TNdcImporter.importProducts(callback: TWorkProgressEvent);
+procedure TNdcImporter.processProducts(callback: TWorkProgressEvent);
 var
-  f : TFslCSVExtractor;
-  fields : TFslStringList;
+  i, lc : integer;
+  p : TNdcProduct;
 begin
   if FConn.Owner.Platform = kdbSQLite then
     FConn.StartTransact;
@@ -472,24 +804,15 @@ begin
                  ':NDCKey, :Code, :Active, :Type, :TradeName, :Suffix, :DoseForm, :Route, :StartDate, :EndDate, :Category, :Company, :Generics)';
     FConn.prepare;
     FKey := 0;
-    fields := TFslStringList.create;
-    try
-      f := TFslCSVExtractor.Create(Path([FSource, 'product.txt']), TEncoding.ASCII, false, 8192);
-      try
-        f.Separator := #9;
-        f.IgnoreWhitespace := false;
-        f.ConsumeEntries(fields); // headers
-        while f.More do
-        begin
-          callback(self, f.percent div 2, false, 'Processing Products');
-          f.ConsumeEntries(fields);
-          processProduct(fields);
-        end;
-      finally
-        f.free;
-      end;
-    finally
-      fields.free;
+    i := 0;
+    lc := 0;
+    for p in FProducts.values do
+    begin
+      inc(lc);
+      if (lc mod LOOP_STEP_COUNT = 0) then
+        callback(self, prog(i, FProducts.Count), false, 'Processing Products');
+      processProduct(p);
+      inc(i);
     end;
     FConn.Terminate;
   finally

@@ -4196,15 +4196,15 @@ begin
         end;
       wrTimeout:
         begin
-          raise exception.create('timeout');
+          raise EFslException.create('timeout');
         end;
       wrAbandoned :
         begin
-          raise exception.create('abandoned');
+          raise EFslException.create('abandoned');
         end;
       wrError :
         begin
-          raise exception.create('error');
+          raise EFslException.create('error');
         end;
     end;
   end;

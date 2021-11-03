@@ -19,7 +19,7 @@
     Rev 1.3    6/11/2004 9:33:58 AM  DSiders
   Added "Do not Localize" comments.
 
-  Rev 1.2    13.1.2004 ã. 17:26:06  DBondzhev
+  Rev 1.2    13.1.2004 c. 17:26:06  DBondzhev
   Added Domain property
 
   Rev 1.1    4/12/2003 10:24:04 PM  GGrieve

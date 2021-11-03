@@ -954,7 +954,7 @@ type
   public
     function link : TFHIRLookupOpResponseW; overload;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
-    function addDesignation(systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
+    function addDesignation(lang, systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function getVersion: String; virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;

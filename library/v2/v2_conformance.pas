@@ -37,6 +37,7 @@ Interface
 Uses
   SysUtils, Classes, Graphics,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml,
+  fhir_colour_utils,
   v2_base, v2_dictionary, v2_objects;
 
 Type
@@ -2901,7 +2902,7 @@ Begin
 
   LElem := AElement.element('HL7v2xStaticDefRef');
   if Assigned(LElem) Then
-    Raise Exception.Create('v2_conformance'+': Static Def Ref not yet supported');
+    Raise EFslException.Create('v2_conformance'+': Static Def Ref not yet supported');
 
   LElem := AElement.nextElement;
   While Assigned(LElem) And (LElem.Name = 'HL7v2xStaticDef') Do

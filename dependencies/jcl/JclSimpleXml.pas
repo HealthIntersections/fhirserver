@@ -12,14 +12,14 @@
 {                                                                                                  }
 { The Original Code is JvSimpleXML.PAS, released on 2002-06-03.                                    }
 {                                                                                                  }
-{ The Initial Developer of the Original Code is Sébastien Buysse [sbuysse att buypin dott com].    }
-{ Portions created by Sébastien Buysse are Copyright (C) 2001 Sébastien Buysse.                    }
+{ The Initial Developer of the Original Code is Sibastien Buysse [sbuysse att buypin dott com].    }
+{ Portions created by Sibastien Buysse are Copyright (C) 2001 Sibastien Buysse.                    }
 { All Rights Reserved.                                                                             }
 {                                                                                                  }
 { Contributor(s):                                                                                  }
 {   Christophe Paris,                                                                              }
 {   Florent Ouchet (move from the JVCL to the JCL)                                                 }
-{   Teträm                                                                                         }
+{   Tetrdm                                                                                         }
 {                                                                                                  }
 {**************************************************************************************************}
 {                                                                                                  }
