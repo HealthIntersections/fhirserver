@@ -504,7 +504,7 @@ uses
   fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas',
   qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
   TZDB in '..\..\source\tzdb\dist\TZDB.pas',
-  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
+  fhir_qrcode in '..\library\fhir\fhir_qrcode.pas',
   time_tracker in 'time_tracker.pas',
   fhir_icao in '..\library\fhir\fhir_icao.pas',
   fhir_uris in '..\library\fhir\fhir_uris.pas',
@@ -513,7 +513,8 @@ uses
   ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas',
   PdfiumCore in '..\..\source\PdfiumLib\Source\PdfiumCore.pas',
   PdfiumCtrl in '..\..\source\PdfiumLib\Source\PdfiumCtrl.pas',
-  PdfiumLib in '..\..\source\PdfiumLib\Source\PdfiumLib.pas';
+  PdfiumLib in '..\..\source\PdfiumLib\Source\PdfiumLib.pas',
+  fhir_colour_utils in '..\library\fhir\fhir_colour_utils.pas';
 
 begin
   ExecuteFhirServer;

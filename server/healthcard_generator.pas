@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, DateUtils, Graphics, {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto, fsl_qrcode,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto, fhir_qrcode,
   fhir_objects, fhir_common, fhir_healthcard, fhir_utilities, fhir_uris,
   fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
   session, storage, server_context;

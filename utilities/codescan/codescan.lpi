@@ -77,12 +77,6 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="LCLBase"/>
-      </Item>
-      <Item>
-        <PackageName Value="LCL"/>
-      </Item>
-      <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>
     </RequiredPackages>

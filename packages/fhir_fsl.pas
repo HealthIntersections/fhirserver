@@ -51,7 +51,7 @@ uses
   fsl_scrypt, fsl_service, fsl_service_win, fsl_shell, fsl_stream, 
   fsl_threads, fsl_turtle, fsl_twilio, fsl_utilities, fsl_websocket, 
   fsl_wininet, fsl_xml, fsl_ucum, IdLogDebug, IdServerInterceptLogFile, 
-  fsl_htmlgen, fsl_diff, fsl_qrcode, qrcodegen, fsl_unicode, LazarusPackageIntf;
+  fsl_htmlgen, fsl_diff, fsl_unicode, LazarusPackageIntf;
 
 implementation
 

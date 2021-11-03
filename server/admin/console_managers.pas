@@ -37,6 +37,7 @@ uses
   Dialogs,
   fsl_base, fsl_threads, fsl_utilities,
   fdb_manager,
+  fhir_colour_utils,
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
   tx_ndc, tx_rxnorm, tx_unii,

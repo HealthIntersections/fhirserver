@@ -28,7 +28,7 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
-  Classes, SysUtils, Interfaces,
+  Classes, SysUtils,
   fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode;
 
 

@@ -37,6 +37,7 @@ Interface
 Uses
   SysUtils, Classes, Graphics,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml,
+  fhir_colour_utils,
   v2_base, v2_dictionary, v2_objects;
 
 Type
