@@ -35,8 +35,6 @@ interface
 uses
   {$IFDEF WINDOWS}
   Windows,
-  {$ELSE}
-  LCLType, Dialogs,
   {$ENDIF}
   SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections, fsl_fpc;
 
@@ -773,7 +771,7 @@ begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
       {$ELSE}
-      DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
+      // todo... DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
       {$ENDIF}
     end;
   end;
