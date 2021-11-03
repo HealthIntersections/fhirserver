@@ -2287,7 +2287,7 @@ begin
         begin
           s := Desc.GetEntry(iRefs[i], ll);
           if useLang(ll, langs, false) then
-            resp.addDesignation(URI_SNOMED, '446211000124102', 'Alias name', s);
+            resp.addDesignation(langDesc(ll), URI_SNOMED, '446211000124102', 'Alias name', s);
         end;
     End;
     {$ENDIF}

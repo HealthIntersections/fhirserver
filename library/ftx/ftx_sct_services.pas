@@ -3852,7 +3852,7 @@ begin
         Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
         if Active and (kind <> 0) Then
         Begin
-          resp.addDesignation(URI_SNOMED, GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
+          resp.addDesignation(codeForLang(lang), URI_SNOMED, GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
         End;
       End;
     End;

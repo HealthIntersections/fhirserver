@@ -641,7 +641,7 @@ type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRResourceV; override;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; override;
-    function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
+    function addDesignation(lang, system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
@@ -3019,7 +3019,7 @@ end;
 
 { TFHIRLookupOpResponse3 }
 
-function TFHIRLookupOpResponse3.addDesignation(system, code, display, value: string): TFHIRLookupOpRespDesignationW;
+function TFHIRLookupOpResponse3.addDesignation(lang, system, code, display, value: string): TFHIRLookupOpRespDesignationW;
 var
   p : TFHIRLookupOpRespDesignation;
 begin
@@ -3029,6 +3029,7 @@ begin
     p.use.system := system;
     p.use.display := display;
     p.use.code := code;
+    p.language := lang;
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation3.create(p.Link);
