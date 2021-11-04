@@ -1,25 +1,30 @@
 program codescan;
 
-{this programs run as part of the ci-build to enforce coding standards
-on the code. THe following rules are enforced:
+{
+This programs run as part of the ci-build to enforce coding standards
+on the fhirserver code. The following rules are enforced:
 
 * code can't have any unicode bi-di control characters in it
    file extensions: .pas, .lpr, .inc, .html, .css,
    (including in all the source packages too)
+   see CVE-2021-42574
+
 * all .pas files must have a license statement in a comment at the head
-   (except for in /dependencies
+   (except for in /dependencies)
+
 * never raise Exception directly - always a subclass
-   (and all exceptions should subclass EFslException outside /dependencies
+   (and all exceptions should subclass EFslException outside /dependencies)
+
 * check .pas line endings are all crlf (make them so)
-*
+   (but still has to be corrected in the PR)
 
-for now, the program doesn't apply code formatting to the code.
+For now, the program doesn't apply code formatting to the code.
 That might be reviewed if a working code formatter is found in the
-future
+future (extensive use of $IFDEF blows most code formatters brains)
 
-The program takes one parameter, which is the name of the root folder that contains the source directory.
-It assumes that the root of the FHIRServer repository is two folders up from the executable
-
+The program takes one parameter, which is the name of the root folder
+that contains the source directory. It assumes that the root of the
+FHIRServer repository is up from folder containing the executable.
 }
 
 {$MODE DELPHI}
