@@ -37,12 +37,9 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-    - name: Docker Buildx
+    - name: Docker Build
       run: |
-        docker buildx build \
-          --output=type=docker \
-          --cache-from "type=local,src=/tmp/.buildx-cache" \
-          --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+        docker  build \
           --tag fhirserver \
         .
     - name: Scan Code
