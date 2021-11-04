@@ -1419,7 +1419,7 @@ var
   id, link, base, sql, field : String;
   total : Integer;
   rkey, versionKey : integer;
-  reverse : boolean;
+  sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus;
   wantsummary : TFHIRSummaryOption;
   title: string;
   keys : TKeyList;
@@ -1451,10 +1451,10 @@ begin
       keys := TKeyList.Create;
       params := THTTPParameters.Create('');
       try
-        if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
+        if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, sortStatus1, sortStatus2, sortStatus3) then
           link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
         else
-          id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartment, request.SessionCompartments, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
+          id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartment, request.SessionCompartments, nil, link, sql, total, wantSummary, request.strictSearch, sortStatus1, sortStatus2, sortStatus3);
         bundle.setTotal(total);
         bundle.tag('sql', sql);
         bundle.addLink('self', 'todo');
