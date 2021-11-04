@@ -89,8 +89,8 @@ implementation
 function TICAOCardImporter.import(json: TJsonObject): THealthcareCard;
 var
   bundle : TFHIRBundleW;
-  data, sig, hdr, msg, ve : TJsonObject;
-  vd : TJsonNode;
+  data, sig, hdr, msg : TJsonObject;
+  ve, vd : TJsonNode;
   i : integer;
   cvxCode : String;
   util : THealthcareCardUtilities;
@@ -111,12 +111,14 @@ begin
     i := 1;
     if (msg.arr['ve'] = nil) or (msg.arr['ve'].Count = 0) then
       raise EFHIRException.Create('Unable to find ve in VDS');
-    ve := msg.arr['ve'].Obj[0];
-    cvxCode := processVaccineCode(ve);
-    for vd in ve.forceArr['vd'] do
+    for ve in msg.arr['ve'] do
     begin
-      addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
-      inc(i);
+      cvxCode := processVaccineCode(ve as TJsonObject);
+      for vd in (ve  as TJsonObject).forceArr['vd'] do
+      begin
+        addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
+        inc(i);
+      end;
     end;
 
     checkSignature(sig, data);
