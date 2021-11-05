@@ -44,11 +44,11 @@ uses
 
 type
   TQuantityOperation = (qopEqual, qopNotEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopStartsAfter, qopEndsBefore, qopApproximate);
+  TSearchSortStatus = (sssNotUsed, sssAscending, sssDescending);
 
   TSearchProcessor = class (TFHIRServerWorker)
   private
     FLink: String;
-    FSort: String;
     FFilter: String;
     FTypeKey: integer;
     FCompartment: TFHIRCompartmentId;
@@ -61,11 +61,16 @@ type
     FSession : TFhirSession;
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
-    FReverse: boolean;
     FStrict : boolean;
     FConnection: TFDBConnection;
     FWarnings : TFslList<TFhirOperationOutcomeIssueW>;
     FResConfig : TFslMap<TFHIRResourceConfig>;
+    FSort1: String;
+    FSortStatus1: TSearchSortStatus;
+    FSort2: String;
+    FSortStatus2: TSearchSortStatus;
+    FSort3: String;
+    FSortStatus3: TSearchSortStatus;
 
     function factory : TFHIRFactory;
     function order(s : String) : String;
@@ -102,6 +107,7 @@ type
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
+    function processSortParam(s : String; var sort : string; var status : TSearchSortStatus) : String;
   public
     constructor Create(serverContext : TFslObject);
     destructor Destroy; override;
@@ -124,9 +130,13 @@ type
 
     // outbound
     property link_ : String read FLink write FLink;
-    property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
-    property reverse : boolean read FReverse write FReverse;
+    property sort1 : String read FSort1 write FSort1;
+    property sortStatus1 : TSearchSortStatus read FSortStatus1 write FSortStatus1;
+    property sort2 : String read FSort2 write FSort2;
+    property sortStatus2 : TSearchSortStatus read FSortStatus2 write FSortStatus2;
+    property sort3 : String read FSort3 write FSort3;
+    property sortStatus3 : TSearchSortStatus read FSortStatus3 write FSortStatus3;
     property strict : boolean read FStrict write FStrict;
     property Warnings : TFslList<TFhirOperationOutcomeIssueW> read FWarnings;
   end;
@@ -182,6 +192,8 @@ var
   i, j : integer;
   ix : TFhirIndex;
   ts : TStringList;
+  sn : TArray<String>;
+  s : String;
 begin
   if typekey = 0 then
   begin
@@ -220,36 +232,82 @@ begin
     ts.free;
   end;
 
-  if params.has(SEARCH_PARAM_NAME_SORT) and (params.Value[SEARCH_PARAM_NAME_SORT] <> '_id') then
+  FSortStatus1 := sssAscending; // always used
+  FSortStatus2 := sssNotUsed;
+  FSortStatus3 := sssNotUsed; // always used
+  sort1 := 'Id';
+  sort2 := 'null';
+  sort3 := 'null';
+
+
+  if Factory.version = fhirVersionRelease2 then
   begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
-  end
-  else if params.has(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
-  begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
-  end
-  else if params.has(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
-  begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort := '(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
-    FReverse := true;
+    if params.has(SEARCH_PARAM_NAME_SORT) and (params.Value[SEARCH_PARAM_NAME_SORT] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
+      if (ix = nil) then
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+    end
+    else if params.has(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
+      if (ix = nil) then
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+    end
+    else if params.has(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
+      if (ix = nil) then
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
+      FSortStatus1 := sssDescending;
+    end
+    else
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
   end
   else
   begin
-    sort := 'Id';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
+    if params.has(SEARCH_PARAM_NAME_SORT) then
+    begin
+      sn := params.Value[SEARCH_PARAM_NAME_SORT].Split([',']);
+      if length(sn) > 3 then
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_TOO_MANY', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      s := processSortParam(sn[0], FSort1, FSortStatus1);
+      if length(sn) > 1 then
+        s := s+','+processSortParam(sn[1], FSort2, FSortStatus2);
+      if length(sn) > 2 then
+        s := s+','+processSortParam(sn[2], FSort3, FSortStatus3);
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'='+s;
+    end
+    else
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
   end;
+end;
+
+function TSearchProcessor.processSortParam(s : String; var sort : string; var status : TSearchSortStatus) : String;
+var
+  ix : TFhirIndex;
+begin
+  if s.StartsWith('-') then
+  begin
+    status := sssDescending;
+    delete(s, 1, 1);
+  end
+  else
+    status := sssAscending;
+  ix := FIndexes.Indexes.getByName(type_, s);
+  if (ix = nil) then
+    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+  sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+  if status = sssDescending then
+    result := '-'+ix.Name
+  else
+    result := ix.Name;
 end;
 
 procedure TSearchProcessor.ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
