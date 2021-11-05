@@ -165,6 +165,8 @@ type
     procedure DoShowDesigner(sender : TObject);
     procedure DoShowTextTab(sender : TObject);
     procedure DoMnuFormat(sender : TObject);
+    procedure DoEditorMouseDown(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure DoEditorMouseUp(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   protected
     // if hasText
     FContent : TStringList;
@@ -173,7 +175,7 @@ type
     FDesignerPanelWork : TPanel;
     FMode : TCurrentViewMode;
     actFormat : TContentAction;
-
+    FMouseDownInTextEditor : boolean;
 
     TextToolbar : TToolBar;
     DesignerToolbar : TToolbar;
@@ -934,6 +936,8 @@ var
   loc : TSourceLocation;
   t : QWord;
 begin
+  if FMouseDownInTextEditor then
+    exit;
   t := GetTickCount64;
   LastChangeChecked := true;
   LastMoveChecked := true;
@@ -963,8 +967,10 @@ var
   ts : TStringList;
   loc : TSourceLocation;
 begin
-  LastMoveChecked := true;
+  if FMouseDownInTextEditor then
+    exit;
 
+  LastMoveChecked := true;
   if (Context.Focus = self) then
   begin
     loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
@@ -1226,6 +1232,8 @@ begin
   TextEditor.Highlighter := HighLighter;
   TextEditor.OnChange := DoTextEditorChange;
   TextEditor.OnStatusChange := DoTextEditorStatusChange;
+  TextEditor.OnMouseDown := DoEditorMouseDown;
+  TextEditor.OnMouseUp := DoEditorMouseUp;;
   TextEditor.PopupMenu := FEditorPopup;
 end;
 
@@ -1320,7 +1328,8 @@ begin
   begin
     lastMove := GetTickCount64;
     lastMoveChecked := false;
-    Context.Inspector.Active := false;
+    if not FMouseDownInTextEditor then
+      Context.Inspector.Active := false;
   end;
 end;
 
@@ -1337,6 +1346,16 @@ end;
 procedure TBaseEditor.DoMnuFormat(sender: TObject);
 begin
   updateFormatMenu;
+end;
+
+procedure TBaseEditor.DoEditorMouseDown(sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FMouseDownInTextEditor := true;
+end;
+
+procedure TBaseEditor.DoEditorMouseUp(sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FMouseDownInTextEditor := false;
 end;
 
 procedure TBaseEditor.MakeNavigationItems(sender: TObject);
