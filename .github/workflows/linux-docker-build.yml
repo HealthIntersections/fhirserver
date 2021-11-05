@@ -28,21 +28,9 @@ jobs:
           -e MYSQL_PASSWORD=test \
           -e MYSQL_DATABASE=test \
           -d mysql:8
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-    - name: Docker Buildx
+    - name: Docker Build
       run: |
-        docker buildx build \
-          --output=type=docker \
-          --cache-from "type=local,src=/tmp/.buildx-cache" \
-          --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+        docker  build \
           --tag fhirserver \
         .
     - name: Scan Code
@@ -77,7 +65,3 @@ jobs:
           -v ~/terminology:/terminology \
           -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
           fhirserver -tests
-    - name: Update cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
