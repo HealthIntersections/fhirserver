@@ -28,15 +28,6 @@ jobs:
           -e MYSQL_PASSWORD=test \
           -e MYSQL_DATABASE=test \
           -d mysql:8
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
     - name: Docker Build
       run: |
         docker  build \
@@ -74,7 +65,3 @@ jobs:
           -v ~/terminology:/terminology \
           -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
           fhirserver -tests
-    - name: Update cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
