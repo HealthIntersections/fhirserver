@@ -728,7 +728,7 @@ begin
   FContext.OnOpenResourceSrc := doOpenResourceSrc;
   FContext.OnOpenSource := doOpenSource;
   FContext.MessageView.OnChange := updateMessages;
-  FContext.Inspector.OnChange:=updateInspector;
+  FContext.Inspector.OnChange := updateInspector;
   FContext.Font := SynEdit1.Font;
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
@@ -1514,7 +1514,7 @@ procedure TMainToolkitForm.updateInspector(sender: TObject);
 begin
   if Context.Inspector.active then
   begin
-    vlInspector.Enabled := true;
+    //vlInspector.Enabled := true;
     vlInspector.Color := clWhite;
     vlInspector.FixedColor := clBtnFace;
     vlInspector.FixedCols := 1;
@@ -1522,7 +1522,7 @@ begin
   end
   else
   begin
-    vlInspector.Enabled := false;
+    //vlInspector.Enabled := false;
     if Context.hasFocus and (context.focus.Pause > 500) then
       vlInspector.Color := $fcf3f5;
     vlInspector.FixedColor := clBtnFace;
