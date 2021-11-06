@@ -73,6 +73,8 @@ const
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
+  ICONS_TSourceEditorKind : Array [TSourceEditorKind] of integer = (-1, 42, 114, 113, 115, 116, 117, -1, 118, 119, 120, 121, 122, 123, -1, 124, -1);
+
 
 
 function onlySourceKind(kinds : TSourceEditorKindSet) : TSourceEditorKind;

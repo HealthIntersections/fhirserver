@@ -8,6 +8,7 @@ object FileFormatChooser: TFileFormatChooser
   ClientHeight = 449
   ClientWidth = 425
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poOwnerFormCenter
   LCLVersion = '2.3.0.0'
   object Panel1: TPanel
@@ -61,78 +62,66 @@ object FileFormatChooser: TFileFormatChooser
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 399
-      ClientWidth = 415
+      ClientHeight = 395
+      ClientWidth = 417
       ParentFont = False
       object Panel2: TPanel
         Left = 0
-        Height = 399
+        Height = 395
         Top = 0
-        Width = 415
+        Width = 417
         Align = alClient
         BorderWidth = 6
-        ClientHeight = 399
-        ClientWidth = 415
+        ClientHeight = 395
+        ClientWidth = 417
         ParentFont = False
         TabOrder = 0
-        object ListBox1: TListBox
+        object lvFormats: TListView
           Left = 7
-          Height = 385
+          Height = 381
           Top = 7
-          Width = 401
+          Width = 403
           Align = alClient
-          Items.Strings = (
-            'FHIR Resource'
-            'HL7 v2 Message'
-            'CDA Document'
-            'XML File'
-            'JSON File'
-            'Liquid Template'
-            'Structure Map'
-            'Ini File'
-            'Text File'
-            'Markdown'
-            'Javascript'
-            'HTML'
-            'DICOM Image'
-          )
-          ItemHeight = 23
-          OnClick = ListBox1Click
-          OnDblClick = ListBox1DblClick
-          ParentFont = False
+          Columns = <          
+            item
+              Width = 10
+            end          
+            item
+              Width = 10
+            end>
           TabOrder = 0
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
-      ClientHeight = 399
-      ClientWidth = 415
+      ClientHeight = 395
+      ClientWidth = 417
       ParentFont = False
       object Panel3: TPanel
         Left = 0
         Height = 41
         Top = 0
-        Width = 415
+        Width = 417
         Align = alTop
         ClientHeight = 41
-        ClientWidth = 415
+        ClientWidth = 417
         ParentFont = False
         TabOrder = 0
         object Label1: TLabel
           Left = 9
-          Height = 17
+          Height = 15
           Top = 9
-          Width = 89
+          Width = 69
           Caption = 'FHIR Version:'
           ParentFont = False
         end
         object ComboBox1: TComboBox
           Left = 91
-          Height = 33
+          Height = 23
           Top = 9
           Width = 141
-          ItemHeight = 0
+          ItemHeight = 15
           ParentFont = False
           Style = csDropDownList
           TabOrder = 0

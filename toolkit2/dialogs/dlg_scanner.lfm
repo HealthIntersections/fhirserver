@@ -1,10 +1,9 @@
 object QRCodeScannerForm: TQRCodeScannerForm
-  Left = 401
+  Left = 503
   Height = 607
-  Top = 130
+  Top = -870
   Width = 941
   BorderIcons = [biSystemMenu, biMaximize]
-  BorderStyle = bsDialog
   Caption = 'QR Code Scanner'
   ClientHeight = 607
   ClientWidth = 941
@@ -65,7 +64,7 @@ object QRCodeScannerForm: TQRCodeScannerForm
     Height = 561
     Top = 0
     Width = 461
-    Align = alLeft
+    Align = alClient
     BevelOuter = bvNone
     ClientHeight = 561
     ClientWidth = 461
@@ -143,7 +142,7 @@ object QRCodeScannerForm: TQRCodeScannerForm
     Height = 561
     Top = 0
     Width = 475
-    Align = alClient
+    Align = alRight
     BevelOuter = bvNone
     Caption = 'Panel3'
     ClientHeight = 561
@@ -177,6 +176,8 @@ object QRCodeScannerForm: TQRCodeScannerForm
     Height = 561
     Top = 0
     Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
   end
   object btnPDF: TButton
     Left = 302

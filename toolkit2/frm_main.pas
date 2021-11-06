@@ -614,6 +614,7 @@ type
 
     // used by the project manager
     function createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor; overload;
+    function createNewFile(kinds : TSourceEditorKindSet; bytes : TBytes = []) : TToolkitEditor; overload;
     function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor; overload;
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     function openFile(address : String) : TToolkitEditor;
@@ -1285,6 +1286,23 @@ end;
 function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor;
 begin
   result := createNewFile(kind, '', '', bytes);
+end;
+
+function TMainToolkitForm.createNewFile(kinds: TSourceEditorKindSet; bytes: TBytes): TToolkitEditor;
+begin
+  if (onlySourceKind(kinds) = sekNull) then
+  begin
+    FileFormatChooser := TFileFormatChooser.create(self);
+    try
+      FileFormatChooser.filter(kinds);
+      if FileFormatChooser.ShowModal = mrOK then
+        result := createNewFile(TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1), bytes);
+      else
+        abort;
+    finally
+      FileFormatChooser.free;
+    end;
+  end;
 end;
 
 function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
@@ -2572,8 +2590,10 @@ end;
 
 procedure TMainToolkitForm.actionFileOpenQRCodeExecute(Sender: TObject);
 var
-  s : String
-;begin
+  s : String;
+  cnt : TBytes;
+  fmt : TSourceEditorKindSet;
+begin
   QRCodeScannerForm := TQRCodeScannerForm.create(nil);
   try
     if QRCodeScannerForm.ShowModal = mrOk then
@@ -2582,7 +2602,11 @@ var
       if (s.StartsWith('shc:/')) then
         createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
       else
-        createNewFile(sekNull, TEncoding.UTF8.getBytes(s));
+      begin
+        cnt := TEncoding.UTF8.getBytes(s);
+        fmt := FFactory.determineFormatFromText(s, cnt);
+        createNewFile(fmt, cnt);
+      end;
     end;
   finally
     QRCodeScannerForm.free;
