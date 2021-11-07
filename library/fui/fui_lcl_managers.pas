@@ -90,12 +90,13 @@ type
     procedure doControl(sender : TObject); virtual; abstract;
     procedure doMnuClick(Sender: TObject); virtual; abstract;
     procedure updateControls(op : TControlOperation; allowed : boolean);
+    procedure SetImages(AValue: TImagelist); virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
 
     property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
-    property Images : TImagelist read FImages write FImages;
+    property Images : TImagelist read FImages write SetImages;
 
     function doubleClickEdit : boolean; virtual;
     function AskOnDelete : boolean; virtual;
@@ -120,6 +121,7 @@ type
     function GetFocus: T;
     procedure SetEnabled(AValue: boolean);
     procedure SetFilter(AValue: TEdit);
+    procedure SetFocus(AValue: T);
     procedure SetList(AValue: TListView);
     procedure SetSettings(AValue: TIniFile);
     procedure updateStatus;
@@ -128,6 +130,7 @@ type
     procedure doListDoubleClick(Sender: TObject);
     procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure populateEntry(entry : TListItem; item : T);
+    procedure SetImages(AValue: TImagelist); override;
   protected
     procedure doControl(sender : TObject); override;
     procedure doMnuClick(Sender: TObject); override;
@@ -137,7 +140,7 @@ type
 
     // configuration
     property Data : TFslList<T> read FData;
-    property Focus : T read GetFocus;
+    property Focus : T read GetFocus write SetFocus;
     property hasFocus : boolean read GetHasFocus;
     property List : TListView read FList write SetList;
     property Filter : TEdit read FFilter write SetFilter;
@@ -207,6 +210,7 @@ type
     procedure doTreeDoubleClick(Sender: TObject);
     procedure updateStatus;
     procedure DoEdited(Sender: TObject; Node: TTreeNode; var S: string);
+    procedure SetImages(AValue: TImagelist); override;
   protected
     FData : TFslList<T>; // hidden root
 
@@ -638,6 +642,12 @@ begin
   result.OnClick := doMnuClick;
 end;
 
+procedure TListOrTreeManagerBase.SetImages(AValue: TImagelist);
+begin
+  if FImages=AValue then Exit;
+  FImages:=AValue;
+end;
+
 procedure TListOrTreeManagerBase.updateControls(op: TControlOperation; allowed: boolean);
 var
   entry : TControlEntry;
@@ -672,7 +682,7 @@ procedure TListManager<T>.doFilter;
 var
   f, item : T;
 begin
-  f := Focus;
+  f := Focus.link;
   try
     FFiltered.Clear;
     if Filtered then
@@ -751,6 +761,16 @@ begin
   FFilter.OnChange := FilterChange;
 end;
 
+procedure TListManager<T>.SetFocus(AValue: T);
+var
+  i : integer;
+begin
+  if AValue = nil then
+    List.itemIndex := -1
+  else
+    List.ItemIndex := FData.IndexOf(aValue);
+end;
+
 procedure TListManager<T>.SetList(AValue: TListView);
 var
   i : integer;
@@ -762,6 +782,7 @@ begin
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
   List.OnCustomDrawSubItem := doListDrawSubItem;
+  List.smallImages := FImages;
   FPopup.Images := FImages;
   buildMenu;
   if FPopup.Items.Count > 0 then
@@ -959,6 +980,13 @@ begin
     entry.subItems.add(getCellText(item, c));
 end;
 
+procedure TListManager<T>.SetImages(AValue: TImagelist);
+begin
+  inherited SetImages(AValue);
+  if FList <> nil then
+    FList.SmallImages := AValue;
+end;
+
 procedure TListManager<T>.buildMenu;
 begin
 end;
@@ -1057,7 +1085,7 @@ begin
     result := LoadList;
     doFilter;
   finally
-    focus.free;
+    f.free;
   end;
 end;
 
@@ -1526,6 +1554,7 @@ begin
   FTree.MultiSelect := false;
   FTree.OnClick := doTreeChange;
   Tree.OnDblClick := doTreeDoubleClick;
+  Tree.Images := FImages;
   FPopup.Images := FImages;
   buildMenu;
   if FPopup.Items.Count > 0 then
@@ -1696,6 +1725,13 @@ begin
       changed
     else
       s := getCellText(item);
+end;
+
+procedure TTreeManager<T>.SetImages(AValue: TImagelist);
+begin
+  inherited SetImages(AValue);
+  if FTree <> nil then
+    FTree.images := AValue;
 end;
 
 procedure TTreeManager<T>.doControl(sender: TObject);
