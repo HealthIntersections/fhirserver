@@ -2,11 +2,11 @@ object FileFormatChooser: TFileFormatChooser
   Left = 600
   Height = 449
   Top = 350
-  Width = 425
+  Width = 549
   BorderIcons = [biSystemMenu]
   Caption = 'Choose File Format'
   ClientHeight = 449
-  ClientWidth = 425
+  ClientWidth = 549
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
@@ -15,14 +15,14 @@ object FileFormatChooser: TFileFormatChooser
     Left = 0
     Height = 46
     Top = 403
-    Width = 425
+    Width = 549
     Align = alBottom
     ClientHeight = 46
-    ClientWidth = 425
+    ClientWidth = 549
     ParentFont = False
     TabOrder = 1
     object btnOk: TButton
-      Left = 257
+      Left = 381
       Height = 25
       Top = 13
       Width = 75
@@ -36,7 +36,7 @@ object FileFormatChooser: TFileFormatChooser
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 341
+      Left = 465
       Height = 25
       Top = 13
       Width = 75
@@ -53,7 +53,7 @@ object FileFormatChooser: TFileFormatChooser
     Left = 0
     Height = 403
     Top = 0
-    Width = 425
+    Width = 549
     ActivePage = TabSheet1
     Align = alClient
     ParentFont = False
@@ -63,49 +63,56 @@ object FileFormatChooser: TFileFormatChooser
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
       ClientHeight = 395
-      ClientWidth = 417
+      ClientWidth = 541
       ParentFont = False
       object Panel2: TPanel
         Left = 0
         Height = 395
         Top = 0
-        Width = 417
+        Width = 541
         Align = alClient
         BorderWidth = 6
         ClientHeight = 395
-        ClientWidth = 417
+        ClientWidth = 541
         ParentFont = False
         TabOrder = 0
         object lvFormats: TListView
           Left = 7
           Height = 381
           Top = 7
-          Width = 403
+          Width = 527
           Align = alClient
           Columns = <          
             item
+              AutoSize = True
+              Caption = 'Type'
               Width = 10
             end          
             item
+              AutoSize = True
+              Caption = 'Information'
               Width = 10
             end>
+          ReadOnly = True
+          RowSelect = True
           TabOrder = 0
+          ViewStyle = vsReport
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
       ClientHeight = 395
-      ClientWidth = 417
+      ClientWidth = 541
       ParentFont = False
       object Panel3: TPanel
         Left = 0
         Height = 41
         Top = 0
-        Width = 417
+        Width = 541
         Align = alTop
         ClientHeight = 41
-        ClientWidth = 417
+        ClientWidth = 541
         ParentFont = False
         TabOrder = 0
         object Label1: TLabel

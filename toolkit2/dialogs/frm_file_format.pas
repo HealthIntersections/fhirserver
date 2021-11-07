@@ -64,11 +64,14 @@ type
     FKinds : TSourceEditorKindSet;
   public
     function canSort : boolean; override;
+    function doubleClickEdit : boolean; override;
+
     function allowedOperations(item : TSourceFormat) : TNodeOperationSet; override;
     function loadList : boolean; override;
     function getImageIndex(item : TSourceFormat) : integer; override;
     function getCellText(item : TSourceFormat; col : integer) : String; override;
     function filterItem(item : TSourceFormat; s : String) : boolean; override;
+    function executeItem(item : TSourceFormat; mode : String) : boolean; override;
 
     property Kinds : TSourceEditorKindSet read FKinds write FKinds;
   end;
@@ -95,8 +98,16 @@ type
     procedure ListBox1DblClick(Sender: TObject);
   private
     FManager : TFormatListManager;
+    function GetFilter: TSourceEditorKindSet;
+    function GetImageList: TImageList;
+    function GetKind: TSourceEditorKind;
+    procedure SetFilter(AValue: TSourceEditorKindSet);
+    procedure SetImageList(AValue: TImageList);
   public
     procedure setFHIRResource;
+    property ImageList : TImageList read GetImageList write SetImageList;
+    property filter : TSourceEditorKindSet read GetFilter write SetFilter;
+    property kind : TSourceEditorKind read GetKind;
   end;
 
 var
@@ -106,6 +117,21 @@ implementation
 
 {$R *.lfm}
 
+{ TSourceFormat }
+
+constructor TSourceFormat.Create(kind: TSourceEditorKind; name: String; reference: String);
+begin
+  inherited Create;
+  self.kind := kind;
+  self.name := name;
+  self.reference := reference;
+end;
+
+function TSourceFormat.link: TSourceFormat;
+begin
+  result := TSourceFormat(inherited Link);
+end;
+
 { TFormatListManager }
 
 function TFormatListManager.canSort: boolean;
@@ -113,27 +139,32 @@ begin
   Result := false;
 end;
 
+function TFormatListManager.doubleClickEdit: boolean;
+begin
+  Result := false;
+end;
+
 function TFormatListManager.allowedOperations(item: TSourceFormat): TNodeOperationSet;
 begin
-  result := [opRefresh];
+  result := [opRefresh, opExecute];
 end;
 
 function TFormatListManager.loadList: boolean;
 begin
-  Data.Add(TSourceFormat.create(sekFHIR, NAMES_TSourceEditorKind[sekFHIR], 'http://hl7.org/fhir'));
-  Data.Add(TSourceFormat.create(sekv2, NAMES_TSourceEditorKind[sekv2], 'https://en.wikipedia.org/wiki/Health_Level_7#Version_2_messaging'));
-  Data.Add(TSourceFormat.create(sekCDA, NAMES_TSourceEditorKind[sekCDA], 'http://hl7.org/cda'));
-  Data.Add(TSourceFormat.create(sekXML, NAMES_TSourceEditorKind[sekXML], 'https://www.w3.org/TR/xml/'));
-  Data.Add(TSourceFormat.create(sekJson, NAMES_TSourceEditorKind[sekJson], 'https://www.json.org/json-en.html'));
-  Data.Add(TSourceFormat.create(sekLiquid, NAMES_TSourceEditorKind[sekLiquid], 'https://shopify.github.io/liquid/'));
-  Data.Add(TSourceFormat.create(sekMap, NAMES_TSourceEditorKind[sekMap], 'http://hl7.org/fhir/StructureMap'));
-  Data.Add(TSourceFormat.create(sekIni, NAMES_TSourceEditorKind[sekIni], 'https://en.wikipedia.org/wiki/INI_file'));
-  Data.Add(TSourceFormat.create(sekText, NAMES_TSourceEditorKind[sekText], 'https://home.unicode.org/'));
-  Data.Add(TSourceFormat.create(sekMD, NAMES_TSourceEditorKind[sekMD], 'https://spec.commonmark.org/'));
-  Data.Add(TSourceFormat.create(sekJS, NAMES_TSourceEditorKind[sekJS], 'https://www.ecma-international.org/publications-and-standards/standards/ecma-262/'));
-  Data.Add(TSourceFormat.create(sekHTML, NAMES_TSourceEditorKind[sekHTML], 'https://en.wikipedia.org/wiki/HTML5'));
-  Data.Add(TSourceFormat.create(sekDicom, NAMES_TSourceEditorKind[sekDicom], 'https://www.dicomstandard.org/'));
-  Data.Add(TSourceFormat.create(sekJWT, NAMES_TSourceEditorKind[sekJWT], 'https://datatracker.ietf.org/doc/html/rfc7519'));
+  Data.Add(TSourceFormat.create(sekFHIR, ' '+NAMES_TSourceEditorKind[sekFHIR], 'http://hl7.org/fhir'));
+  Data.Add(TSourceFormat.create(sekv2, ' '+NAMES_TSourceEditorKind[sekv2], 'https://en.wikipedia.org/wiki/Health_Level_7#Version_2_messaging'));
+  Data.Add(TSourceFormat.create(sekCDA, ' '+NAMES_TSourceEditorKind[sekCDA], 'http://hl7.org/cda'));
+  Data.Add(TSourceFormat.create(sekXML, ' '+NAMES_TSourceEditorKind[sekXML], 'https://www.w3.org/TR/xml/'));
+  Data.Add(TSourceFormat.create(sekJson, ' '+NAMES_TSourceEditorKind[sekJson], 'https://www.json.org/json-en.html'));
+  Data.Add(TSourceFormat.create(sekLiquid, ' '+NAMES_TSourceEditorKind[sekLiquid], 'https://shopify.github.io/liquid/'));
+  Data.Add(TSourceFormat.create(sekMap, ' '+NAMES_TSourceEditorKind[sekMap], 'http://hl7.org/fhir/StructureMap'));
+  Data.Add(TSourceFormat.create(sekIni, ' '+NAMES_TSourceEditorKind[sekIni], 'https://en.wikipedia.org/wiki/INI_file'));
+  Data.Add(TSourceFormat.create(sekText, ' '+NAMES_TSourceEditorKind[sekText], 'https://home.unicode.org/'));
+  Data.Add(TSourceFormat.create(sekMD, ' '+NAMES_TSourceEditorKind[sekMD], 'https://spec.commonmark.org/'));
+  Data.Add(TSourceFormat.create(sekJS, ' '+NAMES_TSourceEditorKind[sekJS], 'https://www.ecma-international.org/publications-and-standards/standards/ecma-262/'));
+  Data.Add(TSourceFormat.create(sekHTML, ' '+NAMES_TSourceEditorKind[sekHTML], 'https://en.wikipedia.org/wiki/HTML5'));
+  Data.Add(TSourceFormat.create(sekDicom, ' '+NAMES_TSourceEditorKind[sekDicom], 'https://www.dicomstandard.org/'));
+  Data.Add(TSourceFormat.create(sekJWT, ' '+NAMES_TSourceEditorKind[sekJWT], 'https://datatracker.ietf.org/doc/html/rfc7519'));
 end;
 
 function TFormatListManager.getImageIndex(item: TSourceFormat): integer;
@@ -154,6 +185,11 @@ begin
   Result := item.kind in FKinds;
 end;
 
+function TFormatListManager.executeItem(item: TSourceFormat; mode: String): boolean;
+begin
+  FileFormatChooser.btnOkClick(nil);
+end;
+
 { TFileFormatChooser }
 
 procedure TFileFormatChooser.ListBox1DblClick(Sender: TObject);
@@ -161,45 +197,78 @@ begin
   ModalResult := mrOK;
 end;
 
+function TFileFormatChooser.GetImageList: TImageList;
+begin
+  result := FManager.Images;
+end;
+
+function TFileFormatChooser.GetKind: TSourceEditorKind;
+begin
+  result := FManager.focus.kind;
+end;
+
+function TFileFormatChooser.GetFilter: TSourceEditorKindSet;
+begin
+  result := FManager.FKinds;
+end;
+
+procedure TFileFormatChooser.SetFilter(AValue: TSourceEditorKindSet);
+begin
+  FManager.FKinds := AValue;
+  FManager.doFilter;
+end;
+
+procedure TFileFormatChooser.SetImageList(AValue: TImageList);
+begin
+  FManager.Images := AValue;
+end;
+
 procedure TFileFormatChooser.setFHIRResource;
 begin
-  ListBox1.ItemIndex := 0;
+  FManager.Focus := FManager.Data[0];
   ListBox1Click(self);
 end;
 
 procedure TFileFormatChooser.ListBox1Click(Sender: TObject);
 begin
-  btnOk.enabled := ListBox1.ItemIndex > -1;
-  if ListBox1.ItemIndex = 0 then
+  btnOk.enabled := FManager.hasFocus;
+  if FManager.hasFocus then
   begin
-    btnOk.caption := '&Next >>';
-    btnOk.modalresult := mrNone;
-  end
-  else
-  begin
-    btnOk.caption := 'OK';
-    btnOk.modalresult := mrOK;
+    if FManager.Focus.kind = sekFHIR then
+    begin
+      btnOk.caption := '&Next >>';
+      btnOk.modalresult := mrNone;
+    end
+    else
+    begin
+      btnOk.caption := 'OK';
+      btnOk.modalresult := mrOK;
+    end;
   end;
 end;
 
 procedure TFileFormatChooser.btnOkClick(Sender: TObject);
 begin
-  if ListBox1.ItemIndex = 0 then
+  if FManager.Focus.kind = sekFHIR then
   begin
     PageControl1.ActivePage := TabSheet2;
     btnOk.caption := 'OK';
     btnOk.modalresult := mrOK;
     btnCancel.caption := 'Back';
     btnCancel.ModalResult := mrNone;
-  end;
+  end
+  else
+    ModalResult := mrOk;
 end;
 
 procedure TFileFormatChooser.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
   FManager := TFormatListManager.create;
-  FManager.Kinds := ALL_SourceEditorKinds;
-  Fmanager.List :=
+  FManager.Kinds := FILE_SourceEditorKinds;
+  Fmanager.List := lvFormats;
+  FManager.onsetfocus := listbox1Click;
+  FManager.doLoad;
 end;
 
 procedure TFileFormatChooser.FormDestroy(Sender: TObject);
