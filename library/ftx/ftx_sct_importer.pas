@@ -2167,7 +2167,6 @@ function needsBaseForImport(moduleId : String): boolean;
 begin
   if (moduleId = '11000172109') // Belgium
   or (moduleId = '554471000005108') // Denmark
-  or (moduleId = '11000146104') // Netherlands
   or (moduleId = '45991000052106') // Sweden
   or (moduleId = '999000041000000102') // UK
   then
