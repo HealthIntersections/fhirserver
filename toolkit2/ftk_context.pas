@@ -67,14 +67,15 @@ const
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
 
-  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'HomePage', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT');
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT', 'HomePage');
   EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
-  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'Home Page', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)');
+  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Structure Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)', 'Home Page');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
   ICONS_TSourceEditorKind : Array [TSourceEditorKind] of integer = (-1, 42, 114, 113, 115, 116, 117, -1, 118, 119, 120, 121, 122, 123, -1, 124, -1);
-
+  ALL_SourceEditorKinds = [sekNull..sekHome];
+  FILE_SourceEditorKinds = [sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekJWT];
 
 
 function onlySourceKind(kinds : TSourceEditorKindSet) : TSourceEditorKind;

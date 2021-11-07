@@ -1294,9 +1294,9 @@ begin
   begin
     FileFormatChooser := TFileFormatChooser.create(self);
     try
-      FileFormatChooser.filter(kinds);
+      FileFormatChooser.filter := kinds;
       if FileFormatChooser.ShowModal = mrOK then
-        result := createNewFile(TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1), bytes);
+        result := createNewFile(FileFormatChooser.kind, bytes)
       else
         abort;
     finally
@@ -1318,8 +1318,9 @@ begin
     begin
       FileFormatChooser := TFileFormatChooser.create(self);
       try
+        FileFormatChooser.ImageList := imgMain;
         if FileFormatChooser.ShowModal = mrOK then
-          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+          kind := FileFormatChooser.kind
         else
           abort;
       finally
