@@ -68,8 +68,7 @@ const
 
 //  ServerDBVersion = 31; // make OAuthLogin.Scope longer (1024)
 
-  ServerDBVersion = 32; // add additional sort keys
-
+  ServerDBVersion = 32; // add additional sort keys +
 
 implementation
 end.

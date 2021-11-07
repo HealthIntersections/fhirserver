@@ -88,7 +88,7 @@ type
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
     procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure serveSearch(name, canonical, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
     procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
@@ -264,7 +264,6 @@ begin
   raise EFslException.Create('This is not applicable to this endpoint');
 end;
 
-
 procedure TPackageServerEndPoint.upgradeDatabase;
 var
   c : TFDBConnection;
@@ -288,7 +287,17 @@ begin
         begin
           c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
           c.ExecSQL('Update PackageVersions set UploadCount = 1');
-        end;  
+        end;
+      end;
+      if not m.HasTable('PackageURLs') then
+      begin
+        c.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+        c.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
+        c.ExecSQL('Delete from PackageDependencies');
+        c.ExecSQL('Delete from PackageFHIRVersions');
+        c.ExecSQL('Delete from PackagePermissions');
+        c.ExecSQL('Delete from PackageVersions');
+        c.ExecSQL('Delete from PackageDependencies');
       end;
     finally
       m.Free;
@@ -819,7 +828,7 @@ begin
     result := '';
 end;
 
-procedure TFHIRPackageWebServer.serveSearch(name, canonical, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalURL, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
@@ -832,11 +841,16 @@ begin
   try
     filter := '';
     if name <> '' then
-      filter := filter + ' and PackageVersions.id like ''%'+name+'%''';
-    if canonical <> '' then
-      filter := filter + ' and PackageVersions.canonical like '''+canonical+'%''';
+      filter := filter + ' and PackageVersions.id like ''%'+SQLWrapString(name)+'%''';
+    if canonicalPkg <> '' then
+      if canonicalPkg.EndsWith('%') then
+        filter := filter + ' and PackageVersions.canonical like '''+SQLWrapString(canonicalPkg)+''''
+      else
+        filter := filter + ' and PackageVersions.canonical = '''+SQLWrapString(canonicalPkg)+'''';
+    if canonicalUrl <> '' then
+      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageURLs where URL like '''+SQLWrapString(canonicalUrl)+'%'')';
     if FHIRVersion <> '' then
-      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
+      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+SQLWrapString(getVersion(FHIRVersion))+'%'')';
 
     conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Kind, PackageVersions.Canonical, Packages.DownloadCount, Security, Packages.ManualToken, Description from Packages, PackageVersions '+
       'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
@@ -882,7 +896,8 @@ begin
         vars := TFslMap<TFHIRObject>.create('vars');
         try
           vars.add('name', TFHIRObjectText.create(name));
-          vars.add('canonical', TFHIRObjectText.create(canonical));
+          vars.add('canonicalPkg', TFHIRObjectText.create(canonicalPkg));
+          vars.add('canonicalUrl', TFHIRObjectText.create(canonicalUrl));
           vars.add('FHIRVersion', TFHIRObjectText.create(FHIRVersion));
           vars.add('count', TFHIRObjectText.create(conn.CountSQL('Select count(*) from PackageVersions')));
           vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(secure)));
@@ -890,7 +905,7 @@ begin
           vars.add('r2selected', TFHIRObjectText.create(sel('R2', FHIRVersion)));
           vars.add('r3selected', TFHIRObjectText.create(sel('R3', FHIRVersion)));
           vars.add('r4selected', TFHIRObjectText.create(sel('R4', FHIRVersion)));
-          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true, secure, true)));
+          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonicalPkg='+canonicalPkg+'&canonical='+canonicalUrl, list, readSort(sort), sort.startsWith('-'), true, secure, true)));
           vars.add('status', TFHIRObjectText.create(status));
           vars.add('downloads', TFHIRObjectText.create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
           returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
@@ -1070,6 +1085,7 @@ var
   canonical, mask, token, id, version : String;
   i : integer;
   npm : TNpmPackage;
+  ts : TStringList;
 begin
   conn := FDB.GetConnection('Package.server.create');
   try
@@ -1116,8 +1132,15 @@ begin
         raise EFslException.Create('The packageId "'+id+'#'+version+'" already exists, and can''t be changed');
       conn.Terminate;
 
-      // ok, it's passed all the tests...
-      TPackageUpdater.commit(conn, blob, npm, TFslDateTime.makeUTC, NewGuidId, id, version, npm.description, canonical, token, npm.kind);
+      ts := TStringList.Create;
+      try
+        TPackageUpdater.processURLs(npm, ts);
+
+        // ok, it's passed all the tests...
+        TPackageUpdater.commit(conn, blob, npm, TFslDateTime.makeUTC, NewGuidId, id, version, npm.description, canonical, token, ts, npm.kind);
+      finally
+        ts.free;
+      end;
     finally
       npm.Free;
     end;
@@ -1210,7 +1233,7 @@ begin
     begin
       if not pm.has('lastUpdated') then
       begin
-        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], secure, request, response);
+        serveSearch(pm['name'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['sort'], secure, request, response);
         result := 'Search Packages';
       end
       else if pm['lastUpdated'].startsWith('-') then
