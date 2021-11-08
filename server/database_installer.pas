@@ -412,6 +412,8 @@ begin
        ' Dependency            nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+')'+#13#10);
   FConn.ExecSQL('Create INDEX SK_PackageDependencies ON PackageDependencies (PackageVersionKey)');
 
+  FConn.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+  FConn.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreatePseudoData;
