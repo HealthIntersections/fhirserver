@@ -162,16 +162,17 @@ end;
 
 function TFolderWebServer.doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
 var
-  p : String;
+  p, n : String;
 begin
   if not request.Document.StartsWith(PathNoSlash) then
     raise EWebException.Create('Illegal path');
   if request.Document.Contains('..') then
     raise EWebException.Create('Illegal path');
   p := FilePath([FFolder, request.Document.Substring(pathNoSlash.Length)]);
+  n := ExtractFileName(p);
   if FolderExists(p) then
     result := serveFolder(request.Document, p, response)
-  else if FileExists(p) and (ExtractFileName(p).ToLower <> '.users.ini') then
+  else if FileExists(p) and (n.ToLower <> '.users.ini') then
     result := serveFile(request.Document, p, response)
   else
   begin
@@ -183,7 +184,7 @@ end;
 
 function TFolderWebServer.handlePut(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): String;
 var
-  p, f : String;
+  p, f, n : String;
   bDef : boolean;
 begin
   if not request.Document.StartsWith(PathNoSlash) then
@@ -194,6 +195,7 @@ begin
   if FolderExists(p) then
     raise EWebException.Create('Can''t write to a folder at '+request.Document);
   f := ExtractFilePath(p);
+  n := ExtractFileName(p);
   ForceFolder(f);
   if not checkUser(f, request.AuthUsername, request.AuthPassword) then
   begin
@@ -204,7 +206,7 @@ begin
   end
   else
   begin
-    bDef := (ExtractFileName(p).ToLower = 'main.zip') or (ExtractFileName(p).ToLower = 'master.zip');
+    bDef := (n.ToLower = 'main.zip') or (n.ToLower = 'master.zip');
     FLog.WriteToLog(TFslDateTime.makeUTC.toHL7+' '+ip+' '+request.AuthUsername+' '+request.document+' '+DescribeBytes(request.PostStream.size)+' '+BoolToStr(bDef, true)+' '+p+#13#10);
     StreamToFile(request.PostStream, p);
     if bDef then
