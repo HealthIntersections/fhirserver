@@ -36,7 +36,7 @@ This server exposes snomed and loinc browsers
 interface
 
 uses
-  Sysutils, Classes, {$IFDEF DELPHI}IOUtils, {$ENDIF}
+  Sysutils, Classes, IniFiles, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_fpc,
   fdb_manager,
@@ -49,18 +49,23 @@ type
   TFolderWebServer = class (TFhirWebServerEndpoint)
   private
     FFolder : String;
-    procedure serveFolder(request, path : String; response: TIdHTTPResponseInfo);
-    procedure serveFile(path : String; response: TIdHTTPResponseInfo);
+    FLog : TLogger;
+    function serveFolder(request, path : String; response: TIdHTTPResponseInfo) : String;
+    function serveFile(request, path : String; response: TIdHTTPResponseInfo) : String;
+    function checkUser(path : String; username, password : String) : boolean;
 
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
+    function send404(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
+    function handlePut(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
   public
     destructor Destroy; override;
+
     function link : TFolderWebServer; overload;
     function description : String; override;
     function logId : string; override;
 
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
   TFolderWebEndPoint = class (TFHIRServerEndPoint)
@@ -107,6 +112,10 @@ function TFolderWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhir
 begin
   FFolderServer := TFolderWebServer.Create(config.name, config['path'].value, common);
   FFolderServer.FFolder := config['folder'].value;
+  FFolderServer.FLog := TLogger.Create(FilePath([FFolderServer.FFolder, 'log.txt']));
+  FFolderServer.FLog.Policy.FullPolicy := lfpCycle;
+  FFolderServer.FLog.Policy.MaximumSize := 1024 * 1024;
+  FFolderServer.FLog.Policy.closeLog := true;
   WebEndPoint := FFolderServer;
   result := FFolderServer.link;
 end;
@@ -118,6 +127,28 @@ end;
 
 { TFolderWebServer }
 
+function TFolderWebServer.checkUser(path, username, password: String): boolean;
+var
+  ini : TIniFile;
+begin
+  if password = '' then
+    exit(false);
+  if path.EndsWith('\') or path.EndsWith('/') then
+    delete(path, length(path), 1);
+
+  ini := TIniFile.Create(FilePath([path, '.users.ini']));
+  try
+    if ini.ReadString('users', username, '') = password then
+      result := true
+    else if path = FFolder then
+      result := false
+    else
+      result := checkUser(PathFolder(path), username, password);
+  finally
+    ini.free;
+  end;
+end;
+
 function TFolderWebServer.description: String;
 begin
   result := 'Folder browser';
@@ -125,6 +156,7 @@ end;
 
 destructor TFolderWebServer.Destroy;
 begin
+  FLog.Free;
   inherited;
 end;
 
@@ -138,13 +170,48 @@ begin
     raise EWebException.Create('Illegal path');
   p := FilePath([FFolder, request.Document.Substring(pathNoSlash.Length)]);
   if FolderExists(p) then
-    serveFolder(request.Document, p, response)
-  else if FileExists(p) then
-    serveFile(p, response)
+    result := serveFolder(request.Document, p, response)
+  else if FileExists(p) and (ExtractFileName(p).ToLower <> '.users.ini') then
+    result := serveFile(request.Document, p, response)
   else
   begin
     response.ResponseNo := 401;
     response.ContentText := request.Document+' not found on this server';
+    result := request.Document+' not found at '+p;
+  end;
+end;
+
+function TFolderWebServer.handlePut(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): String;
+var
+  p, f : String;
+  bDef : boolean;
+begin
+  if not request.Document.StartsWith(PathNoSlash) then
+    raise EWebException.Create('Illegal path');
+  if request.Document.Contains('..') then
+    raise EWebException.Create('Illegal path');
+  p := FilePath([FFolder, request.Document.Substring(pathNoSlash.Length)]);
+  if FolderExists(p) then
+    raise EWebException.Create('Can''t write to a folder at '+request.Document);
+  f := ExtractFilePath(p);
+  ForceFolder(f);
+  if not checkUser(f, request.AuthUsername, request.AuthPassword) then
+  begin
+    StreamToFile(request.PostStream, p);
+    response.ResponseNo := 404;
+    response.ContentText := 'Not found';
+    result := request.Document+' @ '+p+': unauthorised user '+request.AuthUsername+'/'+request.AuthPassword;
+  end
+  else
+  begin
+    bDef := (ExtractFileName(p).ToLower = 'main.zip') or (ExtractFileName(p).ToLower = 'master.zip');
+    FLog.WriteToLog(TFslDateTime.makeUTC.toHL7+' '+ip+' '+request.AuthUsername+' '+request.document+' '+DescribeBytes(request.PostStream.size)+' '+BoolToStr(bDef, true)+' '+p+#13#10);
+    StreamToFile(request.PostStream, p);
+    if bDef then
+      StreamToFile(request.PostStream, FilePath([ExtractFileName(p), 'default.zip']));
+    response.ResponseNo := 200;
+    response.ContentText := 'OK';
+    result := request.Document+' saved to '+p;
   end;
 end;
 
@@ -158,27 +225,44 @@ begin
   result := 'FF';
 end;
 
-function TFolderWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
+function TFolderWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
 begin
-  result := doRequest(AContext, request, response, id, false);
+  if request.CommandType <> hcGET then
+    result := send404(AContext, request, response)
+  else
+    result := doRequest(AContext, request, response, id, false);
 end;
 
-function TFolderWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TFolderWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
+  if request.CommandType = hcPUT then
+    result := handlePut(AContext, ip, request, response)
+  else if request.CommandType <> hcGET then
+    result := send404(AContext, request, response)
+  else
   result := doRequest(AContext, request, response, id, true);
 end;
 
-procedure TFolderWebServer.serveFile(path: String; response: TIdHTTPResponseInfo);
+function TFolderWebServer.send404(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): String;
 begin
+  result := 'Not handled: '+request.Command+' '+request.Document;
+  response.ResponseNo := 404;
+  response.ContentText := 'Not found';
+end;
+
+function TFolderWebServer.serveFile(request, path: String; response: TIdHTTPResponseInfo) : String;
+begin
+  result := 'folder '+request+' at '+path;
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));
   response.FreeContentStream := true;
   response.ContentStream := TFileStream.Create(path, fmOpenRead + fmShareDenyWrite);
 end;
 
-procedure TFolderWebServer.serveFolder(request, path: String; response: TIdHTTPResponseInfo);
+function TFolderWebServer.serveFolder(request, path: String; response: TIdHTTPResponseInfo) : string;
 var
   f, fl, s : String;
 begin
+  result := 'folder '+request+' at '+path;
   if not request.EndsWith('/') then
   begin
     response.Redirect(request+'/');
@@ -194,7 +278,8 @@ begin
     for f in TDirectory.GetFiles(path) do
     begin
       fl := ExtractFileName(f);
-      s := s + '<a href="'+URLPath([request, fl])+'">'+fl+'</a> '+DescribeBytes(FileSize(f))+#13#10;
+      if (fl.ToLower <> '.users.ini') then
+        s := s + '<a href="'+URLPath([request, fl])+'">'+fl+'</a> '+DescribeBytes(FileSize(f))+#13#10;
     end;
     s := s + '</pre>'+#13#10;
     response.ContentText := s;

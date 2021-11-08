@@ -184,6 +184,7 @@ Type
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
 
     function getClientId(AContext: TIdContext; request: TIdHTTPRequestInfo) : String;
+    function getClientIP(AContext: TIdContext; request: TIdHTTPRequestInfo) : String;
 
     procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
     procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
@@ -703,7 +704,7 @@ begin
             begin
               ok := true;
               epn := ep.logId;
-              summ := ep.PlainRequest(AContext, request, response, id, tt);
+              summ := ep.PlainRequest(AContext, getClientIP(AContext, request), request, response, id, tt);
               break;
             end else if (request.Document = ep.PathNoSlash) then
             begin
@@ -841,7 +842,7 @@ begin
             begin
               ok := true;
               epn := ep.logId;
-              summ := ep.SecureRequest(AContext, request, response, cert, id, tt);
+              summ := ep.SecureRequest(AContext, getClientIP(AContext, request), request, response, cert, id, tt);
             end
             else if request.Document = ep.PathNoSlash then
             begin
@@ -1140,6 +1141,13 @@ begin
   if request.UserAgent <> '' then
     if request.UserAgent.StartsWith('fhir/') then
       result := request.UserAgent.Substring(5);
+end;
+
+function TFhirWebServer.getClientIP(AContext: TIdContext; request: TIdHTTPRequestInfo): String;
+begin
+  result := request.rawHeaders.Values['X-Real-IP'];
+  if result = '' then
+    result := AContext.Binding.PeerIP;
 end;
 
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
