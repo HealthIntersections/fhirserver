@@ -53,6 +53,7 @@ Type
     FDescription: String;
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
+    FCloseLog: boolean;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
@@ -83,6 +84,11 @@ Type
 
     // amount to chop off when chopping file. 0 means 1k
     Property ChopAmount : Cardinal Read FChopAmount Write FChopAmount;
+
+    // usually, the log will keep the file open, for performamce reasons,
+    // but holding the log open can be problematic for other uses, so you
+    // get the log to close where the log isn't used intensively
+    property closeLog : boolean read FCloseLog write FCloseLog;
 
   End;
 
@@ -410,6 +416,12 @@ begin
       FOpenName := sName;
     end;
     FStream.Write(bytes[0], length(bytes));
+    if FPolicy.closeLog then
+    begin
+      FStream.Free;
+      FStream := nil;
+      FOpenName := '';
+    end;
   Finally
     FLock.UnLock;
   End;
