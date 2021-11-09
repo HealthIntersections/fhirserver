@@ -5377,6 +5377,8 @@ begin
     result := 4
   else if (s = 'sv') then
     result := 5
+  else if (s = 'da') then
+    result := 6
   else
     raise ETerminologyError.create('Unknown SCT Lang "'+s+'"');
 end;
@@ -5389,6 +5391,7 @@ begin
     3 : result := 'nl';
     4 : result := 'es';
     5 : result := 'sv';
+    6 : result := 'da';
   else
     result := '??';
   end;

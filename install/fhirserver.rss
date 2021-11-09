@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.408 2021-11-08</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.408.exe</link>
+			<description>2021-11-08 (v1.0.408): fix package canonical and add folder management or tx-cache</description>
+		</item>
+<item><title>FHIRServer release 1.0.407 2021-11-01</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.407.exe</link>
+			<description>2021-11-01 (v1.0.407): web interface for icao certificate support - add PDF + fix Audit Trail code system uris</description>
+		</item>
 		<item><title>FHIRServer release 1.0.406 2021-10-28</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.406.exe</link>
 			<description>2021-10-28 (v1.0.406): web interface for icao certificate support</description>
 		</item>
-<item><title>FHIRServer release 1.0.405 2021-10-27</title>
+		<item><title>FHIRServer release 1.0.405 2021-10-27</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.405.exe</link>
 			<description>2021-10-27 (v1.0.405): icao certificate support</description>
 		</item>
