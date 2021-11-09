@@ -208,9 +208,13 @@ begin
   begin
     bDef := (n.ToLower = 'main.zip') or (n.ToLower = 'master.zip');
     FLog.WriteToLog(TFslDateTime.makeUTC.toHL7+' '+ip+' '+request.AuthUsername+' '+request.document+' '+DescribeBytes(request.PostStream.size)+' '+BoolToStr(bDef, true)+' '+p+#13#10);
+    request.PostStream.Position := 0;
     StreamToFile(request.PostStream, p);
     if bDef then
-      StreamToFile(request.PostStream, FilePath([ExtractFileName(p), 'default.zip']));
+    begin
+      request.PostStream.Position := 0;
+      StreamToFile(request.PostStream, FilePath([ExtractFilePath(p), 'default.zip']));
+    end;
     response.ResponseNo := 200;
     response.ContentText := 'OK';
     result := request.Document+' saved to '+p;

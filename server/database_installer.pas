@@ -1297,11 +1297,14 @@ end;
 
 
 procedure TFHIRDatabaseInstaller.Upgrade(version : integer = 0);
+var
+  isTx : boolean;
 begin
   FConn.StartTransact;
   try
     if version = 0 then
       version := Fconn.CountSQL('Select Value from Config where ConfigKey = '+inttostr(CONFIG_DATABASE_VERSION));
+    isTx := Fconn.Lookup('Config', 'ConfigKey', '100', 'Value', '').startsWith('terminology|');
 
     if version > ServerDBVersion then
       raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
@@ -1376,7 +1379,7 @@ begin
       Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ALTER COLUMN Scope nchar(1024) NOT NULL');
     end;
 
-    if (version <= 32) then
+    if not isTx and (version <= 32) then
     begin
       Fconn.ExecSQL('Delete from SearchEntries');
       Fconn.ExecSQL('Delete from Searches');
