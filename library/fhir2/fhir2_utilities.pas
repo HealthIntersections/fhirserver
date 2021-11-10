@@ -1169,15 +1169,20 @@ begin
 end;
 
 function gen(coding : TFHIRCoding):String; overload;
+var
+  system : String;
 begin
   if (coding = nil) then
-     result := ''
-  else if (coding.DisplayElement <> nil) then
-    result := coding.Display
-  else if (coding.CodeElement <> nil) then
-    result := coding.Code
+    result := ''
   else
-    result := '';
+  begin
+    system := csName(coding.system);
+    result := system+'#'+coding.code;
+    if (coding.display <> '') then
+      result := result + ' "'+coding.display+'"';
+    if (coding.version <> '') then
+      result := result + ' (v='+coding.version+')';
+  end;
 end;
 
 function gen(code : TFhirCodeableConcept):String; overload;

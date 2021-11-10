@@ -178,6 +178,7 @@ Type
     FOthers : TFslStringObjectMatch; // checkers or code system providers
     FValueSet : TFHIRValueSetW;
     FId: String;
+    FLog : String;
 
     function determineSystem(code : String) : String;
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW) : boolean; overload;
@@ -201,6 +202,7 @@ Type
     function check(coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
     function check(code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
 
+    property log : String read FLog;
   end;
 
   TFHIRValueSetExpander = class (TValueSetWorker)
@@ -599,6 +601,7 @@ var
   ccl : TFhirCodeSystemConceptListW;
 begin
 //  result := false;
+  FLog := '';
   {special case:}
   s := FValueSet.url;
   if (s = ANY_CODE_VS) then
@@ -609,6 +612,7 @@ begin
       begin
         result := false;
         cause := itNotFound;
+        FLog := 'Unknown code system';
 //        !!!! check if version is valid format then
 
       end
@@ -619,6 +623,7 @@ begin
         begin
           result := false;
           cause := itCodeInvalid;
+          FLog := 'Unknown code';
         end
         else
         begin
@@ -627,7 +632,12 @@ begin
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
             if (not result) then
+            begin
+              FLog := 'Inactive/abstract code';
               cause := itBusinessRule;
+            end
+            else
+              FLog := 'found';
             listDisplays(displays, cs, ctxt);
           finally
             cs.Close(ctxt);
@@ -647,6 +657,7 @@ begin
       begin
         result := false;
         cause := itNotFound;
+        FLog := 'Unknown code system';
       end
       else
       begin
@@ -655,6 +666,7 @@ begin
         begin
           result := false;
           cause := itCodeInvalid;
+          FLog := 'Unknown code';
         end
         else
         begin
@@ -663,7 +675,12 @@ begin
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
             if (not result) then
+            begin
               cause := itBusinessRule;
+              FLog := 'Inactive/abstract code';
+            end
+            else
+              FLog := 'found';
             listDisplays(displays, cs, ctxt);
           finally
             cs.Close(ctxt);
@@ -698,7 +715,6 @@ begin
             ccl.Free;
           end;
         end;
-
       finally
         ics.free;
       end;
@@ -725,6 +741,7 @@ begin
           if (cs = nil) then
           begin
             message := 'The code system "'+cc.systemUri+'" in the include in "'+FValueSet.url+'" is not known';
+            FLog := 'Unknown code system';
             exit(false);
           end;
 

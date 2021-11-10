@@ -1362,9 +1362,9 @@ begin
     system := csName(coding.system);
     result := system+'#'+coding.code;
     if (coding.display <> '') then
-      result := result + ': '+coding.display;
+      result := result + ' "'+coding.display+'"';
     if (coding.version <> '') then
-      result := result + ' (version '+coding.version+')';
+      result := result + ' (v='+coding.version+')';
   end;
 end;
 
