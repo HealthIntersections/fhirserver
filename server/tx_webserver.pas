@@ -950,6 +950,7 @@ var
   coding : TFHIRCodingW;
   res : TFHIRParametersW;
   vs : TFHIRValueSetW;
+  summary : string;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
   try
@@ -959,7 +960,7 @@ begin
       coding.version := pm['version'];
       coding.code := pm['code'];
       coding.display := pm['display'];
-      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', pm['implySystem'] = '1', nil);
+      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', pm['implySystem'] = '1', nil, summary);
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'

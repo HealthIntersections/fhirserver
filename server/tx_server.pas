@@ -98,8 +98,8 @@ Type
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
-    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
     function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
     function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -513,7 +513,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -527,6 +527,7 @@ begin
     try
       check.prepare(vs, profile);
       result := check.check(coding, abstractOk, implySystem);
+      summary := check.log;
     finally
       check.Free;
     end;
@@ -536,7 +537,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -550,6 +551,7 @@ begin
     try
       check.prepare(vs, profile);
       result := check.check(coded, abstractOk, implySystem);
+      summary := check.log;
     finally
       check.Free;
    end;
@@ -673,6 +675,7 @@ var
   vs : TFHIRValueSetW;
   p : TFhirParametersW;
   profile : TFHIRExpansionParams;
+  summary : string;
 begin
   vs := getValueSetByUrl(valueSet, nil);
   try
@@ -681,7 +684,7 @@ begin
     profile := TFHIRExpansionParams.create;
     try
       profile.valueSetMode := vsvmMembershipOnly;
-      p := validate(vs, c, profile, true, false, nil);
+      p := validate(vs, c, profile, true, false, nil, summary);
       try
         result := p.bool('result');
       finally
@@ -975,6 +978,7 @@ var
   op : TFhirOperationOutcomeW;
   list : TLoadedConceptMapList;
   i : integer;
+  summary : string;
   cm : TLoadedConceptMap;
   p : TFhirParametersW;
   g : TFhirConceptMapGroupW;
@@ -989,7 +993,7 @@ begin
         raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
-      p := validate(target, coding, nil, false, false, nil);
+      p := validate(target, coding, nil, false, false, nil, summary);
       try
         if p.bool('result') then
         begin

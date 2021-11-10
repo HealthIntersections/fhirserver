@@ -405,7 +405,7 @@ function TFhirValueSetValidationOperation.Execute(context : TOperationContext; m
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId, url : String;
+  cacheId, url, summary : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
@@ -498,8 +498,10 @@ begin
               profile := buildExpansionParams(request, manager, params);
               if profile.displayLanguage.header = '' then
                 profile.displayLanguage := request.Lang;
-              pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources);
+              pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources, summary);
               try
+                if summary <> '' then
+                  result := result + ': '+summary;
                 response.resource := pout.Resource.link;
               finally
                 pOut.free;
