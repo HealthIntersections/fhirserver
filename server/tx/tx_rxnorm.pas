@@ -1004,6 +1004,7 @@ begin
     begin
       filter.qry.terminate;
       filter.qry.release;
+      filter.qry := nil;
     end;
   end;
   ctxt.free;
@@ -1031,6 +1032,7 @@ begin
   begin
     qry.terminate;
     qry.Release;
+    qry := nil;
   end;
   inherited;
 end;

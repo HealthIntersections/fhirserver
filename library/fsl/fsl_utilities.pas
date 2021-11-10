@@ -2803,7 +2803,8 @@ End;
 Procedure FileHandleClose(Var aFileHandle : TFileHandle);
 {$IFDEF WINDOWS}
 begin
-  Windows.CloseHandle(aFileHandle.Value);
+  if FileHandleIsValid(aFileHandle) then
+    Windows.CloseHandle(aFileHandle.Value);
   aFileHandle := FileHandleInvalid;
 end;
 {$ELSE}
