@@ -1401,7 +1401,7 @@ var
 begin
   for s in sDesc.Split([',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '-', '+', '=']) do
   begin
-    if (s <> '') And not StringIsInteger32(s) and (s.length > 2) Then
+    if (s <> '') And not StringIsInteger64(s) and (s.length > 2) Then
     begin
       stem := FStemmer.Stem(s);
       //if (stem <> '') then
