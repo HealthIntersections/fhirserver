@@ -390,7 +390,7 @@ var
 begin
   if TestSettings.SMTPPassword = '' then
   begin
-    Ignore('No password for SMTP test');
+    assertNotTested('No password for SMTP test');
     exit;
   end;
 
