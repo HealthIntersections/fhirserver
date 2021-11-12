@@ -49,6 +49,7 @@ type
     FSourceDir : String;
     FProjectDir : String;
 
+    procedure check(n, m: String);
     procedure reportError(filename : String; line : integer; msg : String);
 
     procedure checkFileForUnicode(filename : String);
@@ -60,6 +61,8 @@ type
     procedure scanFolder(folder: String; checks: TSourceScanCheckSet);
     procedure checkFile(filename: String; checks: TSourceScanCheckSet);
     function adjustChecksForFolder(folder : String; checks: TSourceScanCheckSet) : TSourceScanCheckSet;
+    procedure setInstallVersion(n, p, v: String);
+    procedure setSourceVersion(v: String);
   public
     constructor Create;
     destructor Destroy; override;
@@ -268,20 +271,96 @@ begin
     scanFolder(s, adjustChecksForFolder(s, checks));
 end;
 
+procedure TCodeScanner.setSourceVersion(v : String);
+var
+  dt, inc : string;
+begin
+  dt := TFslDateTime.makeUTC().toString('yyyy-mm-dd');
+  Writeln('Update version.inc to set version to '+v+' on '+dt);
+
+  inc :=
+    ' FHIR_CODE_FULL_VERSION = '''+v+''';'+#13#10+
+    ' FHIR_CODE_RELEASE_DATE = '''+dt+''';'+#13#10+
+    ' FHIR_CODE_RELEASE_DATETIME = '''+TFslDateTime.makeUTC().toHL7+''';'+#13#10;
+  StringToFile(inc, FilePath([FProjectDir, 'library', 'version.inc']), TEncoding.ASCII);
+  FAllOk := true;
+end;
+
+procedure TCodeScanner.check(n, m : String);
+var
+  ne : boolean;
+begin
+  ne := n.StartsWith('!');
+  if (ne) then
+    delete(n, 1, 1);
+  FAllOk := false;
+  if ne then
+  begin
+    if FileExists(n) then
+      writeln('Error: '+m)
+    else
+      FAllOk := true;
+  end
+  else if not FileExists(n) then
+    writeln('Error: '+m)
+  else
+    FAllOk := true;
+end;
+
+procedure TCodeScanner.setInstallVersion(n, p, v : String);
+var
+  ts : TStringList;
+  i : integer;
+  s : String;
+begin
+  ts := TStringList.create;
+  try
+    ts.LoadFromFile(FilePath([FProjectDir, n]));
+    for i := 0 to ts.count - 1 do
+    begin
+      s := ts[i];
+      if s.StartsWith('AppVerName=') then
+        s := 'AppVerName='+p+' v'+v
+      else if s.StartsWith('OutputBaseFilename=') then
+        s := 'OutputBaseFilename='+p.ToLower+'-win64-'+v
+      else if s.StartsWith('AppVersion=') then
+        s := 'AppVersion='+v
+      else if s.StartsWith('VersionInfoVersion=') then
+        s := 'VersionInfoVersion='+v+'.0';
+      ts[i] := s;
+    end;
+    ts.SaveToFile(FilePath([FProjectDir, n]));
+  finally
+    ts.free;
+  end;
+  FAllOk := true;
+end;
+
 procedure TCodeScanner.Run;
+var
+  v, n, m, p : String;
 begin
   try
-    FSourceDir := FilePath([ParamStr(1), 'source']);
     FProjectDir := paramstr(0);
     FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);
-    Writeln('Running FHIR Code scanner');
-    Writeln('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
-    Writeln('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
-    FAllOk := true;
-    scanFolder(FSourceDir, [sscUnicode]);
-    scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise]);
-    scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise]);
-    scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings]);
+    if getCommandLineParam('install', n) and getCommandLineParam('version', v) and getCommandLineParam('product', p)  then
+      setInstallVersion(n, p, v)
+    else if getCommandLineParam('version', v) then
+      setSourceVersion(v)
+    else if getCommandLineParam('check', n) and getCommandLineParam('message', m) then
+      check(n, m)
+    else
+    begin
+      FSourceDir := FilePath([ParamStr(1), 'source']);
+      Writeln('Running FHIR Code scanner');
+      Writeln('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
+      Writeln('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
+      FAllOk := true;
+      scanFolder(FSourceDir, [sscUnicode]);
+      scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise]);
+      scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise]);
+      scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings]);
+    end;
   except
     on e : Exception do
     begin
@@ -289,19 +368,24 @@ begin
       FAllOk := false;
     end;
   end;
-  if not FAllOk then
+  ExitCode := 0;
+  if hasCommandLineParam('version') or hasCommandLineParam('check') then
+  begin
+    if not FAllOk then
+      ExitCode := 1
+  end
+  else if not FAllOk then
   begin
     writeln('Errors found - code fails checks');
-    ExitCode := 1
+    ExitCode := 1;
+    readln;
   end
   else
   begin
     writeln('All OK');
-    ExitCode := 0;
+    readln;
   end;
-  readln;
 end;
-
 constructor TCodeScanner.Create;
 begin
   inherited Create;
