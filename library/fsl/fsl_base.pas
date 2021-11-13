@@ -241,9 +241,7 @@ Type
 Type
   TFslEnumerable<T : class> = class (TFslObject)
   private
-  {$HINTS OFF}
     function ToArrayImpl(Count: Integer): TArray<T>; // used by descendants
-  {$HINTS ON}
   protected
     function DoGetEnumerator: TEnumerator<T>; virtual; abstract;
   public

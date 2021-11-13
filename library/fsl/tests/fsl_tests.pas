@@ -827,7 +827,6 @@ end;
 
 { TFslGenericsTests }
 
-{$HINTS OFF}
 procedure TFslGenericsTests.testSimple;
 var
   l : TFslList<TFslObject>;
@@ -843,7 +842,6 @@ begin
     l.Free;
   end;
 end;
-{$HINTS ON}
 
 function TFslGenericsTests.doSort(sender : TObject; const left, right : TFslTestObject) : integer;
 begin

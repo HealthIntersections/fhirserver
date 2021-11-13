@@ -17,14 +17,14 @@ uses
   ftk_editor_text, ftk_editor_xml, ftk_factory, ftk_editor_json,
   ftk_editor_base, ftk_editor_html, ftk_editor_js, frm_settings, ftk_editor_hl7,
   ftk_editor_fhir, ftk_editor_md, ftk_search, ftk_frame_codesystem,
-  ftk_frame_resource, frm_about, ftk_version, frm_edit_changes,
+  ftk_frame_resource, frm_about, ftk_version, dlg_edit_changes,
   frm_server_settings, ftk_utilities, ftk_serverlist, ftk_constants,
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
   ftk_store_server, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
   ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
   frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager,
   dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5, ftk_image_scanner,
-  ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner;
+  ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner, dlg_upgrade;
 
 {$R *.res}
 
@@ -48,6 +48,7 @@ begin
     frm.Free;
   end;
   Application.CreateForm(TQRCodeScannerForm, QRCodeScannerForm);
+  Application.CreateForm(TToolkitUpgradeForm, ToolkitUpgradeForm);
   Application.Run;
 end.
 

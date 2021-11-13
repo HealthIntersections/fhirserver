@@ -328,7 +328,7 @@ function SQLWrapString(const AStr: String): String;
 function SQLWrapStrings(const AStr: String): String;
 function AppendForwardSlash(const AStr: String): String;
 function ExcludeTrailingSlash(const S: string): string;
-Function DescribeBytes(i : int64) : String;
+Function DescribeBytes(i : int64; rounded : boolean = false) : String;
 
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
 function RemoveQuotes(AStr: String; AUpperCaseString: Boolean = false): String;
@@ -573,6 +573,7 @@ Function SystemTemp : String;
 Function SystemManualTemp : String;
 Function ProgData : String;
 Function UserFolder : String;
+Function DownloadsFolder : String;
 function tempFileName(prefix : String): String;
 function partnerFile(name : String) : String;
 
@@ -3305,6 +3306,32 @@ End;
 {$OVERFLOWCHECKS ON}
 {$RANGECHECKS ON}
 
+function DownloadsFolder: String;
+{$IFDEF WINDOWS}
+var
+  reg : TRegistry;
+begin
+  reg := TRegistry.create(KEY_READ);
+  try
+    reg.RootKey := HKEY_CURRENT_USER;
+    if reg.OpenKeyReadOnly('SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders') then
+      result := reg.ReadString('{374DE290-123F-4565-9164-39C4925E467B}');
+    if not FolderExists(result) then
+      result := FilePath([UserFolder, 'Downloads']);
+    if not FolderExists(result) then
+      result := GetTempDir;
+  finally
+    reg.free;
+  end;
+end;
+{$ELSE}
+begin
+  result := FilePath([UserFolder, 'Downloads']);
+  if not FolderExists(result) then
+    result := GetTempDir;
+end;
+{$ENDIF}
+
 function tempFileName(prefix : String): String;
 begin
   result := Path([SystemTemp, prefix+'-'+NewGuidId+'.tmp']);
@@ -3969,7 +3996,7 @@ Begin
   mem.dwLength := SizeOf(mem);
   GlobalMemoryStatusEx(mem);
   result.physicalMem := mem.ullTotalPhys;
-  result.virtualMem := mem.ullTotalVirtual;
+  result.virtualMem := mem.ullTotalPhys + mem.ullTotalPageFile;
 End;
 {$ENDIF}
 {$ENDIF}
@@ -5449,18 +5476,32 @@ begin
     SetLength(Result, Length(Result)-1);
 end;
 
-Function DescribeBytes(i : int64) : String;
+Function DescribeBytes(i : int64; rounded : boolean = false) : String;
 Begin
+  if rounded then
   Case i Of
-    0..1000:
+    0..1024:
       Result := IntToStr(i) + ' bytes';
-    1001..1000000:
-      Result := floattostrF(i / 1024, ffFixed, 18, 1) + ' KB';
+    1025..1000000:
+      Result := IntToStr(round(i / 1024)) + ' KB';
     1000001..1000000000:
-      Result := floattostrF(i / 1048576, ffFixed, 18, 1) + ' MB';
+      Result := IntToStr(round(i / 1048576)) + ' MB';
   Else
-    Result := floattostrF(i / 1073741824, ffFixed, 18, 1) + ' GB';
-  End;
+    Result := IntToStr(round(i / 1073741824)) + ' GB';
+  End
+  else
+  begin
+    Case i Of
+      0..1024:
+        Result := IntToStr(i) + ' bytes';
+      1025..1000000:
+        Result := floattostrF(i / 1024, ffFixed, 18, 1) + ' KB';
+      1000001..1000000000:
+        Result := floattostrF(i / 1048576, ffFixed, 18, 1) + ' MB';
+    Else
+      Result := floattostrF(i / 1073741824, ffFixed, 18, 1) + ' GB';
+    End;
+  end;
 End;
 
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
