@@ -56,3 +56,7 @@ testcases/snomed/snomed.cache
 /server/FHIRServer.cfg
 /install/fhirserver.fb8lck
 /install/tools
+
+utilities/codescan/codescan
+
+install/build/FHIRToolkit.app
