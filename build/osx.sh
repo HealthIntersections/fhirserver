@@ -6,5 +6,5 @@ BASEDIR=$(dirname "$0")
 BUILDDIR=${1:-"/tmp/fsbuild"}
 
 $BASEDIR/osx-toolchain.sh $BUILDDIR;
-$BASEDIR/unix-libraries.sh $BUILDDIR;
+$BASEDIR/osx-libraries.sh $BUILDDIR;
 $BASEDIR/osx-fhirserver.sh $BUILDDIR;
