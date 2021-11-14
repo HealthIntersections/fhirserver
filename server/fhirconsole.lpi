@@ -351,6 +351,7 @@
         <Filename Value="test_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TestForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit13>
     </Units>

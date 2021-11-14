@@ -40,7 +40,7 @@ uses
   fdb_odbc_fpc,
   console_form,
   console_tx_edit, console_ep_edit, install_form, install_log, installer, 
-test_form;
+  test_form;
 
 {$R *.res}
 
@@ -72,7 +72,10 @@ begin
     Application.Scaled := True;
 
     Application.Initialize;
-    Application.CreateForm(TMainConsoleForm, MainConsoleForm);
+    if (paramStr(1) = 'test-form') then
+      Application.CreateForm(TTestForm, TestForm)
+    else
+      Application.CreateForm(TMainConsoleForm, MainConsoleForm);
     Application.Run;
   end;
 end.

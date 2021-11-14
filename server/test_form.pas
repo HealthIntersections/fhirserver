@@ -33,9 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, laz.VirtualTrees,
-  fsl_base,
-  fui_lcl_managers;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls,
+  ExtCtrls, laz.VirtualTrees, fsl_base, fui_lcl_managers;
 
 type
   { TTestNode }
@@ -57,12 +56,17 @@ type
     property index : Integer read FIndex write FIndex;
     property Name : String read FName write FName;
     property Children : TFslList<TTestNode> read FChildren;
+
+    function describe : String;
   end;
+
+  TTestForm = class;
 
   { TTestTreeManager }
 
   TTestTreeManager = class (TVTreeManager<TTestNode>)
   private
+    form : TTestForm;
   public
     function doubleClickEdit : boolean; override;
     function LoadData : boolean; override;
@@ -74,15 +78,28 @@ type
     function getSummaryText(item : TTestNode) : String; override;
 
     procedure changed; override;
+    procedure focusItemChange(item : TTestNode); override;
+    function addItem(parent : TTestNode; mode : String) : TTestNode; override;
+    function editItem(item : TTestNode; mode : String) : boolean; override;
     function executeItem(item : TTestNode; mode : String) : boolean; override;
     function refreshItem(item : TTestNode) : boolean; override;
+    function deleteItem(parent, item : TTestNode) : boolean; override;
   end;
 
   { TTestForm }
 
   TTestForm = class(TForm)
+    btnAdd: TButton;
+    btnEdit: TButton;
+    btnDelete: TButton;
     ImageList1: TImageList;
     LazVirtualStringTree1: TLazVirtualStringTree;
+    mFocus: TMemo;
+    Panel1: TPanel;
+    ToolBar1: TToolBar;
+    tbAdd: TToolButton;
+    tbEdit: TToolButton;
+    tbDelete: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -103,8 +120,19 @@ implementation
 procedure TTestForm.FormCreate(Sender: TObject);
 begin
   FManager := TTestTreeManager.create;
-  FManager.Tree := LazVirtualStringTree1;
+  FManager.registerControl(btnAdd, copAdd);
+  FManager.registerControl(btnEdit, copEdit);
+  FManager.registerControl(btnDelete, copDelete);
+  FManager.registerControl(tbAdd, copAdd);
+  FManager.registerControl(tbEdit, copEdit);
+  FManager.registerControl(tbDelete, copDelete);
+  FManager.registerMenuEntry('&Add', 15, copAdd);
+  FManager.registerMenuEntry('&Edit', 16, copEdit);
+  FManager.registerMenuEntry('E&xecute', 18, copExecute);
+  FManager.registerMenuEntry('&Delete', 17, copDelete);
   FManager.Images := ImageList1;
+  FManager.Tree := LazVirtualStringTree1;
+  FManager.form := self;
   FManager.doLoad;
 end;
 
@@ -128,16 +156,19 @@ begin
   result := true;
   for i := 0 to Random(10) do
   begin
-    n := TTestNode.create(Random(Images.count), 'Root.'+inttostr(i));
+    n := TTestNode.create(Random(Images.count-3), 'Root.'+inttostr(i));
     Data.add(n);
     for j := 0 to Random(5) do
-      n.Children.add(TTestNode.create(Random(Images.count), 'Root.'+inttostr(i)+'-'+inttostr(j)));
+      n.Children.add(TTestNode.create(Random(Images.count-3), 'Root.'+inttostr(i)+'-'+inttostr(j)));
   end;
 end;
 
 function TTestTreeManager.allowedOperations(item: TTestNode): TNodeOperationSet;
 begin
-  result := [opExecute, opRefresh];
+  if (item.Name.Contains('-')) then
+    result := [opEdit, opExecute, opRefresh, opDelete]
+  else
+    result := [opAdd, opExecute, opRefresh, opDelete];
 end;
 
 function TTestTreeManager.getImageIndex(item: TTestNode): integer;
@@ -152,11 +183,11 @@ end;
 
 function TTestTreeManager.getCellColors(item: TTestNode; var fore, back: TColor): boolean;
 begin
-  if item.Index > 2 then
+  if item.Index > images.count div 2 then
   begin
     result := true;
-    fore := clWhite;
-    back := clBlack;
+    fore := clMaroon;
+    back := clWhite;
   end
   else
     Result := inherited getCellColors(item, fore, back);
@@ -169,7 +200,25 @@ end;
 
 procedure TTestTreeManager.changed;
 begin
-  // do nothing here
+  // do nothing here, bu we could save the tree
+end;
+
+procedure TTestTreeManager.focusItemChange(item : TTestNode);
+begin
+  form.mFocus.text := item.describe;
+end;
+
+function TTestTreeManager.addItem(parent: TTestNode; mode: String): TTestNode;
+var
+  n : String;
+begin
+  result := nil;
+  n := 'Node.n-n';
+  if InputQuery('Add Test Node', 'Enter Name:', n) then
+  begin
+    result := TTestNode.create(Random(Images.count-3), n);
+    parent.Children.add(result);
+  end;
 end;
 
 function TTestTreeManager.executeItem(item: TTestNode; mode: String): boolean;
@@ -180,6 +229,21 @@ end;
 function TTestTreeManager.refreshItem(item: TTestNode): boolean;
 begin
   ShowMessage('Reload '+item.name);
+end;
+
+function TTestTreeManager.deleteItem(parent, item: TTestNode): boolean;
+begin
+  parent.Children.Remove(item);
+end;
+
+function TTestTreeManager.editItem(item : TTestNode; mode : String) : boolean;
+var
+  n : String;
+begin
+  n := item.name;
+  result :=  InputQuery('Test Edit', 'Enter Name:', n);
+  if result then
+    item.name := n;
 end;
 
 { TTestNode }
@@ -206,6 +270,14 @@ end;
 function TTestNode.link: TTestNode;
 begin
   result := TTestNode(inherited link);
+end;
+
+function TTestNode.describe: String;
+begin
+  result :=
+    'Name: '+name+#13#10+
+    'Image: '+inttostr(index)+#13#10+
+    'Children: '+inttostr(FChildren.count)+#13#10;
 end;
 
 function TTestNode.getChildCount: integer;
