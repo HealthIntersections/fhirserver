@@ -20,7 +20,7 @@
   Fixed estimation of filesize for variable record length files (V) in z/VM to
   conform to what was specified in:
 
-  z/VMTCP/IP User’s Guide Version 5 Release 1.0
+  z/VMTCP/IP Users Guide Version 5 Release 1.0
 
   This will not always give the same estimate as the server would when listing
   in Unix format "SITE LISTFORMAT UNIX" because we can't know the block size
@@ -317,8 +317,8 @@ AUTHORS            A1 DIR    -      -      -       9/20/99   10:31:11
     //File Size - note that this is just an estimiate
 
     {From:
-    z/VMTCP/IP User’s Guide Version 5 Release 1.0
-    © Copyright International Business Machines Corporation 1987, 2004.
+    z/VMTCP/IP Users Guide Version 5 Release 1.0
+    ) Copyright International Business Machines Corporation 1987, 2004.
     All rights reserved.
 
     For fixed-record (F) format minidisk and SFS files,
@@ -327,8 +327,8 @@ AUTHORS            A1 DIR    -      -      -       9/20/99   10:31:11
     the size field contains an estimated file size, this
     being the lesser value determined by:
 
-    – the number of records in the file and its maximum record length
-    – the size and number of blocks required to maintain the file.
+     the number of records in the file and its maximum record length
+     the size and number of blocks required to maintain the file.
 
     For virtual reader files, a size of 0 is always indicated.}
 
@@ -382,23 +382,23 @@ end;
 {List format like:
 
 ===
-05/20/2000 13:38:19 F 1 65758 ’bfsline.cpy’
-05/19/2000 11:02:15 F 1 65758 ’bfsline.txt’
-06/03/2000 12:27:48 F 1 15414 ’bfstest.cpy’
-05/20/2000 13:38:05 F 1 15414 ’bfstest.output’
-05/20/2000 13:38:42 F 1 772902 ’bfswork.output’
-03/31/2000 15:49:27 F 1 782444 ’bfswork.txt’
-05/20/2000 13:39:20 F 1 13930 ’lotsonl.putdata’
-05/19/2000 09:41:21 F 1 13930 ’lotsonl.txt’
-06/15/2000 09:29:25 F 1 278 ’mail.maw’
-05/20/2000 13:39:34 F 1 278 ’mail.putdata’
-05/20/2000 15:30:45 F 1 13930 ’nls.new’
-05/20/2000 14:02:24 F 1 13931 ’nls.txt’
-08/21/2000 10:03:17 F 1 328 ’rock.rules’
-05/20/2000 13:40:05 F 1 58 ’testfil2.putdata’
-04/26/2000 14:34:42 F 1 63 ’testfil2.txt’
-08/21/2000 05:28:40 D - - ’ALTERNATE’
-12/28/2000 17:36:19 D - - ’FIRST
+05/20/2000 13:38:19 F 1 65758 bfsline.cpy
+05/19/2000 11:02:15 F 1 65758 bfsline.txt
+06/03/2000 12:27:48 F 1 15414 bfstest.cpy
+05/20/2000 13:38:05 F 1 15414 bfstest.output
+05/20/2000 13:38:42 F 1 772902 bfswork.output
+03/31/2000 15:49:27 F 1 782444 bfswork.txt
+05/20/2000 13:39:20 F 1 13930 lotsonl.putdata
+05/19/2000 09:41:21 F 1 13930 lotsonl.txt
+06/15/2000 09:29:25 F 1 278 mail.maw
+05/20/2000 13:39:34 F 1 278 mail.putdata
+05/20/2000 15:30:45 F 1 13930 nls.new
+05/20/2000 14:02:24 F 1 13931 nls.txt
+08/21/2000 10:03:17 F 1 328 rock.rules
+05/20/2000 13:40:05 F 1 58 testfil2.putdata
+04/26/2000 14:34:42 F 1 63 testfil2.txt
+08/21/2000 05:28:40 D - - ALTERNATE
+12/28/2000 17:36:19 D - - FIRST
 ===
 }
 class function TIdFTPLPVMBFS.CheckListing(AListing: TStrings;

@@ -349,7 +349,7 @@ begin
   Total Number of batches listed: 5
 
   Note that this was taken from:
-  "Connect:Enterprise® UNIX Remote User’s Guide Version 2.1 " Copyright
+  "Connect:Enterprise. UNIX Remote Users Guide Version 2.1 " Copyright
   1999, 2002, 2003 Sterling Commerce, Inc.
   }
   LI := AItem as TIdSterCommEntUxNSFTPListItem;

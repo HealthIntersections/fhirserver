@@ -221,6 +221,7 @@ var
   c : TFHIRCodingW;
   p : TFHIRParametersW;
   vsw : TFHIRValueSetW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -229,7 +230,7 @@ begin
       c.systemUri := system;
       c.code := code;
       c.version := version;
-      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);
+      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
       try
         result := TValidationResult.Create;
         try
@@ -366,6 +367,7 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodingW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -373,7 +375,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil);
+        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -401,6 +403,7 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodeableConceptW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -408,7 +411,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);
+        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then

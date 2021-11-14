@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, DateUtils, Graphics, {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto, fsl_qrcode,
-  fhir_objects, fhir_common, fhir_healthcard, fhir_utilities,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_crypto, fhir_qrcode,
+  fhir_objects, fhir_common, fhir_healthcard, fhir_utilities, fhir_uris,
   fhir4_types, fhir4_resources, fhir4_json, fhir4_utilities, fhir4_factory,
   session, storage, server_context;
 
@@ -372,7 +372,7 @@ end;
 
 function TVciImmunizationCardMaker.isIncludedCoding(c: TFHIRCoding): boolean;
 begin
-  result := StringArrayExists(['http://hl7.org/fhir/sid/cvx', 'https://www.gs1.org/gtin', 'http://snomed.info/sct',
+  result := StringArrayExists([URI_CVX, URI_GTIN, URI_SNOMED,
       'http://id.who.int/icd/release/11/mms','https://www.humanservices.gov.au/organisations/health-professionals/enablers/air-vaccine-code-formats','http://www.whocc.no/atc'], c.system)
 end;
 
@@ -518,7 +518,7 @@ var
 begin
   result := '';
   for c in obs.code.codingList do
-    if c.system = 'http://loinc.org' then
+    if c.system = URI_LOINC then
       exit(c.code);
 end;
 
@@ -562,7 +562,7 @@ begin
     exit(false);
 
   ctxt := serverContext;
-  c := ctxt.Factory.wrapCoding(ctxt.Factory.makeCoding('http://loinc.org', code));
+  c := ctxt.Factory.wrapCoding(ctxt.Factory.makeCoding(URI_LOINC, code));
   try
     if covid then
       result := ctxt.TerminologyServer.codeInValueSet(c, 'http://test.fhir.org/r4/ValueSet/Covid19Labs')
@@ -637,7 +637,7 @@ begin
   result := TFHIRObservation.Create;
   try
     result.status := obs.status;
-    result.code := TFhirCodeableConcept.Create('http://loinc.org', loincCode(obs));
+    result.code := TFhirCodeableConcept.Create(URI_LOINC, loincCode(obs));
     result.subject := TFhirReference.Create('resource:0');
     result.effective := obs.effective.Link;
 

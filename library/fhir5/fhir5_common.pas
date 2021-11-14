@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   fhir5_types, fhir5_resources, fhir5_operations, fhir5_opbase, fhir5_enums;
 
 const
@@ -581,7 +581,7 @@ type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRResourceV; override;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; override;
-    function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
+    function addDesignation(lang, system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
@@ -2809,7 +2809,7 @@ end;
 
 { TFHIRLookupOpResponse5 }
 
-function TFHIRLookupOpResponse5.addDesignation(system, code, display, value: string): TFHIRLookupOpRespDesignationW;
+function TFHIRLookupOpResponse5.addDesignation(lang, system, code, display, value: string): TFHIRLookupOpRespDesignationW;
 var
   p : TFHIRLookupOpRespDesignation;
 begin
@@ -2819,6 +2819,7 @@ begin
     p.use.system := system;
     p.use.display := display;
     p.use.code := code;
+    p.language := lang;
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation5.create(p.Link);
@@ -4063,7 +4064,7 @@ begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
   ae.event.action := AuditEventActionE;
-  ae.event.outcome := TFhirCodeableConcept.Create('http://terminology.hl7.org/CodeSystem/audit-event-outcome', '0');
+  ae.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
   ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 

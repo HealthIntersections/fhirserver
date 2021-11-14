@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging, fsl_npm_cache,
-  fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager,
+  fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager, fhir_uris,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
   subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine,

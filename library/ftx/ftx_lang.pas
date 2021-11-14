@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http, fsl_lang,
-  fhir_common, fhir_features,
+  fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -137,7 +137,7 @@ end;
 
 function TIETFLanguageCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'urn:ietf:bcp:47';
+  result := URI_BCP47;
 end;
 
 function TIETFLanguageCodeServices.getDefinition(code: String): String;

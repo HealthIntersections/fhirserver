@@ -85,7 +85,8 @@ Type
 
     class procedure test(db : TFDBManager);
 
-    class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; kind : TFHIRPackageKind);
+    class procedure processURLs(npm : TNpmPackage; ts : TStringList);
+    class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; urls : TStringList; kind : TFHIRPackageKind);
   end;
 
 implementation
@@ -97,9 +98,9 @@ end;
 
 { TPackageUpdater }
 
-class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
+class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; urls : TStringList; kind: TFHIRPackageKind);
 var
-  fver, dep : String;
+  fver, dep, u : String;
   pkey, vkey, cvkey, cc : integer;
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
@@ -120,6 +121,8 @@ begin
     conn.ExecSQL('Insert into PackageFHIRVersions (PackageVersionKey, Version) values ('+inttostr(vkey)+', '''+SQLWrapString(fver)+''')');
   for dep in npm.dependencies do
     conn.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(dep)+''')');
+  for u in urls do
+    conn.ExecSQL('Insert into PackageURLs (PackageVersionKey, URL) values('+inttostr(vkey)+', '''+SQLWrapString(u)+''')');
 
   pkey := conn.CountSQL('Select Max(PackageKey) from Packages where Id = '''+SQLWrapString(id)+'''');
   if pkey = 0 then
@@ -202,11 +205,51 @@ begin
   Logging.log(msg);
 end;
 
+class procedure TPackageUpdater.processURLs(npm : TNpmPackage; ts : TStringList);
+var
+  s : String;
+  json : TJsonObject;
+  xml : TMXmlDocument;
+  e, u : TMXmlElement;
+begin
+  for s in npm.list('package') do
+  begin
+    try
+      if s.EndsWith('.json') then
+      begin
+        json := TJSONParser.parse(npm.loadBytes('package', s));
+        try
+          if json.has('url') then
+            ts.Add(json.str['url']);
+        finally
+          json.Free;
+        end;
+      end
+      else if s.EndsWith('.xml') then
+      begin
+        xml := TMXmlParser.parse(npm.loadBytes('package', s), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+        try
+          e := xml.docElement;
+          u := e.element('url');
+          if u <> nil then
+            ts.Add(u.attribute['value']);
+        finally
+          e.Free;
+        end;
+      end
+    except
+      on e : Exception do 
+        Writeln('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+    end;
+  end;
+end;
+
 procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
   id, version, description, canonical, fhirVersion : String;
   kind : TFHIRPackageKind;
+  ts : TStringList;
 begin
   npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil);
   try
@@ -235,7 +278,14 @@ begin
     if not isAbsoluteUrl(canonical) then
       raise EFslException.Create('Canonical "'+canonical+'" is not valid');
 
-    commit(FDB, package, npm, date, guid, id, version, description, canonical, '', kind);
+    ts := TStringList.create;
+    try
+      processURLs(npm, ts);
+      
+      commit(FDB, package, npm, date, guid, id, version, description, canonical, '', ts, kind);
+    finally
+      ts.free;
+    end;
 
   finally
     npm.Free;
@@ -245,10 +295,16 @@ end;
 class procedure TPackageUpdater.test(db: TFDBManager);
 var
   conn : TFDBConnection;
+  this : TPackageUpdater;
 begin
   conn := db.GetConnection('test');
   try
-    TPackageUpdater.Create.update(conn);
+    this := TPackageUpdater.Create;
+    try
+      this.update(conn);
+    finally
+      this.free;
+    end;
   finally
     conn.Release;
   end;
@@ -261,7 +317,7 @@ var
   i : integer;
   pr : TPackageRestrictions;
 begin
-  FIni := TIniFile.Create('package-spider.ini');
+  FIni := TIniFile.Create(tempFile('package-spider.ini'));
   try
     log('Start Package Scan', '', false);
     FTotalBytes := 0;

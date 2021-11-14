@@ -36,7 +36,8 @@ uses
   Windows,
   SysUtils, Classes, Graphics, Types,
   {$IFDEF DELPHI} Jpeg, PNGImage,  GraphicEx, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell,
+  fhir_colour_utils;
 
 Type
   TRect = Windows.TRect;

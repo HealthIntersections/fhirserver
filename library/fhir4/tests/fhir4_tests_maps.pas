@@ -198,7 +198,7 @@ begin
         utils.transform(nil, x.resource, utils.Lib['http://hl7.org/fhir/StructureMap/cda-cd'], cd);
         assert.AreEqual(cd.codingList.count, 1);
         assert.AreEqual(cd.codingList[0].code, '34133-9');
-        assert.AreEqual(cd.codingList[0].system, 'http://loinc.org');
+        assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
         cd.Free;
       end;

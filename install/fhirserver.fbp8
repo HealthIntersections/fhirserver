@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "web interface for icao certificate support"
+        as.returnvalue = "web interface for icao certificate support - add PDF \+ fix Audit Trail code system uris"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -248,7 +248,7 @@ begin
             exportallsymbols = false
             extendedsyntax = true
             externaltd32 = true
-            frameworktype = None
+            frameworktype = VCL
             generatedocumentation = false
             generatehpp = false
             hugestrings = true
@@ -264,7 +264,7 @@ begin
             mapfile = 3
             maxstacksize = 1048576
             minstacksize = 16384
-            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
             openstrings = true
             optimisation = false
             outputdir = C:\\work\\fhirserver\\Exec\\64
@@ -279,7 +279,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics;Dialogs\=Vcl.Dialogs;Clipbrd\=Vcl.Clipbrd
             unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\d64
             usedebugdcu = false
             usepackages = false
@@ -379,7 +379,7 @@ begin
             exportallsymbols = false
             extendedsyntax = true
             externaltd32 = true
-            frameworktype = None
+            frameworktype = VCL
             generatedocumentation = false
             generatehpp = false
             hugestrings = true
@@ -395,7 +395,7 @@ begin
             mapfile = 3
             maxstacksize = 1048576
             minstacksize = 16384
-            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
             openstrings = true
             optimisation = false
             outputdir = C:\\work\\fhirserver\\Exec\\64
@@ -410,7 +410,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms;Graphics\=Vcl.Graphics;Dialogs\=Vcl.Dialogs
             unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\64
             usedebugdcu = false
             usepackages = false

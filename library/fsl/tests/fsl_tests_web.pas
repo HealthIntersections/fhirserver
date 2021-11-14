@@ -388,8 +388,13 @@ var
   msg : TIdMessage;
   ssl : TIdOpenSSLIOHandlerClient;
 begin
+  if TestSettings.SMTPPassword = '' then
+  begin
+    assertNotTested('No password for SMTP test');
+    exit;
+  end;
+
   assertTrue(TestSettings.SMTPUsername <> '', 'Must provide username(/source email) for SMTP test in '+TestSettings.filename+' ([email] sender=)');
-  assertTrue(TestSettings.SMTPPassword <> '', 'Must provide password for SMTP test in '+TestSettings.filename+' ([email] password=)');
   assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destinatino for SMTP test in '+TestSettings.filename+' ([email] destination=)');
 
   sender := TIdSMTP.Create(Nil);

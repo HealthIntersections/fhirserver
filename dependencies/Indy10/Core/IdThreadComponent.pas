@@ -62,7 +62,7 @@
   Rev 1.0    11/13/2002 08:03:06 AM  JPMugaas
 
   2002-05-03 -Andrew P.Rybin
-   -Stéphane Grobéty (Fulgan) suggestion: component is Data owner, don't FreeAndNIL Data property
+   -Stiphane Grobity (Fulgan) suggestion: component is Data owner, don't FreeAndNIL Data property
    -special TThread.OnTerminate support (it is sync-event)
 
   2002-05-23 -APR

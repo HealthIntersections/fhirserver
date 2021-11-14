@@ -37,6 +37,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.FileCtrl, Vcl.Menus, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ExtCtrls,
   fsl_utilities, fsl_shell,
+  fhir_colour_utils,
   server_config, server_constants, gui_controller;
 
 type

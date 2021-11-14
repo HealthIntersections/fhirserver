@@ -1,5 +1,6 @@
 unit fui_gfx_jpg;
 
+{ Adapted from? Copyright (c) ? }
 {$i fhir.inc}
 
 interface

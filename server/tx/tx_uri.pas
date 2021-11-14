@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http,
   fdb_manager,
-  fhir_features,
+  fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -103,7 +103,7 @@ end;
 
 function TUriServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'urn:ietf:rfc:3986';
+  result := URI_URIs;
 end;
 
 function TUriServices.getDefinition(code: String): String;

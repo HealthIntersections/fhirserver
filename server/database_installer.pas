@@ -412,6 +412,8 @@ begin
        ' Dependency            nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+')'+#13#10);
   FConn.ExecSQL('Create INDEX SK_PackageDependencies ON PackageDependencies (PackageVersionKey)');
 
+  FConn.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+  FConn.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreatePseudoData;
@@ -724,6 +726,8 @@ Begin
        ' Count int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Summary int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Reverse int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Reverse2 int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Reverse3 int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Date '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Type int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Title '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -745,6 +749,8 @@ Begin
        ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score1 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score2 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' SortValue2 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' SortValue3 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        InlineForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey')+
@@ -1291,11 +1297,14 @@ end;
 
 
 procedure TFHIRDatabaseInstaller.Upgrade(version : integer = 0);
+var
+  isTx : boolean;
 begin
   FConn.StartTransact;
   try
     if version = 0 then
       version := Fconn.CountSQL('Select Value from Config where ConfigKey = '+inttostr(CONFIG_DATABASE_VERSION));
+    isTx := Fconn.Lookup('Config', 'ConfigKey', '100', 'Value', '').startsWith('terminology|');
 
     if version > ServerDBVersion then
       raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
@@ -1368,6 +1377,14 @@ begin
     if (version <= 30) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ALTER COLUMN Scope nchar(1024) NOT NULL');
+    end;
+
+    if not isTx and (version <= 32) then
+    begin
+      Fconn.ExecSQL('Delete from SearchEntries');
+      Fconn.ExecSQL('Delete from Searches');
+      Fconn.ExecSQL('ALTER TABLE SearchEntries ADD SortValue2 nchar(128) NULL, SortValue3 nchar(128) NULL');
+      Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse2 int NULL,Reverse3 int NULL');
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');

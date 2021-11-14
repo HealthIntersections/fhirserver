@@ -1,6 +1,7 @@
 unit fsl_diff;
 
 // adapted from http://flocke.vssd.de/prog/code/pascal/pasdiff/cur/Diff.pas.html
+// Copyright (c) see source
 
 {$i fhir.inc}
 
@@ -44,7 +45,7 @@ type
 
   { Exception class used by this module.
   }
-  ETextComparerError = class(Exception);
+  ETextComparerError = class(EFslException);
 
   TFslTextComparer = class (TFslObject)
   private

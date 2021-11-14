@@ -31,15 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-{
-[settings]
-} const
-BuildCount='406';
-BuildDate='2021-10-28';
-
-
-  SERVER_FULL_VERSION = '1.9.'+buildCount;
-  SERVER_RELEASE_DATE = BuildDate;
+const
+  {$i version.inc}
+  SERVER_FULL_VERSION = FHIR_CODE_FULL_VERSION;
+  SERVER_RELEASE_DATE = FHIR_CODE_RELEASE_DATETIME;
 
   INDEX_DIGITS = 20;
   INDEX_DECIMALS = 30;

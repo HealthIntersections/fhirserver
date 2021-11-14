@@ -203,9 +203,9 @@ const
   Id_EHR_MSG_VALID_DEST = '2.1.5';                        {do not localize}
   //X.1.6 Destination mailbox has moved, No forwarding address
   Id_EHR_MSG_DEST_MOVED_NOFORWARD = '2.1.6';              {do not localize}
-  //X.1.7 Bad sender’s mailbox address syntax
+  //X.1.7 Bad senders mailbox address syntax
   Id_EHR_MSG_SENDER_BOX_SYNTAX = '5.1.7';                 {do not localize}
-  //X.1.8 Bad sender’s system address
+  //X.1.8 Bad senders system address
   Id_EHR_MSG_BAD_SENDER_ADDR = '5.1.8';                   {do not localize}
   //X.2.0 Other or undefined mailbox status
   Id_EHR_MB_OTHER_STATUS_OK = '2.2.0';                    {do not localize}

@@ -42,7 +42,7 @@ uses
 
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads,
   fdb_manager,
-  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
+  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
@@ -98,8 +98,8 @@ Type
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
-    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
     function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
     function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -513,7 +513,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -527,6 +527,7 @@ begin
     try
       check.prepare(vs, profile);
       result := check.check(coding, abstractOk, implySystem);
+      summary := check.log;
     finally
       check.Free;
     end;
@@ -536,7 +537,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -550,6 +551,7 @@ begin
     try
       check.prepare(vs, profile);
       result := check.check(coded, abstractOk, implySystem);
+      summary := check.log;
     finally
       check.Free;
    end;
@@ -599,9 +601,9 @@ var
   d : String;
 begin
   result := false;
-  if (system = 'http://hl7.org/fhir/sid/icd-10') then
+  if (system = URI_ICD10) then
     result := true// nothing for now....
-  else if (system = 'http://snomed.info/sct') and (CommonTerminologies.DefSnomed <> nil) then
+  else if (system = URI_SNOMED) and (CommonTerminologies.DefSnomed <> nil) then
   begin
     if op.warning('InstanceValidator', itInvalid, path, CommonTerminologies.DefSnomed.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
     begin
@@ -609,13 +611,13 @@ begin
       result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = d), 'Display for SNOMED-CT term "'+code+'" should be "'+d+'"');
     end;
   end
-  else if system.StartsWith('http://loinc.org') and (CommonTerminologies.Loinc <> nil) then
+  else if system.StartsWith(URI_LOINC) and (CommonTerminologies.Loinc <> nil) then
   begin
     d := CommonTerminologies.Loinc.GetDisplayByName(code, CommonTerminologies.Loinc.LangsForLang(lang));
     if op.warning('InstanceValidator', itInvalid, path, d <> '', 'The LOINC code "'+code+'" is unknown') then
       result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = d), 'Display for Loinc Code "'+code+'" should be "'+d+'"');
   end
-  else if system.StartsWith('http://unitsofmeasure.org') and (CommonTerminologies.Ucum <> nil) then
+  else if system.StartsWith(URI_UCUM) and (CommonTerminologies.Ucum <> nil) then
   begin
     d := CommonTerminologies.Ucum.validate(code);
     result := op.warning('InstanceValidator', itInvalid, path, d = '', 'The UCUM code "'+code+'" is not valid: '+d);
@@ -673,6 +675,7 @@ var
   vs : TFHIRValueSetW;
   p : TFhirParametersW;
   profile : TFHIRExpansionParams;
+  summary : string;
 begin
   vs := getValueSetByUrl(valueSet, nil);
   try
@@ -681,7 +684,7 @@ begin
     profile := TFHIRExpansionParams.create;
     try
       profile.valueSetMode := vsvmMembershipOnly;
-      p := validate(vs, c, profile, true, false, nil);
+      p := validate(vs, c, profile, true, false, nil, summary);
       try
         result := p.bool('result');
       finally
@@ -758,7 +761,7 @@ end;
 //        begin
 //          match := TFHIRComposeOpRespMatch.Create;
 //          resp.matchList.add(match);
-//          match.code := TFHIRCodingW.Create('http://snomed.info/sct', mc.matched);
+//          match.code := TFHIRCodingW.Create(URI_SNOMED, mc.matched);
 //          match.code.display := cs.getDisplay(mc.matched, '');
 //          for ref in mc.Unmatched do
 //          begin
@@ -975,6 +978,7 @@ var
   op : TFhirOperationOutcomeW;
   list : TLoadedConceptMapList;
   i : integer;
+  summary : string;
   cm : TLoadedConceptMap;
   p : TFhirParametersW;
   g : TFhirConceptMapGroupW;
@@ -989,7 +993,7 @@ begin
         raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
-      p := validate(target, coding, nil, false, false, nil);
+      p := validate(target, coding, nil, false, false, nil, summary);
       try
         if p.bool('result') then
         begin

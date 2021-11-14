@@ -1,4 +1,5 @@
 // cloned from System.ODBC to address bug https://quality.embarcadero.com/browse/RSP-18980
+// Copyright (c) Embarcadero
 
 {*******************************************************}
 {                                                       }

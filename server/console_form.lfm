@@ -59,10 +59,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 575
       Top = 1
       Width = 684
-      ActivePage = tbManage
+      ActivePage = tbTerminologies
       Align = alClient
       ParentFont = False
-      TabIndex = 3
+      TabIndex = 4
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'

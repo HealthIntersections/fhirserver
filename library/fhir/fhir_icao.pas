@@ -1,5 +1,33 @@
 unit fhir_icao;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -46,6 +74,7 @@ type
     property mustVerify : boolean read FMustVerify write FMustVerify;
     property jwk : TJWK read FJWK write SetJWK;
 
+    procedure log(s : String);
     property htmlReport : String read GetHtmlReport;
     function import(json : TJsonObject) : THealthcareCard; overload;
     function import(source : String) : THealthcareCard; overload;
@@ -60,8 +89,8 @@ implementation
 function TICAOCardImporter.import(json: TJsonObject): THealthcareCard;
 var
   bundle : TFHIRBundleW;
-  data, sig, hdr, msg, ve : TJsonObject;
-  vd : TJsonNode;
+  data, sig, hdr, msg : TJsonObject;
+  ve, vd : TJsonNode;
   i : integer;
   cvxCode : String;
   util : THealthcareCardUtilities;
@@ -82,12 +111,14 @@ begin
     i := 1;
     if (msg.arr['ve'] = nil) or (msg.arr['ve'].Count = 0) then
       raise EFHIRException.Create('Unable to find ve in VDS');
-    ve := msg.arr['ve'].Obj[0];
-    cvxCode := processVaccineCode(ve);
-    for vd in ve.forceArr['vd'] do
+    for ve in msg.arr['ve'] do
     begin
-      addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
-      inc(i);
+      cvxCode := processVaccineCode(ve as TJsonObject);
+      for vd in (ve  as TJsonObject).forceArr['vd'] do
+      begin
+        addEntry(bundle, i, makeImmunization(cvxCode, vd as TJsonObject));
+        inc(i);
+      end;
     end;
 
     checkSignature(sig, data);
@@ -167,7 +198,7 @@ begin
   else if (nam = 'Pfizer Comirnaty') or (nam.ToLower.Contains('pfizer')) then
     result := '208'
   else
-    raise Exception.Create('Unknown vaccine code '+ve['des']+'/"'+nam+'"');
+    raise EFHIRException.Create('Unknown vaccine code '+ve['des']+'/"'+nam+'"');
 end;
 
 function TICAOCardImporter.displayCvx(code : String) : String;
@@ -352,6 +383,11 @@ begin
   end;
 end;
 
+procedure TICAOCardImporter.log(s: String);
+begin
+  Flog.Append('<p>'+encodeXml(s)+'</p>');
+end;
+
 function TICAOCardImporter.import(image: TBitmap): THealthcareCard;
 var
   scanner : TScanManager;
@@ -364,7 +400,7 @@ begin
     try
       if (bc = nil) then
       begin
-        raise Exception.Create('Unable to read a barcode from the image supplied');
+        raise EFHIRException.Create('Unable to read a barcode from the image supplied');
       end;
       result := import(bc.text);
     finally

@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http,
-  fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features,
+  fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -2025,7 +2025,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://loinc.org';
+        inc.systemUri := URI_LOINC;
       finally
         inc.free;
       end;
@@ -2048,7 +2048,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://loinc.org';
+        inc.systemUri := URI_LOINC;
         filt := inc.addFilter;
         try
           filt.prop := 'ancestor';
@@ -2078,7 +2078,7 @@ begin
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
       try
-        inc.systemUri := 'http://loinc.org';
+        inc.systemUri := URI_LOINC;
         answers := FRefs.GetRefs(children);
         for i := 0 to Length(answers) - 1 do
         begin
@@ -2287,7 +2287,7 @@ begin
         begin
           s := Desc.GetEntry(iRefs[i], ll);
           if useLang(ll, langs, false) then
-            resp.addDesignation('http://snomed.info/sct', '446211000124102', 'Alias name', s);
+            resp.addDesignation(langDesc(ll), URI_SNOMED, '446211000124102', 'Alias name', s);
         end;
     End;
     {$ENDIF}
@@ -2329,7 +2329,7 @@ end;
 
 function TLOINCServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
-  result := 'http://loinc.org';
+  result := URI_LOINC;
 end;
 
 function TLOINCServices.TotalCount: integer;

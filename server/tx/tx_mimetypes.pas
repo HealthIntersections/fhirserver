@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http,
-  fhir_common, fhir_features,
+  fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -112,7 +112,7 @@ end;
 
 function TMimeTypeCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'urn:ietf:bcp:13';
+  result := URI_BCP13;
 end;
 
 function TMimeTypeCodeServices.getDefinition(code: String): String;

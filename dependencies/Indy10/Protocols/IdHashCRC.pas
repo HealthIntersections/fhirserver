@@ -25,7 +25,7 @@
   Rev 1.2    24/01/2004 19:20:52  CCostelloe
   Cleaned up warnings
 
-  Rev 1.1    2003-10-16 11:06:28  HHellström
+  Rev 1.1    2003-10-16 11:06:28  HHellstrvm
   Fixed for dotNET
 
   Rev 1.0    11/13/2002 08:30:40 AM  JPMugaas

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang,
-  fhir_common, fhir_features,
+  fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -131,7 +131,7 @@ end;
 
 function TCountryCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
-  result := 'urn:iso:std:iso:3166';
+  result := URI_3166;
 end;
 
 function TCountryCodeServices.getDefinition(code: String): String;

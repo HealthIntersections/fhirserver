@@ -22,7 +22,7 @@
 {                                                                              }
 {    Contributors:                                                             }
 {      Robert Rossmair,                                                        }
-{      Peter Thörnqvist,                                                       }
+{      Peter Thvrnqvist,                                                       }
 {      Florent Ouchet                                                          }
 {                                                                              }
 {    Alternatively, the contents of this file may be used under the terms      }

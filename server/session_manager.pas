@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, fsl_threads,
   fsl_base, fsl_utilities, fsl_json, fsl_crypto,
-  fhir_objects,  fhir_common, fhir_factory,
+  fhir_objects,  fhir_common, fhir_factory, fhir_uris,
   scim_server,
   session, security, user_manager, utilities, storage;
 
@@ -192,10 +192,10 @@ begin
       se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
       try
         se.success;
-        se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
-        se.eventSubType('http://nema.org/dicom/dcid', '110122', 'Login');
-        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
-        se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
+        se.eventType(URI_DICOM, '110114', 'User Authentication');
+        se.eventSubType(URI_DICOM, '110122', 'Login');
+        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, URI_URIs, TFHIRServerContext(serverContext).DatabaseId);
+        se.sourceType(factory.URLs.SecuritySourceType, '3', 'Web Server');
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
         if clientIp <> '' then
           se.participantIp(clientIp);
@@ -218,10 +218,10 @@ begin
   se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
   try
     se.success;
-    se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
-    se.eventSubType('http://nema.org/dicom/dcid', '110123', 'Logout');
-    se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
-    se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
+    se.eventType(URI_DICOM, '110114', 'User Authentication');
+    se.eventSubType(URI_DICOM, '110123', 'Logout');
+    se.source(TFHIRServerContext(serverContext).Globals.OwnerName, URI_URIs, TFHIRServerContext(serverContext).DatabaseId);
+    se.sourceType(factory.urls.SecuritySourceType, '3', 'Web Server');
     se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
     if (ip <> '') then
       se.participantIp(ip);
@@ -442,10 +442,10 @@ begin
       se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
       try
         se.success;
-        se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
-        se.eventSubType('http://nema.org/dicom/dcid', '110122', 'Login');
-        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
-        se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
+        se.eventType(URI_DICOM, '110114', 'User Authentication');
+        se.eventSubType(URI_DICOM, '110122', 'Login');
+        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, URI_URIs, TFHIRServerContext(serverContext).DatabaseId);
+        se.sourceType(factory.urls.SecuritySourceType, '3', 'Web Server');
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(result.key), result.id, result.SessionName);
         if (ClientIp <> '') then
           se.participantIp(ClientIp);
@@ -524,10 +524,10 @@ begin
       se := factory.wrapAuditEvent(factory.makeResource('AuditEvent'));
       try
         se.success;
-        se.eventType('http://nema.org/dicom/dcid', '110114', 'User Authentication');
-        se.eventSubType('http://nema.org/dicom/dcid', '110122', 'Login');
-        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, 'urn:ietf:rfc:3986', TFHIRServerContext(serverContext).DatabaseId);
-        se.sourceType('http://hl7.org/fhir/security-source-type', '3', 'Web Server');
+        se.eventType(URI_DICOM, '110114', 'User Authentication');
+        se.eventSubType(URI_DICOM, '110122', 'Login');
+        se.source(TFHIRServerContext(serverContext).Globals.OwnerName, URI_URIs, TFHIRServerContext(serverContext).DatabaseId);
+        se.sourceType(factory.urls.SecuritySourceType, '3', 'Web Server');
         se.participantId(TFHIRServerContext(serverContext).DatabaseId, inttostr(session.key), session.id, session.SessionName);
         if (clientInfo <> '') then
           se.participantIp(clientInfo);

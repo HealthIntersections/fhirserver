@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities,
-  fhir_objects, fhir_xhtml, fhir_narrative, 
+  fhir_objects, fhir_xhtml, fhir_narrative, fhir_uris,
   fhir2_resources, fhir2_types, fhir2_constants, fhir2_context, fhir2_utilities,
   fhir2_resources_base, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_canonical, fhir2_resources_other;
 
@@ -1601,13 +1601,13 @@ function TFHIRNarrativeGenerator.describeSystem(system: String): String;
 begin
   if (system = '') then
     result := '[not stated]'
-  else if (system.equals('http://loinc.org')) then
+  else if (system.equals(URI_LOINC)) then
     result := 'LOINC'
   else if (system.startsWith('http://snomed.info')) then
     result := 'SNOMED CT'
-  else if (system.equals('http://www.nlm.nih.gov/research/umls/rxnorm')) then
+  else if (system.equals(URI_RXNORM)) then
     result := 'RxNorm'
-  else if (system.equals('http://hl7.org/fhir/sid/icd-9')) then
+  else if (system.equals(URI_ICD9)) then
     result := 'ICD-9'
   else
     result := system;
@@ -2879,9 +2879,9 @@ end;
   private String getCodingReference(TFHIRCoding cc, String system) begin
   if (cc.system.equals(system)) then
   return '#'+cc.code;
-  if (cc.system.equals('http://snomed.info/sct')) then
+  if (cc.system.equals(URI_SNOMED)) then
   return 'http://snomed.info/sct/'+cc.code;
-  if (cc.system.equals('http://loinc.org')) then
+  if (cc.system.equals(URI_LOINC)) then
   return 'http://s.details.loinc.org/LOINC/'+cc.code+'.html';
   return nil;
   end;
@@ -2956,7 +2956,7 @@ end;
   TFHIRXhtmlNode a := li.addTag('a');
   a.setAttribute('href', ref = nil ? '??' : ref.replace('\\', '/'));
   a.addText(value);
-  else if (value.equals('http://snomed.info/sct')) or (value.equals('http://snomed.info/id')) then begin
+  else if (value.equals(URI_SNOMED)) or (value.equals('http://snomed.info/id')) then begin
   TFHIRXhtmlNode a := li.addTag('a');
   a.setAttribute('href', value);
   a.addText('SNOMED-CT');

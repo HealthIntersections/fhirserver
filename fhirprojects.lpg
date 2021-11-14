@@ -12,23 +12,35 @@
       <Target FileName="packages\fhir_xver.lpk"/>
       <Target FileName="server\fhirconsole.lpi">
         <BuildModes>
+          <Mode Name="default"/>
           <Mode Name="win32" Compile="True"/>
           <Mode Name="win64"/>
           <Mode Name="linux"/>
           <Mode Name="osx"/>
-          <Mode Name="win32-release"/>
-          <Mode Name="win64-release"/>
+          <Mode Name="osx-m1"/>
         </BuildModes>
       </Target>
       <Target FileName="server\fhirserver.lpi">
         <BuildModes>
-          <Mode Name="Win32" Compile="True"/>
-          <Mode Name="Win64"/>
-          <Mode Name="Linux"/>
-          <Mode Name="OSX"/>
+          <Mode Name="default"/>
+          <Mode Name="win32" Compile="True"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
         </BuildModes>
       </Target>
       <Target FileName="toolkit2\fhirtoolkit.lpi">
+        <BuildModes>
+          <Mode Name="default"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="OSX-M1"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="utilities\codescan\codescan.lpi">
         <BuildModes>
           <Mode Name="Default"/>
         </BuildModes>

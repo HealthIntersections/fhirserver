@@ -42,7 +42,7 @@ uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   fsl_base, fsl_utilities,
   fdb_manager,
-  fhir_objects,  fhir_factory, fhir_common;
+  fhir_objects, fhir_factory, fhir_common, fhir_uris;
 
 type
   TObservationStatsParameter = (
@@ -380,7 +380,7 @@ begin
     result.units := humanUnits;
     if ucumUnits <> '' then
     begin
-      result.systemUri := 'http://unitsofmeasure.org';
+      result.systemUri := URI_UCUM;
       result.code := ucumUnits;
     end;
     result.Link;
@@ -666,7 +666,7 @@ begin
           u := FUnit;
         if u <> '' then
         begin
-          result.systemUri := 'http://unitsofmeasure.org';
+          result.systemUri := URI_UCUM;
           result.code := u;
         end;
         result.Link;

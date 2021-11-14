@@ -206,7 +206,7 @@ begin
   if (Win32Platform = VER_PLATFORM_WIN32_WINDOWS) and IsDCOMEnabled then
     Result := RegReadString(HKEY_CLASSES_ROOT, DCOMVersionKey, '')
   else
-    { Possibly from DComExt.dll ‘Product Version’ }
+    { Possibly from DComExt.dll Product Version }
     Result := 'DCOM Version Unknown';
 end;
 

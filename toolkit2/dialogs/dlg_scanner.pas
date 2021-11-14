@@ -1,6 +1,34 @@
 unit dlg_scanner;
 
-{$mode Delphi}
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+{$i fhir.inc}
 
 interface
 
@@ -8,6 +36,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Clipbrd,
   FPImage, LCLIntf, LCLType, Menus,
   ZXing.ScanManager, ZXing.BarCodeFormat, ZXing.ReadResult,
+  PdfiumCore,
   fsl_utilities,
   fui_lcl_utilities;
 
@@ -22,6 +51,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button4: TButton;
+    btnPDF: TButton;
     Image1: TImage;
     Memo1: TMemo;
     Panel1: TPanel;
@@ -31,6 +61,7 @@ type
     Panel5: TPanel;
     pnlInfo: TPanel;
     Splitter1: TSplitter;
+    procedure btnPDFClick(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -50,6 +81,9 @@ type
     procedure DrawRect;
     function ImageScale: Double;
     function IsInImage(p: TPoint): boolean;
+    procedure processPDF(pdf: TPdfDocument);
+    function processPDFPageObjects(pg: TPdfPage): boolean;
+    //procedure processPDFPage(pg: TPdfPage);
     procedure readImage;
   end;
 
@@ -98,7 +132,7 @@ begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FOriginalImage := TBitmap.create;
-  FScanner := TScanManager.create(TBarcodeFormat.Auto, nil);
+  FScanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
   //FScreens := TStringList.create;
   //listScreens(FScreens);
   //pmScreens.Items.Clear;
@@ -169,6 +203,101 @@ begin
   Image1.Refresh;
   Application.ProcessMessages;
   readImage;
+end;
+
+function TQRCodeScannerForm.processPDFPageObjects(pg : TPdfPage) : boolean;
+var
+  obj : TPDFObject;
+  bmp : TBitmap;
+  rr : TReadResult;
+begin
+  result := false;
+  for obj in pg.Objects do
+  begin
+    if obj.kind = potImage then
+    begin
+      bmp := obj.AsBitmap;
+      try
+        rr := FScanner.Scan(bmp);
+        if (rr <> nil) then
+        begin
+          clear;
+          FImage.assign(bmp);
+          FHasImage := true;
+          Image1.Picture.Assign(FImage);
+          Image1.Refresh;
+          Application.ProcessMessages;
+          readImage;
+          exit(true);
+        end;
+      finally
+        bmp.free;
+      end;
+    end;
+  end;
+end;
+
+//procedure TQRCodeScannerForm.processPDFPage(pg : TPdfPage);
+//var
+//  bmp : TBitmap;
+//  rr : TReadResult;
+//begin
+//  bmp := TBitmap.create;
+//  try
+//    bmp.width := 1500;
+//    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
+//    pg.Draw(bmp);
+//    clear;
+//    FImage.assign(bmp);
+//    FHasImage := true;
+//    Image1.Picture.Assign(FImage);
+//    Image1.Refresh;
+//    Application.ProcessMessages;
+//    readImage;
+//  finally
+//    bmp.free;
+//  end;
+//end;
+
+procedure TQRCodeScannerForm.processPDF(pdf : TPdfDocument);
+var
+  i : integer;
+  pg : TPdfPage;
+begin
+  for i := 0 to pdf.PageCount - 1 do
+  begin
+    pg := pdf.Pages[i];
+    if processPDFPageObjects(pg) then
+      exit;
+  end;
+  //if pdf.PageCount > 0 then
+  //  processPDFPage(pg);
+end;
+
+procedure TQRCodeScannerForm.btnPDFClick(Sender: TObject);
+var
+  dlg : TOpenDialog;
+  pdf : TPdfDocument;
+begin
+  dlg := TOpenDialog.create(self);
+  try
+    dlg.Filter := 'PDF Files|*.pdf|'+
+      'All Files|*.*';
+    dlg.Options := [ofFileMustExist, ofEnableSizing, ofViewDetail];
+    if dlg.execute then
+    begin
+      clear;
+      pdf := TPdfDocument.Create;
+      try
+        pdf.LoadFromFile(dlg.filename, '', dloMemory);
+        processPDF(pdf);
+      finally
+        pdf.free;
+      end;
+    end;
+  finally
+    dlg.free;
+  end;
 end;
 
 procedure TQRCodeScannerForm.Button2Click(Sender: TObject);
@@ -333,6 +462,13 @@ procedure TQRCodeScannerForm.readImage;
 var
   bc : TReadResult;
 begin
+  pnlInfo.caption := '  Looking for images...';
+  pnlInfo.update;
+  memo1.Color := clBtnFace;
+  memo1.Text := '';
+  memo1.Update;
+  Application.ProcessMessages;
+
   screen.Cursor := crHourGlass;
   try
     bc := FScanner.Scan(FImage);
@@ -345,8 +481,9 @@ begin
       else
       begin
         btnOk.enabled := true;
-        pnlInfo.caption := '  QR code: '+codesTBarcodeFormat(bc.BarcodeFormat)+' found';
+        pnlInfo.caption := '  QR code found';
         memo1.Text := bc.text;
+        memo1.Color := clWhite;
       end;
     finally
       bc.free;
@@ -356,5 +493,9 @@ begin
   end;
 end;
 
+initialization
+  {$IFDEF WINDOWS}
+  PdfiumDllFileName := 'libpdf.dll';
+  {$ENDIF}
 end.
 

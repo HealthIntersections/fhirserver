@@ -629,13 +629,17 @@
         <DCCReference Include="..\library\fcomp\tests\fcomp_tests_graph.pas"/>
         <DCCReference Include="..\dependencies\qrcodegen\qrcodegen.pas"/>
         <DCCReference Include="..\..\source\tzdb\dist\TZDB.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_qrcode.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_qrcode.pas"/>
         <DCCReference Include="time_tracker.pas"/>
         <DCCReference Include="..\library\fhir\fhir_icao.pas"/>
         <DCCReference Include="..\library\fhir\fhir_uris.pas"/>
         <DCCReference Include="..\library\fhir\tests\fhir_tests_icao.pas"/>
         <DCCReference Include="endpoint_icao.pas"/>
         <DCCReference Include="..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumCore.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumCtrl.pas"/>
+        <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumLib.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_colour_utils.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

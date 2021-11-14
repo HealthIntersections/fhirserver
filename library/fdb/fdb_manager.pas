@@ -184,6 +184,7 @@ type
     FBoundItems : TFslMap<TFDBBoundParam>;
     FUsage : String;
     FUsed : TDateTime;
+    FCurrentlyInUse : boolean;
     FTables : TStringList;
     FRowCount : integer;
     FPrepareCount : integer;
@@ -1142,6 +1143,8 @@ end;
 
 procedure TFDBConnection.CheckRelease;
 begin
+  if not FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice');
   {$IFOPT C+}
   if FPrepared then
     raise EDBException.Create('Attempt to release ODBC connection "'+FUsage+'" before it is terminated');
@@ -1444,6 +1447,7 @@ begin
   try
     result.FUsage := AUsage;
     result.FUsed := now;
+    result.FCurrentlyInUse := true;
     result.FRowCount := 0;
     result.FPrepareCount := 0;
     result.Sql := '';
@@ -1477,7 +1481,9 @@ var
   LIndex : integer;
   s : String;
 begin
-
+  if not AConn.FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice');
+  AConn.FCurrentlyInUse := false;
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, nil, '');
   FLock.Enter; // must lock because of the debugger
   try
@@ -1525,6 +1531,10 @@ procedure TFDBManager.Error(AConn : TFDBConnection; AException: Exception; AErrM
 var
   LIndex : integer;
 begin
+  if not AConn.FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice (error)');
+  AConn.FCurrentlyInUse := false;
+
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
   FLock.Enter; // must lock because of the debugger

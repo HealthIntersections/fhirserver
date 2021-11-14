@@ -35,6 +35,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   fsl_utilities,
+  fhir_colour_utils,
   fui_lcl_utilities;
 
 type

@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom"/>
+        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom;..\dependencies\qrcodegen"/>
         <UnitOutputDirectory Value="lib\fhir\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
@@ -382,6 +382,18 @@
       <Item>
         <Filename Value="..\library\fhir\fhir_icao.pas"/>
         <UnitName Value="fhir_icao"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_qrcode.pas"/>
+        <UnitName Value="fhir_qrcode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\qrcodegen\qrcodegen.pas"/>
+        <UnitName Value="qrcodegen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_colour_utils.pas"/>
+        <UnitName Value="fhir_colour_utils"/>
       </Item>
     </Files>
     <RequiredPkgs>

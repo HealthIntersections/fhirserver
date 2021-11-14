@@ -40,7 +40,7 @@ uses
   fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_xml, 
   fsl_fetcher,
 
-   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities,
+  fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
   fhir2_types, fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_other, fhir2_resources_clinical, fhir2_resources, fhir2_constants, fhir2_context;
 
 
@@ -1169,15 +1169,20 @@ begin
 end;
 
 function gen(coding : TFHIRCoding):String; overload;
+var
+  system : String;
 begin
   if (coding = nil) then
-     result := ''
-  else if (coding.DisplayElement <> nil) then
-    result := coding.Display
-  else if (coding.CodeElement <> nil) then
-    result := coding.Code
+    result := ''
   else
-    result := '';
+  begin
+    system := csName(coding.system);
+    result := system+'#'+coding.code;
+    if (coding.display <> '') then
+      result := result + ' "'+coding.display+'"';
+    if (coding.version <> '') then
+      result := result + ' (v='+coding.version+')';
+  end;
 end;
 
 function gen(code : TFhirCodeableConcept):String; overload;
@@ -3286,9 +3291,9 @@ begin
     result := 'V3 '
   else if url.StartsWith('http://hl7.org/fhir') then
     result := 'FHIR '
-  else if url = 'http://snomed.info/sct' then
+  else if url = URI_SNOMED then
     result := 'SCT '
-  else if url = 'http://loinc.org' then
+  else if url = URI_LOINC then
     result := 'LOINC '
   else
     result := 'Other';
@@ -3690,7 +3695,7 @@ begin
     else
     begin
       TFHIRQuantity(element).unit_ := 'mg/mL';
-      TFHIRQuantity(element).system := 'http://unitsofmeasure.org';
+      TFHIRQuantity(element).system := URI_UCUM;
       TFHIRQuantity(element).code := 'mg/mL';
     end;
   end
@@ -4457,34 +4462,34 @@ end;
 
 function TFhirCodingHelper.GetEditString: String;
 begin
-  if system = 'http://snomed.info/sct' then
+  if system = URI_SNOMED then
     result := 'sct:'+code
-  else if system = 'http://loinc.org' then
+  else if system = URI_LOINC then
     result := 'loinc:'+code
-  else if system = 'http://loinc.org' then
+  else if system = URI_LOINC then
     result := 'loinc:'+code
 
-  else if system = 'http://snomed.info/sct' then
+  else if system = URI_SNOMED then
     result := 'sct:'+code
-  else if system = 'http://www.nlm.nih.gov/research/umls/rxnorm' then
+  else if system = URI_RXNORM then
     result := 'rxnorm:'+code
-  else if system = 'http://loinc.org' then
+  else if system = URI_LOINC then
     result := 'loinc:'+code
-  else if system = 'http://unitsofmeasure.org' then
+  else if system = URI_UCUM then
     result := 'ucum:'+code
   else if system = 'http://ncimeta.nci.nih.gov' then
     result := 'nci:'+code
-  else if system = 'http://www.ama-assn.org/go/cpt' then
+  else if system = URI_CPT then
     result := 'cpt:'+code
-  else if system = 'http://hl7.org/fhir/ndfrt' then
+  else if system = URI_NDFRT then
     result := 'ndfrt:'+code
-  else if system = 'http://fdasis.nlm.nih.gov' then
+  else if system = URI_UNII then
     result := 'unii:'+code
-  else if system = 'http://hl7.org/fhir/sid/ndc' then
+  else if system = URI_NDC then
     result := 'ndc:'+code
-  else if system = 'http://hl7.org/fhir/sid/cvx' then
+  else if system = URI_CVX then
     result := 'cvx:'+code
-  else if system = 'urn:iso:std:iso:3166' then
+  else if system = URI_3166 then
     result := 'iso3166:'+code
   else if system = 'http://www.radlex.org' then
     result := 'radlex:'+code
@@ -4492,11 +4497,11 @@ begin
     result := 'icf:'+code
   else if system = 'http://www.whocc.no/atc' then
     result := 'atcc:'+code
-  else if system = 'urn:ietf:bcp:47' then
+  else if system = URI_BCP47 then
     result := 'lang:'+code
-  else if system = 'urn:iso:std:iso:11073:10101' then
+  else if system = URI_11073 then
     result := 'mdc:'+code
-  else if system = 'http://dicom.nema.org/resources/ontology/DCM' then
+  else if system = URI_DICOM then
     result := 'dicom:'+code
   else if system = 'http://hl7.org/fhir/sid/ca-hc-din' then
     result := 'ca-din:'+code
@@ -4553,23 +4558,23 @@ var
   end;
 begin
   StringSplit(value, ':', s, c);
-  if not match('sct', 'http://snomed.info/sct') then
-  if not match('rxnorm', 'http://www.nlm.nih.gov/research/umls/rxnorm') then
-  if not match('loinc', 'http://loinc.org') then
-  if not match('ucum', 'http://unitsofmeasure.org') then
+  if not match('sct', URI_SNOMED) then
+  if not match('rxnorm', URI_RXNORM) then
+  if not match('loinc', URI_LOINC) then
+  if not match('ucum', URI_UCUM) then
   if not match('nci', 'http://ncimeta.nci.nih.gov') then
-  if not match('cpt', 'http://www.ama-assn.org/go/cpt') then
-  if not match('ndfrt', 'http://hl7.org/fhir/ndfrt') then
-  if not match('unii', 'http://fdasis.nlm.nih.gov') then
-  if not match('ndc', 'http://hl7.org/fhir/sid/ndc') then
-  if not match('cvx', 'http://hl7.org/fhir/sid/cvx') then
-  if not match('iso3166', 'urn:iso:std:iso:3166') then
+  if not match('cpt', URI_CPT) then
+  if not match('ndfrt', URI_NDFRT) then
+  if not match('unii', URI_UNII) then
+  if not match('ndc', URI_NDC) then
+  if not match('cvx', URI_CVX) then
+  if not match('iso3166', URI_3166) then
   if not match('radlex', 'http://www.radlex.org') then
   if not match('icf', 'http://hl7.org/fhir/sid/icf-nl') then
   if not match('atcc', 'http://www.whocc.no/atc') then
-  if not match('lang', 'urn:ietf:bcp:47') then
-  if not match('mdc', 'urn:iso:std:iso:11073:10101') then
-  if not match('dicom', 'http://dicom.nema.org/resources/ontology/DCM') then
+  if not match('lang', URI_BCP47) then
+  if not match('mdc', URI_11073) then
+  if not match('dicom', URI_DICOM) then
   if not match('ca', 'din http://hl7.org/fhir/sid/ca-hc-din') then
   if not match('nucc', 'http://nucc.org/provider-taxonomy') then
   if not match('hgnc', 'http://www.genenames.org') then
@@ -4712,7 +4717,7 @@ function TFhirQuantityHelper.asDuration: TDateTime;
 var
   v : Double;
 begin
-  if system <> 'http://unitsofmeasure.org' then
+  if system <> URI_UCUM then
     raise EFHIRException.create('Unknown units system "'+system+'" trying to process quantity as a duration');
   if not IsNumericString(value) then
     raise EFHIRException.create('invalid value "'+value+'" trying to process quantity as a duration');
@@ -4797,9 +4802,9 @@ begin
   result := CODES_TFhirQuantityComparatorEnum[comparator]+value+' '+unit_;
   if code <> '' then
   begin
-    if system = 'http://snomed.info/sct' then
+    if system = URI_SNOMED then
       result := result+' [sct:'+code+']'
-    else if system <> 'http://unitsofmeasure.org' then
+    else if system <> URI_UCUM then
       result := result+' ['+system+'|'+code+']'
     else if code <> unit_ then
       result := result +' ['+code+']';
@@ -4839,7 +4844,7 @@ begin
       u := u.Substring(0, u.Length-1);
     if u.StartsWith('sct:') then
     begin
-      system := 'http://snomed.info/sct';
+      system := URI_SNOMED;
       code := u.Substring(4);
     end
     else if u.Contains('|') then
@@ -4850,7 +4855,7 @@ begin
     end
     else
     begin
-      system := 'http://unitsofmeasure.org';
+      system := URI_UCUM;
       code := u;
     end;
   end;

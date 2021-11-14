@@ -12,8 +12,8 @@
 {                                                                                                  }
 { The Original Code is JclWin32Ex.pas.                                                             }
 {                                                                                                  }
-{ The Initial Developer of the Original Code is Virgo Pärna (virgo dott parna att mail dott ee).   }
-{ Portions created by Virgo Pärna are Copyright (C) 2006 Virgo Pärna. All Rights Reserved.         }
+{ The Initial Developer of the Original Code is Virgo Pdrna (virgo dott parna att mail dott ee).   }
+{ Portions created by Virgo Pdrna are Copyright (C) 2006 Virgo Pdrna. All Rights Reserved.         }
 {                                                                                                  }
 { Contributor(s):                                                                                  }
 {                                                                                                  }

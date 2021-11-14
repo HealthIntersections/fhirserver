@@ -659,7 +659,7 @@ begin
     result := loadFromEC(key, loadPrivate);
   end
   else
-    raise Exception.Create('Unsupported algorithm type loading JWK from X509 cert');
+    raise EFslException.Create('Unsupported algorithm type loading JWK from X509 cert');
 end;
 
 class function TJWK.loadFromRSA(pkey : PRSA; loadPrivate : Boolean) : TJWK;

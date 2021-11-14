@@ -180,7 +180,7 @@ begin
         utils.transform(nil, x.resource, utils.Lib['http://hl7.org/fhir/StructureMap/cda-cd'], cd);
         assert.AreEqual(cd.codingList.count, 1);
         assert.AreEqual(cd.codingList[0].code, '34133-9');
-        assert.AreEqual(cd.codingList[0].system, 'http://loinc.org');
+        assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
         cd.Free;
       end;
@@ -209,7 +209,7 @@ end;
 function TTestTransformerServices.oid2Uri(oid: String): String;
 begin
   if oid = '2.16.840.1.113883.6.1' then
-    result := 'http://loinc.org'
+    result := URI_LOINC
   else
     result := 'http://unknown.com/what?';
 end;

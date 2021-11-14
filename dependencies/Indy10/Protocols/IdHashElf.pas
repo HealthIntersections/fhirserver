@@ -16,7 +16,7 @@
   $Log$
 }
 {
-  Rev 1.1    2003-10-16 11:22:42  HHellström
+  Rev 1.1    2003-10-16 11:22:42  HHellstrvm
   Fixed for dotNET
 
   Rev 1.0    11/13/2002 07:53:32 AM  JPMugaas

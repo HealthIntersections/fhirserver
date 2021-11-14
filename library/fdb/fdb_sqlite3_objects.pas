@@ -6,7 +6,7 @@ unit fdb_sqlite3_objects;
  * This unit contains complete fdb_sqlite3_objects API translation
  * Version of SQLite: 3.6.22
  *
- * Copyright 2010+ Yury Plashenkov
+ * Copyright (c) 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)
@@ -59,7 +59,7 @@ type
 
 const
 {$IFDEF WINDOWS}
-  sqlite3_lib = 'sqlite3.dll';
+  sqlite3_lib = 'libsqlite3.dll';
 {$ENDIF}
 {$IFDEF LINUX}
   sqlite3_lib = 'libsqlite3.so';

@@ -35,8 +35,6 @@ interface
 uses
   {$IFDEF WINDOWS}
   Windows,
-  {$ELSE}
-  LCLType, Dialogs,
   {$ENDIF}
   SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections, fsl_fpc;
 
@@ -122,7 +120,7 @@ Type
     Constructor Create(place : String);
   End;
 
-  EWebServerException = Class(Exception)
+  EWebServerException = Class(EFslException)
   Private
     FCode : Integer;
   Public
@@ -229,6 +227,7 @@ Type
     {$ENDIF}
 
     class function getReport(sep : String; full : boolean) : String;
+    class function classInstanceCount(namedClass : String) : integer;
   End;
   {$M-}
 
@@ -772,7 +771,7 @@ begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
       {$ELSE}
-      DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
+      // todo... DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
       {$ENDIF}
     end;
   end;
@@ -1348,6 +1347,29 @@ Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
 Begin
   Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
+
+class function TFslObject.classInstanceCount(namedClass : String): integer;
+var
+  t : TClassTrackingType;
+begin
+  {$IFDEF OBJECT_TRACKING}
+  if not GInited then
+    initUnit;
+  EnterCriticalSection(GLock);
+  try
+    if not GClassTracker.TryGetValue(namedClass, t) then
+    begin
+      t := TClassTrackingType.Create;
+      GClassTracker.Add(namedClass, t);
+    end;
+    result := t.count;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+  {$ELSE}
+  result := 0;
+  {$ENDIF}
+end;
 
 function TFslObject.sizeInBytes(magic : integer) : cardinal;
 begin

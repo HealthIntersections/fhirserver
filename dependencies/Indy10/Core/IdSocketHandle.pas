@@ -20,7 +20,7 @@
   Fix from Ben Taylor for where a pointer is used after it's freed causing an
   invalid pointer operation.
 
-  Rev 1.7    23.3.2005 ã. 20:50:04  DBondzhev
+  Rev 1.7    23.3.2005 c. 20:50:04  DBondzhev
   Fixed problem on multi CPU systems when connection is closed while it get's
   connected at the end of the timeout period.
 

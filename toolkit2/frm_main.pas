@@ -614,6 +614,7 @@ type
 
     // used by the project manager
     function createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor; overload;
+    function createNewFile(kinds : TSourceEditorKindSet; bytes : TBytes = []) : TToolkitEditor; overload;
     function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor; overload;
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     function openFile(address : String) : TToolkitEditor;
@@ -728,7 +729,7 @@ begin
   FContext.OnOpenResourceSrc := doOpenResourceSrc;
   FContext.OnOpenSource := doOpenSource;
   FContext.MessageView.OnChange := updateMessages;
-  FContext.Inspector.OnChange:=updateInspector;
+  FContext.Inspector.OnChange := updateInspector;
   FContext.Font := SynEdit1.Font;
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
@@ -1287,6 +1288,23 @@ begin
   result := createNewFile(kind, '', '', bytes);
 end;
 
+function TMainToolkitForm.createNewFile(kinds: TSourceEditorKindSet; bytes: TBytes): TToolkitEditor;
+begin
+  if (onlySourceKind(kinds) = sekNull) then
+  begin
+    FileFormatChooser := TFileFormatChooser.create(self);
+    try
+      FileFormatChooser.filter := kinds;
+      if FileFormatChooser.ShowModal = mrOK then
+        result := createNewFile(FileFormatChooser.kind, bytes)
+      else
+        abort;
+    finally
+      FileFormatChooser.free;
+    end;
+  end;
+end;
+
 function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
 var
   session : TToolkitEditSession;
@@ -1300,8 +1318,9 @@ begin
     begin
       FileFormatChooser := TFileFormatChooser.create(self);
       try
+        FileFormatChooser.ImageList := imgMain;
         if FileFormatChooser.ShowModal = mrOK then
-          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+          kind := FileFormatChooser.kind
         else
           abort;
       finally
@@ -1514,7 +1533,7 @@ procedure TMainToolkitForm.updateInspector(sender: TObject);
 begin
   if Context.Inspector.active then
   begin
-    vlInspector.Enabled := true;
+    //vlInspector.Enabled := true;
     vlInspector.Color := clWhite;
     vlInspector.FixedColor := clBtnFace;
     vlInspector.FixedCols := 1;
@@ -1522,7 +1541,7 @@ begin
   end
   else
   begin
-    vlInspector.Enabled := false;
+    //vlInspector.Enabled := false;
     if Context.hasFocus and (context.focus.Pause > 500) then
       vlInspector.Color := $fcf3f5;
     vlInspector.FixedColor := clBtnFace;
@@ -2572,8 +2591,10 @@ end;
 
 procedure TMainToolkitForm.actionFileOpenQRCodeExecute(Sender: TObject);
 var
-  s : String
-;begin
+  s : String;
+  cnt : TBytes;
+  fmt : TSourceEditorKindSet;
+begin
   QRCodeScannerForm := TQRCodeScannerForm.create(nil);
   try
     if QRCodeScannerForm.ShowModal = mrOk then
@@ -2582,7 +2603,11 @@ var
       if (s.StartsWith('shc:/')) then
         createNewFile(sekJWT, TEncoding.UTF8.getBytes(s))
       else
-        createNewFile(sekNull, TEncoding.UTF8.getBytes(s));
+      begin
+        cnt := TEncoding.UTF8.getBytes(s);
+        fmt := FFactory.determineFormatFromText(s, cnt);
+        createNewFile(fmt, cnt);
+      end;
     end;
   finally
     QRCodeScannerForm.free;

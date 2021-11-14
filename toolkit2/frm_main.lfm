@@ -3210,8 +3210,8 @@ object MainToolkitForm: TMainToolkitForm
   LCLVersion = '2.3.0.0'
   object pnlStatus: TStatusBar
     Left = 0
-    Height = 23
-    Top = 714
+    Height = 28
+    Top = 709
     Width = 1290
     Panels = <    
       item
@@ -3434,18 +3434,18 @@ object MainToolkitForm: TMainToolkitForm
   end
   object pnlClient: TPanel
     Left = 0
-    Height = 688
+    Height = 683
     Top = 26
     Width = 1290
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 688
+    ClientHeight = 683
     ClientWidth = 1290
     TabOrder = 2
     object pnlBottom: TPanel
       Left = 0
       Height = 142
-      Top = 546
+      Top = 541
       Width = 1290
       Align = alBottom
       Caption = 'pnlBottom'
@@ -4017,7 +4017,7 @@ object MainToolkitForm: TMainToolkitForm
       Cursor = crVSplit
       Left = 0
       Height = 5
-      Top = 541
+      Top = 536
       Width = 1290
       Align = alBottom
       OnMoved = Splitter1Moved
@@ -4025,11 +4025,11 @@ object MainToolkitForm: TMainToolkitForm
     end
     object pnlMain: TPanel
       Left = 0
-      Height = 541
+      Height = 536
       Top = 0
       Width = 1290
       Align = alClient
-      ClientHeight = 541
+      ClientHeight = 536
       ClientWidth = 1290
       ParentFont = False
       TabOrder = 2
@@ -4534,18 +4534,18 @@ object MainToolkitForm: TMainToolkitForm
       end
       object pnlLeft: TPanel
         Left = 1
-        Height = 539
+        Height = 534
         Top = 1
         Width = 300
         Align = alLeft
-        ClientHeight = 539
+        ClientHeight = 534
         ClientWidth = 300
         Constraints.MinWidth = 57
         ParentFont = False
         TabOrder = 0
         object pnlLeftSpace: TPanel
           Left = 1
-          Height = 537
+          Height = 532
           Top = 1
           Width = 298
           Align = alClient
@@ -4555,7 +4555,7 @@ object MainToolkitForm: TMainToolkitForm
         end
         object pgLeft: TPageControl
           Left = 1
-          Height = 537
+          Height = 532
           Top = 1
           Width = 298
           ActivePage = tbServers
@@ -4567,19 +4567,19 @@ object MainToolkitForm: TMainToolkitForm
           OnChange = pgLeftChange
           object tbProjects: TTabSheet
             Caption = 'Projects'
-            ClientHeight = 509
+            ClientHeight = 504
             ClientWidth = 290
             ImageIndex = 38
             ParentFont = False
             object pnlProjects: TPanel
               Left = 0
-              Height = 509
+              Height = 504
               Top = 0
               Width = 290
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlProjects'
-              ClientHeight = 509
+              ClientHeight = 504
               ClientWidth = 290
               TabOrder = 0
               object ToolBar3: TToolBar
@@ -4600,7 +4600,7 @@ object MainToolkitForm: TMainToolkitForm
               end
               object tvProjects: TTreeView
                 Left = 0
-                Height = 483
+                Height = 478
                 Top = 26
                 Width = 290
                 Align = alClient
@@ -4615,19 +4615,19 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbServers: TTabSheet
             Caption = 'Servers'
-            ClientHeight = 509
+            ClientHeight = 504
             ClientWidth = 290
             ImageIndex = 42
             ParentFont = False
             object pnlServers: TPanel
               Left = 0
-              Height = 509
+              Height = 504
               Top = 0
               Width = 290
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlServers'
-              ClientHeight = 509
+              ClientHeight = 504
               ClientWidth = 290
               TabOrder = 0
               object ToolBar2: TToolBar
@@ -4657,7 +4657,7 @@ object MainToolkitForm: TMainToolkitForm
               end
               object lvServers: TListView
                 Left = 0
-                Height = 483
+                Height = 478
                 Top = 26
                 Width = 290
                 Align = alClient
@@ -4671,11 +4671,11 @@ object MainToolkitForm: TMainToolkitForm
       end
       object pnlRight: TPanel
         Left = 1029
-        Height = 539
+        Height = 534
         Top = 1
         Width = 260
         Align = alRight
-        ClientHeight = 539
+        ClientHeight = 534
         ClientWidth = 260
         Constraints.MinWidth = 57
         ParentFont = False
@@ -4683,7 +4683,7 @@ object MainToolkitForm: TMainToolkitForm
         OnClick = pnlRightClick
         object pnlRightSpace: TPanel
           Left = 1
-          Height = 537
+          Height = 532
           Top = 1
           Width = 258
           Align = alClient
@@ -4693,7 +4693,7 @@ object MainToolkitForm: TMainToolkitForm
         end
         object pgRight: TPageControl
           Left = 1
-          Height = 537
+          Height = 532
           Top = 1
           Width = 258
           ActivePage = tbStack
@@ -4705,24 +4705,24 @@ object MainToolkitForm: TMainToolkitForm
           OnChange = pgRightChange
           object tbInspector: TTabSheet
             Caption = 'Inspector'
-            ClientHeight = 509
+            ClientHeight = 504
             ClientWidth = 250
             ImageIndex = 49
             ParentFont = False
             object pnlInspector: TPanel
               Left = 0
-              Height = 509
+              Height = 504
               Top = 0
               Width = 250
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlInspector'
-              ClientHeight = 509
+              ClientHeight = 504
               ClientWidth = 250
               TabOrder = 0
               object vlInspector: TValueListEditor
                 Left = 0
-                Height = 509
+                Height = 504
                 Top = 0
                 Width = 250
                 Align = alClient
@@ -4734,20 +4734,20 @@ object MainToolkitForm: TMainToolkitForm
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
                 ColWidths = (
                   64
-                  182
+                  165
                 )
               end
             end
           end
           object tbVariables: TTabSheet
             Caption = 'Variables'
-            ClientHeight = 509
+            ClientHeight = 504
             ClientWidth = 250
             ImageIndex = 33
             ParentFont = False
             object pnlVariables: TPanel
               Left = 0
-              Height = 509
+              Height = 504
               Top = 0
               Width = 250
               Align = alClient
@@ -4757,13 +4757,13 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbStack: TTabSheet
             Caption = 'Stack'
-            ClientHeight = 509
+            ClientHeight = 504
             ClientWidth = 250
             ImageIndex = 32
             ParentFont = False
             object pnlStack: TPanel
               Left = 0
-              Height = 509
+              Height = 504
               Top = 0
               Width = 250
               Align = alClient
@@ -4775,7 +4775,7 @@ object MainToolkitForm: TMainToolkitForm
       end
       object Splitter2: TSplitter
         Left = 1024
-        Height = 539
+        Height = 534
         Top = 1
         Width = 5
         Align = alRight
@@ -4784,14 +4784,14 @@ object MainToolkitForm: TMainToolkitForm
       end
       object Splitter3: TSplitter
         Left = 301
-        Height = 539
+        Height = 534
         Top = 1
         Width = 5
         OnMoved = Splitter3Moved
       end
       object pgEditors: TPageControl
         Left = 306
-        Height = 539
+        Height = 534
         Top = 1
         Width = 718
         Align = alClient

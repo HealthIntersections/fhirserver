@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_utilities, fhir_features;
+  fhir_objects, fhir_utilities, fhir_features, fhir_uris;
 
 Type
   TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf);
@@ -954,7 +954,7 @@ type
   public
     function link : TFHIRLookupOpResponseW; overload;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
-    function addDesignation(systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
+    function addDesignation(lang, systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function getVersion: String; virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
@@ -2527,7 +2527,7 @@ end;
 
 function TFHIRImmunizationW.GetCvxCode: String;
 begin
-  result := code('http://hl7.org/fhir/sid/cvx');
+  result := code(URI_CVX);
 end;
 
 function TFHIRImmunizationW.GetIcd11Code: String;
@@ -2537,12 +2537,12 @@ end;
 
 function TFHIRImmunizationW.GetSctCode: String;
 begin
-  result := code('http://snomed.info/sct');
+  result := code(URI_SNOMED);
 end;
 
 procedure TFHIRImmunizationW.SetCvxCode(const Value: String);
 begin
-  setCodeBySystem('http://hl7.org/fhir/sid/cvx', Value);
+  setCodeBySystem(URI_CVX, Value);
 end;
 
 procedure TFHIRImmunizationW.SetIcd11Code(const Value: String);
@@ -2552,7 +2552,7 @@ end;
 
 procedure TFHIRImmunizationW.SetSctCode(const Value: String);
 begin
-  setCodeBySystem('http://snomed.info/sct', Value);
+  setCodeBySystem(URI_SNOMED, Value);
 end;
 
 

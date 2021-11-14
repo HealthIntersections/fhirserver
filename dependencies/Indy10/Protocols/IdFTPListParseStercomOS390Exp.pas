@@ -81,7 +81,7 @@ uses
 
 {
   "Connect:Express OS/390 FTP Guide Version 4.1" Copyright
-  © 2002, 2003 Sterling Commerce, Inc.
+  ) 2002, 2003 Sterling Commerce, Inc.
 
   125 LIST Command accepted.
   -D 2 T VB  00244 18000 FTPGDG!PSR$TST.GDG.TSTGDG0(+01)

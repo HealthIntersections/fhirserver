@@ -16,7 +16,7 @@
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
-    <BuildModes Count="6">
+    <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win32">
         <MacroValues Count="1">
@@ -187,6 +187,46 @@
           </Linking>
         </CompilerOptions>
       </Item6>
+      <Item7 Name="win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\fhirconsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowWarn Value="False"/>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <WriteFPCLogo Value="False"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
       <SharedMatrixOptions Count="3">
         <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item2 ID="601568390877" Modes="osx" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>

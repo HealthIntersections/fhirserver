@@ -222,8 +222,10 @@
         <DCCReference Include="..\..\dependencies\ui\JPG.pas"/>
         <DCCReference Include="..\..\dependencies\ui\MZLib.pas"/>
         <DCCReference Include="..\..\library\wp\wp_printing_base.pas"/>
-        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\..\library\fsl\fsl_logging.pas"/>
+        <DCCReference Include="..\..\..\source\tzdb\dist\TZDB.pas"/>
+        <DCCReference Include="..\..\library\fhir\fhir_colour_utils.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

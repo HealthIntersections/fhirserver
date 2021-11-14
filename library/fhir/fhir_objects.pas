@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF} Graphics,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fsl_qrcode;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fhir_qrcode;
 
 Const
   ID_LENGTH = 64;

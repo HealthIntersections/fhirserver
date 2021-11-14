@@ -13,13 +13,14 @@ RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite
     myodbc-installer -a -d -n "MySQL ODBC 8.0 Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so" && \
     myodbc-installer -a -d -n "MySQL ODBC 8.0" -t "Driver=/usr/local/lib/libmyodbc8a.so"
 
-COPY build/linux-toolchain.sh build/unix-libraries.sh /work/bootstrap/
+COPY build/linux-toolchain.sh build/linux-libraries.sh /work/bootstrap/
 RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
-RUN /work/bootstrap/unix-libraries.sh /work/bootstrap
 
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
+RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
+RUN cp exec/pack/linux/*.so /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 
 ENV DISPLAY :99

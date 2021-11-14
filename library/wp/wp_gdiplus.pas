@@ -49,7 +49,7 @@ Type
   TGPRectF = Winapi.GdipApi.TGPRectF;
 {$ENDIF}
 
-  EGdiPlusException = Class(Exception);
+  EGdiPlusException = Class(EFslException);
 
 Const
   argbAliceBlue = $FFF0F8FF;
@@ -437,7 +437,7 @@ Type
       Function DrawImage(Const oImage : TGPImage; Const aDestinationRectangle : TGPRectF; Const oImageAttributes : TGPImageAttributes) : TGdiPlusStatus; Overload;
   End;
 
-  EGdiPlusExtendedGraphicsException = Class(Exception);
+  EGdiPlusExtendedGraphicsException = Class(EFslException);
 
 Type
   TGdiPlusHotSpot = Class(TFslObject)

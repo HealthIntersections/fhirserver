@@ -302,7 +302,7 @@ begin
 //    C.Display := 'Restful Operation';
 //    C := se.event.subtypeList.append;
 //    C.code := 'read';
-//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.system := URI_FHIR_RESTFUL_OP;
 //    C.Display := 'Read';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome8;
@@ -312,7 +312,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';
@@ -336,7 +336,7 @@ begin
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
 //    o.type_.code := '2';
 //    o.lifecycle := TFhirCoding.Create;
-//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE;
 //    o.lifecycle.code := '6';
 //
 //    log(se);
@@ -363,7 +363,7 @@ begin
 //    C.Display := 'Restful Operation';
 //    C := se.event.subtypeList.append;
 //    C.code := 'read';
-//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.system := URI_FHIR_RESTFUL_OP;
 //    C.Display := 'Read';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome0;
@@ -372,7 +372,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';
@@ -396,7 +396,7 @@ begin
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
 //    o.type_.code := '2';
 //    o.lifecycle := TFhirCoding.Create;
-//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE;
 //    o.lifecycle.code := '6';
 //    o.detailList.Append.value := resourceToBytes(r, ffJson);
 //    log(se);
@@ -422,7 +422,7 @@ begin
 //    C.Display := 'Restful Operation';
 //    C := se.event.subtypeList.append;
 //    C.code := 'read';
-//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.system := URI_FHIR_RESTFUL_OP;
 //    C.Display := 'Read';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome8;
@@ -432,7 +432,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';
@@ -456,7 +456,7 @@ begin
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
 //    o.type_.code := '2';
 //    o.lifecycle := TFhirCoding.Create;
-//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE;
 //    o.lifecycle.code := '6';
 //    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
 //    log(se);
@@ -482,7 +482,7 @@ begin
 //    C.Display := 'Restful Operation';
 //    C := se.event.subtypeList.append;
 //    C.code := 'read';
-//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.system := URI_FHIR_RESTFUL_OP;
 //    C.Display := 'Read';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome0;
@@ -491,7 +491,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';
@@ -515,7 +515,7 @@ begin
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
 //    o.type_.code := '2';
 //    o.lifecycle := TFhirCoding.Create;
-//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE;
 //    o.lifecycle.code := '6';
 //    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
 //    o.detailList.Append.value := resourceToBytes(bnd, ffJson);
@@ -537,11 +537,11 @@ begin
 //    se.event.type_ := TFHIRCoding.Create;
 //    C := se.event.type_;
 //    C.code := '110114';
-//    C.system := 'http://nema.org/dicom/dcid';
+//    C.system := URI_DICOM;
 //    C.Display := 'User Authentication';
 //    C := se.event.subtypeList.append;
 //    C.code := '110122';
-//    C.system := 'http://nema.org/dicom/dcid';
+//    C.system := URI_DICOM;
 //    C.Display := 'Login';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome0;
@@ -549,7 +549,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';
@@ -583,11 +583,11 @@ begin
 //    se.event.type_ := TFHIRCoding.Create;
 //    C := se.event.type_;
 //    C.code := '110114';
-//    C.system := 'http://nema.org/dicom/dcid';
+//    C.system := URI_DICOM;
 //    C.Display := 'User Authentication';
 //    C := se.event.subtypeList.append;
 //    C.code := '110123';
-//    C.system := 'http://nema.org/dicom/dcid';
+//    C.system := URI_DICOM;
 //    C.Display := 'Logout';
 //    se.event.action := AuditEventActionE;
 //    se.event.outcome := AuditEventOutcome0;
@@ -595,7 +595,7 @@ begin
 //    se.source := TFhirAuditEventSource.Create;
 //    se.source.site := Server.name;
 //    se.source.identifier := TFhirIdentifier.Create;
-//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.system := URI_URIs;
 //    se.source.identifier.value := Server.fhirEndpoint;
 //    C := se.source.type_List.append;
 //    C.code := '3';

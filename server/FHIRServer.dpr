@@ -12,7 +12,7 @@ are permitted provided that the following conditions are met:
  * Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to
+ * Neither the name of HL7 nor the names of its contributors may be use d to
    endorse or promote products derived from this software without specific
    prior written permission.
 
@@ -504,13 +504,17 @@ uses
   fcomp_tests_graph in '..\library\fcomp\tests\fcomp_tests_graph.pas',
   qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
   TZDB in '..\..\source\tzdb\dist\TZDB.pas',
-  fsl_qrcode in '..\library\fsl\fsl_qrcode.pas',
+  fhir_qrcode in '..\library\fhir\fhir_qrcode.pas',
   time_tracker in 'time_tracker.pas',
   fhir_icao in '..\library\fhir\fhir_icao.pas',
   fhir_uris in '..\library\fhir\fhir_uris.pas',
   fhir_tests_icao in '..\library\fhir\tests\fhir_tests_icao.pas',
   endpoint_icao in 'endpoint_icao.pas',
-  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas';
+  ZXing.ScanManager in '..\..\source\ZXing.Delphi\Lib\Classes\ZXing.ScanManager.pas',
+  PdfiumCore in '..\..\source\PdfiumLib\Source\PdfiumCore.pas',
+  PdfiumCtrl in '..\..\source\PdfiumLib\Source\PdfiumCtrl.pas',
+  PdfiumLib in '..\..\source\PdfiumLib\Source\PdfiumLib.pas',
+  fhir_colour_utils in '..\library\fhir\fhir_colour_utils.pas';
 
 begin
   ExecuteFhirServer;

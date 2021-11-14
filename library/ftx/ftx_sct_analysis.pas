@@ -258,7 +258,7 @@ end;
 //begin
 //  result := TFhirCodeableConcept.Create;
 //  c := result.codingList.Append;
-//  c.system := 'http://snomed.info/sct';
+//  c.system := URI_SNOMED;
 //  c.code := FSnomed.GetConceptId(index);
 //  c.display := FSnomed.GetDisplayName(index, 0);
 //end;

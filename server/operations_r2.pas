@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities, fsl_json,
   fsl_http,
   fdb_manager,
-  fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
+  fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities, fhir_uris,
   fhir2_types, fhir2_constants, fhir2_utilities, fhir2_opbase, fhir2_operations, fhir2_pathengine,
   fhir2_resources_base, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_canonical, fhir2_resources_other,
   fhir2_pathnode, fhir2_common, fhir2_questionnaire, fhir2_validator, fhir2_context, fhir2_profiles, fhir2_narrative,
@@ -45,7 +45,7 @@ uses
   tx_operations, ftx_ucum_services,
   operations,
   session, tags, storage, database, obsservation_stats, time_tracker,
-  bundlebuilder, validator_r2, security, subscriptions;
+  bundlebuilder, validator_r2, security, subscriptions, search;
 
 type
   TFhirNativeOperationEngineR2 = class (TFhirNativeOperationEngine)
@@ -599,22 +599,22 @@ begin
     se.id := intreqid;
     se.event := TFhirAuditEventEvent.create;
     case op of
-      fcmdRead:            event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'read',    'http://hl7.org/fhir/restful-operation', AuditEventActionR);
-      fcmdVersionRead:     event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'vread',   'http://hl7.org/fhir/restful-operation', AuditEventActionR);
-      fcmdUpdate:          event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'update',  'http://hl7.org/fhir/restful-operation', AuditEventActionU);
-      fcmdDelete:          event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'delete',  'http://hl7.org/fhir/restful-operation', AuditEventActionD);
-      fcmdHistoryInstance: event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'history-instance', 'http://hl7.org/fhir/restful-operation', AuditEventActionR);
-      fcmdCreate:          event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'create',  'http://hl7.org/fhir/restful-operation', AuditEventActionC);
-      fcmdSearch:          event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'search',  'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdHistoryType:     event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'history-type', 'http://hl7.org/fhir/restful-operation', AuditEventActionR);
-      fcmdValidate:        event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'validate', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdMetadata:        event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'conformance',    'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdTransaction:     event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'transaction', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdBatch:           event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'batch', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdPatch:           event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'patch', 'http://hl7.org/fhir/restful-operation', AuditEventActionU);
-      fcmdHistorySystem:   event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'history-system', 'http://hl7.org/fhir/restful-operation', AuditEventActionR);
-      fcmdUpload:          event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'upload', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
-      fcmdOperation:       event('rest', 'http://terminology.hl7.org/CodeSystem/audit-event-type', 'Restful Operation', 'operation', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
+      fcmdRead:            event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'read',    URI_FHIR_RESTFUL_OP, AuditEventActionR);
+      fcmdVersionRead:     event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'vread',   URI_FHIR_RESTFUL_OP, AuditEventActionR);
+      fcmdUpdate:          event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'update',  URI_FHIR_RESTFUL_OP, AuditEventActionU);
+      fcmdDelete:          event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'delete',  URI_FHIR_RESTFUL_OP, AuditEventActionD);
+      fcmdHistoryInstance: event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'history-instance', URI_FHIR_RESTFUL_OP, AuditEventActionR);
+      fcmdCreate:          event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'create',  URI_FHIR_RESTFUL_OP, AuditEventActionC);
+      fcmdSearch:          event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'search',  URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdHistoryType:     event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'history-type', URI_FHIR_RESTFUL_OP, AuditEventActionR);
+      fcmdValidate:        event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'validate', URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdMetadata:        event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'conformance',    URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdTransaction:     event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'transaction', URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdBatch:           event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'batch', URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdPatch:           event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'patch', URI_FHIR_RESTFUL_OP, AuditEventActionU);
+      fcmdHistorySystem:   event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'history-system', URI_FHIR_RESTFUL_OP, AuditEventActionR);
+      fcmdUpload:          event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'upload', URI_FHIR_RESTFUL_OP, AuditEventActionE);
+      fcmdOperation:       event('rest', URI_FHIR_AUDIT_EVENT_TYPE_R3, 'Restful Operation', 'operation', URI_FHIR_RESTFUL_OP, AuditEventActionE);
     else // fcmdUnknown
       raise EFHIRException.create('unknown operation');
     end;
@@ -637,12 +637,12 @@ begin
     se.source.site := ServerContext.Globals.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
     se.source.identifier.value := ServerContext.DatabaseId;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
+    se.source.identifier.system := URI_URIs;
 
     c := se.source.type_List.Append;
-    c.code := '3';
-    c.display := 'Web Server';
-    c.system := 'http://hl7.org/fhir/security-source-type';
+    c.code := '4';
+    c.display := 'Application Server';
+    c.system := URI_FHIR_SECURITY_SOURCE_TYPE_R3;
 
     // participant - the web browser / user proxy
     p := se.participantList.Append;
@@ -665,8 +665,8 @@ begin
       with se.object_List.Append do
       begin
         reference := TFhirReference.Create('Patient/'+patientId);
-        type_ := TFhirCoding.Create('http://terminology.hl7.org/CodeSystem/audit-entity-type', '1');
-        role := TFhirCoding.Create('http://terminology.hl7.org/CodeSystem/object-role', '1');
+        type_ := TFhirCoding.Create(URI_FHIR_AUDIT_ENTITY_TYPE_R3, '1');
+        role := TFhirCoding.Create(URI_FHIR_AUDIT_OBJECT_ROLE_R3, '1');
       end;
 
     if resourceName <> '' then
@@ -678,10 +678,10 @@ begin
       else if id <> '' then
         o.reference.reference := resourceName+'/'+id;
       o.type_ := TFhirCoding.Create;
-      o.type_.system := 'http://hl7.org/fhir/security-source-type';
+      o.type_.system := URI_FHIR_SECURITY_SOURCE_TYPE_R3;
       o.type_.code := '2';
       o.lifecycle := TFhirCoding.Create;
-      o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+      o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R3_DICOM;
       case op of
         fcmdRead:            o.lifecycle.code := '6';
         fcmdVersionRead:     o.lifecycle.code := '6';
@@ -1275,7 +1275,7 @@ var
   id, link, base, sql, field : String;
   total : Integer;
   rkey, versionKey : integer;
-  reverse : boolean;
+  sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus;
   wantsummary : TFHIRSummaryOption;
   title: string;
   keys : TKeyList;
@@ -1307,10 +1307,10 @@ begin
         keys := TKeyList.Create;
         params := THTTPParameters.Create('');
         try
-          if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
+          if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, sortStatus1, sortStatus2, sortStatus3) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartment, request.SessionCompartments, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
+            id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartment, request.SessionCompartments, nil, link, sql, total, wantSummary, request.strictSearch, sortStatus1, sortStatus2, sortStatus3);
           bundle.setTotal(total);
           bundle.tag('sql', sql);
           bundle.addLink('self', 'todo');
@@ -2970,11 +2970,11 @@ begin
     se.event.type_ := TFHIRCoding.Create;
     C := se.event.type_;
     C.code := '110114';
-    C.system := 'http://nema.org/dicom/dcid';
+    C.system := URI_DICOM;
     C.Display := 'User Authentication';
     C := se.event.subtypeList.append;
     C.code := '110122';
-    C.system := 'http://nema.org/dicom/dcid';
+    C.system := URI_DICOM;
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
@@ -2982,12 +2982,12 @@ begin
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.Globals.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
+    se.source.identifier.system := URI_URIs;
     se.source.identifier.value := ServerContext.DatabaseId;
     C := se.source.type_List.append;
     C.code := '3';
     C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
+    C.system := URI_FHIR_SECURITY_SOURCE_TYPE_R3;
 
     // participant - the web browser / user proxy
     p := se.participantList.append;
@@ -3045,7 +3045,7 @@ begin
       with ct.actionList.append.codingList.append do
       begin
         code := UriForScope(s);
-        system := 'urn:ietf:rfc:3986';
+        system := URI_URIs;
       end;
     QueueResource(session, ct, ct.issued);
   finally

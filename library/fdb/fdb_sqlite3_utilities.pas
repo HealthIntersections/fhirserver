@@ -5,7 +5,7 @@ unit fdb_sqlite3_utilities;
  *
  * This unit contains miscellaneous utility functions
  *
- * Copyright 2010+ Yury Plashenkov
+ * Copyright (c) 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)

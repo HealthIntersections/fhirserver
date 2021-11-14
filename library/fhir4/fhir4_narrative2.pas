@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities,
-  fhir_objects, fhir_xhtml,  fhir_utilities,
+  fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
   fhir4_resources, fhir4_types, fhir4_constants, fhir4_utilities, fhir4_profiles, fhir4_questionnaire;
 
 type
@@ -886,7 +886,7 @@ function TNarrativeGenerator.describeSystem(system : String) : String;
 begin
   if (system = '') then
     result := '[not stated]';
-  if (system.equals('http://loinc.org')) then
+  if (system.equals(URI_LOINC)) then
     result := 'LOINC';
   if (system.startsWith('http://snomed.info')) then
     result := 'SNOMED CT'

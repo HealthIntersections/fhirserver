@@ -333,7 +333,7 @@ constructor TFHIRPackageManager.Create(dir: String);
 begin
   inherited Create;
   if (MustBeUserMode) then
-    raise Exception.Create('Unable to create PackageManager for a specific directory');
+    raise EFslException.Create('Unable to create PackageManager for a specific directory');
   FFolder := dir;
   init;
 end;

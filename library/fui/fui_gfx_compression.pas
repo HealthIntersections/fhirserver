@@ -12,8 +12,8 @@ unit fui_gfx_compression;
 //
 // The initial developer of the original code is Dipl. Ing. Mike Lischke (Pleiﬂa, Germany, www.delphi-gems.com),
 //
-// Portions created by Dipl. Ing. Mike Lischke are Copyright
-// (C) 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
+// Portions created by Dipl. Ing. Mike Lischke are Copyright (c)
+// 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
 //----------------------------------------------------------------------------------------------------------------------
 // This file is part of the image library GraphicEx.
 //
@@ -50,6 +50,7 @@ interface
 
 uses                                                
   Windows, Classes, SysUtils, Graphics,
+  fsl_base,
   fui_gfx_jpg,   // JPEG compression support
   fui_gfx_mz;  // general inflate/deflate and LZ77 compression support
 
@@ -296,7 +297,7 @@ const // LZW encoding and decoding support
   NoLZWCode = 4096;
 
 type
-  EGraphicCompression = class(Exception);
+  EGraphicCompression = class(EFslException);
 
 //----------------------------------------------------------------------------------------------------------------------
 

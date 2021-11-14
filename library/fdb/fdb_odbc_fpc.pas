@@ -4,6 +4,8 @@ unit fdb_odbc_fpc;
 This file exists to work around limitations in the standard FPC dobc wrapper (odbcsqldyn.pas)
 until these are resolved in the core.
 
+Copyright (c) The Lazarus Project
+
 changes:
 
 }

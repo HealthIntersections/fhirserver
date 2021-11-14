@@ -1,13 +1,12 @@
 object QRCodeScannerForm: TQRCodeScannerForm
-  Left = 556
-  Height = 518
-  Top = 241
-  Width = 791
-  BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  Left = 503
+  Height = 607
+  Top = -870
+  Width = 941
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'QR Code Scanner'
-  ClientHeight = 518
-  ClientWidth = 791
+  ClientHeight = 607
+  ClientWidth = 941
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
@@ -15,16 +14,16 @@ object QRCodeScannerForm: TQRCodeScannerForm
   object Panel1: TPanel
     Left = 0
     Height = 46
-    Top = 472
-    Width = 791
+    Top = 561
+    Width = 941
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 46
-    ClientWidth = 791
+    ClientWidth = 941
     ParentFont = False
     TabOrder = 0
     object btnOk: TButton
-      Left = 623
+      Left = 773
       Height = 25
       Top = 13
       Width = 75
@@ -36,7 +35,7 @@ object QRCodeScannerForm: TQRCodeScannerForm
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 707
+      Left = 857
       Height = 25
       Top = 13
       Width = 75
@@ -62,49 +61,52 @@ object QRCodeScannerForm: TQRCodeScannerForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 472
+    Height = 561
     Top = 0
-    Width = 403
-    Align = alLeft
+    Width = 461
+    Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 472
-    ClientWidth = 403
+    ClientHeight = 561
+    ClientWidth = 461
     TabOrder = 1
     object Panel4: TPanel
       Left = 0
       Height = 40
       Top = 0
-      Width = 403
+      Width = 461
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = '  Image'
       ClientHeight = 40
-      ClientWidth = 403
+      ClientWidth = 461
       TabOrder = 0
       object Button1: TButton
         Left = 56
         Height = 25
+        Hint = 'Load an image from a File'
         Top = 8
-        Width = 75
-        Caption = 'Load File'
+        Width = 80
+        Caption = 'Image'
         OnClick = Button1Click
         TabOrder = 0
       end
       object Button2: TButton
-        Left = 136
+        Left = 138
         Height = 25
+        Hint = 'Load an image from the clipboard'
         Top = 8
-        Width = 75
+        Width = 80
         Caption = 'Paste'
         OnClick = Button2Click
         TabOrder = 1
       end
       object Button4: TButton
-        Left = 216
+        Left = 220
         Height = 25
+        Hint = 'Load an image by taking a screenshot'
         Top = 8
-        Width = 112
+        Width = 80
         Caption = 'Screenshot'
         OnClick = Button4Click
         TabOrder = 2
@@ -112,20 +114,20 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
     object Panel5: TPanel
       Left = 0
-      Height = 432
+      Height = 521
       Top = 40
-      Width = 403
+      Width = 461
       Align = alClient
       BevelOuter = bvLowered
       BorderWidth = 6
-      ClientHeight = 432
-      ClientWidth = 403
+      ClientHeight = 521
+      ClientWidth = 461
       TabOrder = 1
       object Image1: TImage
         Left = 7
-        Height = 418
+        Height = 507
         Top = 7
-        Width = 389
+        Width = 447
         Align = alClient
         OnMouseDown = Image1MouseDown
         OnMouseMove = Image1MouseMove
@@ -136,21 +138,21 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
   end
   object Panel3: TPanel
-    Left = 408
-    Height = 472
+    Left = 466
+    Height = 561
     Top = 0
-    Width = 383
-    Align = alClient
+    Width = 475
+    Align = alRight
     BevelOuter = bvNone
     Caption = 'Panel3'
-    ClientHeight = 472
-    ClientWidth = 383
+    ClientHeight = 561
+    ClientWidth = 475
     TabOrder = 2
     object pnlInfo: TPanel
       Left = 0
       Height = 40
       Top = 0
-      Width = 383
+      Width = 475
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
@@ -159,9 +161,9 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
     object Memo1: TMemo
       Left = 0
-      Height = 432
+      Height = 521
       Top = 40
-      Width = 383
+      Width = 475
       Align = alClient
       Lines.Strings = (
         'Memo1'
@@ -170,9 +172,21 @@ object QRCodeScannerForm: TQRCodeScannerForm
     end
   end
   object Splitter1: TSplitter
-    Left = 403
-    Height = 472
+    Left = 461
+    Height = 561
     Top = 0
     Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
+  end
+  object btnPDF: TButton
+    Left = 302
+    Height = 25
+    Hint = 'load an image by reading a PDF file'
+    Top = 8
+    Width = 80
+    Caption = 'PDF'
+    OnClick = btnPDFClick
+    TabOrder = 4
   end
 end

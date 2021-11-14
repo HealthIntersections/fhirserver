@@ -39,13 +39,13 @@ uses
   fdb_manager, fdb_dialects,
   fsl_http, fsl_graphql,
   fsl_npm_cache,
-  fhir_objects, fhir_parser, fhir_xhtml,  fhir_utilities, fhir_cdshooks,
+  fhir_objects, fhir_parser, fhir_xhtml, fhir_uris, fhir_utilities, fhir_cdshooks,
   fhir_validator, fhir_common, fhir_factory, fhir_narrative, fhir_indexing,
   fhir_client,
   fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
   fsl_scim, scim_server,
-  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker,
+  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker, search,
   closuremanager, graph_definition, tags, utilities,
   database_installer, mpi_search, server_context, storage, server_constants;
 
@@ -161,8 +161,8 @@ type
     function hasConfidentialitySecurityLabel(res : TFHIRResourceV; codes : array of string) : boolean;
 
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
-    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
-    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus);
+    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus);
     function loadResourceVersion(versionKey : integer; allowNil : boolean) : TFHIRResourceV;
     procedure updateProvenance(prv : TFhirProvenanceW; inTransaction : boolean; rtype, id, vid : String);
 
@@ -241,8 +241,8 @@ type
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
-    function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
-    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+    function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus): boolean;
+    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus):String;
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; loadObjects : boolean; out fieldName : String; out prsrFmt : TFhirFormat; out needsObject : boolean); overload;
     Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResourceV; path : String); virtual; abstract;
     function getResourceByReference(source : TFHIRResourceV; url : string; req : TFHIRRequest; allowNil : boolean; var needSecure : boolean): TFHIRResourceV;
@@ -439,8 +439,7 @@ implementation
 uses
   IdMessage, IdSMTP,
   fsl_logging,
-  tx_manager, tx_operations,
-  search;
+  tx_manager, tx_operations;
 
 function chooseFile(fReal, fDev : String) : String;
 begin
@@ -1285,7 +1284,8 @@ procedure TFHIRNativeOperationEngine.ExecuteHistory(request: TFHIRRequest; respo
 var
   offset, count, i : integer;
   bundle : TFHIRBundleBuilder;
-  ok, reverse : boolean;
+  ok : boolean;
+  sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus;
   id : String;
   dummy : TFHIRSummaryOption;
   link : string;
@@ -1305,7 +1305,7 @@ begin
     try
       if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
       begin
-        ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, reverse);
+        ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, sortStatus1, sortStatus2, sortStatus3);
         if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), itProcessing) then
           link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
       end
@@ -1553,7 +1553,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
+function TFHIRNativeOperationEngine.FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus): boolean;
 begin
   // todo: check sesseion...
   if sId = '' then
@@ -1577,7 +1577,9 @@ begin
           title := TEncoding.UTF8.GetString(FConnection.GetColBlobByName('Title'));
           base := TEncoding.UTF8.GetString(FConnection.GetColBlobByName('Base'));
           summaryStatus := TFHIRSummaryOption(FConnection.GetColIntegerByName('Summary'));
-          reverse := FConnection.GetColIntegerByName('Reverse') > 0;
+          sortStatus1 := TSearchSortStatus(FConnection.GetColIntegerByName('Reverse'));
+          sortStatus2 := TSearchSortStatus(FConnection.GetColIntegerByName('sortStatus2'));
+          sortStatus3 := TSearchSortStatus(FConnection.GetColIntegerByName('sortStatus3'));
         end
         else
           result := false;
@@ -1589,7 +1591,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL: String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+function TFHIRNativeOperationEngine.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL: String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus):String;
 var
   id : string;
 begin
@@ -1598,15 +1600,15 @@ begin
   if params.has('_query') and (params['_query'] <> '') then
   begin
     if (params['_query'] = 'mpi') and (aType = 'Patient') then
-      ProcessMPISearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, link, sql, total, summaryStatus, strict, reverse)
+      ProcessMPISearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, link, sql, total, summaryStatus, strict, sortStatus1, sortStatus2, sortStatus3)
     else
       raise EFHIRException.createLang('UNKNOWN_QUERY', lang, [params['_query']]);
   end
   else
-    ProcessDefaultSearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, op, link, sql, total, summaryStatus, strict, reverse);
+    ProcessDefaultSearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, op, link, sql, total, summaryStatus, strict, sortStatus1, sortStatus2, sortStatus3);
 end;
 
-procedure TFHIRNativeOperationEngine.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+procedure TFHIRNativeOperationEngine.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcomeW; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus);
 var
   sp : TSearchProcessor;
   s : String;
@@ -1637,10 +1639,12 @@ begin
     sp.Connection := FConnection.link;
 
     sp.build;
-    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and MostRecent is not null and '+sp.filter+' order by ResourceKey DESC';
+    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort1+', null, null, '+sp.sort2+', '+sp.sort3+' from Ids where Deleted = 0 and MostRecent is not null and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
-    reverse := sp.reverse;
+    sortStatus1 := sp.sortStatus1;
+    sortStatus2 := sp.sortStatus2;
+    sortStatus3 := sp.sortStatus3;
     if (op <> nil) then
       for iss  in sp.Warnings do
         op.addIssue(iss, false);
@@ -1658,10 +1662,12 @@ begin
     FConnection.ExecSQL(sql);
     total := FConnection.CountSQL('Select count(*) from SearchEntries where SearchKey = '+key);
   end;
-  FConnection.Sql := 'update Searches set Reverse = :r, Link = :l, SqlCode = :s, count = '+inttostr(total)+', Summary = '+inttostr(ord(summaryStatus))+' where SearchKey = '+key;
+  FConnection.Sql := 'update Searches set Reverse = :r1, Reverse2 = :r2, Reverse3 = :r3, Link = :l, SqlCode = :s, count = '+inttostr(total)+', Summary = '+inttostr(ord(summaryStatus))+' where SearchKey = '+key;
   FConnection.Prepare;
   try
-    FConnection.BindIntegerFromBoolean('r', reverse);
+    FConnection.BindInteger('r1', ord(sortStatus1));
+    FConnection.BindInteger('r2', ord(sortStatus2));
+    FConnection.BindInteger('r3', ord(sortStatus3));
     FConnection.BindBlobFromString('l', link);
     FConnection.BindBlobFromString('s', sql);
     FConnection.Execute;
@@ -1670,7 +1676,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : THTTPParameters; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus);
 var
   mpi : TMPISearchProcessor;
   s : String;
@@ -1697,7 +1703,9 @@ begin
     mpi.execute;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+mpi.link_;
     sql := '..mpi..';
-    reverse := false;
+    sortStatus1 := sssNotUsed;
+    sortStatus2 := sssNotUsed;
+    sortStatus3 := sssNotUsed;
   finally
     mpi.free;
   end;
@@ -1846,7 +1854,8 @@ var
   i, total, t : Integer;
   key : integer;
   offset, count : integer;
-  ok, reverse, cok : boolean;
+  ok, cok : boolean;
+  sortStatus1, sortStatus2, sortStatus3 : TSearchSortStatus;
   summaryStatus : TFHIRSummaryOption;
   title: string;
   keys : TKeyList;
@@ -1891,10 +1900,10 @@ begin
   //          bundle.base := request.baseUrl;
 
             summaryStatus := request.Summary;
-            if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
+            if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, sortStatus1, sortStatus2, sortStatus3) then
               link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
             else
-              id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
+              id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, sortStatus1, sortStatus2, sortStatus3);
 
             cok := false;
             if (total = 0) and StringArrayExistsInsensitive(factory.CanonicalResources, request.ResourceName) and (request.Parameters.has('url')) then
@@ -1947,10 +1956,21 @@ begin
 
                 FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
                     'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
-                if reverse then
-                  FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
-                else
-                  FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
+                if sortStatus1 <> sssNotUsed then
+                  if sortStatus1 = sssDescending then
+                    FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
+                  else
+                    FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
+                if sortStatus1 <> sssNotUsed then
+                  if sortStatus1 = sssDescending then
+                    FConnection.SQL := FConnection.SQL + ', SortValue2 DESC'
+                  else
+                    FConnection.SQL := FConnection.SQL + ', SortValue2 ASC';
+                if sortStatus1 <> sssNotUsed then
+                  if sortStatus1 = sssDescending then
+                    FConnection.SQL := FConnection.SQL + ', SortValue3 DESC'
+                  else
+                    FConnection.SQL := FConnection.SQL + ', SortValue3 ASC';
                 FConnection.Prepare;
                 try
                   FConnection.Execute;
@@ -4782,9 +4802,9 @@ end;
 //    begin
 //      inc := result.compose.includeList.append;
 //      if (s = 'snomed') then
-//        inc.systemUri := 'http://snomed.info/sct'
+//        inc.systemUri := URI_SNOMED
 //      else if (s = 'loinc') then
-//        inc.systemUri := 'http://loinc.org'
+//        inc.systemUri := URI_LOINC
 //      else
 //        inc.systemUri := s;
 //      if UseParam('code', s) then
@@ -7050,14 +7070,14 @@ begin
   begin
     val := TFslDecimal.ValueOf(value.value);
     vu := resolveConcept(conn, value.systemUri, value.code);
-    if (value.systemUri = 'http://unitsofmeasure.org') then
+    if (value.systemUri = URI_UCUM) then
     begin
       upS := TUcumPair.Create(val, value.code);
       try
         upC := ServerContext.TerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(upS);
         try
           cval := upC.Value;
-          cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+          cu := resolveConcept(conn, URI_UCUM, upC.UnitCode);
         finally
           upC.Free;
         end;

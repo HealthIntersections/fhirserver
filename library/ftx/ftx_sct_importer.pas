@@ -34,7 +34,7 @@ Interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Inifiles, Generics.Collections,
+  SysUtils, Classes, Inifiles, Generics.Collections, DateUtils,
   fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc,
   ftx_loinc_services, ftx_sct_services, ftx_sct_expressions;
 
@@ -147,6 +147,7 @@ Type
 
     FSvc : TSnomedServices;
     FRefSetTypes : TDictionary<String, System.cardinal>;
+    FConceptIndex : TDictionary<Uint64, integer>;
 
     FConceptFiles : TStringList;
     FRelationshipFiles : TStringList;
@@ -412,10 +413,12 @@ begin
   FRels := TDictionary<UInt64,cardinal>.create;
   FDuplicateRelationships := TStringList.create;
   FRefSetTypes := TDictionary<String, cardinal>.create;
+  FConceptIndex := TDictionary<Uint64, integer>.create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
+  FConceptIndex.free;
   FRefSetTypes.free;
   FDuplicateRelationships.Free;
   FDirectoryReferenceSets.free;
@@ -565,6 +568,9 @@ var
   iLast : UInt64;
   iModule : integer;
   iTerm : Uint64;
+  cIndex : integer;
+  dSnomedDate : TSnomedDate;
+  bCreateOrUpdate : boolean;
 
   oConcept : TConcept;
   iLoop : Integer;
@@ -591,22 +597,45 @@ Begin
       iStatus := Next(9);
       iModule := Next(9);
       iCursor := Next(13); // also is status
+      bCreateOrUpdate := false;
 //      iDesc := 0;
 //      iId := 0;
 
       iTerm := StrToUInt64(memU8toString(s, iStart, iConcept - iStart));
-      oConcept := TConcept.Create;
-      FConcepts.Add(oConcept);
-      oConcept.Identity := iTerm;
+      dSnomedDate := readDate(memU8toString(s, iConcept+1, iDate - iConcept -1));
+      if FConceptIndex.ContainsKey(iTerm) then
+      begin
+         // the concept already exists - so retrieve it
+         cIndex := FConceptIndex[iTerm];
+         oConcept := TConcept(FConcepts[cIndex]);
+         if (CompareDateTime(dSnomedDate, oConcept.FDate) > 0) then
+         begin
+           // the new row has a later effectiveTime than the previous row for this concept, so will update the existing row data
+           bCreateOrUpdate := true;
+         end;
+      end
+      else
+      begin
+        // the concept doesn't exist - so create it
+        oConcept := TConcept.Create;
+        cIndex := FConcepts.Add(oConcept);
+        FConceptIndex.Add(iTerm, cIndex);
+        oConcept.Identity := iTerm;
+        bCreateOrUpdate := true;
+      end;
 
-      oConcept.FDate := readDate(memU8toString(s, iConcept+1, iDate - iConcept -1));
-      if memU8toString(s, iDate+1, iStatus - iDate -1) <> '1' then
-        oConcept.Flag := 1;
-      oConcept.FModuleId := StrToUInt64(memU8toString(s, iStatus+1, iModule - iStatus-1));
-      oConcept.FStatus := StrToUInt64(memU8toString(s, iModule+1, iCursor - iModule-1));
-      if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
-        oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
-      oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
+      if bCreateOrUpdate then
+      begin
+        // add or update the additional concept details
+        oConcept.FDate := dSnomedDate;
+        if memU8toString(s, iDate+1, iStatus - iDate -1) <> '1' then
+          oConcept.Flag := 1;
+        oConcept.FModuleId := StrToUInt64(memU8toString(s, iStatus+1, iModule - iStatus-1));
+        oConcept.FStatus := StrToUInt64(memU8toString(s, iModule+1, iCursor - iModule-1));
+        if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
+          oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
+        oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
+      end;
 
       inc(iCursor, 2);
       inc(OverallCount);
@@ -1372,7 +1401,7 @@ var
 begin
   for s in sDesc.Split([',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '-', '+', '=']) do
   begin
-    if (s <> '') And not StringIsInteger32(s) and (s.length > 2) Then
+    if (s <> '') And not StringIsInteger64(s) and (s.length > 2) Then
     begin
       stem := FStemmer.Stem(s);
       //if (stem <> '') then
@@ -2136,7 +2165,14 @@ end;
 
 function needsBaseForImport(moduleId : String): boolean;
 begin
-  result := moduleId = '11000172109';
+  if (moduleId = '11000172109') // Belgium
+  or (moduleId = '554471000005108') // Denmark
+  or (moduleId = '45991000052106') // Sweden
+  or (moduleId = '999000041000000102') // UK
+  then
+    result := True
+  else
+    result := False;
 end;
 
 End.

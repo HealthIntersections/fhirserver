@@ -12,11 +12,11 @@ set "tmp=%1"
 
 :No1
 
-call windows-toolchain.bat %tmp%
+call build\windows-toolchain.bat %tmp%
 rem pause
 
-call windows-libraries.bat %tmp%
+call build\windows-libraries.bat %tmp%
 rem pause
 
-call windows-fhirserver.bat %tmp%
+call build\windows-fhirserver.bat %tmp%
 rem pause
