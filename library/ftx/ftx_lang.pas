@@ -368,7 +368,7 @@ end;
 
 function TIETFLanguageCodeConcept.Link: TIETFLanguageCodeConcept;
 begin
-  result := TIETFLanguageCodeConcept(inherited create);
+  result := TIETFLanguageCodeConcept(inherited link);
 end;
 
 end.

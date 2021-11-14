@@ -1508,7 +1508,7 @@ begin
     statement.software := TFhirCapabilityStatementSoftware.Create;
   statement.software.name := name;
   statement.software.version := version;
-  statement.software.releaseDate := TFslDateTime.fromXml(release);
+  statement.software.releaseDate := TFslDateTime.fromHL7(release);
 end;
 
 function TFHIRCapabilityStatement2.getDescription : String;

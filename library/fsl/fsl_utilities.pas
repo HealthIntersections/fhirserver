@@ -3319,7 +3319,7 @@ begin
     if not FolderExists(result) then
       result := FilePath([UserFolder, 'Downloads']);
     if not FolderExists(result) then
-      result := GetTempDir;
+      result := SystemTemp;
   finally
     reg.free;
   end;
@@ -3328,7 +3328,7 @@ end;
 begin
   result := FilePath([UserFolder, 'Downloads']);
   if not FolderExists(result) then
-    result := GetTempDir;
+    result := SystemTemp;
 end;
 {$ENDIF}
 
