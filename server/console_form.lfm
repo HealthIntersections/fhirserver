@@ -5656,6 +5656,13 @@ object MainConsoleForm: TMainConsoleForm
         OnClick = MenuItem17Click
       end
     end
+    object MenuItem2: TMenuItem
+      Caption = '&Test'
+      object MenuItem11: TMenuItem
+        Caption = '&Tree Form'
+        OnClick = MenuItem11Click
+      end
+    end
     object MenuItem3: TMenuItem
       Caption = '&Server'
       object MenuItem4: TMenuItem

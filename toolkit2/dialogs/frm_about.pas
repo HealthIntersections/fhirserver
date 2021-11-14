@@ -49,6 +49,7 @@ type
     Image2: TImage;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     lblToolkit: TLabel;
     mInfo: TMemo;
     Panel1: TPanel;

@@ -49,6 +49,9 @@
     </Files>
     <RequiredPkgs>
       <Item>
+        <PackageName Value="laz.virtualtreeview_package"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir"/>
       </Item>
       <Item>

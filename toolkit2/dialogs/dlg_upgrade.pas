@@ -81,9 +81,9 @@ begin
     if OpenDocument(fn) then
       ModalResult := mrOk
     else
-      raise Exception.create('Unable to execute download '+fn);
+      raise EFslException.create('Unable to execute download '+fn);
     {$ELSE}
-    raise Exception.create('Not implemented yet');
+    raise EFslException.create('Not implemented yet');
     {$ENDIF}
   except
     on e : Exception do

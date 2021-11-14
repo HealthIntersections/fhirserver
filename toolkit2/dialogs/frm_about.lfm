@@ -2,12 +2,12 @@ object ToolkitAboutForm: TToolkitAboutForm
   Left = 474
   Height = 223
   Top = 228
-  Width = 528
+  Width = 530
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'FHIR Toolkit'
   ClientHeight = 223
-  ClientWidth = 528
+  ClientWidth = 530
   OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.3.0.0'
@@ -15,11 +15,11 @@ object ToolkitAboutForm: TToolkitAboutForm
     Left = 0
     Height = 223
     Top = 0
-    Width = 528
+    Width = 530
     Align = alClient
     BevelInner = bvLowered
     ClientHeight = 223
-    ClientWidth = 528
+    ClientWidth = 530
     Color = clWhite
     ParentColor = False
     TabOrder = 0
@@ -40,7 +40,7 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Button1: TButton
       Left = 440
       Height = 31
-      Top = 184
+      Top = 187
       Width = 82
       Cancel = True
       Caption = 'Close'
@@ -577,7 +577,7 @@ object ToolkitAboutForm: TToolkitAboutForm
       Cursor = crHandPoint
       Left = 216
       Height = 15
-      Top = 159
+      Top = 152
       Width = 263
       Caption = 'https://github.com/HealthIntersections/fhirserver'
       Font.Color = 10485760
@@ -589,13 +589,20 @@ object ToolkitAboutForm: TToolkitAboutForm
       Cursor = crHandPoint
       Left = 216
       Height = 15
-      Top = 184
+      Top = 187
       Width = 77
       Caption = 'License: BSD-3'
       Font.Color = 10485760
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = Label2Click
+    end
+    object Label3: TLabel
+      Left = 216
+      Height = 15
+      Top = 168
+      Width = 218
+      Caption = 'Copyright (c) Health Intersections Pty Ltd'
     end
   end
 end
