@@ -34,11 +34,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 This unit contains a set of classes that orchestrate the UI interface
 
-- TObjectManager - binds a set of edits that edit the properties of an object
 - TListManager - binds a list of objects to a set of UI controls, with a TListView as the centerpiece
 - TTreeManager - binds a tree of objects to a set of UI controls, with a TTreeView as a centerpiece
-- TFHIRSynEditSynchroniser - keeps a SynEdit source for a resource in sync with a loaded resource
+  - TVTreeManager - binds a tree of objects to a set of UI controls, with a TVirtualStringTree as a centerpiece
 - TPanelStack - binds to a TPanel and manages a set of subpanels that arew laid out vertically (logical alternative to a TPageControl)
+- TObjectManager - binds a set of edits that edit the properties of an object
+- TFHIRSynEditSynchroniser - keeps a SynEdit source for a resource in sync with a loaded resource
 
 }
 
@@ -148,7 +149,6 @@ type
     Property Enabled : boolean read FEnabled write SetEnabled;
     property Settings : TIniFile read FSettings write SetSettings;
 
-
     // control
     function doLoad : boolean; // call this when something changes the data to load
     procedure saveStatus;
@@ -175,6 +175,7 @@ type
     function compareItem(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
     function filterItem(item : T; s : String) : boolean; virtual;
 
+    procedure focusItemChange(item : T); virtual;
     function addItem(mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function deleteItem(item : T) : boolean; virtual;
@@ -252,6 +253,8 @@ type
     function getSummaryText(item : T) : String; virtual;
 
     procedure changed; virtual; // e.g. to save
+
+    procedure focusItemChange(item : T); virtual;
     function addItem(parent : T; mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
@@ -333,6 +336,8 @@ type
     function getSummaryText(item : T) : String; virtual;
 
     procedure changed; virtual; // e.g. to save
+
+    procedure focusItemChange(item : T); virtual;
     function addItem(parent : T; mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
@@ -911,6 +916,7 @@ begin
   updateControls(copExecute, opExecute in ops);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -1216,6 +1222,11 @@ end;
 function TListManager<T>.filterItem(item: T; s: String): boolean;
 begin
   result := true;
+end;
+
+procedure TListManager<T>.focusItemChange;
+begin
+  // nothing here
 end;
 
 function TListManager<T>.addItem(mode: String): T;
@@ -1778,6 +1789,7 @@ begin
   updateControls(copExecute, opExecute in ops);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -1875,6 +1887,11 @@ end;
 procedure TTreeManager<T>.changed;
 begin
   //  nothing
+end;
+
+procedure TTreeManager<T>.focusItemChange;
+begin
+  // nothing here
 end;
 
 function TTreeManager<T>.addItem(parent : T; mode : String) : T;
@@ -1980,8 +1997,12 @@ end;
 
 procedure TVTreeManager<T>.doEdit(mode: String);
 begin
-  changed;
-  raise ETodo.create('doEdit');
+  if focus <> nil then
+    if editItem(focus, mode) then
+    begin
+      updateStatus;
+      FTree.invalidateNode(focus.FPNode);
+    end;
 end;
 
 procedure TVTreeManager<T>.doDelete(mode: String);
@@ -2205,6 +2226,7 @@ begin
   updateControls(copExecute, opExecute in ops);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -2266,9 +2288,9 @@ begin
   fore := clBlack;
   back := clWhite;
   getCellColors(getT(node), fore, back);
-  TargetCanvas.Brush.Color := back;
-  TargetCanvas.Brush.Style := bsSolid;
-  TargetCanvas.Rectangle(cellRect);
+  //TargetCanvas.Brush.Color := back;
+  //TargetCanvas.Brush.Style := bsSolid;
+  //TargetCanvas.Rectangle(cellRect);
 end;
 
 procedure TVTreeManager<T>.doControl(sender: TObject);
@@ -2339,6 +2361,11 @@ end;
 procedure TVTreeManager<T>.changed;
 begin
   //  nothing
+end;
+
+procedure TVTreeManager<T>.focusItemChange;
+begin
+  // nothing here
 end;
 
 function TVTreeManager<T>.addItem(parent : T; mode : String) : T;
