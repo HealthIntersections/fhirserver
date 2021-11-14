@@ -48,6 +48,7 @@ uses
   SysUtils, Classes, Contnrs, Graphics, IniFiles,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus,
   SynEdit, SynEditTypes,
+  laz.virtualtrees,
   fsl_base, fsl_stream, fsl_http,
   fhir_objects, fhir_factory, fhir_parser;
 
@@ -184,6 +185,7 @@ type
   TFslTreeNode = class abstract (TFslObject)
   private
     FNode : TTreeNode;
+    FPnode : PVirtualNode;
   protected
     function getChildCount : integer; virtual; abstract;
     function getChild(index : integer) : TFslTreeNode; virtual; abstract;
@@ -258,16 +260,87 @@ type
     function refreshItem(item : T) : boolean; virtual;
   end;
 
-//  public
-//    constructor Create(tree : TTreeView);
-//    destructor Destroy; override;
-//
-//    function getChildcount : integer; virtual; abstract;
-//    procedure getChild(var kind : integer; var item : TFslObject); virtual; abstract;
-//    function getDisplay(kind : integer; obj : TFslObject) : String; virtual; abstract;
-//    function getImageIndex(kind : integer; obj : TFslObject) : integer; virtual; abstract;
-//    function getOperations(kind : integer; obj : TFslObject) : TOperationSet; virtual; abstract;
-//  end;
+  PTreeData = ^TTreeData;
+  TTreeData = record
+    item : TFslTreeNode;
+  end;
+
+  { TVTreeManager }
+
+  TVTreeManager<T : TFslTreeNode> = class abstract (TListOrTreeManagerBase)
+  private
+    FTree : TVirtualStringTree;
+
+    function getT(p : PVirtualNode) : T;
+    procedure setT(p : PVirtualNode; item : T);
+    procedure setTree(value : TVirtualStringTree);
+    function getFocus : T;
+    function GetHasFocus : boolean;
+    procedure SetSettings(AValue: TIniFile);
+    procedure SetEnabled(AValue: boolean);
+
+    procedure clearTreeNode(item : T);
+    procedure buildTreeNode(parent : PVirtualNode; item : T);
+    procedure populateTreeNode(item : T);
+    procedure refreshTreeNode(item : T);
+    procedure LoadTreeNodes;
+    procedure doTreeChange(Sender: TObject);
+    procedure doTreeDoubleClick(Sender: TObject);
+    procedure updateStatus;
+    procedure DoEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+
+    procedure doGetTreeText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
+    procedure doGetTreeImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure doPaintTreeText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
+    procedure doPaintTreeCell(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+  protected
+    FData : TFslList<T>; // hidden root
+
+    procedure doControl(sender : TObject); override;
+    procedure doMnuClick(Sender: TObject); override;
+    function readOnly : boolean; virtual;
+    procedure SetImages(AValue: TImagelist); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property Tree : TVirtualStringTree read FTree write SetTree;
+    property Data : TFslList<T> read FData;
+    property Focus : T read GetFocus;
+    property hasFocus : boolean read GetHasFocus;
+    Property Enabled : boolean read FEnabled write SetEnabled;
+    property Settings : TIniFile read FSettings write SetSettings;
+
+    // control
+    function doLoad : boolean; // call this when something changes the data to load
+    procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
+    procedure saveStatus;
+
+    // control. These are not usually needed from outside
+    procedure doAdd(mode : String);
+    procedure doEdit(mode : String);
+    procedure doDelete(mode : String);
+    procedure doExecute(mode : String);
+
+    // to override:
+    function LoadData : boolean; virtual; abstract;
+    function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
+
+    procedure buildMenu; virtual;
+    function getImageIndex(item : T) : integer; virtual;
+    function getCellText(item : T) : String; virtual; abstract;
+    function getCellColors(item : T; var fore, back : TColor) : boolean; virtual;
+    function getSummaryText(item : T) : String; virtual;
+
+    procedure changed; virtual; // e.g. to save
+    function addItem(parent : T; mode : String) : T; virtual;
+    function editItem(item : T; mode : String) : boolean; virtual;
+    function editItemText(parent, item : T; var text : String) : boolean; virtual;
+    function deleteItem(parent, item : T) : boolean; virtual; // parent might be nil if we're at the root
+    function executeItem(item : T; mode : String) : boolean; virtual;
+    function refreshItem(item : T) : boolean; virtual;
+  end;
+
 
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
@@ -796,7 +869,7 @@ begin
     List.AutoSort := true;
     List.AutoSortIndicator := true;
     List.SortColumn := 0;
-    List.SortDirection := sdAscending;
+    List.SortDirection := ComCtrls.sdAscending;
     List.SortType := stData;
   end
   else
@@ -849,7 +922,7 @@ begin
   left := T(item1.data);
   right := T(item2.data);
   result := CompareItem(left, right, List.SortColumn);
-  if List.SortDirection = sdDescending then
+  if List.SortDirection = ComCtrls.sdDescending then
     result := - result;
 end;
 
@@ -1830,6 +1903,470 @@ begin
 end;
 
 function TTreeManager<T>.refreshItem(item: T) : boolean;
+begin
+  result := false;
+end;
+
+{ TVTreeManager }
+
+constructor TVTreeManager<T>.Create;
+begin
+  inherited Create;
+  FData := TFslList<T>.create;
+end;
+
+destructor TVTreeManager<T>.Destroy;
+begin
+  FData.Free;
+  Inherited Destroy;
+end;
+
+function TVTreeManager<T>.doLoad: boolean;
+var
+  f : T;
+begin
+  f := Focus.link;
+  try
+    FTree.Clear;
+    FData.Clear;
+    result := LoadData;
+    LoadTreeNodes;
+  finally
+    f.free;
+  end;
+end;
+
+procedure TVTreeManager<T>.refresh(item: T);
+var
+  i : T;
+begin
+  if (item = nil) then
+  begin
+    for i in FData do
+      refreshTreeNode(i)
+  end
+  else if not refreshItem(item) then
+    refreshTreeNode(item);
+end;
+
+procedure TVTreeManager<T>.saveStatus;
+begin
+  // no status to save
+end;
+
+procedure TVTreeManager<T>.doAdd(mode: String);
+var
+  item, pp : T;
+  p : PVirtualNode;
+  s : String;
+  i : integer;
+begin
+  pp := focus;
+  if pp = nil then
+    p := nil
+  else
+    p := pp.FPNode;
+  item := addItem(pp, mode);
+  if item <> nil then
+  begin
+    item.FPNode := FTree.addChild(p);
+    setT(item.FPNode, item);
+    populateTreeNode(item);
+    FTree.Selected[item.FPNode] := true;
+    changed;
+    updateStatus;
+  end;
+end;
+
+procedure TVTreeManager<T>.doEdit(mode: String);
+begin
+  changed;
+  raise ETodo.create('doEdit');
+end;
+
+procedure TVTreeManager<T>.doDelete(mode: String);
+var
+  f, pp : T;
+  n, p : PVirtualNode;
+  s : String;
+  i : integer;
+begin
+  f := focus;
+  n := f.FPNode;
+  p := n.parent;
+  if (p = nil) then
+    pp := nil
+  else
+    pp := getT(p);
+
+  if AskOnDelete then
+  begin
+    if (QuestionDlg('Delete', 'Delete '+getSummaryText(f)+' from '+getSummaryText(pp)+'?', mtConfirmation, [mrYes, mrNo], '') = mrYes) then
+    begin
+      DeleteItem(pp, f);
+      FTree.deleteNode(n);
+      changed;
+      updateStatus;
+    end;
+  end
+  else
+  begin
+    if DeleteItem(pp, f) then
+    begin
+      FTree.deleteNode(n);
+      changed;
+      updateStatus;
+    end;
+  end;
+end;
+
+procedure TVTreeManager<T>.doExecute(mode: String);
+begin
+  if HasFocus then
+    if ExecuteItem(getFocus, mode) then
+      refreshTreeNode(getFocus);
+end;
+
+function TVTreeManager<T>.getT(p: PVirtualNode): T;
+var
+  data: PTreeData;
+begin
+  data := FTree.getNodeData(p);
+  result := data.item as T;
+end;
+
+procedure TVTreeManager<T>.setT(p: PVirtualNode; item: T);
+var
+  data: PTreeData;
+begin
+  data := FTree.getNodeData(p);
+  data.item := item;
+end;
+
+procedure TVTreeManager<T>.setTree(value: TVirtualStringTree);
+var
+  i : integer;
+begin
+  FTree := value;
+  FTree.TreeOptions.SelectionOptions := [toFullRowSelect, toRightClickSelect, toAlwaysSelectNode];
+  FTree.TreeOptions.AnimationOptions := [];
+  FTree.TreeOptions.AutoOptions := [toAutoDropExpand, toAutoScroll, toAutoScrollOnExpand, toAutoExpand];
+  if readonly then
+    FTree.TreeOptions.MiscOptions := [toReportMode]
+  else
+    FTree.TreeOptions.MiscOptions := [toEditable, toReportMode, toEditOnClick];
+  FTree.TreeOptions.PaintOptions := [toShowButtons, toShowTreeLines, toShowRoot];
+
+  FTree.OnClick := doTreeChange;
+  Tree.OnDblClick := doTreeDoubleClick;
+  Tree.Images := FImages;
+  FPopup.Images := FImages;
+  buildMenu;
+  if FPopup.Items.Count > 0 then
+    FTree.PopupMenu := FPopup;
+  FTree.OnEdited := DoEdited;
+  FTree.header.SortColumn := -1;
+  FTree.header.SortDirection := sdAscending;
+  FTree.NodeDataSize := sizeof(pointer);
+  FTree.OnGetText := doGetTreeText;
+  FTree.OnGetImageIndex := doGetTreeImageIndex;
+  FTree.OnPaintText := doPaintTreeText;
+  FTree.OnBeforeCellPaint := doPaintTreeCell;
+end;
+
+procedure TVTreeManager<T>.SetSettings(AValue: TIniFile);
+begin
+  FSettings := AValue;
+  //  nothing to remember at this time
+  //  if (FSettings <> nil) and (FTree <> nil) then
+end;
+
+function TVTreeManager<T>.getFocus : T;
+var
+  sel : PVirtualNode;
+begin
+  sel := FTree.GetFirstSelected;
+  if sel = nil then
+    result := nil
+  else
+    result := getT(sel);
+end;
+
+function TVTreeManager<T>.GetHasFocus : boolean;
+begin
+  result := GetFocus <> nil;
+
+end;
+
+procedure TVTreeManager<T>.SetEnabled(AValue: boolean);
+//var
+//  ce : TControlEntry;
+begin
+  //FEnabled := AValue;
+  //FData.Clear;
+  //FFiltered.Clear;
+  ////if (FFilter <> nil) then
+  ////  FFilter.ReadOnly := not Enabled;
+  //for ce in FControls do
+  //  ce.control.Enabled := Enabled;
+  //if enabled then
+  //  doLoad;
+end;
+
+procedure TVTreeManager<T>.buildTreeNode(parent : PVirtualNode; item : T);
+begin
+  if item.FNode <> nil then
+    raise ELibraryException.create('Node appears in the tree more than once');
+  item.FPNode := FTree.AddChild(parent);
+  setT(item.FPNode, item);
+  populateTreeNode(item);
+end;
+
+procedure TVTreeManager<T>.populateTreeNode(item : T);
+var
+  i : integer;
+begin
+  for i := 0 to item.getchildCount - 1 do
+    buildTreeNode(item.FPNode, item.getChild(i) as T);
+end;
+
+procedure TVTreeManager<T>.refreshTreeNode(item: T);
+var
+  i : integer;
+begin
+  FTree.in
+  for i := 0 to item.getchildCount - 1 do
+    refreshTreeNode(item.getChild(i) as T);
+end;
+
+procedure TVTreeManager<T>.clearTreeNode(item : T);
+var
+  i : integer;
+begin
+  item.FNode := nil;
+  for i := 0 to item.getchildCount - 1 do
+    clearTreeNode(item.getChild(i) as T);
+end;
+
+procedure TVTreeManager<T>.LoadTreeNodes;
+var
+  i : T;
+begin
+  for i in FData do
+    clearTreeNode(i);
+
+  for i in FData do
+    buildTreeNode(nil, i);
+end;
+
+procedure TVTreeManager<T>.doTreeChange(Sender: TObject);
+begin
+  updateStatus;
+end;
+
+procedure TVTreeManager<T>.doTreeDoubleClick(Sender: TObject);
+var
+  item : T;
+  i : integer;
+begin
+  if hasFocus then
+  begin
+    item := GetFocus;
+    if doubleClickEdit then
+    begin
+      if FCanEdit and hasFocus and EditItem(item, '') then
+      begin
+        for i := item.FNode.Count - 1 downto 0 do
+          item.FNode.Items[i].delete;
+        populateTreeNode(item);
+      end;
+    end
+    else
+      doExecute('');
+  end;
+end;
+
+procedure TVTreeManager<T>.updateStatus;
+var
+  sel : PVirtualNode;
+  ops : TNodeOperationSet;
+  op : TControlOperation;
+begin
+  sel := FTree.GetFirstSelected;
+  if sel = nil then
+    ops := allowedOperations(nil)
+  else
+    ops := allowedOperations(getT(sel));
+
+  updateControls(copAdd, opAdd in ops);
+  updateControls(copEdit, (opEdit in ops) and (sel <> nil));
+  updateControls(copDelete, (opDelete in ops) and (sel <> nil));
+  updateControls(copRefresh, opRefresh in ops);
+  updateControls(copExecute, opExecute in ops);
+  FCanEdit := opEdit in ops;
+
+  if assigned(FOnSetFocus) then
+    FOnSetFocus(self);
+end;
+
+procedure TVTreeManager<T>.DoEdited(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
+var
+  item, pp : T;
+  p : PVirtualNode;
+begin
+  item := focus;
+  p := item.FPNode.parent;
+  if (p <> nil) then
+    pp := getT(p)
+  else
+    pp := nil;
+  // todo: editing....
+  //if (s <> getCellText(item)) then
+  //  if editItemText(pp, item, s) then
+  //    changed
+  //  else
+  //    s := getCellText(item);
+end;
+
+procedure TVTreeManager<T>.SetImages(AValue: TImagelist);
+begin
+  inherited SetImages(AValue);
+  if FTree <> nil then
+    FTree.images := AValue;
+end;
+
+procedure TVTreeManager<T>.doGetTreeText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: String);
+var
+  item : T;
+begin
+  item := getT(node);
+  CellText := getCellText(item);
+end;
+
+procedure TVTreeManager<T>.doGetTreeImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
+begin
+  Ghosted := false;
+  ImageIndex := getImageIndex(GetT(node));
+end;
+
+procedure TVTreeManager<T>.doPaintTreeText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
+var
+  fore, back : TColor;
+begin
+  fore := clBlack;
+  back := clWhite;
+  getCellColors(getT(node), fore, back);
+  TargetCanvas.Font.Color := fore;
+end;
+
+procedure TVTreeManager<T>.doPaintTreeCell(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+var
+  fore, back : TColor;
+begin
+  fore := clBlack;
+  back := clWhite;
+  getCellColors(getT(node), fore, back);
+  TargetCanvas.Brush.Color := back;
+  TargetCanvas.Brush.Style := bsSolid;
+  TargetCanvas.Rectangle(cellRect);
+end;
+
+procedure TVTreeManager<T>.doControl(sender: TObject);
+var
+  entry : TControlEntry;
+begin
+  for entry in FControls do
+    if entry.control = sender then
+      case entry.op of
+        copAdd : doAdd(entry.mode);
+        copEdit : doEdit(entry.mode);
+        copDelete : doDelete(entry.mode);
+        //copUp : doUp;
+        //copDown : doDown;
+        copReload : doLoad;
+        copRefresh : refresh(focus);
+        copExecute : doExecute(entry.mode);
+      end;
+end;
+
+procedure TVTreeManager<T>.doMnuClick(Sender: TObject);
+var
+  mnu : TMenuItem;
+  mode : String;
+begin
+  mnu := (Sender as TMenuItem);
+  if mnu.Name.StartsWith('mnuMode') then
+    mode := mnu.Name.Substring(7)
+  else
+    mode := '';
+
+  case TControlOperation(mnu.Tag) of
+    copAdd : doAdd(mode);
+    copEdit : doEdit(mode);
+    copDelete : doDelete(mode);
+    //copUp : doUp;
+    //copDown : doDown;
+    copReload : doLoad;
+    copRefresh : refresh(focus);
+    copExecute : doExecute(mode);
+  end;
+end;
+
+function TVTreeManager<T>.readOnly: boolean;
+begin
+
+end;
+
+procedure TVTreeManager<T>.buildMenu;
+begin
+end;
+
+function TVTreeManager<T>.getImageIndex(item : T) : integer;
+begin
+  result := -1;
+end;
+
+function TVTreeManager<T>.getCellColors(item : T; var fore, back : TColor) : boolean;
+begin
+  result := false;
+end;
+
+function TVTreeManager<T>.getSummaryText(item : T) : String;
+begin
+  result := getCellText(item);
+end;
+
+procedure TVTreeManager<T>.changed;
+begin
+  //  nothing
+end;
+
+function TVTreeManager<T>.addItem(parent : T; mode : String) : T;
+begin
+  result := nil;
+end;
+
+function TVTreeManager<T>.editItem(item : T; mode : String) : boolean;
+begin
+  result := false;
+end;
+
+function TVTreeManager<T>.editItemText(parent, item: T; var text: String): boolean;
+begin
+    result := false;
+end;
+
+function TVTreeManager<T>.deleteItem(parent, item : T) : boolean;
+begin
+  raise EFslException.Create('Delete is not supported here');
+end;
+
+function TVTreeManager<T>.executeItem(item : T; mode : String) : boolean;
+begin
+  raise EFslException.Create('Execute is not supported here');
+end;
+
+function TVTreeManager<T>.refreshItem(item: T) : boolean;
 begin
   result := false;
 end;

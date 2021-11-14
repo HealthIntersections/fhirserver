@@ -1,4 +1,4 @@
-unit frm_edit_changes;
+unit dlg_edit_changes;
 
 {
 Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -38,7 +38,7 @@ uses
   Process,
   fsl_diff, fsl_utilities,
   fui_lcl_utilities,
-  ftk_context;
+  ftk_context, SynEditMarkupSpecialLine;
 
 type
 
@@ -50,8 +50,9 @@ type
     btnExternalDiff: TButton;
     lblStatus: TLabel;
     lblSummary: TLabel;
-    mBase: TMemo;
-    mCurr: TMemo;
+    mStoredSource: TSynEdit;
+    mLeft: TSynEdit;
+    mRight: TSynEdit;
     PageControl1: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -59,20 +60,24 @@ type
     pnlRightSummary: TPanel;
     pnlTextLeft: TPanel;
     pnlTextRight: TPanel;
-    mSource: TSynEdit;
+    mEditorSource: TSynEdit;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     Timer1: TTimer;
     procedure btnCancelClick(Sender: TObject);
     procedure btnExternalDiffClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure mSourceChange(Sender: TObject);
+    procedure mEditorSourceChange(Sender: TObject);
+    procedure mEditorSourceSpecialLineColors(Sender: TObject; Line: integer; var Special: boolean; var FG, BG: TColor);
+    procedure mStoredSourceSpecialLineColors(Sender: TObject; Line: integer; var Special: boolean; var FG, BG: TColor);
     procedure TabSheet1Resize(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     FDiffTool: String;
+    FDiff : TFslTextComparer;
     FEditor: TToolkitEditor;
     baseBytes, currBytes : TBytes;
     FFileTime : TDateTime;
@@ -97,6 +102,7 @@ implementation
 procedure TEditChangeReviewForm.FormDestroy(Sender: TObject);
 begin
   FEditor.Free;
+  FDiff.Free;
 end;
 
 procedure TEditChangeReviewForm.btnExternalDiffClick(Sender: TObject);
@@ -146,10 +152,32 @@ begin
   btnExternalDiff.enabled := fileExists(FDiffTool);
 end;
 
-procedure TEditChangeReviewForm.mSourceChange(Sender: TObject);
+procedure TEditChangeReviewForm.mEditorSourceChange(Sender: TObject);
 begin
   FDirty := true;
   btnReplace.Enabled := true;
+end;
+
+procedure TEditChangeReviewForm.mEditorSourceSpecialLineColors(Sender: TObject; Line: integer; var Special: boolean; var FG, BG: TColor);
+begin
+  if FDiff.hasChanges(clSource2, line) then
+  begin
+    special := true;
+    BG := RGBToColor(252, 250, 179);
+  end
+  else
+    special := false;
+end;
+
+procedure TEditChangeReviewForm.mStoredSourceSpecialLineColors(Sender: TObject; Line: integer; var Special: boolean; var FG, BG: TColor);
+begin
+  if FDiff.hasChanges(clSource1, line) then
+  begin
+    special := true;
+    BG := RGBToColor(252, 250, 179);
+  end
+  else
+    special := false;
 end;
 
 procedure TEditChangeReviewForm.TabSheet1Resize(Sender: TObject);
@@ -165,7 +193,7 @@ begin
     begin
       Timer1.enabled := false;
       if (MessageDlg('Review Change', 'The file '+ExtractFileName(currFile)+' has changed. Reload?', mtConfirmation, mbYesNo, 0) = mrYes) then
-        mSource.Lines.LoadFromFile(CurrFile);
+        mEditorSource.Lines.LoadFromFile(CurrFile);
     end;
   end;
 end;
@@ -179,34 +207,35 @@ end;
 procedure TEditChangeReviewForm.buildTextDiff;
 var
   base, curr : TStringList;
-  diff : TFslTextComparer;
 begin
   baseBytes := editor.Store.load(editor.session.address, true).content;
   currBytes := editor.GetBytes;
-  mSource.text := TEncoding.UTF8.GetAnsiString(currBytes);
+  mEditorSource.text := TEncoding.UTF8.GetAnsiString(currBytes);
+  mStoredSource.text := TEncoding.UTF8.GetAnsiString(baseBytes);
   btnReplace.Enabled := false;
   FDirty := false;
 
+  FDiff.Free;
+  FDiff := TFslTextComparer.create;
+
   base := TStringList.create;
   curr := TStringList.create;
-  diff := TFslTextComparer.create;
   try
     base.text := TEncoding.UTF8.GetAnsiString(baseBytes).trim+#13#10;
     curr.text := TEncoding.UTF8.GetAnsiString(currBytes).trim+#13#10;
-    diff.IgnoreCase := false;
-    diff.IgnoreSpaces := true;
-    diff.Heuristic := 50;
-    diff.Source1 := base;
-    diff.Source2 := curr;
-    diff.Output1 := mBase.lines;
-    diff.Output2 := mCurr.lines;
-    diff.Execute;
+    FDiff.IgnoreCase := false;
+    FDiff.IgnoreSpaces := true;
+    FDiff.Heuristic := 50;
+    FDiff.Source1 := base;
+    FDiff.Source2 := curr;
+    FDiff.Output1 := mLeft.lines;
+    FDiff.Output2 := mRight.lines;
+    FDiff.Execute;
 
-    lblSummary.caption := 'Comparison between Saved and Current version of '+editor.Session.Caption+': '+inttostr(diff.count)+' '+StringPlural('change', diff.count)+' found';
+    lblSummary.caption := 'Comparison between Saved and Current version of '+editor.Session.Caption+': '+inttostr(FDiff.count)+' '+StringPlural('change', FDiff.count)+' found';
     pnlLeftSummary.caption := inttostr(base.count)+' lines';
     pnlRightSummary.caption := inttostr(curr.count)+' lines';
   finally
-    diff.free;
     base.free;
     curr.free;
   end;

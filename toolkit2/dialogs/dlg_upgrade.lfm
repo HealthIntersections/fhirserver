@@ -1,0 +1,91 @@
+object ToolkitUpgradeForm: TToolkitUpgradeForm
+  Left = 163
+  Height = 435
+  Top = -727
+  Width = 697
+  BorderIcons = []
+  Caption = 'Toolkit Upgrade'
+  ClientHeight = 435
+  ClientWidth = 697
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 46
+    Top = 389
+    Width = 697
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 46
+    ClientWidth = 697
+    ParentFont = False
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 497
+      Height = 25
+      Top = 13
+      Width = 107
+      Anchors = [akTop, akRight]
+      Caption = 'Upgrade Now'
+      OnClick = btnOkClick
+      ParentFont = False
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 613
+      Height = 25
+      Top = 13
+      Width = 75
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Ignore'
+      ModalResult = 2
+      ParentFont = False
+      TabOrder = 1
+    end
+    object btnReset: TButton
+      Left = 8
+      Height = 25
+      Top = 13
+      Width = 120
+      Caption = 'Open in Browser'
+      Default = True
+      OnClick = btnResetClick
+      ParentFont = False
+      TabOrder = 2
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 34
+    Top = 0
+    Width = 697
+    Align = alTop
+    Alignment = taLeftJustify
+    BevelOuter = bvNone
+    Caption = '  Release Information'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+  end
+  object html: THtmlViewer
+    Left = 0
+    Height = 355
+    Top = 34
+    Width = 697
+    BorderStyle = htFocused
+    DefBackground = clWhite
+    DefFontName = 'Sans Serif'
+    DefFontSize = 10
+    HistoryMaxCount = 0
+    NoSelect = False
+    PrintMarginBottom = 2
+    PrintMarginLeft = 2
+    PrintMarginRight = 2
+    PrintMarginTop = 2
+    PrintScale = 1
+    Align = alClient
+    TabOrder = 2
+  end
+end

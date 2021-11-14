@@ -39,7 +39,8 @@ uses
   fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
   fdb_odbc_fpc,
   console_form,
-  console_tx_edit, console_ep_edit, install_form, install_log, installer;
+  console_tx_edit, console_ep_edit, install_form, install_log, installer, 
+test_form;
 
 {$R *.res}
 

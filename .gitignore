@@ -55,6 +55,7 @@ testcases/snomed/snomed.cache
 /dependencies/Indy10/Protocols/__recovery
 /server/FHIRServer.cfg
 /install/fhirserver.fb8lck
+/install/tools
 
 utilities/codescan/codescan
 

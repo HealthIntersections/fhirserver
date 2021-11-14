@@ -36,8 +36,9 @@ uses
   Classes, SysUtils;
 
 Const
-  TOOLKIT_VERSION = '0.0.1';
-  TOOLKIT_RELEASE_DATE = '';
+{$i version.inc}
+  TOOLKIT_VERSION = FHIR_CODE_FULL_VERSION;
+  TOOLKIT_RELEASE_DATE = FHIR_CODE_RELEASE_DATETIME;
 
 implementation
 
