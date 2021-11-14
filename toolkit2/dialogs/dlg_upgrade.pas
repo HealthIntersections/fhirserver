@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, lclintf,
   HtmlView,
   MarkdownProcessor,
-  fsl_utilities, fsl_fetcher,
+  fsl_base, fsl_utilities, fsl_fetcher,
   fui_lcl_utilities;
 
 type

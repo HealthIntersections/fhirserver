@@ -2134,7 +2134,7 @@ procedure TVTreeManager<T>.refreshTreeNode(item: T);
 var
   i : integer;
 begin
-  FTree.in
+  FTree.invalidateNode(item.FPNode);
   for i := 0 to item.getchildCount - 1 do
     refreshTreeNode(item.getChild(i) as T);
 end;
