@@ -1406,6 +1406,7 @@ end;
 Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
 var
   defToLatest : boolean;
+  cs : TFHIRCodeSystemEntry;
 begin
   result := nil;
   version := checkVersion(system, version, profile);
@@ -1448,9 +1449,18 @@ begin
   begin
     FLock.Lock('getProvider');
     try
-      // todo; version specific....
-      if FCodeSystems.has(system) then
-        result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, FCodeSystems.get(system).link);
+      if FCodeSystems.has(system)  then
+      begin
+        cs := FCodeSystems.get(system, version).link;
+        if (cs = nil) and ((version = '') or defToLatest) then
+          cs := FCodeSystems.get(system).link;
+        try
+          if (cs.CodeSystem.content in [cscmComplete, cscmFragment]) then
+            result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+        finally
+          cs.Free;
+        end;
+      end;
     finally
       FLock.Unlock;
     end;
@@ -1469,7 +1479,10 @@ begin
   end;
 
   if (result = nil) and not noException then
-    raise ETerminologySetup.create('Unable to provide support for code system '+system);
+    if version <> '' then
+      raise ETerminologySetup.create('Unable to provide support for code system '+system+' v'+version)
+    else
+      raise ETerminologySetup.create('Unable to provide support for code system '+system);
 end;
 
 
