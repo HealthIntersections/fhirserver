@@ -31,7 +31,10 @@ set "tmp=%2"
 echo ## getting ready ##
 
 :: check a version was provided
-IF %2.==. GOTO OK
+IF %1.==. GOTO NoVer
+GOTO OK
+
+:NoVer
 echo You need to provide the new version as a parameter to this batch file
 pause
 exit /b 1
@@ -116,7 +119,7 @@ echo ## GitHub Release ##
 git commit library\version.inc -m "Release Version"
 git push 
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F install\release-notes.md
-rename install\release-notes.md install\release-notes-old.md
+rename install\release-notes.md release-notes-old.md
 
 :: =========================================================================================
 echo Build/Release Process Finished

@@ -343,6 +343,7 @@ procedure TCodeScanner.Run;
 var
   v, n, m, p : String;
 begin
+  //writeln(commandLineAsString);
   try
     FProjectDir := paramstr(0);
     FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);

@@ -60,3 +60,4 @@ testcases/snomed/snomed.cache
 utilities/codescan/codescan
 
 install/build/FHIRToolkit.app
+/install/release-notes-old.md
