@@ -151,6 +151,7 @@ Type
 
     function Link : TCodeSystemProvider; overload;
 
+    function isIncomplete : boolean; virtual;
     function description : String;  virtual; abstract;
     function TotalCount : integer;  virtual; abstract;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
@@ -278,6 +279,11 @@ begin
   finally
     Close(ctxt);
   end;
+end;
+
+function TCodeSystemProvider.isIncomplete: boolean;
+begin
+  result := false;
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;

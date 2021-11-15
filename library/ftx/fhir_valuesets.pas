@@ -322,7 +322,8 @@ begin
         if not (r is TFhirCodeSystemW) then
           raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
         cs := r as TFhirCodeSystemW;
-        exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+        if (cs.content = cscmFragment) then
+          exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
       end;
   end;
 
@@ -621,9 +622,18 @@ begin
         ctxt := cs.locate(code, message);
         if (ctxt = nil) then
         begin
-          result := false;
-          cause := itCodeInvalid;
-          FLog := 'Unknown code';
+          if cs.isIncomplete then
+          begin
+            result := true; // we can't say it isn't valid. Need a third status?
+            cause := itNotFound;
+            FLog := 'Not found in Incomplete Code System';
+          end
+          else
+          begin
+            result := false;
+            cause := itCodeInvalid;
+            FLog := 'Unknown code';
+          end;
         end
         else
         begin
