@@ -64,3 +64,5 @@ install/build/FHIRToolkit.app
 /.zuliprc
 /install/release-notes.md
 /load-password.bat
+/install/healthintersections.pfx
+/install/healthintersections.pfx
