@@ -24,7 +24,8 @@ uses
   ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
   frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager,
   dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5, ftk_image_scanner,
-  ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner, dlg_upgrade;
+  ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner, dlg_upgrade,
+  dlg_clipboard_process;
 
 {$R *.res}
 
@@ -49,6 +50,7 @@ begin
   end;
   Application.CreateForm(TQRCodeScannerForm, QRCodeScannerForm);
   Application.CreateForm(TToolkitUpgradeForm, ToolkitUpgradeForm);
+  Application.CreateForm(TTextPasteProcessorForm, TextPasteProcessorForm);
   Application.Run;
 end.
 

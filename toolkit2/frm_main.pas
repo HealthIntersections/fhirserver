@@ -50,7 +50,7 @@ uses
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade;
+  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade, dlg_clipboard_process;
 
 type
   {$IFDEF WINDOWS}
@@ -76,6 +76,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionEditPasteProcessed: TAction;
     actionFileOpenQRCode: TAction;
     actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
@@ -193,6 +194,7 @@ type
     MenuItem120: TMenuItem;
     MenuItem54: TMenuItem;
     MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -434,6 +436,7 @@ type
     procedure actionEditPasteEscapedExecute(Sender: TObject);
     procedure actionEditPasteFormatExecute(Sender: TObject);
     procedure actionEditPasteNewFileExecute(Sender: TObject);
+    procedure actionEditPasteProcessedExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
@@ -2502,6 +2505,22 @@ begin
   kind := determineClipboardFormat(cnt);
   if kind <> sekNull then
     createNewFile(kind, cnt);
+end;
+
+procedure TMainToolkitForm.actionEditPasteProcessedExecute(Sender: TObject);
+var
+  form : TTextPasteProcessorForm;
+begin
+  if Context.HasFocus then
+  begin
+    form := TTextPasteProcessorForm.create(self);
+    try
+      if form.showModal = mrOk then
+        Context.focus.insertText(form.Text, false);
+    finally
+      form.free;
+    end;
+  end;
 end;
 
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);

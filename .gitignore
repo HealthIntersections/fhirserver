@@ -61,3 +61,8 @@ utilities/codescan/codescan
 
 install/build/FHIRToolkit.app
 /install/release-notes-old.md
+/.zuliprc
+/install/release-notes.md
+/load-password.bat
+/install/healthintersections.pfx
+/install/healthintersections.pfx
