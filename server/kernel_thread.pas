@@ -127,9 +127,9 @@ var
 begin
   if (FTask.FThread <> self) then
     if FTask.FThread = nil then
-      raise Exception.Create('Error in internal thread: task '+FTask.name+' has no thread associated with it')
+      raise EFslException.Create('Error in internal thread: task '+FTask.name+' has no thread associated with it')
     else
-      raise Exception.Create('Error in internal thread: task '+FTask.name+' has a different thread associated with it ('+pointerToString(FTask.FThread)+'/'+pointerToString(self)+')');
+      raise EFslException.Create('Error in internal thread: task '+FTask.name+' has a different thread associated with it ('+pointerToString(FTask.FThread)+'/'+pointerToString(self)+')');
   try
     inc(FTask.FCount);
     FTask.FLastStarted := GetTickCount64;
