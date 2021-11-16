@@ -1,0 +1,115 @@
+object TextPasteProcessorForm: TTextPasteProcessorForm
+  Left = 1270
+  Height = 371
+  Top = -507
+  Width = 512
+  BorderIcons = []
+  BorderStyle = bsDialog
+  Caption = 'Process Clipboard Text'
+  ClientHeight = 371
+  ClientWidth = 512
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 46
+    Top = 325
+    Width = 512
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 46
+    ClientWidth = 512
+    ParentFont = False
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 344
+      Height = 25
+      Top = 13
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Insert'
+      ModalResult = 1
+      ParentFont = False
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 428
+      Height = 25
+      Top = 13
+      Width = 75
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      ParentFont = False
+      TabOrder = 1
+    end
+    object btnProcess: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'Repaste'
+      OnClick = btnProcessClick
+      TabOrder = 2
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 325
+    Top = 0
+    Width = 170
+    Align = alLeft
+    BevelOuter = bvNone
+    BorderWidth = 2
+    ClientHeight = 325
+    ClientWidth = 170
+    TabOrder = 1
+    object lbProcesses: TListBox
+      Left = 2
+      Height = 321
+      Top = 2
+      Width = 166
+      Align = alClient
+      Items.Strings = (
+        'As Is'
+        'HTML Escaped'
+        'XML Text Escaped'
+        'XML Attr Escaped'
+        'Json Escaped'
+        'Java String Escaped'
+        'Pascal String  Escaped'
+        'Raw ANSI (Hex)'
+        'Raw UTF8 (Hex)'
+        'Raw UTF16LE (Hex)'
+        'Raw UTF16BE (Hex)'
+      )
+      ItemHeight = 15
+      OnClick = lbProcessesClick
+      TabOrder = 0
+    end
+  end
+  object Panel3: TPanel
+    Left = 170
+    Height = 325
+    Top = 0
+    Width = 342
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 2
+    Caption = 'Panel3'
+    ClientHeight = 325
+    ClientWidth = 342
+    TabOrder = 2
+    object Memo1: TMemo
+      Left = 2
+      Height = 321
+      Top = 2
+      Width = 338
+      Align = alClient
+      ReadOnly = True
+      TabOrder = 0
+    end
+  end
+end

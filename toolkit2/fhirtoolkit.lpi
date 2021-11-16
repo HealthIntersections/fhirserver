@@ -671,6 +671,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_clipboard_process.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TextPasteProcessorForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
