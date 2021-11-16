@@ -51,7 +51,7 @@ Uses
 
   server_constants, server_config, utilities, server_context,
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
-  server_testing,
+  server_testing, kernel_thread,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
   endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao;
 
@@ -74,22 +74,6 @@ Uses
 type
   TFHIRServiceKernel = class;
 
-  TFhirServerMaintenanceThread = class (TFslThread)
-  private
-    FKernel : TFHIRServiceKernel;
-    FMaxMem : UInt64;
-    function MemIsMax : boolean;
-    procedure ClearCaches;
-  protected
-    function ThreadName : String; override;
-    procedure Initialise; override;
-    procedure Execute; override;
-    procedure Finalise; override;
-  public
-    constructor Create(kernel : TFHIRServiceKernel);
-    destructor Destroy; override;
-  end;
-
   TFHIRServiceKernel = class (TSystemService)
   private
     FIni : TFHIRServerConfigFile;
@@ -102,6 +86,7 @@ type
 
     FMaintenanceThread: TFhirServerMaintenanceThread;
     FPcm : TFHIRPackageManager;
+    FMaxMem : Int64;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -114,6 +99,7 @@ type
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
+    procedure checkMem (callback : TFhirServerMaintenanceThreadTaskCallBack);
   protected
     function command(cmd: String): boolean; override;
   public
@@ -146,77 +132,6 @@ uses
 var
   GStartTime : UInt64;
 
-{ TFhirServerMaintenanceThread }
-
-procedure TFhirServerMaintenanceThread.ClearCaches;
-var
-  ep : TFhirServerEndpoint;
-begin
-  Logging.log('Clear Caches because memory in use = '+DescribeBytes(Logging.InternalMem)+', and max is '+DescribeBytes(FMaxMem));
-  FKernel.WebServer.clearCache;
-  for ep in FKernel.FEndPoints do
-    ep.clearCache;
-  Logging.log('Cleared Cache. Memory in use = '+DescribeBytes(Logging.InternalMem));
-end;
-
-constructor TFhirServerMaintenanceThread.Create(kernel : TFHIRServiceKernel);
-var
-  u : UInt64;
-begin
-  inherited Create();
-  FKernel := kernel;
-  u := FKernel.Settings.Ini.service['max-memory'].readAsInt(0);
-  FMaxMem := u * 1024 * 1024;
-end;
-
-destructor TFhirServerMaintenanceThread.Destroy;
-begin
-  inherited;
-end;
-
-procedure TFhirServerMaintenanceThread.Initialise;
-begin
-  {$IFDEF WINDOWS}
-  CoInitialize(nil);
-  {$ENDIF}
-  TimePeriod := 5000;
-end;
-
-function TFhirServerMaintenanceThread.MemIsMax: boolean;
-begin
-  result := (FMaxMem > 0) and (Logging.InternalMem > FMaxMem);
-end;
-
-function TFhirServerMaintenanceThread.threadName: String;
-begin
-  result := 'Server Maintenance Thread';
-end;
-
-procedure TFhirServerMaintenanceThread.Execute;
-var
-  ep : TFhirServerEndpoint;
-begin
-  try
-    if MemIsMax then
-      ClearCaches;
-    for ep in FKernel.FEndPoints do
-      if not Terminated then
-        ep.internalThread;
-    if not Terminated then
-      FKernel.FTerminologies.sweepSnomed;
-    if not Terminated then
-      FKernel.WebServer.Common.cache.Trim;
-  except
-  end;
-end;
-
-procedure TFhirServerMaintenanceThread.Finalise;
-begin
-  {$IFDEF WINDOWS}
-  CoUninitialize;
-  {$ENDIF}
-end;
-
 { TFHIRServiceKernel }
 
 constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
@@ -236,6 +151,7 @@ begin
   else
     FPcm := TFHIRPackageManager.Create(false);
 
+  FMaxMem := FSettings.Ini.service['max-memory'].readAsInt(0) * 1024 * 1024;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 end;
 
@@ -257,14 +173,22 @@ begin
 end;
 
 procedure TFHIRServiceKernel.postStart;
+var
+  ep : TFhirServerEndpoint;
 begin
   try
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
 
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
+    FMaintenanceThread := TFhirServerMaintenanceThread.Create;
+    FMaintenanceThread.defineTask('mem-check', checkMem, 5);
+    for ep in FEndPoints do
+      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 5);
+    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 10);
+    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 10);
     FMaintenanceThread.Start;
+
 
     SetCacheStatus(settings.Ini.web['caching'].value = 'true');
 
@@ -286,14 +210,18 @@ procedure TFHIRServiceKernel.DoStop;
 begin
   try
     Logging.log('stopping: '+StopReason);
-    Logging.log('stop web server');
 
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' is stopping');
+    Logging.log('close web server');
+    if FWebServer <> nil then
+      FWebServer.Close;
+    Logging.log('stop internal thread');
     if FMaintenanceThread <> nil then
     begin
-      FMaintenanceThread.StopAndWait(100);
+      FMaintenanceThread.StopAndWait(21000); // see comments in FMaintenanceThread.finalise
+      FMaintenanceThread.Free;
     end;
-    FMaintenanceThread.Free;
+    Logging.log('stop web server');
     StopWebServer;
     Logging.log('closing');
     UnLoadEndPoints;
@@ -535,6 +463,20 @@ begin
       exit((t as TStorageEndPoint).ServerContext);
 end;
 
+procedure TFHIRServiceKernel.checkMem (callback : TFhirServerMaintenanceThreadTaskCallBack);
+var
+  ep : TFhirServerEndpoint;
+begin
+  callback(self, 'Checking Memory Status', -1);
+  if (FMaxMem > 0) and (Logging.InternalMem > FMaxMem) then
+  begin
+    Logging.log('Clear Caches because memory in use = '+DescribeBytes(Logging.InternalMem)+', and max is '+DescribeBytes(FMaxMem));
+    WebServer.clearCache;
+    for ep in FEndPoints do
+      ep.clearCache;
+    Logging.log('Cleared Cache. Memory in use = '+DescribeBytes(Logging.InternalMem));
+  end;
+end;
 
 { === Core ====================================================================}
 

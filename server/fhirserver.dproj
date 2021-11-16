@@ -643,6 +643,7 @@
         <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumCtrl.pas"/>
         <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumLib.pas"/>
         <DCCReference Include="..\library\fhir\fhir_colour_utils.pas"/>
+        <DCCReference Include="kernel_thread.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

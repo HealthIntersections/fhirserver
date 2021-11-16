@@ -1,7 +1,7 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 225
+  Left = 325
   Height = 625
-  Top = -682
+  Top = 176
   Width = 691
   Caption = 'FHIRServer Console'
   ClientHeight = 605
@@ -59,10 +59,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 575
       Top = 1
       Width = 684
-      ActivePage = tbTerminologies
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -380,11 +380,11 @@ object MainConsoleForm: TMainConsoleForm
             Height = 441
             Top = 40
             Width = 674
-            ActivePage = TabSheet1
+            ActivePage = tbTermload
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 2
+            TabIndex = 4
             TabOrder = 1
             object tbGeneral: TTabSheet
               Caption = 'General Settings'

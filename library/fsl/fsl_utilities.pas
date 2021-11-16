@@ -642,7 +642,7 @@ Procedure MemoryFill(Const pBuffer : Pointer; iSize : Integer);
 Procedure MemoryMove(Const aSource, aTarget : Pointer; iSize : Integer);
 Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString; Overload;
 Function MemoryToString(pData : Pointer; iLength : Integer) : AnsiString; Overload;
-
+function pointerToString(obj : TObject) : String;
 
 Function HashStringToCode32(Const sValue : String) : Integer;
 Function HashStringToCode64(Const sValue : String) : Int64;
@@ -17152,6 +17152,11 @@ end;
 class function TFslTimeZone.other(zone : String) : TFslTimeZone;
 begin
   result := TFslTimeZone.create(zone);
+end;
+
+function pointerToString(obj : TObject) : String;
+begin
+  result := IntToHex(UInt64(obj), 16);
 end;
 
 Initialization

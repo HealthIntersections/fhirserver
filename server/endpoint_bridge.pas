@@ -234,7 +234,6 @@ Type
     procedure UninstallDatabase; override;
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
-    procedure internalThread; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
@@ -268,11 +267,6 @@ end;
 procedure TBridgeEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
-end;
-
-procedure TBridgeEndPoint.internalThread;
-begin
-  // nothing
 end;
 
 procedure TBridgeEndPoint.Load;
