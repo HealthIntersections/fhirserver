@@ -126,6 +126,7 @@ utilities\codescan\codescan.exe -check install\build\fhirtoolkit-win64-%1.exe -m
 install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirserver-win64-%1.exe
 install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirtoolkit-win64-%1.exe
 
+set HI_PASSWORD=null
 :: =========================================================================================
 :: now time to do the github release
 
