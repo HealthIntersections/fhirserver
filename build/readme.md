@@ -123,3 +123,36 @@ key= {private key filename}
 cacert= {ca cert filename}
 password= {for private key}
 ```
+
+# Releasing the Applications
+
+Releases are done through GitHub releases. The windows build creates the release, and uploads 
+the windows bines (installers for server and toolkit). Then other builds are run on linux and
+OSX and upload additional binaries. 
+
+## Windows Release
+
+Windows: execute build\windows-release.bat [version] ([path])
+
+where:
+* version is the version that will be released
+* path is the optional path (matches what was used when running the batch files above)
+
+In addition to the code checked into git, you need:
+* a code signing certificate
+* a batch file load-password.bat that has the password for the code signing certificate 
+* an install\tools directory that has command line versions of 
+  * dcc64 + the delphi release library 
+  * 7-zip
+  * signtool (from ksign)
+  * innosetup 
+  * gh (github cli)
+  
+  
+## OSX Release
+
+work in progress
+
+## Linux Release
+
+yet to be  done
