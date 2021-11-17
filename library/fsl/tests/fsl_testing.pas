@@ -85,6 +85,7 @@ type
 
     {$IFNDEF FPC}
     function GetName: string; override;
+    property TestName : String read GetName;
     {$ENDIF}
     procedure TestCase(name : String); virtual;
   published

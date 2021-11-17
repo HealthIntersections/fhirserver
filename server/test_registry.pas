@@ -54,7 +54,7 @@ uses
   v2_tests, cda_tests, fdb_tests,
   ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
 
-  fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid,
+  fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_diff,
   fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
   fxver_tests, fhir_tests_icao,
 
@@ -155,6 +155,7 @@ begin
   fhir4_tests_liquid.registerTests;
   fhir4_tests_pathengine.registerTests;
   fhir4_tests_graphql.registerTests;
+  fhir4_tests_diff.registerTests;
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
   test_server_config.registerTests;
