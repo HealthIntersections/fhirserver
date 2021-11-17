@@ -188,7 +188,7 @@ type
     constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
 
-    function isIncomplete : boolean; override;
+    function contentMode : TFhirCodeSystemContentMode; override;
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
@@ -636,9 +636,9 @@ begin
   result := FCs.CodeSystem.isAbstract(TFhirCodeSystemProviderContext(context).concept);
 end;
 
-function TFhirCodeSystemProvider.isIncomplete: boolean;
+function TFhirCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
 begin
-  result := FCs.FCodeSystem.content <> cscmComplete;
+  result := FCs.FCodeSystem.content;
 end;
 
 function TFhirCodeSystemProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;

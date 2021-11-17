@@ -1455,8 +1455,7 @@ begin
         if (cs = nil) and ((version = '') or defToLatest) then
           cs := FCodeSystems.get(system).link;
         try
-          if (cs.CodeSystem.content in [cscmComplete, cscmFragment]) then
-            result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+          result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
         finally
           cs.Free;
         end;
