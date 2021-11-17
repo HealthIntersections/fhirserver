@@ -382,8 +382,9 @@ type
   private
     function exp : TFhirValueSetExpansion;
   public
-    procedure addParam(name, value : String); override;
-    procedure addParam(name : String; value : boolean); override;
+    procedure addParamStr(name, value : String); override;
+    procedure addParamUri(name, value : String); override;
+    procedure addParamBool(name : String; value : boolean); override;
     function hasParam(name : string) : boolean; overload; override;
     function hasParam(name, value : string) : boolean; overload; override;
     procedure copyParams(source : TFhirValueSetExpansionW); override;
@@ -1724,7 +1725,8 @@ function TFhirParametersParameter2.GetParameterParameter(name: String): TFhirPar
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
@@ -1740,7 +1742,8 @@ function TFhirParametersParameter2.GetResourceParameter(name: String): TFHIRReso
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
@@ -1751,7 +1754,8 @@ function TFhirParametersParameter2.GetStringParameter(name: String): String;
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := '';
   for t in FList do
     if t.name = name then
@@ -1850,7 +1854,8 @@ function TFHIRParameters2.GetParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
@@ -3219,14 +3224,19 @@ begin
   result := TFhirValueSetExpansionContains2.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
 end;
 
-procedure TFhirValueSetExpansion2.addParam(name: String; value: boolean);
+procedure TFhirValueSetExpansion2.addParamBool(name: String; value: boolean);
 begin
-  exp.AddParam(name, value);
+  exp.AddParamBool(name, value);
 end;
 
-procedure TFhirValueSetExpansion2.addParam(name, value: String);
+procedure TFhirValueSetExpansion2.addParamStr(name, value: String);
 begin
-  exp.AddParam(name, value);
+  exp.addParamStr(name, value);
+end;
+
+procedure TFhirValueSetExpansion2.addParamUri(name, value: String);
+begin
+  exp.addParamUri(name, value);
 end;
 
 function TFhirValueSetExpansion2.contains: TFslList<TFhirValueSetExpansionContainsW>;

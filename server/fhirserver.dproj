@@ -190,7 +190,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version 4</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version *</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
@@ -644,6 +644,7 @@
         <DCCReference Include="..\..\source\PdfiumLib\Source\PdfiumLib.pas"/>
         <DCCReference Include="..\library\fhir\fhir_colour_utils.pas"/>
         <DCCReference Include="kernel_thread.pas"/>
+        <DCCReference Include="..\library\fhir4\tests\fhir4_tests_diff.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

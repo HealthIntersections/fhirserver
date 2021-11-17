@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_utilities, fhir_features, fhir_uris;
+  fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 
 Type
   TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf);
@@ -58,6 +58,8 @@ const
 type
   // base wrappers.....
   TFhirExtensionW = class;
+
+  { TFHIRXVersionElementWrapper }
 
   TFHIRXVersionElementWrapper = class abstract (TFHIRObject)
   protected
@@ -81,6 +83,7 @@ type
 
     property Element : TFHIRObject read FElement;
 
+    function AsJson : String; override;
     // extensions:
     function hasExtension(url : String) : boolean; override;
     function getExtensionString(url : String) : String; override;
@@ -179,6 +182,8 @@ type
     procedure removeProfile(uri : String); virtual; abstract;
   end;
 
+  { TFHIRXVersionResourceWrapper }
+
   TFHIRXVersionResourceWrapper = class (TFHIRObject)
   protected
     FRes : TFHIRResourceV;
@@ -202,6 +207,8 @@ type
     procedure checkNoImplicitRules(place, role : String); virtual;
     function hasExtensions : boolean; override;
     property language : String read GetLanguage write SetLanguage;
+
+    function AsJson : String; override;
 
     property Resource : TFHIRResourceV read FRes;
   end;
@@ -529,6 +536,7 @@ type
   TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)
   protected
     FList : TFslList<TFhirParametersParameterW>;
+
     function getValue: TFHIRObject; virtual; abstract;
     procedure setValue(Value: TFHIRObject); virtual; abstract;
     function getResource: TFHIRResourceV; virtual; abstract;
@@ -743,8 +751,9 @@ type
   TFhirValueSetExpansionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionW; overload;
-    procedure addParam(name, value : String); overload; virtual; abstract;
-    procedure addParam(name : String; value : boolean); overload; virtual; abstract;
+    procedure addParamStr(name, value : String); overload; virtual; abstract;
+    procedure addParamUri(name, value : String); overload; virtual; abstract;
+    procedure addParamBool(name : String; value : boolean); overload; virtual; abstract;
     function hasParam(name : string) : boolean; overload; virtual; abstract;
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
@@ -1408,7 +1417,7 @@ begin
   FRes.checkNoImplicitRules(place, role);
 end;
 
-constructor TFHIRXVersionResourceWrapper.create(res: TFHIRResourceV);
+constructor TFHIRXVersionResourceWrapper.Create(res: TFHIRResourceV);
 begin
   inherited create;
   if (res = nil) then
@@ -1445,6 +1454,11 @@ end;
 function TFHIRXVersionResourceWrapper.hasExtensions: boolean;
 begin
   result := FRes.hasExtensions;
+end;
+
+function TFHIRXVersionResourceWrapper.AsJson: String;
+begin
+  Result := FRes.asJson;
 end;
 
 function TFHIRXVersionResourceWrapper.GetFhirObjectVersion: TFHIRVersion;
@@ -1634,6 +1648,11 @@ end;
 function TFHIRXVersionElementWrapper.hasExtensions: boolean;
 begin
   result := FElement.hasExtensions;
+end;
+
+function TFHIRXVersionElementWrapper.AsJson: String;
+begin
+  Result := FElement.asJson;
 end;
 
 function TFHIRXVersionElementWrapper.makeCodeValue(v: String): TFHIRObject;

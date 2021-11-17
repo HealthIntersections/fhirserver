@@ -33,12 +33,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs,
+  Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, LclIntf,
+  MarkdownProcessor,
   fsl_utilities, fsl_json,
   fui_lcl_managers,
   fhir_common, fhir_factory, fhir_client,
   ftk_utilities, ftk_constants, ftk_context, HtmlView, ftk_store_temp,
-  ftk_worker_base;
+  ftk_worker_base, HtmlGlobals;
 
 type
   TFrame = TBaseWorkerFrame;
@@ -53,6 +54,8 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     procedure FrameResize(Sender: TObject);
+    procedure HtmlViewer1HotSpotClick(Sender: TObject; const SRC: ThtString;
+      var Handled: Boolean);
     procedure lbMRUDblClick(Sender: TObject);
     procedure lbMRUShowHint(Sender: TObject; HintInfo: PHintInfo);
   private
@@ -80,14 +83,15 @@ uses
 
 const
   HOME_PAGE =
-    '<html><body style="font-family: sans-serif">'+#13#10+
-    '<p>The FHIR Toolkit allows you to edit and validate all sorts of files that are useful when working with FHIR content.'+#13#10+
+    '## Welcome to the FHIR Toolkit'+#13#10+#13#10+
+    'The FHIR Toolkit allows you to edit and validate all sorts of files that are useful when working with FHIR content.'+#13#10+
     'In addition, you can connect to servers and explore them.</p>'+#13#10+
     ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '</body></html>'+#13#10+
-    '';
+    '## User Help'+#13#10+
+    'The best place to task for help is on the [tooling stream on chat.fhir.org](https://chat.fhir.org/#narrow/stream/179239-tooling).'+#13#10+
+    'Note that you might be ''encouraged'' to contribute to the documentation '#$F609'. '+#13#10+
+    ''+#13#10;
+
 { THomePageFrame }
 
 destructor THomePageFrame.Destroy;
@@ -114,9 +118,17 @@ begin
 end;
 
 procedure THomePageFrame.init(json: TJsonObject);
+var
+  proc : TMarkdownProcessor;
 begin
   FMru := TStringList.create;
-  HtmlViewer1.LoadFromString(HOME_PAGE);
+  proc := TMarkdownProcessor.createDialect(mdDaringFireball); // or flavor of your choice
+  try
+    proc.unsafe := false;
+    HtmlViewer1.LoadFromString(proc.process(HOME_PAGE));
+  finally
+    proc.free;
+  end;
 end;
 
 procedure THomePageFrame.lbMRUDblClick(Sender: TObject);
@@ -131,6 +143,12 @@ end;
 procedure THomePageFrame.FrameResize(Sender: TObject);
 begin
   panel1.width := width div 2;
+end;
+
+procedure THomePageFrame.HtmlViewer1HotSpotClick(Sender: TObject; const SRC: ThtString; var Handled: Boolean);
+begin
+  Handled := true;
+  OpenURL(src);
 end;
 
 procedure THomePageFrame.lbMRUShowHint(Sender: TObject; HintInfo: PHintInfo);

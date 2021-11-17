@@ -569,6 +569,7 @@ end;
 procedure TDifferenceEngine.applyReplace(res : TFHIRObject; path: String; value: TFhirParametersParameterW);
 var
   dest : TFHIRSelectionList;
+  d : TFHIRSelection;
   v : TFHIRObject;
 begin
   dest := fpe.evaluate(nil, res, path);
@@ -579,13 +580,14 @@ begin
       raise EFHIRException.create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
       raise EFHIRException.create('Content returned from Path is not part of Resource');
+    d := dest[0];
     if value.value <> nil then
-      dest[0].parent.replaceProperty(dest[0].name, dest[0].value, value.value.Link)
+      d.parent.replaceProperty(d.name, d.value, value.value.Link)
     else
     begin
-      v := dest[0].parent.createPropertyValue(dest[0].name);
+      v := d.parent.createPropertyValue(d.name);
       try
-        dest[0].parent.replaceProperty(dest[0].name, dest[0].value, v.Link);
+        d.parent.replaceProperty(d.name, d.value, v.Link);
         populateObject(v, value);
       finally
         v.Free;

@@ -515,7 +515,8 @@ uses
   PdfiumCtrl in '..\..\source\PdfiumLib\Source\PdfiumCtrl.pas',
   PdfiumLib in '..\..\source\PdfiumLib\Source\PdfiumLib.pas',
   fhir_colour_utils in '..\library\fhir\fhir_colour_utils.pas',
-  kernel_thread in 'kernel_thread.pas';
+  kernel_thread in 'kernel_thread.pas',
+  fhir4_tests_diff in '..\library\fhir4\tests\fhir4_tests_diff.pas';
 
 begin
   ExecuteFhirServer;

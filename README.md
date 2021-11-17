@@ -135,8 +135,4 @@ See [build/readme.md] for further instructions for building the programs in this
 
 ## Building Release
 
-Bulding an actual release requires the following tools
-* Innosetup v6 + 
-* FinalBuilder v8
-
-... todo
+Also see [build/readme.md] for release information

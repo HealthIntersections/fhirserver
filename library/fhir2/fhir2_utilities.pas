@@ -561,8 +561,9 @@ type
 
   TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
   public
-    procedure AddParam(name, value : String); overload;
-    procedure AddParam(name : String; value : boolean); overload;
+    procedure addParamStr(name, value : String); overload;
+    procedure AddParamUri(name, value : String); overload;
+    procedure AddParamBool(name : String; value : boolean); overload;
   end;
 
   TFhirSystemVersionProcessingModeEnum = (SystemVersionProcessingModeDefault, SystemVersionProcessingModeCheck, SystemVersionProcessingModeOverride);
@@ -4683,7 +4684,7 @@ end;
 
 { TFhirValueSetExpansionHelper }
 
-procedure TFhirValueSetExpansionHelper.AddParam(name, value: String);
+procedure TFhirValueSetExpansionHelper.addParamStr(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
@@ -4692,7 +4693,16 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
-procedure TFhirValueSetExpansionHelper.AddParam(name: String; value: boolean);
+procedure TFhirValueSetExpansionHelper.addParamUri(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirUri.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.AddParamBool(name: String; value: boolean);
 var
   p : TFhirValueSetExpansionParameter;
 begin
