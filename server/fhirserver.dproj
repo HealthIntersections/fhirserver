@@ -645,6 +645,7 @@
         <DCCReference Include="..\library\fhir\fhir_colour_utils.pas"/>
         <DCCReference Include="kernel_thread.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_diff.pas"/>
+        <DCCReference Include="tx_version.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
