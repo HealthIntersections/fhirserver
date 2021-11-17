@@ -834,9 +834,9 @@ end;
 function threadToString(id : TThreadId) : String;
 begin
   {$IFDEF OSX}
-  result := inttostr(UInt64(id));
+  result := inttohex(UInt64(id), sizeof(pointer) * 2);
   {$ELSE}
-  result := inttostr(id);
+  result := inttohex(id, sizeof(TThreadId)*2);
   {$ENDIF}
 end;
 
@@ -1064,7 +1064,7 @@ begin
   SetThreadName(ThreadName);
   setThreadStatus('Initialising');
   if logThread then
-    Logging.log('Thread start  '+threadName+ ' '+inttohex(threadid));
+    Logging.log('Thread start  '+threadName+ ' '+threadToString(threadid));
   initialise;
   try
     if FTimePeriod > 0 then
