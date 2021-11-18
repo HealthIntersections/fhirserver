@@ -699,8 +699,12 @@ begin
   {$IFDEF OSX}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0)); // '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
   {$ENDIF}
-  InitOpenSSL;
-
+  try
+    InitOpenSSL;
+  except
+    on e : Exception do
+      MessageDlg('Error loading openSSL', e.message, mtError, [mbok], 0);
+  end;
   GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');

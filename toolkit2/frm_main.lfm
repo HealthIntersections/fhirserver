@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
-  Left = 75
+  Left = 69
   Height = 757
-  Top = 29
+  Top = 33
   Width = 1290
   Caption = 'FHIR Toolkit'
   ClientHeight = 757
