@@ -585,7 +585,7 @@ Type
 
 type
   TFileHandle = Record
-    Value : Cardinal;
+    Value : System.THandle;
   End;
 
   TFileVersion = Record
@@ -604,7 +604,7 @@ Function FileExists(Const sFilename : String) : Boolean; Overload;
 Function FileDelete(Const sFilename : String) : Boolean; Overload;
 Function FileHandleInvalid : TFileHandle; Overload;
 Function FileHandleIsValid(Const aFileHandle : TFileHandle) : Boolean; Overload;
-Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle; Overload;
+Function FileHandleOpen(Const aValue : System.THandle) : TFileHandle; Overload;
 Procedure FileHandleClose(Var aFileHandle : TFileHandle); Overload;
 Function PathFolder(Const sFilename : String) : String; Overload;
 Function ForceFolder(dir: String): Boolean;
@@ -2796,7 +2796,7 @@ Begin
   Result := aFileHandle.Value <> FileHandleInvalid.Value;
 End;
 
-Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle;
+Function FileHandleOpen(Const aValue : System.THandle) : TFileHandle;
 Begin
   Result.Value := aValue;
 End;
