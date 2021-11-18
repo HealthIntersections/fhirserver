@@ -66,3 +66,7 @@ install/build/FHIRToolkit.app
 /load-password.bat
 /install/healthintersections.pfx
 /install/healthintersections.pfx
+
+install/build/FHIRToolkit.zip
+
+exec/Resources
