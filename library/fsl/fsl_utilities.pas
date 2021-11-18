@@ -3341,8 +3341,18 @@ function partnerFile(name: String): String;
 var
   s : String;
 begin
-  s := ExtractFilePath(Paramstr(0));
+  s := ExcludeTrailingSlash(ExtractFilePath(Paramstr(0)));
   result := path([s, name]);
+  {$IFDEF OSX}
+  // if we're packed up in a .app, then the file we're looking for will be
+  // in ../Resources
+  if not FileExists(result) then
+  begin
+    s := path([s.subString(0, s.lastIndexOf('/')), 'Resources', name]);
+    if FileExists(s) then
+      result := s;
+  end;
+  {$ENDIF}
 end;
 
 

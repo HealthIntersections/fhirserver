@@ -23,10 +23,17 @@ object ToolkitAboutForm: TToolkitAboutForm
     Color = clWhite
     ParentColor = False
     TabOrder = 0
+    object Bevel2: TBevel
+      Left = 136
+      Height = 144
+      Top = 0
+      Width = 386
+      Shape = bsFrame
+    end
     object lblToolkit: TLabel
       Left = 128
-      Height = 40
-      Top = 0
+      Height = 32
+      Top = 4
       Width = 400
       Alignment = taCenter
       AutoSize = False
@@ -290,10 +297,10 @@ object ToolkitAboutForm: TToolkitAboutForm
       Stretch = True
     end
     object Image2: TImage
-      Left = 8
-      Height = 128
-      Top = 8
-      Width = 128
+      Left = 4
+      Height = 136
+      Top = 4
+      Width = 134
       Picture.Data = {
         1754506F727461626C654E6574776F726B47726170686963E31E000089504E47
         0D0A1A0A0000000D49484452000000800000008008020000004C5CF69C000000
@@ -550,21 +557,14 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Bevel1: TBevel
       Left = 2
       Height = 10
-      Top = 144
+      Top = 142
       Width = 528
       Shape = bsTopLine
     end
-    object Bevel2: TBevel
-      Left = 136
-      Height = 88
-      Top = 40
-      Width = 386
-      Shape = bsFrame
-    end
     object mInfo: TMemo
       Left = 144
-      Height = 72
-      Top = 48
+      Height = 96
+      Top = 40
       Width = 368
       BorderStyle = bsNone
       Color = clWhite
@@ -576,9 +576,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Label1: TLabel
       Cursor = crHandPoint
       Left = 216
-      Height = 15
+      Height = 16
       Top = 152
-      Width = 263
+      Width = 295
       Caption = 'https://github.com/HealthIntersections/fhirserver'
       Font.Color = 10485760
       Font.Style = [fsUnderline]
@@ -588,9 +588,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Label2: TLabel
       Cursor = crHandPoint
       Left = 216
-      Height = 15
+      Height = 16
       Top = 187
-      Width = 77
+      Width = 94
       Caption = 'License: BSD-3'
       Font.Color = 10485760
       Font.Style = [fsUnderline]
@@ -599,9 +599,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     end
     object Label3: TLabel
       Left = 216
-      Height = 15
+      Height = 16
       Top = 168
-      Width = 218
+      Width = 252
       Caption = 'Copyright (c) Health Intersections Pty Ltd'
     end
   end
