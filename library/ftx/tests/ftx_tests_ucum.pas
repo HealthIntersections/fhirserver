@@ -236,7 +236,7 @@ begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create(nil);
-    svc.Import(partnerFile(['ucum.dat']));
+    svc.Import(partnerFile('ucum.dat'));
   end;
 end;
 
