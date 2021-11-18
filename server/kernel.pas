@@ -86,7 +86,7 @@ type
 
     FMaintenanceThread: TFhirServerMaintenanceThread;
     FPcm : TFHIRPackageManager;
-    FMaxMem : Int64;
+    FMaxMem : UInt64;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -151,7 +151,7 @@ begin
   else
     FPcm := TFHIRPackageManager.Create(false);
 
-  FMaxMem := FSettings.Ini.service['max-memory'].readAsInt(0) * 1024 * 1024;
+  FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 end;
 
