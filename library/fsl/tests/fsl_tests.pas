@@ -285,7 +285,7 @@ Type
     Procedure SetUp; override;
     procedure TearDown; override;
   Published
-    procedure PatchTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
 
   TJsonPatchTests = class (TFslTestSuite)
@@ -827,7 +827,6 @@ end;
 
 { TFslGenericsTests }
 
-{$HINTS OFF}
 procedure TFslGenericsTests.testSimple;
 var
   l : TFslList<TFslObject>;
@@ -843,7 +842,6 @@ begin
     l.Free;
   end;
 end;
-{$HINTS ON}
 
 function TFslGenericsTests.doSort(sender : TObject; const left, right : TFslTestObject) : integer;
 begin
@@ -4414,7 +4412,7 @@ begin
   engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
 end;
 
-procedure TJsonPatchTest.PatchTest(Name: String);
+procedure TJsonPatchTest.TestCase(Name: String);
 var
   t : TJsonNode;
   outcome : TJsonObject;
@@ -4874,6 +4872,7 @@ begin
   RegisterTest('Formats.XPath Engine Tests', TXPathEngineTests.create);
   RegisterTest('Formats.XML Patch Tests', TXmlPatchTests.create);
   RegisterTest('Formats.Json Tests', TJsonTests.Suite);
+  RegisterTest('Formats.Json Patch Tests', TJsonPatchTests.create);
   RegisterTest('Formats.Turtle Tests', TTurtleTests.Suite);
 end;
 

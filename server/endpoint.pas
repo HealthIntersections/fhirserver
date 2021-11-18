@@ -38,7 +38,7 @@ Uses
   fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache,
   fdb_manager,
   fhir_objects,
-  server_config, utilities, session, tx_manager,
+  server_config, utilities, session, tx_manager, kernel_thread,
   web_event, web_base, web_cache, time_tracker;
 
 type
@@ -149,7 +149,7 @@ type
     procedure updateAdminPassword; virtual;
     procedure Load; virtual;
     Procedure Unload; virtual;
-    procedure internalThread; virtual;
+    procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); virtual;
   end;
 
 

@@ -6486,7 +6486,6 @@ begin
   end;
 end;
 
-{$HINTS OFF}
 function IsNumeric(const AString: string): Boolean;
 var
   LCode: Integer;
@@ -6495,7 +6494,6 @@ begin
   Val(AString, LVoid, LCode);
   Result := LCode = 0;
 end;
-{$HINTS ON}
 
 function IsNumeric(const AString: string; const ALength: Integer; const AIndex: Integer = 1): Boolean;
 var

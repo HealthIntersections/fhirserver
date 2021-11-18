@@ -44,7 +44,7 @@ uses
   fui_lcl_utilities,
   ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
-  server_constants, console_managers, frm_about;
+  server_constants, console_managers, frm_about, test_form;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -339,6 +339,8 @@ type
     MainMenu1: TMainMenu;
     mConsole: TMemo;
     MenuItem10: TMenuItem;
+    MenuItem11: TMenuItem;
+    MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem7: TMenuItem;
@@ -549,6 +551,7 @@ type
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
     procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+    procedure MenuItem11Click(Sender: TObject);
     procedure MenuItem17Click(Sender: TObject);
     procedure MenuItem33Click(Sender: TObject);
     procedure MenuItem37Click(Sender: TObject);
@@ -956,7 +959,18 @@ begin
       ts.Delete(i);
     FConfig.save;
   end;
+end;
 
+procedure TMainConsoleForm.MenuItem11Click(Sender: TObject);
+var
+  TestForm : TTestForm;
+begin
+  TestForm := TTestForm.create(self);
+  try
+    TestForm.ShowModal;
+  finally
+    TestForm.free;
+  end;
 end;
 
 procedure TMainConsoleForm.MenuItem17Click(Sender: TObject);

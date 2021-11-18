@@ -55,11 +55,14 @@ testcases/snomed/snomed.cache
 /dependencies/Indy10/Protocols/__recovery
 /server/FHIRServer.cfg
 /install/fhirserver.fb8lck
+/install/tools
 
 utilities/codescan/codescan
 
 install/build/FHIRToolkit.app
-
-install/build/FHIRToolkit.zip
-
-exec/Resources
+/install/release-notes-old.md
+/.zuliprc
+/install/release-notes.md
+/load-password.bat
+/install/healthintersections.pfx
+/install/healthintersections.pfx

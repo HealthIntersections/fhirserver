@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  fsl_base,
+  fsl_base, fsl_http,
   fhir_objects;
 
 type
@@ -44,6 +44,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
   TFhirBase = TFhirObject5;
 
@@ -56,6 +57,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource5;
@@ -85,10 +87,22 @@ type
 implementation
 
 uses
-  fhir5_types, fhir5_utilities;
+  fhir5_types, fhir5_utilities, fhir5_json;
 
 
 { TFHIRObject5 }
+
+function TFHIRObject5.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  try
+    result := j.Compose(fhirType, self);
+  finally
+    j.Free;
+  end;
+end;
 
 function TFHIRObject5.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -116,6 +130,18 @@ begin
 end;
 
 { TFHIRResource5 }
+
+function TFHIRResource5.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  try
+    result := j.Compose(self);
+  finally
+    j.Free;
+  end;
+end;
 
 function TFHIRResource5.GetFhirObjectVersion: TFHIRVersion;
 begin

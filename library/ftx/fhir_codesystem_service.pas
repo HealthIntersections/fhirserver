@@ -188,6 +188,7 @@ type
     constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
 
+    function contentMode : TFhirCodeSystemContentMode; override;
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
@@ -633,6 +634,11 @@ end;
 function TFhirCodeSystemProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   result := FCs.CodeSystem.isAbstract(TFhirCodeSystemProviderContext(context).concept);
+end;
+
+function TFhirCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
+begin
+  result := FCs.FCodeSystem.content;
 end;
 
 function TFhirCodeSystemProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;

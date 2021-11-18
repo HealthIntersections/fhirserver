@@ -568,7 +568,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="dialogs\frm_edit_changes.pas"/>
+        <Filename Value="dialogs\dlg_edit_changes.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditChangeReviewForm"/>
         <HasResources Value="True"/>
@@ -661,6 +661,20 @@
         <Filename Value="dialogs\dlg_scanner.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="QRCodeScannerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_upgrade.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ToolkitUpgradeForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_clipboard_process.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TextPasteProcessorForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>

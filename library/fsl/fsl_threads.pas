@@ -148,6 +148,7 @@ Type
     procedure InternalExecute;
   Protected
     function ThreadName : String; Virtual;
+    function logThread : boolean; virtual;
     procedure Initialise; Virtual;
     Procedure Execute; Virtual; Abstract;
     procedure Finalise; Virtual;
@@ -833,9 +834,9 @@ end;
 function threadToString(id : TThreadId) : String;
 begin
   {$IFDEF OSX}
-  result := inttostr(UInt64(id));
+  result := inttohex(UInt64(id), sizeof(pointer) * 2);
   {$ELSE}
-  result := inttostr(id);
+  result := inttohex(id, sizeof(TThreadId)*2);
   {$ENDIF}
 end;
 
@@ -1062,7 +1063,8 @@ var
 begin
   SetThreadName(ThreadName);
   setThreadStatus('Initialising');
-  Logging.log('Start thread '+threadName);
+  if logThread then
+    Logging.log('Thread start  '+threadName+ ' '+threadToString(threadid));
   initialise;
   try
     if FTimePeriod > 0 then
@@ -1095,7 +1097,8 @@ begin
     on e : Exception do
       Logging.log('Unhandled Exception closing '+threadName+': '+e.message);
   end;
-  Logging.log('Finish '+threadName);
+  if logThread then
+    Logging.log('Thread Finish '+threadName);
   SetThreadStatus('Done');
   closeThread;
 end;
@@ -1104,6 +1107,11 @@ function TFslThread.Link: TFslThread;
 Begin
   Result := TFslThread(Inherited Link);
 End;
+
+function TFslThread.logThread: boolean;
+begin
+  result := true;
+end;
 
 procedure TFslThread.Start;
 Begin
@@ -1120,12 +1128,15 @@ Begin
   FInternal.Terminate;
 End;
 
-procedure TFslThread.StopAndWait;
+procedure TFslThread.StopAndWait(ms : Cardinal);
+var
+  t : int64;
 begin
   if Running then
   begin
     Stop;
-    while FRunning do
+    t := GetTickCount64 + ms;
+    while (FRunning) and (GetTickCount64 < t) do
       sleep(20);
   end;
 end;
@@ -1185,7 +1196,7 @@ begin
   if FOwner.AutoFree then
   begin
     FOwner.Free;
-    Free;
+    Destroy;
   end;
 end;
 

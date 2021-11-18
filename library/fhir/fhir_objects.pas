@@ -517,6 +517,7 @@ type
     function isEmpty : boolean; virtual;
     procedure dropEmpty;
     function Equals(other : TObject) : boolean; override;
+    function asJson : String; virtual; {abstract;} // ths is intended for debugging
   published
     {
       comments from the XML stream. No support for comments in JSON
@@ -1023,6 +1024,11 @@ end;
 procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
 begin
   raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+function TFHIRObject.asJson: String;
+begin
+  raise EFslException.Create('Need to override asjson in '+ClassName);
 end;
 
 procedure TFHIRObject.Assign(oSource: TFslObject);

@@ -39,18 +39,18 @@ uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher,
 
   fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
   fui_lcl_managers,
 
-  ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants,
+  ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants, ftk_version,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http, ftk_store_server,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes, frm_server_settings, frm_oauth,
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url, dlg_scanner;
+  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade, dlg_clipboard_process;
 
 type
   {$IFDEF WINDOWS}
@@ -76,6 +76,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
+    actionEditPasteProcessed: TAction;
     actionFileOpenQRCode: TAction;
     actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
@@ -193,6 +194,7 @@ type
     MenuItem120: TMenuItem;
     MenuItem54: TMenuItem;
     MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -434,6 +436,7 @@ type
     procedure actionEditPasteEscapedExecute(Sender: TObject);
     procedure actionEditPasteFormatExecute(Sender: TObject);
     procedure actionEditPasteNewFileExecute(Sender: TObject);
+    procedure actionEditPasteProcessedExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
@@ -2296,7 +2299,7 @@ begin
     frm.editor := Context.Focus.link;
     frm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
     if frm.ShowModal = mrOK then
-      Context.Focus.loadBytes(TEncoding.UTF8.getBytes(frm.mSource.Lines.Text));
+      Context.Focus.loadBytes(TEncoding.UTF8.getBytes(frm.mEditorSource.Lines.Text));
   finally
     frm.Free;
   end;
@@ -2505,6 +2508,22 @@ begin
     createNewFile(kind, cnt);
 end;
 
+procedure TMainToolkitForm.actionEditPasteProcessedExecute(Sender: TObject);
+var
+  form : TTextPasteProcessorForm;
+begin
+  if Context.HasFocus then
+  begin
+    form := TTextPasteProcessorForm.create(self);
+    try
+      if form.showModal = mrOk then
+        Context.focus.insertText(form.Text, false);
+    finally
+      form.free;
+    end;
+  end;
+end;
+
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
 begin
   closeFile(pgEditors.ActivePage, true);
@@ -2692,8 +2711,44 @@ begin
 end;
 
 procedure TMainToolkitForm.actionHelpCheckUpgradeExecute(Sender: TObject);
+var
+  json : TJsonArray;
+  v : string;
+  md : String;
+  i : integer;
+  function ver(i : integer) : String;
+  begin
+    result := json.Obj[i].str['tag_name'];
+    delete(result, 1, 1);
+  end;
 begin
-  ShowMessage('Not implemented until there''s a release');
+  try
+    json := TInternetFetcher.fetchJsonArray('https://api.github.com/repos/HealthIntersections/fhirserver/releases');
+    try
+      v := ver(0);
+      if v = TOOLKIT_VERSION then
+        MessageDlg('Toolkit Version', 'This is the current version ('+TOOLKIT_VERSION+')', mtInformation, [mbok], 0)
+      else
+      begin
+        md := '';
+        i := 0;
+        while (i < json.Count) and TSemVer.isMoreRecent(ver(i), TOOLKIT_VERSION) do
+        begin
+          md := md + '## '+json.Obj[i].str['tag_name']+#13#10#13#10+json.Obj[i].str['body'].replace('\r', #13).replace('\n', #10)+#13#10#13#10;
+          inc(i);
+        end;
+        if showUpgradeInformation(self, 'https://github.com/HealthIntersections/fhirserver/releases/tag/v'+ver(0),
+              'https://github.com/HealthIntersections/fhirserver/releases/download/v2.0.0/fhirtoolkit-win64-'+ver(0)+'.exe',
+            md) = mrOK then
+            actionFileExit.Execute;
+      end;
+    finally
+      json.free;
+    end;
+  except
+    on e : exception do
+      MessageDlg('Error checking for releases', e.message, mtError, [mbok], 0);
+  end;
 end;
 
 procedure TMainToolkitForm.actionHelpContentExecute(Sender: TObject);

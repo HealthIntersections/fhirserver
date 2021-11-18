@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, LclIntf,
   fsl_utilities,
   ftk_version;
 
@@ -42,17 +42,21 @@ type
   { TToolkitAboutForm }
 
   TToolkitAboutForm = class(TForm)
+    Bevel1: TBevel;
+    Bevel2: TBevel;
     Button1: TButton;
     Image1: TImage;
     Image2: TImage;
     Label1: TLabel;
-    lblAge1: TLabel;
-    lblSysInfo: TLabel;
-    lblVersion: TLabel;
-    lblAge: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    lblToolkit: TLabel;
+    mInfo: TMemo;
     Panel1: TPanel;
     procedure FormShow(Sender: TObject);
     procedure Image1Click(Sender: TObject);
+    procedure Label1Click(Sender: TObject);
+    procedure Label2Click(Sender: TObject);
   private
 
   public
@@ -70,17 +74,32 @@ implementation
 
 procedure TToolkitAboutForm.Image1Click(Sender: TObject);
 begin
+  OpenURL('http://www.healthintersections.com.au');
+end;
 
+procedure TToolkitAboutForm.Label1Click(Sender: TObject);
+begin
+  OpenURL('https://github.com/HealthIntersections/fhirserver/blob/master/toolkit2/readme.md');
+end;
+
+procedure TToolkitAboutForm.Label2Click(Sender: TObject);
+begin
+  OpenURL('https://github.com/HealthIntersections/fhirserver/blob/master/install/licence.txt');
 end;
 
 procedure TToolkitAboutForm.FormShow(Sender: TObject);
+var
+  dt : TFslDateTime;
 begin
-  lblVersion.Caption := 'Version '+TOOLKIT_VERSION;
-  if TOOLKIT_RELEASE_DATE = '' then
-    lblAge.Caption := 'Development Version'
-  else
-    lblAge.Caption := 'Released '+DescribePeriod(now - TFslDateTime.fromHL7(TOOLKIT_RELEASE_DATE).DateTime)+'Ago';
-  lblSysInfo.Caption := SystemPlatform+' '+DescribeBytes(SystemMemory.physicalMem)+'/' + DescribeBytes(SystemMemory.virtualMem);
+  lblToolkit.Caption := 'FHIR Toolkit Version '+TOOLKIT_VERSION;
+  mInfo.Lines.clear;
+  dt := TFslDateTime.fromHL7(TOOLKIT_RELEASE_DATE);
+  mInfo.Lines.Add('Released '+dt.truncToDay.toString+' ('+DescribePeriod(now - dt.DateTime)+' Ago)');
+  {$IFOPT D+}
+  mInfo.Lines.Add('This is the debug version');
+  {$ENDIF}
+  mInfo.Lines.add('Run as "'+commandLineAsString+'"');
+  mInfo.Lines.add('Host is '+SystemPlatform+' '+DescribeBytes(SystemMemory.physicalMem, true)+'/' + DescribeBytes(SystemMemory.virtualMem, true));
 end;
 
 end.

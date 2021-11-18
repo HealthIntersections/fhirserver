@@ -77,7 +77,6 @@ type
     procedure updateAdminPassword; override;
     procedure Load; override;
     Procedure Unload; override;
-    procedure internalThread; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
@@ -135,11 +134,6 @@ end;
 procedure TSnomedWebEndPoint.InstallDatabase;
 begin
   raise EFslException.Create('This operation is not supported for this endpoint');
-end;
-
-procedure TSnomedWebEndPoint.internalThread;
-begin
-  // nothing
 end;
 
 procedure TSnomedWebEndPoint.Load;

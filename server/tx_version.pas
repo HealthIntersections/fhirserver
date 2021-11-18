@@ -1,7 +1,7 @@
-program fhirconsole;
+unit tx_version;
 
 {
-Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -16,7 +16,7 @@ are permitted provided that the following conditions are met:
    endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -29,54 +29,28 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$i fhir.inc}
-uses
-  {$IFNDEF WINDOWS}
-  cmem, cthreads,
-  {$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
-  IdOpenSSLLoader,
-  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
-  fdb_odbc_fpc,
-  console_form,
-  console_tx_edit, console_ep_edit, install_form, install_log, installer, 
-  test_form;
 
-{$R *.res}
+interface
 
-var
-  ok : boolean;
-begin
-  try
-    InitialiseODBC;
-    {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
-    {$ENDIF}
-    {$IFDEF OSX}
-    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
-    {$ENDIF}
+const
+  TX_SERVER_VERSION = '1.0.0';
 
-    InitOpenSSL;
-    ok := true;
-  except
-    on e : Exception do
-    begin
-      MessageDlg('Initialization failure', e.message, mtError, [mbClose], 0);
-      ok := false;
-    end;
-  end;
+{
+This version constant is published in the terminology capabilities resource.
+It's used by dependent tools.
 
-  if ok then
-  begin
-    RequireDerivedFormResource := True;
-    Application.Scaled := True;
+* change major version: all bets are off, tools stop working
+* change minor version: invalidates any terminology service caches out there
+* change patch: some tools depend on particular functionality changes
+}
 
-    Application.Initialize;
-    if (paramStr(1) = 'test-form') then
-      Application.CreateForm(TTestForm, TestForm)
-    else
-      Application.CreateForm(TMainConsoleForm, MainConsoleForm);
-    Application.Run;
-  end;
+{
+Past versions, and change reasons:
+
+Version   Date        Reason changed
+1.0.0     2021-11-18  first introduced
+}
+
+implementation
+
 end.
-

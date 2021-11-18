@@ -1,7 +1,7 @@
 program codescan;
 
 {
-This programs run as part of the ci-build to enforce coding standards
+This program is run as part of the ci-build to enforce coding standards
 on the fhirserver code. The following rules are enforced:
 
 * code can't have any unicode bi-di control characters in it
@@ -25,6 +25,9 @@ future (extensive use of $IFDEF blows most code formatters brains)
 The program takes one parameter, which is the name of the root folder
 that contains the source directory. It assumes that the root of the
 FHIRServer repository is up from folder containing the executable.
+
+Also, this program serves some utility functions in the release process - updating
+code versions, and checking that particular files exist (or not)
 }
 
 {$MODE DELPHI}
@@ -340,6 +343,7 @@ procedure TCodeScanner.Run;
 var
   v, n, m, p : String;
 begin
+  //writeln(commandLineAsString);
   try
     FProjectDir := paramstr(0);
     FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);

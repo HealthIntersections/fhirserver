@@ -95,7 +95,7 @@ var
   cvxCode : String;
   util : THealthcareCardUtilities;
 begin
-  Flog.Append('<p>Processing Content</p>');
+  Flog.Append('<p>Processing Content</p>'#13#10);
   data := json.objReq['data'];
   hdr := data.objReq['hdr'];
   msg := data.objReq['msg'];
@@ -103,7 +103,7 @@ begin
 
   checkheader(hdr);
 
-  Flog.Append('<p>Build Smart Health card for VDS id = '+encodeXml(msg['uvci'])+'</p>');
+  Flog.Append('<p>Build Smart Health card for VDS id = '+encodeXml(msg['uvci'])+'</p>'#13#10);
 
   bundle := makeBundle;
   try
@@ -123,7 +123,7 @@ begin
 
     checkSignature(sig, data);
 
-    Flog.Append('<p>Build Smart Health Card</p>');
+    Flog.Append('<p>Build Smart Health Card</p>'#13#10);
 
     result := factory.makeHealthcareCard;
     try
@@ -135,9 +135,9 @@ begin
       util := THealthcareCardUtilities.create;
       try
         util.Factory := FFactory.link;
-        Flog.Append('<p>Sign with Certificate '+FJwk.id+' ('+FJwk.thumbprint+')</p>');
+        Flog.Append('<p>Sign with Certificate '+FJwk.id+' ('+FJwk.thumbprint+')</p>'#13#10);
         util.sign(result, FJwk);
-        Flog.Append('<p>Build QR Code</p>');
+        Flog.Append('<p>Build QR Code</p>'#13#10);
         result.image := util.generateImage(result);
       finally
         util.Free;
@@ -174,7 +174,7 @@ begin
       if (n[i] <> '') and (n[i] <> ',') then
         pat.addGiven(n[i]);
     pat.active := true;
-    Flog.Append('<p>The card is for '+encodeXml(giv)+' '+encodeXml(fam)+', dob = '+encodeXml(pat.dob)+'. Passport # = '+encodeXml(pid['i'])+'</p>');
+    Flog.Append('<p>The card is for '+encodeXml(giv)+' '+encodeXml(fam)+', dob = '+encodeXml(pat.dob)+'. Passport # = '+encodeXml(pid['i'])+'</p>'#13#10);
     // we ignore gender.
     result := pat.Resource.link;
   finally
@@ -224,7 +224,7 @@ begin
     imm.lotNumber := vd['lot'];
     imm.patient := 'resource:0';
     imm.date := TFslDateTime.fromXML(vd['dvc']);
-    Flog.Append('<p>Vaccinated with CVX#'+cvxCode+' ('+displayCvx(cvxCode)+') on '+encodeXml(vd['dvc'])+' by '+encodeXml(vd['adm'])+', lot# = '+encodeXml(imm.lotNumber)+'</p>');
+    Flog.Append('<p>Vaccinated with CVX#'+cvxCode+' ('+displayCvx(cvxCode)+') on '+encodeXml(vd['dvc'])+' by '+encodeXml(vd['adm'])+', lot# = '+encodeXml(imm.lotNumber)+'</p>'#13#10);
     result := imm.Resource.link;
   finally
     imm.Free;
@@ -235,7 +235,7 @@ procedure TICAOCardImporter.checkheader(hdr: TJsonObject);
 begin
   if hdr['t'] <> 'icao.vacc' then
     raise EFHIRException.Create('Unsupported card type = only type: icao.vacc cards are supported');
-  Flog.Append('<p>Importing an ICAO VDS, version "'+encodeXml(hdr['v'])+'" issued by '+encodeXml(hdr['is']));
+  Flog.Append('<p>Importing an ICAO VDS, version "'+encodeXml(hdr['v'])+'" issued by '+encodeXml(hdr['is'])+#13#10);
   if hdr['v'] <> '1' then
     raise EFHIRException.Create('Unsupported card version = only v: 1 cards are supported');
   if hdr['is'] <> 'AUS' then
@@ -262,22 +262,22 @@ begin
 
   x := TX509Certificate.create(cert);
   try
-    Flog.Append('<p>Check Certificate # '+encodeXml(x.SerialNumber)+'</p>');
-    Flog.Append('<p>Issuer = '+encodeXml(x.Issuer.AsString)+'</p>');
-    Flog.Append('<p>Subject = '+encodeXml(x.Subject.AsString)+'</p>');
-    Flog.Append('<p>Expires = '+FormatDateTime('c', x.ValidToInGMT)+'</p>');
-    Flog.Append('<p>Algorithm = '+encodeXml(x.SignatureAlgorithmAsString)+'</p>');
-    Flog.Append('<p>Authority Key Id = '+encodeXml(x.AuthorityKeyIdentifier)+'</p>');
+    Flog.Append('<p>Check Certificate # '+encodeXml(x.SerialNumber)+'</p>'#13#10);
+    Flog.Append('<p>Issuer = '+encodeXml(x.Issuer.AsString)+'</p>'#13#10);
+    Flog.Append('<p>Subject = '+encodeXml(x.Subject.AsString)+'</p>'#13#10);
+    Flog.Append('<p>Expires = '+FormatDateTime('c', x.ValidToInGMT)+'</p>'#13#10);
+    Flog.Append('<p>Algorithm = '+encodeXml(x.SignatureAlgorithmAsString)+'</p>'#13#10);
+    Flog.Append('<p>Authority Key Id = '+encodeXml(x.AuthorityKeyIdentifier)+'</p>'#13#10);
 
     ca := FStore.ByKeyId[x.AuthorityKeyIdentifier];
     if ca <> nil then
     begin
-      Flog.Append('<p>Found Authority Certificate, verifying against it</p>');
+      Flog.Append('<p>Found Authority Certificate '+ca.SerialNumber+', verifying against it</p>'#13#10);
       TX509CertificateVerifier.verifyCert(x, [ca]);
     end
     else
     begin
-      Flog.Append('<p>No matching certificate found for Authority Key Id</p>');
+      Flog.Append('<p>No matching certificate found for Authority Key Id</p>'#13#10);
       if FMustVerify then
         raise EFHIRException.Create('Cannot verify certificate - no match for key "'+x.AuthorityKeyIdentifier+'"');
     end;
@@ -291,7 +291,7 @@ begin
 
     jwk := TJWK.loadFromX509(x, false);
     try
-      Flog.Append('<p>Check Signature ('+Base64URL(vl)+'/'+Base64URL(src)+'</p>');
+      Flog.Append('<p>Check Signature ('+Base64URL(vl)+'/'+Base64URL(src)+'</p>'#13#10);
       s := TJWTUtils.Verify_Hmac_ES256(src, vl, jwk);
       if s <> '' then
         raise EFHIRException.Create('The Covid Passport Signature is not valid');
@@ -345,7 +345,7 @@ function TICAOCardImporter.import(source: String): THealthcareCard;
 var
   json : TJsonObject;
 begin
-  Flog.Append('<p>Reading JSON ('+inttostr(source.Length)+'bytes)</p>');
+  Flog.Append('<p>Reading JSON ('+inttostr(source.Length)+'bytes)</p>'#13#10);
   json := TJSONParser.Parse(source);
   try
     result := import(json);
@@ -360,7 +360,7 @@ var
   bitmap : TBitmap;
   stream : TBytesStream;
 begin
-  Flog.Append('<p>Importing from an image format ('+inttostr(length(image))+'bytes)</p>');
+  Flog.Append('<p>Importing from an image format ('+inttostr(length(image))+'bytes)</p>'#13#10);
   picture := TPicture.create;
   try
     stream := TBytesStream.Create(image);
@@ -385,7 +385,7 @@ end;
 
 procedure TICAOCardImporter.log(s: String);
 begin
-  Flog.Append('<p>'+encodeXml(s)+'</p>');
+  Flog.Append('<p>'+encodeXml(s)+'</p>'#13#10);
 end;
 
 function TICAOCardImporter.import(image: TBitmap): THealthcareCard;
@@ -393,7 +393,7 @@ var
   scanner : TScanManager;
   bc : TReadResult;
 begin
-  Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>');
+  Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>'#13#10);
   scanner := TScanManager.create(TBarcodeFormat.Auto, nil);
   try
     bc := scanner.Scan(image);

@@ -151,6 +151,7 @@ Type
 
     function Link : TCodeSystemProvider; overload;
 
+    function contentMode : TFhirCodeSystemContentMode; virtual;
     function description : String;  virtual; abstract;
     function TotalCount : integer;  virtual; abstract;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
@@ -278,6 +279,11 @@ begin
   finally
     Close(ctxt);
   end;
+end;
+
+function TCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
+begin
+  result := cscmComplete; // unless specified otherwise
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;

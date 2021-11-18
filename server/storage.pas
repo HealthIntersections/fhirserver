@@ -43,7 +43,7 @@ uses
   session,
   fhir_indexing, fhir_graphql, fhir_features,
   html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder, time_tracker,
-  client_cache_manager;
+  client_cache_manager, tx_version;
 
 Type
   TAsyncTaskStatus = (atsCreated, atsWaiting, atsProcessing, atsComplete, atsAborted, atsTerminated, atsError, atsDeleted);
@@ -1168,9 +1168,9 @@ begin
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
-      oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
-      oConf.name := 'FHIR Reference Server Conformance Statement';
-      oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.version := TX_SERVER_VERSION;
+      oConf.name := 'FHIR Reference Server Teminology Capability Statement';
+      oConf.description := 'Standard Teminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
 
