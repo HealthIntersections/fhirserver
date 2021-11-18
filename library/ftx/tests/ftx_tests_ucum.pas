@@ -122,7 +122,7 @@ begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create(nil);
-    svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum.dat']));
+    svc.Import(partnerFile('ucum.dat'));
   end;
 end;
 
@@ -236,7 +236,7 @@ begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create(nil);
-    svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum.date']));
+    svc.Import(partnerFile(['ucum.dat']));
   end;
 end;
 

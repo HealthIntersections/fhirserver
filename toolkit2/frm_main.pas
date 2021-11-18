@@ -212,7 +212,7 @@ type
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
-    MenuItem17: TMenuItem;
+    mnuFileExit: TMenuItem;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
     mnuEdit: TMenuItem;
@@ -686,6 +686,7 @@ begin
   {$IFDEF OSX}
   mnuApple.caption := #$EF#$A3#$BF;
   actionToolsOptions.caption := 'Preferences...';
+  mnuFileExit.visible := false;
   {$ELSE}
   mnuApple.Visible := false;
   {$ENDIF}
@@ -693,7 +694,7 @@ begin
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
   {$ENDIF}
   {$IFDEF OSX}
-  GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+  GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0)); // '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
   {$ENDIF}
   InitOpenSSL;
 
@@ -770,7 +771,7 @@ begin
   actionViewsOpenLog.enabled := false;
   actionViewsCopyLog.enabled := false;
   updateActionStatus(nil);
-  FContext.Languages := TIETFLanguageDefinitions.create(FileToString(FilePath([ExtractFilePath(paramstr(0)), 'lang.dat']), TEncoding.UTF8));
+  FContext.Languages := TIETFLanguageDefinitions.create(FileToString(partnerFile('lang.dat'), TEncoding.UTF8));
   startLoadingContexts;
   Logging.Log('FHIR Toolkit Started: '+TFslDateTime.makeLocal.toString);
 end;
