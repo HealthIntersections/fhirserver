@@ -61,3 +61,5 @@ utilities/codescan/codescan
 install/build/FHIRToolkit.app
 
 install/build/FHIRToolkit.zip
+
+exec/Resources
