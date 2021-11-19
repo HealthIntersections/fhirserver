@@ -18,11 +18,14 @@ rem ---- download the installer
 
 md tools
 
-curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0b/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
+curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0e/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
 
 rem -- run the installer- will finish with a full install of Lazarus 
 
-tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm --include=anchordocking,anchordockingdsgn,lazprojectgroups,laz.virtualtreeview_package,lazdebuggerfp,fpdebug
+tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug --verbose
+
+:: tools\fpclazup --ostarget="linux" --cputarget="x86_64" --only="FPCCleanOnly,FPCBuildOnly" --installdir=tools. --noconfirm --verbose
+
 
 Rem ----  back to the fhirserver directory ----------
 
