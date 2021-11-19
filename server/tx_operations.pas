@@ -1253,7 +1253,8 @@ begin
   end;
 end;
 
-function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;begin
+function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
+begin
   result := TFHIRExpansionParams.Create;
   try
     processExpansionParams(request, manager, params, result);

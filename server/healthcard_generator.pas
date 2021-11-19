@@ -113,6 +113,7 @@ type
     procedure makeLaboratoryCard(covid : boolean);
 
     function processParams : TCredentialTypeSet;
+    procedure SetManager(const Value: TFHIROperationEngine);
   public
     constructor Create(manager: TFHIROperationEngine; request : TFHIRRequest; key : TJWK);
     destructor Destroy; override;
@@ -127,6 +128,65 @@ type
     property IssuerURL : String read FIssuerUrl write FIssuerUrl;
   end;
 
+  TParameterCheckType = (f_name, f_date, f_numeric, f_text);
+
+  THealthCardFormGenerator = class (TFslObject)
+  private
+    FIssuerUrl : String;
+    FJwk : TJWK;
+
+    FVpr2: String;
+    FVpr3: String;
+    FVpr1: String;
+    FIhi: String;
+    FVacc2: String;
+    FVacc3: String;
+    FId: String;
+    FVacc1: String;
+    FVdate2: String;
+    FFamily: String;
+    FVdate3: String;
+    Fissues: TStringList;
+    FVdate1: String;
+    FExp: String;
+    FVlot2: String;
+    FDob: String;
+    FVlot3: String;
+    FGiven: String;
+    FVlot1: String;
+    procedure checkParam(value, name: String; required: boolean; minLength, maxLength: integer; checkType: TParameterCheckType);
+    function makePatient : TFHIRPatient;
+    function makeImmunization(date, vacc, lot, pr : String) : TFhirImmunization;
+    function makeBundle : TFHIRBundle;
+  public
+    constructor Create(key : TJWK);
+    destructor Destroy; override;
+
+    function checkInput(vars : THTTPParameters) : boolean;
+    function generateCard : THealthcareCard;
+
+    property IssuerURL : String read FIssuerUrl write FIssuerUrl;
+    property issues : TStringList read Fissues;
+
+    property family : String read FFamily write FFamily;
+    property given : String read FGiven write FGiven;
+    property dob : String read FDob write FDob;
+    property ihi : String read FIhi write FIhi;
+    property vdate1 : String read FVdate1 write FVdate1;
+    property vacc1 : String read FVacc1 write FVacc1;
+    property vlot1 : String read FVlot1 write FVlot1;
+    property vpr1 : String read FVpr1 write FVpr1;
+    property vdate2 : String read FVdate2 write FVdate2;
+    property vacc2 : String read FVacc2 write FVacc2;
+    property vlot2 : String read FVlot2 write FVlot2;
+    property vpr2 : String read FVpr2 write FVpr2;
+    property vdate3 : String read FVdate3 write FVdate3;
+    property vacc3 : String read FVacc3 write FVacc3;
+    property vlot3 : String read FVlot3 write FVlot3;
+    property vpr3 : String read FVpr3 write FVpr3;
+    property id : String read FId write FId;
+    property exp : String read FExp write FExp;
+  end;
 implementation
 
 { THealthCardGenerator }
@@ -149,7 +209,7 @@ begin
   FIssues.free;
   FCards.free;
   FParams.Free;
-  FManager.free;
+  FManager.Free;
   inherited;
 end;
 
@@ -259,6 +319,12 @@ begin
     makeLaboratoryCard(covid);
 end;
 
+procedure THealthCardGenerator.SetManager(const Value: TFHIROperationEngine);
+begin
+  FManager.Free;
+  FManager := Value;
+end;
+
 procedure THealthCardGenerator.SetParams(const Value: TFhirParameters);
 begin
   FParams.Free;
@@ -267,18 +333,22 @@ end;
 
 function THealthCardGenerator.signCard(bundle: TFHIRBundle; types : TCredentialTypeSet) : THealthcareCard;
 var
+  key : integer;
   util : THealthcareCardUtilities;
 begin
   result := TFHIRHealthcareCardR4.Create;
   try
     result.Bundle := bundle.Link;
     result.issueDate := TFslDateTime.makeUTC;
+    key := FManager.Storage.issueHealthCardKey;
+    result.id := inttostr(key);
     result.issuer := ExcludeTrailingSlash(FIssuerUrl);
     result.types := types;
     util := THealthcareCardUtilities.create;
     try
       util.Factory := TFHIRFactoryR4.Create;
       util.sign(result, FJwk);
+      FManager.storage.logHealthCard(key, shcSrcFromResources, result.issueDate, IntToStr(result.issueDate.toNbf), util.hash(result), PatientId, TEncoding.UTF8.GetBytes(bundle.asJson));
       result.image := util.generateImage(result);
     finally
       util.Free;
@@ -679,6 +749,226 @@ begin
     result.Link;
   finally
     result.Free;
+  end;
+end;
+
+{ THealthCardFormGenerator }
+
+constructor THealthCardFormGenerator.Create(key: TJWK);
+begin
+  inherited Create;
+  FJwk := key;
+  FIssues := TStringList.Create;
+end;
+
+destructor THealthCardFormGenerator.Destroy;
+begin
+  FIssues.Free;
+  FJwk.Free;
+  inherited;
+end;
+
+function THealthCardFormGenerator.generateCard: THealthcareCard;
+var
+  key : integer;
+  util : THealthcareCardUtilities;
+begin
+  result := TFHIRHealthcareCardR4.Create;
+  try
+    result.Bundle := makeBundle;
+    result.issueDate := TFslDateTime.makeUTC;
+    // result.id := inttostr(key);
+    result.issuer := ExcludeTrailingSlash(FIssuerUrl);
+    result.types := [ctCovidCard, ctImmunizationCard];
+    util := THealthcareCardUtilities.create;
+    try
+      util.Factory := TFHIRFactoryR4.Create;
+      util.sign(result, FJwk);
+      // FManager.storage.logHealthCard(key, shcSrcFromResources, result.issueDate, IntToStr(result.issueDate.toNbf), util.hash(result), PatientId, TEncoding.UTF8.GetBytes(bundle.asJson));
+      result.image := util.generateImage(result);
+    finally
+      util.Free;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function THealthCardFormGenerator.makeBundle: TFHIRBundle;
+var
+  bundle : TFhirBundle;
+  imm : TFhirImmunization;
+  i : integer;
+begin
+  bundle := TFhirBundle.Create(BundleTypeCollection);
+  try
+    bundle.entryList.Append('resource:0').resource := makePatient();
+    bundle.entryList.Append('resource:1').resource := makeImmunization(vdate1, vacc1, vlot1, vpr1);
+    imm := makeImmunization(vdate2, vacc2, vlot2, vpr2);
+    if (imm <> nil) then
+    begin
+      bundle.entryList.Append('resource:2').resource := imm;
+      imm := makeImmunization(vdate3, vacc3, vlot3, vpr3);
+      if (imm <> nil) then
+        bundle.entryList.Append('resource:3').resource := imm;
+    end;
+    result := bundle.Link;
+  finally
+    bundle.Free;
+  end;
+
+end;
+
+function THealthCardFormGenerator.makeImmunization(date, vacc, lot, pr : String): TFhirImmunization;
+var
+  c : TFHIRCoding;
+  prf : TFhirImmunizationPerformer;
+begin
+  if (date = '') and (vacc = '') then
+    result := nil
+  else
+  begin
+    result := TFhirImmunization.create;
+    try
+      result.status := ImmunizationStatusCompleted;
+      result.vaccineCode := TFhirCodeableConcept.Create;
+      c := result.vaccineCode.codingList.append;
+      c.system := 'http://hl7.org/fhir/sid/cvx';
+      c.code := vacc;
+      result.patient := TFhirReference.Create('resource:0');
+      result.lotNumber := lot;
+      if (pr <> '') then
+      begin
+        prf := result.performerList.Append;
+        prf.actor := TFhirReference.create;
+        prf.actor.display := pr;
+      end;
+      result.Link;
+    finally
+      result.Free;
+    end;
+  end;
+end;
+
+function THealthCardFormGenerator.makePatient(): TFHIRPatient;
+var
+  n : TFhirHumanName;
+  s : String;
+begin
+  result := TFHIRPatient.Create;
+  try
+    n := result.nameList.Append;
+    n.family := family;
+    for s in given.Split([' ']) do
+       n.givenList.add(s);
+    if TFslDateTime.isValiddate('yyyy-mm-dd', dob) then
+      result.birthDate := TFslDateTime.fromFormat('yyyy-mm-dd', dob)
+    else
+      result.birthDate := TFslDateTime.fromFormat('dd-mm-yyyy', dob);
+    result.link;
+  finally
+    result.Free;
+  end;
+
+end;
+
+function THealthCardFormGenerator.checkInput(vars: THTTPParameters): boolean;
+begin
+  family := vars['family'];
+  given := vars['given'];
+  dob := vars['dob'];
+  ihi := vars['ihi'];
+  vdate1 := vars['vdate1'];
+  vacc1 := vars['vacc1'];
+  vlot1 := vars['vlot1'];
+  vpr1 := vars['vpr1'];
+  vdate2 := vars['vdate2'];
+  vacc2 := vars['vacc2'];
+  vlot2 := vars['vlot2'];
+  vpr2 := vars['vpr2'];
+  vdate3 := vars['vdate3'];
+  vacc3 := vars['vacc3'];
+  vlot3 := vars['vlot3'];
+  vpr3 := vars['vpr3'];
+  id := vars['id'];
+  exp := vars['exp'];
+
+  checkParam(family, 'family', true, 1, 40, f_name);
+  checkParam(given, 'given', true, 1, 40, f_name);
+  checkParam(dob, 'dob', true, 10, 10, f_date);
+  checkParam(ihi, 'given', false, 16, 16, f_numeric);
+
+  // if (vdate1 <> '') or (vacc1 <> '') or (vlot1 <> '') or (vpr1 <> '') then have to have at least a first
+//    begin
+  checkParam(vdate1, 'vdate1', true, 10, 10, f_date);
+  checkParam(vacc1, 'vacc1', true, 3, 3, f_numeric);
+  checkParam(vlot1, 'vlot1', false, 1, 15, f_text);
+  checkParam(vpr1, 'vpr1', false, 1, 40, f_text);
+  if (vdate2 <> '') or (vacc2 <> '') or (vlot2 <> '') or (vpr2 <> '') then
+  begin
+    checkParam(vdate2, 'vdate2', true, 10, 10, f_date);
+    checkParam(vacc2, 'vacc2', true, 3, 3, f_numeric);
+    checkParam(vlot2, 'vlot2', false, 1, 15, f_text);
+    checkParam(vpr2, 'vpr2', false, 1, 40, f_text);
+    if (vdate3 <> '') or (vacc3 <> '') or (vlot3 <> '') or (vpr3 <> '') then
+    begin
+      checkParam(vdate3, 'vdate3', true, 10, 10, f_date);
+      checkParam(vacc3, 'vacc3', true, 3, 3, f_numeric);
+      checkParam(vlot3, 'vlot3', false, 1, 15, f_text);
+      checkParam(vpr3, 'vpr3', false, 1, 40, f_text);
+    end;
+  end;
+  result := Fissues.Count = 0;
+end;
+
+procedure THealthCardFormGenerator.checkParam(value, name : String; required : boolean; minLength, maxLength : integer; checkType : TParameterCheckType);
+var
+  ch : char;
+begin
+  if value = '' then
+  begin
+    if required then
+      issues.Add('Parameter '+name+' needs to have a value')
+  end
+  else
+  begin
+    if value.length < minLength then
+      issues.Add('<li>Parameter '+name+' minimum length is '+inttostr(minLength)+' ("'+EncodeXML(value)+'")</li>');
+    if value.length > maxLength then
+      issues.Add('<li>Parameter '+name+' maximum length is '+inttostr(maxLength)+' ("'+EncodeXML(value)+'")</li>');
+    case checkType of
+      f_name:
+        for ch in value do
+        begin
+          if not CharInSet(ch, ['a'..'z', 'A'..'Z', '-', '`', '''', ' ']) then
+          begin
+            issues.Add('Parameter '+name+' illegal char "'+EncodeXML(ch)+'"</li>');
+            break
+          end;
+        end;
+      f_date:
+        if not TFslDateTime.isValiddate('yyyy-mm-dd', value) and not TFslDateTime.isValiddate('dd-mm-yyyy', value) then
+          issues.Add('<li>Parameter '+name+' illegal date "'+EncodeXML(value)+'"</li>');
+      f_numeric:
+        for ch in value do
+        begin
+          if not CharInSet(ch, ['0'..'9']) then
+          begin
+            issues.Add('<li>Parameter '+name+' illegal char "'+EncodeXML(ch)+'"</li>');
+            break
+          end;
+        end;
+      f_text:
+        for ch in value do
+        begin
+          if (ord(ch) < 32) or (ord(ch) > 126) then
+          begin
+            issues.Add('<li>Parameter '+name+' illegal char "'+EncodeXML(ch)+'"</li>');
+            break
+          end;
+        end;
+    end;
   end;
 end;
 

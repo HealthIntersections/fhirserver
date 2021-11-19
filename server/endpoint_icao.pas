@@ -43,7 +43,7 @@ uses
   fhir_objects, fhir_icao,
   fhir4_factory,
   utilities, server_config, time_tracker, storage,
-  web_base, endpoint;
+  web_base, endpoint, healthcard_generator;
 
 type
   TICAOWebServer = class (TFhirWebServerEndpoint)
@@ -53,11 +53,12 @@ type
     FStore : TX509CertificateStore;
     FPDFLock : TFslLock;
     function readPDF(stream : TStream) : TBitmap;
-    function processSHC(card : THealthcareCard; accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
+    function processGenerationForm(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
+    function processSHC(card : THealthcareCard; accept : String; title, action, htmlLog : String; response: TIdHTTPResponseInfo): String;
     function processCard(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function processQRCode(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
     function processPDF(stream : TStream; accept : String; response: TIdHTTPResponseInfo): String;
-    function render(card: THealthcareCard; log: String): String;
+    function render(card: THealthcareCard; title, action, log: String): String;
     function processError(message, accept, htmlLog: String;  response: TIdHTTPResponseInfo): String;
     function renderError(message, log: String): String;
     function renderStartPage(path: string): String;
@@ -190,15 +191,15 @@ begin
   end;
 end;
 
-function TICAOWebServer.render(card : THealthcareCard; log : String): String;
+function TICAOWebServer.render(card : THealthcareCard; title, action, log : String): String;
 begin
   result :=
 '<html>'+#13#10+
 '  <head>'+#13#10+
-'    <title>ICAO VDS Process</title>'+#13#10+
+'    <title>'+title+'</title>'+#13#10+
 '  </head>'+#13#10+
 '  <body>'+#13#10+
-'    <h1>Outcome of Processing ICAO VDS</h1>'+#13#10+
+'    <h1>Outcome of '+action+'</h1>'+#13#10+
 '    <h2>Smart Health QR Code</h2>'+#13#10+
 '    <p><img src="data:image/png;base64,'+EncodeBase64(card.image)+'"></p>'+#13#10+
 '    <h2>Log Details</h2>'+#13#10+
@@ -208,6 +209,10 @@ begin
 '    <h2>QR Code Source</h2>'+#13#10+
 '    <pre>'+#13#10+
 card.qrSource(true)+
+'    </pre>'+#13#10+
+'    <h2>Payload Source</h2>'+#13#10+
+'    <pre>'+#13#10+
+EncodeXML(card.payloadSource)+
 '    </pre>'+#13#10+
 '  </body>'+#13#10+
 '</html>'+#13#10;
@@ -238,9 +243,9 @@ begin
 '  <head>'+#13#10+
 '    <title>ICAO VDS Processor</title>'+#13#10+
 '  </head>'+#13#10+
-'  <body>'+#13#10+
+'  <body style="font-family: Helvetica, Arial, Sans-Serif">'+#13#10+
 '    <h1>Convert an ICAO VDS to a Smart Health Card</h1>'+#13#10+
-'    <p>Choose the PDF file that is your Australian International Covid Passport, or choose your VDS QR code directly from an image file (png etc).</p>'+#13#10+
+'    <p style="font-family: Helvetica, Arial, Sans-Serif">Choose the PDF file that is your Australian International Covid Passport, or choose your VDS QR code directly from an image file (png etc).</p>'+#13#10+
 '    <form method="POST" enctype="multipart/form-data" action="'+path+'">'+#13#10+
 '      <input type="file" id="myFile" name="filename"><hr>'+#13#10+
 '      <input type="submit">'+#13#10+
@@ -250,11 +255,14 @@ begin
 '     <li>The VDS QR code is a big one, and scanning with ZXing is hit and miss - you might have to try various resolutions</li>'+#13#10+
 '     <li>The server does not retain any information from the posted VDS, except for the card id.</li>'+#13#10+
 '    </ul>'+#13#10+
+'    <hr/>'+#13#10+
+'    <p>Alternatively, enter your details directly, and generate any card you want:</p>'+#13#10+
+processFile(nil, 'shc_covid_vacc_form.shtml', 'shc_covid_vacc_form.shtml', true, nil)+#13#10+
 '  </body>'+#13#10+
 '</html>'+#13#10;
 end;
 
-function TICAOWebServer.processSHC(card : THealthcareCard; accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
+function TICAOWebServer.processSHC(card : THealthcareCard; accept : String; title, action, htmlLog : String; response: TIdHTTPResponseInfo): String;
 begin
   result := 'Convert ICAO card "'+card.id+'" to SHC';
   response.ResponseNo := 200;
@@ -273,7 +281,7 @@ begin
   else if accept.Contains('text/html') then
   begin
     response.ContentType := 'text/html';
-    response.ContentText := render(card, htmlLog);
+    response.ContentText := render(card, title, action, htmlLog);
   end
   else if accept.Contains('text/qrcode') then
   begin
@@ -304,6 +312,42 @@ begin
   end;
 end;
 
+
+function TICAOWebServer.processGenerationForm(AContext: TIdContext; ip: String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): String;
+var
+  vars : THTTPParameters;
+  gen : THealthCardFormGenerator;
+  card : THealthcareCard;
+begin
+  gen := THealthCardFormGenerator.create(FJWK.link);
+  try
+    gen.IssuerURL := AbsoluteURL(true);
+    try
+      vars := THTTPParameters.Create(request.UnparsedParams);
+      try
+        if not gen.checkInput(vars) then
+          result := processError('Form Validation Failed', request.Accept, '<ul>'+gen.issues.Text+'</ul>', response)
+        else
+        begin
+          card := gen.generateCard;
+          try
+            result := processSHC(card, request.Accept, 'SHC Generation', 'Processing User Form', gen.issues.Text, response);
+          finally
+            card.Free;
+          end;
+        end;
+      finally
+        vars.Free;
+      end;
+    except
+      on e : Exception do
+        result := processError(e.message, request.Accept, gen.issues.Text, response);
+    end;
+  finally
+    gen.Free
+  end;
+end;
+
 function TICAOWebServer.processPDF(stream: TStream; accept: String; response: TIdHTTPResponseInfo): String;
 var
   bmp : TBitmap;
@@ -323,7 +367,7 @@ begin
       try
         card := conv.import(bmp);
         try
-          processSHC(card, accept, conv.htmlReport, response);
+          processSHC(card, accept, 'ICAO VDS Process', 'Processing ICAO VDS', conv.htmlReport, response);
         finally
           card.free;
         end;
@@ -354,7 +398,7 @@ begin
     try
       card := conv.import(StreamToString(stream, TEncoding.UTF8));
       try
-        processSHC(card, accept, conv.htmlReport, response);
+        processSHC(card, accept, 'ICAO VDS Process', 'Processing ICAO VDS', conv.htmlReport, response);
       finally
         card.free;
       end;
@@ -382,7 +426,7 @@ begin
     try
       card := conv.import(StreamToBytes(stream));
       try
-        processSHC(card, accept, conv.htmlReport, response);
+        processSHC(card, accept, 'ICAO VDS Process', 'Processing ICAO VDS', conv.htmlReport, response);
       finally
         card.free;
       end;
@@ -449,6 +493,10 @@ begin
     finally
        s.Free;
     end;
+  end
+  else if (request.Command = 'POST') then
+  begin
+    result := ProcessGenerationForm(aContext, ip, request, response);
   end
   else if (request.Command = 'GET') and (request.document = URLPath([PathNoSlash, '.well-known/jwks.json'])) then
   begin
