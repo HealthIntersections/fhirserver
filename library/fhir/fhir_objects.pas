@@ -807,6 +807,7 @@ type
     FValidationMessage: String;
     FImage: TBytes;
     FId: String;
+    FPayloadSource: String;
     procedure SetBundle(const Value: TFHIRResourceV);
   protected
     FSummary: String;
@@ -831,6 +832,7 @@ type
     function htmlReport(tx : TFHIRTerminologyService) : String; virtual; abstract;
 
     function qrSource(prefix : boolean) : String; // prefix = include the shc:/ at the start
+    property payloadSource : String read FPayloadSource write FPayloadSource;
     procedure toBmp(bmp : TBitmap);
 
     property jws : String read FJws write FJws;

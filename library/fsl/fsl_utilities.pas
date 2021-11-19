@@ -986,8 +986,10 @@ type
     function toHL7: String; // as yyyymmddhhnnss.zzz+T
     function toXML : String;
     function toDB : String; // as yyyy-mm-dd hh:nn:ss.zzz
+    function toNbf : Integer; // JWT seconds since
 
     class function isValidXmlDate(value : String) : Boolean; static;
+    class function isValidDate(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : boolean; static;
 
     property Precision : TFslDateTimePrecision read FPrecision;
 
@@ -8155,6 +8157,18 @@ begin
 end;
 
 
+class function TFslDateTime.isValidDate(format, date: String; AllowBlankTimes, allowNoDay, allownodate, noFixYear: boolean): boolean;
+var
+  dt : TFslDateTime;
+begin
+  try
+    dt := TFslDateTime.fromFormat(format, date, AllowBlankTimes, allowNoDay, allownodate, noFixYear);
+    result := dt.year > 0;
+  except
+    result := false;
+  end;
+end;
+
 class function TFslDateTime.isValidXmlDate(value: String): Boolean;
 var
   s : String;
@@ -8536,6 +8550,11 @@ begin
   {else
     dttzUnknown - do nothing }
   end;
+end;
+
+function TFslDateTime.toNbf: Integer;
+begin
+  result := SecondsBetween(DateTime, EncodeDate(1970, 1, 1));
 end;
 
 function TFslDateTime.toXML: String;
