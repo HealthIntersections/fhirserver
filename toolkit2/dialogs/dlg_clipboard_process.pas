@@ -39,16 +39,17 @@ uses
 
 const
   ppAsIs = 0;
-  ppHTMLEscaped = 1;
-  ppXMLTextEscaped = 2;
-  ppXMLAttrEscaped = 3;
-  ppJsonEscaped = 4;
-  ppJavaEscaped = 5;
-  ppPascalEscaped = 6;
-  ppRawANSI = 7;
-  ppRawUTF8 = 8;
-  ppRawUTF16L = 9;
-  ppRawUTF16B = 10;
+  ppHTMLEscaped = ppAsIs + 1;
+  ppXMLTextEscaped = ppHTMLEscaped + 1;
+  ppXMLAttrEscaped = ppXMLTextEscaped + 1;
+  ppJsonEscaped = ppXMLAttrEscaped + 1;
+  ppJavaEscaped = ppJsonEscaped + 1;
+  ppPascalEscaped = ppJavaEscaped + 1;
+  ppAnsiOnly = ppPascalEscaped + 1;
+  ppRawANSI = ppAnsiOnly + 1;
+  ppRawUTF8 = ppRawANSI + 1;
+  ppRawUTF16L = ppRawUTF8 + 1;
+  ppRawUTF16B = ppRawUTF16L + 1;
 
 type
 
@@ -79,6 +80,19 @@ var
 implementation
 
 {$R *.lfm}
+
+function StripUnicode(s : String):String;
+var
+  ch : UnicodeChar;
+begin
+  result := '';
+  for ch in unicodeChars(s) do
+    if ord(ch) > 127 then
+      result := result + '?'
+    else
+      result := result + ch;
+end;
+
 
 function javaEscape(s : String):String;
 var
@@ -184,6 +198,7 @@ begin
     ppJsonEscaped: FProcessedText := jsonEscape(FRawText, true);
     ppJavaEscaped: FProcessedText := javaEscape(FRawText);
     ppPascalEscaped: FProcessedText := pascalEscape(FRawText);
+    ppAnsiOnly : FProcessedText := StripUnicode(FRawText);
     ppRawANSI: FProcessedText := HexEncode(TEncoding.ANSI.GetBytes(FRawText));
     ppRawUTF8: FProcessedText := HexEncode(TEncoding.ANSI.GetBytes(FRawText));
     ppRawUTF16L: FProcessedText := HexEncode(TEncoding.Unicode.GetBytes(FRawText));

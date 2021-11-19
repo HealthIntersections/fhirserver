@@ -190,7 +190,7 @@ function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
 var
   src : TFslBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
     raise EIOException.create('Unable to find '+filename);
   result := src.AsText;
 end;
