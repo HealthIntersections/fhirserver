@@ -301,6 +301,8 @@ type
     FLastAuthorizationKey : integer;
     FLastConnectionKey : Integer;
     FLastClientKey : Integer;
+    FLastSHCKey : integer;
+
     FTotalResourceCount: integer;
     FNextSearchSweep: TDateTime;
     FServerContext : TFHIRServerContext; // not linked
@@ -420,6 +422,9 @@ type
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
+
+    function issueHealthCardKey : integer; override;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); override;
   end;
 
   TFslDateTimeWrapper = class (TFslObject)
@@ -5471,6 +5476,8 @@ begin
       FLastAuthorizationKey := conn.CountSQL('select max(AuthorizationKey) from Authorizations');
       FLastConnectionKey := conn.CountSQL('select max(ConnectionKey) from Connections');
       FLastClientKey := conn.CountSQL('select max(ClientKey) from ClientRegistrations');
+      FLastSHCKey := conn.CountSQL('select max(SmartHealthCardKey) from SmartHealthCards');
+
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
       Logging.log('  .. valuesets');
@@ -5628,6 +5635,17 @@ begin
     end;
   finally
     implGuides.free;
+  end;
+end;
+
+function TFHIRNativeStorageService.issueHealthCardKey: integer;
+begin
+  FLock.Lock('issueHealthCardKey');
+  try
+    inc(FLastSHCKey);
+    result := FLastSHCKey;
+  finally
+    FLock.Unlock;
   end;
 end;
 
@@ -7571,7 +7589,7 @@ var
   parser: TFHIRParser;
   mem: TBytes;
 begin
-  conn.SQL := 
+  conn.SQL :=
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and Ids.ResourceKey = '+inttostr(key)+' and Versions.Status < 2';
@@ -7597,6 +7615,37 @@ begin
   while conn.FetchNext do
     FSpaces.RecordSpace(conn.ColStringByName['Space'], conn.ColIntegerByName['SpaceKey']);
   conn.terminate;
+end;
+
+procedure TFHIRNativeStorageService.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
+var
+  conn : TFDBConnection;
+begin
+  conn := DB.getConnection('logHealthCard');
+  try
+    conn.SQL := 'Insert into SmartHealthCards (SmartHealthCardKey, Source, Date, Nbf, Hash, Revoked, PatientId, Details) values ('+
+      inttostr(key)+', :src, :date, :nbf, :hash, 0, :pid, :blob)';
+    conn.Prepare;
+    conn.BindInteger('src', ord(source));
+    conn.BindDateTimeEx('date', date);
+    conn.BindString('nbf', nbf);
+    conn.BindString('hash', hash);
+    conn.BindStringOrNull('pid', patientId);
+    if (length(details) > 0) then
+      conn.BindBlob('blob', details)
+    else
+      conn.BindNull('blob');
+    conn.Execute;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e: Exception do
+    begin
+      conn.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 function TFHIRNativeStorageService.LookupCode(system, version, code: String): String;

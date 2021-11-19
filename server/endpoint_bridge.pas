@@ -189,6 +189,8 @@ Type
     Procedure SetUpRecording(session : TFhirSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
+    function issueHealthCardKey : integer; override;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); override;
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
@@ -746,12 +748,22 @@ begin
   result := FDataBase.CountSQL('Select count(*) from Patient', 'count');
 end;
 
+function TExampleFhirServerStorage.issueHealthCardKey: integer;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TExampleFhirServerStorage.Link: TExampleFhirServerStorage;
 begin
   result := TExampleFhirServerStorage(inherited link);
 end;
 
 function TExampleFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TExampleFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
 begin
   raise EFslException.Create('Not Implemented');
 end;

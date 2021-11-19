@@ -191,6 +191,8 @@ type
     procedure loadFile(factory : TFHIRFactory; name : String);
 
     function cacheSize(magic : integer) : UInt64; override;
+    function issueHealthCardKey : integer; override;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); override;
   end;
 
   TTerminologyFHIRUserProvider = class (TFHIRUserProvider)
@@ -1042,6 +1044,11 @@ begin
   result := FData.FCodeSystems.Count + FData.FValueSets.Count + FData.FNamingSystems.Count + FData.FConceptMaps.Count;
 end;
 
+function TTerminologyFhirServerStorage.issueHealthCardKey: integer;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyFhirServerStorage.link: TTerminologyFhirServerStorage;
 begin
   result := TTerminologyFhirServerStorage(inherited link);
@@ -1258,6 +1265,11 @@ begin
   count := count + loadFromUTG(factory, path([folder, 'fhir']));
   count := count + loadFromUTG(factory, path([folder, 'unified']));
   Logging.finish(inttostr(count)+' resources loaded');
+end;
+
+procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyFhirServerStorage.ProcessEmails;
