@@ -112,7 +112,7 @@ del exec\pack\fhirserver.web
 utilities\codescan\codescan.exe -check !exec\pack\fhirserver.web -message "Deleting the web file failed" || goto :error
 cd server
 cd web
-..\..\install\tools\7z a -r ..\..\exec\pack\fhirserver.web *.*
+..\..\install\tools\7z a -r -tzip ..\..\exec\pack\fhirserver.web *.*
 cd ..
 cd ..
 utilities\codescan\codescan.exe -check exec\pack\fhirserver.web -message "Creating the web file failed" || goto :error
