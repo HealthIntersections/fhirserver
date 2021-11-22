@@ -48,6 +48,7 @@ utilities\codescan\codescan.exe -version %1
 utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
 
 utilities\codescan\codescan.exe -check install\release-notes.md -message "Please provide some release notes" || goto :error
+utilities\codescan\codescan.exe -check install\healthintersections.pfx -message "Code signing Certificate is missing" || goto :error
 
 del exec\64\*.exe /q /s 1>nul
 del install\build\*.exe 1>nul

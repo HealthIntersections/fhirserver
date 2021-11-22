@@ -844,6 +844,10 @@ begin
         prf.actor := TFhirReference.create;
         prf.actor.display := pr;
       end;
+      if TFslDateTime.isValidDate('yyyy-mm-dd', date) then
+        result.occurrence := TFhirDateTime.Create(TFslDateTime.fromFormat('yyyy-mm-dd', date))
+      else
+        result.occurrence := TFhirDateTime.Create(TFslDateTime.fromFormat('dd-mm-yyyy', date));
       result.Link;
     finally
       result.Free;

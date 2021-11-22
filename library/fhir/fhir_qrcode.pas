@@ -174,7 +174,7 @@ procedure TQRCode.SaveToBitmap(bmp: TBitmap);
 var
   x, y : integer;
 const
-  hdr = 2;
+  hdr = 4;
 begin
   if not FGenerated then
     Generate;
