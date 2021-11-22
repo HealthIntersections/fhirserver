@@ -52,12 +52,13 @@ type
     synPayload : TSynEdit;
     edtPublicKey, edtPrivateKey : TEdit;
     lblSig : TLabel;
-    btnUpdate : TButton;
+    btnUpdate, btnValidate : TButton;
     FUpdating : boolean;
     procedure doTabResize(sender : TObject);
     function fetchJson(address : String) : TJsonObject;
     procedure DoContentChange(sender : TObject);
     procedure doRegenerate(sender : TObject);
+    procedure doValidate(sender : TObject);
 
     procedure doHeaderPretty(sender : TObject);
     procedure doHeaderDense(sender : TObject);
@@ -108,6 +109,7 @@ procedure TJWTEditor.DoContentChange(sender: TObject);
 begin
   if not FUpdating then
   begin
+    btnValidate.enabled := edtPublicKey.text <> '';
     btnUpdate.enabled := edtPrivateKey.text <> '';
   end;
 end;
@@ -156,6 +158,11 @@ begin
   finally
     jwt.free;
   end;
+end;
+
+procedure TJWTEditor.doValidate(sender: TObject);
+begin
+  ContentChanged;
 end;
 
 procedure TJWTEditor.doHeaderPretty(sender: TObject);
@@ -353,10 +360,20 @@ begin
   edtPublicKey.parent := panel;
   edtPublicKey.top := 48;
   edtPublicKey.left := 80;
-  edtPublicKey.Width := panel.Width - 100;
+  edtPublicKey.Width := panel.Width - 180;
   edtPublicKey.Anchors := [akTop, akLeft, akRight];
   edtPublicKey.TextHint := '(File/URL of JSON JWKS)';
   edtPublicKey.OnChange := DoContentChange;
+
+  btnValidate := TButton.create(panel);
+  btnValidate.parent := panel;
+  btnValidate.top := 48;
+  btnValidate.left := panel.Width - 90;
+  btnValidate.width := 70;
+  btnValidate.caption := 'Validate';
+  btnValidate.Anchors := [akTop, akRight];
+  btnValidate.OnClick := doValidate;
+  btnValidate.enabled := false;
 
   lbl := TLabel.create(panel);
   lbl.parent := panel;

@@ -476,6 +476,12 @@ var
   s : TStream;
   ct : String;
 begin
+  response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+  response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+  response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST');
+  if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+    response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+
   if (request.Command = 'POST') and (request.ContentType = 'application/json') then
     result := processCard(request.PostStream, request.Accept, response)
   else if (request.Command = 'POST') and (request.ContentType.startsWith('image/')) then
