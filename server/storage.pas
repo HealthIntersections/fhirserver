@@ -177,6 +177,7 @@ type
   end;
 
   TFindResourceOption = (froFindDeletedResource, froForCommit);
+  TSmartHealthCardSource = (shcSrcUnknown, shcSrcFromResources);
 
   TFindResourceOptions = set of TFindResourceOption;
 
@@ -383,6 +384,10 @@ type
     procedure clearCache; virtual;
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
+
+    // Smart Health Cards support
+    function issueHealthCardKey : integer; virtual; abstract;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); virtual; abstract;
   end;
 
 

@@ -70,5 +70,4 @@ install/build/FHIRToolkit.app
 install/build/FHIRToolkit.zip
 
 exec/Resources
-
-install/build/FHIRToolkit-v2.0.3-osxm1.zip
+/dependencies/Indy10-mod-static

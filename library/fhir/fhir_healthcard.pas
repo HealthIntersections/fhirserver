@@ -34,7 +34,8 @@ interface
 
 uses
   SysUtils, Classes, DateUtils, Graphics,  {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_http, fsl_crypto, fsl_json, fsl_fetcher,
+  IdGlobal, IdHash, IdHashSHA,
+  fsl_base, fsl_utilities, fsl_http, fsl_crypto, fsl_json, fsl_fetcher, fsl_openssl,
   fhir_objects, fhir_factory, fhir_parser, fhir_utilities;
 
 type
@@ -54,6 +55,7 @@ type
 
     { also packs as well - output in card.jws }
     procedure sign(card : THealthcareCard; jwk : TJWK);
+    function hash(card : THealthcareCard) : String;
     function generateImage(card : THealthcareCard) : TBytes;
 
     { unpacks, and verifies, and sets isValid to true }
@@ -87,7 +89,7 @@ var
   json : TFHIRComposer;
 begin
   result := '{"iss":"'+jsonEscape(card.Issuer, true)+'",'+
-     '"nbf":'+IntToStr(SecondsBetween(card.IssueDate.DateTime, EncodeDate(1970, 1, 1)))+',';
+     '"nbf":'+inttostr(card.IssueDate.toNbf)+',';
   if card.id <> '' then
     result := result +'"id":"'+jsonEscape(card.id, true)+'",';
   result := result +
@@ -201,13 +203,34 @@ begin
   end;
 end;
 
+function THealthcareCardUtilities.hash(card: THealthcareCard): String;
+var
+  hash : TIdHashSHA256;
+  b : TIdBytes;
+begin
+  hash := TIdHashSHA256.Create;
+  try
+    b := hash.HashString(card.jws);
+    result := Base64URL(idb(b));
+  finally
+    hash.Free;
+  end;
+end;
+
 procedure THealthcareCardUtilities.sign(card: THealthcareCard; jwk : TJWK);
 var
   payload : String;
   bytes : TBytes;
   jwt : TJWT;
+  j : TJsonObject;
 begin
   payload := buildPayload(card);
+  j := TJSONParser.Parse(payload);
+  try
+    card.payloadSource := TJSONWriter.writeObjectStr(j, true);
+  finally
+    j.Free;
+  end;
   bytes := DeflateRfc1951(TEncoding.UTF8.GetBytes(payload));
   card.jws := TJWTUtils.encodeJWT('{"alg":"ES256","zip":"DEF","kid":"'+jwk.id+'"}', bytes, jwt_es256, jwk);
 end;

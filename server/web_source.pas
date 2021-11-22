@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_stream;
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging;
 
 type
   TFHIRWebServerSourceProvider = class abstract (TFslObject)
@@ -141,8 +141,8 @@ function TFHIRWebServerSourceZipProvider.asBytes(filename: String): TBytes;
 var
   src : TFslBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename);
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
+    raise EIOException.create('Unable to find '+filename+ ' in archive');
   result := src.AsBytes;
 end;
 
@@ -150,8 +150,8 @@ function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
 var
   src : TFslBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename);
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
+    raise EIOException.create('Unable to find '+filename+ ' in archive');
   result := TMemoryStream.Create;
   src.SaveToStream(result);
   result.Position := 0;
@@ -168,8 +168,9 @@ begin
   try
     zip.Stream := TFslFile.Create(path, fmOpenRead);
     zip.ReadZip;
+    Logging.log(inttostr(zip.Parts.Count)+' files loaded');
     for i := 0 to zip.Parts.Count - 1 do
-      FZip.Add('web/'+zip.Parts[i].Name, zip.Parts[i].Link);
+      FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);
   finally
     zip.Free;
   end;
@@ -183,7 +184,7 @@ end;
 
 function TFHIRWebServerSourceZipProvider.exists(filename: String): boolean;
 begin
-  result := (filename <> '') and FZip.ContainsKey('web/'+filename.replace('\', '/'));
+  result := (filename <> '') and FZip.ContainsKey(filename.replace('\', '/'));
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
@@ -191,7 +192,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue(filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename);
+    raise EIOException.create('Unable to find '+filename+ ' in archive');
   result := src.AsText;
 end;
 
