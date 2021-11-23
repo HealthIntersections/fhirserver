@@ -52,18 +52,20 @@ type
     synPayload : TSynEdit;
     edtPublicKey, edtPrivateKey : TEdit;
     lblSig : TLabel;
-    btnUpdate, btnValidate : TButton;
+    btnUpdate, btnValidate, btnResource : TButton;
     FUpdating : boolean;
     procedure doTabResize(sender : TObject);
     function fetchJson(address : String) : TJsonObject;
     procedure DoContentChange(sender : TObject);
     procedure doRegenerate(sender : TObject);
     procedure doValidate(sender : TObject);
+    function FindResource(json : TJsonNode) : TJsonObject;
 
     procedure doHeaderPretty(sender : TObject);
     procedure doHeaderDense(sender : TObject);
     procedure doPayloadPretty(sender : TObject);
     procedure doPayloadDense(sender : TObject);
+    procedure doOpenResource(sender : TObject);
   protected
     procedure ContentChanged; override;
     procedure makeTextTab; override;
@@ -106,13 +108,26 @@ begin
 end;
 
 procedure TJWTEditor.DoContentChange(sender: TObject);
+var
+  json, res : TJsonObject;
 begin
   if not FUpdating then
   begin
     btnValidate.enabled := edtPublicKey.text <> '';
     btnUpdate.enabled := edtPrivateKey.text <> '';
   end;
+  btnResource.enabled := false;
+  try
+    json := TJSONParser.Parse(synPayload.text);
+    try
+      btnResource.enabled := FindResource(json) <> nil;
+    finally
+      json.free;
+    end;
+  except
+  end;
 end;
+
 
 procedure TJWTEditor.doRegenerate(sender: TObject);
 var
@@ -165,6 +180,42 @@ begin
   ContentChanged;
 end;
 
+function TJWTEditor.FindResource(json: TJsonNode): TJsonObject;
+var
+  n : TJsonNode;
+  o, t : TJsonObject;
+  a : TJsonArray;
+begin
+  result := nil;
+  if (json = nil) then
+    exit;
+  if (json.kind = jnkObject) then
+  begin
+    o := json as TJsonObject;
+    if (o.has('resourceType')) then
+      exit(o);
+    for n in o.properties.Values do
+    begin
+      if n.kind = jnkObject then
+      begin
+        t := FindResource(n);
+        if (t <> nil) then
+          exit(t);
+      end;
+    end;
+  end;
+  if n.kind = jnkArray then
+  begin
+    a := n as TJsonArray;
+    for n in a do
+    begin
+      t := FindResource(n);
+      if (t <> nil) then
+        exit(t);
+    end;
+  end;
+end;
+
 procedure TJWTEditor.doHeaderPretty(sender: TObject);
 var
   json : TJsonObject;
@@ -215,6 +266,24 @@ begin
     json.free;
   end;
   DoContentChange(self);
+end;
+
+procedure TJWTEditor.doOpenResource(sender: TObject);
+var
+  json, res : TJsonObject;
+  cnt : TBytes;
+begin
+  json := TJSONParser.Parse(synPayload.text);
+  try
+    res := FindResource(json);
+    if (res <> nil) then
+    begin
+      cnt := TJSONWriter.WriteObject(res);
+      context.OnOpenSource(self, cnt, sekFHIR);
+    end;
+  finally
+    json.free;
+  end;
 end;
 
 procedure TJWTEditor.ContentChanged;
@@ -431,6 +500,15 @@ begin
   btn.caption := 'Dense';
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doPayloadDense;
+
+  btn := TButton.create(pnlSub);
+  btn.parent := pnlSub;
+  btn.top := 2;
+  btn.left := 240;
+  btn.width := 100;
+  btn.caption := 'Open Resource';
+  btn.Anchors := [akTop, akLeft];
+  btn.OnClick := doOpenResource;
 
 
   synPayload := TSynEdit.create(panel);

@@ -41,7 +41,7 @@ uses
 
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher,
 
-  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
+  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context, fhir_utilities,
   fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants, ftk_version,
@@ -1297,8 +1297,11 @@ begin
 end;
 
 function TMainToolkitForm.createNewFile(kinds: TSourceEditorKindSet; bytes: TBytes): TToolkitEditor;
+var
+  kind : TSourceEditorKind;
 begin
-  if (onlySourceKind(kinds) = sekNull) then
+  kind := onlySourceKind(kinds);
+  if (kind = sekNull) then
   begin
     FileFormatChooser := TFileFormatChooser.create(self);
     try
@@ -1310,7 +1313,10 @@ begin
     finally
       FileFormatChooser.free;
     end;
-  end;
+  end
+  else
+    result := createNewFile(kind, bytes);
+
 end;
 
 function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
@@ -1337,20 +1343,25 @@ begin
     end;
     session := FFactory.makeNewSession(kind);
     try
-      if (kind = sekFHIR) and (length(bytes) = 0) then
+      if (kind = sekFHIR) then
       begin
-        NewResourceDialog := TNewResourceDialog.create(self);
-        try
-          NewResourceDialog.IniFile := FIni;
-          NewResourceDialog.Context := FContext.link;
-          if NewResourceDialog.ShowModal <> mrOk then
-            abort;
-          session.Info.AddPair('fhir-version', NewResourceDialog.version);
-          session.Info.AddPair('fhir-format', NewResourceDialog.format);
-          bytes := NewResourceDialog.generate;
-        finally
-          NewResourceDialog.Free;
-        end;
+        if (length(bytes) = 0) then
+        begin
+          NewResourceDialog := TNewResourceDialog.create(self);
+          try
+            NewResourceDialog.IniFile := FIni;
+            NewResourceDialog.Context := FContext.link;
+            if NewResourceDialog.ShowModal <> mrOk then
+              abort;
+            session.Info.AddPair('fhir-version', NewResourceDialog.version);
+            session.Info.AddPair('fhir-format', NewResourceDialog.format);
+            bytes := NewResourceDialog.generate;
+          finally
+            NewResourceDialog.Free;
+          end;
+        end
+        else // (length(bytes) > 0
+          session.info.Values['Format'] := CODES_TFHIRFormat[DetectFormat(bytes)];
       end;
 
       if path <> '' then
