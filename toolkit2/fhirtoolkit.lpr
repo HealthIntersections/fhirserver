@@ -20,12 +20,12 @@ uses
   ftk_frame_resource, frm_about, ftk_version, dlg_edit_changes,
   frm_server_settings, ftk_utilities, ftk_serverlist, ftk_constants,
   ftk_worker_base, ftk_frame_server, ftk_worker_server, ftk_store_internal,
-  ftk_store_server, ftk_frame_resource_tree, ftk_frame_patient, frm_oauth,
-  ftk_terminology_service, ftk_editor_jwt, frm_format_chooser, frm_clip_chooser,
-  frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager,
-  dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5, ftk_image_scanner,
-  ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner, dlg_upgrade,
-  dlg_clipboard_process;
+  ftk_store_server, ftk_frame_resource_tree, ftk_frame_patient, ftk_frame_igpub,
+  frm_oauth, ftk_terminology_service, ftk_editor_jwt, frm_format_chooser,
+  frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor,
+  frm_view_manager, dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5,
+  ftk_image_scanner, ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner,
+  dlg_upgrade, dlg_clipboard_process, ftk_engine_igpub, dlg_igpub_config;
 
 {$R *.res}
 
@@ -48,9 +48,7 @@ begin
   finally
     frm.Free;
   end;
-  Application.CreateForm(TQRCodeScannerForm, QRCodeScannerForm);
-  Application.CreateForm(TToolkitUpgradeForm, ToolkitUpgradeForm);
-  Application.CreateForm(TTextPasteProcessorForm, TextPasteProcessorForm);
+  Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
   Application.Run;
 end.
 

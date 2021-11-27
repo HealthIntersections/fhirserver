@@ -501,14 +501,14 @@ begin
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doPayloadDense;
 
-  btn := TButton.create(pnlSub);
-  btn.parent := pnlSub;
-  btn.top := 2;
-  btn.left := 240;
-  btn.width := 100;
-  btn.caption := 'Open Resource';
-  btn.Anchors := [akTop, akLeft];
-  btn.OnClick := doOpenResource;
+  btnResource := TButton.create(pnlSub);
+  btnResource.parent := pnlSub;
+  btnResource.top := 2;
+  btnResource.left := 240;
+  btnResource.width := 100;
+  btnResource.caption := 'Open Resource';
+  btnResource.Anchors := [akTop, akLeft];
+  btnResource.OnClick := doOpenResource;
 
 
   synPayload := TSynEdit.create(panel);

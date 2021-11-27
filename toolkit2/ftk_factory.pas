@@ -42,7 +42,7 @@ uses
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
   ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir, ftk_editor_jwt,
 
-  ftk_worker_server, ftk_worker_home;
+  ftk_worker_server, ftk_worker_home, ftk_worker_igpub;
 
 type
 
@@ -313,6 +313,7 @@ begin
   sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
   sekServer : result := TServerWorker.create(FContext{.link}, session, store.link);
   sekHome : result := THomePageWorker.create(FContext{.link}, session, store.link, tempStore.link);
+  sekIGs : result := TIgPubPageWorker.create(FContext{.link}, session, store.link, tempStore.link);
   sekJWT : result := TJWTEditor.create(FContext{.link}, session, store.link);
   else
     raise EFslException.Create('not supported yet');

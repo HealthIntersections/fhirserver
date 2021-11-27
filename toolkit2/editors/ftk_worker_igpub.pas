@@ -1,4 +1,4 @@
-program fhirconsole;
+unit ftk_worker_igpub;
 
 {
 Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -29,51 +29,64 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$i fhir.inc}
+
+interface
+
 uses
-  {$IFNDEF WINDOWS}
-  cmem, cthreads,
-  {$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
-  IdOpenSSLLoader,
-  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
-  fdb_odbc_fpc,
-  console_form,
-  console_tx_edit, console_ep_edit, install_form, install_log, installer, 
-  test_form;
+  Classes, SysUtils,
+  ftk_context, ftk_store, ftk_store_temp,
+  ftk_worker_base,
+  ftk_frame_igpub;
 
-{$R *.res}
+type
+  { TIgPubPageWorker }
 
-var
-  ok : boolean;
+  TIgPubPageWorker = class (TBaseWorker)
+  private
+    FTempStore: TFHIRToolkitTemporaryStorage;
+    procedure SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
+  protected
+    function makeFrame(owner : TComponent) : TBaseWorkerFrame; override;
+  public
+    constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService; temp : TFHIRToolkitTemporaryStorage);
+    destructor Destroy; override;
+
+    property TempStore : TFHIRToolkitTemporaryStorage read FTempStore write SetTempStore;
+    function EditorTitle : String; override;
+  end;
+
+implementation
+
+{ TIgPubPageWorker }
+
+constructor TIgPubPageWorker.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService; temp : TFHIRToolkitTemporaryStorage);
 begin
-  try
-    InitialiseODBC;
-    {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
-    {$ENDIF}
-    {$IFDEF OSX}
-    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
-    {$ENDIF}
+  inherited Create(context, session, store);
+  FTempStore := temp;
+end;
 
-    InitOpenSSL;
-    ok := true;
-  except
-    on e : Exception do
-    begin
-      MessageDlg('Initialization failure', e.message, mtError, [mbClose], 0);
-      ok := false;
-    end;
-  end;
+destructor TIgPubPageWorker.Destroy;
+begin
+  FTempStore.Free;
+  inherited Destroy;
+end;
 
-  if ok then
-  begin
-    RequireDerivedFormResource := True;
-    Application.Scaled := True;
+function TIgPubPageWorker.EditorTitle: String;
+begin
+  Result := 'IG Publisher';
+end;
 
-    Application.Initialize;
-    Application.CreateForm(TMainConsoleForm, MainConsoleForm);
-    Application.Run;
-  end;
+procedure TIgPubPageWorker.SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
+begin
+  FTempStore.Free;
+  FTempStore := AValue;
+end;
+
+function TIgPubPageWorker.makeFrame(owner: TComponent): TBaseWorkerFrame;
+begin
+  result := TIGPubPageFrame.create(owner);
+  (result as TIGPubPageFrame).TempStore := FTempStore.link;
+end;
+
 end.
 

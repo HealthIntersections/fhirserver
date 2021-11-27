@@ -402,6 +402,9 @@ end;
 
 var
   Application: TCodeScanner;
+
+{$R *.res}
+
 begin
   Application := TCodeScanner.Create;
   Application.Run;

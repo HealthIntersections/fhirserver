@@ -157,6 +157,7 @@ type
     actionFileNew: TAction;
     actionFileOpen: TAction;
     actionFileSaveAs1: TAction;
+    actionPublishIG: TAction;
     actionHelpContent: THelpContents;
     btnOpenLog: TSpeedButton;
     btnSearch: TBitBtn;
@@ -464,6 +465,7 @@ type
     procedure actionPagesMoveFarRIghtExecute(Sender: TObject);
     procedure actionPagesMoveLeftExecute(Sender: TObject);
     procedure actionPagesMoveRightExecute(Sender: TObject);
+    procedure actionPublishIGExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
     procedure actionToolsPackageManagerExecute(Sender: TObject);
     procedure actionToolsSideBySideModeExecute(Sender: TObject);
@@ -724,7 +726,7 @@ begin
   end;
   loadFonts;
   loadSearch;
-
+  Caption := 'FHIR Toolkit '+TOOLKIT_VERSION;
 
   FTempStore := TFHIRToolkitTemporaryStorage.create;
 
@@ -1524,7 +1526,6 @@ begin
       storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FTempStore.removeFromMRU(editor.session.address);
-      editor.lastChangeChecked := true;
       FContext.Focus := editor;
       clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
@@ -1976,9 +1977,9 @@ end;
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
   if context.hasFocus then
-    Caption := 'FHIR Toolkit - '+context.focus.session.caption
+    Caption := 'FHIR Toolkit '+TOOLKIT_VERSION+' - '+context.focus.session.caption
   else
-    Caption := 'FHIR Toolkit';
+    Caption := 'FHIR Toolkit '+TOOLKIT_VERSION;
 
   // always enabled
   actionToolsPackageManager.enabled := true;
@@ -2852,6 +2853,22 @@ begin
   pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex + 1;
   updateActionStatus(self);
   storeOpenFileList;
+end;
+
+procedure TMainToolkitForm.actionPublishIGExecute(Sender: TObject);
+var
+  editor : TToolkitEditor;
+begin
+  for editor in FContext.editors do
+  begin
+    if editor.Session.Kind = sekIGs then
+    begin
+      pgEditors.ActivePage := editor.tab;
+      exit;
+    end;
+  end;
+
+  createNewFile(sekIGs);
 end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
