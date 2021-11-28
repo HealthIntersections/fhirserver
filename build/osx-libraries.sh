@@ -72,6 +72,13 @@ else
 fi
 
 
+if [ ! -d "DelphiAST" ] ; then
+    git clone https://github.com/grahamegrieve/DelphiAST
+else
+    cd DelphiAST && git pull && cd ..
+fi
+
+
 cd ..
 
 # ---- register the source with lazarus ----------

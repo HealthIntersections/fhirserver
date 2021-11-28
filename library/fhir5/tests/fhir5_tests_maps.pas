@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Maps;
+unit fhir5_tests_maps;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -309,11 +309,4 @@ initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
   TDUnitX.RegisterTestFixture(TMapParserTests2);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests);
-function TMapParserTests2.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, ctxt.sizeInBytes(magic));
-  inc(result, utils.sizeInBytes(magic));
-end;
-
 end.

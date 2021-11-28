@@ -25,6 +25,7 @@ git clone https://github.com/grahamegrieve/lazarus-ide-tester
 git clone https://github.com/grahamegrieve/ZXing.Delphi
 git clone https://github.com/FHIR/fhir-test-cases
 git clone https://github.com/grahamegrieve/PdfiumLib
+git clone https://github.com/grahamegrieve/DelphiAST
 
 cd tzdb 
 git pull
@@ -58,6 +59,9 @@ cd PdfiumLib
 git pull
 cd ..
 
+cd DelphiAST
+git pull
+cd ..
 
 cd ..
 

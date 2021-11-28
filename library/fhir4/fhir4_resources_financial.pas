@@ -1,4 +1,4 @@
-﻿unit fhir4_resources_financial;
+unit fhir4_resources_financial;
 
 {$I fhir4.inc}
 

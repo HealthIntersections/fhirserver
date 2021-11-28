@@ -1,4 +1,4 @@
-unit FHIR.R2.Tests.Parser;
+unit fhir2_tests_parser;
 
 
 {

@@ -37,8 +37,8 @@ interface
 {$OVERFLOWCHECKS OFF}
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
-  process,
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, process, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
+
   SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
   fsl_base, fsl_utilities, fsl_fpc;
 
@@ -194,7 +194,9 @@ Type
     FStatus: TFslExternalProcessStatus;
 
     FLock : TFslLock;
+    {$IFDEF FPC}
     FProcess : TProcess;
+    {$ENDIF}
     FBuffer : String;
     FUseCmd: boolean;
     procedure processOutput(s : String);
@@ -770,6 +772,7 @@ var
   Buffer       : TBytes;
   s : String;
 begin
+  {$IFDEF FPC}
   FLock.Lock;
   try
     FStatus := epsRunning;
@@ -813,12 +816,19 @@ begin
       FLock.Unlock;
     end;
   end;
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
 end;
 
 procedure TFslExternalProcessThread.terminate;
 begin
+  {$IFDEF FPC}
   if not FProcess.Terminate(1) then
-    raise Exception.create('unable to terminate');
+    raise EFslException.create('unable to terminate');
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
 end;
 
 { TNullTaskEngine }

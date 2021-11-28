@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Client;
+unit fhir5_tests_client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

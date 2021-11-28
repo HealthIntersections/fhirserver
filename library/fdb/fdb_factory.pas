@@ -53,9 +53,6 @@ implementation
 uses
   IdSoapUtilities,
   KProcs,
-  {$IFDEF VER140}
-  KDBDBExpress,
-  {$ENDIF}
   {$IFNDEF UNICODE}
   KDBFirebird,
   KDBOdbcExpress,
@@ -171,17 +168,14 @@ function KDBManagerFactory(AProvider : TFDBProvider) : TFDBManagerClass;
 const ASSERT_LOCATION = ASSERT_UNIT+'.KDBManagerFactory1';
 begin
   case AProvider of
-  {$IFNDEF LINUX}
     kdbpDSN : result := TFDBOdbcDSN;
     kdbpODBC : result := TFDBOdbcDirect;
+    kdbpMySQL : result := TMySQLConnMan;
+    {$IFNDEF LINUX}
     kdbpFirebird : result := TFireBirdConnMan;
     kdbpSoapClient : result := TFDBSoapConnMan;
     kdbpAccess : result := TFDBOdbcDirect;
-    kdbpMySQL : result := TMySQLConnMan;
-  {$ENDIF}
-  {$IFDEF VER140}
-    kdbpDBXpress : result := TDBExpressConnMan;
-  {$ENDIF}
+   {$ENDIF}
   else
     // kdbpUnknown,
     raise EKDBFactoryException.create(ASSERT_LOCATION+': the provider '+IdEnumToString(TypeInfo(TFDBProvider), ord(AProvider))+' is not known or not supported by this system');

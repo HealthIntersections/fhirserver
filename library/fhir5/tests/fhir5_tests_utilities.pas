@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Utilities;
+unit fhir5_tests_utilities;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

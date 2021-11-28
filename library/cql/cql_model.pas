@@ -1,4 +1,4 @@
-unit FHIR.Cql.Model;
+unit cql_model;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

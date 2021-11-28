@@ -1,4 +1,4 @@
-unit FHIR.R3.Tests.Validator;
+unit fhir3_tests_validator;
 
 
 {
@@ -532,10 +532,4 @@ end;
 initialization
   if FindCmdLineSwitch('dev') then
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
-function TFHIRValidatorTests.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FServices.sizeInBytes(magic));
-end;
-
 end.

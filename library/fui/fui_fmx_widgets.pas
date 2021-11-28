@@ -1,4 +1,4 @@
-unit FHIR.Ui.ComboFMX;
+unit fui_fmx_widgets;
 
 {
 Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -28,22 +28,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 interface
 
 uses
   Classes,
   fsl_utilities,
   FHIR.Version.Resources,
-  FMX.ListBox;
-
-
-uses
+  FMX.ListBox,
   {$IFDEF WINDOWS}
   FMX.Platform.Win, Winapi.Windows, Winapi.ShellAPI, ComObj, ShlObj, ActiveX, FMX.Types;
   {$ENDIF WINDOWS}
   {$IFDEF OSX}
   FMX.Types, Macapi.AppKit, Macapi.Foundation, Macapi.ObjectiveC, Posix.Stdlib;
-  {$ENDIF MACOS}
+  {$ENDIF OSX}
+  {$IFDEF LINUX}
+  SysUtils; // this doesn't work under linux, but it's easiest to have the synx to be valid
+  {$ENDIF LINUX}
 
 function SelectDirectory(Handle : TWindowHandle; const ATitle: string; const Existing : String; var ADir: string): boolean;
 procedure OpenURL(sCommand: string);
@@ -115,16 +117,6 @@ begin
     ts.Free;
   end;
 end;
-
-
-////
-//var
-//  NewPath: string;
-//begin
-//  if SelectDirectory('Please select directory...', NewPath) then
-//  begin
-//    edSearchPath.Text := NewPath;
-//  end;
 
 var
   init : PChar;
@@ -201,6 +193,7 @@ begin
     finally
       Malloc.Free(lpBuf);
     end;
+  end;
 end;
 {$ENDIF WINDOWS}
 {$IFDEF OSX}
@@ -233,8 +226,12 @@ begin
   finally
     LOpenDir.release;
   end;
-{$ENDIF MACOS}
 end;
+{$ENDIF OSX}
+{$IFDEF LINUX}
+begin
+end;
+{$ENDIF LINUX}
 
 procedure OpenURL(sCommand: string);
 begin
@@ -245,7 +242,5 @@ begin
   _system(PAnsiChar('open ' + AnsiString(sCommand)));
 {$ENDIF POSIX}
 end;
-
-end.
 
 end.

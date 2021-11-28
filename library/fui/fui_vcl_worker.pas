@@ -1,4 +1,4 @@
-unit FHIR.Ui.WorkerTask;
+unit fui_vcl_worker;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

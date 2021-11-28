@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.PathEngine;
+unit fhir5_tests_pathengine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
