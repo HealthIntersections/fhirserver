@@ -113,7 +113,10 @@ tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk --quiet --add-package
 echo "## compile package source/delphi-markdown/tests/markdowntests.lpk"
 tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk --quiet --ws=cocoa
 
+echo "## compile package source/DelphiAST/Package/pascalast.lpk"
+tools/lazarus/lazbuild source/DelphiAST/Package/pascalast.lpk --quiet 
 
+"C:\work\source\DelphiAST\Package\pascalast.lpk"
 # ----  back to the server ----------
 
 popd
