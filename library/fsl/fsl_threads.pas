@@ -37,7 +37,8 @@ interface
 {$OVERFLOWCHECKS OFF}
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, process, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
+  {$IFDEF FPC} process, {$ENDIF}
 
   SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
   fsl_base, fsl_utilities, fsl_fpc;
