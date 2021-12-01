@@ -6,11 +6,11 @@ This page documents the FHIR Server security.
 Principles 
 ----------
 
-The FHIRServer offers 2 interfaces: secure, and insecure. 
+The Full FHIRServer offers 2 interfaces: secure, and insecure. 
 They both have exactly the same functionality, which is 
 what is described in the FHIR Specification. However, 
 on the secure interface, clients have to authenticate.
-Note that there are 2 differment meanings to authenticate:
+Note that there are 2 different meanings to authenticate:
 
 - identifying the software that is the client
 - identifying the user that the software is acting on behalf of
@@ -47,7 +47,8 @@ the /metadata endpoint. Any other operations require some form
 of authentication. The Secure interface supports 3 kinds of 
 security:
 
-* OAuth2 login (actually, the Smart App Launch profile on OAuth2)
+* OAuth2 login (actually, the Smart App Launch v1 profile on OAuth2)
+  * v2 is planned 
 * OWin-type login
 * Certificates + JWT Bearer Tokens
 
@@ -58,9 +59,8 @@ OAuth2 login
 ------------
 
 This implements the SMART App launch profile, as specified by the 
-HL7 specification at http://hl7.org/fhir/smart-app-launch. 
-There is, as yet, no dynamic registration of clients. Clients must 
-be registered in the authorization file manually
+HL7 specification at http://hl7.org/fhir/smart-app-launch. Clients
+can be dynamically registered through the web interface.
 
 Part of the OAuth login process  includes identifying the
 end user. the FHIR Server supports the following methods 
