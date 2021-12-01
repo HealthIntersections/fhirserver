@@ -178,7 +178,7 @@ Type
   TFslThreadClass = Class Of TFslThread;
 
   TFslExternalProcessThread = class;
-  TFslExternalProcessLineEvent = procedure (sender : TFslExternalProcessThread; line : String) of object;
+  TFslExternalProcessLineEvent = procedure (sender : TFslExternalProcessThread; line : String; replLast : boolean) of object;
   TFslExternalProcessStatus = (epsInitialising, epsRunning, epsFinished, epsTerminated);
 
   { TFslExternalProcessThread }
@@ -186,6 +186,7 @@ Type
   TFslExternalProcessThread = class (TFslThread)
   private
     FCommand: String;
+    FExitCode: integer;
     FFolder: String;
     FLines: TStringList;
     FOnEmitLine: TFslExternalProcessLineEvent;
@@ -213,6 +214,7 @@ Type
     procedure terminate; // terminate is different to kill - it uses the system to halt the external process rather than just killing the thread
 
     property status : TFslExternalProcessStatus read FStatus write FStatus;
+    property exitCode : integer read FExitCode;
     property secondsSinceLastOutput : Integer read FSecondsSinceLastOutput write FSecondsSinceLastOutput;
     property lines : TStringList read FLines;
     property OnEmitLine : TFslExternalProcessLineEvent read FOnEmitLine write FOnEmitLine;
@@ -750,17 +752,36 @@ end;
 procedure TFslExternalProcessThread.processOutput(s: String);
 var
   l, r : String;
+  ch1, ch2 : String;
+  i : integer;
+  repl : boolean;
 begin
   FBuffer := FBuffer + s;
-  while FBuffer.contains(#10) do
+  while FBuffer.contains(#10) or FBuffer.contains(#13) do
   begin
-    StringSplit(FBuffer, #10, l, r);
+    i := FBuffer.indexOf(#13)+1;
+    if (i > 0) then
+    begin
+      ch1 := FBuffer[i];
+      ch2 := FBuffer[i+1];
+    end;
+    repl := false;
+    if (i > 0) and (i < FBuffer.length) and (FBuffer[i+1] = #10) then
+      StringSplit(FBuffer, #13#10, l, r)
+    else if (i > 0) then
+    begin
+      StringSplit(FBuffer, #13, l, r);
+      repl := true;
+    end
+    else
+      StringSplit(FBuffer, #10, l, r);
     FBuffer := r;
-    if l.EndsWith(#13) then
-      delete(l, length(l), 1);
-    FLines.add(l);
+    if (repl) and (FLines.count > 0) then
+      FLines[FLines.count - 1] := l
+    else
+      FLines.add(l);
     if assigned(FOnEmitLine) then
-      FOnEmitLine(self, l);
+      FOnEmitLine(self, l, repl);
   end;
 end;
 
@@ -805,13 +826,17 @@ begin
       BytesRead := FProcess.Output.Read(Buffer, BUF_SIZE);
       processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
     until BytesRead = 0;
+    FExitCode := FProcess.ExitCode;
   finally
     FLock.Lock;
     try
       FProcess.free;
       FProcess := nil;
-      if FStatus <> epsTerminated then
-        FStatus := epsFinished;
+      if FStatus = epsTerminated then
+        FExitCode := $FFFF
+      else
+        FStatus := epsFinished
+
     finally
       FLock.Unlock;
     end;

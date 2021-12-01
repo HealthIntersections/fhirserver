@@ -25,7 +25,8 @@ uses
   frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor,
   frm_view_manager, dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5,
   ftk_image_scanner, ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner,
-  dlg_upgrade, dlg_clipboard_process, ftk_engine_igpub, dlg_igpub_config;
+  dlg_upgrade, ftk_engine_igpub, dlg_igpub_config,
+dlg_igpub_github, ftk_engine_text, ftk_text_view;
 
 {$R *.res}
 
@@ -33,7 +34,7 @@ var
   frm : TToolkitAboutForm;
 
 begin
-  RequireDerivedFormResource:=True;
+   RequireDerivedFormResource:=True;
   Application.Title:='FHIRToolkit';
   Application.Scaled:=True;
   Application.Initialize;
@@ -49,6 +50,7 @@ begin
     frm.Free;
   end;
   Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
+  Application.CreateForm(TIgGitHubDialog, IgGitHubDialog);
   Application.Run;
 end.
 

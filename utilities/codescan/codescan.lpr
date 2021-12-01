@@ -489,10 +489,18 @@ begin
       Writeln('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
       Writeln('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
       FAllOk := true;
+      writeln(FSourceDir+' [unicode]');
       scanFolder(FSourceDir, [sscUnicode], FProjectDir);
+      writeln;
+      writeln(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
       scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'delphi-markdown']));
+      writeln;
+      writeln(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
       scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
+      writeln;
+      writeln(FProjectDir+' [license, eoln, exceptions, full-parse]');
       scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
+      writeln;
     end;
   except
     on e : Exception do

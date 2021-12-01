@@ -37,13 +37,14 @@ uses
   fsl_base, fsl_utilities, fsl_threads, fsl_fetcher, fsl_stream;
 
 type
-  TIgPublisherBuildEngineLineEvent = procedure(line : String) of Object;
+  TIgPublisherBuildEngineLineEvent = procedure(line : String; repl : boolean) of Object;
 
   { TIgPublisherBuildEngine }
 
   TIgPublisherBuildEngine = class (TFslThread)
   private
     FDevParams: String;
+    FDoGit: boolean;
     FFolder : String;
     FJavaCmd: String;
     FOnEmitLine: TIgPublisherBuildEngineLineEvent;
@@ -58,7 +59,8 @@ type
     procedure checkInstallIgPublisher;
     function GetSuccess: boolean;
     procedure runBuild;
-    procedure procEmitLine(sender : TFslExternalProcessThread; line : String);
+    procedure executeGitUpdate;
+    procedure procEmitLine(sender : TFslExternalProcessThread; line : String; repl : boolean);
     procedure doFetcherProgress(sender : TObject; progress : integer);
   public
     destructor Destroy; override;
@@ -68,6 +70,7 @@ type
     property version : String read FVersion write FVersion;
     property url : String read FUrl write FUrl;
     property txSrvr : String read FTxSrvr write FTxSrvr;
+    property doGit : boolean read FDoGit write FDoGit;
 
     procedure execute; override;
     procedure Terminate;
@@ -91,7 +94,7 @@ var
   s : String;
   ok : boolean;
 begin
-  FOnEmitLine('Check Java Version');
+  FOnEmitLine('Check Java Version', false);
 
   p := TFslExternalProcessThread.create;
   try
@@ -108,7 +111,7 @@ begin
       if s.ToLower.StartsWith('java version') then
       begin
         ok := true;
-        FOnEmitLine(s);
+        FOnEmitLine(s, false);
       end;
     end;
     if not ok then
@@ -129,7 +132,7 @@ begin
   FJarName := FilePath([folder, 'ig-publisher-'+version+'.jar']);
   if not FileExists(FJarName) then
   begin
-    FOnEmitLine('Downloading jar from '+url);
+    FOnEmitLine('Downloading jar from '+url, false);
     try
       fetcher := TInternetFetcher.create;
       try
@@ -140,13 +143,13 @@ begin
         if not FileExists(FJarName) then
           raise EFslException.create('Unable to download jar from '+url)
         else
-          FOnEmitLine('Downloaded ('+DescribeBytes(fetcher.Buffer.Size)+' to '+FJarName+')');
+          FOnEmitLine('Downloaded ('+DescribeBytes(fetcher.Buffer.Size)+' to '+FJarName+')', false);
       finally
         fetcher.Free;
       end;
     except
       on e : EAbort do
-        FOnEmitLine('Cancelled');
+        FOnEmitLine('Cancelled', false);
     end;
   end;
 end;
@@ -164,7 +167,7 @@ var
   p : TFslExternalProcessThread;
   s : String;
 begin
-  FOnEmitLine('Run Build: java -jar '+FJarName+' -ig '+FFolder+' -tx '+FTxSrvr);
+  FOnEmitLine('Run Build: java -jar '+FJarName+' -ig '+FFolder+' -tx '+FTxSrvr, false);
 
   p := TFslExternalProcessThread.create;
   try
@@ -193,9 +196,30 @@ begin
   end;
 end;
 
-procedure TIgPublisherBuildEngine.procEmitLine(sender: TFslExternalProcessThread; line: String);
+procedure TIgPublisherBuildEngine.executeGitUpdate;
+var
+  p : TFslExternalProcessThread;
 begin
-  FOnEmitLine(line);
+  FOnEmitLine('git pull', false);
+
+  p := TFslExternalProcessThread.create;
+  try
+    p.command := 'git';
+    p.parameters.Add('pull');
+    p.parameters.Add('--progress');
+    p.folder := FFolder;
+    p.OnEmitLine := procEmitLine;
+    p.Start;
+    while p.Running do
+      sleep(50);
+  finally
+    p.free;
+  end;
+end;
+
+procedure TIgPublisherBuildEngine.procEmitLine(sender: TFslExternalProcessThread; line: String; repl : boolean);
+begin
+  FOnEmitLine(line, repl);
 end;
 
 procedure TIgPublisherBuildEngine.doFetcherProgress(sender: TObject; progress: integer);
@@ -207,21 +231,26 @@ end;
 procedure TIgPublisherBuildEngine.execute;
 begin
   try
-    if FileExists(FilePath([FFolder, 'output', 'qa.json'])) then
-      FStartingDate := FileGetModified(FilePath([FFolder, 'output', 'qa.json']))
+    if FDoGit then
+      executeGitUpdate
     else
-      FStartingDate := 0;
-    if FileExists(FilePath([FFolder, 'ig-publisher.kill'])) then
-      DeleteFile(FilePath([FFolder, 'ig-publisher.kill']));
-    if not FWantStop then
-      checkJava;
-    if not FWantStop and (url <> '#dev') then
-      checkInstallIgPublisher;
-    if not FWantStop then
-      runBuild;
+    begin
+      if FileExists(FilePath([FFolder, 'output', 'qa.json'])) then
+        FStartingDate := FileGetModified(FilePath([FFolder, 'output', 'qa.json']))
+      else
+        FStartingDate := 0;
+      if FileExists(FilePath([FFolder, 'ig-publisher.kill'])) then
+        DeleteFile(FilePath([FFolder, 'ig-publisher.kill']));
+      if not FWantStop then
+        checkJava;
+      if not FWantStop and (url <> '#dev') then
+        checkInstallIgPublisher;
+      if not FWantStop then
+        runBuild;
+    end;
   except
     on e : Exception do
-      FOnEmitLine(e.message);
+      FOnEmitLine(e.message, false);
   end;
 end;
 

@@ -672,13 +672,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="dialogs\dlg_clipboard_process.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="TextPasteProcessorForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
         <Filename Value="..\lib\libfhir.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -697,7 +690,23 @@
         <Filename Value="dialogs\dlg_igpub_config.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="IGPublisherConfigForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_igpub_github.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="IgGitHubDialog"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="tasks\ftk_engine_text.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="views\ftk_text_view.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>

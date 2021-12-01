@@ -86,9 +86,9 @@ object IGPublisherConfigForm: TIGPublisherConfigForm
     Caption = 'Java Command'
   end
   object edtJavaCmd: TEdit
-    Left = 8
+    Left = -8
     Height = 23
-    Top = 26
+    Top = 24
     Width = 512
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 2

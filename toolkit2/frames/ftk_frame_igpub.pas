@@ -37,7 +37,7 @@ uses
   LclIntf, Buttons,
   fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads,
   fui_lcl_managers, fsl_fpc,
-  ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config;
+  ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github;
 
 type
   TFrame = TBaseWorkerFrame;
@@ -50,18 +50,22 @@ type
 
   TIGPublicationFolder = class (TFslObject)
   private
+    FLineCount: integer;
     FManager : TIGPublicationManager;
     FEngine: TIgPublisherBuildEngine;
     FFolder: String;
     FLines: TStringList;
     Fname: String;
+    FRunLength: Int64;
+    FStartRun: Int64;
     FStatus: TIGPublicationFolderStatus;
     procedure SetEngine(AValue: TIgPublisherBuildEngine);
 
-    procedure emitLine(line : String);
+    procedure emitLine(line : String; repl : boolean);
+    function log : String;
   public
     constructor Create(manager : TIGPublicationManager); overload;
-    constructor Create(manager : TIGPublicationManager; name, folder : String); overload;
+    constructor Create(manager : TIGPublicationManager; name, folder : String; RunLength, LineCount : integer); overload;
     destructor Destroy; override;
     function link : TIGPublicationFolder; overload;
 
@@ -73,6 +77,9 @@ type
     property folder : String read FFolder write FFolder;
     property lines : TStringList read FLines;
     property engine : TIgPublisherBuildEngine read FEngine write SetEngine;
+    property RunLength : Int64 read FRunLength write FRunLength;
+    property LineCount : integer read FLineCount write FLineCount;
+    property StartRun : Int64 read FStartRun write FStartRun;
   end;
 
   { TIGPublicationManager }
@@ -95,6 +102,7 @@ type
     function doubleClickEdit : boolean; override;
     function AskOnDelete(item : TIGPublicationFolder) : boolean; override;
     function canSort : boolean; override;
+    procedure getCopyModes(modes : TStringList); override;
 
     function allowedOperations(item : TIGPublicationFolder) : TNodeOperationSet; override;
     function loadList : boolean; override;
@@ -103,6 +111,7 @@ type
     function getCellText(item : TIGPublicationFolder; col : integer) : String; override;
     function getCellColors(item : TIGPublicationFolder; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TIGPublicationFolder) : String; override;
+    function getCopyValue(item : TIGPublicationFolder; mode : String) : String; override;
 
     procedure focusItemChange(item : TIGPublicationFolder); override;
     function addItem(mode : String) : TIGPublicationFolder; override;
@@ -111,6 +120,7 @@ type
     function executeItem(item : TIGPublicationFolder; mode : String) : boolean; override;
     function stopItem(item : TIGPublicationFolder; mode : String) : boolean; override;
     function refreshItem(item : TIGPublicationFolder) : boolean; override;
+    function updateItem(item : TIGPublicationFolder; mode : String) : boolean; override;
   end;
 
   { TIgPubPageFrame }
@@ -128,13 +138,15 @@ type
     Panel5: TPanel;
     fd: TSelectDirectoryDialog;
     Panel6: TPanel;
+    Panel7: TPanel;
+    ProgressBar1: TProgressBar;
     Splitter1: TSplitter;
     Timer1: TTimer;
     ToolBar1: TToolBar;
     tbAdd: TToolButton;
     tbDelete: TToolButton;
-    tbCopy: TToolButton;
     tbAddSet: TToolButton;
+    tbGitHub: TToolButton;
     ToolButton2: TToolButton;
     tbBuild: TToolButton;
     tbUp: TToolButton;
@@ -146,7 +158,6 @@ type
     ToolButton8: TToolButton;
     tbConfig: TToolButton;
     procedure tbConfigClick(Sender: TObject);
-    procedure tbCopyClick(Sender: TObject);
     procedure tbOpenClick(Sender: TObject);
     procedure tbQAClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -157,6 +168,7 @@ type
     FJavaCmd : String;
     FDevParams : String;
     FCounter : integer;
+    FDefaultRootFolder : String;
 
     FManager : TIGPublicationManager;
 
@@ -203,6 +215,7 @@ var
   ts : TStringList;
   i : integer;
   b : boolean;
+  pctTime, pctLines, pct : integer;
 begin
   if FCurrent <> nil then
   begin
@@ -216,12 +229,31 @@ begin
       finally
         FLock.Unlock;
       end;
+      if (FCurrent.status <> fsRunning) or ((FCurrent.RunLength = 0) and (FCurrent.LineCount = 0)) or (FCurrent.StartRun = 0) then
+      begin
+        FFrame.ProgressBar1.Enabled := false;
+        FFrame.ProgressBar1.Position := 0;
+      end
+      else
+      begin
+        pctTime := 0;
+        pctLines := 0;
+        if FCurrent.RunLength > 0 then
+          pctTime := trunc(((GetTickCount64 - FCurrent.StartRun) / FCurrent.RunLength) * 100);
+        if FCurrent.LineCount > 0 then
+          pctLines := trunc((FCurrent.lines.count / FCurrent.LineCount) * 100);
+        FFrame.ProgressBar1.Enabled := true;
+        FFrame.ProgressBar1.Position := (pctTime + pctLines) div 2;
+      end;
       if ts.count > 0 then
       begin
         FFrame.mStatus.lines.BeginUpdate;
         try
           for i := 0 to ts.count - 1 do
-            FFrame.mStatus.lines.add(ts[i]);
+            if ts[i].StartsWith('t') and (FFrame.mStatus.lines.count > 0) then
+              FFrame.mStatus.lines[FFrame.mStatus.lines.count - 1] := ts[i].Substring(1)
+            else
+              FFrame.mStatus.lines.add(ts[i].Substring(1));
         finally
           FFrame.mStatus.lines.EndUpdate;
         end;
@@ -247,10 +279,16 @@ begin
       if not o.Engine.Running then
       begin
         if (o.engine.success) then
-          o.status := fsSuccess
+        begin
+          o.status := fsSuccess;
+          o.RunLength := GetTickCount64 - o.StartRun;
+          o.lineCount := o.lines.count;
+          FFrame.FWorker.lastChange := GetTickCount64;
+          FFrame.FWorker.lastChangeChecked := false;
+          FFrame.FWorker.session.NeedsSaving := true;
+        end
         else
           o.status := fsError;
-        o.Engine.free;
         o.Engine := nil;
         refresh(o);
       end;
@@ -286,6 +324,13 @@ begin
   Result := false;
 end;
 
+procedure TIGPublicationManager.getCopyModes(modes: TStringList);
+begin
+  inherited getCopyModes(modes);
+  modes.AddPair('path', 'Path');
+  modes.AddPair('log', 'Log');
+end;
+
 function TIGPublicationManager.allowedOperations(item: TIGPublicationFolder): TNodeOperationSet;
 begin
   if item = nil then
@@ -293,7 +338,11 @@ begin
   else if item.status = fsRunning then
     result := [opAdd, opOrder, opDelete, opStop]
   else
+  begin
     result := [opAdd, opOrder, opDelete, opExecute];
+    if FolderExists(FilePath([item.folder, '.git'])) then
+      result := result + [opUpdate];
+  end;
 end;
 
 function TIGPublicationManager.loadList: boolean;
@@ -301,7 +350,7 @@ var
   o : TJsonObject;
 begin
   for o in FFolderList.asObjects.forEnum do
-    Data.Add(TIGPublicationFolder.create(self, o['name'], o['folder']));
+    Data.Add(TIGPublicationFolder.create(self, o['name'], o['folder'], o.int['run-length'], o.int['line-count']));
   result := true;
 end;
 
@@ -338,6 +387,16 @@ begin
   Result := item.name+' ('+item.folder+')';
 end;
 
+function TIGPublicationManager.getCopyValue(item: TIGPublicationFolder; mode: String): String;
+begin
+  if (mode = 'path') then
+    result := item.folder
+  else if (mode = 'log') then
+    result := item.log
+  else
+    result:=inherited getCopyValue(item, mode);
+end;
+
 procedure TIGPublicationManager.focusItemChange(item: TIGPublicationFolder);
 begin
   FFrame.mStatus.Clear;
@@ -350,16 +409,37 @@ var
   name, folder : String;
 begin
   result := nil;
-  if FFrame.fd.execute then
+  if (mode = 'git') then
   begin
-    folder := FFrame.fd.filename;
-    if not FileNameCaseSensitive then
-      folder := folder.ToLower;
-    name := ExtractFileName(folder);
-    result := TIGPublicationFolder.create(self, name, folder);
-    FFrame.FWorker.lastChange := GetTickCount64;
-    FFrame.FWorker.lastChangeChecked := false;
-    FFrame.FWorker.session.NeedsSaving := true;
+    IgGitHubDialog := TIgGitHubDialog.create(FFrame);
+    try
+      IgGitHubDialog.edtFolder.Text := FFrame.FDefaultRootFolder;
+      if IgGitHubDialog.ShowModal = mrOk then
+      begin
+        FFrame.FDefaultRootFolder := IgGitHubDialog.edtFolder.Text;
+        name := IgGitHubDialog.edtLocalFolder.Text;
+        folder := FilePath([FFrame.FDefaultRootFolder, name]);
+        result := TIGPublicationFolder.create(self, name, folder, 0, 0);
+        FFrame.FWorker.lastChange := GetTickCount64;
+        FFrame.FWorker.lastChangeChecked := false;
+        FFrame.FWorker.session.NeedsSaving := true;
+      end;
+    finally
+      IgGitHubDialog.free;
+    end;
+  end
+  else
+  begin
+    if FFrame.fd.execute then
+    begin
+      folder := FFrame.fd.filename;
+      if not FileNameCaseSensitive then
+        folder := folder.ToLower;
+      name := ExtractFileName(folder);
+      FFrame.FWorker.lastChange := GetTickCount64;
+      FFrame.FWorker.lastChangeChecked := false;
+      FFrame.FWorker.session.NeedsSaving := true;
+    end;
   end;
 end;
 
@@ -377,7 +457,7 @@ begin
       if not FileNameCaseSensitive then
         folder := folder.ToLower;
       name := ExtractFileName(folder);
-      result.add(TIGPublicationFolder.create(self, name, folder));
+      result.add(TIGPublicationFolder.create(self, name, folder, 0, 0));
     end;
     FFrame.FWorker.lastChange := GetTickCount64;
     FFrame.FWorker.lastChangeChecked := false;
@@ -400,11 +480,11 @@ function TIGPublicationManager.executeItem(item: TIGPublicationFolder; mode: Str
 begin
   result := false;
   if (item.status = fsRunning ) then
-    MessageDlg('Build IG', 'The IG '+item.name+' is already being built', mtError, [mbok], 0)
+    MessageDlg('Build IG', 'The IG '+item.name+' is being built or updated', mtError, [mbok], 0)
   else
   begin
     item.lines.clear;
-    item.lines.add('Building '+item.name+'. Starting at '+TFslDateTime.makeLocal.toString('c'));
+    item.lines.add('fBuilding '+item.name+'. Starting at '+TFslDateTime.makeLocal.toString('c'));
     item.engine := TIgPublisherBuildEngine.create;
     item.engine.folder := item.folder;
     item.engine.OnEmitLine := item.emitLine;
@@ -415,6 +495,7 @@ begin
     item.engine.url := FFrame.FIgUrls[FFrame.cbxVersions.ItemIndex];
     item.engine.Start;
     item.status := fsRunning;
+    item.StartRun := GetTickCount64;
     result := true;
   end;
 end;
@@ -435,6 +516,25 @@ begin
   result := false; // nothing yet
 end;
 
+function TIGPublicationManager.updateItem(item: TIGPublicationFolder; mode : String): boolean;
+begin
+  result := false;
+  if (item.status = fsRunning ) then
+    MessageDlg('Update IG', 'The IG '+item.name+' is being built or updated', mtError, [mbok], 0)
+  else
+  begin
+    item.lines.clear;
+    item.engine := TIgPublisherBuildEngine.create;
+    item.engine.folder := item.folder;
+    item.engine.OnEmitLine := item.emitLine;
+    item.engine.doGit := true;
+    item.engine.Start;
+    item.StartRun := 0;
+    item.status := fsRunning;
+    result := true;
+  end;
+end;
+
 { TIGPublicationFolder }
 
 constructor TIGPublicationFolder.Create(manager : TIGPublicationManager);
@@ -444,12 +544,14 @@ begin
   FLines := TStringList.create;
 end;
 
-constructor TIGPublicationFolder.Create(manager : TIGPublicationManager; name, folder: String);
+constructor TIGPublicationFolder.Create(manager : TIGPublicationManager; name, folder: String; RunLength, LineCount : integer);
 begin
   Create;
   FManager := manager; // no own
   self.name := name;
   self.folder := folder;
+  self.RunLength := RunLength;
+  self.LineCount := LineCount;
   FLines := TStringList.create;
 end;
 
@@ -476,13 +578,39 @@ begin
   FEngine := AValue;
 end;
 
-procedure TIGPublicationFolder.emitLine(line: String);
+procedure TIGPublicationFolder.emitLine(line: String; repl : boolean);
 begin
   FManager.FLock.Lock;
   try
-    FLines.add(line);
+    if repl then
+      FLines.add('t'+line)
+    else
+      FLines.add('f'+line);
   finally
     FManager.Flock.Unlock;
+  end;
+end;
+
+function TIGPublicationFolder.log: String;
+var
+  b : TStringBuilder;
+  s : String;
+begin
+  b := TStringBuilder.create;
+  try
+    FManager.FLock.Lock;
+    try
+      for s in FLines do
+      begin
+        b.append(s.substring(1));
+        b.append(#13#10);
+      end;
+    finally
+      FManager.Flock.Unlock;
+    end;
+    result := b.toString;
+  finally
+    b.free;
   end;
 end;
 
@@ -516,6 +644,7 @@ begin
   FManager.FFrame := self;
 
   FManager.registerControl(tbAdd, copAdd);
+  FManager.registerControl(tbGitHub, copAdd, 'git');
   FManager.registerControl(tbAddSet, copAddSet, 'set');
   FManager.registerControl(tbDelete, copDelete);
   FManager.registerControl(tbUp, copUp);
@@ -528,6 +657,9 @@ begin
   FManager.registerMenuEntry('Up', 11, copUp);
   FManager.registerMenuEntry('Down', 10, copDown);
   FManager.registerMenuEntry('-', -1, copNone);
+  FManager.registerMenuEntry('Copy', 13, copCopy);
+  FManager.registerMenuEntry('-', -1, copNone);
+  FManager.registerMenuEntry('Update', 16, copUpdate);
   FManager.registerMenuEntry('Build', 1, copExecute);
   FManager.registerMenuEntry('Stop', 5, copStop);
 
@@ -536,6 +668,9 @@ begin
 
   cbxTxServer.items.clear;
   FJavaCmd := json.str['java-cmd'];
+  FDefaultRootFolder := json.str['default-root'];
+  if (FDefaultRootFolder = '') then
+    FDefaultRootFolder := FilePath(['[tmp]', 'ig-pub']);
   if FJavaCmd = '' then
     FJavaCmd := 'java';
   FDevParams := json.str['dev-params'];
@@ -581,13 +716,6 @@ begin
   finally
     IGPublisherConfigForm.free;
   end;
-end;
-
-procedure TIgPubPageFrame.tbCopyClick(Sender: TObject);
-begin
-  mStatus.SelectAll;
-  mStatus.CopyToClipboard;
-  mStatus.SelStart := length(mStatus.Text);
 end;
 
 procedure TIgPubPageFrame.tbOpenClick(Sender: TObject);
@@ -725,6 +853,7 @@ var
   arr : TJsonArray;
 begin
   json.str['igpub-page'] := 'true';
+  json.str['default-root'] := FDefaultRootFolder;
   json.str['java-cmd'] := FJavaCmd;
   json.str['dev-params'] := FDevParams;
   arr := json.forceArr['ig-pub-versions'];
@@ -760,6 +889,8 @@ begin
     arr.add(v);
     v.str['name'] := FManager.Data[i].name;
     v.str['folder'] := FManager.Data[i].folder;
+    v.int['run-length'] := FManager.Data[i].RunLength;
+    v.int['line-count'] := FManager.Data[i].LineCount;
   end;
 end;
 

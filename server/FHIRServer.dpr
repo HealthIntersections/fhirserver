@@ -32,7 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$R *.res}
 
-
 {
 todo:
 STU3 draft:

@@ -124,7 +124,7 @@ begin
   FMru := TStringList.create;
   proc := TMarkdownProcessor.createDialect(mdDaringFireball); // or flavor of your choice
   try
-    proc.unsafe := false;
+    proc.allowUnsafe := false;
     HtmlViewer1.LoadFromString(proc.process(HOME_PAGE));
   finally
     proc.free;
