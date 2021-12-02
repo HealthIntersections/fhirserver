@@ -1469,7 +1469,7 @@ begin
   FLoaded := 0;
   FSourceFile := sFilename;
   if not FileExists(FSourceFile) then
-    raise Exception.create('The SNOMED CT Source File '+sFilename+' does not exist');
+    raise ETerminologySetup.create('The SNOMED CT Source File '+sFilename+' does not exist');
 
   if immediate then
     LoadFromSource
