@@ -63,6 +63,7 @@ type
 
     procedure emitLine(line : String; repl : boolean);
     function log : String;
+    function ghURL : String;
   public
     constructor Create(manager : TIGPublicationManager); overload;
     constructor Create(manager : TIGPublicationManager; name, folder : String; RunLength, LineCount : integer); overload;
@@ -111,6 +112,7 @@ type
     function getCellText(item : TIGPublicationFolder; col : integer) : String; override;
     function getCellColors(item : TIGPublicationFolder; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TIGPublicationFolder) : String; override;
+    function getCanCopy(item : TIGPublicationFolder; mode : String) : boolean; override;
     function getCopyValue(item : TIGPublicationFolder; mode : String) : String; override;
 
     procedure focusItemChange(item : TIGPublicationFolder); override;
@@ -329,6 +331,17 @@ begin
   inherited getCopyModes(modes);
   modes.AddPair('path', 'Path');
   modes.AddPair('log', 'Log');
+  modes.AddPair('gh', 'GitHub URL');
+end;
+
+function TIGPublicationManager.getCanCopy(item: TIGPublicationFolder; mode: String): boolean;
+begin
+  if item = nil then
+    Result := false
+  else if mode = 'gh' then
+    Result := FolderExists(FilePath([item.FFolder, '.git']))
+  else
+    Result := true;
 end;
 
 function TIGPublicationManager.allowedOperations(item: TIGPublicationFolder): TNodeOperationSet;
@@ -393,6 +406,8 @@ begin
     result := item.folder
   else if (mode = 'log') then
     result := item.log
+  else if (mode = 'gh') then
+    result := item.ghURL
   else
     result:=inherited getCopyValue(item, mode);
 end;
@@ -614,6 +629,32 @@ begin
   end;
 end;
 
+function TIGPublicationFolder.ghURL: String;
+var
+  ts : TStringList;
+  i : integer;
+  s : String;
+begin
+  result := 'GitHub Repo URL unknown';
+  try
+    ts := TStringList.create;
+    try
+      ts.LoadFromFile(FilePath([folder, '.git', 'config']));
+      for i := 0 to ts.count - 1 do
+      begin
+        s := ts[i].trim.replace(' ', '');
+        if s.StartsWith('url=') then
+           exit(s.Substring(4));
+      end;
+    finally
+      ts.free;
+    end;
+  except
+    on e : Exception do
+      result := e.message;
+  end;
+end;
+
 { TIgPubPageFrame }
 
 destructor TIgPubPageFrame.Destroy;
@@ -659,9 +700,10 @@ begin
   FManager.registerMenuEntry('-', -1, copNone);
   FManager.registerMenuEntry('Copy', 13, copCopy);
   FManager.registerMenuEntry('-', -1, copNone);
-  FManager.registerMenuEntry('Update', 16, copUpdate);
   FManager.registerMenuEntry('Build', 1, copExecute);
   FManager.registerMenuEntry('Stop', 5, copStop);
+  FManager.registerMenuEntry('-', -1, copNone);
+  FManager.registerMenuEntry('Update', 16, copUpdate);
 
   FManager.Images := ImageList1;
   FManager.list := lvFolders;

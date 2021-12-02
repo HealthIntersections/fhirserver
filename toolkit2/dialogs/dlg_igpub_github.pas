@@ -209,6 +209,7 @@ begin
     FGit.parameters.Add(edtBranch.Text);
     FGit.parameters.Add('https://github.com/'+edtGitOrg.text+'/'+edtGitRepoName.text);
     FGit.parameters.Add(lf);
+    FGit.environmentVars := false;
     FGit.folder := GetTempDir;
     FGit.OnEmitLine := doLine;
     FGit.Start;

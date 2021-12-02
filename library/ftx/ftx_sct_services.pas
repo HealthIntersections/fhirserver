@@ -1468,6 +1468,9 @@ procedure TSnomedServices.Load(const sFilename: String; immediate : boolean);
 begin
   FLoaded := 0;
   FSourceFile := sFilename;
+  if not FileExists(FSourceFile) then
+    raise Exception.create('The SNOMED CT Source File '+sFilename+' does not exist');
+
   if immediate then
     LoadFromSource
   else

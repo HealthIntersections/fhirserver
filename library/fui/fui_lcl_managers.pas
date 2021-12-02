@@ -136,6 +136,7 @@ type
     procedure populateEntry(entry : TListItem; item : T);
     procedure SetImages(AValue: TImagelist); override;
     procedure internalAddItem(item : T);
+    procedure doPopup(sender : TObject);
   protected
     procedure doControl(sender : TObject); override;
     procedure doMnuClick(Sender: TObject); override;
@@ -182,6 +183,7 @@ type
     function getSummaryText(item : T) : String; virtual;
     function compareItem(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
     function filterItem(item : T; s : String) : boolean; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
     function getCopyValue(item : T; mode : String) : String; virtual;
 
     procedure focusItemChange(item : T); virtual;
@@ -226,6 +228,7 @@ type
     procedure updateStatus;
     procedure DoEdited(Sender: TObject; Node: TTreeNode; var S: string);
     procedure SetImages(AValue: TImagelist); override;
+    procedure doPopup(sender : TObject);
   protected
     FData : TFslList<T>; // hidden root
 
@@ -281,6 +284,7 @@ type
     function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
     function getCopyValue(item : T; mode : String) : String; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
   end;
 
   PTreeData = ^TTreeData;
@@ -316,6 +320,7 @@ type
     procedure doGetTreeImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
     procedure doPaintTreeText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
     procedure doPaintTreeCell(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+    procedure doPopup(sender : TObject);
   protected
     FData : TFslList<T>; // hidden root
 
@@ -372,6 +377,7 @@ type
     function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
     function getCopyValue(item : T; mode : String) : String; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
   end;
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
@@ -910,6 +916,7 @@ begin
   List.OnCustomDrawSubItem := doListDrawSubItem;
   List.smallImages := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     List.PopupMenu := FPopup;
@@ -1093,6 +1100,20 @@ begin
     entry.Data := pointer(item);
     populateEntry(entry, item);
   end;
+end;
+
+procedure TListManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count - 1 do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
 end;
 
 procedure TListManager<T>.doAdd(mode : String);
@@ -1354,6 +1375,11 @@ end;
 function TListManager<T>.filterItem(item: T; s: String): boolean;
 begin
   result := true;
+end;
+
+function TListManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
 end;
 
 procedure TListManager<T>.focusItemChange(item: T);
@@ -1833,6 +1859,7 @@ begin
   Tree.OnDblClick := doTreeDoubleClick;
   Tree.Images := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     FTree.PopupMenu := FPopup;
@@ -2016,6 +2043,20 @@ begin
     FTree.images := AValue;
 end;
 
+procedure TTreeManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
+end;
+
 procedure TTreeManager<T>.doControl(sender: TObject);
 var
   entry : TControlEntry;
@@ -2145,6 +2186,11 @@ begin
     result := getCellText(item)
   else
     result := '';
+end;
+
+function TTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
 end;
 
 { TVTreeManager }
@@ -2343,6 +2389,7 @@ begin
   Tree.OnDblClick := doTreeDoubleClick;
   Tree.Images := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     FTree.PopupMenu := FPopup;
@@ -2558,6 +2605,20 @@ begin
   //TargetCanvas.Rectangle(cellRect);
 end;
 
+procedure TVTreeManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
+end;
+
 procedure TVTreeManager<T>.doControl(sender: TObject);
 var
   entry : TControlEntry;
@@ -2687,6 +2748,11 @@ begin
     result := getCellText(item)
   else
     result := '';
+end;
+
+function TVTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
 end;
 
 { TPanelStack }

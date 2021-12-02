@@ -179,6 +179,7 @@ begin
     end
     else
     begin
+      p.parameters.add('-Dfile.encoding=UTF-8');
       p.parameters.add('-jar');
       p.parameters.add(FJarName);
     end;

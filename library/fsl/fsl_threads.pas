@@ -187,6 +187,7 @@ Type
   TFslExternalProcessThread = class (TFslThread)
   private
     FCommand: String;
+    FEnvironmentVars : boolean;
     FExitCode: integer;
     FFolder: String;
     FLines: TStringList;
@@ -210,6 +211,7 @@ Type
     property command : String read FCommand write FCommand;
     property parameters : TStringList read FParameters;
     property folder : String read FFolder write FFolder;
+    property environmentVars : boolean read FEnvironmentVars write FEnvironmentVars;
 
     procedure execute; override; // will return an exception if the process couldn't be started, otherwise the process has been started
     procedure terminate; // terminate is different to kill - it uses the system to halt the external process rather than just killing the thread
@@ -793,6 +795,7 @@ var
   BytesRead    : longint;
   Buffer       : TBytes;
   s : String;
+  i : integer;
 begin
   {$IFDEF FPC}
   FLock.Lock;
@@ -815,6 +818,14 @@ begin
     {$ELSE}
     FProcess.Executable := command;
     {$ENDIF}
+    if (FEnvironmentVars) then
+    begin
+      for i := 1 to GetEnvironmentVariableCount do
+        begin
+        s := GetEnvironmentString(i);
+        FProcess.Environment.Add(s+'=' + GetEnvironmentVariable(s));
+      end;
+    end;
     FProcess.CurrentDirectory := FFolder;
     for s in FParameters do
       FProcess.Parameters.add(s);
