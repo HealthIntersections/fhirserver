@@ -34,8 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
+  IdHash, IdHashSHA,
   fsl_testing,
-  fsl_base,
+  fsl_base, fsl_stream,
   ftx_sct_services, ftx_sct_expressions;
 
 type
@@ -66,15 +67,38 @@ procedure registerTests;
 
 implementation
 
+function hashOf(fn : String) : String;
+var
+  hash : TIdHashSHA256;
+  f : TFileStream;
+begin
+  hash := TIdHashSHA256.create;
+  try
+    f := TFileStream.create(fn, fmOpenRead);
+    try
+      result := hash.HashStreamAsHex(f);
+    finally
+      f.free;
+    end;
+  finally
+    hash.free;
+  end;
+end;
+
 { TSnomedTests }
 
 procedure TSnomedTests.Setup;
+var
+  s, h : String;
 begin
   FServices := TSnomedServices.Create(nil);
   if GSnomedDataFile <> '' then
-    FServices.Load(GSnomedDataFile, true)
+    s := GSnomedDataFile
   else
-    FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
+    s := TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']);
+  h := hashOf(s);
+  assertTrue(h = 'AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816', 'Hash of SCT test file is wrong: AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816/'+h);
+  FServices.Load(s, true)
 end;
 
 procedure TSnomedTests.TearDown;
