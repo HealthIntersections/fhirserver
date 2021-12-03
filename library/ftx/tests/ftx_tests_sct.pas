@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdHash, IdHashSHA,
   fsl_testing,
-  fsl_base, fsl_stream,
+  fsl_base, fsl_stream, fsl_utilities,
   ftx_sct_services, ftx_sct_expressions;
 
 type
@@ -97,8 +97,8 @@ begin
   else
     s := TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']);
   h := hashOf(s);
-  assertTrue(h = 'AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816', 'Hash of SCT test file is wrong: AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816/'+h+' starts with '+
-    FileToString(s, TEncoding.ASCII).Substring(0, 100));
+  assertTrue(h = 'AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816', 'Hash of SCT test file is wrong: AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816/'+h+', file size is  '+
+    DescribeBytes(FileSize(s)));
   FServices.Load(s, true)
 end;
 
