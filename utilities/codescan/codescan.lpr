@@ -37,13 +37,21 @@ uses
   cthreads,
   {$ENDIF}
   Classes, SysUtils,
+  DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
   fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode;
 
 
 type
+  TIncludeHandler = class(TInterfacedObject, IIncludeHandler)
+  private
+    FPath: string;
+  public
+    constructor Create(const Path: string);
+    function GetIncludeFileContent(const ParentFileName, IncludeName: string; out Content: string; out FileName: string): Boolean;
+  end;
 
   { TCodeScanner }
-  TSourceScanCheck = (sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings);
+  TSourceScanCheck = (sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse);
   TSourceScanCheckSet = set of TSourceScanCheck;
 
   TCodeScanner = class(TObject)
@@ -55,14 +63,17 @@ type
     procedure check(n, m: String);
     procedure reportError(filename : String; line : integer; msg : String);
 
+    procedure checkUnitName(code : TSyntaxNode; filename: String);
+    procedure parseFile(filename: String; incFolder : String);
+
     procedure checkFileForUnicode(filename : String);
     procedure checkFileForLicense(filename, src : String);
     procedure checkFileForExceptionRaise(filename, src : String; ts : TStringList);
     procedure checkFileForExceptionDefine(filename, src : String; ts : TStringList);
     function checkFileForLineEndings(filename, src : String) : String;
 
-    procedure scanFolder(folder: String; checks: TSourceScanCheckSet);
-    procedure checkFile(filename: String; checks: TSourceScanCheckSet);
+    procedure scanFolder(folder: String; checks: TSourceScanCheckSet; incFolder : String);
+    procedure checkFile(filename: String; checks: TSourceScanCheckSet; incFolder : String);
     function adjustChecksForFolder(folder : String; checks: TSourceScanCheckSet) : TSourceScanCheckSet;
     procedure setInstallVersion(n, p, v: String);
     procedure setSourceVersion(v: String);
@@ -79,6 +90,41 @@ begin
     result := '  (found)'
   else
     result := '  (not found!)';
+end;
+
+{ TIncludeHandler }
+
+constructor TIncludeHandler.Create(const Path: string);
+begin
+  inherited Create;
+  FPath := Path;
+end;
+
+function TIncludeHandler.GetIncludeFileContent(const ParentFileName, IncludeName: string;
+  out Content: string; out FileName: string): Boolean;
+var
+  FileContent: TStringList;
+begin
+  FileContent := TStringList.Create;
+  try
+    if (includeName = 'fhir5.inc') then
+      FileName := FilePath([FPath, 'fhir5', IncludeName])
+    else if (includeName = 'fhir4.inc') then
+      FileName := FilePath([FPath, 'fhir4', IncludeName])
+    else if (includeName = 'fhir3.inc') then
+      FileName := FilePath([FPath, 'fhir3', IncludeName])
+    else if (includeName = 'fhir2.inc') then
+      FileName := FilePath([FPath, 'fhir2', IncludeName])
+    else if (includeName = 'fui_gfx.inc') then
+      FileName := FilePath([FPath, 'fui', IncludeName])
+    else
+      FileName := FilePath([FPath, IncludeName]);
+    FileContent.LoadFromFile(FileName);
+    Content := FileContent.Text;
+    Result := True;
+  finally
+    FileContent.Free;
+  end;
 end;
 
 { TCodeScanner }
@@ -193,8 +239,83 @@ begin
   end;
 end;
 
+procedure TCodeScanner.checkUnitName(code : TSyntaxNode; filename: String);
+begin
+  if (code.GetAttribute(anName) <> '') and (code.GetAttribute(anName) <> PathTitle(filename)) then
+    reportError(filename, code.Line, 'unit name doesn''t match file name: "'+code.GetAttribute(anName)+'" vs "'+PathTitle(filename)+'"');
+end;
 
-procedure TCodeScanner.checkFile(filename: String; checks: TSourceScanCheckSet);
+procedure TCodeScanner.parseFile(filename: String; incFolder : String);
+var
+  code : TSyntaxNode;
+begin
+  try
+    DelphiParserConfig.LoadDefaults;
+    DelphiParserConfig.FreePascal := false;
+    DelphiParserConfig.ConfigureWin64;
+    code := TPasSyntaxTreeBuilder.Run(FileName, False, TIncludeHandler.Create(incFolder));
+    try
+      checkUnitName(code, filename);
+    finally
+      code.free;
+    end;
+  Except
+    on e : ESyntaxTreeException do
+      reportError(filename, e.line, e.message+' (Windows)');
+    on e : Exception do
+      reportError(filename, -1, e.message+' (Windows)');
+  end;
+  try
+    DelphiParserConfig.LoadDefaults;
+    DelphiParserConfig.FreePascal := true;
+    DelphiParserConfig.ConfigureWin64;
+    code := TPasSyntaxTreeBuilder.Run(FileName, False, TIncludeHandler.Create(incFolder));
+    try
+      checkUnitName(code, filename);
+    finally
+      code.free;
+    end;
+  Except
+    on e : ESyntaxTreeException do
+      reportError(filename, e.line, e.message+' (Windows/FPC)');
+    on e : Exception do
+      reportError(filename, -1, e.message+' (Windows/FPC)');
+  end;
+  try
+    DelphiParserConfig.LoadDefaults;
+    DelphiParserConfig.FreePascal := true;
+    DelphiParserConfig.ConfigureLinux64;
+    code := TPasSyntaxTreeBuilder.Run(FileName, False, TIncludeHandler.Create(incFolder));
+    try
+      checkUnitName(code, filename);
+    finally
+      code.free;
+    end;
+  Except
+    on e : ESyntaxTreeException do
+      reportError(filename, e.line, e.message+' (Linux)');
+    on e : Exception do
+      reportError(filename, -1, e.message+' (Linux)');
+  end;
+  try
+    DelphiParserConfig.LoadDefaults;
+    DelphiParserConfig.FreePascal := true;
+    DelphiParserConfig.ConfigureMacM1;
+    code := TPasSyntaxTreeBuilder.Run(FileName, False, TIncludeHandler.Create(incFolder));
+    try
+      checkUnitName(code, filename);
+    finally
+      code.free;
+    end;
+  Except
+    on e : ESyntaxTreeException do
+      reportError(filename, e.line, e.message+' (OSX/M1)');
+    on e : Exception do
+      reportError(filename, -1, e.message+' (OSX/M1)');
+  end;
+end;
+
+procedure TCodeScanner.checkFile(filename: String; checks: TSourceScanCheckSet; incFolder : String);
 var
   src : String;
   ts : TStringList;
@@ -241,6 +362,9 @@ begin
   finally
     ts.free;
   end;
+
+  if (sscParse in checks) and StringArrayExists(['.pas'], ExtractFileExt(filename)) then
+    parseFile(filename, incFolder);
 end;
 
 function TCodeScanner.adjustChecksForFolder(folder : String; checks: TSourceScanCheckSet) : TSourceScanCheckSet;
@@ -256,22 +380,27 @@ begin
     result := []
   else if n[length(n)-1] = 'packages' then
     result := checks * [sscUnicode, sscLineEndings]
+  else if n[length(n)-1] = 'install' then
+    result := checks * [sscUnicode, sscLineEndings]
+  else if n[length(n)-1] = 'r5gen' then
+    result := checks * [sscUnicode, sscLineEndings]
   else if StringArrayExists(['backup', '__history', '__recovery', '.git', 'lib'], n[length(n)-1]) then
    result := []
   else
     result := checks;
 end;
 
-procedure TCodeScanner.scanFolder(folder : String; checks : TSourceScanCheckSet);
+procedure TCodeScanner.scanFolder(folder : String; checks : TSourceScanCheckSet; incFolder : String);
 var
   s : String;
 begin
   if (checks = []) then
     exit;
+  write('.');
   for s in TDirectory.GetFiles(folder) do
-    checkFile(s, checks);
+    checkFile(s, checks, incFolder);
   for s in TDirectory.GetDirectories(folder) do
-    scanFolder(s, adjustChecksForFolder(s, checks));
+    scanFolder(s, adjustChecksForFolder(s, checks), incFolder);
 end;
 
 procedure TCodeScanner.setSourceVersion(v : String);
@@ -360,10 +489,18 @@ begin
       Writeln('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
       Writeln('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
       FAllOk := true;
-      scanFolder(FSourceDir, [sscUnicode]);
-      scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise]);
-      scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise]);
-      scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings]);
+      writeln(FSourceDir+' [unicode]');
+      scanFolder(FSourceDir, [sscUnicode], FProjectDir);
+      writeln;
+      writeln(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
+      scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'delphi-markdown']));
+      writeln;
+      writeln(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
+      scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
+      writeln;
+      writeln(FProjectDir+' [license, eoln, exceptions, full-parse]');
+      scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
+      writeln;
     end;
   except
     on e : Exception do
@@ -402,6 +539,9 @@ end;
 
 var
   Application: TCodeScanner;
+
+{$R *.res}
+
 begin
   Application := TCodeScanner.Create;
   Application.Run;

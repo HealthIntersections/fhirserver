@@ -1,4 +1,4 @@
-unit FHIR.R2.Tests.PathEngine;
+unit fhir2_tests_pathengine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -293,10 +293,4 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TFluentPathTest);
   TDUnitX.RegisterTestFixture(TFluentPathTests);
-function TFluentPathTest.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, engine.sizeInBytes(magic));
-end;
-
 end.

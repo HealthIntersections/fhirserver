@@ -1,4 +1,4 @@
-Unit FHIR.Ui.GraphDesigner;
+Unit fui_vcl_graphdesigner;
 
 {
 Copyright (c) 1996+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

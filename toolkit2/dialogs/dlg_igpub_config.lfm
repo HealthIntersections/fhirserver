@@ -1,0 +1,97 @@
+object IGPublisherConfigForm: TIGPublisherConfigForm
+  Left = 1209
+  Height = 179
+  Top = -612
+  Width = 537
+  BorderIcons = []
+  Caption = 'IG Publisher Configuration'
+  ClientHeight = 179
+  ClientWidth = 537
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object edtDevParams: TEdit
+    Left = 8
+    Height = 23
+    Top = 85
+    Width = 512
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 1
+    Text = 'edtDevParams'
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 138
+    Width = 537
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 537
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 372
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 453
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+    object Button1: TButton
+      Left = 8
+      Height = 25
+      Top = 6
+      Width = 136
+      Caption = 'Reload Version List'
+      OnClick = Button1Click
+      TabOrder = 2
+    end
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 64
+    Width = 221
+    Caption = 'Parameters for Dev Version of IG Publisher'
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 119
+    Width = 64
+    Caption = 'Eclipse Help'
+    Font.Color = 13959168
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    OnClick = Label2Click
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 82
+    Caption = 'Java Command'
+  end
+  object edtJavaCmd: TEdit
+    Left = -8
+    Height = 23
+    Top = 24
+    Width = 512
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 2
+    Text = 'edtJavaCmd'
+  end
+end

@@ -1,4 +1,4 @@
-unit v2_dictionary_Compiled;
+unit v2_dictionary_compiled;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

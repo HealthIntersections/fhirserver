@@ -1,4 +1,4 @@
-Unit dicom_Writer;
+Unit dicom_writer;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)

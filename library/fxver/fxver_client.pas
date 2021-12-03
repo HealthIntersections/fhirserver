@@ -1,4 +1,4 @@
-unit FHIR.Version.Client;
+unit fxver_client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,16 +34,16 @@ interface
 uses
   SysUtils,
   fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_factory,
-  {$IFDEF FHIR2}
-  fhir2_client, fhir2_context;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  fhir3_client, fhir3_context;
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  fhir4_client, fhir4_context;
-  {$ENDIF}
+  fhir_objects, fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_factory;
+  //{$IFDEF FHIR2}
+  //fhir2_client, fhir2_context;
+  //{$ENDIF}
+  //{$IFDEF FHIR3}
+  //fhir3_client, fhir3_context;
+  //{$ENDIF}
+  //{$IFDEF FHIR4}
+  //fhir4_client, fhir4_context;
+  //{$ENDIF}
 
 
 Type

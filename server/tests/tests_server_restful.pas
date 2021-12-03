@@ -1,4 +1,4 @@
-unit FHIR.Tests.RestfulServer;
+unit tests_server_restful;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

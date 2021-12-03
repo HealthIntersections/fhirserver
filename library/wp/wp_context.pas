@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$if fhir.inc}
+{$i fhir.inc}
 
 interface
 
@@ -39,7 +39,7 @@ type
   TWPContext = class (TFSlObject)
   private
   public
-    constructor create(
+   // constructor create(
   end;
 
 implementation

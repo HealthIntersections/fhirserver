@@ -1,4 +1,4 @@
-﻿unit fhir4_resources_base;
+unit fhir4_resources_base;
 
 {$I fhir4.inc}
 

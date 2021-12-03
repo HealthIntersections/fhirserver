@@ -71,6 +71,11 @@ else
     cd PdfiumLib && git pull && cd ..
 fi
 
+if [ ! -d "DelphiAST" ] ; then
+    git clone --recurse-submodules https://github.com/grahamegrieve/DelphiAST
+else
+    cd DelphiAST && git pull && cd ..
+fi
 
 cd ..
 
@@ -106,6 +111,8 @@ tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk -q --add-package
 echo "## compile package source/delphi-markdown/tests/markdowntests.lpk"
 tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk -q
 
+echo "## compile package source/DelphiAST/Package/pascalast.lpk"
+tools/lazarus/lazbuild source/DelphiAST/Package/pascalast.lpk --quiet 
 
 # ----  back to the server ----------
 

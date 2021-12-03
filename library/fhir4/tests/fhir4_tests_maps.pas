@@ -1,4 +1,4 @@
-unit fhir4_tests_Maps;
+unit fhir4_tests_maps;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

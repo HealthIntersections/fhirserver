@@ -393,6 +393,7 @@ Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Int
 Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean; Overload;
 
 function jsonEscape(s : String; isString : boolean) : String;
+function jsonUnescape(s : String) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
 function isAbsoluteUrl(s: String): boolean;
@@ -5970,6 +5971,62 @@ begin
     result := b.ToString;
   finally
     b.Free;
+  end;
+end;
+
+function jsonUnescape(s : String) : String;
+var
+  b : TStringBuilder;
+  i : integer;
+  ch :  char;
+  hex : String;
+  function nextChar : char;
+  begin
+    inc(i);
+    if i <= s.length then
+      result := s[i]
+    else
+      result := ' ';
+  end;
+begin
+  b := TStringBuilder.create;
+  try
+    i := 0;
+    while (i < s.length) do
+    begin
+      ch := nextChar;
+      if (ch = '\') Then
+      Begin
+        ch := nextChar;
+        case ch of
+          '"': b.append('"');
+          '''': b.append('''');
+          '\': b.append('\');
+          '/': b.append('/');
+          'n': b.append(#10);
+          'r': b.append(#13);
+          't': b.append(#09);
+          'u':
+            begin
+            setLength(hex, 4);
+            hex[1] := nextChar;
+            hex[2] := nextChar;
+            hex[3] := nextChar;
+            hex[4] := nextChar;
+            b.append(chr(StrToInt('$'+hex)));
+            end
+        Else
+          b.append('?'+ch);
+        End;
+      End
+      Else if (ch = '"') then
+        b.append(ch)
+      else
+        b.append(ch);
+    end;
+    result := b.toString;
+  finally
+    b.free;
   end;
 end;
 

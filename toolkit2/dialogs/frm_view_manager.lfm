@@ -1,13 +1,13 @@
 object ViewManagerForm: TViewManagerForm
   Left = 683
-  Height = 525
+  Height = 598
   Top = 121
-  Width = 780
+  Width = 589
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'Manage Views'
-  ClientHeight = 525
-  ClientWidth = 780
+  ClientHeight = 598
+  ClientWidth = 589
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -16,23 +16,23 @@ object ViewManagerForm: TViewManagerForm
   object Panel1: TPanel
     Left = 0
     Height = 40
-    Top = 445
-    Width = 780
-    Align = alBottom
+    Top = 0
+    Width = 589
+    Align = alTop
     ClientHeight = 40
-    ClientWidth = 780
+    ClientWidth = 589
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 0
     object Label4: TLabel
       Left = 8
-      Height = 17
+      Height = 15
       Top = 12
-      Width = 43
+      Width = 35
       Caption = 'Zoom:'
     end
     object edtZoom: TSpinEdit
       Left = 50
-      Height = 33
+      Height = 23
       Top = 9
       Width = 79
       Increment = 10
@@ -43,7 +43,7 @@ object ViewManagerForm: TViewManagerForm
     end
     object btn100: TButton
       Left = 129
-      Height = 23
+      Height = 25
       Top = 8
       Width = 31
       Caption = '100'
@@ -51,465 +51,48 @@ object ViewManagerForm: TViewManagerForm
       TabOrder = 1
     end
     object chkSrcIsMaximised: TCheckBox
-      Left = 234
-      Height = 23
+      Left = 224
+      Height = 19
       Top = 12
-      Width = 104
-      Caption = 'Editor View'
+      Width = 118
+      Caption = 'Editor Full Window'
       TabOrder = 2
     end
-    object chkToolButtons: TCheckBox
-      Left = 396
-      Height = 23
+    object Label5: TLabel
+      Left = 424
+      Height = 15
       Top = 12
-      Width = 174
-      Caption = 'Show Views in Toolbar'
+      Width = 42
+      Caption = 'Toolbar:'
+    end
+    object cbxToolbar: TComboBox
+      Left = 480
+      Height = 23
+      Top = 8
+      Width = 100
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'Small'
+        'Big'
+      )
+      Style = csDropDownList
       TabOrder = 3
-    end
-  end
-  object Panel2: TPanel
-    Left = 0
-    Height = 445
-    Top = 0
-    Width = 260
-    Align = alLeft
-    ClientHeight = 445
-    ClientWidth = 260
-    TabOrder = 0
-    object Panel5: TPanel
-      Left = 1
-      Height = 30
-      Top = 1
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      Caption = '  Left Views'
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 0
-      object Label1: TLabel
-        Left = 128
-        Height = 17
-        Top = 10
-        Width = 45
-        Anchors = [akTop, akRight]
-        Caption = 'Width:'
-      end
-      object edtLeftWidth: TSpinEdit
-        Left = 180
-        Height = 33
-        Top = 6
-        Width = 69
-        Anchors = [akTop, akRight]
-        Increment = 10
-        MaxValue = 1000
-        TabOrder = 0
-      end
-    end
-    object Panel8: TPanel
-      Left = 1
-      Height = 30
-      Top = 31
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 1
-      object rbLeftTabbed: TRadioButton
-        Left = 8
-        Height = 23
-        Top = 4
-        Width = 77
-        Caption = 'Tabbed'
-        Checked = True
-        TabOrder = 0
-        TabStop = True
-      end
-      object rbLeftStacked: TRadioButton
-        Left = 104
-        Height = 23
-        Top = 4
-        Width = 79
-        Caption = 'Stacked'
-        TabOrder = 1
-      end
-    end
-    object Panel11: TPanel
-      Left = 1
-      Height = 38
-      Top = 406
-      Width = 258
-      Align = alBottom
-      BevelOuter = bvNone
-      ClientHeight = 38
-      ClientWidth = 258
-      TabOrder = 2
-      object btnLeftUp: TButton
-        Left = 4
-        Height = 25
-        Top = 8
-        Width = 59
-        Caption = 'Up'
-        Enabled = False
-        OnClick = btnLeftUpClick
-        TabOrder = 0
-      end
-      object btnLeftDown: TButton
-        Left = 66
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Down'
-        Enabled = False
-        OnClick = btnLeftDownClick
-        TabOrder = 1
-      end
-      object btnLeftBottom: TButton
-        Left = 128
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Bottom'
-        Enabled = False
-        OnClick = btnLeftBottomClick
-        TabOrder = 2
-      end
-      object btnLeftRight: TButton
-        Left = 192
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Right'
-        Enabled = False
-        OnClick = btnLeftRightClick
-        TabOrder = 3
-      end
-    end
-    object Panel14: TPanel
-      Left = 1
-      Height = 345
-      Top = 61
-      Width = 258
-      Align = alClient
-      BevelOuter = bvNone
-      BorderWidth = 6
-      Caption = 'Panel14'
-      ClientHeight = 345
-      ClientWidth = 258
-      TabOrder = 3
-      object lbleft: TListBox
-        Left = 6
-        Height = 333
-        Top = 6
-        Width = 246
-        Align = alClient
-        ItemHeight = 0
-        OnClick = updateStatus
-        TabOrder = 0
-        TopIndex = -1
-      end
-    end
-  end
-  object Panel3: TPanel
-    Left = 520
-    Height = 445
-    Top = 0
-    Width = 260
-    Align = alRight
-    ClientHeight = 445
-    ClientWidth = 260
-    TabOrder = 2
-    object Panel6: TPanel
-      Left = 1
-      Height = 30
-      Top = 1
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      Caption = '  Right Views'
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 0
-      object Label3: TLabel
-        Left = 128
-        Height = 17
-        Top = 10
-        Width = 45
-        Anchors = [akTop, akRight]
-        Caption = 'Width:'
-      end
-      object edtRightWidth: TSpinEdit
-        Left = 180
-        Height = 33
-        Top = 6
-        Width = 69
-        Anchors = [akTop, akRight]
-        Increment = 10
-        MaxValue = 1000
-        TabOrder = 0
-      end
-    end
-    object Panel10: TPanel
-      Left = 1
-      Height = 30
-      Top = 31
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 1
-      object rbRightTabbed: TRadioButton
-        Left = 8
-        Height = 23
-        Top = 4
-        Width = 77
-        Caption = 'Tabbed'
-        Checked = True
-        TabOrder = 0
-        TabStop = True
-      end
-      object rbRightStacked: TRadioButton
-        Left = 104
-        Height = 23
-        Top = 4
-        Width = 79
-        Caption = 'Stacked'
-        TabOrder = 1
-      end
-    end
-    object Panel13: TPanel
-      Left = 1
-      Height = 38
-      Top = 406
-      Width = 258
-      Align = alBottom
-      BevelOuter = bvNone
-      ClientHeight = 38
-      ClientWidth = 258
-      TabOrder = 2
-      object btnRightUp: TButton
-        Left = 4
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Up'
-        Enabled = False
-        OnClick = btnRightUpClick
-        TabOrder = 0
-      end
-      object btnRightDown: TButton
-        Left = 66
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Down'
-        Enabled = False
-        OnClick = btnRightDownClick
-        TabOrder = 1
-      end
-      object btnRightLeft: TButton
-        Left = 128
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Left'
-        Enabled = False
-        OnClick = btnRightLeftClick
-        TabOrder = 2
-      end
-      object btnRightBottom: TButton
-        Left = 192
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Bottom'
-        Enabled = False
-        OnClick = btnRightBottomClick
-        TabOrder = 3
-      end
-    end
-    object Panel16: TPanel
-      Left = 1
-      Height = 345
-      Top = 61
-      Width = 258
-      Align = alClient
-      BevelOuter = bvNone
-      BorderWidth = 6
-      Caption = 'Panel16'
-      ClientHeight = 345
-      ClientWidth = 258
-      TabOrder = 3
-      object lbRight: TListBox
-        Left = 6
-        Height = 333
-        Top = 6
-        Width = 246
-        Align = alClient
-        ItemHeight = 0
-        OnClick = updateStatus
-        TabOrder = 0
-        TopIndex = -1
-      end
-    end
-  end
-  object Panel4: TPanel
-    Left = 260
-    Height = 445
-    Top = 0
-    Width = 260
-    Align = alClient
-    ClientHeight = 445
-    ClientWidth = 260
-    TabOrder = 1
-    object Panel7: TPanel
-      Left = 1
-      Height = 30
-      Top = 1
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      Caption = '  Bottom Views'
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 0
-      object Label2: TLabel
-        Left = 125
-        Height = 17
-        Top = 10
-        Width = 48
-        Anchors = [akTop, akRight]
-        Caption = 'Height:'
-      end
-      object edtBottomWidth: TSpinEdit
-        Left = 180
-        Height = 33
-        Top = 6
-        Width = 69
-        Anchors = [akTop, akRight]
-        Increment = 10
-        MaxValue = 1000
-        TabOrder = 0
-      end
-    end
-    object Panel9: TPanel
-      Left = 1
-      Height = 30
-      Top = 31
-      Width = 258
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      ClientHeight = 30
-      ClientWidth = 258
-      TabOrder = 1
-      object RadioButton3: TRadioButton
-        Left = 8
-        Height = 23
-        Top = 4
-        Width = 77
-        Caption = 'Tabbed'
-        Checked = True
-        Enabled = False
-        TabOrder = 0
-        TabStop = True
-      end
-    end
-    object Panel12: TPanel
-      Left = 1
-      Height = 38
-      Top = 406
-      Width = 258
-      Align = alBottom
-      BevelOuter = bvNone
-      ClientHeight = 38
-      ClientWidth = 258
-      TabOrder = 2
-      object btnBottomUp: TButton
-        Left = 4
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Up'
-        Enabled = False
-        OnClick = btnBottomUpClick
-        TabOrder = 0
-      end
-      object btnBottomDown: TButton
-        Left = 66
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Down'
-        Enabled = False
-        OnClick = btnBottomDownClick
-        TabOrder = 1
-      end
-      object btnBottomLeft: TButton
-        Left = 128
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Left'
-        Enabled = False
-        OnClick = btnBottomLeftClick
-        TabOrder = 2
-      end
-      object btnBottomRight: TButton
-        Left = 192
-        Height = 25
-        Top = 6
-        Width = 59
-        Caption = 'Right'
-        Enabled = False
-        OnClick = btnBottomRightClick
-        TabOrder = 3
-      end
-    end
-    object Panel15: TPanel
-      Left = 1
-      Height = 345
-      Top = 61
-      Width = 258
-      Align = alClient
-      BevelOuter = bvNone
-      BorderWidth = 6
-      Caption = 'Panel15'
-      ClientHeight = 345
-      ClientWidth = 258
-      TabOrder = 3
-      object lbBottom: TListBox
-        Left = 6
-        Height = 333
-        Top = 6
-        Width = 246
-        Align = alClient
-        ItemHeight = 0
-        OnClick = updateStatus
-        TabOrder = 0
-        TopIndex = -1
-      end
+      Text = 'Small'
     end
   end
   object Panel17: TPanel
     Left = 0
     Height = 40
-    Top = 485
-    Width = 780
+    Top = 558
+    Width = 589
     Align = alBottom
     ClientHeight = 40
-    ClientWidth = 780
+    ClientWidth = 589
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 1
     object btnOk: TButton
-      Left = 616
+      Left = 425
       Height = 25
       Top = 5
       Width = 75
@@ -522,7 +105,7 @@ object ViewManagerForm: TViewManagerForm
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 696
+      Left = 505
       Height = 25
       Top = 5
       Width = 75
@@ -532,14 +115,562 @@ object ViewManagerForm: TViewManagerForm
       ParentFont = False
       TabOrder = 1
     end
-    object Button14: TButton
+    object btnRestore: TButton
       Left = 6
       Height = 25
       Top = 5
       Width = 110
       Caption = 'Restore Defaults'
-      OnClick = Button13Click
+      OnClick = btnRestoreClick
       TabOrder = 2
+    end
+  end
+  object Panel23: TPanel
+    Left = 0
+    Height = 518
+    Top = 40
+    Width = 589
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 518
+    ClientWidth = 589
+    TabOrder = 2
+    object Panel24: TPanel
+      Left = 0
+      Height = 275
+      Top = 0
+      Width = 589
+      Align = alTop
+      BevelOuter = bvNone
+      ClientHeight = 275
+      ClientWidth = 589
+      TabOrder = 0
+      object Panel2: TPanel
+        Left = 0
+        Height = 275
+        Top = 0
+        Width = 296
+        Align = alLeft
+        ClientHeight = 275
+        ClientWidth = 296
+        TabOrder = 0
+        object Panel5: TPanel
+          Left = 1
+          Height = 30
+          Top = 1
+          Width = 294
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '  Left Views'
+          ClientHeight = 30
+          ClientWidth = 294
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          object Label1: TLabel
+            Left = 166
+            Height = 15
+            Top = 8
+            Width = 37
+            Anchors = [akTop, akRight]
+            Caption = 'Width:'
+          end
+          object edtLeftWidth: TSpinEdit
+            Left = 216
+            Height = 23
+            Top = 6
+            Width = 69
+            Anchors = [akTop, akRight]
+            Increment = 10
+            MaxValue = 1000
+            TabOrder = 0
+          end
+        end
+        object Panel8: TPanel
+          Left = 1
+          Height = 30
+          Top = 31
+          Width = 294
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          ClientHeight = 30
+          ClientWidth = 294
+          TabOrder = 1
+          object rbLeftTabbed: TRadioButton
+            Left = 8
+            Height = 19
+            Top = 4
+            Width = 57
+            Caption = 'Tabbed'
+            Checked = True
+            TabOrder = 0
+            TabStop = True
+          end
+          object rbLeftStacked: TRadioButton
+            Left = 104
+            Height = 19
+            Top = 4
+            Width = 59
+            Caption = 'Stacked'
+            TabOrder = 1
+          end
+        end
+        object Panel11: TPanel
+          Left = 1
+          Height = 31
+          Top = 243
+          Width = 294
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 31
+          ClientWidth = 294
+          TabOrder = 2
+          object btnLeftUp: TButton
+            Left = 4
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Up'
+            Enabled = False
+            OnClick = btnLeftUpClick
+            TabOrder = 0
+          end
+          object btnLeftDown: TButton
+            Left = 72
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Down'
+            Enabled = False
+            OnClick = btnLeftDownClick
+            TabOrder = 1
+          end
+          object btnLeftMove: TButton
+            Left = 213
+            Height = 25
+            Top = 0
+            Width = 75
+            Anchors = [akTop, akRight]
+            Caption = 'Move'
+            OnClick = btnMoveClick
+            TabOrder = 2
+          end
+        end
+        object Panel14: TPanel
+          Left = 1
+          Height = 182
+          Top = 61
+          Width = 294
+          Align = alClient
+          BevelOuter = bvNone
+          BorderWidth = 6
+          Caption = 'Panel14'
+          ClientHeight = 182
+          ClientWidth = 294
+          TabOrder = 3
+          object lbleft: TListBox
+            Left = 6
+            Height = 170
+            Top = 6
+            Width = 282
+            Align = alClient
+            ItemHeight = 0
+            OnClick = updateStatus
+            OnContextPopup = lbRightContextPopup
+            OnMouseDown = lbleftMouseDown
+            PopupMenu = pmList
+            TabOrder = 0
+          end
+        end
+      end
+      object Panel3: TPanel
+        Left = 296
+        Height = 275
+        Top = 0
+        Width = 293
+        Align = alClient
+        ClientHeight = 275
+        ClientWidth = 293
+        TabOrder = 1
+        object Panel6: TPanel
+          Left = 1
+          Height = 30
+          Top = 1
+          Width = 291
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '  Right Views'
+          ClientHeight = 30
+          ClientWidth = 291
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          object Label3: TLabel
+            Left = 169
+            Height = 15
+            Top = 10
+            Width = 37
+            Anchors = [akTop, akRight]
+            Caption = 'Width:'
+          end
+          object edtRightWidth: TSpinEdit
+            Left = 213
+            Height = 23
+            Top = 6
+            Width = 69
+            Anchors = [akTop, akRight]
+            Increment = 10
+            MaxValue = 1000
+            TabOrder = 0
+          end
+        end
+        object Panel10: TPanel
+          Left = 1
+          Height = 30
+          Top = 31
+          Width = 291
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          ClientHeight = 30
+          ClientWidth = 291
+          TabOrder = 1
+          object rbRightTabbed: TRadioButton
+            Left = 8
+            Height = 19
+            Top = 4
+            Width = 57
+            Caption = 'Tabbed'
+            Checked = True
+            TabOrder = 0
+            TabStop = True
+          end
+          object rbRightStacked: TRadioButton
+            Left = 104
+            Height = 19
+            Top = 4
+            Width = 59
+            Caption = 'Stacked'
+            TabOrder = 1
+          end
+        end
+        object Panel13: TPanel
+          Left = 1
+          Height = 31
+          Top = 243
+          Width = 291
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 31
+          ClientWidth = 291
+          TabOrder = 2
+          object btnRightUp: TButton
+            Left = 6
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Up'
+            Enabled = False
+            OnClick = btnRightUpClick
+            TabOrder = 0
+          end
+          object btnRightDown: TButton
+            Left = 72
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Down'
+            Enabled = False
+            OnClick = btnRightDownClick
+            TabOrder = 1
+          end
+          object btnRightMove: TButton
+            Tag = 1
+            Left = 213
+            Height = 25
+            Top = 0
+            Width = 75
+            Anchors = [akTop, akRight]
+            Caption = 'Move'
+            OnClick = btnMoveClick
+            TabOrder = 2
+          end
+        end
+        object Panel16: TPanel
+          Left = 1
+          Height = 182
+          Top = 61
+          Width = 291
+          Align = alClient
+          BevelOuter = bvNone
+          BorderWidth = 6
+          Caption = 'Panel16'
+          ClientHeight = 182
+          ClientWidth = 291
+          TabOrder = 3
+          object lbRight: TListBox
+            Tag = 1
+            Left = 6
+            Height = 170
+            Top = 6
+            Width = 279
+            Align = alClient
+            ItemHeight = 0
+            OnClick = updateStatus
+            OnContextPopup = lbRightContextPopup
+            OnMouseDown = lbleftMouseDown
+            PopupMenu = pmList
+            TabOrder = 0
+          end
+        end
+      end
+    end
+    object Panel25: TPanel
+      Left = 0
+      Height = 243
+      Top = 275
+      Width = 589
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 243
+      ClientWidth = 589
+      TabOrder = 1
+      object Panel4: TPanel
+        Left = 0
+        Height = 243
+        Top = 0
+        Width = 296
+        Align = alLeft
+        ClientHeight = 243
+        ClientWidth = 296
+        TabOrder = 0
+        object Panel7: TPanel
+          Left = 1
+          Height = 30
+          Top = 1
+          Width = 294
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '  Bottom Views'
+          ClientHeight = 30
+          ClientWidth = 294
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          object Label2: TLabel
+            Left = 168
+            Height = 15
+            Top = 10
+            Width = 41
+            Anchors = [akTop, akRight]
+            Caption = 'Height:'
+          end
+          object edtBottomWidth: TSpinEdit
+            Left = 216
+            Height = 23
+            Top = 6
+            Width = 69
+            Anchors = [akTop, akRight]
+            Increment = 10
+            MaxValue = 1000
+            TabOrder = 0
+          end
+        end
+        object Panel12: TPanel
+          Left = 1
+          Height = 29
+          Top = 213
+          Width = 294
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 29
+          ClientWidth = 294
+          TabOrder = 1
+          object btnBottomUp: TButton
+            Left = 4
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Up'
+            Enabled = False
+            OnClick = btnBottomUpClick
+            TabOrder = 0
+          end
+          object btnBottomDown: TButton
+            Left = 72
+            Height = 25
+            Top = 0
+            Width = 59
+            Caption = 'Down'
+            Enabled = False
+            OnClick = btnBottomDownClick
+            TabOrder = 1
+          end
+          object btnBottomMove: TButton
+            Tag = 2
+            Left = 213
+            Height = 25
+            Top = 0
+            Width = 75
+            Anchors = [akTop, akRight]
+            Caption = 'Move'
+            OnClick = btnMoveClick
+            TabOrder = 2
+          end
+        end
+        object Panel15: TPanel
+          Left = 1
+          Height = 182
+          Top = 31
+          Width = 294
+          Align = alClient
+          BevelOuter = bvNone
+          BorderWidth = 6
+          Caption = 'Panel15'
+          ClientHeight = 182
+          ClientWidth = 294
+          TabOrder = 2
+          object lbBottom: TListBox
+            Tag = 2
+            Left = 6
+            Height = 170
+            Top = 6
+            Width = 282
+            Align = alClient
+            ItemHeight = 0
+            OnClick = updateStatus
+            OnContextPopup = lbRightContextPopup
+            OnMouseDown = lbleftMouseDown
+            PopupMenu = pmList
+            TabOrder = 0
+          end
+        end
+      end
+      object Panel18: TPanel
+        Left = 296
+        Height = 243
+        Top = 0
+        Width = 293
+        Align = alClient
+        ClientHeight = 243
+        ClientWidth = 293
+        TabOrder = 1
+        object Panel19: TPanel
+          Left = 1
+          Height = 30
+          Top = 1
+          Width = 291
+          Align = alTop
+          Alignment = taLeftJustify
+          BevelOuter = bvNone
+          Caption = '  Hidden Views'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object Panel21: TPanel
+          Left = 1
+          Height = 29
+          Top = 213
+          Width = 291
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 29
+          ClientWidth = 291
+          TabOrder = 1
+          object btnHiddenMove: TButton
+            Tag = 3
+            Left = 213
+            Height = 25
+            Top = 0
+            Width = 75
+            Anchors = [akTop, akRight]
+            Caption = 'Move'
+            OnClick = btnMoveClick
+            TabOrder = 0
+          end
+        end
+        object Panel22: TPanel
+          Left = 1
+          Height = 182
+          Top = 31
+          Width = 291
+          Align = alClient
+          BevelOuter = bvNone
+          BorderWidth = 6
+          Caption = 'Panel16'
+          ClientHeight = 182
+          ClientWidth = 291
+          TabOrder = 2
+          object lbHidden: TListBox
+            Tag = 3
+            Left = 6
+            Height = 170
+            Top = 6
+            Width = 279
+            Align = alClient
+            ItemHeight = 0
+            OnClick = updateStatus
+            OnContextPopup = lbRightContextPopup
+            OnMouseDown = lbleftMouseDown
+            PopupMenu = pmList
+            TabOrder = 0
+          end
+        end
+      end
+    end
+  end
+  object pmMove: TPopupMenu
+    Left = 152
+    Top = 552
+    object mnuMoveLeft: TMenuItem
+      Caption = 'Send to Left'
+      OnClick = mnuMoveLeftClick
+    end
+    object mnuMoveRight: TMenuItem
+      Caption = 'Send to Right'
+      OnClick = mnuMoveRightClick
+    end
+    object mnuMoveBottom: TMenuItem
+      Caption = 'Send to Bottom'
+      OnClick = mnuMoveBottomClick
+    end
+    object mnuMoveHidden: TMenuItem
+      Caption = 'Hide'
+      OnClick = mnuMoveHiddenClick
+    end
+  end
+  object pmList: TPopupMenu
+    OnPopup = pmListPopup
+    Left = 232
+    Top = 552
+    object mnuListUp: TMenuItem
+      Caption = 'Up'
+      OnClick = mnuListUpClick
+    end
+    object mnuListDown: TMenuItem
+      Caption = 'Down'
+      OnClick = mnuListDownClick
+    end
+    object mnuListMoveLeft: TMenuItem
+      Caption = 'Send to Left'
+      OnClick = mnuListMoveLeftClick
+    end
+    object mnuListMoveRIght: TMenuItem
+      Caption = 'Send to Right'
+      OnClick = mnuListMoveRIghtClick
+    end
+    object mnuListMoveBottom: TMenuItem
+      Caption = 'Send to Bottom'
+      OnClick = mnuListMoveBottomClick
+    end
+    object mnuListMoveHidden: TMenuItem
+      Caption = 'Hide'
+      OnClick = mnuListMoveHiddenClick
     end
   end
 end

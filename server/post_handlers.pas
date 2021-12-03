@@ -66,7 +66,7 @@ Type
     function execute : TFslStringDictionary; virtual; abstract;
   end;
 
-  !{$IFDEF FHIR3}
+  {$IFDEF FHIR3}
   TFHIRServerCoveragePostHandler = class (TFHIRServerPostHandler)
   private
   public
@@ -101,16 +101,16 @@ end;
 
 function TFHIRServerPostHandler.buildPeriod(startParam, endParam: String): TFHIRPeriod;
 begin
-  if (params['startParam') = '') and  (params['endParam') = '') then
+  if (params['startParam'] = '') and  (params['endParam'] = '') then
     exit(nil)
   else
   begin
     result := TFhirPeriod.Create;
     try
-      if (params['startParam') <> '') then
-        result.start := TFslDateTime.fromXML(params['startParam'));
-      if (params['endParam') <> '') then
-        result.end_ := TFslDateTime.fromXML(params['endParam'));
+      if (params['startParam'] <> '') then
+        result.start := TFslDateTime.fromXML(params['startParam']);
+      if (params['endParam'] <> '') then
+        result.end_ := TFslDateTime.fromXML(params['endParam']);
       result.Link;
     finally
       result.Free;
@@ -120,13 +120,13 @@ end;
 
 function TFHIRServerPostHandler.buildReference(param: String): TFhirReference;
 begin
-  if (params['param') = '') then
+  if (params['param'] = '') then
     exit(nil)
   else
   begin
     result := TFhirReference.Create;
     try
-      result.reference := params['param');
+      result.reference := params['param'];
       // todo: look up display
       result.Link;
     finally
@@ -149,9 +149,9 @@ var
   s, v, t : String;
   id : TFhirIdentifier;
 begin
-  s := params[systemParam);
-  v := params[valueParam);
-  t := params[typeParam);
+  s := params[systemParam];
+  v := params[valueParam];
+  t := params[typeParam];
   if (s <> '') or (t <> '') or (v <> '') then
   begin
     id := TFhirIdentifier.Create;
@@ -201,7 +201,7 @@ begin
   FSession := Value;
 end;
 
-!{$IFDEF FHIR3}
+{$IFDEF FHIR3}
 
 { TFHIRServerCoveragePostHandler }
 
@@ -255,9 +255,9 @@ var
     end;
   end;
 begin
-  if params['provenance.name') = '' then
+  if params['provenance.name'] = '' then
     raise EFHIRException.create('Please provide a name');
-  if params['provenance.country') = '' then
+  if params['provenance.country'] = '' then
     raise EFHIRException.create('Please provide a country');
 
   prov := TFhirProvenance.Create;
@@ -268,49 +268,49 @@ begin
       processIdentifier(coverage.identifierList, 'id.system.1',' id.value.1', 'id.type.1');
       processIdentifier(coverage.identifierList, 'id.system.2',' id.value.2', 'id.type.2');
       processIdentifier(coverage.identifierList, 'id.system.3',' id.value.3', 'id.type.3');
-      coverage.status := TFhirFmStatusEnum(StringArrayIndexOfSensitive(['', 'active', 'cancelled', 'draft', 'entered-in-error'], params['status')));
-      if params['type') <> '' then
-        if params['type') = 'pay' then
-          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/coverage-selfpay', params['type'))
+      coverage.status := TFhirFmStatusEnum(StringArrayIndexOfSensitive(['', 'active', 'cancelled', 'draft', 'entered-in-error'], params['status']));
+      if params['type'] <> '' then
+        if params['type'] = 'pay' then
+          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/coverage-selfpay', params['type'])
         else
-          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/v3/ActCode', params['type'));
+          coverage.type_ := buildCodeableConcept('http://hl7.org/fhir/v3/ActCode', params['type']);
       coverage.policyHolder := buildReference('policy');
       coverage.subscriber := buildReference('subscriber');
-      coverage.subscriberId := params['subscriberId');
+      coverage.subscriberId := params['subscriberId'];
       coverage.beneficiary := buildReference('beneficiary');
-      coverage.relationship := buildCodeableConcept('http://hl7.org/fhir/policyholder-relationship', params['relationship'));
+      coverage.relationship := buildCodeableConcept('http://hl7.org/fhir/policyholder-relationship', params['relationship']);
       coverage.period := buildPeriod('start', 'end');
       processReference(coverage.payorList, 'payor');
 
-      if params['group.code') <> '' then
-        forceGroup.group := params['group.code');
-      if params['group.display') <> '' then
-        forceGroup.groupDisplay := params['group.display');
-      if params['subgroup.code') <> '' then
-        forceGroup.subGroup := params['subgroup.code');
-      if params['subgroup.display') <> '' then
-        forceGroup.subGroupDisplay := params['subgroup.display');
-      if params['plan.code') <> '' then
-        forceGroup.plan := params['plan.code');
-      if params['plan.display') <> '' then
-        forceGroup.planDisplay := params['plan.display');
-      if params['subplan.code') <> '' then
-        forceGroup.subPlan := params['subplan.code');
-      if params['subplan.display') <> '' then
-        forceGroup.subPlanDisplay := params['subplan.display');
-      if params['class.code') <> '' then
-        forceGroup.class_ := params['class.code');
-      if params['class.display') <> '' then
-        forceGroup.classDisplay := params['class.display');
-      if params['subclass.code') <> '' then
-        forceGroup.subclass := params['subclass.code');
-      if params['subclass.display') <> '' then
-        forceGroup.subclassDisplay := params['subclass.display');
+      if params['group.code'] <> '' then
+        forceGroup.group := params['group.code'];
+      if params['group.display'] <> '' then
+        forceGroup.groupDisplay := params['group.display'];
+      if params['subgroup.code'] <> '' then
+        forceGroup.subGroup := params['subgroup.code'];
+      if params['subgroup.display'] <> '' then
+        forceGroup.subGroupDisplay := params['subgroup.display'];
+      if params['plan.code'] <> '' then
+        forceGroup.plan := params['plan.code'];
+      if params['plan.display'] <> '' then
+        forceGroup.planDisplay := params['plan.display'];
+      if params['subplan.code'] <> '' then
+        forceGroup.subPlan := params['subplan.code'];
+      if params['subplan.display'] <> '' then
+        forceGroup.subPlanDisplay := params['subplan.display'];
+      if params['class.code'] <> '' then
+        forceGroup.class_ := params['class.code'];
+      if params['class.display'] <> '' then
+        forceGroup.classDisplay := params['class.display'];
+      if params['subclass.code'] <> '' then
+        forceGroup.subclass := params['subclass.code'];
+      if params['subclass.display'] <> '' then
+        forceGroup.subclassDisplay := params['subclass.display'];
 
-      coverage.dependent := params['dependent');
-      coverage.sequence := params['sequence');
-      coverage.order := params['order');
-      coverage.network := params['network');
+      coverage.dependent := params['dependent'];
+      coverage.sequence := params['sequence'];
+      coverage.order := params['order'];
+      coverage.network := params['network'];
 
       processExtension('a');
       processExtension('b');
@@ -325,7 +325,7 @@ begin
       prov.containedList.Add(p);
       p.id := 'p1';
       p.nameList.Add(TFhirHumanName.create);
-      p.nameList[0].text := params['provenance.name');
+      p.nameList[0].text := params['provenance.name'];
       prov.agentList.Append;
       prov.agentList[0].roleList.add(buildCodeableConcept('http://hl7.org/fhir/v3/ParticipationType', 'AUT'));
       prov.agentList[0].who := TFhirReference.Create('#p1');
@@ -333,9 +333,9 @@ begin
       prov.containedList.Add(l);
       l.id := 'l1';
       prov.location := TFhirReference.Create('#l1');
-      l.name := params['provenance.country');
+      l.name := params['provenance.country'];
       coverage.meta := TFhirMeta.create;
-      coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params['provenance.name')+' @ '+params['provenance.country'));
+      coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params['provenance.name']+' @ '+params['provenance.country']);
 
       // post the coverage
       client := context.Storage.createClient(THTTPLanguages.create('en'), context, FContext.ValidatorContext.Link, FSession.Link);

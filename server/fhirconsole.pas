@@ -72,10 +72,7 @@ begin
     Application.Scaled := True;
 
     Application.Initialize;
-    if (paramStr(1) = 'test-form') then
-      Application.CreateForm(TTestForm, TestForm)
-    else
-      Application.CreateForm(TMainConsoleForm, MainConsoleForm);
+    Application.CreateForm(TMainConsoleForm, MainConsoleForm);
     Application.Run;
   end;
 end.

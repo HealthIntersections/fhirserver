@@ -1,4 +1,4 @@
-unit FHIR.Cql.Tests;
+unit cql_tests;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

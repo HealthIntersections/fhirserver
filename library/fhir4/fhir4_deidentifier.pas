@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-this code is not functional at this time. It may be brought back to life in the future.
+{ this code is not functional at this time. It may be brought back to life in the future. }
 
 {$i fhir.inc}
 
