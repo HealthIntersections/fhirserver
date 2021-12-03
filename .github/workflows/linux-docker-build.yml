@@ -15,8 +15,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/terminology
-        key: terminology-${{ github.sha }}
-        restore-keys: terminology-
+        key: terminology-a-${{ github.sha }}
+        restore-keys: terminology-a-
     - name: Setup MySQL
       run: |
         docker network create gh
