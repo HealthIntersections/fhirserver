@@ -18,6 +18,9 @@ set "tmp=%1"
 :No1
 
 
+echo ## compile packages/fhir_indy.lpk
+%tmp%\tools\lazarus\lazbuild.exe packages/fhir_indy.lpk -q -q
+
 echo ## compile packages/fhir_fsl.lpk
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir_fsl.lpk -q -q
 
