@@ -1,4 +1,4 @@
-﻿{$IFDEF CONDITIONALEXPRESSIONS}
+{$IFDEF CONDITIONALEXPRESSIONS}
   // Must be at the top...
   {$IF CompilerVersion >= 24.0}
     {$LEGACYIFEND ON}
