@@ -1215,6 +1215,8 @@ begin
     result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
   if (params.str('default-to-latest-version') <> '') then
     result.defaultToLatestVersion := StrToBoolDef(params.str('default-to-latest-version'), false);
+  if (params.str('incomplete-ok') <> '') then
+    result.incompleteOK := StrToBoolDef(params.str('incomplete-ok'), false);
   for p in params.parameterList do
   begin
     if (p.name = 'system-version') then
@@ -1251,7 +1253,8 @@ begin
   end;
 end;
 
-function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;begin
+function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
+begin
   result := TFHIRExpansionParams.Create;
   try
     processExpansionParams(request, manager, params, result);

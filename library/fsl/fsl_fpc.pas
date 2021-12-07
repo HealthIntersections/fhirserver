@@ -77,7 +77,7 @@ procedure setCurrentDirectory(dir : String);
 
 // unicode helpers - make life easier for shared fpc/delphi code
 function unicodeChars(s : String) : TUCharArray;
-function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this does nothing.
+function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this function does nothing.
 function UCharArrayToString(chars : TUCharArray) : String;
 
 {$IFDEF FPC}
@@ -97,7 +97,7 @@ type
   end;
 
   { TCharHelper }
-
+  {$IFNDEF CODE_PARSER} // code parser doesn't know how to parse type helper
   TCharHelper = type helper for char
   public
     function isDigit : boolean;
@@ -114,6 +114,7 @@ type
     function substring(start, stop : integer) : String; overload;
     function substring(start : integer) : String; overload;
   end;
+  {$ENDIF}
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);

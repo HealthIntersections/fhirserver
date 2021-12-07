@@ -33,6 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  fsl_http,
   fhir_objects;
 
 type
@@ -43,6 +44,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRObjectX = TFHIRObject2;
@@ -54,6 +56,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource2;
@@ -61,10 +64,23 @@ type
 implementation
 
 uses
-  fhir2_types;
+  fhir2_types,
+  fhir2_json;
 
 
 { TFHIRObject2 }
+
+function TFHIRObject2.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  try
+    result := j.Compose(fhirType, self);
+  finally
+    j.Free;
+  end;
+end;
 
 function TFHIRObject2.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -93,6 +109,18 @@ end;
 
 
 { TFHIRResource2 }
+
+function TFHIRResource2.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  try
+    result := j.Compose(self);
+  finally
+    j.Free;
+  end;
+end;
 
 function TFHIRResource2.GetFhirObjectVersion: TFHIRVersion;
 begin

@@ -13,6 +13,7 @@
       <Title Value="FHIR Code Scanner"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <Icon Value="0"/>
     </General>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -77,6 +78,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="PascalAST"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>
     </RequiredPackages>
@@ -113,6 +117,15 @@
       </Item>
       <Item>
         <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="EParserException"/>
+      </Item>
+      <Item>
+        <Name Value="ESyntaxTreeException"/>
+      </Item>
+      <Item>
+        <Name Value="ESyntaxError"/>
       </Item>
     </Exceptions>
   </Debugging>

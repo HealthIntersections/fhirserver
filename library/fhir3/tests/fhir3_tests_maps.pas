@@ -1,4 +1,4 @@
-unit FHIR.R3.Tests.Maps;
+unit fhir3_tests_maps;
 
 
 {

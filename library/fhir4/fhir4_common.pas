@@ -391,8 +391,9 @@ type
   private
     function exp : TFhirValueSetExpansion;
   public
-    procedure addParam(name, value : String); override;
-    procedure addParam(name : String; value : boolean); override;
+    procedure addParamStr(name, value : String); override;
+    procedure addParamUri(name, value : String); override;
+    procedure addParamBool(name : String; value : boolean); override;
     function hasParam(name : string) : boolean; overload; override;
     function hasParam(name, value : string) : boolean; overload; override;
     procedure copyParams(source : TFhirValueSetExpansionW); override;
@@ -1603,7 +1604,7 @@ begin
     statement.software := TFhirCapabilityStatementSoftware.Create;
   statement.software.name := name;
   statement.software.version := version;
-  statement.software.releaseDate := TFslDateTime.fromXml(release);
+  statement.software.releaseDate := TFslDateTime.fromHL7(release);
 end;
 
 function TFHIRCapabilityStatement4.getDescription : String;
@@ -1805,12 +1806,18 @@ end;
 function TFhirParametersParameter4.GetParameterParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
+  s : String;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
-      exit(t);
+    begin
+      result := t;
+      break;
+    end;
+  s := result.asJson;
 end;
 
 function TFhirParametersParameter4.GetResource: TFHIRResourceV;
@@ -1822,7 +1829,8 @@ function TFhirParametersParameter4.GetResourceParameter(name: String): TFHIRReso
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
@@ -1833,7 +1841,8 @@ function TFhirParametersParameter4.GetStringParameter(name: String): String;
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := '';
   for t in FList do
     if t.name = name then
@@ -1935,7 +1944,8 @@ function TFHIRParameters4.GetParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
 begin
-  populateList;
+  if FList = nil then
+    populateList;
   result := nil;
   for t in FList do
     if t.name = name then
@@ -3354,14 +3364,19 @@ begin
   result := TFhirValueSetExpansionContains4.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
 end;
 
-procedure TFhirValueSetExpansion4.addParam(name: String; value: boolean);
+procedure TFhirValueSetExpansion4.addParamBool(name: String; value: boolean);
 begin
-  exp.AddParam(name, value);
+  exp.addParamBool(name, value);
 end;
 
-procedure TFhirValueSetExpansion4.addParam(name, value: String);
+procedure TFhirValueSetExpansion4.addParamStr(name, value: String);
 begin
-  exp.AddParam(name, value);
+  exp.addParamStr(name, value);
+end;
+
+procedure TFhirValueSetExpansion4.addParamUri(name, value: String);
+begin
+  exp.addParamUri(name, value);
 end;
 
 function TFhirValueSetExpansion4.contains: TFslList<TFhirValueSetExpansionContainsW>;

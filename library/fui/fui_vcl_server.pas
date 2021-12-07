@@ -1,4 +1,4 @@
-unit FHIR.Client.ServerDialog;
+unit fui_vcl_server;
 
 
 {

@@ -208,6 +208,7 @@ Type
     procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean); // private (hint busting)
 
     Procedure Start; // (active, threads: boolean);
+    Procedure Close;
     Procedure Stop;
 
     Procedure clearCache;
@@ -242,6 +243,11 @@ end;
 procedure TFhirWebServer.clearCache;
 begin
   Common.cache.Clear;
+end;
+
+procedure TFhirWebServer.Close;
+begin
+  FActive := false;
 end;
 
 Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);

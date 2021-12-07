@@ -31,7 +31,10 @@ set "tmp=%2"
 echo ## getting ready ##
 
 :: check a version was provided
-IF %2.==. GOTO OK
+IF %1.==. GOTO NoVer
+GOTO OK
+
+:NoVer
 echo You need to provide the new version as a parameter to this batch file
 pause
 exit /b 1
@@ -45,6 +48,7 @@ utilities\codescan\codescan.exe -version %1
 utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
 
 utilities\codescan\codescan.exe -check install\release-notes.md -message "Please provide some release notes" || goto :error
+utilities\codescan\codescan.exe -check install\healthintersections.pfx -message "Code signing Certificate is missing" || goto :error
 
 del exec\64\*.exe /q /s 1>nul
 del install\build\*.exe 1>nul
@@ -67,7 +71,7 @@ cd server
 ..\install\tools\dcc64.exe FHIRServer.dpr -Q
 cd ..
 utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the Debug server failed" || goto :error
-copy exec\64\fhirserver.exe exec\64\fhirserver.debug.exe
+copy exec\64\fhirserver.exe exec\64\FHIRServer.debug.exe
 del exec\64\fhirserver.exe 
 
 :: =========================================================================================
@@ -91,12 +95,27 @@ echo All compile done
 :: =========================================================================================
 :: todo: sign the 4 binaries
 :: echo ## sign the binaries ##
+:: the password batch file is never in git, but has the format
+:: @echo off
+:: setlocal
+:: set HI_PASSWORD="...."
+
+call load-password.bat
+echo %HI_PASSWORD%
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRToolkit.exe
 
 :: =========================================================================================
 :: build the web file
 del exec\pack\fhirserver.web 
 utilities\codescan\codescan.exe -check !exec\pack\fhirserver.web -message "Deleting the web file failed" || goto :error
-install\tools\7z a -r exec\pack\fhirserver.web server\web\*.*
+cd server
+cd web
+..\..\install\tools\7z a -r -tzip ..\..\exec\pack\fhirserver.web *.*
+cd ..
+cd ..
 utilities\codescan\codescan.exe -check exec\pack\fhirserver.web -message "Creating the web file failed" || goto :error
 
 :: =========================================================================================
@@ -109,6 +128,10 @@ install\tools\iscc.exe install\install-tk.iss -q
 utilities\codescan\codescan.exe -check install\build\fhirserver-win64-%1.exe -message "Creating the server install failed" || goto :error
 utilities\codescan\codescan.exe -check install\build\fhirtoolkit-win64-%1.exe -message "Creating the toolkit install failed" || goto :error
 
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirserver-win64-%1.exe
+install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirtoolkit-win64-%1.exe
+
+set HI_PASSWORD=null
 :: =========================================================================================
 :: now time to do the github release
 
@@ -116,7 +139,11 @@ echo ## GitHub Release ##
 git commit library\version.inc -m "Release Version"
 git push 
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F install\release-notes.md
-rename install\release-notes.md install\release-notes-old.md
+rename install\release-notes.md release-notes-old.md
+
+:: =========================================================================================
+:: echo Post note on Zulip
+zulip-send --stream tooling/releases --subject "FHIR Tools" --message "New FHIRServer and Toolkit v"%1" released (see https://github.com/HealthIntersections/fhirserver/releases/v"%1")" --config-file .zuliprc
 
 :: =========================================================================================
 echo Build/Release Process Finished
@@ -128,3 +155,6 @@ exit /b 0
 echo Build failed!
 pause
 exit /b %errorlevel%
+
+
+

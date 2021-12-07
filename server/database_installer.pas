@@ -115,7 +115,7 @@ Type
     procedure CreatePackagesTables;
     procedure CreatePackagePermissionsTable;
     procedure CreateLoadedPackagesTable;
-//    procedure CreateTwilioTable;
+    procedure CreateSmartHealthCardsTable;
 //    procedure runScript(s : String);
   public
     constructor Create(conn : TFDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -762,6 +762,21 @@ Begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey'));
 End;
 
+procedure TFHIRDatabaseInstaller.CreateSmartHealthCardsTable;
+begin
+  FConn.ExecSQL('CREATE TABLE SmartHealthCards ( '+#13#10+
+       ' SmartHealthCardKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Source           int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Date '+          DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Nbf              char(20) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Hash             char(20) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Revoked          int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' PatientId        char(64) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Details '+       DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_SmartHealthCard', 'SmartHealthCardKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_SmartHealthCards_Hash ON SmartHealthCards (Hash)');
+end;
+
 procedure TFHIRDatabaseInstaller.CreateSubscriptionQueue;
 begin
   FConn.ExecSQL('CREATE TABLE SubscriptionQueue ( '+#13#10+
@@ -1227,6 +1242,7 @@ begin
       except
       end;
 
+      drop('SmartHealthCards');
       drop('Connections');
       drop('AuthorizationSessions');
       drop('Authorizations');
@@ -1379,13 +1395,16 @@ begin
       Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ALTER COLUMN Scope nchar(1024) NOT NULL');
     end;
 
-    if not isTx and (version <= 32) then
+    if not isTx and (version <= 31) then
     begin
       Fconn.ExecSQL('Delete from SearchEntries');
       Fconn.ExecSQL('Delete from Searches');
       Fconn.ExecSQL('ALTER TABLE SearchEntries ADD SortValue2 nchar(128) NULL, SortValue3 nchar(128) NULL');
       Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse2 int NULL,Reverse3 int NULL');
     end;
+
+    if not isTx and (version <= 32) then
+      CreateSmartHealthCardsTable;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

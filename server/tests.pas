@@ -76,7 +76,7 @@ uses
   MarkdownDaringFireballTests, fsl_json;
 
 const
-  !{$IFDEF FHIR2}
+  {$IFDEF FHIR2}
   PUB_PATH = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish';
   {$ELSE}
   PUB_PATH = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.2016May\build\publish';

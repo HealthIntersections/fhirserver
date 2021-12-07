@@ -43,7 +43,6 @@ const
   CONFIG_DEFAULT_RIGHTS = 10;
   CONFIG_DATABASE_VERSION = 5;
 
-
 implementation
 
 end.

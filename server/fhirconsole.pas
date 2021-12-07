@@ -40,7 +40,7 @@ uses
   fdb_odbc_fpc,
   console_form,
   console_tx_edit, console_ep_edit, install_form, install_log, installer, 
-test_form;
+  test_form;
 
 {$R *.res}
 

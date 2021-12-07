@@ -65,6 +65,7 @@ type
     property value : String read GetValue write SetValue;
     property valueBool : Boolean read GetValueBool write SetValueBool;
     function readAsInt(def : integer = 0) : Integer;
+    function readAsUInt64(def : UInt64 = 0) : UInt64;
     function readAsBool(def : boolean = false) : boolean;
 
     class function fromLine(line : String; comments : TStringList) : TFHIRServerConfigProperty;
@@ -327,6 +328,11 @@ end;
 function TFHIRServerConfigProperty.readAsInt(def: integer): Integer;
 begin
   result := StrToIntDef(Value, def);
+end;
+
+function TFHIRServerConfigProperty.readAsUInt64(def: UInt64): UInt64;
+begin
+  result := StrToInt64Def(Value, def);
 end;
 
 function TFHIRServerConfigProperty.readAsBool(def: boolean): boolean;

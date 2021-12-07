@@ -214,7 +214,7 @@ function makeUcum : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('ucum');
 //  result.value['type'] := 'ucum';
-//  result.value['source'] := localFile('ucum.dat');
+//  result.value['source'] := partnerFile('ucum.dat');
   result := nil;
 end;
 

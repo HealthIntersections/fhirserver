@@ -29,6 +29,7 @@ object HomePageFrame: THomePageFrame
       Width = 462
       BorderStyle = htNone
       DefBackground = clWhite
+      DefFontName = 'Sans Serif'
       HistoryMaxCount = 0
       NoSelect = False
       PrintMarginBottom = 2
@@ -36,6 +37,7 @@ object HomePageFrame: THomePageFrame
       PrintMarginRight = 2
       PrintMarginTop = 2
       PrintScale = 1
+      OnHotSpotClick = HtmlViewer1HotSpotClick
       Align = alClient
       TabOrder = 0
     end

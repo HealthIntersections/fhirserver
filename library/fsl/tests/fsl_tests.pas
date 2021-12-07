@@ -285,7 +285,7 @@ Type
     Procedure SetUp; override;
     procedure TearDown; override;
   Published
-    procedure PatchTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
 
   TJsonPatchTests = class (TFslTestSuite)
@@ -4412,7 +4412,7 @@ begin
   engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
 end;
 
-procedure TJsonPatchTest.PatchTest(Name: String);
+procedure TJsonPatchTest.TestCase(Name: String);
 var
   t : TJsonNode;
   outcome : TJsonObject;
@@ -4872,6 +4872,7 @@ begin
   RegisterTest('Formats.XPath Engine Tests', TXPathEngineTests.create);
   RegisterTest('Formats.XML Patch Tests', TXmlPatchTests.create);
   RegisterTest('Formats.Json Tests', TJsonTests.Suite);
+  RegisterTest('Formats.Json Patch Tests', TJsonPatchTests.create);
   RegisterTest('Formats.Turtle Tests', TTurtleTests.Suite);
 end;
 

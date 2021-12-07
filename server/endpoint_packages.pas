@@ -42,7 +42,7 @@ uses
 
   server_config, utilities,
   database_installer, telnet_server,
-  tx_manager, time_tracker,
+  tx_manager, time_tracker, kernel_thread,
   web_event, web_base, endpoint, session;
 
 type
@@ -130,7 +130,7 @@ type
     procedure updateAdminPassword; override;
     procedure Load; override;
     Procedure Unload; override;
-    procedure internalThread; override;
+    procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;

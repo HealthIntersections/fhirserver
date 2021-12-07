@@ -517,6 +517,7 @@ type
     function isEmpty : boolean; virtual;
     procedure dropEmpty;
     function Equals(other : TObject) : boolean; override;
+    function asJson : String; virtual; {abstract;} // ths is intended for debugging
   published
     {
       comments from the XML stream. No support for comments in JSON
@@ -806,6 +807,7 @@ type
     FValidationMessage: String;
     FImage: TBytes;
     FId: String;
+    FPayloadSource: String;
     procedure SetBundle(const Value: TFHIRResourceV);
   protected
     FSummary: String;
@@ -830,6 +832,7 @@ type
     function htmlReport(tx : TFHIRTerminologyService) : String; virtual; abstract;
 
     function qrSource(prefix : boolean) : String; // prefix = include the shc:/ at the start
+    property payloadSource : String read FPayloadSource write FPayloadSource;
     procedure toBmp(bmp : TBitmap);
 
     property jws : String read FJws write FJws;
@@ -1023,6 +1026,11 @@ end;
 procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
 begin
   raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+function TFHIRObject.asJson: String;
+begin
+  raise EFslException.Create('Need to override asjson in '+ClassName);
 end;
 
 procedure TFHIRObject.Assign(oSource: TFslObject);
@@ -2597,7 +2605,7 @@ var
 
 Function LoadSource : TBytes;
 begin
-  result := fsl_stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'fhir-lang.dat');
+  result := fsl_stream.FileToBytes(partnerFile('fhir-lang.dat'));
 end;
 
 procedure LoadMessages;

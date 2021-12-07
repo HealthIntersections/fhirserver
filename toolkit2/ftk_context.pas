@@ -54,7 +54,7 @@ uses
 // resource
 
 type
-  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT, sekHome);
+  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekServer, sekJWT, sekHome, sekIGs);
   TSourceEditorKindSet = set of TSourceEditorKind;
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
@@ -67,14 +67,14 @@ const
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
 
-  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT', 'HomePage');
-  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt');
-  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Structure Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)', 'Home Page');
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom', 'Server', 'JWT', 'HomePage', 'IGPage');
+  EXTENSIONS_TSourceEditorKind : Array [TSourceEditorKind] of String = ('', '.json', '.hl7', '.xml', '.xml', '.json', '.liquid', '.map', '.ini', '.txt', '.md', '.js', '.html', '.dcm', '', '.jwt', '', '');
+  NAMES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR Resource', 'v2 Message/Bach', 'CDA Document', 'XML Document', 'Json Document', 'Liquid Script', 'Structure Map', 'IniFile', 'Text', 'Markdown', 'Javascript', 'HTML', 'Dicom', 'Server Source', 'JWT (Json Web Token)', 'Home Page', 'IG Page');
   CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
   CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
   CODES_TToolkitMessageLevel : Array [TToolkitMessageLevel] of String = ('Error', 'Warning', 'Hint');
-  ICONS_TSourceEditorKind : Array [TSourceEditorKind] of integer = (-1, 42, 114, 113, 115, 116, 117, -1, 118, 119, 120, 121, 122, 123, -1, 124, -1);
-  ALL_SourceEditorKinds = [sekNull..sekHome];
+  ICONS_TSourceEditorKind : Array [TSourceEditorKind] of integer = (-1, 42, 114, 113, 115, 116, 117, -1, 118, 119, 120, 121, 122, 123, -1, 124, -1, -1);
+  ALL_SourceEditorKinds = [sekNull..sekIGs];
   FILE_SourceEditorKinds = [sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom, sekJWT];
 
 
@@ -180,6 +180,8 @@ type
     function GetHasAddress: boolean;
     function GetHint: String;
     function getIsFile: boolean;
+    procedure SetLastChange(AValue: int64);
+    procedure SetLastChangeChecked(AValue: boolean);
     procedure SetStore(AValue: TStorageService);
   protected
     FTab: TTabSheet;
@@ -245,8 +247,8 @@ type
     property isFile : boolean read getIsFile;
     property hasAddress : boolean read GetHasAddress;
 
-    property lastChange : int64 read FLastChange write FLastChange;
-    property lastChangeChecked : boolean read FLastChangeChecked write FLastChangeChecked;
+    property lastChange : int64 read FLastChange write SetLastChange;
+    property lastChangeChecked : boolean read FLastChangeChecked write SetLastChangeChecked;
     property lastMove : int64 read FLastMove write FLastMove;
     property lastMoveChecked : boolean read FLastMoveChecked write FLastMoveChecked;
 
@@ -571,6 +573,18 @@ end;
 function TToolkitEditor.getIsFile: boolean;
 begin
   result := session.address.startsWith('file:');
+end;
+
+procedure TToolkitEditor.SetLastChange(AValue: int64);
+begin
+  if FLastChange=AValue then Exit;
+  FLastChange:=AValue;
+end;
+
+procedure TToolkitEditor.SetLastChangeChecked(AValue: boolean);
+begin
+  if FLastChangeChecked=AValue then Exit;
+  FLastChangeChecked:=AValue;
 end;
 
 procedure TToolkitEditor.SetStore(AValue: TStorageService);

@@ -52,7 +52,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, time_tracker,
-  telnet_server,
+  telnet_server, kernel_thread,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -191,6 +191,8 @@ type
     procedure loadFile(factory : TFHIRFactory; name : String);
 
     function cacheSize(magic : integer) : UInt64; override;
+    function issueHealthCardKey : integer; override;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); override;
   end;
 
   TTerminologyFHIRUserProvider = class (TFHIRUserProvider)
@@ -246,7 +248,7 @@ type
     procedure UninstallDatabase; override;
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
-    procedure internalThread; override;
+    procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
@@ -1042,6 +1044,11 @@ begin
   result := FData.FCodeSystems.Count + FData.FValueSets.Count + FData.FNamingSystems.Count + FData.FConceptMaps.Count;
 end;
 
+function TTerminologyFhirServerStorage.issueHealthCardKey: integer;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyFhirServerStorage.link: TTerminologyFhirServerStorage;
 begin
   result := TTerminologyFhirServerStorage(inherited link);
@@ -1258,6 +1265,11 @@ begin
   count := count + loadFromUTG(factory, path([folder, 'fhir']));
   count := count + loadFromUTG(factory, path([folder, 'unified']));
   Logging.finish(inttostr(count)+' resources loaded');
+end;
+
+procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyFhirServerStorage.ProcessEmails;
@@ -1480,16 +1492,16 @@ begin
   FStore := nil;
 end;
 
-procedure TTerminologyServerEndPoint.internalThread;
+procedure TTerminologyServerEndPoint.internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack);
 begin
   try
-    setThreadStatus('Google Commit');
+    callback(self, 'Google Commit', 0);
     FWeb.Common.Google.commit;
-    setThreadStatus('Checking Async Tasks');
+    callback(self, 'Checking Async Tasks', 25);
     FWeb.CheckAsyncTasks;
-    setThreadStatus('Sweeping Client Cache');
+    callback(self, 'Sweeping Client Cache', 50);
     FServerContext.ClientCacheManager.sweep;
-    setThreadStatus('Build Terminology Indexes');
+    callback(self, 'Build Terminology Indexes', 75);
     FServerContext.TerminologyServer.BuildIndexes(false);
   except
     on e : exception do

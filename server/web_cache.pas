@@ -35,7 +35,8 @@ interface
 Uses
   SysUtils, Classes,
   IdCustomHTTPServer, IdContext,
-  fsl_base, fsl_threads, fsl_stream, fsl_utilities;
+  fsl_base, fsl_threads, fsl_stream, fsl_utilities,
+  kernel_thread;
 
 type
   TCachedHTTPResponse = class (TFslBuffer)
@@ -67,7 +68,7 @@ type
     function respond(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; var summary : String) : boolean;
     procedure recordResponse(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; tat : UInt64; summary : String);
     procedure Clear;
-    procedure Trim;
+    procedure Trim(callback : TFhirServerMaintenanceThreadTaskCallBack);
     property Caching : boolean read FCaching write FCaching;
     property MaxSize : Cardinal read FMaxSize write FMaxSize;
   end;
@@ -181,13 +182,14 @@ begin
   result := inherited sizeInBytesV(magic) + SizeOf(FLock) + SizeOf(FSize) + FCache.sizeInBytes(magic)+SizeOf(FMaxSize)+SizeOf(FCaching);
 end;
 
-procedure THTTPCacheManager.Trim;
+procedure THTTPCacheManager.Trim(callback : TFhirServerMaintenanceThreadTaskCallBack);
 var
   i : cardinal;
   s : String;
   list : TStringList;
   v : TCachedHTTPResponse;
 begin
+  callback(self, 'Trimming Cache', -1);
   list := TStringList.create;
   try
     FLock.Lock;

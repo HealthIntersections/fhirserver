@@ -39,9 +39,9 @@ uses
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
-  tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
+  tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs,
-  utilities, server_config;
+  utilities, server_config, kernel_thread;
 
 const
   URI_VERSION_BREAK = '#';
@@ -81,7 +81,7 @@ Type
     procedure add(p : TCodeSystemProvider; defVer : boolean); overload;
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
-    procedure sweepSnomed;
+    procedure sweepSnomed(callback : TFhirServerMaintenanceThreadTaskCallBack);
     procedure clearSnomed;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
@@ -1406,6 +1406,7 @@ end;
 Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
 var
   defToLatest : boolean;
+  cs : TFHIRCodeSystemEntry;
 begin
   result := nil;
   version := checkVersion(system, version, profile);
@@ -1448,9 +1449,18 @@ begin
   begin
     FLock.Lock('getProvider');
     try
-      // todo; version specific....
-      if FCodeSystems.has(system) then
-        result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, FCodeSystems.get(system).link);
+      if FCodeSystems.has(system)  then
+      begin
+        cs := FCodeSystems.get(system, version).link;
+        if (cs = nil) and ((version = '') or defToLatest) then
+          cs := FCodeSystems.get(system).link;
+        try
+          if cs <> nil then
+            result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+        finally
+          cs.Free;
+        end;
+      end;
     finally
       FLock.Unlock;
     end;
@@ -1469,7 +1479,10 @@ begin
   end;
 
   if (result = nil) and not noException then
-    raise ETerminologySetup.create('Unable to provide support for code system '+system);
+    if version <> '' then
+      raise ETerminologySetup.create('Unable to provide support for code system '+system+' v'+version)
+    else
+      raise ETerminologySetup.create('Unable to provide support for code system '+system);
 end;
 
 
@@ -2124,6 +2137,7 @@ procedure TCommonTerminologies.sweepSnomed;
 var
   ss : TSnomedServices;
 begin
+  callback(self, 'Sweeping Snomed', -1);
   for ss in FSnomed do
     if ss <> FDefSnomed then
       ss.checkUnloadMe;

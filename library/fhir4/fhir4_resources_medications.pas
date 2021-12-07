@@ -1,4 +1,4 @@
-﻿unit fhir4_resources_medications;
+unit fhir4_resources_medications;
 
 {$I fhir4.inc}
 

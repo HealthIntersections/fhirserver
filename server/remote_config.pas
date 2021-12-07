@@ -217,7 +217,7 @@ begin
     cfg.web['http-cache-time'].value := '1000';
     cfg.web['plain-mode'].value := 'false';
     cfg.web['caching'].value := 'true';
-    cfg.service['langfile'].value := FilePath([ExtractFilePath(ParamStr(0)), 'lang.dat']);
+    cfg.service['langfile'].value := partnerFile('lang.dat');
     cfg.service['package-cache'].value := ExtractFilePath(fn);
     cfg.admin['scim-salt'].value := NewGuidId;
 

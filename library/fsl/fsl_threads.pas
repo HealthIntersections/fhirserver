@@ -38,6 +38,8 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
+  {$IFDEF FPC} process, {$ENDIF}
+
   SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
   fsl_base, fsl_utilities, fsl_fpc;
 
@@ -148,6 +150,7 @@ Type
     procedure InternalExecute;
   Protected
     function ThreadName : String; Virtual;
+    function logThread : boolean; virtual;
     procedure Initialise; Virtual;
     Procedure Execute; Virtual; Abstract;
     procedure Finalise; Virtual;
@@ -174,6 +177,51 @@ Type
   End;
 
   TFslThreadClass = Class Of TFslThread;
+
+  TFslExternalProcessThread = class;
+  TFslExternalProcessLineEvent = procedure (sender : TFslExternalProcessThread; line : String; replLast : boolean) of object;
+  TFslExternalProcessStatus = (epsInitialising, epsRunning, epsFinished, epsTerminated);
+
+  { TFslExternalProcessThread }
+
+  TFslExternalProcessThread = class (TFslThread)
+  private
+    FCommand: String;
+    FEnvironmentVars : boolean;
+    FExitCode: integer;
+    FFolder: String;
+    FLines: TStringList;
+    FOnEmitLine: TFslExternalProcessLineEvent;
+    FParameters: TStringList;
+    FSecondsSinceLastOutput: Integer;
+    FStatus: TFslExternalProcessStatus;
+
+    FLock : TFslLock;
+    {$IFDEF FPC}
+    FProcess : TProcess;
+    {$ENDIF}
+    FBuffer : String;
+    FUseCmd: boolean;
+    procedure processOutput(s : String);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property useCmd : boolean read FUseCmd write FUseCmd;
+    property command : String read FCommand write FCommand;
+    property parameters : TStringList read FParameters;
+    property folder : String read FFolder write FFolder;
+    property environmentVars : boolean read FEnvironmentVars write FEnvironmentVars;
+
+    procedure execute; override; // will return an exception if the process couldn't be started, otherwise the process has been started
+    procedure terminate; // terminate is different to kill - it uses the system to halt the external process rather than just killing the thread
+
+    property status : TFslExternalProcessStatus read FStatus write FStatus;
+    property exitCode : integer read FExitCode;
+    property secondsSinceLastOutput : Integer read FSecondsSinceLastOutput write FSecondsSinceLastOutput;
+    property lines : TStringList read FLines;
+    property OnEmitLine : TFslExternalProcessLineEvent read FOnEmitLine write FOnEmitLine;
+  end;
 
   TBackgroundTaskPackage = class;
   TBackgroundTaskEngine = class;
@@ -332,7 +380,7 @@ Type
 
     // properties of interest to subclasses:
     // execute is called. There is a request, create a response, calling
-    // progress regularly (which allows the task to get killed
+    // progress regularly (which allows the task to get killed)
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); virtual; abstract;
     procedure progress(state : String; pct : integer); // -1 for no pct. may throw EAbort
 
@@ -685,6 +733,141 @@ begin
   DeleteCriticalSection(GCritSct);
 end;
 
+{ TFslExternalProcessThread }
+
+constructor TFslExternalProcessThread.Create;
+begin
+  inherited Create;
+  FLines := TStringList.create;
+  FParameters := TStringList.create;
+  FLock := TFslLock.create('ProcessThreadLock');
+  FStatus := epsInitialising;
+end;
+
+destructor TFslExternalProcessThread.Destroy;
+begin
+  FLock.Free;
+  FLines.Free;
+  FParameters.Free;
+  inherited Destroy;
+end;
+
+procedure TFslExternalProcessThread.processOutput(s: String);
+var
+  l, r : String;
+  ch1, ch2 : String;
+  i : integer;
+  repl : boolean;
+begin
+  FBuffer := FBuffer + s;
+  while FBuffer.contains(#10) or FBuffer.contains(#13) do
+  begin
+    i := FBuffer.indexOf(#13)+1;
+    if (i > 0) then
+    begin
+      ch1 := FBuffer[i];
+      ch2 := FBuffer[i+1];
+    end;
+    repl := false;
+    if (i > 0) and (i < FBuffer.length) and (FBuffer[i+1] = #10) then
+      StringSplit(FBuffer, #13#10, l, r)
+    else if (i > 0) then
+    begin
+      StringSplit(FBuffer, #13, l, r);
+      repl := true;
+    end
+    else
+      StringSplit(FBuffer, #10, l, r);
+    FBuffer := r;
+    if (repl) and (FLines.count > 0) then
+      FLines[FLines.count - 1] := l
+    else
+      FLines.add(l);
+    if assigned(FOnEmitLine) then
+      FOnEmitLine(self, l, repl);
+  end;
+end;
+
+procedure TFslExternalProcessThread.execute;
+const
+  BUF_SIZE = 2048; // Buffer size for reading the output in chunks
+var
+  BytesRead    : longint;
+  Buffer       : TBytes;
+  s : String;
+  i : integer;
+begin
+  {$IFDEF FPC}
+  FLock.Lock;
+  try
+    FStatus := epsRunning;
+    FProcess := TProcess.create(nil);
+  finally
+    FLock.Unlock;
+  end;
+  try
+    {$IFDEF WINDOWS}
+    if useCmd then
+    begin
+      FProcess.Executable := 'cmd';
+      FProcess.Parameters.add('/c');
+      FProcess.Parameters.add(command);
+    end
+    else
+      FProcess.Executable := command;
+    {$ELSE}
+    FProcess.Executable := command;
+    {$ENDIF}
+    if (FEnvironmentVars) then
+    begin
+      for i := 1 to GetEnvironmentVariableCount do
+        begin
+        s := GetEnvironmentString(i);
+        FProcess.Environment.Add(s+'=' + GetEnvironmentVariable(s));
+      end;
+    end;
+    FProcess.CurrentDirectory := FFolder;
+    for s in FParameters do
+      FProcess.Parameters.add(s);
+    FProcess.Options := [poNoConsole, poStderrToOutPut, poUsePipes];
+    FProcess.ShowWindow := swoHIDE;
+    FProcess.PipeBufferSize := 1024;
+    FProcess.Execute;
+    repeat
+      SetLength(Buffer, BUF_SIZE);
+      BytesRead := FProcess.Output.Read(Buffer, BUF_SIZE);
+      processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
+    until BytesRead = 0;
+    FExitCode := FProcess.ExitCode;
+  finally
+    FLock.Lock;
+    try
+      FProcess.free;
+      FProcess := nil;
+      if FStatus = epsTerminated then
+        FExitCode := $FFFF
+      else
+        FStatus := epsFinished
+
+    finally
+      FLock.Unlock;
+    end;
+  end;
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
+end;
+
+procedure TFslExternalProcessThread.terminate;
+begin
+  {$IFDEF FPC}
+  if not FProcess.Terminate(1) then
+    raise EFslException.create('unable to terminate');
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
+end;
+
 { TNullTaskEngine }
 
 function TNullTaskEngine.name: String;
@@ -833,9 +1016,9 @@ end;
 function threadToString(id : TThreadId) : String;
 begin
   {$IFDEF OSX}
-  result := inttostr(UInt64(id));
+  result := inttohex(UInt64(id), sizeof(pointer) * 2);
   {$ELSE}
-  result := inttostr(id);
+  result := inttohex(id, sizeof(TThreadId)*2);
   {$ENDIF}
 end;
 
@@ -1062,7 +1245,8 @@ var
 begin
   SetThreadName(ThreadName);
   setThreadStatus('Initialising');
-  Logging.log('Start thread '+threadName);
+  if logThread then
+    Logging.log('Thread start  '+threadName+ ' '+threadToString(threadid));
   initialise;
   try
     if FTimePeriod > 0 then
@@ -1095,7 +1279,8 @@ begin
     on e : Exception do
       Logging.log('Unhandled Exception closing '+threadName+': '+e.message);
   end;
-  Logging.log('Finish '+threadName);
+  if logThread then
+    Logging.log('Thread Finish '+threadName);
   SetThreadStatus('Done');
   closeThread;
 end;
@@ -1104,6 +1289,11 @@ function TFslThread.Link: TFslThread;
 Begin
   Result := TFslThread(Inherited Link);
 End;
+
+function TFslThread.logThread: boolean;
+begin
+  result := true;
+end;
 
 procedure TFslThread.Start;
 Begin
@@ -1120,12 +1310,15 @@ Begin
   FInternal.Terminate;
 End;
 
-procedure TFslThread.StopAndWait;
+procedure TFslThread.StopAndWait(ms : Cardinal);
+var
+  t : int64;
 begin
   if Running then
   begin
     Stop;
-    while FRunning do
+    t := GetTickCount64 + ms;
+    while (FRunning) and (GetTickCount64 < t) do
       sleep(20);
   end;
 end;
@@ -1185,7 +1378,7 @@ begin
   if FOwner.AutoFree then
   begin
     FOwner.Free;
-    Free;
+    Destroy;
   end;
 end;
 

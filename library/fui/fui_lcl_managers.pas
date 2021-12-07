@@ -34,11 +34,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 This unit contains a set of classes that orchestrate the UI interface
 
-- TObjectManager - binds a set of edits that edit the properties of an object
 - TListManager - binds a list of objects to a set of UI controls, with a TListView as the centerpiece
 - TTreeManager - binds a tree of objects to a set of UI controls, with a TTreeView as a centerpiece
-- TFHIRSynEditSynchroniser - keeps a SynEdit source for a resource in sync with a loaded resource
+  - TVTreeManager - binds a tree of objects to a set of UI controls, with a TVirtualStringTree as a centerpiece
 - TPanelStack - binds to a TPanel and manages a set of subpanels that arew laid out vertically (logical alternative to a TPageControl)
+- TObjectManager - binds a set of edits that edit the properties of an object
+- TFHIRSynEditSynchroniser - keeps a SynEdit source for a resource in sync with a loaded resource
 
 }
 
@@ -46,19 +47,19 @@ Interface
 
 uses
   SysUtils, Classes, Contnrs, Graphics, IniFiles,
-  Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus,
+  Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus, ClipBrd,
   SynEdit, SynEditTypes,
   laz.virtualtrees,
   fsl_base, fsl_stream, fsl_http,
   fhir_objects, fhir_factory, fhir_parser;
 
 type
-  TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy, opRefresh);
+  TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy, opRefresh, opStop, opUpdate);
   TNodeOperationSet = set of TNodeOperation;
 
   { TControlEntry }
 
-  TControlOperation = (copNone, copAdd, copEdit, copDelete, copUp, copDown, copReload, copExecute, copRefresh);
+  TControlOperation = (copNone, copAdd, copAddSet, copEdit, copDelete, copUp, copDown, copReload, copExecute, copRefresh, copStop, copCopy, copUpdate);
 
   TControlEntry = class (TFslObject)
   private
@@ -87,6 +88,7 @@ type
     FCanEdit : boolean;
     FSettings: TIniFile;
     FPopup : TPopupMenu;
+    FHasCopy : boolean;
 
     procedure doControl(sender : TObject); virtual; abstract;
     procedure doMnuClick(Sender: TObject); virtual; abstract;
@@ -99,8 +101,9 @@ type
     property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
     property Images : TImagelist read FImages write SetImages;
 
+    // to override:
     function doubleClickEdit : boolean; virtual;
-    function AskOnDelete : boolean; virtual;
+    procedure getCopyModes(modes : TStringList); virtual;
 
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
     function registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '') : TMenuItem;
@@ -132,6 +135,8 @@ type
     procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure populateEntry(entry : TListItem; item : T);
     procedure SetImages(AValue: TImagelist); override;
+    procedure internalAddItem(item : T);
+    procedure doPopup(sender : TObject);
   protected
     procedure doControl(sender : TObject); override;
     procedure doMnuClick(Sender: TObject); override;
@@ -148,23 +153,27 @@ type
     Property Enabled : boolean read FEnabled write SetEnabled;
     property Settings : TIniFile read FSettings write SetSettings;
 
-
     // control
     function doLoad : boolean; // call this when something changes the data to load
     procedure saveStatus;
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
+    procedure doAddSet(mode : String);
     procedure doEdit(mode : String);
     procedure doDelete(mode : String);
     procedure doUp;
     procedure doDown;
     procedure doExecute(mode : String);
+    procedure doUpdate(mode : String);
+    procedure doStop(mode : String);
+    procedure doCopy(mode : String);
     procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
 
     // to override:
     function canSort : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
+    function AskOnDelete(item : T) : boolean; virtual;
     function loadList : boolean; virtual; abstract; // return false if not loaded ok
 
     procedure buildMenu; virtual;
@@ -174,11 +183,17 @@ type
     function getSummaryText(item : T) : String; virtual;
     function compareItem(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
     function filterItem(item : T; s : String) : boolean; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
+    function getCopyValue(item : T; mode : String) : String; virtual;
 
+    procedure focusItemChange(item : T); virtual;
     function addItem(mode : String) : T; virtual;
+    function addItems(mode : String) : TFslList<T>; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function deleteItem(item : T) : boolean; virtual;
     function executeItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : boolean; virtual;
+    function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
   end;
 
@@ -213,6 +228,7 @@ type
     procedure updateStatus;
     procedure DoEdited(Sender: TObject; Node: TTreeNode; var S: string);
     procedure SetImages(AValue: TImagelist); override;
+    procedure doPopup(sender : TObject);
   protected
     FData : TFslList<T>; // hidden root
 
@@ -237,13 +253,18 @@ type
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
+    procedure doAddSet(mode : String);
     procedure doEdit(mode : String);
     procedure doDelete(mode : String);
     procedure doExecute(mode : String);
+    procedure doUpdate(mode : String);
+    procedure doStop(mode : String);
+    procedure doCopy(mode : String);
 
     // to override:
     function LoadData : boolean; virtual; abstract;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
+    function AskOnDelete(item : T) : boolean; virtual;
 
     procedure buildMenu; virtual;
     function getImageIndex(item : T) : integer; virtual;
@@ -252,12 +273,18 @@ type
     function getSummaryText(item : T) : String; virtual;
 
     procedure changed; virtual; // e.g. to save
+
+    procedure focusItemChange(item : T); virtual;
     function addItem(parent : T; mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
     function deleteItem(parent, item : T) : boolean; virtual; // parent might be nil if we're at the root
     function executeItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : boolean; virtual;
+    function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
+    function getCopyValue(item : T; mode : String) : String; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
   end;
 
   PTreeData = ^TTreeData;
@@ -293,6 +320,7 @@ type
     procedure doGetTreeImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
     procedure doPaintTreeText(Sender: TBaseVirtualTree; const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType);
     procedure doPaintTreeCell(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+    procedure doPopup(sender : TObject);
   protected
     FData : TFslList<T>; // hidden root
 
@@ -318,13 +346,18 @@ type
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
+    procedure doAddSet(mode : String);
     procedure doEdit(mode : String);
     procedure doDelete(mode : String);
     procedure doExecute(mode : String);
+    procedure doUpdate(mode : String);
+    procedure doStop(mode : String);
+    procedure doCopy(mode : String);
 
     // to override:
     function LoadData : boolean; virtual; abstract;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
+    function AskOnDelete(item : T) : boolean; virtual;
 
     procedure buildMenu; virtual;
     function getImageIndex(item : T) : integer; virtual;
@@ -333,15 +366,19 @@ type
     function getSummaryText(item : T) : String; virtual;
 
     procedure changed; virtual; // e.g. to save
+
+    procedure focusItemChange(item : T); virtual;
     function addItem(parent : T; mode : String) : T; virtual;
     function editItem(item : T; mode : String) : boolean; virtual;
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
     function deleteItem(parent, item : T) : boolean; virtual; // parent might be nil if we're at the root
     function executeItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : boolean; virtual;
+    function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
+    function getCopyValue(item : T; mode : String) : String; virtual;
+    function getCanCopy(item : T; mode : String) : boolean; virtual;
   end;
-
-
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
   TFillListManagerEvent = procedure (sender : TObject; propName : String; propValues : TFHIRObjectList) of object;
@@ -668,9 +705,9 @@ begin
   result := true;
 end;
 
-function TListOrTreeManagerBase.AskOnDelete: boolean;
+procedure TListOrTreeManagerBase.getCopyModes(modes: TStringList);
 begin
-  result := true;
+  modes.AddPair('caption', 'Caption');
 end;
 
 procedure TListOrTreeManagerBase.registerControl(c : TControl; op : TControlOperation; mode : String = '');
@@ -691,6 +728,9 @@ begin
 end;
 
 function TListOrTreeManagerBase.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation; mode : String = '') : TMenuItem;
+var
+  list : TStringList;
+  i : integer;
 begin
   result  := TMenuItem.create(nil);
   FPopup.Items.add(result);
@@ -701,6 +741,21 @@ begin
     result.name := 'mnuMode'+mode;
   if op <> copNone then
     result.OnClick := doMnuClick;
+  if (op = copCopy) then
+  begin
+    FHasCopy := true;
+    list := TStringList.create;
+    try
+      getCopyModes(list);
+      for i := 0 to list.count - 1 do
+        if list.Objects[i] <> nil then
+          registerSubMenuEntry(result, list.ValueFromIndex[i], integer(list.Objects[i]), copCopy, list.Names[i])
+        else
+          registerSubMenuEntry(result, list.ValueFromIndex[i], -1, copCopy, list.Names[i]);
+    finally
+      list.free;
+    end;
+  end;
 end;
 
 function TListOrTreeManagerBase.registerSubMenuEntry(parent: TMenuItem; caption: String; imageIndex: integer; op: TControlOperation; mode: String): TMenuItem;
@@ -785,6 +840,7 @@ begin
     if entry.control = sender then
       case entry.op of
         copAdd : doAdd(entry.mode);
+        copAddSet : doAddSet(entry.mode);
         copEdit : doEdit(entry.mode);
         copDelete : doDelete(entry.mode);
         copUp : doUp;
@@ -792,6 +848,9 @@ begin
         copReload : doLoad;
         copRefresh : refresh(focus);
         copExecute : doExecute(entry.mode);
+        copUpdate : doUpdate(entry.mode);
+        copStop : doStop(entry.mode);
+        copCopy : doCopy(entry.mode);
       end;
 end;
 
@@ -857,6 +916,7 @@ begin
   List.OnCustomDrawSubItem := doListDrawSubItem;
   List.smallImages := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     List.PopupMenu := FPopup;
@@ -903,14 +963,19 @@ begin
     ops := allowedOperations(FFiltered[i]);
 
   updateControls(copAdd, opAdd in ops);
+  updateControls(copAddSet, opAdd in ops);
   updateControls(copEdit, (opEdit in ops) and (i > -1));
   updateControls(copDelete, (opDelete in ops) and (i > -1));
   updateControls(copUp, (opOrder in ops) and (i > 0) and not Filtered);
   updateControls(copDown, (opOrder in ops) and (i > -1) and (i < FFiltered.count - 1) and not Filtered);
   updateControls(copRefresh, opRefresh in ops);
   updateControls(copExecute, opExecute in ops);
+  updateControls(copUpdate, opUpdate in ops);
+  updateControls(copStop, opStop in ops);
+  updateControls(copCopy, FHasCopy);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -978,6 +1043,7 @@ begin
 
   case TControlOperation(mnu.Tag) of
     copAdd : doAdd(mode);
+    copAddSet : doAddSet(mode);
     copEdit : doEdit(mode);
     copDelete : doDelete(mode);
     copUp : doUp;
@@ -985,59 +1051,101 @@ begin
     copReload : doLoad;
     copRefresh : refresh(focus);
     copExecute : doExecute(mode);
+    copUpdate : doupdate(mode);
+    copStop : doStop(mode);
+    copCopy : doCopy(mode);
   end;
+end;
+
+procedure TListManager<T>.internalAddItem(item : T);
+var
+  itemT, itemN : T;
+  entry : TListItem;
+  i : integer;
+begin
+  // so, does this replace and existing item?
+  itemN := nil;
+  for itemT in FData do
+  begin
+    if (compareItem(item, itemT, -1) = 0) then
+      itemN := itemT;
+  end;
+
+  if itemN = nil then
+  begin
+    entry := FList.items.add;
+    entry.Data := pointer(item);
+    populateEntry(entry, item);
+    FData.add(item.link);
+    FFiltered.add(item.link); // even if it fails filter
+    FList.ItemIndex := FList.items.count - 1;
+  end
+  else
+  begin
+    i := FData.indexOf(itemN);
+    FData[i] := item.link;
+    i := FFiltered.indexOf(itemN);
+    if i > -1 then
+    begin
+      entry := FList.items[i];
+      FList.ItemIndex := i;
+      FFiltered[i] := item.link;
+    end
+    else
+    begin
+      FFiltered.add(item.link); // even if it fails filter
+      entry := FList.items.add;
+      FList.ItemIndex := FList.items.count - 1;
+    end;
+    entry.Data := pointer(item);
+    populateEntry(entry, item);
+  end;
+end;
+
+procedure TListManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count - 1 do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
 end;
 
 procedure TListManager<T>.doAdd(mode : String);
 var
-  item, itemT, itemN : T;
-  entry : TListItem;
-  i : integer;
+  item : T;
 begin
   item := addItem(mode);
   if (item <> nil) then
   begin
     try
-      // so, does this replace and existing item?
-      itemN := nil;
-      for itemT in FData do
-      begin
-        if (compareItem(item, itemT, -1) = 0) then
-          itemN := itemT;
-      end;
-
-      if itemN = nil then
-      begin
-        entry := FList.items.add;
-        entry.Data := pointer(item);
-        populateEntry(entry, item);
-        FData.add(item.link);
-        FFiltered.add(item.link); // even if it fails filter
-        FList.ItemIndex := FList.items.count - 1;
-      end
-      else
-      begin
-        i := FData.indexOf(itemN);
-        FData[i] := item.link;
-        i := FFiltered.indexOf(itemN);
-        if i > -1 then
-        begin
-          entry := FList.items[i];
-          FList.ItemIndex := i;
-          FFiltered[i] := item.link;
-        end
-        else
-        begin
-          FFiltered.add(item.link); // even if it fails filter
-          entry := FList.items.add;
-          FList.ItemIndex := FList.items.count - 1;
-        end;
-        entry.Data := pointer(item);
-        populateEntry(entry, item);
-      end;
+      internalAddItem(item);
       updateStatus;
     finally
       item.Free;
+    end;
+  end;
+end;
+
+procedure TListManager<T>.doAddSet(mode: String);
+var
+  items : TFslList<T>;
+  item : T;
+begin
+  items := addItems(mode);
+  if (items <> nil) then
+  begin
+    try
+      for item in items do
+        internalAddItem(item);
+      updateStatus;
+    finally
+      items.Free;
     end;
   end;
 end;
@@ -1082,7 +1190,7 @@ var
   i : integer;
 begin
   f := focus;
-  if AskOnDelete then
+  if AskOnDelete(f) then
   begin
     if (QuestionDlg('Delete', 'Delete '+getSummaryText(f)+'?', mtConfirmation, [mrYes, mrNo], '') = mrYes) then
     begin
@@ -1116,10 +1224,53 @@ begin
 end;
 
 procedure TListManager<T>.doExecute(mode: String);
+var
+  item : T;
 begin
   if HasFocus then
-    if ExecuteItem(getFocus, mode) then
-      refresh(getFocus);
+  begin
+    item := getFocus;
+    if ExecuteItem(item, mode) then
+      refresh(item);
+  end;
+end;
+
+procedure TListManager<T>.doUpdate(mode: String);
+var
+  item : T;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    if UpdateItem(item, mode) then
+      refresh(item);
+  end;
+end;
+
+procedure TListManager<T>.doStop(mode: String);
+var
+  item : T;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    if StopItem(item, mode) then
+      refresh(item);
+  end;
+end;
+
+procedure TListManager<T>.doCopy(mode: String);
+var
+  item : T;
+  s : String;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    s := getCopyValue(item, mode);
+    if (s <> '') then
+      Clipboard.AsText := s;
+  end;
 end;
 
 procedure TListManager<T>.rebuild(focus : T);
@@ -1178,7 +1329,10 @@ var
   i, c : integer;
 begin
   if (item <> nil) then
+  begin
     refreshItem(item);
+    updateStatus;
+  end;
 
   FList.BeginUpdate;
   try
@@ -1196,6 +1350,11 @@ end;
 function TListManager<T>.canSort: boolean;
 begin
   result := false;
+end;
+
+function TListManager<T>.AskOnDelete(item: T): boolean;
+begin
+  result := true;
 end;
 
 function TListManager<T>.getCellColors(item: T; col: integer; var fore, back: TColor): boolean;
@@ -1218,9 +1377,32 @@ begin
   result := true;
 end;
 
+function TListManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
+end;
+
+procedure TListManager<T>.focusItemChange(item: T);
+begin
+  // nothing here
+end;
+
+function TListManager<T>.getCopyValue(item: T; mode: String): String;
+begin
+  if mode = 'caption' then
+    result := getCellText(item, 0)
+  else
+    result := '';
+end;
+
 function TListManager<T>.addItem(mode: String): T;
 begin
   result := nil;
+end;
+
+function TListManager<T>.addItems(mode: String): TFslList<T>;
+begin
+
 end;
 
 function TListManager<T>.editItem(item: T; mode: String): boolean;
@@ -1236,6 +1418,16 @@ end;
 function TListManager<T>.executeItem(item: T; mode: String): boolean;
 begin
   raise EFslException.Create('Execute is not supported here');
+end;
+
+function TListManager<T>.updateItem(item: T; mode: String): boolean;
+begin
+  raise EFslException.Create('Update is not supported here');
+end;
+
+function TListManager<T>.stopItem(item: T; mode: String): boolean;
+begin
+  raise EFslException.Create('Stop is not supported here');
 end;
 
 function TListManager<T>.refreshItem(item: T) : boolean;
@@ -1570,6 +1762,11 @@ begin
   end;
 end;
 
+procedure TTreeManager<T>.doAddSet(mode: String);
+begin
+  raise ETodo.create('doAddSet');
+end;
+
 procedure TTreeManager<T>.doEdit(mode: String);
 begin
   changed;
@@ -1591,7 +1788,7 @@ begin
   else
     pp := TFslObject(p.Data) as T;
 
-  if AskOnDelete then
+  if AskOnDelete(f) then
   begin
     if (QuestionDlg('Delete', 'Delete '+getSummaryText(f)+' from '+getSummaryText(pp)+'?', mtConfirmation, [mrYes, mrNo], '') = mrYes) then
     begin
@@ -1619,6 +1816,39 @@ begin
       refreshTreeNode(getFocus);
 end;
 
+procedure TTreeManager<T>.doUpdate(mode: String);
+begin
+  if HasFocus then
+    if UpdateItem(getFocus, mode) then
+      refreshTreeNode(getFocus);
+end;
+
+procedure TTreeManager<T>.doStop(mode: String);
+begin
+  if HasFocus then
+    if StopItem(getFocus, mode) then
+      refreshTreeNode(getFocus);
+end;
+
+procedure TTreeManager<T>.doCopy(mode: String);
+var
+  item : T;
+  s : String;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    s := getCopyValue(item, mode);
+    if (s <> '') then
+      Clipboard.AsText := s;
+  end;
+end;
+
+function TTreeManager<T>.AskOnDelete(item: T): boolean;
+begin
+  result := true;
+end;
+
 procedure TTreeManager<T>.setTree(value: TTreeView);
 var
   i : integer;
@@ -1629,6 +1859,7 @@ begin
   Tree.OnDblClick := doTreeDoubleClick;
   Tree.Images := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     FTree.PopupMenu := FPopup;
@@ -1772,12 +2003,17 @@ begin
     ops := allowedOperations(TFslObject(sel.Data) as T);
 
   updateControls(copAdd, opAdd in ops);
+  updateControls(copAddSet, opAdd in ops);
   updateControls(copEdit, (opEdit in ops) and (sel <> nil));
   updateControls(copDelete, (opDelete in ops) and (sel <> nil));
   updateControls(copRefresh, opRefresh in ops);
   updateControls(copExecute, opExecute in ops);
+  updateControls(copUpdate, opUpdate in ops);
+  updateControls(copStop, opStop in ops);
+  updateControls(copCopy, FHasCopy);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -1807,6 +2043,20 @@ begin
     FTree.images := AValue;
 end;
 
+procedure TTreeManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
+end;
+
 procedure TTreeManager<T>.doControl(sender: TObject);
 var
   entry : TControlEntry;
@@ -1815,6 +2065,7 @@ begin
     if entry.control = sender then
       case entry.op of
         copAdd : doAdd(entry.mode);
+        copAddSet : doAddSet(entry.mode);
         copEdit : doEdit(entry.mode);
         copDelete : doDelete(entry.mode);
         //copUp : doUp;
@@ -1822,6 +2073,9 @@ begin
         copReload : doLoad;
         copRefresh : refresh(focus);
         copExecute : doExecute(entry.mode);
+        copUpdate : doUpdate(entry.mode);
+        copStop : doStop(entry.mode);
+        copCopy : doCopy(entry.mode);
       end;
 end;
 
@@ -1838,6 +2092,7 @@ begin
 
   case TControlOperation(mnu.Tag) of
     copAdd : doAdd(mode);
+    copAddSet : doAddSet(mode);
     copEdit : doEdit(mode);
     copDelete : doDelete(mode);
     //copUp : doUp;
@@ -1845,6 +2100,9 @@ begin
     copReload : doLoad;
     copRefresh : refresh(focus);
     copExecute : doExecute(mode);
+    copUpdate : doUpdate(mode);
+    copStop : doStop(mode);
+    copCopy : doCopy(mode);
   end;
 end;
 
@@ -1877,6 +2135,11 @@ begin
   //  nothing
 end;
 
+procedure TTreeManager<T>.focusItemChange(item: T);
+begin
+  // nothing here
+end;
+
 function TTreeManager<T>.addItem(parent : T; mode : String) : T;
 begin
   result := nil;
@@ -1902,9 +2165,32 @@ begin
   raise EFslException.Create('Execute is not supported here');
 end;
 
+function TTreeManager<T>.updateItem(item : T; mode : String) : boolean;
+begin
+  raise EFslException.Create('Update is not supported here');
+end;
+
+function TTreeManager<T>.stopItem(item : T; mode : String) : boolean;
+begin
+  raise EFslException.Create('Stop is not supported here');
+end;
+
 function TTreeManager<T>.refreshItem(item: T) : boolean;
 begin
   result := false;
+end;
+
+function TTreeManager<T>.getCopyValue(item: T; mode: String): String;
+begin
+  if mode = 'caption' then
+    result := getCellText(item)
+  else
+    result := '';
+end;
+
+function TTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
 end;
 
 { TVTreeManager }
@@ -1978,10 +2264,19 @@ begin
   end;
 end;
 
+procedure TVTreeManager<T>.doAddSet(mode: String);
+begin
+  raise ETodo.create('doAddSet');
+end;
+
 procedure TVTreeManager<T>.doEdit(mode: String);
 begin
-  changed;
-  raise ETodo.create('doEdit');
+  if focus <> nil then
+    if editItem(focus, mode) then
+    begin
+      updateStatus;
+      FTree.invalidateNode(focus.FPNode);
+    end;
 end;
 
 procedure TVTreeManager<T>.doDelete(mode: String);
@@ -1999,7 +2294,7 @@ begin
   else
     pp := getT(p);
 
-  if AskOnDelete then
+  if AskOnDelete(f) then
   begin
     if (QuestionDlg('Delete', 'Delete '+getSummaryText(f)+' from '+getSummaryText(pp)+'?', mtConfirmation, [mrYes, mrNo], '') = mrYes) then
     begin
@@ -2025,6 +2320,39 @@ begin
   if HasFocus then
     if ExecuteItem(getFocus, mode) then
       refreshTreeNode(getFocus);
+end;
+
+procedure TVTreeManager<T>.doUpdate(mode: String);
+begin
+  if HasFocus then
+    if UpdateItem(getFocus, mode) then
+      refreshTreeNode(getFocus);
+end;
+
+procedure TVTreeManager<T>.doStop(mode: String);
+begin
+  if HasFocus then
+    if StopItem(getFocus, mode) then
+      refreshTreeNode(getFocus);
+end;
+
+procedure TVTreeManager<T>.doCopy(mode: String);
+var
+  item : T;
+  s : String;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    s := getCopyValue(item, mode);
+    if (s <> '') then
+      Clipboard.AsText := s;
+  end;
+end;
+
+function TVTreeManager<T>.AskOnDelete(item: T): boolean;
+begin
+  result := true;
 end;
 
 function TVTreeManager<T>.getT(p: PVirtualNode): T;
@@ -2061,6 +2389,7 @@ begin
   Tree.OnDblClick := doTreeDoubleClick;
   Tree.Images := FImages;
   FPopup.Images := FImages;
+  FPopup.OnPopup := doPopup;
   buildMenu;
   if FPopup.Items.Count > 0 then
     FTree.PopupMenu := FPopup;
@@ -2199,12 +2528,17 @@ begin
     ops := allowedOperations(getT(sel));
 
   updateControls(copAdd, opAdd in ops);
+  updateControls(copAddSet, opAdd in ops);
   updateControls(copEdit, (opEdit in ops) and (sel <> nil));
   updateControls(copDelete, (opDelete in ops) and (sel <> nil));
   updateControls(copRefresh, opRefresh in ops);
   updateControls(copExecute, opExecute in ops);
+  updateControls(copUpdate, opUpdate in ops);
+  updateControls(copStop, opStop in ops);
+  updateControls(copCopy, FHasCopy);
   FCanEdit := opEdit in ops;
 
+  focusItemChange(focus);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -2266,9 +2600,23 @@ begin
   fore := clBlack;
   back := clWhite;
   getCellColors(getT(node), fore, back);
-  TargetCanvas.Brush.Color := back;
-  TargetCanvas.Brush.Style := bsSolid;
-  TargetCanvas.Rectangle(cellRect);
+  //TargetCanvas.Brush.Color := back;
+  //TargetCanvas.Brush.Style := bsSolid;
+  //TargetCanvas.Rectangle(cellRect);
+end;
+
+procedure TVTreeManager<T>.doPopup(sender: TObject);
+  procedure visitItem(item : TMenuItem);
+  var
+    i : integer;
+  begin
+    if item.Tag = ord(copCopy) then
+      item.Enabled := getCanCopy(focus, item.name);
+    for i := 0 to item.Count do
+      visitItem(item.Items[i]);
+  end;
+begin
+  visitItem(FPopup.items);
 end;
 
 procedure TVTreeManager<T>.doControl(sender: TObject);
@@ -2279,6 +2627,7 @@ begin
     if entry.control = sender then
       case entry.op of
         copAdd : doAdd(entry.mode);
+        copAddSet : doAddSet(entry.mode);
         copEdit : doEdit(entry.mode);
         copDelete : doDelete(entry.mode);
         //copUp : doUp;
@@ -2286,6 +2635,9 @@ begin
         copReload : doLoad;
         copRefresh : refresh(focus);
         copExecute : doExecute(entry.mode);
+        copupdate : doUpdate(entry.mode);
+        copStop : doStop(entry.mode);
+        copCopy : doCopy(entry.mode);
       end;
 end;
 
@@ -2302,6 +2654,7 @@ begin
 
   case TControlOperation(mnu.Tag) of
     copAdd : doAdd(mode);
+    copAddSet : doAddSet(mode);
     copEdit : doEdit(mode);
     copDelete : doDelete(mode);
     //copUp : doUp;
@@ -2309,6 +2662,9 @@ begin
     copReload : doLoad;
     copRefresh : refresh(focus);
     copExecute : doExecute(mode);
+    copUpdate : doUpdate(mode);
+    copStop : doStop(mode);
+    copCopy : doCopy(mode);
   end;
 end;
 
@@ -2341,6 +2697,11 @@ begin
   //  nothing
 end;
 
+procedure TVTreeManager<T>.focusItemChange(item: T);
+begin
+  // nothing here
+end;
+
 function TVTreeManager<T>.addItem(parent : T; mode : String) : T;
 begin
   result := nil;
@@ -2366,9 +2727,32 @@ begin
   raise EFslException.Create('Execute is not supported here');
 end;
 
+function TVTreeManager<T>.updateItem(item : T; mode : String) : boolean;
+begin
+  raise EFslException.Create('Update is not supported here');
+end;
+
+function TVTreeManager<T>.stopItem(item : T; mode : String) : boolean;
+begin
+  raise EFslException.Create('Stop is not supported here');
+end;
+
 function TVTreeManager<T>.refreshItem(item: T) : boolean;
 begin
   result := false;
+end;
+
+function TVTreeManager<T>.getCopyValue(item: T; mode: String): String;
+begin
+  if mode = 'caption' then
+    result := getCellText(item)
+  else
+    result := '';
+end;
+
+function TVTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
+begin
+  result := item <> nil;
 end;
 
 { TPanelStack }

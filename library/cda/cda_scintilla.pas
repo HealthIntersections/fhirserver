@@ -1,4 +1,4 @@
-unit cda_scint;
+unit cda_scintilla;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

@@ -356,7 +356,7 @@
         <PackageName Value="LCL"/>
       </Item17>
     </RequiredPackages>
-    <Units Count="81">
+    <Units Count="83">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -684,6 +684,14 @@
         <Filename Value="tx\tx_us_states.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
+      <Unit81>
+        <Filename Value="kernel_thread.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit81>
+      <Unit82>
+        <Filename Value="tx_version.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit82>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

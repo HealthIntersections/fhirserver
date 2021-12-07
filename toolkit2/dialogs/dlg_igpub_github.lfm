@@ -1,0 +1,199 @@
+object IgGitHubDialog: TIgGitHubDialog
+  Left = 778
+  Height = 485
+  Top = -650
+  Width = 504
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Get IG from GitHub'
+  ClientHeight = 485
+  ClientWidth = 504
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object edtGitOrg: TEdit
+    Left = 8
+    Height = 23
+    Top = 85
+    Width = 480
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 444
+    Width = 504
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 504
+    TabOrder = 1
+    object btnOk: TButton
+      Left = 339
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      OnClick = btnOkClick
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 420
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = 'Cancel'
+      OnClick = btnCancelClick
+      TabOrder = 1
+    end
+    object btnPaste: TButton
+      Left = 8
+      Height = 25
+      Hint = 'Paste a GitHub URL, or a build.fhir.org URL'
+      Top = 6
+      Width = 136
+      Caption = 'Paste'
+      OnClick = btnPasteClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 64
+    Width = 139
+    Caption = 'GitHub Repo Organization'
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 95
+    Caption = 'Containing Folder'
+  end
+  object edtFolder: TEdit
+    Left = 8
+    Height = 23
+    Top = 26
+    Width = 448
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 2
+    Text = 'edtFolder'
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 176
+    Width = 37
+    Caption = 'Branch'
+  end
+  object edtBranch: TEdit
+    Left = 8
+    Height = 23
+    Top = 192
+    Width = 480
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 3
+  end
+  object SpeedButton1: TSpeedButton
+    Left = 464
+    Height = 24
+    Top = 26
+    Width = 23
+    Glyph.Data = {
+      36030000424D3803000000000000360000002800000010000000100000000100
+      18000000000000000000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FF078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+      BE078DBE1594C3FF00FFFF00FFFF00FF078DBE47BAE8078DBE96DEFD61CBF764
+      CDF764CDF865CDF765CDF866CEF85EC9F450B9E08BD5EA078DBEFF00FFFF00FF
+      078DBE4FC0EB078DBEA1E6FF6ED5FA71D6FB71D6FA72D6FB72D6FB73D7FC6AD2
+      F757BFE193DAEB078DBEFF00FF078DBE078DBE55C4EB078DBEA8ECFF78DDFB7C
+      DEFB7CDEFB7CDEFB7DDEFB7DDFFB74DAF85EC4E197DDEB078DBE078DBE47BAE8
+      078DBE5CCAED078DBEABF2FF7FE5FB83E6FC82E6FC83E6FC82E6FC83E7FD7AE2
+      F95CC6E198E0EB078DBE078DBE4FC0EB078DBE60CFEC078DBEEFFFFFB9FAFFBD
+      FBFFBEFBFFBDFBFFBDFBFFBFFCFFB5F6FF9ADCECBAEBF3078DBE078DBE55C4EB
+      078DBE6DD8EF078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+      BE078DBE078DBE078DBE078DBE5CCAED078DBE8DEEFA8DEEFA8DEEFA8DEEFA8D
+      EEFA8DEEFA8DEEFA8DEEFA8DEEFA8DEEFA078DBEFF00FFFF00FF078DBE60CFEC
+      078DBEDEFEFFABFFFFACFFFFACFFFFAEFFFFAEFFFFAFFFFFAFFFFFB2FFFFA4FD
+      FF078DBEFF00FFFF00FF078DBE6DD8EF078DBE078DBEDEFDFE9FFCFEAEFDFE62
+      CEE4078DBE078DBE078DBE078DBE078DBE078DBEFF00FFFF00FF078DBE8DEEFA
+      8DEEFA8DEEFA078DBE078DBE078DBE078DBE8DEEFA8DEEFA8DEEFA078DBEFF00
+      FFFF00FFFF00FFFF00FF078DBEDEFEFFABFFFFACFFFFACFFFFAEFFFFAEFFFFAF
+      FFFFAFFFFFB2FFFFA4FDFF078DBEFF00FFFF00FFFF00FFFF00FFFF00FF078DBE
+      DEFDFE9FFCFEAEFDFE62CEE4078DBE078DBE078DBE078DBE078DBEFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+    }
+    OnClick = SpeedButton1Click
+  end
+  object Label4: TLabel
+    Left = 8
+    Height = 15
+    Top = 120
+    Width = 103
+    Caption = 'GitHub Repo Name'
+  end
+  object edtGitRepoName: TEdit
+    Left = 8
+    Height = 23
+    Top = 141
+    Width = 480
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 4
+  end
+  object Label5: TLabel
+    Left = 8
+    Height = 15
+    Top = 232
+    Width = 99
+    Caption = 'Local Folder Name'
+  end
+  object edtLocalFolder: TEdit
+    Left = 8
+    Height = 23
+    Top = 248
+    Width = 480
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 5
+  end
+  object Label6: TLabel
+    Left = 8
+    Height = 15
+    Top = 284
+    Width = 45
+    Caption = 'Progress'
+  end
+  object Memo1: TMemo
+    Left = 10
+    Height = 122
+    Top = 304
+    Width = 478
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ReadOnly = True
+    TabOrder = 6
+    WordWrap = False
+  end
+  object fd: TSelectDirectoryDialog
+    InitialDir = 'fd'
+    Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Left = 224
+    Top = 443
+  end
+  object Timer1: TTimer
+    Interval = 50
+    OnTimer = Timer1Timer
+    Left = 185
+    Top = 443
+  end
+end

@@ -1,4 +1,4 @@
-unit FHIR.Scint.Formats;
+unit fui_scintilla;
 
 {
 Copyright (c) 2014+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

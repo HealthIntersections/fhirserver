@@ -1,4 +1,4 @@
-unit FHIR.Tests.FullServer;
+unit tests_server_full;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

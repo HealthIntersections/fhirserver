@@ -393,6 +393,7 @@ Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Int
 Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean; Overload;
 
 function jsonEscape(s : String; isString : boolean) : String;
+function jsonUnescape(s : String) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
 function isAbsoluteUrl(s: String): boolean;
@@ -585,7 +586,7 @@ Type
 
 type
   TFileHandle = Record
-    Value : Cardinal;
+    Value : System.THandle;
   End;
 
   TFileVersion = Record
@@ -604,7 +605,7 @@ Function FileExists(Const sFilename : String) : Boolean; Overload;
 Function FileDelete(Const sFilename : String) : Boolean; Overload;
 Function FileHandleInvalid : TFileHandle; Overload;
 Function FileHandleIsValid(Const aFileHandle : TFileHandle) : Boolean; Overload;
-Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle; Overload;
+Function FileHandleOpen(Const aValue : System.THandle) : TFileHandle; Overload;
 Procedure FileHandleClose(Var aFileHandle : TFileHandle); Overload;
 Function PathFolder(Const sFilename : String) : String; Overload;
 Function ForceFolder(dir: String): Boolean;
@@ -642,7 +643,7 @@ Procedure MemoryFill(Const pBuffer : Pointer; iSize : Integer);
 Procedure MemoryMove(Const aSource, aTarget : Pointer; iSize : Integer);
 Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString; Overload;
 Function MemoryToString(pData : Pointer; iLength : Integer) : AnsiString; Overload;
-
+function pointerToString(obj : TObject) : String;
 
 Function HashStringToCode32(Const sValue : String) : Integer;
 Function HashStringToCode64(Const sValue : String) : Int64;
@@ -986,8 +987,10 @@ type
     function toHL7: String; // as yyyymmddhhnnss.zzz+T
     function toXML : String;
     function toDB : String; // as yyyy-mm-dd hh:nn:ss.zzz
+    function toNbf : Integer; // JWT seconds since
 
     class function isValidXmlDate(value : String) : Boolean; static;
+    class function isValidDate(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : boolean; static;
 
     property Precision : TFslDateTimePrecision read FPrecision;
 
@@ -2796,7 +2799,7 @@ Begin
   Result := aFileHandle.Value <> FileHandleInvalid.Value;
 End;
 
-Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle;
+Function FileHandleOpen(Const aValue : System.THandle) : TFileHandle;
 Begin
   Result.Value := aValue;
 End;
@@ -3319,7 +3322,7 @@ begin
     if not FolderExists(result) then
       result := FilePath([UserFolder, 'Downloads']);
     if not FolderExists(result) then
-      result := GetTempDir;
+      result := SystemTemp;
   finally
     reg.free;
   end;
@@ -3328,7 +3331,7 @@ end;
 begin
   result := FilePath([UserFolder, 'Downloads']);
   if not FolderExists(result) then
-    result := GetTempDir;
+    result := SystemTemp;
 end;
 {$ENDIF}
 
@@ -3341,8 +3344,18 @@ function partnerFile(name: String): String;
 var
   s : String;
 begin
-  s := ExtractFilePath(Paramstr(0));
+  s := ExcludeTrailingSlash(ExtractFilePath(Paramstr(0)));
   result := path([s, name]);
+  {$IFDEF OSX}
+  // if we're packed up in a .app, then the file we're looking for will be
+  // in ../Resources
+  if not FileExists(result) then
+  begin
+    s := path([s.subString(0, s.lastIndexOf('/')), 'Resources', name]);
+    if FileExists(s) then
+      result := s;
+  end;
+  {$ENDIF}
 end;
 
 
@@ -5961,6 +5974,62 @@ begin
   end;
 end;
 
+function jsonUnescape(s : String) : String;
+var
+  b : TStringBuilder;
+  i : integer;
+  ch :  char;
+  hex : String;
+  function nextChar : char;
+  begin
+    inc(i);
+    if i <= s.length then
+      result := s[i]
+    else
+      result := ' ';
+  end;
+begin
+  b := TStringBuilder.create;
+  try
+    i := 0;
+    while (i < s.length) do
+    begin
+      ch := nextChar;
+      if (ch = '\') Then
+      Begin
+        ch := nextChar;
+        case ch of
+          '"': b.append('"');
+          '''': b.append('''');
+          '\': b.append('\');
+          '/': b.append('/');
+          'n': b.append(#10);
+          'r': b.append(#13);
+          't': b.append(#09);
+          'u':
+            begin
+            setLength(hex, 4);
+            hex[1] := nextChar;
+            hex[2] := nextChar;
+            hex[3] := nextChar;
+            hex[4] := nextChar;
+            b.append(chr(StrToInt('$'+hex)));
+            end
+        Else
+          b.append('?'+ch);
+        End;
+      End
+      Else if (ch = '"') then
+        b.append(ch)
+      else
+        b.append(ch);
+    end;
+    result := b.toString;
+  finally
+    b.free;
+  end;
+end;
+
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
 var
   dec : boolean;
@@ -8145,6 +8214,18 @@ begin
 end;
 
 
+class function TFslDateTime.isValidDate(format, date: String; AllowBlankTimes, allowNoDay, allownodate, noFixYear: boolean): boolean;
+var
+  dt : TFslDateTime;
+begin
+  try
+    dt := TFslDateTime.fromFormat(format, date, AllowBlankTimes, allowNoDay, allownodate, noFixYear);
+    result := dt.year > 0;
+  except
+    result := false;
+  end;
+end;
+
 class function TFslDateTime.isValidXmlDate(value: String): Boolean;
 var
   s : String;
@@ -8526,6 +8607,11 @@ begin
   {else
     dttzUnknown - do nothing }
   end;
+end;
+
+function TFslDateTime.toNbf: Integer;
+begin
+  result := SecondsBetween(DateTime, EncodeDate(1970, 1, 1));
 end;
 
 function TFslDateTime.toXML: String;
@@ -17152,6 +17238,11 @@ end;
 class function TFslTimeZone.other(zone : String) : TFslTimeZone;
 begin
   result := TFslTimeZone.create(zone);
+end;
+
+function pointerToString(obj : TObject) : String;
+begin
+  result := IntToHex(UInt64(obj), 16);
 end;
 
 Initialization

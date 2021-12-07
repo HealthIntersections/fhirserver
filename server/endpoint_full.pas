@@ -62,7 +62,7 @@ uses
   scim_server, telnet_server, session, security, jwt,
   database_installer, server_version, server_config, utilities, bundlebuilder, html_builder, server_constants,
   server_context, auth_manager,
-  storage, database, time_tracker,
+  storage, database, time_tracker, kernel_thread,
   server_factory, indexing, subscriptions,
   web_base, endpoint, endpoint_storage;
 
@@ -209,7 +209,7 @@ Type
     procedure UninstallDatabase; override;
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
-    procedure internalThread; override;
+    procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
@@ -684,22 +684,22 @@ procedure TFullServerEndPoint.internalThread;
 begin
   try
     if FStopping then exit;
-    setThreadStatus('Sweeping Sessions');
+    callback(self, 'Sweeping Sessions', 0);
     FStore.Sweep;
     if FStopping then exit;
-    setThreadStatus('Google Commit');
+    callback(self, 'Google Commit', 10);
     FWeb.Common.Google.commit;
     if FStopping then exit;
-    setThreadStatus('Checking Async Tasks');
+    callback(self, 'Checking Async Tasks', 20);
     FWeb.CheckAsyncTasks;
     if FStopping then exit;
-    setThreadStatus('Processing Observations');
+    callback(self, 'Processing Observations', 30);
     FStore.ProcessObservations;
     if FStopping then exit;
-    setThreadStatus('Sweeping Client Cache');
+    callback(self, 'Sweeping Client Cache', 50);
     FServerContext.ClientCacheManager.sweep;
     if FStopping then exit;
-    setThreadStatus('Build Terminology Indexes');
+    callback(self, 'Build Terminology Indexes', 60);
     FServerContext.TerminologyServer.BuildIndexes(false);
   except
     on e : exception do
