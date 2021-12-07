@@ -970,7 +970,7 @@ begin
   result := result + '<p><a href="' + AuthServer.BasePath + '/auth?client_id=c.1&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20' + SCIM_ADMINISTRATOR
     + '&redirect_uri=' + authurl + '/internal&aud=' + authurl + '&state=' + AuthServer.MakeLoginToken(path, apGoogle) + '">Login using OAuth</a></p>' + #13#10;
 
-  if Common.StatedSSLPort <> 0 then
+  if Common.StatedPort <> 0 then
     result := result + '<p>Or use the <a href="http://' + Host + port(Common.StatedPort, 80) + PathNoSlash + '">unsecured API</a>.</p>'#13#10;
 
   result := result + '<p>&nbsp;</p>'#13#10 +
