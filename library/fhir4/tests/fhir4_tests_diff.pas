@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_testing, fsl_utilities, fsl_stream, fsl_tests,
+  fsl_base, fsl_testing, fsl_utilities, fsl_stream, fsl_tests,
   fsl_http,
   fhir_objects, fhir_parser, fhir_factory, fhir_common,
   fhir4_tests_worker, fhir4_resources, fhir4_types, fhir4_factory, fhir4_common, fhir4_parser, fhir4_xml,
@@ -42,6 +42,15 @@ uses
   fsl_xml;
 
 type
+  TFHIRDifferenceTestContext = class (TFslObject)
+  private
+    engine : TDifferenceEngine;
+    delta : TFhirParametersW;
+    input: TFhirResource;
+    diff: TFhirParameters;
+    output : TFhirResource;
+  end;
+
   TFHIRDifferenceTest4 = Class (TFslTestSuiteCase)
   Private
     FTest : TMXmlElement;
@@ -50,6 +59,9 @@ type
     function AsXml(res : TFHIRResource) : String;
     procedure CompareXml(name, mode : String; expected, obtained : TFHIRResource);
     procedure execCase(mode : String; input : TFhirResource; diff : TFhirParameters; output : TFhirResource);
+    procedure execCaseError(mode : String; input : TFhirResource; diff : TFhirParameters; msg : string);
+    procedure execGenDiffError(context : TObject);
+    procedure execApplyDiffError(context : TObject);
   Public
     constructor Create(test : TMXmlElement);
     destructor Destroy; override;
@@ -139,6 +151,21 @@ begin
   inherited;
 end;
 
+procedure TFHIRDifferenceTest4.execApplyDiffError(context: TObject);
+var
+  ctxt : TFHIRDifferenceTestContext;
+  w : TFhirParametersW;
+begin
+  ctxt := context as TFHIRDifferenceTestContext;
+
+  w := TFhirParameters4.create(ctxt.diff.link);
+  try
+    ctxt.engine.applyDifference(ctxt.input, w);
+  finally
+    w.free;
+  end;
+end;
+
 procedure TFHIRDifferenceTest4.execCase(mode: String; input: TFhirResource; diff: TFhirParameters; output: TFhirResource);
 var
   engine : TDifferenceEngine;
@@ -183,6 +210,57 @@ begin
   end;
 end;
 
+procedure TFHIRDifferenceTest4.execCaseError(mode: String; input: TFhirResource; diff: TFhirParameters; msg: string);
+var
+  context : TFHIRDifferenceTestContext;
+  html : String;
+  w : TFhirParametersW;
+begin
+  if (mode = 'both') or (mode = 'reverse') then
+  begin
+    context := TFHIRDifferenceTestContext.Create;
+    try
+      context.input := input;
+      context.engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, TFHIRFactoryR4.create);
+      try
+        assertWillRaise(execGenDiffError, context, EFHIRException, msg);
+      finally
+        context.engine.free;
+      end;
+    finally
+      context.Free;
+    end;
+  end;
+
+  if (mode = 'both') or (mode = 'forwards') then
+  begin
+    context := TFHIRDifferenceTestContext.Create;
+    try
+      context.input := input;
+      context.diff := diff;
+      context.engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, TFHIRFactoryR4.create);
+      try
+        context.engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, TFHIRFactoryR4.create);
+        assertWillRaise(execApplyDiffError, context, EFHIRException, msg);
+      finally
+        context.engine.free;
+      end;
+    finally
+      context.Free;
+    end;
+  end;
+end;
+
+procedure TFHIRDifferenceTest4.execGenDiffError(context: TObject);
+var
+  ctxt : TFHIRDifferenceTestContext;
+  w : TFhirParametersW;
+  html : String;
+begin
+  ctxt := context as TFHIRDifferenceTestContext;
+  ctxt.engine.generateDifference(ctxt.input, ctxt.output, html);
+end;
+
 function TFHIRDifferenceTest4.parseResource(elem: TMXmlElement): TFhirResource;
 var
   p : TFHIRXmlParser;
@@ -204,16 +282,23 @@ var
 begin
   input := parseResource(FTest.element('input'));
   try
-    output := parseResource(FTest.element('output'));
+    diff := parseResource(FTest.element('diff')) as TFHIRParameters;
     try
-      diff := parseResource(FTest.element('diff')) as TFHIRParameters;
-      try
-        execCase(FTest.attribute['mode'], input, diff, output);
-      finally
-        diff.Free;
+      if FTest.element('error') <> nil then
+      begin
+        execCaseError(FTest.attribute['mode'], input, diff, FTest.element('error').attribute['msg']);
+      end
+      else
+      begin
+        output := parseResource(FTest.element('output'));
+        try
+          execCase(FTest.attribute['mode'], input, diff, output);
+        finally
+          output.free;
+        end;
       end;
     finally
-      output.free;
+      diff.Free;
     end;
   finally
     input.Free;
