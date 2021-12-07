@@ -162,7 +162,7 @@ type
     constructor Create(folder : String; conn : TFDBConnection);
     destructor Destroy; override;
 
-    procedure Doinstall(sender : TObject; callback : TWorkProgressEvent);
+    procedure Doinstall(sender : TObject; context: TObject; callback : TWorkProgressEvent);
   end;
 
 
@@ -454,7 +454,7 @@ begin
   end;
 end;
 
-procedure TUMLSImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
+procedure TUMLSImporter.Doinstall(sender: TObject; context: TObject; callback: TWorkProgressEvent);
 begin
   callback(self, 1, false, 'Checking');
   CheckFiles;
