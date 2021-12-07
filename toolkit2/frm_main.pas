@@ -712,11 +712,13 @@ begin
   {$ELSE}
   mnuApple.Visible := false;
   {$ENDIF}
+  {$IFNDEF STATICLOAD_OPENSSL}
   {$IFDEF WINDOWS}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
   {$ENDIF}
   {$IFDEF OSX}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0)); // '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+  {$ENDIF}
   {$ENDIF}
   try
     InitOpenSSL;

@@ -1,5 +1,7 @@
 unit IdOpenSSLLoader;
 
+{$i IdCompilerDefines.inc}
+
 interface
 
 uses

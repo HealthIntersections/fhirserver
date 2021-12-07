@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\dependencies\Indy10"/>
-        <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+        <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\static"/>
         <UnitOutputDirectory Value="lib\indy\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -21,7 +21,7 @@
         <CompilerMessages>
           <IgnoredMessages idx5091="True" idx5024="True"/>
         </CompilerMessages>
-        <CustomOptions Value="-Ur"/>
+        <CustomOptions Value="-Ur STATICLOAD_OPENSSL"/>
       </Other>
     </CompilerOptions>
     <Files>

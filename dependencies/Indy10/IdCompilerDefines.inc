@@ -1,4 +1,4 @@
-{$IFDEF CONDITIONALEXPRESSIONS}
+﻿{$IFDEF CONDITIONALEXPRESSIONS}
   // Must be at the top...
   {$IF CompilerVersion >= 24.0}
     {$LEGACYIFEND ON}
@@ -2013,3 +2013,7 @@ SOLARIS instead of IFDEF UNIX is not an error, it's deliberate.}
 {$IFDEF HAS_DIRECTIVE_ZEROBASEDSTRINGS}
   {$ZEROBASEDSTRINGS OFF}
 {$ENDIF}
+
+// Added: Grahame Grieve, for FHIR Suite
+{$DEFINE STATICLOAD_OPENSSL}
+

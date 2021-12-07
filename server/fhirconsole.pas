@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$i fhir.inc}
+
 uses
   {$IFNDEF WINDOWS}
   cmem, cthreads,
@@ -49,11 +50,13 @@ var
 begin
   try
     InitialiseODBC;
+    {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
     {$IFDEF OSX}
     GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+    {$ENDIF}
     {$ENDIF}
 
     InitOpenSSL;

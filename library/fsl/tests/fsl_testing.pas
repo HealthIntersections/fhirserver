@@ -279,9 +279,6 @@ end;
 
 procedure TFslTestCase.assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
 begin
-  {$IFDEF FPC}
-  TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
-  {$ELSE}
   try
     AMethod(context);
     if (AExceptionMessage = '') then
@@ -296,7 +293,6 @@ begin
         assertEqual(AExceptionMessage, e.Message);
     end;
   end;
-  {$ENDIF}
 end;
 
 procedure TFslTestCase.Status(const Msg: string);

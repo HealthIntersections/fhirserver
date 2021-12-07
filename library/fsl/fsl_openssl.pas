@@ -122,9 +122,13 @@ end;
 
 function OpenSSLIsHashingIntfAvail : Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_DigestInit_ex) and
             Assigned(EVP_DigestUpdate) and
             Assigned(EVP_DigestFinal_ex) ;
+  {$ENDIF}
 end;
 
 function OpenSSLGetFIPSMode : Boolean;
@@ -176,7 +180,11 @@ end;
 
 function OpenSSLIsMD5HashIntfAvail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_md5);
+  {$ENDIF}
 end;
 
 function OpenSSLGetMD5HashInst : TIdHashIntCtx;
@@ -199,7 +207,11 @@ end;
 
 function OpenSSLIsSHA224HashIntfAvail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha224);
+  {$ENDIF}
 end;
 
 function OpenSSLGetSHA224HashInst : TIdHashIntCtx;
@@ -212,7 +224,11 @@ end;
 
 function OpenSSLIsSHA256HashIntfAvail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha256);
+  {$ENDIF}
 end;
 
 function OpenSSLGetSHA256HashInst : TIdHashIntCtx;
@@ -225,7 +241,11 @@ end;
 
 function OpenSSLIsSHA384HashIntfAvail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha384);
+  {$ENDIF}
 end;
 
 function OpenSSLGetSHA384HashInst : TIdHashIntCtx;
@@ -238,7 +258,11 @@ end;
 
 function OpenSSLIsSHA512HashIntfAvail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha512);
+  {$ENDIF}
 end;
 
 function OpenSSLGetSHA512HashInst : TIdHashIntCtx;
@@ -274,12 +298,20 @@ end;
 
 function OpenSSLIsHMACAvail : Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(HMAC_CTX_new) and Assigned(HMAC_Init_ex) and Assigned(HMAC_Update) and Assigned(HMAC_Final) and Assigned(HMAC_CTX_free);
+  {$ENDIF}
 end;
 
 function OpenSSLIsHMACMD5Avail: Boolean;
 begin
- Result := Assigned(EVP_md5);
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
+  Result := Assigned(EVP_md5);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACMD5Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -290,7 +322,11 @@ end;
 
 function OpenSSLIsHMACSHA1Avail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha1);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACSHA1Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -301,7 +337,11 @@ end;
 
 function OpenSSLIsHMACSHA224Avail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha224);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACSHA224Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -312,7 +352,11 @@ end;
 
 function OpenSSLIsHMACSHA256Avail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha256);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACSHA256Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -323,7 +367,11 @@ end;
 
 function OpenSSLIsHMACSHA384Avail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha384);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACSHA384Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -334,7 +382,11 @@ end;
 
 function OpenSSLIsHMACSHA512Avail: Boolean;
 begin
+  {$IFDEF STATICLOAD_OPENSSL}
+  Result := true;
+  {$ELSE}
   Result := Assigned(EVP_sha512);
+  {$ENDIF}
 end;
 
 function OpenSSLGetHMACSHA512Inst(const AKey : TIdBytes) : TIdHMACIntCtx;
@@ -407,8 +459,10 @@ end;
 
 procedure InitOpenSSL;
 begin
+  {$IFNDEF STATICLOAD_OPENSSL}
   if not GetOpenSSLLoader.Load then
     raise EFslException.Create('open SSL failed to load: '+GetOpenSSLLoader.LoadError);
+  {$ENDIF}
   InstallIndyRoutines;
 end;
 
