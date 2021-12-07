@@ -38,7 +38,7 @@ uses
   {$ENDIF}
   Classes, SysUtils,
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
-  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode;
+  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions;
 
 
 type
@@ -77,6 +77,8 @@ type
     function adjustChecksForFolder(folder : String; checks: TSourceScanCheckSet) : TSourceScanCheckSet;
     procedure setInstallVersion(n, p, v: String);
     procedure setSourceVersion(v: String);
+    procedure setProjectVersion(p, v: String; d : boolean);
+    procedure setNextSourceVersion(v : String);
   public
     constructor Create;
     destructor Destroy; override;
@@ -407,6 +409,47 @@ procedure TCodeScanner.setSourceVersion(v : String);
 var
   dt, inc : string;
 begin
+  if not TSemanticVersion.isValid(v) then
+    raise Exception.create('Invalid semantic version '+v);
+
+  dt := TFslDateTime.makeUTC().toString('yyyy-mm-dd');
+  Writeln('Update version.inc to set version to '+v+' on '+dt);
+
+  inc :=
+    ' FHIR_CODE_FULL_VERSION = '''+v+''';'+#13#10+
+    ' FHIR_CODE_RELEASE_DATE = '''+dt+''';'+#13#10+
+    ' FHIR_CODE_RELEASE_DATETIME = '''+TFslDateTime.makeUTC().toHL7+''';'+#13#10;
+  StringToFile(inc, FilePath([FProjectDir, 'library', 'version.inc']), TEncoding.ASCII);
+  FAllOk := true;
+end;
+
+procedure TCodeScanner.setProjectVersion(p, v: String; d : boolean);
+var
+  sv : TSemanticVersion;
+begin
+  sv := TSemanticVersion.fromString(v);
+  try
+    sv.applyToProject(p, d);
+  finally
+    sv.free;
+  end;
+  FAllOk := true;
+end;
+
+
+procedure TCodeScanner.setNextSourceVersion(v : String);
+var
+  ver : TSemanticVersion;
+  dt, inc : String;
+begin
+  ver := TSemanticVersion.fromString(v);
+  try
+    ver.incVer(semverPatch);
+    ver.BuildLabel := 'SNAPSHOT';
+    v := ver.ToString;
+  finally
+    ver.free;
+  end;
   dt := TFslDateTime.makeUTC().toString('yyyy-mm-dd');
   Writeln('Update version.inc to set version to '+v+' on '+dt);
 
@@ -445,6 +488,9 @@ var
   i : integer;
   s : String;
 begin
+  if not TSemanticVersion.isValid(v) then
+    raise Exception.create('Invalid semantic version '+v);
+
   ts := TStringList.create;
   try
     ts.LoadFromFile(FilePath([FProjectDir, n]));
@@ -470,16 +516,26 @@ end;
 
 procedure TCodeScanner.Run;
 var
-  v, n, m, p : String;
+  v, n, m, p, d : String;
 begin
+  v := '';
+  n := '';
+  m := '';
+  p := '';
+  d := '';
+
   //writeln(commandLineAsString);
   try
     FProjectDir := paramstr(0);
     FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);
     if getCommandLineParam('install', n) and getCommandLineParam('version', v) and getCommandLineParam('product', p)  then
       setInstallVersion(n, p, v)
+    else if getCommandLineParam('proj-version', p) and getCommandLineParam('version', v) and getCommandLineParam('debug', d) then
+      setProjectVersion(p, v, d = 'true')
     else if getCommandLineParam('version', v) then
       setSourceVersion(v)
+    else if getCommandLineParam('next-version', v) then
+      setNextSourceVersion(v)
     else if getCommandLineParam('check', n) and getCommandLineParam('message', m) then
       check(n, m)
     else

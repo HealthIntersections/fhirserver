@@ -2,6 +2,7 @@
 <CONFIG>
   <ProjectGroup FileVersion="2">
     <Targets>
+      <Target FileName="packages\fhir_indy.lpk"/>
       <Target FileName="packages\fhir_fsl.lpk"/>
       <Target FileName="packages\fhir.lpk"/>
       <Target FileName="packages\fhir_fui.lpk"/>
@@ -18,6 +19,7 @@
           <Mode Name="linux"/>
           <Mode Name="osx"/>
           <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
         </BuildModes>
       </Target>
       <Target FileName="server\fhirserver.lpi">
@@ -37,12 +39,18 @@
           <Mode Name="win64"/>
           <Mode Name="linux"/>
           <Mode Name="osx"/>
-          <Mode Name="OSX-M1"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
+          <Mode Name="osx-release"/>
+          <Mode Name="osx-m1-release"/>
         </BuildModes>
       </Target>
       <Target FileName="utilities\codescan\codescan.lpi">
         <BuildModes>
           <Mode Name="Default"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
         </BuildModes>
       </Target>
     </Targets>

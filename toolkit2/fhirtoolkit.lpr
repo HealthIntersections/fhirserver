@@ -26,7 +26,7 @@ uses
   frm_view_manager, dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5,
   ftk_image_scanner, ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner,
   dlg_upgrade, ftk_engine_igpub, dlg_igpub_config,
-dlg_igpub_github, ftk_engine_text, ftk_text_view;
+dlg_igpub_github, ftk_engine_text, ftk_text_view, dlg_working;
 
 {$R *.res}
 
@@ -51,6 +51,7 @@ begin
   end;
   Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
   Application.CreateForm(TIgGitHubDialog, IgGitHubDialog);
+  Application.CreateForm(TWorkInProgressForm, WorkInProgressForm);
   Application.Run;
 end.
 

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_versions,
   fdb_manager,
   fhir_objects,
   package_spider,
@@ -1110,7 +1110,7 @@ begin
         raise EFslException.Create('Id "'+id+'" is not valid');
       if (version = '') then
         raise EFslException.Create('No version found in package');
-      if not isValidSemVer(version) then
+      if not TSemanticVersion.isValid(version) then
         raise EFslException.Create('Version "'+version+'" is not valid');
       if (canonical = '') then
         raise EFslException.Create('No canonical found in package');

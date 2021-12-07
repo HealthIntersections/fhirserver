@@ -47,19 +47,20 @@ utilities\codescan\codescan.exe -check !library\version.inc -message "setting up
 utilities\codescan\codescan.exe -version %1
 utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
 
-utilities\codescan\codescan.exe -check install\release-notes.md -message "Please provide some release notes" || goto :error
+utilities\codescan\codescan.exe -check release-notes.md -message "Please provide some release notes" || goto :error
 utilities\codescan\codescan.exe -check install\healthintersections.pfx -message "Code signing Certificate is missing" || goto :error
 
 del exec\64\*.exe /q /s 1>nul
 del install\build\*.exe 1>nul
-del install\release-notes-old.md 1>nul
+del release-notes-old.md 1>nul
 
 :: ok. we're good to go...
 
 :: =========================================================================================
 echo ## build FHIRConsole ## 
 call clean 1>nul
-%tmp%\tools\lazarus\lazbuild.exe -B c:\work\fhirserver\server\fhirconsole.lpi --build-mode=win64-release -q -q
+utilities\codescan\codescan.exe -proj-version c:\work\fhirserver\server\fhirconsole.lpi -version %1 -debug false || goto :error
+%tmp%\tools\lazarus\lazbuild.exe -B server\fhirconsole.lpi --build-mode=win64-release -q -q
 utilities\codescan\codescan.exe -check exec\64\fhirconsole.exe -message "Building the console failed" || goto :error
 
 :: =========================================================================================
@@ -67,6 +68,7 @@ echo ## build FHIRServer (debug) ##
 call clean 1>nul
 del server\FHIRServer.cfg
 copy server\FHIRServer.debug.cfg server\FHIRServer.cfg
+utilities\codescan\codescan.exe -proj-version server\fhirserver.dpr -version %1 -debug true || goto :error
 cd server
 ..\install\tools\dcc64.exe FHIRServer.dpr -Q
 cd ..
@@ -79,6 +81,7 @@ echo ## build FHIRServer (release) ##
 call clean 1>nul
 del server\FHIRServer.cfg
 copy server\FHIRServer.release.cfg server\FHIRServer.cfg
+utilities\codescan\codescan.exe -proj-version server\fhirserver.dpr -version %1 -debug false || goto :error
 cd server
 ..\install\tools\dcc64 FHIRServer.dpr -Q
 cd ..
@@ -87,7 +90,8 @@ utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building
 :: =========================================================================================
 echo ## build FHIRToolkit ##
 call clean 1>nul
-%tmp%\tools\lazarus\lazbuild.exe -B c:\work\fhirserver\toolkit2\fhirtoolkit.lpi --build-mode=win64-release -q -q
+utilities\codescan\codescan.exe -proj-version toolkit2\fhirtoolkit.lpi -version %1 -debug false || goto :error
+%tmp%\tools\lazarus\lazbuild.exe -B toolkit2\fhirtoolkit.lpi --build-mode=win64-release -q -q
 utilities\codescan\codescan.exe -check exec\64\fhirtoolkit.exe -message "Building the toolkit failed" || goto :error
 
 echo All compile done
@@ -138,8 +142,10 @@ set HI_PASSWORD=null
 echo ## GitHub Release ##
 git commit library\version.inc -m "Release Version"
 git push 
-install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F install\release-notes.md
-rename install\release-notes.md release-notes-old.md
+install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
+rename release-notes.md release-notes-old.md
+
+utilities\codescan\codescan.exe -next-version %1
 
 :: =========================================================================================
 :: echo Post note on Zulip
