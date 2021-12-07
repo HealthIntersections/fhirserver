@@ -147,6 +147,8 @@ Type
   end;
 
 
+  { TMXmlElement }
+
   TMXmlElement = class (TMXmlNamedNode)
   private
     FAttributes : TFslList<TMXmlAttribute>;
@@ -157,7 +159,9 @@ Type
     function GetChildren: TFslList<TMXmlElement>;
     function GetHasAttributes: boolean;
     function GetHasChildren: boolean;
+    function GetHasOnlyOneText: boolean;
     function GetHasText: boolean;
+    procedure SetAllText(AValue: String);
     procedure SetNext(const Value: TMXmlElement);
     function GetText: string;
     procedure SetText(const Value: string);
@@ -188,6 +192,7 @@ Type
     property Children : TFslList<TMXmlElement> read GetChildren;
     property HasChildren : boolean read GetHasChildren;
     property AllChildrenAreText : boolean read GetAllChildrenAreText;
+    property hasOnlyOneText : boolean read GetHasOnlyOneText;
     property Text : string read GetText write SetText;
     property HasText : boolean read GetHasText;
     property Next : TMXmlElement read FNext write SetNext;
@@ -202,13 +207,14 @@ Type
     function previous : TMXmlElement;
     function last : TMXmlElement;
     property document : TMXmlElement read firstElement;
-    property allText : String read GetAllText;
+    property allText : String read GetAllText write SetAllText;
     property attribute[name : String] : String read GetAttribute write SetAttribute;
     property attributeNS[ns, name : String] : String read GetAttributeNS write SetAttributeNS;
     function getAttrByName(name: String; var attr : TMXmlAttribute): boolean;
     function RemoveAttribute(name : String) : boolean;
     function element(name : String) : TMXmlElement;
     function elementNS(ns, name : String) : TMXmlElement;
+    function forceElement(name : String) : TMXmlElement;
     procedure listElements(name : String; list : TFslList<TMXmlElement>);
     procedure addChild(node : TMXmlElement; fix : boolean);
     function addElement(name : String) : TMXmlElement;
@@ -1042,6 +1048,13 @@ begin
         raise EXmlException.create('Multiple matches found for '+ns+'::'+name+' at '+FStart.describe);
 end;
 
+function TMXmlElement.forceElement(name: String): TMXmlElement;
+begin
+  result := element(name);
+  if result = nil then
+    result := addElement(name);
+end;
+
 function TMXmlElement.equal(other: TMXmlNode): boolean;
 begin
   result := other = self;
@@ -1258,9 +1271,20 @@ begin
  result := (FChildren <> nil) and (FChildren.Count > 0);
 end;
 
+function TMXmlElement.GetHasOnlyOneText: boolean;
+begin
+  result := (Children.count = 1) and (Children[0].NodeType = ntText);
+end;
+
 function TMXmlElement.GetHasText: boolean;
 begin
   result := FText <> '';
+end;
+
+procedure TMXmlElement.SetAllText(AValue: String);
+begin
+  FChildren.Clear;
+  addText(AValue);
 end;
 
 function TMXmlElement.GetText: string;
@@ -1463,13 +1487,19 @@ begin
       if HasChildren then
       begin
         b.append('>');
-        if pretty then
-          b.Append(#13#10);
-        for c in Children do
-          c.writeToXml(b, pretty, indent + 1);
-        if pretty then
+        if (hasOnlyOneText) then
         begin
-          b.Append(StringPadLeft('', ' ', indent*2));
+          for c in Children do
+            c.writeToXml(b, false, 0);
+        end
+        else
+        begin
+          if pretty then
+            b.Append(#13#10);
+          for c in Children do
+            c.writeToXml(b, pretty, indent + 1);
+          if pretty then
+            b.Append(StringPadLeft('', ' ', indent*2));
         end;
         b.Append('</');
         b.Append(Name);
