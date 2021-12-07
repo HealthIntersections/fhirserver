@@ -39,7 +39,7 @@ uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher, fsl_versions,
 
   fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context, fhir_utilities,
   fui_lcl_managers,
@@ -2818,7 +2818,7 @@ begin
       begin
         md := '';
         i := 0;
-        while (i < json.Count) and TSemVer.isMoreRecent(ver(i), TOOLKIT_VERSION) do
+        while (i < json.Count) and TSemanticVersion.isMoreRecent(ver(i), TOOLKIT_VERSION) do
         begin
           md := md + '## '+json.Obj[i].str['tag_name']+#13#10#13#10+json.Obj[i].str['body'].replace('\r', #13).replace('\n', #10)+#13#10#13#10;
           inc(i);
