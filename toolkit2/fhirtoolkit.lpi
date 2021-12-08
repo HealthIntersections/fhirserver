@@ -174,6 +174,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -200,6 +201,7 @@
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
+            <LinkSmart Value="True"/>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -210,6 +212,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-WM11.0"/>
           </Other>
         </CompilerOptions>
       </Item>

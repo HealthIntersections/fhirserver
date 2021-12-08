@@ -268,7 +268,7 @@ var
 
   BN_mod_exp: function(r: PBIGNUM; a: PBIGNUM; p: PBIGNUM; const m: PBIGNUM; ctx: PBN_CTX): TIdC_INT cdecl = nil;
   BN_mod_exp_mont: function(r: PBIGNUM; a: PBIGNUM; p: PBIGNUM; m: PBIGNUM; ctx: PBN_CTX; m_ctx: PBN_MONT_CTX): TIdC_INT cdecl = nil;
-  BN_mod_exp_mont_consttime: function(rr: PBIGNUM; a: PBIGNUM; p: PBIGNUM; m: PBIGNUM; ctx: PBN_CTX; in_mont: PBN_MONT_CTX): TIdC_INT cdecl = nil;
+  //BN_mod_exp_mont_consttime: function(rr: PBIGNUM; a: PBIGNUM; p: PBIGNUM; m: PBIGNUM; ctx: PBN_CTX; in_mont: PBN_MONT_CTX): TIdC_INT cdecl = nil;
   BN_mod_exp_mont_word: function(r: PBIGNUM; a: BN_ULONG; p: PBIGNUM; m: PBIGNUM; ctx: PBN_CTX; m_ctx: PBN_MONT_CTX): TIdC_INT cdecl = nil;
   BN_mod_exp2_mont: function(r: PBIGNUM; const a1: PBIGNUM; const p1: PBIGNUM; const a2: PBIGNUM; const p2: PBIGNUM; const m: PBIGNUM; ctx: PBN_CTX; m_ctx: PBN_MONT_CTX): TIdC_INT cdecl = nil;
   BN_mod_exp_simple: function(r: PBIGNUM; a: PBIGNUM; p: PBIGNUM; m: PBIGNUM; ctx: PBN_CTX): TIdC_INT cdecl = nil;

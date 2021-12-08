@@ -1,5 +1,20 @@
 unit IdOpenSSLLoader;
 
+{$IFDEF FPC}
+  {$IFDEF DARWIN}
+  { On MacOS, and only on MacOS, we statically bind to openSSL
+    because the openSSL libssl.dylib doesn't bind to libcrypto.dylib
+    in a way that will be approved by the OSX loader for hardened
+    apps. But it's not worth the effort to statically bind on other
+    platforms - On linux, openSSL is baked in. On windows, we distribute
+    it with the application
+  }
+  {$DEFINE STATICLOAD_OPENSSL}
+  {$LINKLIB libcrypto.a}
+  {$LINKLIB libssl.a}
+  {$ENDIF}
+{$ENDIF}
+
 interface
 
 uses

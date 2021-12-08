@@ -8,11 +8,17 @@ const
   CLibCryptoRaw = 'libcrypto';
   CLibSSLRaw = 'libssl';
 
-  {$IFDEF OSX}
-  SSLDLLVers: array [0..0] of string = ('.1.1'); // can't try the unversioned ones on OSX
-  {$ELSE}
   SSLDLLVers: array [0..1] of string = ('', '.1.1');
+
+  {$IFDEF OSX}
+  CLibCrypto = CLibCryptoRaw+'-1_1.dylib';
+  CLibSSL = CLibSSLRaw+'-1_1.dylib';
   {$ENDIF}
+  {$IFDEF LINUX}
+  !
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  !
   CLibCrypto =
     {$IFDEF CPU32}CLibCryptoRaw + '-1_1.dll'{$ENDIF}
     {$IFDEF CPU64}CLibCryptoRaw + '-1_1-x64.dll'{$ENDIF}
@@ -21,6 +27,7 @@ const
     {$IFDEF CPU32}CLibSSLRaw + '-1_1.dll'{$ENDIF}
     {$IFDEF CPU64}CLibSSLRaw + '-1_1-x64.dll'{$ENDIF}
     ;
+  {$ENDIF}
 
 implementation
 
