@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_http,
+  fsl_base, fsl_http, fsl_versions,
   fhir_objects, fhir_factory, fhir_common,  fhir2_types,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
 
@@ -323,7 +323,7 @@ begin
         latest := T(nil);
         for tt in rl do
         begin
-          if (TFHIRVersions.matches(tt.version, version)) then
+          if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
             latest := tt;
         end;
         if (latest <> T(nil)) then // might be null if it's not using semver

@@ -168,7 +168,7 @@ type
 
     property source : String read FSource write FSource;
 
-    procedure Doinstall(sender : TObject; callback : TWorkProgressEvent);
+    procedure Doinstall(sender : TObject; context: TObject; callback : TWorkProgressEvent);
   end;
 
   TNDCProviderContext = class (TCodeSystemProviderContext)
@@ -324,7 +324,7 @@ begin
   inherited;
 end;
 
-procedure TNdcImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
+procedure TNdcImporter.Doinstall(sender: TObject; context: TObject; callback: TWorkProgressEvent);
 var
   s, v : String;
 begin

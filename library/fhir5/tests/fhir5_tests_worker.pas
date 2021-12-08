@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Worker;
+unit fhir5_tests_worker;
 
 {.$.DEFINE DIFF}
 
@@ -100,7 +100,6 @@ var
 function TTestingWorkerContext.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, class function Use.sizeInBytes(magic));
 end;
 
 class procedure TTestingWorkerContext.closeUp;

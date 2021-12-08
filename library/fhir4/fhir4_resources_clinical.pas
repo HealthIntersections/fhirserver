@@ -1,4 +1,4 @@
-﻿unit fhir4_resources_clinical;
+unit fhir4_resources_clinical;
 
 {$I fhir4.inc}
 

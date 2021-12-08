@@ -280,8 +280,9 @@ implementation
 {$R *.fmx}
 
 uses
-{$IFDEF FHIR3} fhir3_factory; {$ENDIF}
-{$IFDEF FHIR4} fhir4_factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE} IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
+  FDownloadForm;
+//{$IFDEF FHIR3} fhir3_factory; {$ENDIF}
+//{$IFDEF FHIR4} fhir4_factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE} IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -975,7 +976,7 @@ begin
   try
     if FContext = nil then
     begin
-      Factory := {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
+      Factory := nil; // {$IFDEF FHIR3} TFHIRFactoryR3.Create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.Create {$ENDIF};
       try
         FCache := TFHIRPackageManager.Create(true);
         FCache.OnWork := doWork2;

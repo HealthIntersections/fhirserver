@@ -45,7 +45,7 @@ Type
   TFDBTests = Class (TFslTestCase)
   private
     conn4: TFDBConnection;
-    procedure TestThread;
+    procedure TestThread(context : TObject);
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
@@ -446,7 +446,7 @@ end;
 // end;
 //
 
-procedure TFDBTests.TestThread;
+procedure TFDBTests.TestThread(context : TObject);
 begin
   sleep(500);
   conn4.Release;
@@ -499,7 +499,7 @@ begin
             end;
           end;
           conn4 := db.GetConnection('test4');
-          thread(testThread);
+          thread(testThread, nil);
           conn5 := db.GetConnection('test');
           try
             assertTrue(db.CurrConnCount = 4);

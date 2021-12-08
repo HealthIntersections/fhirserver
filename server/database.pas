@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_xml,
-  fsl_crypto, fsl_collections, fsl_json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_xml, fsl_crypto, fsl_collections, fsl_json,
+  fsl_versions,
   fdb_manager, fdb_dialects,
   fsl_http, fsl_graphql,
   fsl_npm_cache,
@@ -5522,7 +5522,7 @@ begin
           ServerContext.ResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 8 then
         begin
-          if not TFHIRVersions.matches(conn.ColStringByName['Value'], factory.versionString) then
+          if not TFHIRVersions.matches(conn.ColStringByName['Value'], factory.versionString, semverMinor) then
             raise EFHIRException.create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+factory.versionString)
         end
         else if not (conn.ColIntegerByName['ConfigKey'] in [5,10,100]) then

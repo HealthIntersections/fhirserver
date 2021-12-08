@@ -675,6 +675,7 @@ begin
 
   try
     Logging.Log('Loading Dependencies');
+    {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
@@ -686,6 +687,9 @@ begin
       Logging.Log('OpenSSL 1.1 from (default)')
     else
       Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
+    {$ELSE}
+    // Logging.Log('OpenSSL 1.1 Statically bound');
+    {$ENDIF}
     InitOpenSSL;
     {$IFDEF DELPHI}
     JclStartExceptionTracking;

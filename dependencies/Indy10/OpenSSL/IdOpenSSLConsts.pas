@@ -15,7 +15,8 @@ const
   CLibSSL = CLibSSLRaw+'-1_1.dylib';
   {$ENDIF}
   {$IFDEF LINUX}
-  !
+  CLibCrypto = CLibCryptoRaw+'-1_1.so';
+  CLibSSL = CLibSSLRaw+'-1_1.so';
   {$ENDIF}
   {$IFDEF MSWINDOWS}
   !

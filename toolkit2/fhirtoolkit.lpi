@@ -14,6 +14,13 @@
       </XPManifest>
       <Icon Value="0"/>
     </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <RevisionNr Value="3"/>
+      <Attributes pvaDebug="True"/>
+    </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
       <Item Name="win64">
@@ -25,7 +32,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -74,7 +81,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -126,7 +133,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -175,7 +182,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -225,7 +232,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -272,7 +279,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -314,7 +321,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -675,10 +682,46 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="dialogs\dlg_clipboard_process.pas"/>
+        <Filename Value="..\lib\libfhir.txt"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="TextPasteProcessorForm"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frames\ftk_frame_igpub.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="IgPubPageFrame"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="tasks\ftk_engine_igpub.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_igpub_config.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="IGPublisherConfigForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_igpub_github.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="IgGitHubDialog"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="tasks\ftk_engine_text.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="views\ftk_text_view.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_working.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="WorkInProgressForm"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
@@ -691,7 +734,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="editors;stores;views;frames;dialogs"/>
+      <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

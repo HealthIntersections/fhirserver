@@ -1430,7 +1430,7 @@ Begin
           response.ResponseNo := 200;
           response.contentType := 'text/html; charset=UTF-8';
           response.FreeContentStream := true;
-          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, logId, e.Msg, ssl, request.unparsedParams));
+          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sRawHost, sPath + sDoc, logId, e.Msg, ssl, request.unparsedParams));
           result := result + ' (Auth needed)';
         end
         else

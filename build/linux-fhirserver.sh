@@ -13,6 +13,9 @@ echo compile libraries
 echo "## compile packages/fhir_fsl.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q
 
+echo "## compile packages/fhir_indy.lpk"
+$BUILD/tools/lazarus/lazbuild packages/fhir_indy.lpk -q -q
+
 echo "## compile packages/fcomp.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fcomp.lpk -q -q
 

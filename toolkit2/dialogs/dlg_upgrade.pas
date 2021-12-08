@@ -127,7 +127,7 @@ begin
 
   proc := TMarkdownProcessor.createDialect(mdCommonMark);
   try
-    proc.unsafe := false;
+    proc.allowUnsafe := false;
     html.LoadFromString(proc.process(FMarkdown));
   finally
     proc.free;

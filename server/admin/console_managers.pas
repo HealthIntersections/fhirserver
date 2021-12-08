@@ -701,7 +701,7 @@ begin
         try
           ndc := TNdcImporter.create(dlg.FileName, conn.link);
           try
-            DoForegroundTask(List.Owner, ndc.Doinstall);
+            DoForegroundTask(List.Owner, nil, ndc.Doinstall);
           finally
             ndc.free;
           end;
@@ -743,7 +743,7 @@ begin
         try
           umls := TUMLSImporter.create(dlg.FileName, conn.link);
           try
-            DoForegroundTask(List.Owner, umls.Doinstall);
+            DoForegroundTask(List.Owner, nil, umls.Doinstall);
           finally
             umls.free;
           end;

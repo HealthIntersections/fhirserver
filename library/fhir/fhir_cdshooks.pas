@@ -531,7 +531,7 @@ begin
       begin
         md := TMarkdownProcessor.CreateDialect(mdCommonMark);
         try
-          md.UnSafe := false;
+          md.AllowUnSafe := false;
           b.Append(md.process(card.detail));
         finally
           md.Free;

@@ -1,4 +1,4 @@
-unit FHIR.Tools.Signatures;
+unit fhir2_signatures;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

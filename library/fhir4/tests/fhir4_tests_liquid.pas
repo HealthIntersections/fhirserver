@@ -1,4 +1,4 @@
-unit fhir4_tests_Liquid;
+unit fhir4_tests_liquid;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

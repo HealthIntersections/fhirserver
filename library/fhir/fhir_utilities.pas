@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions,
   fhir_objects, fhir_uris;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -59,9 +59,9 @@ type
 
   { TFHIRVersions }
 
-  TFHIRVersions = class (TSemVer)
+  TFHIRVersions = class (TSemanticVersion)
   public
-    class function getMajMin(v : TFHIRVersion) : String; overload;
+  //  class function getMajMinFromFHIRVersion(v : TFHIRVersion) : String; overload;
     class function readVersion(s : String) : TFHIRVersion;
   end;
 
@@ -432,23 +432,18 @@ begin
   inc(result, FResource.sizeInBytes(magic));
 end;
 
-class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;
-begin
-  result := getMajMin(FHIR_VERSIONS[v])
-end;
-
 class function TFHIRVersions.readVersion(s: String): TFHIRVersion;
 begin
   if (s.contains('(')) then
     s := s.substring(0, s.indexof('(')).trim;
   s := s.ToLower;
-  if (s = 'r5') or (getMajMin(s) > '4.0') then
+  if (s = 'r5') or isMoreRecent(s, '4.0') then
     result := fhirVersionRelease5
-  else if (s = 'r4') or (getMajMin(s) = '4.0') then
+  else if (s = 'r4') or isMoreRecent(s, '3.0') then
     result := fhirVersionRelease4
-  else if (s = 'r3') or (getMajMin(s) = '3.0') then
+  else if (s = 'r3') or isMoreRecent(s, '1.0') then
     result := fhirVersionRelease3
-  else if (s = 'r2') or (getMajMin(s) = '1.0') then
+  else if (s = 'r2') or isMoreRecent(s, '0.1') then
     result := fhirVersionRelease2
   else
     result := fhirVersionUnknown;

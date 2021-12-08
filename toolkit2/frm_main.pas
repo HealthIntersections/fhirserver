@@ -35,22 +35,22 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls, Math,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
-  lclintf, ValEdit, LCLType, FPImage,
+  lclintf, ValEdit, LCLType, ComboEx, FPImage,
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging, fsl_http, fsl_openssl, fsl_lang, fsl_json, fsl_fetcher, fsl_versions,
 
-  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context,
+  fhir_objects, fhir_client, fhir_factory, fhir_oauth, fhir_parser, fhir_context, fhir_utilities,
   fui_lcl_managers,
 
   ftk_context, ftk_store_temp, ftk_utilities, ftk_terminology_service, ftk_fhir_context, ftk_constants, ftk_version,
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http, ftk_store_server,
-  ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server,
+  ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server, ftk_engine_text, ftk_text_view,
 
   fui_lcl_cache, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade, dlg_clipboard_process;
+  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade;
 
 type
   {$IFDEF WINDOWS}
@@ -76,7 +76,7 @@ type
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
     actConnectToServer: TAction;
-    actionEditPasteProcessed: TAction;
+    actionViewTextTools: TAction;
     actionFileOpenQRCode: TAction;
     actionHelpWelcomePage: TAction;
     actionViewManager: TAction;
@@ -157,9 +157,13 @@ type
     actionFileNew: TAction;
     actionFileOpen: TAction;
     actionFileSaveAs1: TAction;
+    actionPublishIG: TAction;
     actionHelpContent: THelpContents;
     btnOpenLog: TSpeedButton;
     btnSearch: TBitBtn;
+    btnTextCopy: TButton;
+    btnTextPaste: TButton;
+    btnTextHeader: TButton;
     chkCase: TCheckBox;
     chkWholeWord: TCheckBox;
     chkhideHintsAndWarnings: TCheckBox;
@@ -168,15 +172,22 @@ type
     cbxSearch: TComboBox;
     cbxSearchType: TComboBox;
     cbxSearchScope: TComboBox;
+    cbxTextTransform: TComboBox;
     imgMain: TImageList;
     Label1: TLabel;
     Label2: TLabel;
+    lblTextHeader: TLabel;
     lvServers: TListView;
     lvSearch: TListView;
     lvTasks: TListView;
     lvMessages: TListView;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    mnuTextDown: TMenuItem;
+    mnuTextDelete: TMenuItem;
+    mnuTextAdd: TMenuItem;
+    mnuTextUp: TMenuItem;
+    mTextSource: TMemo;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
     MenuItem100: TMenuItem;
@@ -192,9 +203,10 @@ type
     MenuItem118: TMenuItem;
     MenuItem119: TMenuItem;
     MenuItem120: TMenuItem;
+    MenuItem17: TMenuItem;
     MenuItem54: TMenuItem;
     MenuItem56: TMenuItem;
-    MenuItem57: TMenuItem;
+    MenuItem58: TMenuItem;
     N15: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem40: TMenuItem;
@@ -323,11 +335,15 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
+    pgHidden: TPageControl;
+    pnlTextTools: TPanel;
     Panel2: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
     Panel7: TPanel;
+    pnlTextHeader: TPanel;
+    Panel9: TPanel;
     pnlLeftSpace: TPanel;
     pnlRightSpace: TPanel;
     pnlStack: TPanel;
@@ -363,11 +379,13 @@ type
     btnSearchFolder: TSpeedButton;
     btnCopyLog: TSpeedButton;
     btnStopTask: TSpeedButton;
+    pmText: TPopupMenu;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     pnlStatus: TStatusBar;
     SynEdit1: TSynEdit;
+    tbText: TTabSheet;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -391,18 +409,7 @@ type
     ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
-    tbView1: TToolButton;
-    tbView2: TToolButton;
-    tbView3: TToolButton;
-    tbView4: TToolButton;
     ToolButton2: TToolButton;
-    tbView5: TToolButton;
-    tbView6: TToolButton;
-    tbView7: TToolButton;
-    tbView8: TToolButton;
-    tbView9: TToolButton;
-    tbView10: TToolButton;
-    tbView11: TToolButton;
     ToolButton27: TToolButton;
     ToolButton28: TToolButton;
     ToolButton29: TToolButton;
@@ -436,7 +443,6 @@ type
     procedure actionEditPasteEscapedExecute(Sender: TObject);
     procedure actionEditPasteFormatExecute(Sender: TObject);
     procedure actionEditPasteNewFileExecute(Sender: TObject);
-    procedure actionEditPasteProcessedExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
@@ -464,6 +470,7 @@ type
     procedure actionPagesMoveFarRIghtExecute(Sender: TObject);
     procedure actionPagesMoveLeftExecute(Sender: TObject);
     procedure actionPagesMoveRightExecute(Sender: TObject);
+    procedure actionPublishIGExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
     procedure actionToolsPackageManagerExecute(Sender: TObject);
     procedure actionToolsSideBySideModeExecute(Sender: TObject);
@@ -484,12 +491,18 @@ type
     procedure actionViewsOpenLogExecute(Sender: TObject);
     procedure actionViewStackExecute(Sender: TObject);
     procedure actionViewTasksExecute(Sender: TObject);
+    procedure actionViewTextToolsExecute(Sender: TObject);
     procedure actionViewVariablesExecute(Sender: TObject);
     procedure actionZoomInExecute(Sender: TObject);
     procedure actionZoomOutExecute(Sender: TObject);
     procedure btnOpenLogClick(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure btnSearchFolderClick(Sender: TObject);
+    procedure btnTextCopyClick(Sender: TObject);
+    procedure btnTextHeaderContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
+    procedure btnTextPasteClick(Sender: TObject);
+    procedure btnTextHeaderClick(Sender: TObject);
     procedure cbxSearchEditingDone(Sender: TObject);
     procedure cbxSearchTypeChange(Sender: TObject);
     procedure chkCurrrentFileOnlyChange(Sender: TObject);
@@ -505,6 +518,10 @@ type
     procedure MenuItem118Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem40Click(Sender: TObject);
+    procedure mnuTextAddClick(Sender: TObject);
+    procedure mnuTextDeleteClick(Sender: TObject);
+    procedure mnuTextDownClick(Sender: TObject);
+    procedure mnuTextUpClick(Sender: TObject);
     procedure mnuEditClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
     procedure MenuItem60Click(Sender: TObject);
@@ -551,6 +568,7 @@ type
     FViewManager : TViewManager;
     FServerView : TFHIRServersView;
     FProjectsView : TFHIRProjectsView;
+    FTextViewManager : TToolkitTextViewManager;
     FFinishedLoading : boolean;
     FScale : integer;
     FSearchTask : integer;
@@ -635,6 +653,7 @@ implementation
 {$R *.lfm}
 
 {$IFDEF WINDOWS}
+
 procedure TPageControl.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   r : TRect;
@@ -693,19 +712,18 @@ begin
   {$ELSE}
   mnuApple.Visible := false;
   {$ENDIF}
-  {$IFNDEF FPC}
-  !
+  {$IFNDEF STATICLOAD_OPENSSL}
+  {$IFDEF WINDOWS}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  {$ENDIF}
+  {$ENDIF}
   try
     InitOpenSSL;
   except
     on e : Exception do
       MessageDlg('Error loading openSSL', e.message, mtError, [mbok], 0);
   end;
-  {$ENDIF}
-  //{$IFDEF OSX}
-  //GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0)); // '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
-  //{$ENDIF}
+
   GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
@@ -725,7 +743,10 @@ begin
   end;
   loadFonts;
   loadSearch;
-
+  Caption := 'FHIR Toolkit '+TOOLKIT_VERSION;
+  FTextViewManager := TToolkitTextViewManager.create;
+  FTextViewManager.registerBase(pnlTextHeader, lblTextHeader, cbxTextTransform, btnTextHeader);
+  FTextViewManager.ini := FIni;
 
   FTempStore := TFHIRToolkitTemporaryStorage.create;
 
@@ -804,6 +825,7 @@ begin
   FInternalStorage.Free;
   FTempStore.Free;
   FContext.Free;
+  FTextViewManager.free;
   FViewManager.Free;
 
   FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
@@ -907,6 +929,26 @@ end;
 procedure TMainToolkitForm.MenuItem40Click(Sender: TObject);
 begin
   AddServer('hapi.fhir.org', 'http://hapi.fhir.org/baseR4');
+end;
+
+procedure TMainToolkitForm.mnuTextAddClick(Sender: TObject);
+begin
+  FTextViewManager.add(pmText.tag);
+end;
+
+procedure TMainToolkitForm.mnuTextDeleteClick(Sender: TObject);
+begin
+  FTextViewManager.delete(pmText.tag);
+end;
+
+procedure TMainToolkitForm.mnuTextDownClick(Sender: TObject);
+begin
+  FTextViewManager.down(pmText.tag);
+end;
+
+procedure TMainToolkitForm.mnuTextUpClick(Sender: TObject);
+begin
+  FTextViewManager.up(pmText.tag);
 end;
 
 procedure TMainToolkitForm.mnuEditClick(Sender: TObject);
@@ -1298,8 +1340,11 @@ begin
 end;
 
 function TMainToolkitForm.createNewFile(kinds: TSourceEditorKindSet; bytes: TBytes): TToolkitEditor;
+var
+  kind : TSourceEditorKind;
 begin
-  if (onlySourceKind(kinds) = sekNull) then
+  kind := onlySourceKind(kinds);
+  if (kind = sekNull) then
   begin
     FileFormatChooser := TFileFormatChooser.create(self);
     try
@@ -1311,7 +1356,10 @@ begin
     finally
       FileFormatChooser.free;
     end;
-  end;
+  end
+  else
+    result := createNewFile(kind, bytes);
+
 end;
 
 function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
@@ -1338,20 +1386,25 @@ begin
     end;
     session := FFactory.makeNewSession(kind);
     try
-      if (kind = sekFHIR) and (length(bytes) = 0) then
+      if (kind = sekFHIR) then
       begin
-        NewResourceDialog := TNewResourceDialog.create(self);
-        try
-          NewResourceDialog.IniFile := FIni;
-          NewResourceDialog.Context := FContext.link;
-          if NewResourceDialog.ShowModal <> mrOk then
-            abort;
-          session.Info.AddPair('fhir-version', NewResourceDialog.version);
-          session.Info.AddPair('fhir-format', NewResourceDialog.format);
-          bytes := NewResourceDialog.generate;
-        finally
-          NewResourceDialog.Free;
-        end;
+        if (length(bytes) = 0) then
+        begin
+          NewResourceDialog := TNewResourceDialog.create(self);
+          try
+            NewResourceDialog.IniFile := FIni;
+            NewResourceDialog.Context := FContext.link;
+            if NewResourceDialog.ShowModal <> mrOk then
+              abort;
+            session.Info.AddPair('fhir-version', NewResourceDialog.version);
+            session.Info.AddPair('fhir-format', NewResourceDialog.format);
+            bytes := NewResourceDialog.generate;
+          finally
+            NewResourceDialog.Free;
+          end;
+        end
+        else // (length(bytes) > 0
+          session.info.Values['Format'] := CODES_TFHIRFormat[DetectFormat(bytes)];
       end;
 
       if path <> '' then
@@ -1514,7 +1567,6 @@ begin
       storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
       FTempStore.removeFromMRU(editor.session.address);
-      editor.lastChangeChecked := true;
       FContext.Focus := editor;
       clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
@@ -1966,9 +2018,9 @@ end;
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
   if context.hasFocus then
-    Caption := 'FHIR Toolkit - '+context.focus.session.caption
+    Caption := 'FHIR Toolkit '+TOOLKIT_VERSION+' - '+context.focus.session.caption
   else
-    Caption := 'FHIR Toolkit';
+    Caption := 'FHIR Toolkit '+TOOLKIT_VERSION;
 
   // always enabled
   actionToolsPackageManager.enabled := true;
@@ -2183,6 +2235,11 @@ begin
   showView(tviTasks);
 end;
 
+procedure TMainToolkitForm.actionViewTextToolsExecute(Sender: TObject);
+begin
+  showView(tviTextTools);
+end;
+
 procedure TMainToolkitForm.actionViewVariablesExecute(Sender: TObject);
 begin
   showView(tviVariables);
@@ -2223,6 +2280,46 @@ procedure TMainToolkitForm.btnSearchFolderClick(Sender: TObject);
 begin
   if dlgFolder.execute then
     cbxSearchScope.text := dlgFolder.FileName;
+end;
+
+procedure TMainToolkitForm.btnTextCopyClick(Sender: TObject);
+begin
+  mTextSource.CopyToClipboard;
+end;
+
+procedure TMainToolkitForm.btnTextHeaderContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+begin
+  pmText.tag := (sender as TButton).tag;
+  mnuTextDelete.Enabled := FTextViewManager.canDelete(pmText.tag);
+  mnuTextUp.Enabled := FTextViewManager.canUp(pmText.tag);
+  mnuTextDown.Enabled := FTextViewManager.canDown(pmText.tag);
+  Handled := false;
+end;
+
+procedure TMainToolkitForm.btnTextPasteClick(Sender: TObject);
+var
+  engine : TTextEngine;
+begin
+  engine := TTextEngine.create;
+  try
+    FTextViewManager.configureEngine(engine);
+    mTextSource.Text := engine.execute(clipboard.asText);
+  finally
+    engine.free;
+  end;
+end;
+
+procedure TMainToolkitForm.btnTextHeaderClick(Sender: TObject);
+var
+  btn : TButton;
+begin
+  btn := sender as TButton;
+  pmText.tag := btn.tag;
+  mnuTextDelete.Enabled := FTextViewManager.canDelete(pmText.tag);
+  mnuTextUp.Enabled := FTextViewManager.canUp(pmText.tag);
+  mnuTextDown.Enabled := FTextViewManager.canDown(pmText.tag);
+  with btn.ClientToScreen(point(0, btn.Height)) do
+     pmText.Popup(X, Y);
 end;
 
 procedure TMainToolkitForm.cbxSearchEditingDone(Sender: TObject);
@@ -2513,22 +2610,6 @@ begin
     createNewFile(kind, cnt);
 end;
 
-procedure TMainToolkitForm.actionEditPasteProcessedExecute(Sender: TObject);
-var
-  form : TTextPasteProcessorForm;
-begin
-  if Context.HasFocus then
-  begin
-    form := TTextPasteProcessorForm.create(self);
-    try
-      if form.showModal = mrOk then
-        Context.focus.insertText(form.Text, false);
-    finally
-      form.free;
-    end;
-  end;
-end;
-
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
 begin
   closeFile(pgEditors.ActivePage, true);
@@ -2737,7 +2818,7 @@ begin
       begin
         md := '';
         i := 0;
-        while (i < json.Count) and TSemVer.isMoreRecent(ver(i), TOOLKIT_VERSION) do
+        while (i < json.Count) and TSemanticVersion.isMoreRecent(ver(i), TOOLKIT_VERSION) do
         begin
           md := md + '## '+json.Obj[i].str['tag_name']+#13#10#13#10+json.Obj[i].str['body'].replace('\r', #13).replace('\n', #10)+#13#10#13#10;
           inc(i);
@@ -2842,6 +2923,22 @@ begin
   pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex + 1;
   updateActionStatus(self);
   storeOpenFileList;
+end;
+
+procedure TMainToolkitForm.actionPublishIGExecute(Sender: TObject);
+var
+  editor : TToolkitEditor;
+begin
+  for editor in FContext.editors do
+  begin
+    if editor.Session.Kind = sekIGs then
+    begin
+      pgEditors.ActivePage := editor.tab;
+      exit;
+    end;
+  end;
+
+  createNewFile(sekIGs);
 end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
@@ -3081,6 +3178,7 @@ begin
       tvlLeft : pg := pgLeft;
       tvlRight : pg := pgRight;
       tvlBottom : pg := pgBottom;
+      tvlHidden : pg := pgHidden;
     end;
     if ndx < pg.PageCount then
       tab := pg.Pages[ndx]
@@ -3132,6 +3230,14 @@ begin
     else
       unmaximiseSource;
 
+    if FViewManager.bigToolbar then
+      ToolBar1.ImagesWidth := 32
+    else
+      ToolBar1.ImagesWidth := 16;
+    ToolBar1.Height := ToolBar1.ImagesWidth+10;
+    ToolBar1.ButtonHeight := ToolBar1.ImagesWidth+8;
+    ToolBar1.ButtonWidth := ToolBar1.ImagesWidth+7;
+
     // hide all tabs
     hideTabs(pgLeft);
     hideTabs(pgRight);
@@ -3172,6 +3278,7 @@ begin
     placeView(pnlTasks, tviTasks);
     placeView(pnlFHIRPath, tviFHIRPath);
     placeView(pnlPackages, tviPackages);
+    placeView(pnlTextTools, tviTextTools);
 
     if (not FViewManager.tabbed[tvlLeft]) then
       FLeftStack.resize;
@@ -3181,18 +3288,6 @@ begin
     pgLeft.ActivePageIndex := FViewManager.active[tvlLeft];
     pgRight.ActivePageIndex := FViewManager.active[tvlRight];
     pgBottom.ActivePageIndex := FViewManager.active[tvlBottom];
-
-    tbView1.Visible := FViewManager.showToolbarButtons;
-    tbView2.Visible := FViewManager.showToolbarButtons;
-    tbView3.Visible := FViewManager.showToolbarButtons;
-    tbView4.Visible := FViewManager.showToolbarButtons;
-    tbView5.Visible := FViewManager.showToolbarButtons;
-    tbView6.Visible := FViewManager.showToolbarButtons;
-    tbView7.Visible := FViewManager.showToolbarButtons;
-    tbView8.Visible := FViewManager.showToolbarButtons;
-    tbView9.Visible := FViewManager.showToolbarButtons;
-    tbView10.Visible := FViewManager.showToolbarButtons;
-    tbView11.Visible := FViewManager.showToolbarButtons;
   finally
     FDoingLayout := false;
     EndFormUpdate;

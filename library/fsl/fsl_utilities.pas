@@ -184,9 +184,6 @@ Type
   TShortString = String[255];
   PShortString = ^TShortString;
 
-
-  
-
 Const
   cNull = #0;
   cBackspace = #8;
@@ -218,11 +215,9 @@ Const
   setFilename = setAlphanumeric + setSpecials - ['<', '>', '?', '*', '|', '\', '/', ':'] + [' '];
   setKeyboard = setSpecials + setAlphanumeric;
 
-
 // NOTE: declared in the initialization.
 Var
   UnicodeWhitespaceArray : TCharArray;
-
 
 function clength(S : String) : cardinal; overload;
 function clength(b : TBytes) : cardinal; overload;
@@ -333,7 +328,6 @@ Function DescribeBytes(i : int64; rounded : boolean = false) : String;
 procedure CommaAdd(var AStr: String; AStrToAdd: String);
 function RemoveQuotes(AStr: String; AUpperCaseString: Boolean = false): String;
 function IsNumericString(st: String): Boolean;
-function isValidSemVer(s : String) : boolean;
 function RemoveAccents(const s : String): String;
 
 function charLower(ch : char) : char; overload;
@@ -393,10 +387,10 @@ Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Int
 Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean; Overload;
 
 function jsonEscape(s : String; isString : boolean) : String;
+function jsonUnescape(s : String) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
 function isAbsoluteUrl(s: String): boolean;
-
 
 Const
   OID_LOINC = '2.16.840.1.113883.6.1';
@@ -459,8 +453,6 @@ type
 
 Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCharSet; Var sLeft, sRight: AnsiString) : Boolean;
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
-
-
 
 Type
   TFslStringBuilder = Class (TFslObject)
@@ -541,8 +533,6 @@ type
 //  TEolnOption = (eolnIgnore, eolnCanonical, eolnEscape);
 
 Function EncodeNYSIIS(Const sValue : String) : String;
-{
-}
 
 //Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String; Overload;
 //Function DecodeXML(Const sValue : String) : String; Overload;
@@ -567,8 +557,6 @@ function GetCryptKey(const AStr: String): Word;
 function strEncrypt(const AStr: String; AKey: Word): String; // encrypt a string. Result is Mime Encoded so is still a valid string in many contexts (but is longer)
 function strDecrypt(const AStr: String; AKey: Word): String; // decrypt a string encrypted with above procedure
 
-
-  
 Function SystemTemp : String;
 Function SystemManualTemp : String;
 Function ProgData : String;
@@ -577,13 +565,9 @@ Function DownloadsFolder : String;
 function tempFileName(prefix : String): String;
 function partnerFile(name : String) : String;
 
-
 Type
   TInstallerCallback = procedure(IntParam: Integer; StrParam: String) of object;
 
-
-
-type
   TFileHandle = Record
     Value : System.THandle;
   End;
@@ -666,7 +650,6 @@ Function RandomReal(Const iLowest, iHighest : Real) : Real; Overload;
 Function RandomAlphabeticString(Const iLength : Integer) : String; Overload;
 Function RandomAlphabeticCharacter : Char; Overload;
 
-
 Type
   TMediaSoundBeepType = (MediaSoundBeepTypeAsterisk, MediaSoundBeepTypeExclamation, MediaSoundBeepTypeHand, MediaSoundBeepTypeQuestion, MediaSoundBeepTypeOk);
 
@@ -680,7 +663,6 @@ Procedure SoundBeepOK; Overload;
 Procedure SoundBeepRange(Const iFrequency, iDuration : Cardinal); Overload;
 {$ENDIF}
 
-
 Type
   TCurrency = Currency;
   TCurrencyCents = Int64;
@@ -690,7 +672,6 @@ Type
     physicalMem : UInt64;
     virtualMem : UInt64;
   end;
-
 
 Function CurrencyCompare(Const rA, rB : TCurrency) : Integer; Overload;
 Function CurrencyCompare(Const rA, rB, rThreshold : TCurrency) : Integer; Overload;
@@ -778,7 +759,6 @@ type
   TFileLauncher = class (TObject)
     class procedure Open(const FilePath: string);
   end;
-
 
 Const
   DATETIME_MIN = -693593; // '1/01/0001'
@@ -1811,7 +1791,7 @@ Type
 
 
 function hasCommandLineParam(name : String) : boolean;
-function getCommandLineParam(name : String; var res : String) : boolean;
+function getCommandLineParam(name : String; out res : String) : boolean;
 function commandLineAsString : String;
 
 
@@ -1819,14 +1799,6 @@ type
   TStringListHelper = class helper for TStringList
   public
     function sizeInBytes(magic : integer) : cardinal;
-  end;
-
-type
-  TSemVer = class (TFslObject)
-  public
-    class function matches(v1, v2 : String) : boolean;
-    class function isMoreRecent(v1, v2 : String) : boolean;
-    class function getMajMin(v : String) : String; overload;
   end;
 
 function ZCompressBytes(const s: TBytes): TBytes;
@@ -5559,22 +5531,6 @@ begin
     end;
 end;
 
-function isValidSemVer(s : String) : boolean;
-var
-  parts : TArray<string>;
-  p: string;
-begin
-  if (s = '') then
-    exit(false);
-  if (s.CountChar('.') <> 2) then
-    exit(false);
-  parts := s.Split(['.']);
-  for p in parts do
-    if (not IsNumericString(p)) then
-      exit(false);
-  result := true;
-end;
-
 function isAbsoluteUrl(s: String): boolean;
 begin
   result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
@@ -5970,6 +5926,62 @@ begin
     result := b.ToString;
   finally
     b.Free;
+  end;
+end;
+
+function jsonUnescape(s : String) : String;
+var
+  b : TStringBuilder;
+  i : integer;
+  ch :  char;
+  hex : String;
+  function nextChar : char;
+  begin
+    inc(i);
+    if i <= s.length then
+      result := s[i]
+    else
+      result := ' ';
+  end;
+begin
+  b := TStringBuilder.create;
+  try
+    i := 0;
+    while (i < s.length) do
+    begin
+      ch := nextChar;
+      if (ch = '\') Then
+      Begin
+        ch := nextChar;
+        case ch of
+          '"': b.append('"');
+          '''': b.append('''');
+          '\': b.append('\');
+          '/': b.append('/');
+          'n': b.append(#10);
+          'r': b.append(#13);
+          't': b.append(#09);
+          'u':
+            begin
+            setLength(hex, 4);
+            hex[1] := nextChar;
+            hex[2] := nextChar;
+            hex[3] := nextChar;
+            hex[4] := nextChar;
+            b.append(chr(StrToInt('$'+hex)));
+            end
+        Else
+          b.append('?'+ch);
+        End;
+      End
+      Else if (ch = '"') then
+        b.append(ch)
+      else
+        b.append(ch);
+    end;
+    result := b.toString;
+  finally
+    b.free;
   end;
 end;
 
@@ -16909,7 +16921,7 @@ begin
   result := cardinal(length(b));
 end;
 
-function getCommandLineParam(name : String; var res : String) : boolean;
+function getCommandLineParam(name : String; out res : String) : boolean;
 {$IFDEF FPC}
 var
   i : integer;
@@ -16969,61 +16981,6 @@ begin
   Result := True;
   for i := 1 to length(s) do
     Result := Result and ((Upcase(s[i]) >= '0') and (Upcase(s[i]) <= '9')) or ((s[i] >= 'A') and (s[i] <= 'F'));
-end;
-
-{ TSemVer }
-
-class function TSemVer.getMajMin(v: String): String;
-var
-  p : TArray<String>;
-begin
-  if (v = '') then
-    exit('');
-
-  if (v = 'R2') then
-    exit('1.0');
-  if (v = 'R2B') then
-    exit('1.4');
-  if (v = 'R3') then
-    exit('3.0');
-  if (v = 'R4') then
-    exit('4.0');
-  if (v = 'R5') then
-    exit('5.0');
-
-  if (v.CountChar('.') = 2) then
-  begin
-    p := v.split(['.']);
-    result := p[0]+'.'+p[1];
-  end
-  else
-    result := '';
-end;
-
-class function TSemVer.isMoreRecent(v1, v2: String): boolean;
-var
-  p1, p2 : TArray<String>;
-  i, i1, i2 : integer;
-begin
-  p1 := v1.split(['.']);
-  p2 := v2.split(['.']);
-  for i := 0 to IntegerMin(length(p1), length(p2)) - 1 do
-  begin
-    i1 := StrToIntDef(p1[i], 0);
-    i2 := StrToIntDef(p2[i], 0);
-    if i1 < i2 then
-      exit(false)
-    else if (i1 > i2) then
-      exit(true)
-  end;
-  result := length(p1) > length(p2);
-end;
-
-class function TSemVer.matches(v1, v2 : String) : boolean;
-begin
-  v1 := getMajMin(v1);
-  v2 := getMajMin(v2);
-  result := v1 = v2;
 end;
 
 function ZCompressBytes(const s: TBytes): TBytes;

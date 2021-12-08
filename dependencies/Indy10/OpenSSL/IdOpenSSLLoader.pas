@@ -1,5 +1,7 @@
 unit IdOpenSSLLoader;
 
+{$i IdCompilerDefines.inc}
+
 {$IFDEF FPC}
   {$IFDEF DARWIN}
   { On MacOS, and only on MacOS, we statically bind to openSSL

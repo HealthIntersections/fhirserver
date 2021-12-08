@@ -1,4 +1,4 @@
-unit fhir_validation_wrapper;
+unit fui_validation_wrapper;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-This code is not functional at this time. It may be brought back to life in the future. 
+{ This code is not functional at this time. It may be brought back to life in the future. }
 
 {$i fhir.inc}
 

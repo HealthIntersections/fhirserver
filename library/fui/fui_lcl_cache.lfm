@@ -1,7 +1,7 @@
 object PackageCacheForm: TPackageCacheForm
-  Left = 668
+  Left = 505
   Height = 538
-  Top = 470
+  Top = 219
   Width = 1092
   Caption = 'Package Cache Manager'
   ClientHeight = 538

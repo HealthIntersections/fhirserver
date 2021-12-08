@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI}IOUtils, {$ENDIF} zlib,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads;
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads, fsl_versions;
 
 Type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
@@ -1085,8 +1085,8 @@ end;
 
 function isMoreRecentVersion(test, base : String) : boolean;
 begin
-  if isValidSemVer(test) and isValidSemVer(base) then
-    result := TSemVer.isMoreRecent(test, base)
+  if TSemanticVersion.isValid(test) and TSemanticVersion.isValid(base) then
+    result := TSemanticVersion.isMoreRecent(test, base)
   else
     result := test > base;
 end;

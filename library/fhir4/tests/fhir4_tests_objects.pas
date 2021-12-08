@@ -1,4 +1,4 @@
-unit fhir4_tests_Objects;
+unit fhir4_tests_objects;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

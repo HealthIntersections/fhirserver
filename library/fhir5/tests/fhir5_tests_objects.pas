@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Objects;
+unit fhir5_tests_objects;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

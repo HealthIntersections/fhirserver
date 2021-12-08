@@ -1,4 +1,4 @@
-Unit fui_vclx_Dialogs;
+Unit fui_vclx_dialogs;
 
 {
 Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)

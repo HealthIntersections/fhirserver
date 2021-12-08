@@ -1950,7 +1950,7 @@ begin
          try
            NDC := TNdcImporter.create(edtNDCFolder.text, c.link);
            try
-             NDC.Doinstall(self, ndcCallback);
+             NDC.Doinstall(self, nil, ndcCallback);
            finally
              NDC.free;
            end;
@@ -2124,7 +2124,7 @@ begin
          try
            rxn := TUMLSImporter.create(edtRXNFolder.text, c.link);
            try
-             rxn.Doinstall(self, rxNormCallback);
+             rxn.Doinstall(self, nil, rxNormCallback);
            finally
              rxn.free;
            end;

@@ -32,7 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$R *.res}
 
-
 {
 todo:
 STU3 draft:
@@ -517,7 +516,8 @@ uses
   fhir_colour_utils in '..\library\fhir\fhir_colour_utils.pas',
   kernel_thread in 'kernel_thread.pas',
   fhir4_tests_diff in '..\library\fhir4\tests\fhir4_tests_diff.pas',
-  tx_version in 'tx_version.pas';
+  tx_version in 'tx_version.pas',
+  fsl_versions in '..\library\fsl\fsl_versions.pas';
 
 begin
   ExecuteFhirServer;

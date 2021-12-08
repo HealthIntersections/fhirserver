@@ -1,4 +1,4 @@
-unit FHIR.R2.Tests.Validator;
+unit fhir2_tests_validator;
 
 
 {
@@ -507,11 +507,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
-function TFHIRValidatorTests.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FServices.sizeInBytes(magic));
-end;
-
 end.
 

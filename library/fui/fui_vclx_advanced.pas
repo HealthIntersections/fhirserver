@@ -1,4 +1,4 @@
-Unit fui_vclx_Advanced;
+Unit fui_vclx_advanced;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)

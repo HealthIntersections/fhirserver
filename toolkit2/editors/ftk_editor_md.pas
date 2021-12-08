@@ -190,7 +190,7 @@ begin
 
   proc := TMarkdownProcessor.createDialect(mdCommonMark); // or flavor of your choice
   try
-    proc.unsafe := false;
+    proc.AllowUnsafe := false;
     html := proc.process(FContent.text);
   finally
     proc.free;

@@ -97,7 +97,7 @@ type
     property Context : TToolkitContext read FContext write SetContext;
 
     function doubleClickEdit : boolean; override;
-    function AskOnDelete : boolean; override;
+    function AskOnDelete(item : TFHIRProjectNode) : boolean; override;
     function readOnly : boolean; override;
 
     function allowedOperations(item : TFHIRProjectNode) : TNodeOperationSet; override;
@@ -366,7 +366,7 @@ begin
   Result := false;
 end;
 
-function TProjectTreeManager.AskOnDelete: boolean;
+function TProjectTreeManager.AskOnDelete(item : TFHIRProjectNode): boolean;
 begin
   Result := false;
 end;

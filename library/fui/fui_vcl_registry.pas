@@ -1,4 +1,4 @@
-unit FHIR.Npm.Browser;
+unit fui_vcl_registry;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

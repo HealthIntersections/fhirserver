@@ -189,6 +189,7 @@ begin
   finally
     FPDFLock.Unlock;
   end;
+  result := nil;
 end;
 
 function TICAOWebServer.render(card : THealthcareCard; title, action, log : String): String;
