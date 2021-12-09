@@ -109,6 +109,7 @@
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\static;C:\work\fhirserver\dependencies\Indy10;C:\work\source\ZXing.Delphi\Lib\Classes\Common;C:\work\source\ZXing.Delphi\Lib\Classes\1D Barcodes;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes;C:\work\source\ZXing.Delphi\Lib\Classes\Common\ReedSolomon;C:\work\source\ZXing.Delphi\Lib\Classes\Common\Detector;C:\work\source\ZXing.Delphi\Lib\Classes\Filtering;C:\work\source\ZXing.Delphi\Lib\Classes;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Decoder;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Detector;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <DCC_Define>USE_VCL_BITMAP;$(DCC_Define)</DCC_Define>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -194,7 +195,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\exec\fhir.dev.local.cfg -local c:\temp\zero -xtestinsight -version 4</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version 4</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>

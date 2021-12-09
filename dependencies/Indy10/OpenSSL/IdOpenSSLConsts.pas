@@ -19,7 +19,6 @@ const
   CLibSSL = CLibSSLRaw+'-1_1.so';
   {$ENDIF}
   {$IFDEF MSWINDOWS}
-  !
   CLibCrypto =
     {$IFDEF CPU32}CLibCryptoRaw + '-1_1.dll'{$ENDIF}
     {$IFDEF CPU64}CLibCryptoRaw + '-1_1-x64.dll'{$ENDIF}

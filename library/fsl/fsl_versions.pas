@@ -9,6 +9,8 @@ uses
   fsl_base, fsl_utilities, fsl_xml;
 
 type
+  ESemVerException = class (Exception);
+
   TSemanticVersionLevel = (semverMajor, semverMinor, semverPatch, semverLabel);
 
   { TSemanticVersion }
@@ -98,7 +100,7 @@ begin
   begin
     c := ver.CountChar('.');
     if (c < 1) or (c > 2) then
-      raise EFSLException.create('Error reading SemVer: Structure "'+ver+'" is not correct');
+      raise ESemVerException.create('Error reading SemVer: Structure "'+ver+'" is not correct');
 
     result := TSemanticVersion.create;
     try
@@ -110,16 +112,16 @@ begin
         parts[2] := l;
       end;
       if StrToIntDef(parts[0], -1) = -1 then
-        raise EFSLException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
+        raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
       else
         result.FMajor := StrToInt(parts[0]);
       if StrToIntDef(parts[1], -1) = -1 then
-        raise EFSLException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
+        raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
       else
         result.FMinor := StrToInt(parts[1]);
       if (length(parts) = 3) then
         if StrToIntDef(parts[2], -1) = -1 then
-          raise EFSLException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
+          raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
         else
           result.FPatch := StrToInt(parts[2]);
       result.Link;
@@ -153,6 +155,9 @@ class function TSemanticVersion.getMajMin(v: string): String;
 var
   this : TSemanticVersion;
 begin
+  if v = '' then
+    exit('');
+
   try
     this := fromString(v);
     try
@@ -333,7 +338,7 @@ end;
 procedure TSemanticVersion.SetBuildLabel(const value: String);
 begin
   if (value.Contains(' ')) then
-    raise EFslException.create('Build Label cannot contain a space');
+    raise ESemVerException.create('Build Label cannot contain a space');
   FBuildLabel := value;
 end;
 
