@@ -15,8 +15,14 @@ const
   CLibSSL = CLibSSLRaw+'-1_1.dylib';
   {$ENDIF}
   {$IFDEF LINUX}
+  {$IFDEF STATICLOAD_OPENSSL}
+  // experimentally, this is works for static binding by the linker
+  CLibCrypto = CLibCryptoRaw;
+  CLibSSL = CLibSSLRaw;
+  {$ELSE}
   CLibCrypto = CLibCryptoRaw+'-1_1.so';
   CLibSSL = CLibSSLRaw+'-1_1.so';
+  {$ENDIF}
   {$ENDIF}
   {$IFDEF MSWINDOWS}
   CLibCrypto =

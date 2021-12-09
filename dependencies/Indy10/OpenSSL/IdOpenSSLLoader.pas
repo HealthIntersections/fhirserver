@@ -3,7 +3,7 @@ unit IdOpenSSLLoader;
 {$i IdCompilerDefines.inc}
 
 {$IFDEF FPC}
-  {$IFDEF DARWIN}
+  {$IFNDEF MSWINDOWS}
   { On MacOS, and only on MacOS, we statically bind to openSSL
     because the openSSL libssl.dylib doesn't bind to libcrypto.dylib
     in a way that will be approved by the OSX loader for hardened
