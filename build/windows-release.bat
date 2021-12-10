@@ -40,6 +40,11 @@ pause
 exit /b 1
 
 :OK
+
+call load-password.bat
+echo %HI_PASSWORD%
+
+
 :: write version and date to source code 
 utilities\codescan\codescan.exe -check library\version.inc -message "Not run from the right directory - run in the root directory of the repo" || goto :error
 del library\version.inc
@@ -104,8 +109,6 @@ echo All compile done
 :: setlocal
 :: set HI_PASSWORD="...."
 
-call load-password.bat
-echo %HI_PASSWORD%
 install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
 install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
 install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe

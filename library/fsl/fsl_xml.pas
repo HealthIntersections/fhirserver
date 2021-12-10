@@ -1283,7 +1283,8 @@ end;
 
 procedure TMXmlElement.SetAllText(AValue: String);
 begin
-  FChildren.Clear;
+  if FChildren <> nil then
+    FChildren.Clear;
   addText(AValue);
 end;
 
