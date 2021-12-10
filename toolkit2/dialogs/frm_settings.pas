@@ -55,7 +55,6 @@ type
     edtCache: TEdit;
     edtTxServer: TEdit;
     edtTxLog: TEdit;
-    GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;

@@ -1849,9 +1849,9 @@ function IndyMax(const AValueOne, AValueTwo: Int32): Int32; overload;
 function IndyMax(const AValueOne, AValueTwo: UInt16): UInt16; overload;
 function IPv4MakeUInt32InRange(const AInt: Int64; const A256Power: Integer): UInt32;
 function IPv4MakeLongWordInRange(const AInt: Int64; const A256Power: Integer): UInt32; {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use IPv4MakeUInt32InRange()'{$ENDIF};{$ENDIF}
-  {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
+{$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
 function IndyRegisterExpectedMemoryLeak(AAddress: Pointer): Boolean;
-  {$ENDIF}
+{$ENDIF}
 function LoadLibFunction(const ALibHandle: TIdLibHandle; const AProcName: TIdLibFuncName): Pointer;
 {$IFDEF UNIX}
 function HackLoad(const ALibName : String; const ALibVersions : array of String) : TIdLibHandle;
@@ -2895,12 +2895,12 @@ begin
     {$IFDEF USE_LCONVENC}
   Create(GetDefaultTextEncoding());
     {$ELSE}
-    {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
+      {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
   Create(CP_ACP, 0, 0);
-    {$ELSE}
+      {$ELSE}
   ToDo('Constructor of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
+      {$ENDIF}
     {$ENDIF}
- {$ENDIF}
  {$ENDIF}
 end;
 
@@ -2989,18 +2989,18 @@ end;
 {$IFDEF WINDOWS}
   // TODO: move this into IdCompilerDefines.inc?
   {$IFNDEF WINCE}
-  {$IFDEF DCC}
-    {$IFDEF VCL_2009_OR_ABOVE}
-      {$DEFINE HAS_GetCPInfoEx}
+    {$IFDEF DCC}
+      {$IFDEF VCL_2009_OR_ABOVE}
+        {$DEFINE HAS_GetCPInfoEx}
+      {$ELSE}
+        {$UNDEF HAS_GetCPInfoEx}
+      {$ENDIF}
     {$ELSE}
-      {$UNDEF HAS_GetCPInfoEx}
+      // TODO: when was GetCPInfoEx() added to FreePascal?
+      {$DEFINE HAS_GetCPInfoEx}
     {$ENDIF}
-  {$ELSE}
-    // TODO: when was GetCPInfoEx() added to FreePascal?
-    {$DEFINE HAS_GetCPInfoEx}
-  {$ENDIF}
 
-  {$IFNDEF HAS_GetCPInfoEx}
+    {$IFNDEF HAS_GetCPInfoEx}
 // TODO: implement GetCPInfoEx() as a stub that falls back to GetCPInfo() if needed
 type
   TCPInfoEx = record
@@ -3013,8 +3013,8 @@ type
   end;
 
 function GetCPInfoEx(CodePage: UINT; dwFlags: DWORD; var lpCPInfoEx: TCPInfoEx): BOOL; stdcall; external 'KERNEL32' name {$IFDEF UNICODE}'GetCPInfoExW'{$ELSE}'GetCPInfoExA'{$ENDIF};
+    {$ENDIF}
   {$ENDIF}
-{$ENDIF}
 {$ENDIF}
 
 constructor TIdMBCSEncoding.Create(CodePage, MBToWCharFlags, WCharToMBFlags: Integer);
@@ -3356,13 +3356,13 @@ begin
     {$IFDEF USE_LCONVENC}
   Result := DoLconvCharsToBytes(FCharset, AChars, ACharCount, nil, 0);
     {$ELSE}
-    {$IFDEF HAS_LocaleCharsFromUnicode}
+      {$IFDEF HAS_LocaleCharsFromUnicode}
   Result := LocaleCharsFromUnicode(FCodePage, FWCharToMBFlags, AChars, ACharCount, nil, 0, nil, nil);
-    {$ELSE}
+      {$ELSE}
   Result := 0;
   ToDo('GetByteCount() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
+      {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3376,13 +3376,13 @@ begin
     {$IFDEF USE_LCONVENC}
   Result := DoLconvCharsToBytes(FCharset, AChars, ACharCount, ABytes, AByteCount);
     {$ELSE}
-    {$IFDEF HAS_LocaleCharsFromUnicode}
+      {$IFDEF HAS_LocaleCharsFromUnicode}
   Result := LocaleCharsFromUnicode(FCodePage, FWCharToMBFlags, AChars, ACharCount, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, nil, nil);
-    {$ELSE}
+      {$ELSE}
   Result := 0;
   ToDo('GetBytes() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
+      {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3568,13 +3568,13 @@ begin
     {$IFDEF USE_LCONVENC}
   Result := DoLconvBytesToChars(FCharSet, ABytes, AByteCount, nil, 0);
     {$ELSE}
-    {$IFDEF HAS_UnicodeFromLocaleChars}
+      {$IFDEF HAS_UnicodeFromLocaleChars}
   Result := UnicodeFromLocaleChars(FCodePage, FMBToWCharFlags, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, nil, 0);
-    {$ELSE}
+      {$ELSE}
   Result := 0;
   ToDo('GetCharCount() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
+      {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -3587,13 +3587,13 @@ begin
     {$IFDEF USE_LCONVENC}
   Result := DoLconvBytesToChars(FCharSet, ABytes, AByteCount, AChars, ACharCount);
     {$ELSE}
-    {$IFDEF HAS_UnicodeFromLocaleChars}
+      {$IFDEF HAS_UnicodeFromLocaleChars}
   Result := UnicodeFromLocaleChars(FCodePage, FMBToWCharFlags, {$IFNDEF HAS_PAnsiChar}Pointer{$ELSE}PAnsiChar{$ENDIF}(ABytes), AByteCount, AChars, ACharCount);
-    {$ELSE}
+      {$ELSE}
   Result := 0;
   ToDo('GetChars() method of TIdMBCSEncoding class is not implemented for this platform yet'); {do not localize}
+      {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -5500,7 +5500,7 @@ begin
   Assert(ASourceIndex >= 0);
   Assert((ASourceIndex+ALength) <= Length(ASource));
   if ALength > 0 then
-  Move(ASource[ASourceIndex], VDest[ADestIndex], ALength);
+    Move(ASource[ASourceIndex], VDest[ADestIndex], ALength);
   {$ENDIF}
 end;
 
@@ -6464,8 +6464,8 @@ function IsHexidecimal(const AChar: Char): Boolean; overload;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
   Result := ((AChar >= '0') and (AChar <= '9'))  {Do not Localize}
-   or ((AChar >= 'A') and (AChar <= 'F')) {Do not Localize}
-   or ((AChar >= 'a') and (AChar <= 'f')); {Do not Localize}
+         or ((AChar >= 'A') and (AChar <= 'F'))  {Do not Localize}
+         or ((AChar >= 'a') and (AChar <= 'f')); {Do not Localize}
 end;
 
 function IsHexidecimal(const AString: string; const ALength: Integer = -1; const AIndex: Integer = 1): Boolean; overload;
@@ -7812,35 +7812,35 @@ function OffsetFromUTC: TDateTime;
 {$ELSE}
   {$IFNDEF HAS_GetLocalTimeOffset}
     {$IFNDEF HAS_DateUtils_TTimeZone}
-  {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
 var
   iBias: Integer;
   tmez: TTimeZoneInformation;
-  {$ELSE}
-      {$IFDEF UNIX}
-        {$IFDEF USE_VCL_POSIX}
+      {$ELSE}
+        {$IFDEF UNIX}
+          {$IFDEF USE_VCL_POSIX}
 var
   T : Time_t;
   TV : TimeVal;
   UT : tm;
-        {$ELSE}
-          {$IFDEF KYLIXCOMPAT}
+          {$ELSE}
+            {$IFDEF KYLIXCOMPAT}
 var
   T : Time_T;
   TV : TTimeVal;
   UT : TUnixTime;
-          {$ELSE}
-            {$IFDEF USE_BASEUNIX}
+            {$ELSE}
+              {$IFDEF USE_BASEUNIX}
  var
    timeval: TTimeVal;
    timezone: TTimeZone;
+              {$ENDIF}
             {$ENDIF}
           {$ENDIF}
         {$ENDIF}
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
-{$ENDIF}
 {$ENDIF}
 begin
   {$IFDEF DOTNET}
@@ -7855,7 +7855,7 @@ begin
       {$IFDEF HAS_DateUtils_TTimeZone}
   Result := TTimeZone.Local.UtcOffset.TotalMinutes / 60 / 24;
       {$ELSE}
-    {$IFDEF WINDOWS}
+        {$IFDEF WINDOWS}
   case GetTimeZoneInformation({$IFDEF WINCE}@{$ENDIF}tmez) of
     TIME_ZONE_ID_INVALID  :
       raise EIdFailedToRetreiveTimeZoneInfo.Create(RSFailedTimeZoneInfo);
@@ -7887,35 +7887,35 @@ begin
   if iBias > 0 then begin
     Result := 0.0 - Result;
   end;
-    {$ELSE}
-        {$IFDEF UNIX}
+        {$ELSE}
+          {$IFDEF UNIX}
 
   // TODO: raise EIdFailedToRetreiveTimeZoneInfo if gettimeofday() fails...
 
-          {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
+            {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
   {from http://edn.embarcadero.com/article/27890 but without multiplying the Result by -1}
 
   gettimeofday(TV, nil);
   T := TV.tv_sec;
   localtime_r({$IFDEF KYLIXCOMPAT}@{$ENDIF}T, UT);
   Result := UT.{$IFDEF KYLIXCOMPAT}__tm_gmtoff{$ELSE}tm_gmtoff{$ENDIF} / 60 / 60 / 24;
-          {$ELSE}
-            {$IFDEF USE_BASEUNIX}
+            {$ELSE}
+              {$IFDEF USE_BASEUNIX}
   fpGetTimeOfDay (@TimeVal, @TimeZone);
   Result := -1 * (timezone.tz_minuteswest / 60 / 24);
-            {$ELSE}
+              {$ELSE}
   {$message error gettimeofday is not called on this platform!}
   Result := GOffsetFromUTC;
+              {$ENDIF}
             {$ENDIF}
-          {$ENDIF}
 
-        {$ELSE}
+          {$ELSE}
   {$message error no platform API called to get UTC offset!}
   Result := GOffsetFromUTC;
+          {$ENDIF}
         {$ENDIF}
       {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -9743,7 +9743,7 @@ begin
   Result := True;
 end;
 
-  {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
+{$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
 function IndyRegisterExpectedMemoryLeak(AAddress: Pointer): Boolean;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
@@ -9797,7 +9797,7 @@ begin
     {$ENDIF}
   {$ENDIF}
 end;
-  {$ENDIF}
+{$ENDIF}
 
 function IndyAddPair(AStrings: TStrings; const AName, AValue: String): TStrings;
   {$IFDEF USE_INLINE}inline;{$ENDIF}

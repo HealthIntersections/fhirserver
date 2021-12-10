@@ -11,6 +11,9 @@ mkdir -p exec/64/
 cp exec/pack/*.cfg exec/pack/*.dat exec/64/
 cp exec/pack/linux/*.so exec/64/
 
+echo "## compile packages/fhir_indy.lpk"
+$BUILD/tools/lazarus/lazbuild packages/fhir_indy.lpk -q -q
+
 echo "## compile packages/fhir_fsl.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q
 

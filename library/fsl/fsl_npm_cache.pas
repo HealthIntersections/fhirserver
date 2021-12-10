@@ -35,8 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ELSE} LazFileUtils, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads, fsl_logging,
-  fsl_stream, fsl_fetcher,
+  fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads, fsl_logging, fsl_stream, fsl_fetcher, fsl_versions,
   fsl_npm, fsl_npm_client;
 
 type
@@ -68,7 +67,7 @@ type
 
   TPackageLoadingInformation = class (TFslObject)
   private
-    FVersion: String;
+    FVersion: TSemanticVersion;
     FLoaded: TStringList;
     FOnLoadEvent: TPackageLoadingEvent;
   protected
@@ -375,7 +374,7 @@ begin
   begin
     npm := TNpmPackage.fromFolderQuick(s);
     try
-      if TSemVer.matches(npm.fhirVersion, ver) then
+      if TSemanticVersion.matches(npm.fhirVersion, ver, semverMinor) then
       begin
         found := false;
         for t in list do
@@ -1131,22 +1130,27 @@ constructor TPackageLoadingInformation.Create(ver : string);
 begin
   inherited Create;
   FLoaded := TStringList.Create;
-  FVersion := TSemVer.getMajMin(ver);
+  FVersion := TSemanticVersion.fromString(ver);
 end;
 
 destructor TPackageLoadingInformation.Destroy;
 begin
   FLoaded.Free;
+  FVersion.free;
   inherited;
 end;
 
 procedure TPackageLoadingInformation.checkVersion(ver: String);
+var
+  sv : TSemanticVersion;
 begin
-  ver := TSemVer.getMajMin(ver);
-  if FVersion = '' then
-    FVersion := ver
-  else if FVersion <> ver then
-    raise EFslException.Create('FHIR Loading Version mismatch: loading '+ver+' but already loaded '+FVersion);
+  sv := TSemanticVersion.fromString(ver);
+  try
+    if not FVersion.matches(sv, semverMinor) then
+      raise EFslException.Create('FHIR Loading Version mismatch: loading '+ver+' but already loaded '+FVersion.ToString);
+  finally
+    sv.free;
+  end;
 end;
 
 function TPackageLoadingInformation.isLoaded(id, ver: String): boolean;
@@ -1162,7 +1166,7 @@ end;
 function TPackageLoadingInformation.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, FVersion.sizeInBytes(magic));
   inc(result, FLoaded.sizeInBytes(magic));
 end;
 

@@ -40,13 +40,17 @@ uses
   ftx_sct_services, ftx_sct_expressions;
 
 type
+  TSnomedTestContext = class (TFslObject)
+  private
+    c : String;
+  end;
+
   TSnomedTests = Class (TFslTestCase)
   private
     FServices : TSnomedServices;
 
-    Fc : String; // (for pm)
     procedure p(c : String); // parse
-    procedure pm; // parse
+    procedure pm(ctxt : TObject); // parse
     procedure e(e1, e2 : String; yes : boolean); // test equivalence
     procedure n(s, d : String); // normalise from s to d
     procedure s(p, c : String; yes : boolean); // test subsumption
@@ -152,33 +156,40 @@ begin
   assertTrue(true);
 end;
 
-procedure TSnomedTests.pm;
+procedure TSnomedTests.pm(ctxt : TObject);
 begin
-  FServices.parseExpression(Fc).free;
+  FServices.parseExpression((ctxt as TSnomedTestContext).c).free;
 end;
 
 procedure TSnomedTests.ParseErrors;
+var
+  c : TSnomedTestContext;
 begin
-  Fc := '1166800031';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '1280450061:{363698007=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{363698007=564590041}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071,56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{363698007=56459004},';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}';
-  assertWillRaise(pm, ETerminologyError, '');
+  c := TSnomedTestContext.Create;
+  try
+    c.c := '1166800031';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '1280450061:{363698007=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{363698007=564590041}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071,56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{363698007=56459004},';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+  finally
+
+  end;
 end;
 
 procedure TSnomedTests.Subsumes;

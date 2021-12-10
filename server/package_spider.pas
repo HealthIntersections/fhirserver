@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging,
+  fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging, fsl_versions,
   fsl_fetcher,
   fdb_manager,
   fsl_npm;
@@ -271,7 +271,7 @@ begin
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
       raise EFslException.Create('Id "'+id+'" is not valid');
-    if not isValidSemVer(version) then
+    if not TSemanticVersion.isValid(version) then
       raise EFslException.Create('Version "'+version+'" is not valid');
     if (canonical = '') then
       raise EFslException.Create('No canonical found in rss');

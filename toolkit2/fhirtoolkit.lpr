@@ -50,7 +50,6 @@ begin
     frm.Free;
   end;
   Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
-  Application.CreateForm(TIgGitHubDialog, IgGitHubDialog);
   Application.Run;
 end.
 

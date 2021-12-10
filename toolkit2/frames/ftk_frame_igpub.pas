@@ -35,8 +35,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, Graphics,
   LclIntf, Buttons,
-  fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads,
-  fui_lcl_managers, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads, fsl_fpc, fsl_versions,
+  fui_lcl_managers, fui_lcl_progress,
   ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github;
 
 type
@@ -83,6 +83,22 @@ type
     property StartRun : Int64 read FStartRun write FStartRun;
   end;
 
+  { TDeleteTaskContext }
+
+  TDeleteTaskContext = class (TFslObject)
+  private
+    FDeleteDisk: boolean;
+    FFolder: TIGPublicationFolder;
+    FKillFirst: boolean;
+    procedure SetFolder(AValue: TIGPublicationFolder);
+  public
+    destructor Destroy; override;
+
+    property folder : TIGPublicationFolder read FFolder write SetFolder;
+    property killFirst : boolean read FKillFirst write FKillFirst;
+    property deleteDisk : boolean read FDeleteDisk write FDeleteDisk;
+  end;
+
   { TIGPublicationManager }
 
   TIGPublicationManager = class (TListManager<TIGPublicationFolder>)
@@ -94,8 +110,11 @@ type
     FFrame : TIgPubPageFrame;
     FFolderList : TJsonArray; // initial list, will be used for reloading if necessary
 
+    procedure deleteFiles(folder: String; i: integer; progress: TWorkProgressEvent);
+    procedure ScanForFolders(ts: TStringList; folder: String);
     procedure updateMemo;
     procedure updateStatuses;
+    procedure doDeleteItem(sender : TObject; context : TObject; progress : TWorkProgressEvent);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -210,6 +229,21 @@ const
     'Note that you might be ''encouraged'' to contribute to the documentation '#$F609'. '+#13#10+
     ''+#13#10;
 
+{ TDeleteTaskContext }
+
+procedure TDeleteTaskContext.SetFolder(AValue: TIGPublicationFolder);
+begin
+  FFolder.Free;
+  FFolder := AValue;
+end;
+
+destructor TDeleteTaskContext.Destroy;
+begin
+  FFolder.Free;
+  inherited Destroy;
+end;
+
+
 { TIGPublicationManager }
 
 procedure TIGPublicationManager.updateMemo;
@@ -298,6 +332,61 @@ begin
   end;
 end;
 
+procedure TIGPublicationManager.ScanForFolders(ts : TStringList; folder : String);
+var
+  s : String;
+begin
+  ts.add(folder);
+  for s in TDirectory.getDirectories(folder) do
+    ScanForFolders(ts, s);
+end;
+
+procedure TIGPublicationManager.deleteFiles(folder : String; i : integer; progress: TWorkProgressEvent);
+var
+  s : String;
+begin
+  for s in TDirectory.GetFiles(folder) do
+  begin
+    progress(self, i, false, 'Delete Files  '+folder);
+    FileSetReadOnly(s, false);
+    deleteFile(s);
+  end;
+end;
+
+procedure TIGPublicationManager.doDeleteItem(sender: TObject; context : TObject; progress: TWorkProgressEvent);
+var
+  deleteTask : TDeleteTaskContext;
+  ts : TStringList;
+  i : integer;
+begin
+  deleteTask := context as TDeleteTaskContext;
+  if (deleteTask.killFirst) then
+  begin
+    deleteTask.folder.engine.Terminate;
+    while (deleteTask.folder.engine <> nil) and (deleteTask.folder.engine.Running) do
+      progress(self, 0, false, 'Terminating build before deleting');
+  end;
+  if (deleteTask.deleteDisk) then
+  begin
+    progress(self, 0, false, 'Scanning Folder '+deleteTask.folder.folder);
+    ts := TStringList.Create;
+    try
+      ScanForFolders(ts, deleteTask.folder.folder);
+      for i := 0 to ts.count - 1 do
+      begin
+        progress(self, trunc(i/ts.count * 100), false, 'Delete Files in '+ts[(ts.count - 1)- i]);
+        deleteFiles(ts[(ts.count - 1)- i], trunc(i/ts.count * 100), progress);
+        FolderDelete(ts[(ts.count - 1)- i]);
+      end;
+      progress(self, 100, false, 'Delete Folder');
+      FolderDelete(deleteTask.folder.folder);
+      progress(self, 100, true, 'Delete Files in '+deleteTask.folder.folder);
+    finally
+      ts.Free;
+    end;
+  end;
+end;
+
 constructor TIGPublicationManager.Create;
 begin
   inherited Create;
@@ -318,7 +407,7 @@ end;
 
 function TIGPublicationManager.AskOnDelete(item : TIGPublicationFolder): boolean;
 begin
-  Result := item.status = fsRunning;
+  Result := false;
 end;
 
 function TIGPublicationManager.canSort: boolean;
@@ -451,6 +540,7 @@ begin
       if not FileNameCaseSensitive then
         folder := folder.ToLower;
       name := ExtractFileName(folder);
+      result := TIGPublicationFolder.create(self, name, folder, 0, 0);
       FFrame.FWorker.lastChange := GetTickCount64;
       FFrame.FWorker.lastChangeChecked := false;
       FFrame.FWorker.session.NeedsSaving := true;
@@ -481,14 +571,33 @@ begin
 end;
 
 function TIGPublicationManager.deleteItem(item: TIGPublicationFolder): boolean;
+var
+  res : TModalResult;
+  ctxt : TDeleteTaskContext;
 begin
-  result := true;
   if item.status = fsRunning then
-    item.engine.Terminate;
-
-  FFrame.FWorker.lastChange := GetTickCount64;
-  FFrame.FWorker.lastChangeChecked := false;
-  FFrame.FWorker.session.NeedsSaving := true;
+    res := MessageDlg('Delete IG', 'Cancel build and Delete '+item.name+'. Delete underlying source from disk?', mtConfirmation, mbYesNoCancel, 0)
+  else
+    res := MessageDlg('Delete IG', 'Delete '+item.name+'. Delete underlying source from disk?', mtConfirmation, mbYesNoCancel, 0);
+  result := res <> mrCancel;
+  if result then
+  begin
+    ctxt := TDeleteTaskContext.create;
+    try
+      ctxt.folder := item.link;
+      ctxt.killFirst := item.status = fsRunning;
+      ctxt.deleteDisk := res = mrYes;
+      if ctxt.killFirst or ctxt.deleteDisk then
+        DoForegroundTask(FFrame, ctxt, doDeleteItem);
+      if ctxt.deleteDisk and (FolderExists(item.folder)) then
+        MessageDlg('Delete IG', item.name+' could not be deleted from the disk entirely (usually due to a file being in use)', mtInformation, [mbOK], 0);
+    finally
+      ctxt.free;
+    end;
+    FFrame.FWorker.lastChange := GetTickCount64;
+    FFrame.FWorker.lastChangeChecked := false;
+    FFrame.FWorker.session.NeedsSaving := true;
+  end;
 end;
 
 function TIGPublicationManager.executeItem(item: TIGPublicationFolder; mode: String): boolean;

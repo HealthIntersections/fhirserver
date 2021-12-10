@@ -72,3 +72,5 @@ install/build/FHIRToolkit.zip
 exec/Resources
 /dependencies/Indy10-mod-static
 /dependencies/indy-master
+/release-notes.md
+/install/build

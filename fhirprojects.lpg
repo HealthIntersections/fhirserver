@@ -2,25 +2,17 @@
 <CONFIG>
   <ProjectGroup FileVersion="2">
     <Targets>
-      <Target FileName="packages\fhir_fsl.lpk"/>
-      <Target FileName="packages\fhir.lpk"/>
-      <Target FileName="packages\fhir_fui.lpk"/>
-      <Target FileName="packages\fhir2.lpk"/>
-      <Target FileName="packages\fhir3.lpk"/>
-      <Target FileName="packages\fhir4.lpk"/>
-      <Target FileName="packages\fhir5.lpk"/>
-      <Target FileName="packages\fhir_xver.lpk"/>
-      <Target FileName="server\fhirconsole.lpi">
-        <BuildModes>
-          <Mode Name="default"/>
-          <Mode Name="win32" Compile="True"/>
-          <Mode Name="win64"/>
-          <Mode Name="linux"/>
-          <Mode Name="osx"/>
-          <Mode Name="osx-m1"/>
-        </BuildModes>
-      </Target>
-      <Target FileName="server\fhirserver.lpi">
+      <Target FileName="packages/fhir_indy.lpk"/>
+      <Target FileName="packages/fhir_fsl.lpk"/>
+      <Target FileName="packages/fcomp.lpk"/>
+      <Target FileName="packages/fhir.lpk"/>
+      <Target FileName="packages/fhir_fui.lpk"/>
+      <Target FileName="packages/fhir2.lpk"/>
+      <Target FileName="packages/fhir3.lpk"/>
+      <Target FileName="packages/fhir4.lpk"/>
+      <Target FileName="packages/fhir5.lpk"/>
+      <Target FileName="packages/fhir_xver.lpk"/>
+      <Target FileName="server/fhirconsole.lpi">
         <BuildModes>
           <Mode Name="default"/>
           <Mode Name="win32" Compile="True"/>
@@ -31,18 +23,35 @@
           <Mode Name="win64-release"/>
         </BuildModes>
       </Target>
-      <Target FileName="toolkit2\fhirtoolkit.lpi">
+      <Target FileName="server/fhirserver.lpi">
+        <BuildModes>
+          <Mode Name="default"/>
+          <Mode Name="win32" Compile="True"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="toolkit2/fhirtoolkit.lpi">
         <BuildModes>
           <Mode Name="default"/>
           <Mode Name="win64"/>
           <Mode Name="linux"/>
           <Mode Name="osx"/>
-          <Mode Name="OSX-M1"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
+          <Mode Name="osx-release"/>
+          <Mode Name="osx-m1-release"/>
         </BuildModes>
       </Target>
-      <Target FileName="utilities\codescan\codescan.lpi">
+      <Target FileName="utilities/codescan/codescan.lpi">
         <BuildModes>
           <Mode Name="Default"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
         </BuildModes>
       </Target>
     </Targets>

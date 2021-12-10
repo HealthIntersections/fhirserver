@@ -43,9 +43,7 @@ Uses
 // *** General Testing Infrastructure ******************************************
 
 type
-  {$IFNDEF FPC}
-  TRunMethod = TTestMethod;
-  {$ENDIF}
+  TTestMethodWithContext = procedure (context : TObject) of object;
   TFslTestThread = class;
 
   {
@@ -66,8 +64,8 @@ type
     procedure assertEqual(left, right : String); overload;
     procedure assertEqual(left, right : integer; message : String); overload;
     procedure assertEqual(left, right : integer); overload;
-    procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
-    procedure thread(proc : TRunMethod);
+    procedure assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
+    procedure thread(proc : TTestMethodWithContext; context : TObject);
   public
   end;
 
@@ -107,11 +105,12 @@ type
 
   TFslTestThread = class (TThread)
   private
-    FProc : TRunMethod;
+    FProc : TTestMethodWithContext;
+    FContext  : TObject;
   protected
     procedure Execute; override;
   public
-    constructor Create(proc : TRunMethod);
+    constructor Create(proc : TTestMethodWithContext; context : TObject);
   end;
 
   { TFslTestSettings }
@@ -278,13 +277,10 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslTestCase.assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+procedure TFslTestCase.assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
 begin
-  {$IFDEF FPC}
-  TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
-  {$ELSE}
   try
-    AMethod;
+    AMethod(context);
     if (AExceptionMessage = '') then
       fail('Expected '+AExceptionClass.ClassName+', but it did not occur')
     else
@@ -297,7 +293,6 @@ begin
         assertEqual(AExceptionMessage, e.Message);
     end;
   end;
-  {$ENDIF}
 end;
 
 procedure TFslTestCase.Status(const Msg: string);
@@ -305,9 +300,9 @@ begin
  // nothing, for now
 end;
 
-procedure TFslTestCase.thread(proc: TRunMethod);
+procedure TFslTestCase.thread(proc : TTestMethodWithContext; context : TObject);
 begin
-  TFSLTestThread.Create(proc);
+  TFSLTestThread.Create(proc, context);
 end;
 
 { TFslTestSuiteCase }
@@ -394,16 +389,17 @@ end;
 
 { TFslTestThread }
 
-constructor TFslTestThread.Create(proc: TRunMethod);
+constructor TFslTestThread.Create(proc: TTestMethodWithContext; context : TObject);
 begin
   FProc := proc;
+  FContext := context;
   FreeOnTerminate := true;
   inherited Create(false);
 end;
 
 procedure TFslTestThread.execute;
 begin
-  Fproc;
+  FProc(FContext);
 end;
 
 { TFslTestSettings }

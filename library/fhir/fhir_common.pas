@@ -34,8 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities,
-  fsl_http,
+  fsl_base, fsl_utilities, fsl_versions, fsl_http,
   fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 
 Type
@@ -2362,12 +2361,12 @@ begin
         latest := T(nil);
         for tt in rl do
         begin
-          if (TFHIRVersions.matches(tt.version, version)) then
+          if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
             latest := tt;
         end;
         if (latest <> T(nil)) then // might be null if it's not using semver
         begin
-          lv := TFHIRVersions.getMajMin(latest.version);
+          lv := TSemanticVersion.getMajMin(latest.version);
           if (lv <> version) then
             FMap.addOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;

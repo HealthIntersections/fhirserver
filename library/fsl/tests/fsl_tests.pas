@@ -36,7 +36,7 @@ Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions,
   fsl_xml,
   {$IFNDEF FPC}
   fsl_msxml,
@@ -102,7 +102,7 @@ Type
   TFslCollectionsTests = class (TFslTestCase)
   private
     list : TFslTestObjectList;
-    procedure executeFail();
+    procedure executeFail(context : TObject);
   published
     procedure testAdd;
     procedure testAddFail;
@@ -120,7 +120,7 @@ Type
 
   TXPlatformTests = class (TFslTestCase)
   private
-    procedure test60sec;
+    procedure test60sec(context : TObject);
   published
     procedure TesTFslObject;
     procedure TestCriticalSectionSimple;
@@ -242,7 +242,7 @@ Type
     engine : TXmlPatchEngine;
     // here for FPC to make the exception procedure event.
     test, target, patch, error, patched : TMXmlElement;
-    procedure doExecute;
+    procedure doExecute(context : TObject);
   public
     Procedure SetUp; override;
     procedure TearDown; override;
@@ -280,7 +280,7 @@ Type
     tests : TJsonArray;
     test : TJsonObject;
     engine : TJsonPatchEngine;
-    procedure execute;
+    procedure execute(context : TObject);
   public
     Procedure SetUp; override;
     procedure TearDown; override;
@@ -703,7 +703,7 @@ implementation
 
 procedure TFslUtilitiesTestCases.testSemVer;
 begin
-  AssertTrue(TSemVer.isMoreRecent('0.10.0', '0.2.0'));
+  AssertTrue(TSemanticVersion.isMoreRecent('0.10.0', '0.2.0'));
 end;
 
 const
@@ -1012,7 +1012,7 @@ end;
 
 { TXmlPatchTest }
 
-procedure TXmlPatchTest.doExecute();
+procedure TXmlPatchTest.doExecute(context : TObject);
 begin
   engine.execute(tests, target, patch);
 end;
@@ -1033,7 +1033,7 @@ begin
       patched := test.element('patched');
 
       if (error <> nil) then
-        assertWillRaise(doExecute, EXmlException, error.text)
+        assertWillRaise(doExecute, nil, EXmlException, error.text)
       else
       begin
         engine.execute(tests, target, patch);
@@ -3877,7 +3877,7 @@ var
 Const
   TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
 
-procedure TXPlatformTests.test60sec;
+procedure TXPlatformTests.test60sec(context : TObject);
 begin
   TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
 end;
@@ -4077,7 +4077,7 @@ begin
 
   // Date Time conversion
   assertTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000', 'TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = ''20130405123456.000''');
-  assertWillRaise(test60Sec, EConvertError, '');
+  assertWillRaise(test60Sec, nil, EConvertError, '');
   dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
   dt2 := TFslDateTime.fromHL7('20130405123456').DateTime;
   assertTrue(dt1 = dt2, 'dt1 = dt2');
@@ -4407,7 +4407,7 @@ end;
 
 { TJsonPatchTest }
 
-procedure TJsonPatchTest.execute;
+procedure TJsonPatchTest.execute(context : TObject);
 begin
   engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
 end;
@@ -4426,7 +4426,7 @@ begin
     begin
       if test.has('error') then
       begin
-        assertWillRaise(execute, EJsonException, '');
+        assertWillRaise(execute, nil, EJsonException, '');
       end
       else
       begin
@@ -4647,7 +4647,7 @@ begin
   end;
 end;
 
-procedure TFslCollectionsTests.executeFail();
+procedure TFslCollectionsTests.executeFail(context : TObject);
 begin
   list.Add(TFslTestObjectList.create);
 end;
@@ -4656,7 +4656,7 @@ procedure TFslCollectionsTests.testAddFail;
 begin
   list := TFslTestObjectList.create;
   try
-    assertWillRaise(executeFail, EFslInvariant, '');
+    assertWillRaise(executeFail, nil, EFslInvariant, '');
     assertTrue(list.Count = 0);
   finally
     list.Free;

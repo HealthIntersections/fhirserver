@@ -38,7 +38,7 @@ uses
   fsl_threads;
 
 type
-  TPerformTaskEvent = procedure (sender : TObject; progress : TWorkProgressEvent) of object;
+  TPerformTaskEvent = procedure (sender : TObject; context : TObject; progress : TWorkProgressEvent) of object;
 
   { TProgressForm }
 
@@ -56,6 +56,7 @@ type
     started : boolean;
     stopped : boolean;
     event : TPerformTaskEvent;
+    FContext : TObject;
     procedure start;
     procedure progress(sender : TObject; pct : integer; done : boolean; desc : String);
     procedure done(id : integer; response : TBackgroundTaskResponsePackage);
@@ -66,7 +67,7 @@ var
   ProgressForm: TProgressForm;
 
 function DoBackgroundTask(owner : TComponent; taskid : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage) : boolean;
-function DoForegroundTask(owner : TComponent; event : TPerformTaskEvent) : boolean;
+function DoForegroundTask(owner : TComponent; context : TObject; event : TPerformTaskEvent) : boolean;
 
 implementation
 
@@ -85,11 +86,13 @@ begin
   end;
 end;
 
-function DoForegroundTask(owner : TComponent; event : TPerformTaskEvent) : boolean;
+function DoForegroundTask(owner : TComponent; context : TObject; event : TPerformTaskEvent) : boolean;
 begin
   ProgressForm := TProgressForm.create(owner);
   try
     ProgressForm.event := event;
+    ProgressForm.FContext := context;
+
     ProgressForm.showModal;
     result := ProgressForm.finished;
   finally
@@ -134,7 +137,7 @@ begin
   stopped := false;
   started := true;
   Label1.caption := 'Starting';
-  event(self, progress);
+  event(self, FContext, progress);
 end;
 
 procedure TProgressForm.progress(sender: TObject; pct: integer; done: boolean; desc: String);

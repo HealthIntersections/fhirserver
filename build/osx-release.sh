@@ -47,7 +47,7 @@ xcrun stapler staple install/build/FHIRToolkit.app
 rm -r -f install/build/FHIRToolkit.zip
 /usr/bin/ditto -c -k --keepParent install/build/FHIRToolkit.app install/build/FHIRToolkit-v$1-osxm1.zip
 
-gh release upload v%1 'install/build/FHIRToolkit-v'$1'-osxm1.zip#OSX Toolkit (M1)'
+gh release upload v$1 'install/build/FHIRToolkit-v'$1'-osxm1.zip#OSX Toolkit (M1)'
 
 
 

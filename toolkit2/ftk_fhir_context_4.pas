@@ -35,7 +35,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_utilities, fsl_base, fsl_lang, fsl_npm_cache,
+  fsl_utilities, fsl_base, fsl_lang, fsl_npm_cache, fsl_versions,
   fhir_objects, fhir_factory, fhir_client, fhir_common, fhir_utilities,
   ftx_service,
   fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_context, fhir4_profiles, fhir4_client,
@@ -94,7 +94,7 @@ begin
       FServer.Free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
-    if not TFHIRVersions.matches(CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion], CODES_TFhirFHIRVersionEnum[FHIR_ENUM_VERSIONS[factory.version]]) then
+    if not TFHIRVersions.matches(CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion], CODES_TFhirFHIRVersionEnum[FHIR_ENUM_VERSIONS[factory.version]], semverMinor) then
       raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;

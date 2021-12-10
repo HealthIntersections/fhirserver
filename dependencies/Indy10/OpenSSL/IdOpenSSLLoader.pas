@@ -1,5 +1,25 @@
 unit IdOpenSSLLoader;
 
+{$i IdCompilerDefines.inc}
+
+{$IFDEF FPC}
+  {$IFNDEF MSWINDOWS}
+  { On Mac and Linux, we statically bind to openSSL.
+
+  The impetus for this is that the the openSSL libssl.dylib doesn't bind to libcrypto.dylib
+  in a way that will be approved by the OSX loader for hardened apps.
+
+  And it's esy to do for Linux too.
+
+  But windows... compiling openSSL is a nightmare... just not worth it.
+  So on windows, we distribute the openSSL dlls with the application
+  }
+  {$DEFINE STATICLOAD_OPENSSL}
+  {$LINKLIB libcrypto.a}
+  {$LINKLIB libssl.a}
+  {$ENDIF}
+{$ENDIF}
+
 interface
 
 uses

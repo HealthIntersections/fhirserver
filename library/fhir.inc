@@ -5,6 +5,7 @@
 // LINUX - 64 bit only, FPC only
 
 {$IFDEF FPC}
+  {$DEFINE STATICLOAD_OPENSSL}
   {$MODE DELPHI}
   {$MODESWITCH ADVANCEDRECORDS}
   {$MODESWITCH TYPEHELPERS}
@@ -51,4 +52,10 @@ costly. Enable it with this define
 {$IFOPT D+}
 {$DEFINE OBJECT_TRACKING}
 {$ENDIF}
+
+{
+OpenSSL is always statically loaded.
+Or in the case of FPC compiled applications, statically bound
+}
+{$DEFINE STATICLOAD_OPENSSL}
 

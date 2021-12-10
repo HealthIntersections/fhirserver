@@ -30,6 +30,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -73,6 +74,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -119,6 +121,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -150,6 +153,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -173,6 +177,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -196,6 +201,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
@@ -364,6 +370,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
+      <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
       <OtherUnitFiles Value="admin;tx"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
