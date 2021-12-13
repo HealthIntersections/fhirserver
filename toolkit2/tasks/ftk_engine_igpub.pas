@@ -109,7 +109,7 @@ implementation
 
 procedure TIgPublisherCleanEngine.execute;
 begin
-  raise Exception.create('todo');
+  raise EFslException.create('todo');
 end;
 
 { TIgPublisherBuildBaseEngine }
