@@ -61,12 +61,31 @@ type
 
   TControlOperation = (copNone, copAdd, copAddSet, copEdit, copDelete, copUp, copDown, copReload, copExecute, copRefresh, copStop, copCopy, copUpdate);
 
+  { TControlEntryMenuItem }
+
+  TControlEntryMenuItem = class (TFslObject)
+  private
+    FMenuItem: TMenuItem;
+    FMode: String;
+    FOp: TControlOperation;
+  public
+    function link : TControlEntryMenuItem; overload;
+
+    property menuItem : TMenuItem read FMenuItem write FMenuItem;
+    property op : TControlOperation read FOp write FOp;
+    property mode : String read FMode write FMode;
+  end;
+
   TControlEntry = class (TFslObject)
   private
     FControl: TControl;
     FMode: String;
     FOp: TControlOperation;
+    FMenuItems : TFslList<TControlEntryMenuItem>;
+    FMenu : TPopupMenu;
   public
+    destructor Destroy; override;
+
     function link : TControlEntry; overload;
 
 
@@ -93,6 +112,7 @@ type
     procedure doControl(sender : TObject); virtual; abstract;
     procedure doMnuClick(Sender: TObject); virtual; abstract;
     procedure updateControls(op : TControlOperation; allowed : boolean);
+    procedure updateMenuControls;
     procedure SetImages(AValue: TImagelist); virtual;
   public
     constructor Create; override;
@@ -106,7 +126,9 @@ type
     procedure getCopyModes(modes : TStringList); virtual;
 
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
-    function registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '') : TMenuItem;
+    function registerControlForMenu(c : TControl; menu : TPopupMenu) : TControlEntry;
+    function registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation; mode : String = '') : TMenuItem; overload;
+    function registerMenuEntry(grp : TControlEntry; caption : String; imageIndex : integer; op : TControlOperation; mode : String = '') : TMenuItem; overload;
     function registerSubMenuEntry(parent : TMenuItem; caption : String; imageIndex : integer; op : TControlOperation; mode : String = '') : TMenuItem;
   end;
 
@@ -555,6 +577,13 @@ type
 
 Implementation
 
+{ TControlEntryMenuItem }
+
+function TControlEntryMenuItem.link: TControlEntryMenuItem;
+begin
+  result := TControlEntryMenuItem(inherited link);
+end;
+
 { TPanelStackSubPanel }
 
 constructor TPanelStackSubPanel.create(container, heading: TPanel);
@@ -679,6 +708,12 @@ end;
 
 { TControlEntry }
 
+destructor TControlEntry.Destroy;
+begin
+  FMenuItems.Free;
+  inherited Destroy;
+end;
+
 function TControlEntry.link: TControlEntry;
 begin
   result := TControlEntry(inherited link);
@@ -727,6 +762,20 @@ begin
   end;
 end;
 
+function TListOrTreeManagerBase.registerControlForMenu(c: TControl; menu : TPopupMenu): TControlEntry;
+begin
+  result := TControlEntry.create;
+  try
+    result.control := c;
+    result.op := copNone;
+    result.FMenu := menu;
+    c.enabled := false;
+    FControls.add(result.link);
+  finally
+    result.free;
+  end;
+end;
+
 function TListOrTreeManagerBase.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation; mode : String = '') : TMenuItem;
 var
   list : TStringList;
@@ -758,6 +807,22 @@ begin
   end;
 end;
 
+function TListOrTreeManagerBase.registerMenuEntry(grp: TControlEntry; caption: String; imageIndex: integer; op: TControlOperation; mode: String): TMenuItem;
+var
+  list : TStringList;
+  i : integer;
+begin
+  result  := TMenuItem.create(nil);
+  grp.FMenu.Items.add(result);
+  result.caption := caption;
+  result.imageIndex := imageIndex;
+  result.Tag := Integer(op);
+  if mode <> '' then
+    result.name := 'mnuMode'+mode;
+  if op <> copNone then
+    result.OnClick := doMnuClick;
+end;
+
 function TListOrTreeManagerBase.registerSubMenuEntry(parent: TMenuItem; caption: String; imageIndex: integer; op: TControlOperation; mode: String): TMenuItem;
 begin
   result  := TMenuItem.create(nil);
@@ -783,11 +848,36 @@ var
   i : integer;
 begin
   for entry in FControls do
+  begin
     if entry.op = op then
       entry.control.enabled := allowed;
+    if (entry.FMenu <> nil) then
+      for i := 0 to entry.FMenu.Items.Count - 1 do
+        if (TControlOperation(entry.FMenu.Items[i].tag) = op) then
+          entry.FMenu.Items[i].enabled := allowed;
+  end;
   for i := 0 to FPopup.Items.Count - 1 do
     if (TControlOperation(FPopup.Items[i].tag) = op) then
       FPopup.Items[i].enabled := allowed;
+end;
+
+procedure TListOrTreeManagerBase.updateMenuControls;
+var
+  entry : TControlEntry;
+  i : integer;
+  ok : boolean;
+begin
+  for entry in FControls do
+  begin
+    if (entry.FMenu <> nil) then
+    begin
+      ok := false;
+      for i := 0 to entry.FMenu.Items.Count - 1 do
+        if entry.FMenu.Items[i].Enabled then
+          ok := true;
+      entry.control.Enabled := ok;
+    end;
+  end;
 end;
 
 { TListManager }
@@ -973,6 +1063,7 @@ begin
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
   updateControls(copCopy, FHasCopy);
+  updateMenuControls();
   FCanEdit := opEdit in ops;
 
   focusItemChange(focus);
@@ -2011,6 +2102,7 @@ begin
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
   updateControls(copCopy, FHasCopy);
+  updateMenuControls;
   FCanEdit := opEdit in ops;
 
   focusItemChange(focus);
@@ -2536,6 +2628,7 @@ begin
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
   updateControls(copCopy, FHasCopy);
+  updateMenuControls;
   FCanEdit := opEdit in ops;
 
   focusItemChange(focus);

@@ -548,6 +548,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure ToolButton32Click(Sender: TObject);
     procedure tvProjectsChange(Sender: TObject; Node: TTreeNode);
     procedure tvProjectsChanging(Sender: TObject; Node: TTreeNode;
       var AllowChange: Boolean);
@@ -1067,6 +1068,11 @@ begin
 end;
 
 procedure TMainToolkitForm.ToolButton2Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainToolkitForm.ToolButton32Click(Sender: TObject);
 begin
 
 end;
