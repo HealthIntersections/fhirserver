@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, Graphics,
-  LclIntf, Buttons,
+  LclIntf, Buttons, Menus,
   fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads, fsl_fpc, fsl_versions,
   fui_lcl_managers, fui_lcl_progress,
   ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github;
@@ -52,14 +52,14 @@ type
   private
     FLineCount: integer;
     FManager : TIGPublicationManager;
-    FEngine: TIgPublisherBuildEngine;
+    FEngine: TIgPublisherBuildBaseEngine;
     FFolder: String;
     FLines: TStringList;
     Fname: String;
     FRunLength: Int64;
     FStartRun: Int64;
     FStatus: TIGPublicationFolderStatus;
-    procedure SetEngine(AValue: TIgPublisherBuildEngine);
+    procedure SetEngine(AValue: TIgPublisherBuildBaseEngine);
 
     procedure emitLine(line : String; repl : boolean);
     function log : String;
@@ -77,7 +77,7 @@ type
     property name : String read Fname write FName;
     property folder : String read FFolder write FFolder;
     property lines : TStringList read FLines;
-    property engine : TIgPublisherBuildEngine read FEngine write SetEngine;
+    property engine : TIgPublisherBuildBaseEngine read FEngine write SetEngine;
     property RunLength : Int64 read FRunLength write FRunLength;
     property LineCount : integer read FLineCount write FLineCount;
     property StartRun : Int64 read FStartRun write FStartRun;
@@ -151,6 +151,14 @@ type
     cbxVersions: TComboBox;
     ImageList1: TImageList;
     lvFolders: TListView;
+    mnuAddFolder: TMenuItem;
+    mnuAddGit: TMenuItem;
+    mnuAddFolders: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
     mStatus: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -160,14 +168,15 @@ type
     fd: TSelectDirectoryDialog;
     Panel6: TPanel;
     Panel7: TPanel;
+    pmDev: TPopupMenu;
+    pmAdd: TPopupMenu;
     ProgressBar1: TProgressBar;
     Splitter1: TSplitter;
     Timer1: TTimer;
     ToolBar1: TToolBar;
     tbAdd: TToolButton;
     tbDelete: TToolButton;
-    tbAddSet: TToolButton;
-    tbGitHub: TToolButton;
+    tbDevTools: TToolButton;
     ToolButton2: TToolButton;
     tbBuild: TToolButton;
     tbUp: TToolButton;
@@ -178,6 +187,7 @@ type
     tbDown: TToolButton;
     ToolButton8: TToolButton;
     tbConfig: TToolButton;
+    procedure mnuAddFolderClick(Sender: TObject);
     procedure tbConfigClick(Sender: TObject);
     procedure tbOpenClick(Sender: TObject);
     procedure tbQAClick(Sender: TObject);
@@ -265,7 +275,7 @@ begin
       finally
         FLock.Unlock;
       end;
-      if (FCurrent.status <> fsRunning) or ((FCurrent.RunLength = 0) and (FCurrent.LineCount = 0)) or (FCurrent.StartRun = 0) then
+      if (FCurrent.status <> fsRunning) or not FCurrent.engine.trackBuildTime then
       begin
         FFrame.ProgressBar1.Enabled := false;
         FFrame.ProgressBar1.Position := 0;
@@ -317,7 +327,8 @@ begin
         if (o.engine.success) then
         begin
           o.status := fsSuccess;
-          o.RunLength := GetTickCount64 - o.StartRun;
+          if o.engine.trackBuildTime then
+            o.RunLength := GetTickCount64 - o.StartRun;
           o.lineCount := o.lines.count;
           FFrame.FWorker.lastChange := GetTickCount64;
           FFrame.FWorker.lastChangeChecked := false;
@@ -601,6 +612,8 @@ begin
 end;
 
 function TIGPublicationManager.executeItem(item: TIGPublicationFolder; mode: String): boolean;
+var
+  engine : TIgPublisherBuildEngine;
 begin
   result := false;
   if (item.status = fsRunning ) then
@@ -609,15 +622,16 @@ begin
   begin
     item.lines.clear;
     item.lines.add('fBuilding '+item.name+'. Starting at '+TFslDateTime.makeLocal.toString('c'));
-    item.engine := TIgPublisherBuildEngine.create;
-    item.engine.folder := item.folder;
-    item.engine.OnEmitLine := item.emitLine;
-    item.engine.javaCmd := FFrame.FJavaCmd;
-    item.engine.devParams := FFrame.FDevParams;
-    item.engine.txSrvr := FFrame.FTxServers[FFrame.cbxTxServer.ItemIndex];
-    item.engine.version := FFrame.cbxVersions.text;
-    item.engine.url := FFrame.FIgUrls[FFrame.cbxVersions.ItemIndex];
-    item.engine.Start;
+    engine := TIgPublisherBuildEngine.create;
+    item.engine := engine;
+    engine.folder := item.folder;
+    engine.OnEmitLine := item.emitLine;
+    engine.javaCmd := FFrame.FJavaCmd;
+    engine.devParams := FFrame.FDevParams;
+    engine.txSrvr := FFrame.FTxServers[FFrame.cbxTxServer.ItemIndex];
+    engine.version := FFrame.cbxVersions.text;
+    engine.url := FFrame.FIgUrls[FFrame.cbxVersions.ItemIndex];
+    engine.Start;
     item.status := fsRunning;
     item.StartRun := GetTickCount64;
     result := true;
@@ -648,10 +662,9 @@ begin
   else
   begin
     item.lines.clear;
-    item.engine := TIgPublisherBuildEngine.create;
+    item.engine := TIgPublisherUpdateEngine.create;
     item.engine.folder := item.folder;
     item.engine.OnEmitLine := item.emitLine;
-    item.engine.doGit := true;
     item.engine.Start;
     item.StartRun := 0;
     item.status := fsRunning;
@@ -696,7 +709,7 @@ begin
   // nothing yet
 end;
 
-procedure TIGPublicationFolder.SetEngine(AValue: TIgPublisherBuildEngine);
+procedure TIGPublicationFolder.SetEngine(AValue: TIgPublisherBuildBaseEngine);
 begin
   FEngine.Free;
   FEngine := AValue;
@@ -786,6 +799,8 @@ begin
 end;
 
 procedure TIgPubPageFrame.init(json: TJsonObject);
+var
+  grp : TControlEntry;
 begin
   FIgUrls := TStringList.create;
   FTxServers := TStringList.create;
@@ -793,9 +808,10 @@ begin
   FManager := TIGPublicationManager.create;
   FManager.FFrame := self;
 
-  FManager.registerControl(tbAdd, copAdd);
-  FManager.registerControl(tbGitHub, copAdd, 'git');
-  FManager.registerControl(tbAddSet, copAddSet, 'set');
+  grp := FManager.registerControlForMenu(tbAdd, pmAdd);
+  FManager.registerMenuEntry(grp, 'Folder', 18, copAdd);
+  FManager.registerMenuEntry(grp, 'From GitHub', 15, copAdd, 'git');
+  FManager.registerMenuEntry(grp, 'Sub-Folders', 14, copAddSet);
   FManager.registerControl(tbDelete, copDelete);
   FManager.registerControl(tbUp, copUp);
   FManager.registerControl(tbDown, copDown);
@@ -867,6 +883,12 @@ begin
   finally
     IGPublisherConfigForm.free;
   end;
+end;
+
+
+procedure TIgPubPageFrame.mnuAddFolderClick(Sender: TObject);
+begin
+
 end;
 
 procedure TIgPubPageFrame.tbOpenClick(Sender: TObject);
@@ -989,6 +1011,11 @@ begin
   begin
     tbOpen.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'index.html']));
     tbQA.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'qa.html']));
+    {$IFDEF WINDONWS}
+    tbDevTools.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'clean.bat']));
+    {$ELSE}
+    tbDevTools.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'clean.sh']));
+    {$ENDIF}
   end;
 end;
 

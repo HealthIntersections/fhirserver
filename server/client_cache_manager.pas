@@ -118,8 +118,11 @@ begin
     FList.RemoveAll(remove);
     for i in list do
     begin
-      FSize := FSize + i.sizeInBytes(magic);
-      FList.Add(i.link);
+      if (i.url <> '') then
+      begin
+        FSize := FSize + i.sizeInBytes(magic);
+        FList.Add(i.link);
+      end;
     end;
   finally
     remove.Free;

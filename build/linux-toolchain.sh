@@ -14,7 +14,7 @@ echo "Get fpclazup"
 
 mkdir tools
 
-wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0b/fpclazup-x86_64-linux -O tools/fpclazup
+wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0g/fpclazup-x86_64-linux -O tools/fpclazup
 
 chmod +x tools/fpclazup
 

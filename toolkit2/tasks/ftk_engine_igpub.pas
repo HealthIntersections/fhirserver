@@ -39,54 +39,131 @@ uses
 type
   TIgPublisherBuildEngineLineEvent = procedure(line : String; repl : boolean) of Object;
 
-  { TIgPublisherBuildEngine }
+  { TIgPublisherBuildBaseEngine }
 
-  TIgPublisherBuildEngine = class (TFslThread)
+  TIgPublisherBuildBaseEngine = class (TFslThread)
   private
-    FDevParams: String;
-    FDoGit: boolean;
     FFolder : String;
-    FJavaCmd: String;
-    FOnEmitLine: TIgPublisherBuildEngineLineEvent;
-    FTxSrvr : String;
-    FUrl: String;
-    FVersion : String;
-    FJarName : String;
-    FWantStop : boolean;
     FStartingDate : TDateTime;
-
-    procedure checkJava;
-    procedure checkInstallIgPublisher;
-    function GetSuccess: boolean;
-    procedure runBuild;
-    procedure executeGitUpdate;
+    FOnEmitLine: TIgPublisherBuildEngineLineEvent;
+    FWantStop : boolean;
     procedure procEmitLine(sender : TFslExternalProcessThread; line : String; repl : boolean);
     procedure doFetcherProgress(sender : TObject; progress : integer);
+  protected
+    function GetSuccess: boolean; virtual;
   public
-    destructor Destroy; override;
-    property javaCmd : String read FJavaCmd write FJavaCmd;
-    property devParams : String read FDevParams write FDevParams;
+    function trackBuildTime : boolean; virtual;
+    procedure terminate; virtual;
+
     property folder : String read FFolder write FFolder;
-    property version : String read FVersion write FVersion;
-    property url : String read FUrl write FUrl;
-    property txSrvr : String read FTxSrvr write FTxSrvr;
-    property doGit : boolean read FDoGit write FDoGit;
-
-    procedure execute; override;
-    procedure Terminate;
-
     property success : boolean read GetSuccess;
     property OnEmitLine : TIgPublisherBuildEngineLineEvent read FOnEmitLine write FOnEmitLine;
   end;
 
+  { TIgPublisherUpdateEngine }
+
+  TIgPublisherUpdateEngine = class (TIgPublisherBuildBaseEngine)
+  public
+    procedure execute; override;
+  end;
+
+  { TIgPublisherCleanEngine }
+
+  TIgPublisherCleanEngine = class (TIgPublisherBuildBaseEngine)
+  public
+    procedure execute; override;
+  end;
+
+  { TIgPublisherBuildEngine }
+
+  TIgPublisherBuildEngine = class (TIgPublisherBuildBaseEngine)
+  private
+    FDevParams: String;
+    FJavaCmd: String;
+    FTxSrvr : String;
+    FUrl: String;
+    FVersion : String;
+    FJarName : String;
+
+    procedure checkJava;
+    procedure checkInstallIgPublisher;
+    procedure runBuild;
+  protected
+    function GetSuccess: boolean; override;
+  public
+    function trackBuildTime : boolean; override;
+    property javaCmd : String read FJavaCmd write FJavaCmd;
+    property devParams : String read FDevParams write FDevParams;
+    property version : String read FVersion write FVersion;
+    property url : String read FUrl write FUrl;
+    property txSrvr : String read FTxSrvr write FTxSrvr;
+
+    procedure execute; override;
+    procedure terminate; override;
+
+  end;
+
 implementation
 
-{ TIgPublisherBuildEngine }
+{ TIgPublisherCleanEngine }
 
-destructor TIgPublisherBuildEngine.Destroy;
+procedure TIgPublisherCleanEngine.execute;
 begin
-  inherited Destroy;
+  raise EFslException.create('todo');
 end;
+
+{ TIgPublisherBuildBaseEngine }
+
+procedure TIgPublisherBuildBaseEngine.procEmitLine(sender: TFslExternalProcessThread; line: String; repl : boolean);
+begin
+  FOnEmitLine(line, repl);
+end;
+
+procedure TIgPublisherBuildBaseEngine.doFetcherProgress(sender: TObject; progress: integer);
+begin
+  if FWantStop then
+    abort;
+end;
+
+function TIgPublisherBuildBaseEngine.GetSuccess: boolean;
+begin
+  result := false;
+end;
+
+function TIgPublisherBuildBaseEngine.trackBuildTime: boolean;
+begin
+  result := false;
+end;
+
+procedure TIgPublisherBuildBaseEngine.terminate;
+begin
+  // nothing right now
+end;
+
+{ TIgPublisherUpdateEngine }
+
+procedure TIgPublisherUpdateEngine.execute;
+var
+  p : TFslExternalProcessThread;
+begin
+  FOnEmitLine('git pull', false);
+
+  p := TFslExternalProcessThread.create;
+  try
+    p.command := 'git';
+    p.parameters.Add('pull');
+    p.parameters.Add('--progress');
+    p.folder := FFolder;
+    p.OnEmitLine := procEmitLine;
+    p.Start;
+    while p.Running do
+      sleep(50);
+  finally
+    p.free;
+  end;
+end;
+
+{ TIgPublisherBuildEngine }
 
 procedure TIgPublisherBuildEngine.checkJava;
 var
@@ -162,6 +239,11 @@ begin
     result := false;
 end;
 
+function TIgPublisherBuildEngine.trackBuildTime: boolean;
+begin
+  Result := true;
+end;
+
 procedure TIgPublisherBuildEngine.runBuild;
 var
   p : TFslExternalProcessThread;
@@ -197,65 +279,28 @@ begin
   end;
 end;
 
-procedure TIgPublisherBuildEngine.executeGitUpdate;
-var
-  p : TFslExternalProcessThread;
-begin
-  FOnEmitLine('git pull', false);
-
-  p := TFslExternalProcessThread.create;
-  try
-    p.command := 'git';
-    p.parameters.Add('pull');
-    p.parameters.Add('--progress');
-    p.folder := FFolder;
-    p.OnEmitLine := procEmitLine;
-    p.Start;
-    while p.Running do
-      sleep(50);
-  finally
-    p.free;
-  end;
-end;
-
-procedure TIgPublisherBuildEngine.procEmitLine(sender: TFslExternalProcessThread; line: String; repl : boolean);
-begin
-  FOnEmitLine(line, repl);
-end;
-
-procedure TIgPublisherBuildEngine.doFetcherProgress(sender: TObject; progress: integer);
-begin
-  if FWantStop then
-    abort;
-end;
-
 procedure TIgPublisherBuildEngine.execute;
 begin
   try
-    if FDoGit then
-      executeGitUpdate
+    if FileExists(FilePath([FFolder, 'output', 'qa.json'])) then
+      FStartingDate := FileGetModified(FilePath([FFolder, 'output', 'qa.json']))
     else
-    begin
-      if FileExists(FilePath([FFolder, 'output', 'qa.json'])) then
-        FStartingDate := FileGetModified(FilePath([FFolder, 'output', 'qa.json']))
-      else
-        FStartingDate := 0;
-      if FileExists(FilePath([FFolder, 'ig-publisher.kill'])) then
-        DeleteFile(FilePath([FFolder, 'ig-publisher.kill']));
-      if not FWantStop then
-        checkJava;
-      if not FWantStop and (url <> '#dev') then
-        checkInstallIgPublisher;
-      if not FWantStop then
-        runBuild;
-    end;
+      FStartingDate := 0;
+    if FileExists(FilePath([FFolder, 'ig-publisher.kill'])) then
+      DeleteFile(FilePath([FFolder, 'ig-publisher.kill']));
+    if not FWantStop then
+      checkJava;
+    if not FWantStop and (url <> '#dev') then
+      checkInstallIgPublisher;
+    if not FWantStop then
+      runBuild;
   except
     on e : Exception do
       FOnEmitLine(e.message, false);
   end;
 end;
 
-procedure TIgPublisherBuildEngine.Terminate;
+procedure TIgPublisherBuildEngine.terminate;
 begin
   // java creates a double process (at least on windows) and we can't kill the actual operational process.
   // instead we ask it to die by creating this file
