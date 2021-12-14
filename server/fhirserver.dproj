@@ -92,7 +92,7 @@
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <VerInfo_MajorVer>2</VerInfo_MajorVer>
     <VerInfo_MinorVer>0</VerInfo_MinorVer>
-    <VerInfo_Release>9</VerInfo_Release>
+    <VerInfo_Release>10</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Base_Win32)&apos;!=&apos;&apos;">
@@ -209,7 +209,7 @@
     <Icon_MainIcon>..\exec\icons\fhir-server.ico</Icon_MainIcon>
     <VerInfo_MajorVer>2</VerInfo_MajorVer>
     <VerInfo_MinorVer>0</VerInfo_MinorVer>
-    <VerInfo_Release>9</VerInfo_Release>
+    <VerInfo_Release>10</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <ItemGroup>

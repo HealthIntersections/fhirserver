@@ -67,6 +67,16 @@ type
     procedure execute; override;
   end;
 
+  { TIgPublisherJekyllEngine }
+
+  TIgPublisherJekyllEngine = class (TIgPublisherBuildBaseEngine)
+  private
+    Fcommand: String;
+  public
+    property command : String read Fcommand write Fcommand;
+    procedure execute; override;
+  end;
+
   { TIgPublisherCleanEngine }
 
   TIgPublisherCleanEngine = class (TIgPublisherBuildBaseEngine)
@@ -105,11 +115,54 @@ type
 
 implementation
 
+{ TIgPublisherJekyllEngine }
+
+
+procedure TIgPublisherJekyllEngine.execute;
+var
+  p : TFslExternalProcessThread;
+  fn : String;
+begin
+  FOnEmitLine('Run jekyll Directly: '+command, false);
+  fn := tempFile('jekyll-command.bat');
+  StringToFile(command+#13#10, fn, TEncoding.ASCII);
+
+  p := TFslExternalProcessThread.create;
+  try
+    p.command := 'cmd';
+    p.parameters.Add('/c');
+    p.parameters.Add(fn);
+    p.folder := FFolder;
+    p.OnEmitLine := procEmitLine;
+    p.Start;
+    while p.Running do
+      sleep(50);
+  finally
+    p.free;
+  end;
+end;
+
 { TIgPublisherCleanEngine }
 
 procedure TIgPublisherCleanEngine.execute;
+var
+  p : TFslExternalProcessThread;
 begin
-  raise EFslException.create('todo');
+  FOnEmitLine('clean files', false);
+
+  p := TFslExternalProcessThread.create;
+  try
+    p.command := 'cmd';
+    p.parameters.add('/c');
+    p.parameters.add('clean.bat');
+    p.folder := FFolder;
+    p.OnEmitLine := procEmitLine;
+    p.Start;
+    while p.Running do
+      sleep(50);
+  finally
+    p.free;
+  end;
 end;
 
 { TIgPublisherBuildBaseEngine }

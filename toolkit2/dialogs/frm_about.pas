@@ -90,11 +90,22 @@ end;
 procedure TToolkitAboutForm.FormShow(Sender: TObject);
 var
   dt : TFslDateTime;
+  v : String;
 begin
-  lblToolkit.Caption := 'FHIR Toolkit Version '+TOOLKIT_VERSION;
+  v := TOOLKIT_VERSION;
   mInfo.Lines.clear;
-  dt := TFslDateTime.fromHL7(TOOLKIT_RELEASE_DATE);
-  mInfo.Lines.Add('Released '+dt.truncToDay.toString+' ('+DescribePeriod(now - dt.DateTime)+' Ago)');
+  if (v.EndsWith('-SNAPSHOT')) then
+  begin
+    mInfo.Lines.Add('Unreleased version (work in progress)');
+    v := v.replace('-SNAPSHOT', '');
+  end
+  else
+  begin
+    dt := TFslDateTime.fromHL7(TOOLKIT_RELEASE_DATE);
+    mInfo.Lines.Add('Released '+dt.truncToDay.toString+' ('+DescribePeriod(now - dt.DateTime)+' Ago)');
+  end;
+
+  lblToolkit.Caption := 'FHIR Toolkit Version '+v;
   {$IFOPT D+}
   mInfo.Lines.Add('This is the debug version');
   {$ENDIF}

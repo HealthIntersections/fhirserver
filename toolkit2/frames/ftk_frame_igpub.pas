@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, Graphics,
+  Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, Graphics, Process,
   LclIntf, Buttons, Menus,
-  fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads, fsl_fpc, fsl_versions,
+  fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads, fsl_fpc, fsl_versions, fsl_stream,
   fui_lcl_managers, fui_lcl_progress,
   ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github;
 
@@ -154,11 +154,11 @@ type
     mnuAddFolder: TMenuItem;
     mnuAddGit: TMenuItem;
     mnuAddFolders: TMenuItem;
-    MenuItem4: TMenuItem;
-    MenuItem5: TMenuItem;
-    MenuItem6: TMenuItem;
-    MenuItem7: TMenuItem;
-    MenuItem8: TMenuItem;
+    mnuClean: TMenuItem;
+    mnuClearTx: TMenuItem;
+    mnuJekyll: TMenuItem;
+    mnuCommand: TMenuItem;
+    mnuFolder: TMenuItem;
     mStatus: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -187,7 +187,11 @@ type
     tbDown: TToolButton;
     ToolButton8: TToolButton;
     tbConfig: TToolButton;
-    procedure mnuAddFolderClick(Sender: TObject);
+    procedure mnuCleanClick(Sender: TObject);
+    procedure mnuClearTxClick(Sender: TObject);
+    procedure mnuCommandClick(Sender: TObject);
+    procedure mnuFolderClick(Sender: TObject);
+    procedure mnuJekyllClick(Sender: TObject);
     procedure tbConfigClick(Sender: TObject);
     procedure tbOpenClick(Sender: TObject);
     procedure tbQAClick(Sender: TObject);
@@ -210,6 +214,7 @@ type
     procedure loadFolders(json : TJsonObject);
     procedure updateButtons;
     procedure doReloadVersions(sender : TObject);
+    procedure ClearDirectory(dir : String);
   protected
     procedure save(json : TJsonObject); override;
   public
@@ -225,19 +230,29 @@ implementation
 
 {$R *.lfm}
 
-uses
-  frm_main;
-
-const
-  HOME_PAGE =
-    '## Welcome to the FHIR Toolkit'+#13#10+#13#10+
-    'The FHIR Toolkit allows you to edit and validate all sorts of files that are useful when working with FHIR content.'+#13#10+
-    'In addition, you can connect to servers and explore them.</p>'+#13#10+
-    ''+#13#10+
-    '## User Help'+#13#10+
-    'The best place to task for help is on the [tooling stream on chat.fhir.org](https://chat.fhir.org/#narrow/stream/179239-tooling).'+#13#10+
-    'Note that you might be ''encouraged'' to contribute to the documentation '#$F609'. '+#13#10+
-    ''+#13#10;
+function jekyllCommand(s : String; out cmd, folder : String) : boolean;
+var
+  i : integer;
+  l, r : String;
+begin
+  cmd := '';
+  folder := '';
+  i := s.indexOf('Run jekyll:');
+  if i = 0 then
+    result := false
+  else
+  begin
+    result := true;
+    s := s.substring(i+12);
+    i := s.indexOf(#13#10);
+    s := s.substring(0, i);
+    StringSplit(s, '(in folder', l, r);
+    i := r.indexOf(')');
+    r := r.subString(0, i);
+    cmd := l.trim;
+    folder := r.trim;
+  end;
+end;
 
 { TDeleteTaskContext }
 
@@ -432,16 +447,27 @@ begin
   modes.AddPair('path', 'Path');
   modes.AddPair('log', 'Log');
   modes.AddPair('gh', 'GitHub URL');
+  modes.AddPair('jekyll', 'Jekyll Command');
 end;
 
 function TIGPublicationManager.getCanCopy(item: TIGPublicationFolder; mode: String): boolean;
+var
+  s, c, f : String;
 begin
   if item = nil then
     Result := false
   else if mode = 'gh' then
     Result := FolderExists(FilePath([item.FFolder, '.git']))
   else
-    Result := true;
+  begin
+    s := item.log;
+    if mode = 'log' then
+      Result := s <> ''
+    else if mode = 'jekyll' then
+      Result := jekyllCommand(s, c, f)
+    else
+      Result := true;
+  end;
 end;
 
 function TIGPublicationManager.allowedOperations(item: TIGPublicationFolder): TNodeOperationSet;
@@ -501,15 +527,24 @@ begin
 end;
 
 function TIGPublicationManager.getCopyValue(item: TIGPublicationFolder; mode: String): String;
+var
+  c, f : String;
 begin
   if (mode = 'path') then
     result := item.folder
   else if (mode = 'log') then
     result := item.log
+  else if (mode = 'jekyll') then
+  begin
+    if jekyllCommand(item.log, c, f) then
+      result := c+' in '+f
+    else
+      result := ''
+  end
   else if (mode = 'gh') then
     result := item.ghURL
   else
-    result:=inherited getCopyValue(item, mode);
+    result := inherited getCopyValue(item, mode);
 end;
 
 procedure TIGPublicationManager.focusItemChange(item: TIGPublicationFolder);
@@ -885,10 +920,144 @@ begin
   end;
 end;
 
-
-procedure TIgPubPageFrame.mnuAddFolderClick(Sender: TObject);
+{$IFDEF WINDOWS}
+function makeCleanBat : String;
 begin
+  result :=
+    '@echo off'#13#10+
+    'echo Delete Output'#13#10+
+    'del /s /q output\*.* >nul'#13#10+
+    'echo Delete Temp Pages'#13#10+
+    'del /s /q temp\pages\*.* >nul'#13#10+
+    'echo Delete QA Files'#13#10+
+    'del /s /q temp\qa\*.* >nul'#13#10+
+    'echo Delete Backup Files'#13#10+
+    'del /s /q *.bak >nul'#13#10
+end;
+{$ELSE}
+function makeCleanSh : String;
+begin
+  result :=
+    '@echo off'#13#10+
+    'echo To Do'#13#10
+end;
+{$ENDIF}
 
+procedure TIgPubPageFrame.mnuCleanClick(Sender: TObject);
+var
+  fn : String;
+begin
+  if FManager.FCurrent <> nil then
+  begin
+    if (FManager.FCurrent.status = fsRunning) then
+      MessageDlg('Clean IG', 'The IG '+FManager.FCurrent.name+' is being built or updated', mtError, [mbok], 0)
+    else
+    begin
+      {$IFDEF WINDOWS}
+      fn := FilePath([FManager.FCurrent.FFolder, 'clean.bat']);
+      if not FileExists(fn) then
+        StringToFile(makeCleanBat, fn, TEncoding.ASCII);
+      {$ELSE}
+      fn := FilePath([FManager.FCurrent.FFolder, 'clean.sh']);
+      if not FileExists(fn) then
+        StringToFile(makeCleanSh, fn, TEncoding.ASCII);
+      {$ENDIF}
+      FManager.FCurrent.lines.clear;
+      FManager.FCurrent.engine := TIgPublisherCleanEngine.create;
+      FManager.FCurrent.engine.folder := FManager.FCurrent.folder;
+      FManager.FCurrent.engine.OnEmitLine := FManager.FCurrent.emitLine;
+      FManager.FCurrent.engine.Start;
+      FManager.FCurrent.StartRun := 0;
+      FManager.FCurrent.status := fsRunning;
+    end;
+  end;
+end;
+
+procedure TIgPubPageFrame.ClearDirectory(dir : String);
+var
+  s : String;
+begin
+  for s in TDirectory.getDirectories(dir) do
+    ClearDirectory(s);
+  FManager.FCurrent.FLines.add(' Delete files in '+dir);
+  Application.ProcessMessages;
+  for s in TDirectory.GetFiles(dir) do
+    DeleteFile(s);
+end;
+
+procedure TIgPubPageFrame.mnuClearTxClick(Sender: TObject);
+var
+  s : string;
+begin
+  if FManager.FCurrent <> nil then
+  begin
+    FManager.FCurrent.FLines.Clear;
+    ClearDirectory(FilePath([FManager.FCurrent.FFolder, 'input-cache', 'txCache']));
+    FManager.FCurrent.FLines.Add(' Done');
+  end;
+end;
+
+procedure TIgPubPageFrame.mnuCommandClick(Sender: TObject);
+var
+  proc : TProcess;
+  s : String;
+  i : integer;
+begin
+  if FManager.FCurrent <> nil then
+  begin
+    {$IFDEF WINDOWS}
+    proc := TProcess.create(nil);
+    try
+      proc.CurrentDirectory := FilePath([FManager.FCurrent.FFolder]);
+      proc.CommandLine := 'cmd';
+      for i := 1 to GetEnvironmentVariableCount do
+        begin
+        s := GetEnvironmentString(i);
+        proc.Environment.Add(s+'=' + GetEnvironmentVariable(s));
+      end;
+      proc.Execute;
+    finally
+      proc.free;
+    end;
+    {$ELSE}
+    raise Exception.create('Not done yet');
+    {$ENDIF}
+  end;
+end;
+
+procedure TIgPubPageFrame.mnuFolderClick(Sender: TObject);
+begin
+  if FManager.FCurrent <> nil then
+    OpenDocument(FilePath([FManager.FCurrent.FFolder]));
+end;
+
+procedure TIgPubPageFrame.mnuJekyllClick(Sender: TObject);
+var
+  proc : TProcess;
+  s, c, f, fn, td : String;
+  i : integer;
+  j : TIgPublisherJekyllEngine;
+begin
+  if FManager.FCurrent <> nil then
+  begin
+    if (FManager.FCurrent.status = fsRunning) then
+      MessageDlg('Run Jekyll', 'The IG '+FManager.FCurrent.name+' is being built or updated', mtError, [mbok], 0)
+    else
+    begin
+      if jekyllCommand(FManager.FCurrent.log, c, f) then
+      begin
+        FManager.FCurrent.lines.clear;
+        j := TIgPublisherJekyllEngine.create;
+        FManager.FCurrent.engine := j;
+        FManager.FCurrent.engine.folder := f;
+        j.command := c;
+        FManager.FCurrent.engine.OnEmitLine := FManager.FCurrent.emitLine;
+        FManager.FCurrent.engine.Start;
+        FManager.FCurrent.StartRun := 0;
+        FManager.FCurrent.status := fsRunning;
+      end;
+    end;
+  end;
 end;
 
 procedure TIgPubPageFrame.tbOpenClick(Sender: TObject);
@@ -1001,21 +1170,30 @@ begin
 end;
 
 procedure TIgPubPageFrame.updateButtons;
+var
+  c, f : string;
 begin
   if FManager.FCurrent = nil then
   begin
     tbOpen.enabled := false;
     tbQA.enabled := false;
+    tbDevTools.enabled := false;
   end
   else
   begin
     tbOpen.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'index.html']));
     tbQA.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'qa.html']));
-    {$IFDEF WINDONWS}
-    tbDevTools.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'clean.bat']));
+    {$IFDEF WINDOWS}
+    mnuCommand.caption := 'Command Prompt here';
     {$ELSE}
-    tbDevTools.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'clean.sh']));
+    mnuCommand.caption := 'Terminal here';
     {$ENDIF}
+    tbDevTools.enabled := true;
+    mnuClean.enabled := true;
+    mnuCommand.enabled := true;
+    mnuFolder.enabled := true;
+    mnuClearTx.enabled := FolderExists(FilePath([FManager.FCurrent.FFolder, 'input-cache', 'txCache']));
+    mnuJekyll.enabled := JekyllCommand(FManager.FCurrent.log, c, f);
   end;
 end;
 
