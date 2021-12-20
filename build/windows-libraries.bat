@@ -60,7 +60,7 @@ git pull
 cd ..
 
 cd DelphiAST
-git pull 
+git pull
 cd ..
 
 cd ..
