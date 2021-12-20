@@ -610,25 +610,30 @@ object IgPubPageFrame: TIgPubPageFrame
     Images = ImageList1
     Left = 152
     Top = 74
-    object MenuItem4: TMenuItem
+    object mnuClean: TMenuItem
       Caption = 'Clean Generated Files'
       ImageIndex = 17
+      OnClick = mnuCleanClick
     end
-    object MenuItem5: TMenuItem
+    object mnuClearTx: TMenuItem
       Caption = 'Clear Tx Cache'
       ImageIndex = 19
+      OnClick = mnuClearTxClick
     end
-    object MenuItem6: TMenuItem
-      Caption = 'Copy Jekyll Command'
+    object mnuJekyll: TMenuItem
+      Caption = 'Run Jekyll'
       ImageIndex = 20
+      OnClick = mnuJekyllClick
     end
-    object MenuItem7: TMenuItem
+    object mnuCommand: TMenuItem
       Caption = 'Command Prompt Here'
       ImageIndex = 21
+      OnClick = mnuCommandClick
     end
-    object MenuItem8: TMenuItem
+    object mnuFolder: TMenuItem
       Caption = 'Open Folder'
       ImageIndex = 18
+      OnClick = mnuFolderClick
     end
   end
   object pmAdd: TPopupMenu
