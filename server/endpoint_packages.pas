@@ -625,29 +625,42 @@ end;
 procedure TFHIRPackageWebServer.serveDownload(id, version : String; response : TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
+  procedure sendRow;
+  var
+    pvk : integer;
+  begin
+    response.ResponseNo := 200;
+    response.ResponseText := 'OK';
+    response.ContentType := 'application/tar+gzip';
+    response.ContentStream := TBytesStream.Create(conn.GetColBlobByName('Content'));
+    response.ContentDisposition := 'attachment; filename="'+id+'#'+version+'.tgz"';
+    response.FreeContentStream := true;
+    pvk := conn.GetColIntegerByName('PackageVersionKey');
+    conn.Terminate;
+    conn.SQL := 'Update PackageVersions set DownloadCount = DownloadCount + 1 where PackageVersionKey = '+inttostr(pvk);
+    conn.Prepare;
+    conn.Execute;
+    conn.Terminate;
+    conn.SQL := 'Update Packages set DownloadCount = DownloadCount + 1 where Id = '''+SQLWrapString(id)+'''';
+    conn.Prepare;
+    conn.Execute;
+  end;
 begin
   conn := FDB.getConnection('Package.server.download');
   try
-    conn.SQL := 'Select Content from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version = '''+SQLWrapString(version)+'''';
+    conn.SQL := 'Select PackageVersionKey, Content from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version = '''+SQLWrapString(version)+'''';
+    conn.Prepare;
+    conn.Execute;
+    if conn.FetchNext then
+      sendRow
+    else
+    begin
+      conn.Terminate;
+      conn.SQL := 'Select PackageVersionKey, Content from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version like '''+SQLWrapString(version)+'-%'' order by PubDate desc';
       conn.Prepare;
       conn.Execute;
       if conn.FetchNext then
-      begin
-        response.ResponseNo := 200;
-        response.ResponseText := 'OK';
-        response.ContentType := 'application/tar+gzip';
-        response.ContentStream := TBytesStream.Create(conn.GetColBlobByName('Content'));
-        response.ContentDisposition := 'attachment; filename="'+id+'#'+version+'.tgz"';
-        response.FreeContentStream := true;
-        conn.Terminate;
-        conn.SQL := 'Update PackageVersions set DownloadCount = DownloadCount + 1 where Id = '''+SQLWrapString(id)+''' and Version = '''+SQLWrapString(version)+'''';
-        conn.Prepare;
-        conn.Execute;
-        conn.Terminate;
-        conn.SQL := 'Update Packages set DownloadCount = DownloadCount + 1 where Id = '''+SQLWrapString(id)+'''';
-        conn.Prepare;
-        conn.Execute;
-      end
+        sendRow
       else
       begin
         response.ResponseNo := 404;
@@ -655,7 +668,8 @@ begin
         response.ContentType := 'text/plain';
         response.ContentText := 'The package "'+id+'#'+version+'" is not known by this server';
       end;
-      conn.Terminate;
+    end;
+    conn.Terminate;
     conn.release;
   except
     on e : Exception do
