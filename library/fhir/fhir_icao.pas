@@ -197,6 +197,8 @@ begin
     result := '210'
   else if (nam = 'Pfizer Comirnaty') or (nam.ToLower.Contains('pfizer')) then
     result := '208'
+  else if (nam = 'Moderna Spikevax') or (nam.ToLower.Contains('moderna')) then
+    result := '207'
   else
     raise EFHIRException.Create('Unknown vaccine code '+ve['des']+'/"'+nam+'"');
 end;
@@ -207,6 +209,8 @@ begin
     result := 'AstraZeneca Vaxzevria'
   else if code = '208' then
     result := 'Pfizer Comirnaty'
+  else if code = '207' then
+    result := 'Moderna Spikevax'
   else
     result := '??';
 end;
