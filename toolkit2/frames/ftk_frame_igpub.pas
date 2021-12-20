@@ -1020,7 +1020,7 @@ begin
       proc.free;
     end;
     {$ELSE}
-    raise Exception.create('Not done yet');
+    raise EFslException.create('Not done yet');
     {$ENDIF}
   end;
 end;
