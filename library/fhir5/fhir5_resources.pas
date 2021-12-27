@@ -1,7 +1,5 @@
 unit fhir5_resources;
 
-{$I fhir5.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -30,6 +28,9 @@ unit fhir5_resources;
   POSSIBILITY OF SUCH DAMAGE.
   
 }
+
+{$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 

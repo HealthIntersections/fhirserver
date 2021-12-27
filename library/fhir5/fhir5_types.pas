@@ -29,8 +29,8 @@ unit fhir5_types;
 
 }
 
-{$I fhir5.inc}
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 

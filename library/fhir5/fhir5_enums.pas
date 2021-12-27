@@ -1,7 +1,5 @@
 unit fhir5_enums;
 
-{$I fhir5.inc}
-
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -31,6 +29,9 @@ unit fhir5_enums;
   
 }
 
+{$I fhir.inc}
+{$I fhir5.inc}
+
 interface
 
 // Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
@@ -38,7 +39,7 @@ interface
 
 
 uses
-  Classes, SysUtils, EncdDecd, 
+  Classes, SysUtils,
   fsl_base, fsl_utilities, fsl_crypto, fsl_stream, 
   fhir_objects, fhir_xhtml, fhir_uris, 
   fhir5_base;
