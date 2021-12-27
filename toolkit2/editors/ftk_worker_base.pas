@@ -80,7 +80,7 @@ type
     procedure newContent(); override;
     function GetBytes: TBytes; override;
     procedure LoadBytes(bytes: TBytes); override;
-    procedure bindToTab(tab : TTabSheet); override;
+    procedure bindToTab(tab : TTabSheet; pnl : TPanel); override;
     procedure locate(location : TSourceLocation); override;
     function location : String; override;
     procedure redo; override;
@@ -189,11 +189,11 @@ begin
   end;
 end;
 
-procedure TBaseWorker.bindToTab(tab: TTabSheet);
+procedure TBaseWorker.bindToTab(tab: TTabSheet; pnl : TPanel);
 begin
-  inherited bindToTab(tab);
-  FFrame := makeFrame(tab);
-  FFrame.parent := tab;
+  inherited bindToTab(tab, pnl);
+  FFrame := makeFrame(pnl);
+  FFrame.parent := pnl;
   FFrame.Align := alClient;
   FFrame.FContext := Context.link;
   FFrame.FWorker := self;
@@ -251,7 +251,7 @@ end;
 
 function TBaseWorker.hasDesigner: boolean;
 begin
-
+  result := false;
 end;
 
 function TBaseWorker.IsShowingDesigner: boolean;

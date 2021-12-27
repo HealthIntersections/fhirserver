@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.fhir.pascal.generator.analysis.Analyser.SearchParameterSorter;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.conformance.ProfileUtilities;
@@ -29,9 +28,7 @@ public class Analyser {
     public int compare(SearchParameter arg0, SearchParameter arg1) {
       return arg0.getCode().compareTo(arg1.getCode());
     }
-
   }
-
 
   private Definitions definitions;
   private Configuration config;
@@ -51,14 +48,20 @@ public class Analyser {
     
     TypeInfo type = new TypeInfo();
     type.setName(res.getClassName());
-    type.setAncestorName(sd.getType().equals("Meta") ? "DataType" : res.getAncestor().getName());
+    if (res.getAncestor() == null) {
+      type.setAncestorName("Base");      
+    } else {
+      type.setAncestorName(sd.getType().equals("Meta") ? "DataType" : res.getAncestor().getName());
+    }
     res.getTypes().put(type.getName(), type);
     res.setRootType(type);
     sd.setUserData("pascal.type.info", type);
     
     type.setDefn(sd.getSnapshot().getElementFirstRep());
     type.setChildren(filterChildren(new ProfileUtilities(null, null, null).getChildList(sd, type.getDefn())));
-    type.setInheritedChildren(getAbstractChildren(res.getAncestor()));
+    if (res.getAncestor() != null) {
+      type.setInheritedChildren(getAbstractChildren(res.getAncestor()));
+    }
     
     for (ElementDefinition e : type.getChildren()) {
       scanNestedTypes(res, type, type.getName(), e);

@@ -3,10 +3,10 @@ unit fhir5_types;
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
-  
+
   Redistribution and use in source and binary forms, with or without modification, 
   are permitted provided that the following conditions are met:
-  
+
    * Redistributions of source code must retain the above copyright notice, this 
      list of conditions and the following disclaimer.
    * Redistributions in binary form must reproduce the above copyright notice, 
@@ -15,7 +15,7 @@ unit fhir5_types;
    * Neither the name of HL7 nor the names of its contributors may be used to 
      endorse or promote products derived from this software without specific 
      prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
@@ -26,7 +26,7 @@ unit fhir5_types;
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
   POSSIBILITY OF SUCH DAMAGE.
-  
+
 }
 
 {$I fhir5.inc}
@@ -110,7 +110,7 @@ type
   public
     constructor Create(system : String; value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirEnum; overload;
     function Clone : TFhirEnum; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -156,46 +156,40 @@ type
     function Link : TFhirEnumList; overload;
     function Clone : TFhirEnumList; overload;
     function GetEnumerator : TFhirEnumListEnumerator;
-    
 
     //  Add a FhirEnum to the end of the list.
     function Append : TFhirEnum;
 
-    
     // Add an already existing FhirEnum to the end of the list.
-    procedure AddItem(value : TFhirEnum); overload;
+    function AddItem(value : TFhirEnum): TFhirEnum; overload;
 
-    
     // Add an already existing FhirEnum to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String): TFhirEnum; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirEnum) : Integer;
-    
 
     // Insert FhirEnum before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirEnum;
-    
 
     // Insert an existing FhirEnum before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirEnum);
-    
+
     // Get the iIndexth FhirEnum. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirEnum);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirEnum;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirEnums[index : Integer] : TFhirEnum read GetItemN write SetItemN; default;
   End;
 
@@ -215,7 +209,7 @@ type
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDate; overload;
     function Clone : TFhirDate; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -256,46 +250,40 @@ type
     function Link : TFhirDateList; overload;
     function Clone : TFhirDateList; overload;
     function GetEnumerator : TFhirDateListEnumerator;
-    
 
     //  Add a FhirDate to the end of the list.
     function Append : TFhirDate;
 
-    
     // Add an already existing FhirDate to the end of the list.
-    procedure AddItem(value : TFhirDate); overload;
+    function AddItem(value : TFhirDate) : TFhirDate; overload;
 
-    
     // Add an already existing FhirDate to the end of the list.
-    procedure AddItem(value : TFslDateTime); overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDate) : Integer;
-    
 
     // Insert FhirDate before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDate;
-    
 
     // Insert an existing FhirDate before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDate);
-    
+
     // Get the iIndexth FhirDate. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDate);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDate;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDates[index : Integer] : TFhirDate read GetItemN write SetItemN; default;
   End;
 
@@ -315,7 +303,7 @@ type
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDateTime; overload;
     function Clone : TFhirDateTime; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -356,46 +344,40 @@ type
     function Link : TFhirDateTimeList; overload;
     function Clone : TFhirDateTimeList; overload;
     function GetEnumerator : TFhirDateTimeListEnumerator;
-    
 
     //  Add a FhirDateTime to the end of the list.
     function Append : TFhirDateTime;
 
-    
     // Add an already existing FhirDateTime to the end of the list.
-    procedure AddItem(value : TFhirDateTime); overload;
+    function AddItem(value : TFhirDateTime) : TFhirDateTime; overload;
 
-    
     // Add an already existing FhirDateTime to the end of the list.
-    procedure AddItem(value : TFslDateTime); overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDateTime) : Integer;
-    
 
     // Insert FhirDateTime before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDateTime;
-    
 
     // Insert an existing FhirDateTime before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDateTime);
-    
+
     // Get the iIndexth FhirDateTime. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDateTime);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDateTime;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDateTimes[index : Integer] : TFhirDateTime read GetItemN write SetItemN; default;
   End;
 
@@ -415,7 +397,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirString; overload;
     function Clone : TFhirString; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -453,46 +435,40 @@ type
     function Link : TFhirStringList; overload;
     function Clone : TFhirStringList; overload;
     function GetEnumerator : TFhirStringListEnumerator;
-    
 
     //  Add a FhirString to the end of the list.
     function Append : TFhirString;
 
-    
     // Add an already existing FhirString to the end of the list.
-    procedure AddItem(value : TFhirString); overload;
+    function AddItem(value : TFhirString) : TFhirString; overload;
 
-    
     // Add an already existing FhirString to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirString; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirString) : Integer;
-    
 
     // Insert FhirString before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirString;
-    
 
     // Insert an existing FhirString before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirString);
-    
+
     // Get the iIndexth FhirString. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirString);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirString;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirStrings[index : Integer] : TFhirString read GetItemN write SetItemN; default;
   End;
 
@@ -512,7 +488,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInteger; overload;
     function Clone : TFhirInteger; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -550,46 +526,40 @@ type
     function Link : TFhirIntegerList; overload;
     function Clone : TFhirIntegerList; overload;
     function GetEnumerator : TFhirIntegerListEnumerator;
-    
 
     //  Add a FhirInteger to the end of the list.
     function Append : TFhirInteger;
 
-    
     // Add an already existing FhirInteger to the end of the list.
-    procedure AddItem(value : TFhirInteger); overload;
+    function AddItem(value : TFhirInteger) : TFhirInteger; overload;
 
-    
     // Add an already existing FhirInteger to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirInteger; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInteger) : Integer;
-    
 
     // Insert FhirInteger before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInteger;
-    
 
     // Insert an existing FhirInteger before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInteger);
-    
+
     // Get the iIndexth FhirInteger. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInteger);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInteger;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirIntegers[index : Integer] : TFhirInteger read GetItemN write SetItemN; default;
   End;
 
@@ -609,7 +579,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUri; overload;
     function Clone : TFhirUri; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -647,46 +617,40 @@ type
     function Link : TFhirUriList; overload;
     function Clone : TFhirUriList; overload;
     function GetEnumerator : TFhirUriListEnumerator;
-    
 
     //  Add a FhirUri to the end of the list.
     function Append : TFhirUri;
 
-    
     // Add an already existing FhirUri to the end of the list.
-    procedure AddItem(value : TFhirUri); overload;
+    function AddItem(value : TFhirUri) : TFhirUri; overload;
 
-    
     // Add an already existing FhirUri to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUri; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUri) : Integer;
-    
 
     // Insert FhirUri before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUri;
-    
 
     // Insert an existing FhirUri before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUri);
-    
+
     // Get the iIndexth FhirUri. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUri);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUri;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUris[index : Integer] : TFhirUri read GetItemN write SetItemN; default;
   End;
 
@@ -706,7 +670,7 @@ type
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInstant; overload;
     function Clone : TFhirInstant; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -747,46 +711,40 @@ type
     function Link : TFhirInstantList; overload;
     function Clone : TFhirInstantList; overload;
     function GetEnumerator : TFhirInstantListEnumerator;
-    
 
     //  Add a FhirInstant to the end of the list.
     function Append : TFhirInstant;
 
-    
     // Add an already existing FhirInstant to the end of the list.
-    procedure AddItem(value : TFhirInstant); overload;
+    function AddItem(value : TFhirInstant) : TFhirInstant; overload;
 
-    
     // Add an already existing FhirInstant to the end of the list.
-    procedure AddItem(value : TFslDateTime); overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInstant) : Integer;
-    
 
     // Insert FhirInstant before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInstant;
-    
 
     // Insert an existing FhirInstant before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInstant);
-    
+
     // Get the iIndexth FhirInstant. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInstant);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInstant;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirInstants[index : Integer] : TFhirInstant read GetItemN write SetItemN; default;
   End;
 
@@ -806,7 +764,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirXhtml; overload;
     function Clone : TFhirXhtml; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -844,46 +802,40 @@ type
     function Link : TFhirXhtmlList; overload;
     function Clone : TFhirXhtmlList; overload;
     function GetEnumerator : TFhirXhtmlListEnumerator;
-    
 
     //  Add a FhirXhtml to the end of the list.
     function Append : TFhirXhtml;
 
-    
     // Add an already existing FhirXhtml to the end of the list.
-    procedure AddItem(value : TFhirXhtml); overload;
+    function AddItem(value : TFhirXhtml) : TFhirXhtml; overload;
 
-    
     // Add an already existing FhirXhtml to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirXhtml; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirXhtml) : Integer;
-    
 
     // Insert FhirXhtml before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirXhtml;
-    
 
     // Insert an existing FhirXhtml before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirXhtml);
-    
+
     // Get the iIndexth FhirXhtml. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirXhtml);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirXhtml;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirXhtmls[index : Integer] : TFhirXhtml read GetItemN write SetItemN; default;
   End;
 
@@ -903,7 +855,7 @@ type
   public
     constructor Create(value : Boolean); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirBoolean; overload;
     function Clone : TFhirBoolean; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -942,46 +894,40 @@ type
     function Link : TFhirBooleanList; overload;
     function Clone : TFhirBooleanList; overload;
     function GetEnumerator : TFhirBooleanListEnumerator;
-    
 
     //  Add a FhirBoolean to the end of the list.
     function Append : TFhirBoolean;
 
-    
     // Add an already existing FhirBoolean to the end of the list.
-    procedure AddItem(value : TFhirBoolean); overload;
+    function AddItem(value : TFhirBoolean) : TFhirBoolean; overload;
 
-    
     // Add an already existing FhirBoolean to the end of the list.
-    procedure AddItem(value : Boolean); overload;
+    function AddItem(value : Boolean) : Boolean; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBoolean) : Integer;
-    
 
     // Insert FhirBoolean before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirBoolean;
-    
 
     // Insert an existing FhirBoolean before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirBoolean);
-    
+
     // Get the iIndexth FhirBoolean. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirBoolean);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirBoolean;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirBooleans[index : Integer] : TFhirBoolean read GetItemN write SetItemN; default;
   End;
 
@@ -1001,7 +947,7 @@ type
   public
     constructor Create(value : TBytes); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirBase64Binary; overload;
     function Clone : TFhirBase64Binary; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1039,46 +985,40 @@ type
     function Link : TFhirBase64BinaryList; overload;
     function Clone : TFhirBase64BinaryList; overload;
     function GetEnumerator : TFhirBase64BinaryListEnumerator;
-    
 
     //  Add a FhirBase64Binary to the end of the list.
     function Append : TFhirBase64Binary;
 
-    
     // Add an already existing FhirBase64Binary to the end of the list.
-    procedure AddItem(value : TFhirBase64Binary); overload;
+    function AddItem(value : TFhirBase64Binary) : TFhirBase64Binary; overload;
 
-    
     // Add an already existing FhirBase64Binary to the end of the list.
-    procedure AddItem(value : TBytes); overload;
+    function AddItem(value : TBytes) : TBytes; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBase64Binary) : Integer;
-    
 
     // Insert FhirBase64Binary before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirBase64Binary;
-    
 
     // Insert an existing FhirBase64Binary before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirBase64Binary);
-    
+
     // Get the iIndexth FhirBase64Binary. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirBase64Binary);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirBase64Binary;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirBase64Binaries[index : Integer] : TFhirBase64Binary read GetItemN write SetItemN; default;
   End;
 
@@ -1098,7 +1038,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirTime; overload;
     function Clone : TFhirTime; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1136,46 +1076,40 @@ type
     function Link : TFhirTimeList; overload;
     function Clone : TFhirTimeList; overload;
     function GetEnumerator : TFhirTimeListEnumerator;
-    
 
     //  Add a FhirTime to the end of the list.
     function Append : TFhirTime;
 
-    
     // Add an already existing FhirTime to the end of the list.
-    procedure AddItem(value : TFhirTime); overload;
+    function AddItem(value : TFhirTime) : TFhirTime; overload;
 
-    
     // Add an already existing FhirTime to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTime) : Integer;
-    
 
     // Insert FhirTime before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirTime;
-    
 
     // Insert an existing FhirTime before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirTime);
-    
+
     // Get the iIndexth FhirTime. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirTime);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirTime;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirTimes[index : Integer] : TFhirTime read GetItemN write SetItemN; default;
   End;
 
@@ -1195,7 +1129,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDecimal; overload;
     function Clone : TFhirDecimal; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1233,46 +1167,40 @@ type
     function Link : TFhirDecimalList; overload;
     function Clone : TFhirDecimalList; overload;
     function GetEnumerator : TFhirDecimalListEnumerator;
-    
 
     //  Add a FhirDecimal to the end of the list.
     function Append : TFhirDecimal;
 
-    
     // Add an already existing FhirDecimal to the end of the list.
-    procedure AddItem(value : TFhirDecimal); overload;
+    function AddItem(value : TFhirDecimal) : TFhirDecimal; overload;
 
-    
     // Add an already existing FhirDecimal to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirDecimal; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDecimal) : Integer;
-    
 
     // Insert FhirDecimal before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDecimal;
-    
 
     // Insert an existing FhirDecimal before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDecimal);
-    
+
     // Get the iIndexth FhirDecimal. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDecimal);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDecimal;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDecimals[index : Integer] : TFhirDecimal read GetItemN write SetItemN; default;
   End;
 
@@ -1285,7 +1213,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirCode; overload;
     function Clone : TFhirCode; overload;
     function fhirType : string; override;
@@ -1317,46 +1245,40 @@ type
     function Link : TFhirCodeList; overload;
     function Clone : TFhirCodeList; overload;
     function GetEnumerator : TFhirCodeListEnumerator;
-    
 
     //  Add a FhirCode to the end of the list.
     function Append : TFhirCode;
 
-    
     // Add an already existing FhirCode to the end of the list.
-    procedure AddItem(value : TFhirCode); overload;
+    function AddItem(value : TFhirCode) : TFhirCode; overload;
 
-    
     // Add an already existing FhirCode to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirCode; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCode) : Integer;
-    
 
     // Insert FhirCode before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirCode;
-    
 
     // Insert an existing FhirCode before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirCode);
-    
+
     // Get the iIndexth FhirCode. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirCode);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirCode;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirCodes[index : Integer] : TFhirCode read GetItemN write SetItemN; default;
   End;
 
@@ -1369,7 +1291,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirCanonical; overload;
     function Clone : TFhirCanonical; overload;
     function fhirType : string; override;
@@ -1401,46 +1323,40 @@ type
     function Link : TFhirCanonicalList; overload;
     function Clone : TFhirCanonicalList; overload;
     function GetEnumerator : TFhirCanonicalListEnumerator;
-    
 
     //  Add a FhirCanonical to the end of the list.
     function Append : TFhirCanonical;
 
-    
     // Add an already existing FhirCanonical to the end of the list.
-    procedure AddItem(value : TFhirCanonical); overload;
+    function AddItem(value : TFhirCanonical) : TFhirCanonical; overload;
 
-    
     // Add an already existing FhirCanonical to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirCanonical; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCanonical) : Integer;
-    
 
     // Insert FhirCanonical before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirCanonical;
-    
 
     // Insert an existing FhirCanonical before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirCanonical);
-    
+
     // Get the iIndexth FhirCanonical. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirCanonical);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirCanonical;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirCanonicals[index : Integer] : TFhirCanonical read GetItemN write SetItemN; default;
   End;
 
@@ -1453,7 +1369,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirOid; overload;
     function Clone : TFhirOid; overload;
     function fhirType : string; override;
@@ -1485,46 +1401,40 @@ type
     function Link : TFhirOidList; overload;
     function Clone : TFhirOidList; overload;
     function GetEnumerator : TFhirOidListEnumerator;
-    
 
     //  Add a FhirOid to the end of the list.
     function Append : TFhirOid;
 
-    
     // Add an already existing FhirOid to the end of the list.
-    procedure AddItem(value : TFhirOid); overload;
+    function AddItem(value : TFhirOid) : TFhirOid; overload;
 
-    
     // Add an already existing FhirOid to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirOid; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOid) : Integer;
-    
 
     // Insert FhirOid before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirOid;
-    
 
     // Insert an existing FhirOid before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirOid);
-    
+
     // Get the iIndexth FhirOid. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirOid);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirOid;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirOids[index : Integer] : TFhirOid read GetItemN write SetItemN; default;
   End;
 
@@ -1537,7 +1447,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUuid; overload;
     function Clone : TFhirUuid; overload;
     function fhirType : string; override;
@@ -1569,46 +1479,40 @@ type
     function Link : TFhirUuidList; overload;
     function Clone : TFhirUuidList; overload;
     function GetEnumerator : TFhirUuidListEnumerator;
-    
 
     //  Add a FhirUuid to the end of the list.
     function Append : TFhirUuid;
 
-    
     // Add an already existing FhirUuid to the end of the list.
-    procedure AddItem(value : TFhirUuid); overload;
+    function AddItem(value : TFhirUuid) : TFhirUuid; overload;
 
-    
     // Add an already existing FhirUuid to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUuid; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUuid) : Integer;
-    
 
     // Insert FhirUuid before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUuid;
-    
 
     // Insert an existing FhirUuid before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUuid);
-    
+
     // Get the iIndexth FhirUuid. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUuid);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUuid;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUuids[index : Integer] : TFhirUuid read GetItemN write SetItemN; default;
   End;
 
@@ -1621,7 +1525,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUrl; overload;
     function Clone : TFhirUrl; overload;
     function fhirType : string; override;
@@ -1653,46 +1557,40 @@ type
     function Link : TFhirUrlList; overload;
     function Clone : TFhirUrlList; overload;
     function GetEnumerator : TFhirUrlListEnumerator;
-    
 
     //  Add a FhirUrl to the end of the list.
     function Append : TFhirUrl;
 
-    
     // Add an already existing FhirUrl to the end of the list.
-    procedure AddItem(value : TFhirUrl); overload;
+    function AddItem(value : TFhirUrl) : TFhirUrl; overload;
 
-    
     // Add an already existing FhirUrl to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUrl; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUrl) : Integer;
-    
 
     // Insert FhirUrl before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUrl;
-    
 
     // Insert an existing FhirUrl before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUrl);
-    
+
     // Get the iIndexth FhirUrl. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUrl);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUrl;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUrls[index : Integer] : TFhirUrl read GetItemN write SetItemN; default;
   End;
 
@@ -1705,7 +1603,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirMarkdown; overload;
     function Clone : TFhirMarkdown; overload;
     function fhirType : string; override;
@@ -1737,46 +1635,40 @@ type
     function Link : TFhirMarkdownList; overload;
     function Clone : TFhirMarkdownList; overload;
     function GetEnumerator : TFhirMarkdownListEnumerator;
-    
 
     //  Add a FhirMarkdown to the end of the list.
     function Append : TFhirMarkdown;
 
-    
     // Add an already existing FhirMarkdown to the end of the list.
-    procedure AddItem(value : TFhirMarkdown); overload;
+    function AddItem(value : TFhirMarkdown) : TFhirMarkdown; overload;
 
-    
     // Add an already existing FhirMarkdown to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirMarkdown; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMarkdown) : Integer;
-    
 
     // Insert FhirMarkdown before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirMarkdown;
-    
 
     // Insert an existing FhirMarkdown before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirMarkdown);
-    
+
     // Get the iIndexth FhirMarkdown. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirMarkdown);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirMarkdown;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirMarkdowns[index : Integer] : TFhirMarkdown read GetItemN write SetItemN; default;
   End;
 
@@ -1789,7 +1681,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUnsignedInt; overload;
     function Clone : TFhirUnsignedInt; overload;
     function fhirType : string; override;
@@ -1821,46 +1713,40 @@ type
     function Link : TFhirUnsignedIntList; overload;
     function Clone : TFhirUnsignedIntList; overload;
     function GetEnumerator : TFhirUnsignedIntListEnumerator;
-    
 
     //  Add a FhirUnsignedInt to the end of the list.
     function Append : TFhirUnsignedInt;
 
-    
     // Add an already existing FhirUnsignedInt to the end of the list.
-    procedure AddItem(value : TFhirUnsignedInt); overload;
+    function AddItem(value : TFhirUnsignedInt) : TFhirUnsignedInt; overload;
 
-    
     // Add an already existing FhirUnsignedInt to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUnsignedInt; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUnsignedInt) : Integer;
-    
 
     // Insert FhirUnsignedInt before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUnsignedInt;
-    
 
     // Insert an existing FhirUnsignedInt before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUnsignedInt);
-    
+
     // Get the iIndexth FhirUnsignedInt. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUnsignedInt);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUnsignedInt;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUnsignedInts[index : Integer] : TFhirUnsignedInt read GetItemN write SetItemN; default;
   End;
 
@@ -1873,7 +1759,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirId; overload;
     function Clone : TFhirId; overload;
     function fhirType : string; override;
@@ -1905,46 +1791,40 @@ type
     function Link : TFhirIdList; overload;
     function Clone : TFhirIdList; overload;
     function GetEnumerator : TFhirIdListEnumerator;
-    
 
     //  Add a FhirId to the end of the list.
     function Append : TFhirId;
 
-    
     // Add an already existing FhirId to the end of the list.
-    procedure AddItem(value : TFhirId); overload;
+    function AddItem(value : TFhirId) : TFhirId; overload;
 
-    
     // Add an already existing FhirId to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirId; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirId) : Integer;
-    
 
     // Insert FhirId before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirId;
-    
 
     // Insert an existing FhirId before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirId);
-    
+
     // Get the iIndexth FhirId. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirId);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirId;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirIds[index : Integer] : TFhirId read GetItemN write SetItemN; default;
   End;
 
@@ -1957,7 +1837,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirPositiveInt; overload;
     function Clone : TFhirPositiveInt; overload;
     function fhirType : string; override;
@@ -1989,46 +1869,40 @@ type
     function Link : TFhirPositiveIntList; overload;
     function Clone : TFhirPositiveIntList; overload;
     function GetEnumerator : TFhirPositiveIntListEnumerator;
-    
 
     //  Add a FhirPositiveInt to the end of the list.
     function Append : TFhirPositiveInt;
 
-    
     // Add an already existing FhirPositiveInt to the end of the list.
-    procedure AddItem(value : TFhirPositiveInt); overload;
+    function AddItem(value : TFhirPositiveInt) : TFhirPositiveInt; overload;
 
-    
     // Add an already existing FhirPositiveInt to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirPositiveInt; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPositiveInt) : Integer;
-    
 
     // Insert FhirPositiveInt before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirPositiveInt;
-    
 
     // Insert an existing FhirPositiveInt before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirPositiveInt);
-    
+
     // Get the iIndexth FhirPositiveInt. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirPositiveInt);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirPositiveInt;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirPositiveInts[index : Integer] : TFhirPositiveInt read GetItemN write SetItemN; default;
   End;
 
@@ -2041,7 +1915,7 @@ type
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInteger64; overload;
     function Clone : TFhirInteger64; overload;
     function fhirType : string; override;
@@ -2073,46 +1947,40 @@ type
     function Link : TFhirInteger64List; overload;
     function Clone : TFhirInteger64List; overload;
     function GetEnumerator : TFhirInteger64ListEnumerator;
-    
 
     //  Add a FhirInteger64 to the end of the list.
     function Append : TFhirInteger64;
 
-    
     // Add an already existing FhirInteger64 to the end of the list.
-    procedure AddItem(value : TFhirInteger64); overload;
+    function AddItem(value : TFhirInteger64) : TFhirInteger64; overload;
 
-    
     // Add an already existing FhirInteger64 to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirInteger64; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInteger64) : Integer;
-    
 
     // Insert FhirInteger64 before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInteger64;
-    
 
     // Insert an existing FhirInteger64 before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInteger64);
-    
+
     // Get the iIndexth FhirInteger64. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInteger64);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInteger64;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirInteger64s[index : Integer] : TFhirInteger64 read GetItemN write SetItemN; default;
   End;
 
@@ -2284,7 +2152,7 @@ end;
 
 { TFhirEnumList }
 
-procedure TFhirEnumList.AddItem(value: TFhirEnum);
+function TFhirEnumList.AddItem(value: TFhirEnum) : TFhirEnum;
 begin
   assert(value.ClassName = 'TFhirEnum', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnum');
   add(value);
@@ -2304,9 +2172,10 @@ begin
   end;
 end;
 
-procedure TFhirEnumList.AddItem(value: String);
+function TFhirEnumList.AddItem(value: String) : TFhirEnum;
 begin
-  add(TFhirEnum.create(FSystems[StringArrayIndexOf(FCodes, value)], value));
+  result := TFhirEnum.create(FSystems[StringArrayIndexOf(FCodes, value)], value);
+  add(result);
 end;
 
 function TFhirEnumList.Append: TFhirEnum;
@@ -2546,13 +2415,13 @@ end;
 
 { TFhirDateList }
 
-procedure TFhirDateList.AddItem(value: TFhirDate);
+function TFhirDateList.AddItem(value: TFhirDate) : TFhirDate;
 begin
   assert(value.ClassName = 'TFhirDate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDate');
   add(value);
 end;
 
-procedure TFhirDateList.AddItem(value: TFslDateTime);
+function TFhirDateList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirDate.create(value));
 end;
@@ -2794,13 +2663,13 @@ end;
 
 { TFhirDateTimeList }
 
-procedure TFhirDateTimeList.AddItem(value: TFhirDateTime);
+function TFhirDateTimeList.AddItem(value: TFhirDateTime) : TFhirDateTime;
 begin
   assert(value.ClassName = 'TFhirDateTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDateTime');
   add(value);
 end;
 
-procedure TFhirDateTimeList.AddItem(value: TFslDateTime);
+function TFhirDateTimeList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirDateTime.create(value));
 end;
@@ -3021,15 +2890,16 @@ end;
 
 { TFhirStringList }
 
-procedure TFhirStringList.AddItem(value: TFhirString);
+function TFhirStringList.AddItem(value: TFhirString) : TFhirString;
 begin
   assert(value.ClassName = 'TFhirString', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirString');
   add(value);
 end;
 
-procedure TFhirStringList.AddItem(value: String);
+function TFhirStringList.AddItem(value: String) : TFhirString;
 begin
-  add(TFhirString.create(value));
+  result := TFhirString.create(value);
+  add(result);
 end;
 
 function TFhirStringList.Append: TFhirString;
@@ -3248,15 +3118,16 @@ end;
 
 { TFhirIntegerList }
 
-procedure TFhirIntegerList.AddItem(value: TFhirInteger);
+function TFhirIntegerList.AddItem(value: TFhirInteger) : TFhirInteger;
 begin
   assert(value.ClassName = 'TFhirInteger', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInteger');
   add(value);
 end;
 
-procedure TFhirIntegerList.AddItem(value: String);
+function TFhirIntegerList.AddItem(value: String) : TFhirInteger;
 begin
-  add(TFhirInteger.create(value));
+  result := TFhirInteger.create(value);
+  add(result);
 end;
 
 function TFhirIntegerList.Append: TFhirInteger;
@@ -3475,15 +3346,16 @@ end;
 
 { TFhirUriList }
 
-procedure TFhirUriList.AddItem(value: TFhirUri);
+function TFhirUriList.AddItem(value: TFhirUri) : TFhirUri;
 begin
   assert(value.ClassName = 'TFhirUri', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUri');
   add(value);
 end;
 
-procedure TFhirUriList.AddItem(value: String);
+function TFhirUriList.AddItem(value: String) : TFhirUri;
 begin
-  add(TFhirUri.create(value));
+  result := TFhirUri.create(value);
+  add(result);
 end;
 
 function TFhirUriList.Append: TFhirUri;
@@ -3723,13 +3595,13 @@ end;
 
 { TFhirInstantList }
 
-procedure TFhirInstantList.AddItem(value: TFhirInstant);
+function TFhirInstantList.AddItem(value: TFhirInstant) : TFhirInstant;
 begin
   assert(value.ClassName = 'TFhirInstant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInstant');
   add(value);
 end;
 
-procedure TFhirInstantList.AddItem(value: TFslDateTime);
+function TFhirInstantList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirInstant.create(value));
 end;
@@ -3950,15 +3822,16 @@ end;
 
 { TFhirXhtmlList }
 
-procedure TFhirXhtmlList.AddItem(value: TFhirXhtml);
+function TFhirXhtmlList.AddItem(value: TFhirXhtml) : TFhirXhtml;
 begin
   assert(value.ClassName = 'TFhirXhtml', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirXhtml');
   add(value);
 end;
 
-procedure TFhirXhtmlList.AddItem(value: String);
+function TFhirXhtmlList.AddItem(value: String) : TFhirXhtml;
 begin
-  add(TFhirXhtml.create(value));
+  result := TFhirXhtml.create(value);
+  add(result);
 end;
 
 function TFhirXhtmlList.Append: TFhirXhtml;
@@ -4181,13 +4054,13 @@ end;
 
 { TFhirBooleanList }
 
-procedure TFhirBooleanList.AddItem(value: TFhirBoolean);
+function TFhirBooleanList.AddItem(value: TFhirBoolean) : TFhirBoolean;
 begin
   assert(value.ClassName = 'TFhirBoolean', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBoolean');
   add(value);
 end;
 
-procedure TFhirBooleanList.AddItem(value: Boolean);
+function TFhirBooleanList.AddItem(value: Boolean) : Boolean;
 begin
   add(TFhirBoolean.create(value));
 end;
@@ -4408,13 +4281,13 @@ end;
 
 { TFhirBase64BinaryList }
 
-procedure TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary);
+function TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary) : TFhirBase64Binary;
 begin
   assert(value.ClassName = 'TFhirBase64Binary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBase64Binary');
   add(value);
 end;
 
-procedure TFhirBase64BinaryList.AddItem(value: TBytes);
+function TFhirBase64BinaryList.AddItem(value: TBytes) : TBytes;
 begin
   add(TFhirBase64Binary.create(value));
 end;
@@ -4635,15 +4508,16 @@ end;
 
 { TFhirTimeList }
 
-procedure TFhirTimeList.AddItem(value: TFhirTime);
+function TFhirTimeList.AddItem(value: TFhirTime) : TFhirTime;
 begin
   assert(value.ClassName = 'TFhirTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTime');
   add(value);
 end;
 
-procedure TFhirTimeList.AddItem(value: String);
+function TFhirTimeList.AddItem(value: String) : TFhirTime;
 begin
-  add(TFhirTime.create(value));
+  result := TFhirTime.create(value);
+  add(result);
 end;
 
 function TFhirTimeList.Append: TFhirTime;
@@ -4862,15 +4736,16 @@ end;
 
 { TFhirDecimalList }
 
-procedure TFhirDecimalList.AddItem(value: TFhirDecimal);
+function TFhirDecimalList.AddItem(value: TFhirDecimal) : TFhirDecimal;
 begin
   assert(value.ClassName = 'TFhirDecimal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDecimal');
   add(value);
 end;
 
-procedure TFhirDecimalList.AddItem(value: String);
+function TFhirDecimalList.AddItem(value: String) : TFhirDecimal;
 begin
-  add(TFhirDecimal.create(value));
+  result := TFhirDecimal.create(value);
+  add(result);
 end;
 
 function TFhirDecimalList.Append: TFhirDecimal;
@@ -5028,15 +4903,16 @@ end;
 
 { TFhirCodeList }
 
-procedure TFhirCodeList.AddItem(value: TFhirCode);
+function TFhirCodeList.AddItem(value: TFhirCode) : TFhirCode;
 begin
   assert(value.ClassName = 'TFhirCode', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCode');
   add(value);
 end;
 
-procedure TFhirCodeList.AddItem(value: String);
+function TFhirCodeList.AddItem(value: String) : TFhirCode;
 begin
-  add(TFhirCode.create(value));
+  result := TFhirCode.create(value);
+  add(result);
 end;
 
 function TFhirCodeList.Append: TFhirCode;
@@ -5194,15 +5070,16 @@ end;
 
 { TFhirCanonicalList }
 
-procedure TFhirCanonicalList.AddItem(value: TFhirCanonical);
+function TFhirCanonicalList.AddItem(value: TFhirCanonical) : TFhirCanonical;
 begin
   assert(value.ClassName = 'TFhirCanonical', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCanonical');
   add(value);
 end;
 
-procedure TFhirCanonicalList.AddItem(value: String);
+function TFhirCanonicalList.AddItem(value: String) : TFhirCanonical;
 begin
-  add(TFhirCanonical.create(value));
+  result := TFhirCanonical.create(value);
+  add(result);
 end;
 
 function TFhirCanonicalList.Append: TFhirCanonical;
@@ -5360,15 +5237,16 @@ end;
 
 { TFhirOidList }
 
-procedure TFhirOidList.AddItem(value: TFhirOid);
+function TFhirOidList.AddItem(value: TFhirOid) : TFhirOid;
 begin
   assert(value.ClassName = 'TFhirOid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOid');
   add(value);
 end;
 
-procedure TFhirOidList.AddItem(value: String);
+function TFhirOidList.AddItem(value: String) : TFhirOid;
 begin
-  add(TFhirOid.create(value));
+  result := TFhirOid.create(value);
+  add(result);
 end;
 
 function TFhirOidList.Append: TFhirOid;
@@ -5526,15 +5404,16 @@ end;
 
 { TFhirUuidList }
 
-procedure TFhirUuidList.AddItem(value: TFhirUuid);
+function TFhirUuidList.AddItem(value: TFhirUuid) : TFhirUuid;
 begin
   assert(value.ClassName = 'TFhirUuid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUuid');
   add(value);
 end;
 
-procedure TFhirUuidList.AddItem(value: String);
+function TFhirUuidList.AddItem(value: String) : TFhirUuid;
 begin
-  add(TFhirUuid.create(value));
+  result := TFhirUuid.create(value);
+  add(result);
 end;
 
 function TFhirUuidList.Append: TFhirUuid;
@@ -5692,15 +5571,16 @@ end;
 
 { TFhirUrlList }
 
-procedure TFhirUrlList.AddItem(value: TFhirUrl);
+function TFhirUrlList.AddItem(value: TFhirUrl) : TFhirUrl;
 begin
   assert(value.ClassName = 'TFhirUrl', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUrl');
   add(value);
 end;
 
-procedure TFhirUrlList.AddItem(value: String);
+function TFhirUrlList.AddItem(value: String) : TFhirUrl;
 begin
-  add(TFhirUrl.create(value));
+  result := TFhirUrl.create(value);
+  add(result);
 end;
 
 function TFhirUrlList.Append: TFhirUrl;
@@ -5858,15 +5738,16 @@ end;
 
 { TFhirMarkdownList }
 
-procedure TFhirMarkdownList.AddItem(value: TFhirMarkdown);
+function TFhirMarkdownList.AddItem(value: TFhirMarkdown) : TFhirMarkdown;
 begin
   assert(value.ClassName = 'TFhirMarkdown', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMarkdown');
   add(value);
 end;
 
-procedure TFhirMarkdownList.AddItem(value: String);
+function TFhirMarkdownList.AddItem(value: String) : TFhirMarkdown;
 begin
-  add(TFhirMarkdown.create(value));
+  result := TFhirMarkdown.create(value);
+  add(result);
 end;
 
 function TFhirMarkdownList.Append: TFhirMarkdown;
@@ -6024,15 +5905,16 @@ end;
 
 { TFhirUnsignedIntList }
 
-procedure TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt);
+function TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt) : TFhirUnsignedInt;
 begin
   assert(value.ClassName = 'TFhirUnsignedInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUnsignedInt');
   add(value);
 end;
 
-procedure TFhirUnsignedIntList.AddItem(value: String);
+function TFhirUnsignedIntList.AddItem(value: String) : TFhirUnsignedInt;
 begin
-  add(TFhirUnsignedInt.create(value));
+  result := TFhirUnsignedInt.create(value);
+  add(result);
 end;
 
 function TFhirUnsignedIntList.Append: TFhirUnsignedInt;
@@ -6190,15 +6072,16 @@ end;
 
 { TFhirIdList }
 
-procedure TFhirIdList.AddItem(value: TFhirId);
+function TFhirIdList.AddItem(value: TFhirId) : TFhirId;
 begin
   assert(value.ClassName = 'TFhirId', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirId');
   add(value);
 end;
 
-procedure TFhirIdList.AddItem(value: String);
+function TFhirIdList.AddItem(value: String) : TFhirId;
 begin
-  add(TFhirId.create(value));
+  result := TFhirId.create(value);
+  add(result);
 end;
 
 function TFhirIdList.Append: TFhirId;
@@ -6356,15 +6239,16 @@ end;
 
 { TFhirPositiveIntList }
 
-procedure TFhirPositiveIntList.AddItem(value: TFhirPositiveInt);
+function TFhirPositiveIntList.AddItem(value: TFhirPositiveInt) : TFhirPositiveInt;
 begin
   assert(value.ClassName = 'TFhirPositiveInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPositiveInt');
   add(value);
 end;
 
-procedure TFhirPositiveIntList.AddItem(value: String);
+function TFhirPositiveIntList.AddItem(value: String) : TFhirPositiveInt;
 begin
-  add(TFhirPositiveInt.create(value));
+  result := TFhirPositiveInt.create(value);
+  add(result);
 end;
 
 function TFhirPositiveIntList.Append: TFhirPositiveInt;
@@ -6522,15 +6406,16 @@ end;
 
 { TFhirInteger64List }
 
-procedure TFhirInteger64List.AddItem(value: TFhirInteger64);
+function TFhirInteger64List.AddItem(value: TFhirInteger64) : TFhirInteger64;
 begin
   assert(value.ClassName = 'TFhirInteger64', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInteger64');
   add(value);
 end;
 
-procedure TFhirInteger64List.AddItem(value: String);
+function TFhirInteger64List.AddItem(value: String) : TFhirInteger64;
 begin
-  add(TFhirInteger64.create(value));
+  result := TFhirInteger64.create(value);
+  add(result);
 end;
 
 function TFhirInteger64List.Append: TFhirInteger64;

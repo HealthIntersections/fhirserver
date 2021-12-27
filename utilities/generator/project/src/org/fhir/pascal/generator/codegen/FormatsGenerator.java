@@ -9,19 +9,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.fhir.delphi.DefinedCode;
-import org.fhir.delphi.ElementDefn;
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.codegen.ClassGenerator.ClassGeneratorCategory;
-import org.fhir.pascal.generator.codegen.FormatsGenerator.StructureDefinitionSorter;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.ElementDefinition.PropertyRepresentation;
 import org.hl7.fhir.r5.model.ElementDefinition.TypeRefComponent;
-import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.StructureDefinition;
+import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.utilities.Utilities;
 
 /*
@@ -136,7 +133,7 @@ public class FormatsGenerator extends BaseGenerator {
   }
 
   public void generateXml(String filename) throws Exception {
-	  String template = config.getTemplate("fhir5_xml");
+	  String template = config.getTemplate("fhir{N}_xml");
 	  template = template.replace("{{mark}}", startVMarkValue());
 	  template = template.replace("{{types.abstract.parser.intf}}", xta.parser.toString());
 	  template = template.replace("{{types.concrete.parser.intf}}", xtc.parser.toString());
@@ -164,7 +161,7 @@ public class FormatsGenerator extends BaseGenerator {
 	
 
   public void generateJson(String filename) throws Exception {
-    String template = config.getTemplate("fhir5_json");
+    String template = config.getTemplate("fhir{N}_json");
     
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{abstract.types.intf.parser}}", jta.parser.toString());
@@ -190,7 +187,7 @@ public class FormatsGenerator extends BaseGenerator {
   
 
   public void generateTurtle(String filename) throws Exception {
-    String template = config.getTemplate("fhir5_turtle");
+    String template = config.getTemplate("fhir{N}_turtle");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{parse.types.abstract.intf}}", tta.parser.toString());
     template = template.replace("{{parse.types.concrete.intf}}", ttc.parser.toString());

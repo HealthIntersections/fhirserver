@@ -39,7 +39,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json,
   fhir_parser, fhir_objects,
-  fhir5_base, fhir5_enums, fhir5_parserBase, fhir5_resources, fhir5_resources_base, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
+  fhir5_base, fhir5_constants, fhir5_enums, fhir5_types, fhir5_parserBase, fhir5_resources, fhir5_resources_base;
 
 Type
 

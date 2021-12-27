@@ -228,7 +228,7 @@ type
 
     function GetBytes: TBytes; override;
     procedure LoadBytes(bytes: TBytes); override;
-    procedure bindToTab(tab : TTabSheet); override;
+    procedure bindToTab(tab : TTabSheet; pnl : TPanel); override;
     procedure locate(location : TSourceLocation); override;
     function location : String; override;
     procedure redo; override;
@@ -1074,30 +1074,30 @@ begin
 
 end;
 
-procedure TBaseEditor.bindToTab(tab: TTabSheet);
+procedure TBaseEditor.bindToTab(tab: TTabSheet; pnl : TPanel);
 begin
-  inherited bindToTab(tab);
+  inherited bindToTab(tab, pnl);
 
   // create the pages
-  FPageControl := TPageControl.create(tab);
+  FPageControl := TPageControl.create(pnl);
   FPageControl.ShowTabs := false;
   FPageControl.Align := alClient;
   FTextTab := FPageControl.AddTabSheet;
   FDesignTab := FPageControl.AddTabSheet;
 
   // create the side by side
-  FTextPanelBase := TPanel.create(tab);
+  FTextPanelBase := TPanel.create(pnl);
   FTextPanelBase.BevelWidth := 1;
   FTextPanelBase.BorderWidth := 2;
   FTextPanelBase.Align := alLeft;
   FTextPanelBase.Width := (tab.width div 2) - 4;
   FTextPanelBase.Color := clLime;
   FTextPanelBase.ShowHint := false;
-  FSplitter := TSplitter.create(tab);
+  FSplitter := TSplitter.create(pnl);
   FSplitter.Width := 8;
   FSplitter.Align := alLeft;
   FSplitter.ResizeControl := FTextPanelBase;
-  FDesignerPanelBase := TPanel.create(tab);
+  FDesignerPanelBase := TPanel.create(pnl);
   FDesignerPanelBase.BevelWidth := 1;
   FDesignerPanelBase.BorderWidth := 2;
   FDesignerPanelBase.Align := alClient;
@@ -1108,14 +1108,14 @@ begin
   // create the panels
   if hasTextTab then
   begin
-    FTextPanelWork := TPanel.create(tab);
+    FTextPanelWork := TPanel.create(pnl);
     FTextPanelWork.BevelWidth := 1;
     FTextPanelWork.Align := alClient;
     FTextPanelWork.Color := clBtnFace;
   end;
   if hasDesigner then
   begin
-    FDesignerPanelWork := TPanel.create(tab);
+    FDesignerPanelWork := TPanel.create(pnl);
     FDesignerPanelWork.BevelWidth := 1;
     FDesignerPanelWork.Align := alClient;
     FDesignerPanelWork.Color := clBtnFace;
@@ -1125,16 +1125,16 @@ begin
   // bind mode
   if (Context.SideBySide and hasTextTab and hasDesigner) then
   begin
-    FTextPanelBase.parent := Tab;
-    FSplitter.parent := Tab;
-    FDesignerPanelBase.parent := Tab;
+    FTextPanelBase.parent := pnl;
+    FSplitter.parent := pnl;
+    FDesignerPanelBase.parent := pnl;
     FTextPanelWork.parent := FTextPanelBase;
     FDesignerPanelWork.parent := FDesignerPanelBase;
     FPageControl.Parent := nil;
   end
   else
   begin
-    FPageControl.Parent := tab;
+    FPageControl.Parent := pnl;
     FTextPanelBase.parent := nil;
     FSplitter.parent := nil;
     FDesignerPanelBase.parent := nil;

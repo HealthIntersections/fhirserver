@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.analysis.EnumInfo;
@@ -16,7 +14,6 @@ import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.ElementDefinition.PropertyRepresentation;
 import org.hl7.fhir.r5.model.ElementDefinition.TypeRefComponent;
-import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.utilities.Utilities;
 
 public abstract class ClassGenerator extends BaseGenerator {
@@ -84,7 +81,7 @@ public abstract class ClassGenerator extends BaseGenerator {
       def.append("    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
       def.append("    procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); override;\r\n");
       def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
-      def.append("    function sizeInBytesV : cardinal; override;\r\n");
+      def.append("    function sizeInBytesV(magic : integer) : cardinal; override;\r\n");
     }
     if (config.hasTemplate(tn+".protected")) {
       def.append(config.getTemplate(tn+".protected"));
@@ -249,9 +246,9 @@ public abstract class ClassGenerator extends BaseGenerator {
       impl2.append("  inherited listFieldsInOrder(fields);\r\n");  
       impl2.append(fields.toString());  
       impl2.append("end;\r\n\r\n");
-      impl2.append("function "+tn+".sizeInBytesV;\r\n");
+      impl2.append("function "+tn+".sizeInBytesV(magic : integer) : cardinal;\r\n");
       impl2.append("begin;\r\n");
-      impl2.append("  result := inherited sizeInBytesV;\r\n");  
+      impl2.append("  result := inherited sizeInBytesV(magic);\r\n");  
       impl2.append(sizers.toString());  
       impl2.append("end;\r\n\r\n");
     }
@@ -290,7 +287,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     StringBuilder replprops = new StringBuilder();
     StringBuilder reorderprops = new StringBuilder();
     String tn = ti.getName();
-    boolean isBase = analysis.getAncestor().getType().equals("Base");
+    boolean isBase = analysis.getAncestor() == null || analysis.getAncestor().getType().equals("Base");
     
     String tj = tn.substring(5);
     
@@ -299,7 +296,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     }
 
     def.append("  // "+makeDocoSafe(analysis.getStructure().getDescription(), "// ")+"\r\n");
-    def.append("  "+tn+" = class abstract (TFhir"+(tn.equals("TFhirResource") ? "Resource5" :  analysis.getAncestor().getName())+")\r\n");
+    def.append("  "+tn+" = class abstract (TFhir"+(tn.equals("TFhirResource") ? "Resource5" :    analysis.getAncestor() == null ? "Base" : analysis.getAncestor().getName())+")\r\n");
     if (config.hasTemplate(tn+".private")) {
       def.append("  private\r\n");
       def.append(config.getTemplate(tn+".private"));
@@ -314,7 +311,7 @@ public abstract class ClassGenerator extends BaseGenerator {
       def.append("    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
       def.append("    procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); override;\r\n");
       def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
-      def.append("    function sizeInBytesV : cardinal; override;\r\n");
+      def.append("    function sizeInBytesV(magic : integer) : cardinal; override;\r\n");
     }
     if (tn.equals("TFhirResource")) {
       def.append("    function GetResourceType : TFhirResourceType; virtual; abstract;\r\n");
@@ -607,9 +604,9 @@ public abstract class ClassGenerator extends BaseGenerator {
       impl2.append("  inherited listFieldsInOrder(fields);\r\n");  
       impl2.append(fields.toString());
       impl2.append("end;\r\n\r\n");
-      impl2.append("function "+tn+".sizeInBytesV;\r\n");
+      impl2.append("function "+tn+".sizeInBytesV(magic : integer) : cardinal;\r\n");
       impl2.append("begin;\r\n");
-      impl2.append("  result := inherited sizeInBytesV;\r\n");  
+      impl2.append("  result := inherited sizeInBytesV(magic);\r\n");  
       impl2.append(sizers.toString());  
       impl2.append("end;\r\n\r\n");      
     }
@@ -652,7 +649,7 @@ public abstract class ClassGenerator extends BaseGenerator {
               "    FList : "+tnl+";\r\n"+
               "    function GetCurrent : "+tn+";\r\n"+
               "  protected\r\n"+
-              "    function sizeInBytesV : cardinal; override;\r\n"+
+              "    function sizeInBytesV(magic : integer) : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create(list : "+tnl+");\r\n"+
               "    destructor Destroy; override;\r\n"+
@@ -690,12 +687,12 @@ public abstract class ClassGenerator extends BaseGenerator {
       intf.append(
           "    \r\n"+
               "    // Add an already existing "+tt+" to the end of the list.\r\n"+
-              "    procedure AddItem(value : "+tn+"); overload;\r\n");
+              "    function AddItem(value : "+tn+") : "+tn+"; overload;\r\n");
       if (sn != null)    
         intf.append(
             "    \r\n"+
                 "    // Add an already existing "+tt+" to the end of the list.\r\n"+
-                "    procedure AddItem(value : "+sn+"); overload;\r\n");
+                "    function AddItem(value : "+sn+") : "+sn+"; overload;\r\n");
       intf.append(
           "    \r\n"+
               "    // See if an item is already in the list. returns -1 if not in the list\r\n"+
@@ -756,18 +753,19 @@ public abstract class ClassGenerator extends BaseGenerator {
               "  Result := FList[FIndex];\r\n"+
               "end;\r\n"+
               "\r\n"+
-              "function "+tnl+"Enumerator.sizeInBytesV : cardinal;\r\n"+
+              "function "+tnl+"Enumerator.sizeInBytesV(magic : integer) : cardinal;\r\n"+
               "begin\r\n"+
-              "  result := inherited sizeInBytesV;\r\n"+
-              "  inc(result, FList.sizeInBytes);\r\n"+
+              "  result := inherited sizeInBytesV(magic);\r\n"+
+              "  inc(result, FList.sizeInBytes(magic));\r\n"+
               "end;\r\n"+
           "\r\n");
       impl.append(
           "{ "+tn+"List }\r\n\r\n"+
-              "procedure "+tn+"List.AddItem(value: "+tn+");\r\n"+
+              "function "+tn+"List.AddItem(value: "+tn+"): "+tn+";\r\n"+
               "begin\r\n"+
               "  assert(value.ClassName = '"+tn+"', 'Attempt to add an item of type '+value.ClassName+' to a List of "+tn+"');\r\n"+
               "  add(value);\r\n"+
+              "  result := value;\r\n"+
               "end;\r\n"+
           "\r\n");
       if (isEnum)
@@ -788,16 +786,18 @@ public abstract class ClassGenerator extends BaseGenerator {
       if (sn != null) {    
         if (isEnum) {
           impl.append(
-              "procedure "+tn+"List.AddItem(value: "+sn+");\r\n"+
+              "function "+tn+"List.AddItem(value: "+sn+"): "+sn+";\r\n"+
                   "begin\r\n"+
-                  "  add("+tn+".create(FSystems[StringArrayIndexOf(FCodes, value)], value));\r\n"+
+                  "  result := \"+tn+\".create(FSystems[StringArrayIndexOf(FCodes, value)], value);\r\n"+
+                  "  add(result);\r\n"+
                   "end;\r\n"+
               "\r\n");
         } else {
           impl.append(
-              "procedure "+tn+"List.AddItem(value: "+sn+");\r\n"+
+              "function "+tn+"List.AddItem(value: "+sn+"): "+sn+";\r\n"+
                   "begin\r\n"+
-                  "  add("+tn+".create(value));\r\n"+
+                  "  result := \"+tn+\".create(value);\r\n"+
+                  "  add(result);\r\n"+
                   "end;\r\n"+
               "\r\n");
         }
@@ -986,7 +986,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     if (e.unbounded()) {
       if (e.hasUserData("pascal.enum")) {
         if (base == null) {
-          sizers.append("  inc(result, F"+getTitle(s)+".sizeInBytes);\r\n");
+          sizers.append("  inc(result, F"+getTitle(s)+".sizeInBytes(magic));\r\n");
           defPriv1.append("    F"+getTitle(s)+" : "+listForm("TFhirEnum")+";\r\n");
           destroy.append("  F"+getTitle(s)+".Free;\r\n");
           empty.append(" and isEmptyProp(F"+getTitle(s)+")");
@@ -1056,7 +1056,7 @@ public abstract class ClassGenerator extends BaseGenerator {
         s = s+"List";
         defPub.append("    // "+makeDocoSafe(e.getDefinition(), "// ")+"\r\n");
         if (base == null) { 
-          sizers.append("  inc(result, "+propV+"List.sizeInBytes);\r\n");
+          sizers.append("  inc(result, "+propV+"List.sizeInBytes(magic));\r\n");
           defPriv1.append("    F"+s+" : "+tnl+";\r\n");
           destroy.append("  F"+getTitle(s)+".Free;\r\n");
           empty.append(" and isEmptyProp(F"+s+")");

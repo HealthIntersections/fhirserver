@@ -212,8 +212,9 @@ type
     function EditorTitle : String; virtual;
 
     // editing related functionality
+    function makeRootPanel(tab: TTabSheet) : TPanel;
     property Pause : integer read FPause write FPause;
-    procedure bindToTab(tab : TTabSheet); virtual;  // set up the UI - caleed before either newContent or LoadBytes is called
+    procedure bindToTab(tab : TTabSheet; pnl : TPanel); virtual;  // set up the UI - caleed before either newContent or LoadBytes is called
     procedure newContent(); virtual; abstract; // create new content
     procedure loadBytes(bytes : TBytes); virtual; abstract;
     procedure locate(location : TSourceLocation); virtual; abstract;
@@ -688,7 +689,21 @@ begin
   result := '';
 end;
 
-procedure TToolkitEditor.bindToTab(tab: TTabSheet);
+function TToolkitEditor.makeRootPanel(tab: TTabSheet): TPanel;
+begin
+  result := TPanel.create(tab);
+  result.Parent := tab;
+  result.align := alClient;
+  result.BevelInner := bvNone;
+  result.BevelOuter := bvNone;
+  result.BorderWidth := 0;
+  result.PopupMenu := TPopupMenu.create(tab);
+  result.ShowHint := true;
+  result.Hint := '';
+  result.ParentShowHint := false;
+end;
+
+procedure TToolkitEditor.bindToTab(tab: TTabSheet; pnl : TPanel);
 begin
   FTab := tab;
   tab.Caption := FSession.Caption{$IFDEF WINDOWS}+'    '{$ENDIF};

@@ -178,7 +178,6 @@ type
   TFhirAuditEventParticipant = TFhirAuditEventAgent;
   TFhirAuditEventObject = TFhirAuditEventEntity;
   TFhirAuditEventEvent = TFhirAuditEvent;
-  TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
   TFhirQuestionnaireItemOption = TFhirQuestionnaireItemAnswerOption;
@@ -6721,20 +6720,20 @@ procedure TFHIRCapabilityStatement2Helper.dumpFeatures(dest: TFhirCapabilityStat
 var
   pf, f : TFHIRFeature;
 begin
-  pf := TFHIRFeature.fromString(path);
-  try
-    for f in source do
-    begin
-      if f.livesOn(pf) then
-        with dest.Append do
-        begin
-          code := f.relativePath(pf);
-          value := f.value;
-        end;
-    end;
-  finally
-    pf.free;
-  end;
+//  pf := TFHIRFeature.fromString(path);
+//  try
+//    for f in source do
+//    begin
+//      if f.livesOn(pf) then
+//        with dest.Append do
+//        begin
+//          code := f.relativePath(pf);
+//          value := f.value;
+//        end;
+//    end;
+//  finally
+//    pf.free;
+//  end;
 end;
 
 function TFHIRCapabilityStatement2Helper.hasFeature(feature: TFHIRFeature): boolean;
@@ -6774,8 +6773,8 @@ function TFhirEncounterHelper.summary: String;
 begin
   if hasIdentifierList then
     result := gen(identifierList[0]);
-  if period <> nil then
-    result := result +' ['+gen(period)+']';
+  if actualPeriod <> nil then
+    result := result +' ['+gen(actualPeriod)+']';
   result := result.Trim;
 end;
 

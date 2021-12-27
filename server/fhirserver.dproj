@@ -92,7 +92,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_MinorVer>0</VerInfo_MinorVer>
-        <VerInfo_Release>10</VerInfo_Release>
+        <VerInfo_Release>11</VerInfo_Release>
         <VerInfo_Debug>false</VerInfo_Debug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -209,7 +209,7 @@
         <Icon_MainIcon>..\exec\icons\fhir-server.ico</Icon_MainIcon>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_MinorVer>0</VerInfo_MinorVer>
-        <VerInfo_Release>10</VerInfo_Release>
+        <VerInfo_Release>11</VerInfo_Release>
         <VerInfo_Debug>false</VerInfo_Debug>
     </PropertyGroup>
     <ItemGroup>
@@ -521,6 +521,36 @@
         <DCCReference Include="..\library\fhir5\fhir5_narrative2.pas"/>
         <DCCReference Include="..\library\fhir5\fhir5_graphdefinition.pas"/>
         <DCCReference Include="..\library\fhir5\fhir5_maputils.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_base.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_constants.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_enums.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_factory.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_indexinfo.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_json.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_pathengine.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_pathnode.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_profiles.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_resources.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_tags.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_turtle.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_types.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_utilities.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_validator.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_xml.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_context.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_parserBase.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_parser.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_elementmodel.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_common.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_opbase.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_operations.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_authmap.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_client.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_narrative.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_questionnaire.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_narrative2.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_graphdefinition.pas"/>
+        <DCCReference Include="..\library\fhir4b\fhir4b_maputils.pas"/>
         <DCCReference Include="package_spider.pas"/>
         <DCCReference Include="..\library\fsl\fsl_npm_client.pas"/>
         <DCCReference Include="..\library\fhir4\fhir4_liquid.pas"/>

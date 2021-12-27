@@ -34,7 +34,7 @@ unit fhir5_operations;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -1591,10 +1591,44 @@ Type
     function asParams : TFHIRParameters; override;
     property return : TFhirResource read FReturn write SetReturn;
   end;
+  //Operation events (Search and retrieve prior events for a Subscription)
+  TFHIREventsOpRequest = class (TFHIROperationRequest)
+  private
+    FEventsSinceNumber : String;
+    FEventsUntilNumber : String;
+    FContent : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property eventsSinceNumber : String read FEventsSinceNumber write FEventsSinceNumber;
+    property eventsUntilNumber : String read FEventsUntilNumber write FEventsUntilNumber;
+    property content : String read FContent write FContent;
+  end;
+  TFHIREventsOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirBundle;
+    procedure SetReturn(value : TFhirBundle);
+  protected
+    function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : THTTPParameters); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirBundle read FReturn write SetReturn;
+  end;
   //Operation get-ws-binding-token (Get a binding token for use in a websocket connection)
   TFHIRGetWsBindingTokenOpRequest = class (TFHIROperationRequest)
   private
-    FIdsList : TStringList;
+    FIdList : TStringList;
   protected
     function isKnownName(name : String) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1604,12 +1638,14 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
-    property idsList : TStringList read FIdsList;
+    property idList : TStringList read FIdList;
   end;
   TFHIRGetWsBindingTokenOpResponse = class (TFHIROperationResponse)
   private
-    FReturn : TFhirParameters;
-    procedure SetReturn(value : TFhirParameters);
+    FToken : String;
+    FExpiration : TFslDateTime;
+    FSubscriptionList : TStringList;
+    FWebsocketUrl : String;
   protected
     function isKnownName(name : String) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1619,12 +1655,16 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
-    property return : TFhirParameters read FReturn write SetReturn;
+    property token : String read FToken write FToken;
+    property expiration : TFslDateTime read FExpiration write FExpiration;
+    property subscriptionList : TStringList read FSubscriptionList;
+    property websocketUrl : String read FWebsocketUrl write FWebsocketUrl;
   end;
   //Operation status (Get Current Subscription Status for One or More Subscriptions)
   TFHIRStatusOpRequest = class (TFHIROperationRequest)
   private
-    FIdsList : TStringList;
+    FIdList : TStringList;
+    FStatusList : TStringList;
   protected
     function isKnownName(name : String) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1634,7 +1674,8 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
-    property idsList : TStringList read FIdsList;
+    property idList : TStringList read FIdList;
+    property statusList : TStringList read FStatusList;
   end;
   TFHIRStatusOpResponse = class (TFHIROperationResponse)
   private
@@ -6171,78 +6212,79 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRGetWsBindingTokenOpRequest.create;
+constructor TFHIREventsOpRequest.create;
 begin
   inherited create();
-  FIdsList := TStringList.create;
 end;
-procedure TFHIRGetWsBindingTokenOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
+procedure TFHIREventsOpRequest.load(params : TFHIRParameters);
 begin
-  for p in params.parameterList do
-    if p.name = 'ids' then
-      FIdsList.Add((p.value as TFhirId).value);
+  if params.param['eventsSinceNumber'] <> nil then
+    FEventsSinceNumber := (params.param['eventsSinceNumber'].value as TFHIRInteger64).Value; 
+  if params.param['eventsUntilNumber'] <> nil then
+    FEventsUntilNumber := (params.param['eventsUntilNumber'].value as TFHIRInteger64).Value; 
+  if params.param['content'] <> nil then
+    FContent := (params.param['content'].value as TFHIRCode).Value; 
   loadExtensions(params);
 end;
-procedure TFHIRGetWsBindingTokenOpRequest.load(params : THTTPParameters);
-var
-  s : String;
+procedure TFHIREventsOpRequest.load(params : THTTPParameters);
 begin
-  for s in params['ids'].Split([';']) do
-    FIdsList.add(s); 
   loadExtensions(params);
 end;
-destructor TFHIRGetWsBindingTokenOpRequest.Destroy;
+destructor TFHIREventsOpRequest.Destroy;
 begin
-  FIdsList.free;
   inherited;
 end;
-function TFHIRGetWsBindingTokenOpRequest.asParams : TFhirParameters;var  v1 : String;begin
+function TFHIREventsOpRequest.asParams : TFhirParameters;begin
   result := TFHIRParameters.create;
   try
-    for v1 in FIdsList do
-      result.AddParameter('ids', TFhirId.create(v1));
+    if (FEventsSinceNumber <> '') then
+      result.addParameter('eventsSinceNumber', TFHIRInteger64.create(FEventsSinceNumber));
+    if (FEventsUntilNumber <> '') then
+      result.addParameter('eventsUntilNumber', TFHIRInteger64.create(FEventsUntilNumber));
+    if (FContent <> '') then
+      result.addParameter('content', TFHIRCode.create(FContent));
     writeExtensions(result);
     result.link;
   finally
     result.free;
   end;
 end;
-function TFHIRGetWsBindingTokenOpRequest.isKnownName(name : String) : boolean;begin
-  result := StringArrayExists(['ids'], name);
+function TFHIREventsOpRequest.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['eventsSinceNumber', 'eventsUntilNumber', 'content'], name);
 end;
 
-function TFHIRGetWsBindingTokenOpRequest.sizeInBytesV(magic : integer) : cardinal;
+function TFHIREventsOpRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, FIdsList.sizeInBytes(magic));
+  inc(result, (FEventsSinceNumber.length * sizeof(char))+12);
+  inc(result, (FEventsUntilNumber.length * sizeof(char))+12);
+  inc(result, (FContent.length * sizeof(char))+12);
 end;
 
-procedure TFHIRGetWsBindingTokenOpResponse.SetReturn(value : TFhirParameters);
+procedure TFHIREventsOpResponse.SetReturn(value : TFhirBundle);
 begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRGetWsBindingTokenOpResponse.create;
+constructor TFHIREventsOpResponse.create;
 begin
   inherited create();
 end;
-procedure TFHIRGetWsBindingTokenOpResponse.load(params : TFHIRParameters);
+procedure TFHIREventsOpResponse.load(params : TFHIRParameters);
 begin
-  FReturn := (params.res['return'] as TFhirParameters).Link;
+  FReturn := (params.res['return'] as TFhirBundle).Link;
   loadExtensions(params);
 end;
-procedure TFHIRGetWsBindingTokenOpResponse.load(params : THTTPParameters);
+procedure TFHIREventsOpResponse.load(params : THTTPParameters);
 begin
   loadExtensions(params);
 end;
-destructor TFHIRGetWsBindingTokenOpResponse.Destroy;
+destructor TFHIREventsOpResponse.Destroy;
 begin
   FReturn.free;
   inherited;
 end;
-function TFHIRGetWsBindingTokenOpResponse.asParams : TFhirParameters;begin
+function TFHIREventsOpResponse.asParams : TFhirParameters;begin
   result := TFHIRParameters.create;
   try
     if (FReturn <> nil) then
@@ -6253,48 +6295,167 @@ function TFHIRGetWsBindingTokenOpResponse.asParams : TFhirParameters;begin
     result.free;
   end;
 end;
-function TFHIRGetWsBindingTokenOpResponse.isKnownName(name : String) : boolean;begin
+function TFHIREventsOpResponse.isKnownName(name : String) : boolean;begin
   result := StringArrayExists(['return'], name);
 end;
 
-function TFHIRGetWsBindingTokenOpResponse.sizeInBytesV(magic : integer) : cardinal;
+function TFHIREventsOpResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
+constructor TFHIRGetWsBindingTokenOpRequest.create;
+begin
+  inherited create();
+  FIdList := TStringList.create;
+end;
+procedure TFHIRGetWsBindingTokenOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  for p in params.parameterList do
+    if p.name = 'id' then
+      FIdList.Add((p.value as TFhirId).value);
+  loadExtensions(params);
+end;
+procedure TFHIRGetWsBindingTokenOpRequest.load(params : THTTPParameters);
+var
+  s : String;
+begin
+  for s in params['id'].Split([';']) do
+    FIdList.add(s); 
+  loadExtensions(params);
+end;
+destructor TFHIRGetWsBindingTokenOpRequest.Destroy;
+begin
+  FIdList.free;
+  inherited;
+end;
+function TFHIRGetWsBindingTokenOpRequest.asParams : TFhirParameters;var  v1 : String;begin
+  result := TFHIRParameters.create;
+  try
+    for v1 in FIdList do
+      result.AddParameter('id', TFhirId.create(v1));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRGetWsBindingTokenOpRequest.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['id'], name);
+end;
+
+function TFHIRGetWsBindingTokenOpRequest.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdList.sizeInBytes(magic));
+end;
+
+constructor TFHIRGetWsBindingTokenOpResponse.create;
+begin
+  inherited create();
+  FSubscriptionList := TStringList.create;
+end;
+procedure TFHIRGetWsBindingTokenOpResponse.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  if params.param['token'] <> nil then
+    FToken := (params.param['token'].value as TFHIRString).Value; 
+  if params.param['expiration'] <> nil then
+    FExpiration := (params.param['expiration'].value as TFHIRDateTime).Value; 
+  for p in params.parameterList do
+    if p.name = 'subscription' then
+      FSubscriptionList.Add((p.value as TFhirString).value);
+  if params.param['websocket-url'] <> nil then
+    FWebsocketUrl := (params.param['websocket-url'].value as TFHIRUrl).Value; 
+  loadExtensions(params);
+end;
+procedure TFHIRGetWsBindingTokenOpResponse.load(params : THTTPParameters);
+var
+  s : String;
+begin
+  for s in params['subscription'].Split([';']) do
+    FSubscriptionList.add(s); 
+  loadExtensions(params);
+end;
+destructor TFHIRGetWsBindingTokenOpResponse.Destroy;
+begin
+  FSubscriptionList.free;
+  inherited;
+end;
+function TFHIRGetWsBindingTokenOpResponse.asParams : TFhirParameters;var  v1 : String;begin
+  result := TFHIRParameters.create;
+  try
+    if (FToken <> '') then
+      result.addParameter('token', TFHIRString.create(FToken));
+    if (FExpiration.notNull) then
+      result.addParameter('expiration', TFHIRDateTime.create(FExpiration));
+    for v1 in FSubscriptionList do
+      result.AddParameter('subscription', TFhirString.create(v1));
+    if (FWebsocketUrl <> '') then
+      result.addParameter('websocket-url', TFHIRUrl.create(FWebsocketUrl));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+function TFHIRGetWsBindingTokenOpResponse.isKnownName(name : String) : boolean;begin
+  result := StringArrayExists(['token', 'expiration', 'subscription', 'websocket-url'], name);
+end;
+
+function TFHIRGetWsBindingTokenOpResponse.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, (FToken.length * sizeof(char))+12);
+  inc(result, FSubscriptionList.sizeInBytes(magic));
+  inc(result, (FWebsocketUrl.length * sizeof(char))+12);
+end;
+
 constructor TFHIRStatusOpRequest.create;
 begin
   inherited create();
-  FIdsList := TStringList.create;
+  FIdList := TStringList.create;
+  FStatusList := TStringList.create;
 end;
 procedure TFHIRStatusOpRequest.load(params : TFHIRParameters);
 var
   p : TFhirParametersParameter;
 begin
   for p in params.parameterList do
-    if p.name = 'ids' then
-      FIdsList.Add((p.value as TFhirId).value);
+    if p.name = 'id' then
+      FIdList.Add((p.value as TFhirId).value);
+  for p in params.parameterList do
+    if p.name = 'status' then
+      FStatusList.Add((p.value as TFhirCode).value);
   loadExtensions(params);
 end;
 procedure TFHIRStatusOpRequest.load(params : THTTPParameters);
 var
   s : String;
 begin
-  for s in params['ids'].Split([';']) do
-    FIdsList.add(s); 
+  for s in params['id'].Split([';']) do
+    FIdList.add(s); 
+  for s in params['status'].Split([';']) do
+    FStatusList.add(s); 
   loadExtensions(params);
 end;
 destructor TFHIRStatusOpRequest.Destroy;
 begin
-  FIdsList.free;
+  FIdList.free;
+  FStatusList.free;
   inherited;
 end;
-function TFHIRStatusOpRequest.asParams : TFhirParameters;var  v1 : String;begin
+function TFHIRStatusOpRequest.asParams : TFhirParameters;var  v1 : String;  v2 : String;begin
   result := TFHIRParameters.create;
   try
-    for v1 in FIdsList do
-      result.AddParameter('ids', TFhirId.create(v1));
+    for v1 in FIdList do
+      result.AddParameter('id', TFhirId.create(v1));
+    for v2 in FStatusList do
+      result.AddParameter('status', TFhirCode.create(v2));
     writeExtensions(result);
     result.link;
   finally
@@ -6302,13 +6463,14 @@ function TFHIRStatusOpRequest.asParams : TFhirParameters;var  v1 : String;begin
   end;
 end;
 function TFHIRStatusOpRequest.isKnownName(name : String) : boolean;begin
-  result := StringArrayExists(['ids'], name);
+  result := StringArrayExists(['id', 'status'], name);
 end;
 
 function TFHIRStatusOpRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, FIdsList.sizeInBytes(magic));
+  inc(result, FIdList.sizeInBytes(magic));
+  inc(result, FStatusList.sizeInBytes(magic));
 end;
 
 procedure TFHIRStatusOpResponse.SetReturn(value : TFhirBundle);

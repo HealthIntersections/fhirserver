@@ -33,7 +33,7 @@ unit fhir5_indexinfo;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -68,6 +68,9 @@ Type
     {$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
+    {$IFDEF FHIR_ARTIFACTASSESSMENT}
+    procedure buildIndexesForArtifactAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
     {$IFDEF FHIR_AUDITEVENT}
     procedure buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -98,9 +101,6 @@ Type
     {$IFDEF FHIR_CARETEAM}
     procedure buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
-    {$IFDEF FHIR_CATALOGENTRY}
-    procedure buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}
     procedure buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
@@ -118,6 +118,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION}
     procedure buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CLINICALUSEDEFINITION}
+    procedure buildIndexesForClinicalUseDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_CLINICALUSEISSUE}
     procedure buildIndexesForClinicalUseIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -139,6 +142,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_CONCEPTMAP}
     procedure buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CONCEPTMAP2}
+    procedure buildIndexesForConceptMap2(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_CONDITION}
     procedure buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -169,6 +175,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_DEVICEDEFINITION}
     procedure buildIndexesForDeviceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICEDISPENSE}
+    procedure buildIndexesForDeviceDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_DEVICEMETRIC}
     procedure buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -241,6 +250,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_HEALTHCARESERVICE}
     procedure buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMAGINGSELECTION}
+    procedure buildIndexesForImagingSelection(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_IMAGINGSTUDY}
     procedure buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -506,11 +518,13 @@ begin
   indexes.add('Account', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Account', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Account', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Account', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Account', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Account', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Account', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Account', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Account', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Account', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Account', 'guarantor', 'The parties ultimately responsible for balancing the Account', sptREFERENCE, ['Organization', 'Patient', 'RelatedPerson'], 'Account.guarantor.party', sxpNormal);
   indexes.add('Account', 'identifier', 'Account number', sptTOKEN, [], 'Account.identifier', sxpNormal);
   indexes.add('Account', 'name', 'Human-readable label', sptSTRING, [], 'Account.name', sxpNormal);
   indexes.add('Account', 'owner', 'Entity managing the Account', sptREFERENCE, ['Organization'], 'Account.owner', sxpNormal);
@@ -533,7 +547,8 @@ begin
   indexes.add('ActivityDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ActivityDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ActivityDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ActivityDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ActivityDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ActivityDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ActivityDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ActivityDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ActivityDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -551,6 +566,7 @@ begin
   indexes.add('ActivityDefinition', 'effective', 'The time during which the activity definition is intended to be in use', sptDATE, [], 'ActivityDefinition.effectivePeriod', sxpNormal);
   indexes.add('ActivityDefinition', 'identifier', 'External identifier for the activity definition', sptTOKEN, [], 'ActivityDefinition.identifier', sxpNormal);
   indexes.add('ActivityDefinition', 'jurisdiction', 'Intended jurisdiction for the activity definition', sptTOKEN, [], 'ActivityDefinition.jurisdiction', sxpNormal);
+  indexes.add('ActivityDefinition', 'kind', 'The kind of activity definition', sptTOKEN, [], 'ActivityDefinition.kind', sxpNormal);
   indexes.add('ActivityDefinition', 'name', 'Computationally friendly name of the activity definition', sptSTRING, [], 'ActivityDefinition.name', sxpNormal);
   indexes.add('ActivityDefinition', 'predecessor', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''predecessor'').resource', sxpNormal);
   indexes.add('ActivityDefinition', 'publisher', 'Name of the publisher of the activity definition', sptSTRING, [], 'ActivityDefinition.publisher', sxpNormal);
@@ -571,18 +587,19 @@ begin
   indexes.add('AdministrableProductDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AdministrableProductDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('AdministrableProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('AdministrableProductDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('AdministrableProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'device', 'A device that is integral to the medicinal product, in effect being considered as an "ingredient" of the medicinal product. This is not intended for devices that are just co-packaged', sptREFERENCE, ['DeviceDefinition'], 'AdministrableProductDefinition.device', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'dose-form', 'The administrable dose form, i.e. the dose form of the final product after necessary reconstitution or processing', sptTOKEN, [], 'AdministrableProductDefinition.administrableDoseForm', sxpNormal);
+  indexes.add('AdministrableProductDefinition', 'form-of', 'The medicinal product that this is an administrable form of. This is not a reference to the item(s) that make up this administrable form - it is the whole product', sptREFERENCE, ['MedicinalProductDefinition'], 'AdministrableProductDefinition.formOf', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'identifier', 'An identifier for the administrable product', sptTOKEN, [], 'AdministrableProductDefinition.identifier', sxpNormal);
-  indexes.add('AdministrableProductDefinition', 'ingredient', 'The ingredients of this administrable medicinal product. Sometimes it may be appropriate to specify these via the associated manufactured item(s)', sptREFERENCE, ['Ingredient'], 'AdministrableProductDefinition.ingredient', sxpNormal);
+  indexes.add('AdministrableProductDefinition', 'ingredient', 'The ingredients of this administrable medicinal product', sptTOKEN, [], 'AdministrableProductDefinition.ingredient', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'manufactured-item', 'The manufactured item(s) that this administrable product is produced from. Either a single item, or several that are mixed before administration (e.g. a power item and a solution item). Note that these are not raw ingredients', sptREFERENCE, ['ManufacturedItemDefinition'], 'AdministrableProductDefinition.producedFrom', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'route', 'Coded expression for the route', sptTOKEN, [], 'AdministrableProductDefinition.routeOfAdministration.code', sxpNormal);
-  indexes.add('AdministrableProductDefinition', 'subject', 'The medicinal product that this is an administrable form of. This is not a reference to the item(s) that make up this administrable form - it is the whole product', sptREFERENCE, ['MedicinalProductDefinition'], 'AdministrableProductDefinition.subject', sxpNormal);
   indexes.add('AdministrableProductDefinition', 'target-species', 'Coded expression for the species', sptTOKEN, [], 'AdministrableProductDefinition.routeOfAdministration.targetSpecies.code', sxpNormal);
   indexes.add('AdministrableProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
@@ -595,7 +612,8 @@ begin
   indexes.add('AdverseEvent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AdverseEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AdverseEvent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('AdverseEvent', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('AdverseEvent', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('AdverseEvent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('AdverseEvent', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('AdverseEvent', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('AdverseEvent', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -628,7 +646,8 @@ begin
   indexes.add('AllergyIntolerance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AllergyIntolerance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AllergyIntolerance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('AllergyIntolerance', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('AllergyIntolerance', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('AllergyIntolerance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('AllergyIntolerance', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('AllergyIntolerance', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('AllergyIntolerance', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -639,8 +658,8 @@ begin
   indexes.add('AllergyIntolerance', 'code', '): Code that identifies the allergy or intolerance', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('AllergyIntolerance', 'criticality', 'low | high | unable-to-assess', sptTOKEN, [], 'AllergyIntolerance.criticality', sxpNormal);
-  indexes.add('AllergyIntolerance', 'date', '): Date first version of the resource instance was recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('AllergyIntolerance', 'date', '): Date first version of the resource instance was recorded', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('AllergyIntolerance', 'identifier', '): External ids for this item', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -650,13 +669,13 @@ begin
   indexes.add('AllergyIntolerance', 'manifestation-code', 'Clinical symptoms/signs associated with the Event', sptTOKEN, [], 'AllergyIntolerance.reaction.manifestation.concept', sxpNull);
   indexes.add('AllergyIntolerance', 'manifestation-reference', 'Clinical symptoms/signs associated with the Event', sptREFERENCE, [], 'AllergyIntolerance.reaction.manifestation.reference', sxpNull);
   indexes.add('AllergyIntolerance', 'patient', '): Who the sensitivity is for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient'+
    ' | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('AllergyIntolerance', 'recorder', 'Who recorded the sensitivity', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AllergyIntolerance.recorder', sxpNormal);
+  indexes.add('AllergyIntolerance', 'recorder', 'Who recorded the sensitivity', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AllergyIntolerance.recorder', sxpNormal);
   indexes.add('AllergyIntolerance', 'route', 'How the subject was exposed to the substance', sptTOKEN, [], 'AllergyIntolerance.reaction.exposureRoute', sxpNormal);
   indexes.add('AllergyIntolerance', 'severity', 'mild | moderate | severe (of event as a whole)', sptTOKEN, [], 'AllergyIntolerance.reaction.severity', sxpNormal);
   indexes.add('AllergyIntolerance', 'type', '): allergy | intolerance - Underlying mechanism (if known)', sptTOKEN, [], 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type', sxpNormal);
@@ -675,27 +694,31 @@ begin
   indexes.add('Appointment', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Appointment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Appointment', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Appointment', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Appointment', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Appointment', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Appointment', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Appointment', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Appointment', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Appointment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Appointment', 'actor', 'Any one of the individuals participating in the appointment', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor', sxpNormal);
+  indexes.add('Appointment', 'actor', 'Any one of the individuals participating in the appointment', sptREFERENCE, ['Practitioner', 'Group', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor', sxpNormal);
   indexes.add('Appointment', 'appointment-type', 'The style of appointment or patient that has been booked in the slot (not service type)', sptTOKEN, [], 'Appointment.appointmentType', sxpNormal);
   indexes.add('Appointment', 'based-on', 'The service request this appointment is allocated to assess', sptREFERENCE, ['ServiceRequest'], 'Appointment.basedOn', sxpNormal);
-  indexes.add('Appointment', 'date', 'Appointment date/time.', sptDATE, [], 'Appointment.start', sxpNormal);
+  indexes.add('Appointment', 'date', 'Appointment date/time.', sptDATE, [], '(start | requestedPeriod.start).first()', sxpNormal);
+  indexes.add('Appointment', 'group', 'One of the individuals of the appointment is this patient', sptREFERENCE, ['Practitioner', 'Group', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Group) | Appointment.subject.where(resolve() is Group)', sxpNormal);
   indexes.add('Appointment', 'identifier', 'An Identifier of the Appointment', sptTOKEN, [], 'Appointment.identifier', sxpNormal);
-  indexes.add('Appointment', 'location', 'This location is listed in the participants of the appointment', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Location)', sxpNormal);
+  indexes.add('Appointment', 'location', 'This location is listed in the participants of the appointment', sptREFERENCE, ['Practitioner', 'Group', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Location)', sxpNormal);
   indexes.add('Appointment', 'part-status', 'The Participation status of the subject, or other participant on the appointment. Can be used to locate participants that have not responded to meeting requests.', sptTOKEN, [], 'Appointment.participant.status', sxpNormal);
-  indexes.add('Appointment', 'patient', 'One of the individuals of the appointment is this patient', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Patient)', sxpNormal);
-  indexes.add('Appointment', 'practitioner', 'One of the individuals of the appointment is this practitioner', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Practitioner)', sxpNormal);
+  indexes.add('Appointment', 'patient', 'One of the individuals of the appointment is this patient', sptREFERENCE, ['Practitioner', 'Group', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Patient) | Appointment.subject.where(resolve() is Patient)', sxpNormal);
+  indexes.add('Appointment', 'practitioner', 'One of the individuals of the appointment is this practitioner', sptREFERENCE, ['Practitioner', 'Group', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Appointment.participant.actor.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('Appointment', 'reason-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Appointment.reason.concept', sxpNormal);
   indexes.add('Appointment', 'reason-reference', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Appointment.reason.reference', sxpNormal);
+  indexes.add('Appointment', 'requested-period', 'During what period was the Appointment requested to take place', sptDATE, [], 'requestedPeriod', sxpNormal);
   indexes.add('Appointment', 'service-category', 'A broad categorization of the service that is to be performed during this appointment', sptTOKEN, [], 'Appointment.serviceCategory', sxpNormal);
   indexes.add('Appointment', 'service-type', 'The specific service that is to be performed during this appointment', sptTOKEN, [], 'Appointment.serviceType', sxpNormal);
   indexes.add('Appointment', 'slot', 'The slots that this appointment is filling', sptREFERENCE, ['Slot'], 'Appointment.slot', sxpNormal);
   indexes.add('Appointment', 'specialty', 'The specialty of a practitioner that would be required to perform the service requested in this appointment', sptTOKEN, [], 'Appointment.specialty', sxpNormal);
   indexes.add('Appointment', 'status', 'The overall status of the appointment', sptTOKEN, [], 'Appointment.status', sxpNormal);
+  indexes.add('Appointment', 'subject', 'One of the individuals of the appointment is this patient', sptREFERENCE, ['Group', 'Patient'], 'Appointment.subject', sxpNormal);
   indexes.add('Appointment', 'supporting-info', 'Additional information to support the appointment', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Appointment.supportingInformation', sxpNormal);
   indexes.add('Appointment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Appointment', ['actor']);
@@ -712,18 +735,20 @@ begin
   indexes.add('AppointmentResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AppointmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AppointmentResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('AppointmentResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('AppointmentResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('AppointmentResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('AppointmentResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('AppointmentResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('AppointmentResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('AppointmentResponse', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('AppointmentResponse', 'actor', 'The Person, Location/HealthcareService or Device that this appointment response replies for', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor', sxpNormal);
+  indexes.add('AppointmentResponse', 'actor', 'The Person, Location/HealthcareService or Device that this appointment response replies for', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor', sxpNormal);
   indexes.add('AppointmentResponse', 'appointment', 'The appointment that the response is attached to', sptREFERENCE, ['Appointment'], 'AppointmentResponse.appointment', sxpNormal);
+  indexes.add('AppointmentResponse', 'group', 'This Response is for this Group', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Group)', sxpNormal);
   indexes.add('AppointmentResponse', 'identifier', 'An Identifier in this appointment response', sptTOKEN, [], 'AppointmentResponse.identifier', sxpNormal);
-  indexes.add('AppointmentResponse', 'location', 'This Response is for this Location', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Location)', sxpNormal);
+  indexes.add('AppointmentResponse', 'location', 'This Response is for this Location', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Location)', sxpNormal);
   indexes.add('AppointmentResponse', 'part-status', 'The participants acceptance status for this appointment', sptTOKEN, [], 'AppointmentResponse.participantStatus', sxpNormal);
-  indexes.add('AppointmentResponse', 'patient', 'This Response is for this Patient', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Patient)', sxpNormal);
-  indexes.add('AppointmentResponse', 'practitioner', 'This Response is for this Practitioner', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Practitioner)', sxpNormal);
+  indexes.add('AppointmentResponse', 'patient', 'This Response is for this Patient', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Patient)', sxpNormal);
+  indexes.add('AppointmentResponse', 'practitioner', 'This Response is for this Practitioner', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'AppointmentResponse.actor.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('AppointmentResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'AppointmentResponse', ['actor']);
   compartments.register('Patient', 'AppointmentResponse', ['actor']);
@@ -732,6 +757,24 @@ begin
 end;
 {$ENDIF FHIR_APPOINTMENTRESPONSE}
 
+{$IFDEF FHIR_ARTIFACTASSESSMENT}
+procedure TFHIRIndexBuilderR5.buildIndexesForArtifactAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ArtifactAssessment', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
+  indexes.add('ArtifactAssessment', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('ArtifactAssessment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ArtifactAssessment', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ArtifactAssessment', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ArtifactAssessment', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ArtifactAssessment', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
+  indexes.add('ArtifactAssessment', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ArtifactAssessment', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ArtifactAssessment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ArtifactAssessment', 'date', 'The artifact assessment publication date', sptDATE, [], 'ArtifactAssessment.date', sxpNormal);
+  indexes.add('ArtifactAssessment', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_ARTIFACTASSESSMENT}
+
 {$IFDEF FHIR_AUDITEVENT}
 procedure TFHIRIndexBuilderR5.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -739,32 +782,27 @@ begin
   indexes.add('AuditEvent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('AuditEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('AuditEvent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('AuditEvent', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('AuditEvent', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('AuditEvent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('AuditEvent', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('AuditEvent', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('AuditEvent', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('AuditEvent', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('AuditEvent', 'action', 'Type of action performed during the event', sptTOKEN, [], 'AuditEvent.action', sxpNormal);
-  indexes.add('AuditEvent', 'address', 'Identifier for the network access point of the user device', sptSTRING, [], 'AuditEvent.agent.network.address', sxpNormal);
-  indexes.add('AuditEvent', 'agent', 'Identifier of who', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AuditEvent.agent.who', sxpNormal);
-  indexes.add('AuditEvent', 'agent-name', 'Human friendly name for the agent', sptSTRING, [], 'AuditEvent.agent.name', sxpNormal);
+  indexes.add('AuditEvent', 'agent', 'Identifier of who', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AuditEvent.agent.who', sxpNormal);
   indexes.add('AuditEvent', 'agent-role', 'Agent role in the event', sptTOKEN, [], 'AuditEvent.agent.role', sxpNormal);
-  indexes.add('AuditEvent', 'altid', 'Alternative User identity', sptTOKEN, [], 'AuditEvent.agent.altId', sxpNormal);
-  indexes.add('AuditEvent', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'AuditEvent.basedOn', sxpNormal);
+  indexes.add('AuditEvent', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'Task', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'AuditEvent.basedOn', sxpNormal);
+  indexes.add('AuditEvent', 'category', 'Category of event', sptTOKEN, [], 'AuditEvent.category', sxpNormal);
+  indexes.add('AuditEvent', 'code', 'More specific code for the event', sptTOKEN, [], 'AuditEvent.code', sxpNormal);
   indexes.add('AuditEvent', 'date', 'Time when the event was recorded', sptDATE, [], 'AuditEvent.recorded', sxpNormal);
   indexes.add('AuditEvent', 'encounter', 'Encounter related to the activity recorded in the AuditEvent', sptREFERENCE, ['Encounter'], 'AuditEvent.encounter', sxpNormal);
   indexes.add('AuditEvent', 'entity', 'Specific instance of resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AuditEvent.entity.what', sxpNormal);
-  indexes.add('AuditEvent', 'entity-name', 'Descriptor for entity', sptSTRING, [], 'AuditEvent.entity.name', sxpNormal);
   indexes.add('AuditEvent', 'entity-role', 'What role the entity played', sptTOKEN, [], 'AuditEvent.entity.role', sxpNormal);
-  indexes.add('AuditEvent', 'entity-type', 'Type of entity involved', sptTOKEN, [], 'AuditEvent.entity.type', sxpNormal);
-  indexes.add('AuditEvent', 'outcome', 'Whether the event succeeded or failed', sptTOKEN, [], 'AuditEvent.outcome', sxpNormal);
+  indexes.add('AuditEvent', 'outcome', 'Whether the event succeeded or failed', sptTOKEN, [], 'AuditEvent.outcome.code', sxpNormal);
   indexes.add('AuditEvent', 'patient', 'Identifier of who', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AuditEvent.agent.who.where(resolve() is Patient) | AuditEvent.entity.what.where(resolve() is Patient)', sxpNormal);
   indexes.add('AuditEvent', 'policy', 'Policy that authorized event', sptURI, [], 'AuditEvent.agent.policy', sxpNormal);
-  indexes.add('AuditEvent', 'purpose', 'The purposeOfUse of the event', sptTOKEN, [], 'AuditEvent.purposeOfEvent | AuditEvent.agent.purposeOfUse', sxpNormal);
-  indexes.add('AuditEvent', 'site', 'Logical source location within the enterprise', sptTOKEN, [], 'AuditEvent.source.site', sxpNormal);
-  indexes.add('AuditEvent', 'source', 'The identity of source detecting the event', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AuditEvent.source.observer', sxpNormal);
-  indexes.add('AuditEvent', 'subtype', 'More specific type/id for the event', sptTOKEN, [], 'AuditEvent.subtype', sxpNormal);
-  indexes.add('AuditEvent', 'type', 'Type/identifier of event', sptTOKEN, [], 'AuditEvent.type', sxpNormal);
+  indexes.add('AuditEvent', 'purpose', 'The authorization (purposeOfUse) of the event', sptTOKEN, [], 'AuditEvent.authorization | AuditEvent.agent.authorization', sxpNormal);
+  indexes.add('AuditEvent', 'source', 'The identity of source detecting the event', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'AuditEvent.source.observer', sxpNormal);
   indexes.add('AuditEvent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'AuditEvent', ['agent']);
   compartments.register('Patient', 'AuditEvent', ['patient']);
@@ -779,7 +817,8 @@ begin
   indexes.add('Basic', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Basic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Basic', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Basic', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Basic', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Basic', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Basic', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Basic', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Basic', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -804,7 +843,8 @@ begin
   indexes.add('Binary', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Binary', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Binary', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Binary', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Binary', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Binary', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Binary', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Binary', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Binary', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -820,11 +860,13 @@ begin
   indexes.add('BiologicallyDerivedProduct', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('BiologicallyDerivedProduct', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('BiologicallyDerivedProduct', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('BiologicallyDerivedProduct', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('BiologicallyDerivedProduct', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('BiologicallyDerivedProduct', 'biological-source', 'The biological source for the biologically derived product', sptTOKEN, [], 'BiologicallyDerivedProduct.biologicalSource', sxpNormal);
   indexes.add('BiologicallyDerivedProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
@@ -836,7 +878,8 @@ begin
   indexes.add('BodyStructure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('BodyStructure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('BodyStructure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('BodyStructure', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('BodyStructure', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('BodyStructure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('BodyStructure', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('BodyStructure', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('BodyStructure', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -857,7 +900,8 @@ begin
   indexes.add('Bundle', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Bundle', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Bundle', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Bundle', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Bundle', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Bundle', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Bundle', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Bundle', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Bundle', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -878,7 +922,8 @@ begin
   indexes.add('CapabilityStatement', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CapabilityStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CapabilityStatement', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CapabilityStatement', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CapabilityStatement', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CapabilityStatement', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CapabilityStatement', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CapabilityStatement', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CapabilityStatement', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -937,7 +982,8 @@ begin
   indexes.add('CapabilityStatement2', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CapabilityStatement2', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CapabilityStatement2', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CapabilityStatement2', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CapabilityStatement2', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CapabilityStatement2', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CapabilityStatement2', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CapabilityStatement2', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CapabilityStatement2', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -975,7 +1021,8 @@ begin
   indexes.add('CarePlan', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CarePlan', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CarePlan', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CarePlan', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CarePlan', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CarePlan', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CarePlan', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CarePlan', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CarePlan', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -988,8 +1035,8 @@ begin
   indexes.add('CarePlan', 'care-team', 'Who''s involved in plan?', sptREFERENCE, ['CareTeam'], 'CarePlan.careTeam', sxpNormal);
   indexes.add('CarePlan', 'category', 'Type of plan', sptTOKEN, [], 'CarePlan.category', sxpNormal);
   indexes.add('CarePlan', 'condition', 'Reference to a resource (by instance)', sptREFERENCE, [], 'CarePlan.addresses.reference', sxpNormal);
-  indexes.add('CarePlan', 'date', '): Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CarePlan', 'date', '): Time period plan covers', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('CarePlan', 'encounter', 'The Encounter during which this CarePlan was created', sptREFERENCE, ['Encounter'], 'CarePlan.encounter', sxpNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', sptREFERENCE, ['Goal'], 'CarePlan.goal', sxpNormal);
   indexes.add('CarePlan', 'identifier', '): External Ids for this plan', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -1002,7 +1049,7 @@ begin
   indexes.add('CarePlan', 'intent', 'proposal | plan | order | option | directive', sptTOKEN, [], 'CarePlan.intent', sxpNormal);
   indexes.add('CarePlan', 'part-of', 'Part of referenced CarePlan', sptREFERENCE, ['CarePlan'], 'CarePlan.partOf', sxpNormal);
   indexes.add('CarePlan', 'patient', '): Who the care plan is for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subj'+
    'ect.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -1027,14 +1074,15 @@ begin
   indexes.add('CareTeam', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CareTeam', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CareTeam', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CareTeam', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CareTeam', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CareTeam', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CareTeam', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CareTeam', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CareTeam', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('CareTeam', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('CareTeam', 'category', 'Type of team', sptTOKEN, [], 'CareTeam.category', sxpNormal);
-  indexes.add('CareTeam', 'date', '): A date within the coverage time period.', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('CareTeam', 'date', '): A date within the coverage time period.', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('CareTeam', 'identifier', '): External Ids for this team', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -1043,7 +1091,7 @@ begin
   indexes.add('CareTeam', 'name', 'Name of the team, such as crisis assessment team', sptSTRING, [], 'CareTeam.name | CareTeam.extension(''http://hl7.org/fhir/StructureDefinition/careteam-alias'')', sxpNormal);
   indexes.add('CareTeam', 'participant', 'Who is involved', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'CareTeam.participant.member', sxpNormal);
   indexes.add('CareTeam', 'patient', '): Who care team is for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subject.'+
    'where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -1058,29 +1106,6 @@ begin
 end;
 {$ENDIF FHIR_CARETEAM}
 
-{$IFDEF FHIR_CATALOGENTRY}
-procedure TFHIRIndexBuilderR5.buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('CatalogEntry', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
-  indexes.add('CatalogEntry', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
-  indexes.add('CatalogEntry', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
-  indexes.add('CatalogEntry', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CatalogEntry', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
-  indexes.add('CatalogEntry', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
-  indexes.add('CatalogEntry', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
-  indexes.add('CatalogEntry', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
-  indexes.add('CatalogEntry', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('CatalogEntry', 'identifier', 'Business identifier of the catalog entry', sptTOKEN, [], 'CatalogEntry.identifier', sxpNormal);
-  indexes.add('CatalogEntry', 'name', 'Displayable name assigned to the catalog entry', sptSTRING, [], 'CatalogEntry.name', sxpNormal);
-  indexes.add('CatalogEntry', 'orderable', 'Is orderable', sptTOKEN, [], 'CatalogEntry.orderable', sxpNormal);
-  indexes.add('CatalogEntry', 'referenced-item', 'Item attached to this entry of the catalog', sptREFERENCE, ['Practitioner', 'SpecimenDefinition', 'Organization', 'DeviceDefinition', 'ObservationDefinition', 'MedicationKnowledge', 'PlanDefinition', 'Substance', 'HealthcareService', 'PractitionerRole', 'ActivityDefinition', 'Location'], 'CatalogEntry.referencedItem', sxpNormal);
-  indexes.add('CatalogEntry', 'related-entry', 'The reference to the related entry', sptREFERENCE, ['CatalogEntry'], 'CatalogEntry.relatedEntry.target', sxpNormal);
-  indexes.add('CatalogEntry', 'status', 'Usability status of this entry in the catalog', sptTOKEN, [], 'CatalogEntry.status', sxpNormal);
-  indexes.add('CatalogEntry', 'type', 'ActivityDefinition | PlanDefinition | SpecimenDefinition | ObservationDefinition | DeviceDefinition | Organization | Practitioner | PractitionerRole | HealthcareService | MedicationKnowledge | Medication | Substance | Location', sptTOKEN, [], 'CatalogEntry.type', sxpNormal);
-  indexes.add('CatalogEntry', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-end;
-{$ENDIF FHIR_CATALOGENTRY}
-
 {$IFDEF FHIR_CHARGEITEM}
 procedure TFHIRIndexBuilderR5.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1088,7 +1113,8 @@ begin
   indexes.add('ChargeItem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ChargeItem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ChargeItem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ChargeItem', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ChargeItem', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ChargeItem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ChargeItem', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ChargeItem', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ChargeItem', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1126,7 +1152,8 @@ begin
   indexes.add('ChargeItemDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ChargeItemDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ChargeItemDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ChargeItemDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ChargeItemDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ChargeItemDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ChargeItemDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ChargeItemDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ChargeItemDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1157,7 +1184,8 @@ begin
   indexes.add('Citation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Citation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Citation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Citation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Citation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Citation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Citation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Citation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Citation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1189,7 +1217,8 @@ begin
   indexes.add('Claim', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Claim', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Claim', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Claim', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Claim', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Claim', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Claim', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Claim', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Claim', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1227,7 +1256,8 @@ begin
   indexes.add('ClaimResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ClaimResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ClaimResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ClaimResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ClaimResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ClaimResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ClaimResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ClaimResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ClaimResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1256,22 +1286,23 @@ begin
   indexes.add('ClinicalImpression', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ClinicalImpression', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ClinicalImpression', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ClinicalImpression', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ClinicalImpression', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ClinicalImpression', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ClinicalImpression', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ClinicalImpression', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ClinicalImpression', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('ClinicalImpression', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('ClinicalImpression', 'date', '): When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('ClinicalImpression', 'date', '): When the assessment was documented', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('ClinicalImpression', 'encounter', 'The Encounter during which this ClinicalImpression was created', sptREFERENCE, ['Encounter'], 'ClinicalImpression.encounter', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-code', 'Reference to a concept (by class)', sptTOKEN, [], 'ClinicalImpression.finding.item.concept', sxpNormal);
   indexes.add('ClinicalImpression', 'finding-ref', 'Reference to a resource (by instance)', sptREFERENCE, [], 'ClinicalImpression.finding.item.reference', sxpNormal);
   indexes.add('ClinicalImpression', 'identifier', 'Business identifier', sptTOKEN, [], 'ClinicalImpression.identifier', sxpNormal);
-  indexes.add('ClinicalImpression', 'patient', '): Patient or group assessed', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+  indexes.add('ClinicalImpression', 'patient', '): Patient assessed', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
-      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient '+
-   '| List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
+      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.su'+
+   'bject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('ClinicalImpression', 'performer', 'The clinician performing the assessment', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ClinicalImpression.performer', sxpNormal);
@@ -1287,6 +1318,34 @@ begin
 end;
 {$ENDIF FHIR_CLINICALIMPRESSION}
 
+{$IFDEF FHIR_CLINICALUSEDEFINITION}
+procedure TFHIRIndexBuilderR5.buildIndexesForClinicalUseDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ClinicalUseDefinition', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('ClinicalUseDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'contraindication', 'The situation that is being documented as contraindicating against this item, as a code', sptTOKEN, [], 'ClinicalUseDefinition.contraindication.diseaseSymptomProcedure', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'contraindication-reference', 'The situation that is being documented as contraindicating against this item, as a reference', sptREFERENCE, [], 'ClinicalUseDefinition.contraindication.diseaseSymptomProcedure', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'effect', 'The situation in which the undesirable effect may manifest, as a code', sptTOKEN, [], 'ClinicalUseDefinition.undesirableEffect.symptomConditionEffect', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'effect-reference', 'The situation in which the undesirable effect may manifest, as a reference', sptREFERENCE, [], 'ClinicalUseDefinition.undesirableEffect.symptomConditionEffect', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'identifier', 'Business identifier for this issue', sptTOKEN, [], 'ClinicalUseDefinition.identifier', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'indication', 'The situation that is being documented as an indicaton for this item, as a code', sptTOKEN, [], 'ClinicalUseDefinition.indication.diseaseSymptomProcedure', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'indication-reference', 'The situation that is being documented as an indicaton for this item, as a reference', sptREFERENCE, [], 'ClinicalUseDefinition.indication.diseaseSymptomProcedure', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'interaction', 'The type of the interaction e.g. drug-drug interaction, drug-food interaction, drug-lab test interaction', sptTOKEN, [], 'ClinicalUseDefinition.interaction.type', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'product', 'The medicinal product for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition', 'Device', 'Medication', 'DeviceDefinition', 'PlanDefinition', 'Substance', 'ActivityDefinition'], 'ClinicalUseDefinition.subject.where(resolve() is MedicinalProductDefinition)', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'subject', 'The resource for which this is a clinical usage issue', sptREFERENCE, ['MedicinalProductDefinition', 'Device', 'Medication', 'DeviceDefinition', 'PlanDefinition', 'Substance', 'ActivityDefinition'], 'ClinicalUseDefinition.subject', sxpNormal);
+  indexes.add('ClinicalUseDefinition', 'type', 'indication | contraindication | interaction | undesirable-effect | warning', sptTOKEN, [], 'ClinicalUseDefinition.type', sxpNormal);
+  indexes.add('ClinicalUseDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_CLINICALUSEDEFINITION}
+
 {$IFDEF FHIR_CLINICALUSEISSUE}
 procedure TFHIRIndexBuilderR5.buildIndexesForClinicalUseIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1294,7 +1353,8 @@ begin
   indexes.add('ClinicalUseIssue', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ClinicalUseIssue', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ClinicalUseIssue', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ClinicalUseIssue', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ClinicalUseIssue', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ClinicalUseIssue', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ClinicalUseIssue', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ClinicalUseIssue', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ClinicalUseIssue', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1321,7 +1381,8 @@ begin
   indexes.add('CodeSystem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CodeSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CodeSystem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CodeSystem', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CodeSystem', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CodeSystem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CodeSystem', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CodeSystem', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CodeSystem', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1377,7 +1438,8 @@ begin
   indexes.add('Communication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Communication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Communication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Communication', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Communication', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Communication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Communication', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Communication', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Communication', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1401,6 +1463,7 @@ begin
   indexes.add('Communication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Encounter', 'Communication', ['encounter']);
+  compartments.register('Device', 'Communication', ['sender', 'recipient']);
   compartments.register('Patient', 'Communication', ['subject', 'sender', 'recipient']);
   compartments.register('Practitioner', 'Communication', ['sender', 'recipient']);
   compartments.register('RelatedPerson', 'Communication', ['sender', 'recipient']);
@@ -1414,7 +1477,8 @@ begin
   indexes.add('CommunicationRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CommunicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CommunicationRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CommunicationRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CommunicationRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CommunicationRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CommunicationRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CommunicationRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CommunicationRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1438,6 +1502,7 @@ begin
   indexes.add('CommunicationRequest', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'CommunicationRequest', ['information-provider', 'recipient']);
   compartments.register('Encounter', 'CommunicationRequest', ['encounter']);
+  compartments.register('Device', 'CommunicationRequest', ['sender', 'recipient']);
   compartments.register('Patient', 'CommunicationRequest', ['subject', 'information-provider', 'recipient', 'requester']);
   compartments.register('Practitioner', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
   compartments.register('RelatedPerson', 'CommunicationRequest', ['information-provider', 'recipient', 'requester']);
@@ -1451,7 +1516,8 @@ begin
   indexes.add('CompartmentDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CompartmentDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CompartmentDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CompartmentDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CompartmentDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CompartmentDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CompartmentDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CompartmentDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CompartmentDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1500,7 +1566,8 @@ begin
   indexes.add('Composition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Composition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Composition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Composition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Composition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Composition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Composition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Composition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Composition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1510,8 +1577,8 @@ begin
   indexes.add('Composition', 'category', 'Categorization of Composition', sptTOKEN, [], 'Composition.category', sxpNormal);
   indexes.add('Composition', 'confidentiality', 'As defined by affinity domain', sptTOKEN, [], 'Composition.confidentiality', sxpNormal);
   indexes.add('Composition', 'context', 'Code(s) that apply to the event being documented', sptTOKEN, [], 'Composition.event.code', sxpNormal);
-  indexes.add('Composition', 'date', '): Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Composition', 'date', '): Composition editing time', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Composition', 'encounter', '): Context of the Composition', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Composition', 'entry', 'A reference to data that supports this section', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.section.entry', sxpNormal);
@@ -1521,15 +1588,14 @@ begin
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier |'+
    ' VisionPrescription.identifier', sxpNormal);
   indexes.add('Composition', 'patient', '): Who and/or what the composition is about', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.'+
    'patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
   indexes.add('Composition', 'period', 'The period covered by the documentation', sptDATE, [], 'Composition.event.period', sxpNormal);
-  indexes.add('Composition', 'related-id', 'Target of the relationship', sptTOKEN, [], '(Composition.relatesTo.target as Identifier)', sxpNormal);
-  indexes.add('Composition', 'related-ref', 'Target of the relationship', sptREFERENCE, ['Composition'], '(Composition.relatesTo.target as Reference)', sxpNormal);
+  indexes.add('Composition', 'related', 'Target of the relationship', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.relatesTo.resourceReference', sxpNormal);
   indexes.add('Composition', 'section', 'Classification of section (recommended)', sptTOKEN, [], 'Composition.section.code', sxpNormal);
   indexes.add('Composition', 'status', 'preliminary | final | amended | entered-in-error', sptTOKEN, [], 'Composition.status', sxpNormal);
   indexes.add('Composition', 'subject', 'Who and/or what the composition is about', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.subject', sxpNormal);
@@ -1551,7 +1617,8 @@ begin
   indexes.add('ConceptMap', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ConceptMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ConceptMap', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ConceptMap', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ConceptMap', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ConceptMap', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ConceptMap', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ConceptMap', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ConceptMap', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1606,6 +1673,49 @@ begin
 end;
 {$ENDIF FHIR_CONCEPTMAP}
 
+{$IFDEF FHIR_CONCEPTMAP2}
+procedure TFHIRIndexBuilderR5.buildIndexesForConceptMap2(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ConceptMap2', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
+  indexes.add('ConceptMap2', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('ConceptMap2', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ConceptMap2', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ConceptMap2', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ConceptMap2', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ConceptMap2', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
+  indexes.add('ConceptMap2', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ConceptMap2', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ConceptMap2', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ConceptMap2', 'context', 'A use context assigned to the concept map', sptTOKEN, [], '(ConceptMap2.useContext.value as CodeableConcept)', sxpNormal);
+  indexes.add('ConceptMap2', 'context-quantity', 'A quantity- or range-valued use context assigned to the concept map', sptQUANTITY, [], '(ConceptMap2.useContext.value as Quantity) | (ConceptMap2.useContext.value as Range)', sxpNormal);
+  indexes.add('ConceptMap2', 'context-type', 'A type of use context assigned to the concept map', sptTOKEN, [], 'ConceptMap2.useContext.code', sxpNormal);
+  indexes.add('ConceptMap2', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the concept map', sptCOMPOSITE, [], 'ConceptMap2.useContext', sxpNormal);
+  indexes.add('ConceptMap2', 'context-type-value', 'A use context type and value assigned to the concept map', sptCOMPOSITE, [], 'ConceptMap2.useContext', sxpNormal);
+  indexes.add('ConceptMap2', 'date', 'The concept map publication date', sptDATE, [], 'ConceptMap2.date', sxpNormal);
+  indexes.add('ConceptMap2', 'dependson', 'Reference to property mapping depends on', sptURI, [], 'ConceptMap2.group.element.target.dependsOn.property', sxpNormal);
+  indexes.add('ConceptMap2', 'description', 'The description of the concept map', sptSTRING, [], 'ConceptMap2.description', sxpNormal);
+  indexes.add('ConceptMap2', 'identifier', 'External identifier for the concept map', sptTOKEN, [], 'ConceptMap2.identifier', sxpNormal);
+  indexes.add('ConceptMap2', 'jurisdiction', 'Intended jurisdiction for the concept map', sptTOKEN, [], 'ConceptMap2.jurisdiction', sxpNormal);
+  indexes.add('ConceptMap2', 'name', 'Computationally friendly name of the concept map', sptSTRING, [], 'ConceptMap2.name', sxpNormal);
+  indexes.add('ConceptMap2', 'other', 'canonical reference to an additional ConceptMap2 to use for mapping if the source concept is unmapped', sptREFERENCE, ['ConceptMap2'], 'ConceptMap2.group.unmapped.url', sxpNormal);
+  indexes.add('ConceptMap2', 'product', 'Reference to property mapping depends on', sptURI, [], 'ConceptMap2.group.element.target.product.property', sxpNormal);
+  indexes.add('ConceptMap2', 'publisher', 'Name of the publisher of the concept map', sptSTRING, [], 'ConceptMap2.publisher', sxpNormal);
+  indexes.add('ConceptMap2', 'source', 'The source value set that contains the concepts that are being mapped', sptREFERENCE, ['ValueSet'], '(ConceptMap2.source as canonical)', sxpNormal);
+  indexes.add('ConceptMap2', 'source-code', 'Identifies element being mapped', sptTOKEN, [], 'ConceptMap2.group.element.code', sxpNormal);
+  indexes.add('ConceptMap2', 'source-system', 'Source system where concepts to be mapped are defined', sptURI, [], 'ConceptMap2.group.source', sxpNormal);
+  indexes.add('ConceptMap2', 'source-uri', 'The source value set that contains the concepts that are being mapped', sptREFERENCE, ['ValueSet'], '(ConceptMap2.source as uri)', sxpNormal);
+  indexes.add('ConceptMap2', 'status', 'The current status of the concept map', sptTOKEN, [], 'ConceptMap2.status', sxpNormal);
+  indexes.add('ConceptMap2', 'target', 'The target value set which provides context for the mappings', sptREFERENCE, ['ValueSet'], '(ConceptMap2.target as canonical)', sxpNormal);
+  indexes.add('ConceptMap2', 'target-code', 'Code that identifies the target element', sptTOKEN, [], 'ConceptMap2.group.element.target.code', sxpNormal);
+  indexes.add('ConceptMap2', 'target-system', 'Target system that the concepts are to be mapped to', sptURI, [], 'ConceptMap2.group.target', sxpNormal);
+  indexes.add('ConceptMap2', 'target-uri', 'The target value set which provides context for the mappings', sptREFERENCE, ['ValueSet'], '(ConceptMap2.target as uri)', sxpNormal);
+  indexes.add('ConceptMap2', 'title', 'The human-friendly name of the concept map', sptSTRING, [], 'ConceptMap2.title', sxpNormal);
+  indexes.add('ConceptMap2', 'url', 'The uri that identifies the concept map', sptURI, [], 'ConceptMap2.url', sxpNormal);
+  indexes.add('ConceptMap2', 'version', 'The business version of the concept map', sptTOKEN, [], 'ConceptMap2.version', sxpNormal);
+  indexes.add('ConceptMap2', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_CONCEPTMAP2}
+
 {$IFDEF FHIR_CONDITION}
 procedure TFHIRIndexBuilderR5.buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1613,7 +1723,8 @@ begin
   indexes.add('Condition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Condition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Condition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Condition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Condition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Condition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Condition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Condition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Condition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1639,7 +1750,7 @@ begin
   indexes.add('Condition', 'onset-date', 'Date related onsets (dateTime and Period)', sptDATE, [], 'Condition.onset.as(dateTime) | Condition.onset.as(Period)', sxpNormal);
   indexes.add('Condition', 'onset-info', 'Onsets as a string', sptSTRING, [], 'Condition.onset.as(string)', sxpNormal);
   indexes.add('Condition', 'patient', '): Who has the condition?', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subje'+
    'ct.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -1665,7 +1776,8 @@ begin
   indexes.add('ConditionDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ConditionDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ConditionDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ConditionDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ConditionDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ConditionDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ConditionDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ConditionDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ConditionDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1696,7 +1808,8 @@ begin
   indexes.add('Consent', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Consent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Consent', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Consent', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Consent', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Consent', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Consent', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Consent', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Consent', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1704,11 +1817,11 @@ begin
   indexes.add('Consent', 'action', 'Actions controlled by this rule', sptTOKEN, [], 'Consent.provision.action', sxpNormal);
   indexes.add('Consent', 'actor', 'Resource for the actor (or group, by role)', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Consent.provision.actor.reference', sxpNormal);
   indexes.add('Consent', 'category', 'Classification of the consent statement - for indexing/retrieval', sptTOKEN, [], 'Consent.category', sxpNormal);
-  indexes.add('Consent', 'consentor', 'Who is agreeing to the policy and rules', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Consent.performer', sxpNormal);
   indexes.add('Consent', 'controller', 'Consent Enforcer', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'HealthcareService'], 'Consent.controller', sxpNormal);
   indexes.add('Consent', 'data', 'The actual data reference', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Consent.provision.data.reference', sxpNormal);
-  indexes.add('Consent', 'date', '): When consent was agreed to', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Consent', 'date', '): When consent was agreed to', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Consent', 'grantee', 'Who is agreeing to the policy and rules', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Consent.grantee', sxpNormal);
   indexes.add('Consent', 'identifier', '): Identifier for this record (external references)', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -1716,7 +1829,7 @@ begin
    'nPrescription.identifier', sxpNormal);
   indexes.add('Consent', 'manager', 'Consent workflow management', sptREFERENCE, ['Practitioner', 'Organization', 'Patient', 'HealthcareService'], 'Consent.manager', sxpNormal);
   indexes.add('Consent', 'patient', '): Who the consent applies to', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.sub'+
    'ject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -1725,11 +1838,10 @@ begin
   indexes.add('Consent', 'period', 'Timeframe for this rule', sptDATE, [], 'Consent.provision.period', sxpNormal);
   indexes.add('Consent', 'policy-uri', 'Search for Consents aligned with a specific policy or policy date/version.  URIs should be complete with date/version and not assume the Resource will maintain versioning information', sptURI, [], 'Consent.policy.uri', sxpNormal);
   indexes.add('Consent', 'purpose', 'Context of activities covered by this rule', sptTOKEN, [], 'Consent.provision.purpose', sxpNormal);
-  indexes.add('Consent', 'scope', 'Which of the three areas this resource covers (extensible)', sptTOKEN, [], 'Consent.scope', sxpNormal);
   indexes.add('Consent', 'security-label', 'Security Labels that define affected resources', sptTOKEN, [], 'Consent.provision.securityLabel', sxpNormal);
   indexes.add('Consent', 'source-reference', 'Search by reference to a Consent, DocumentReference, Contract  or QuestionnaireResponse', sptREFERENCE, ['Consent', 'Contract', 'QuestionnaireResponse', 'DocumentReference'], 'Consent.sourceReference', sxpNormal);
   indexes.add('Consent', 'status', 'draft | active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Consent.status', sxpNormal);
-  indexes.add('Consent', 'subject', 'Who the consent applies to', sptREFERENCE, ['Practitioner', 'Patient'], 'Consent.subject', sxpNormal);
+  indexes.add('Consent', 'subject', 'Who the consent applies to', sptREFERENCE, ['Practitioner', 'Group', 'Patient'], 'Consent.subject', sxpNormal);
   indexes.add('Consent', 'verified', 'Has been verified', sptTOKEN, [], 'Consent.verification.verified', sxpNormal);
   indexes.add('Consent', 'verified-date', 'When consent verified', sptDATE, [], 'Consent.verification.verificationDate', sxpNormal);
   indexes.add('Consent', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -1744,7 +1856,8 @@ begin
   indexes.add('Contract', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Contract', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Contract', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Contract', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Contract', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Contract', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Contract', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Contract', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Contract', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1770,7 +1883,8 @@ begin
   indexes.add('Coverage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Coverage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Coverage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Coverage', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Coverage', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Coverage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Coverage', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Coverage', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Coverage', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1799,7 +1913,8 @@ begin
   indexes.add('CoverageEligibilityRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CoverageEligibilityRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CoverageEligibilityRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CoverageEligibilityRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CoverageEligibilityRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CoverageEligibilityRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1824,7 +1939,8 @@ begin
   indexes.add('CoverageEligibilityResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('CoverageEligibilityResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('CoverageEligibilityResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('CoverageEligibilityResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('CoverageEligibilityResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('CoverageEligibilityResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1851,7 +1967,8 @@ begin
   indexes.add('DetectedIssue', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DetectedIssue', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DetectedIssue', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DetectedIssue', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DetectedIssue', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DetectedIssue', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DetectedIssue', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DetectedIssue', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DetectedIssue', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1866,7 +1983,7 @@ begin
    'ion.identifier', sxpNormal);
   indexes.add('DetectedIssue', 'implicated', 'Problem resource', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DetectedIssue.implicated', sxpNormal);
   indexes.add('DetectedIssue', 'patient', '): Associated patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.subje'+
    'ct.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -1887,12 +2004,14 @@ begin
   indexes.add('Device', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Device', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Device', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Device', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Device', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Device', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Device', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Device', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Device', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Device', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Device', 'definition', 'The definition / type of the device', sptREFERENCE, ['DeviceDefinition'], 'Device.definition', sxpNormal);
+  indexes.add('Device', 'biological-source', 'The biological source for the device', sptTOKEN, [], 'Device.biologicalSource', sxpNormal);
+  indexes.add('Device', 'definition', 'The definition / type of the device', sptREFERENCE, [], 'Device.definition.reference', sxpNormal);
   indexes.add('Device', 'device-name', 'A server defined search that may match any of the string fields in Device.deviceName or Device.type.', sptSTRING, [], 'Device.deviceName.name | Device.type.coding.display | Device.type.text', sxpNormal);
   indexes.add('Device', 'din', 'The donation identification number (DIN)', sptTOKEN, [], 'Device.extension(''http://hl7.org/fhir/SearchParameter/device-extensions-Device-din'')', sxpNormal);
   indexes.add('Device', 'expiration-date', 'The expiration date of the device', sptDATE, [], 'Device.expirationDate', sxpNormal);
@@ -1904,16 +2023,17 @@ begin
   indexes.add('Device', 'model', 'The model of the device', sptSTRING, [], 'Device.modelNumber', sxpNormal);
   indexes.add('Device', 'organization', 'The organization responsible for the device', sptREFERENCE, ['Organization'], 'Device.owner', sxpNormal);
   indexes.add('Device', 'parent', 'The parent device', sptREFERENCE, ['Device'], 'Device.parent', sxpNormal);
-  indexes.add('Device', 'patient', 'Patient information, if the resource is affixed to a person', sptREFERENCE, ['Patient'], 'Device.patient', sxpNormal);
+  indexes.add('Device', 'patient', 'Patient information, if the resource is affixed to a person', sptREFERENCE, ['Practitioner', 'Patient', 'Person'], 'Device.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('Device', 'serial-number', 'The serial number of the device', sptSTRING, [], 'Device.serialNumber', sxpNormal);
   indexes.add('Device', 'status', 'active | inactive | entered-in-error | unknown', sptTOKEN, [], 'Device.status', sxpNormal);
+  indexes.add('Device', 'subject', 'Subject information, to which the device is associated of affixed', sptREFERENCE, ['Practitioner', 'Patient', 'Person'], 'Device.subject', sxpNormal);
   indexes.add('Device', 'type', 'The type of the device', sptTOKEN, [], 'Device.type', sxpNormal);
   indexes.add('Device', 'udi-carrier', 'UDI Barcode (RFID or other technology) string in *HRF* format.', sptSTRING, [], 'Device.udiCarrier.carrierHRF', sxpNormal);
   indexes.add('Device', 'udi-di', 'The udi Device Identifier (DI)', sptSTRING, [], 'Device.udiCarrier.deviceIdentifier', sxpNormal);
   indexes.add('Device', 'url', 'Network address to contact device', sptURI, [], 'Device.url', sxpNormal);
   indexes.add('Device', 'version', 'The specific version of the device', sptSTRING, [], 'Device.version.value', sxpNormal);
   indexes.add('Device', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  compartments.register('Patient', 'Device', ['patient']);
+  compartments.register('Patient', 'Device', ['subject']);
 end;
 {$ENDIF FHIR_DEVICE}
 
@@ -1924,17 +2044,37 @@ begin
   indexes.add('DeviceDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DeviceDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DeviceDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DeviceDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DeviceDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DeviceDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DeviceDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DeviceDefinition', 'identifier', 'The identifier of the component', sptTOKEN, [], 'DeviceDefinition.identifier', sxpNormal);
   indexes.add('DeviceDefinition', 'parent', 'The parent DeviceDefinition resource', sptREFERENCE, ['DeviceDefinition'], 'DeviceDefinition.parentDevice', sxpNormal);
-  indexes.add('DeviceDefinition', 'type', 'The device component type', sptTOKEN, [], 'DeviceDefinition.type', sxpNormal);
+  indexes.add('DeviceDefinition', 'type', 'The device component type', sptTOKEN, [], 'DeviceDefinition.classification.type', sxpNormal);
   indexes.add('DeviceDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_DEVICEDEFINITION}
+
+{$IFDEF FHIR_DEVICEDISPENSE}
+procedure TFHIRIndexBuilderR5.buildIndexesForDeviceDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('DeviceDispense', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceDispense', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('DeviceDispense', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('DeviceDispense', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('DeviceDispense', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceDispense', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DeviceDispense', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceDispense', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('DeviceDispense', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('DeviceDispense', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('DeviceDispense', 'code', 'Search for devices that match this code', sptTOKEN, [], 'DeviceDispense.device.concept', sxpNormal);
+  indexes.add('DeviceDispense', 'subject', 'The identity of a patient for whom to list dispenses', sptREFERENCE, ['Patient'], 'DeviceDispense.subject', sxpNormal);
+  indexes.add('DeviceDispense', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+end;
+{$ENDIF FHIR_DEVICEDISPENSE}
 
 {$IFDEF FHIR_DEVICEMETRIC}
 procedure TFHIRIndexBuilderR5.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1943,7 +2083,8 @@ begin
   indexes.add('DeviceMetric', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceMetric', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceMetric', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DeviceMetric', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DeviceMetric', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceMetric', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DeviceMetric', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DeviceMetric', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DeviceMetric', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1964,7 +2105,8 @@ begin
   indexes.add('DeviceRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DeviceRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DeviceRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DeviceRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DeviceRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DeviceRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -1988,7 +2130,7 @@ begin
   indexes.add('DeviceRequest', 'insurance', 'Associated insurance coverage', sptREFERENCE, ['ClaimResponse', 'Coverage'], 'DeviceRequest.insurance', sxpNormal);
   indexes.add('DeviceRequest', 'intent', 'proposal | plan | original-order |reflex-order', sptTOKEN, [], 'DeviceRequest.intent', sxpNormal);
   indexes.add('DeviceRequest', 'patient', '): Individual the service is ordered for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.p'+
    'atient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2014,23 +2156,23 @@ begin
   indexes.add('DeviceUsage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DeviceUsage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DeviceUsage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DeviceUsage', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DeviceUsage', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DeviceUsage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DeviceUsage', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DeviceUsage', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DeviceUsage', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('DeviceUsage', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('DeviceUsage', 'device', 'Search by device', sptTOKEN, [], 'DeviceUsage.device.concept', sxpNormal);
   indexes.add('DeviceUsage', 'identifier', 'Search by identifier', sptTOKEN, [], 'DeviceUsage.identifier', sxpNormal);
-  indexes.add('DeviceUsage', 'patient', '): Search by subject - a patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+  indexes.add('DeviceUsage', 'patient', '): Search by patient who used / uses the device', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
-      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | L'+
-   'ist.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
+      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizat'+
+   'ion.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('DeviceUsage', 'subject', 'Search by subject', sptREFERENCE, ['Patient'], 'DeviceUsage.subject', sxpNormal);
   indexes.add('DeviceUsage', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  compartments.register('Patient', 'DeviceUsage', ['subject']);
+  compartments.register('Patient', 'DeviceUsage', ['patient']);
 end;
 {$ENDIF FHIR_DEVICEUSAGE}
 
@@ -2041,7 +2183,8 @@ begin
   indexes.add('DiagnosticReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DiagnosticReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DiagnosticReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DiagnosticReport', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DiagnosticReport', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DiagnosticReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DiagnosticReport', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DiagnosticReport', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DiagnosticReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2051,8 +2194,8 @@ begin
   indexes.add('DiagnosticReport', 'code', '): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
   indexes.add('DiagnosticReport', 'conclusion', 'A coded conclusion (interpretation/impression) on the report', sptTOKEN, [], 'DiagnosticReport.conclusionCode', sxpNormal);
-  indexes.add('DiagnosticReport', 'date', '): The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('DiagnosticReport', 'date', '): The clinically relevant time of the report', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('DiagnosticReport', 'encounter', '): The Encounter when the order was made', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('DiagnosticReport', 'identifier', '): An identifier for the report', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -2063,7 +2206,7 @@ begin
   indexes.add('DiagnosticReport', 'issued', 'When the report was issued', sptDATE, [], 'DiagnosticReport.issued', sxpNormal);
   indexes.add('DiagnosticReport', 'media', 'A reference to the image source.', sptREFERENCE, ['DocumentReference'], 'DiagnosticReport.media.link', sxpNormal);
   indexes.add('DiagnosticReport', 'patient', '): The subject of the report if a patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizati'+
    'on.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2074,7 +2217,7 @@ begin
   indexes.add('DiagnosticReport', 'results-interpreter', 'Who was the source of the report', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'PractitionerRole'], 'DiagnosticReport.resultsInterpreter', sxpNormal);
   indexes.add('DiagnosticReport', 'specimen', 'The specimen details', sptREFERENCE, ['Specimen'], 'DiagnosticReport.specimen', sxpNormal);
   indexes.add('DiagnosticReport', 'status', 'The status of the report', sptTOKEN, [], 'DiagnosticReport.status', sxpNormal);
-  indexes.add('DiagnosticReport', 'subject', 'The subject of the report', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'DiagnosticReport.subject', sxpNormal);
+  indexes.add('DiagnosticReport', 'subject', 'The subject of the report', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'BiologicallyDerivedProduct', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'DiagnosticReport.subject', sxpNormal);
   indexes.add('DiagnosticReport', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'DiagnosticReport', ['subject']);
   compartments.register('Encounter', 'DiagnosticReport', ['encounter']);
@@ -2090,7 +2233,8 @@ begin
   indexes.add('DocumentManifest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DocumentManifest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DocumentManifest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DocumentManifest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DocumentManifest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DocumentManifest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DocumentManifest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DocumentManifest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DocumentManifest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2105,7 +2249,7 @@ begin
    'sionPrescription.identifier', sxpNormal);
   indexes.add('DocumentManifest', 'item', 'Items in manifest', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.content', sxpNormal);
   indexes.add('DocumentManifest', 'patient', '): The subject of the set of documents', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.'+
    'patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2134,7 +2278,8 @@ begin
   indexes.add('DocumentReference', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('DocumentReference', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('DocumentReference', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('DocumentReference', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('DocumentReference', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('DocumentReference', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('DocumentReference', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('DocumentReference', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('DocumentReference', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2162,7 +2307,7 @@ begin
   indexes.add('DocumentReference', 'language', 'Human language of the content (BCP-47)', sptTOKEN, [], 'DocumentReference.content.attachment.language', sxpNormal);
   indexes.add('DocumentReference', 'location', 'Uri where the data can be found', sptURI, [], 'DocumentReference.content.attachment.url', sxpNormal);
   indexes.add('DocumentReference', 'patient', '): Who/what is the subject of the document', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immuniza'+
    'tion.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2194,7 +2339,8 @@ begin
   indexes.add('Encounter', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Encounter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Encounter', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Encounter', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Encounter', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Encounter', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Encounter', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Encounter', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Encounter', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2203,8 +2349,8 @@ begin
   indexes.add('Encounter', 'appointment', 'The appointment that scheduled this encounter', sptREFERENCE, ['Appointment'], 'Encounter.appointment', sxpNormal);
   indexes.add('Encounter', 'based-on', 'The ServiceRequest that initiated this encounter', sptREFERENCE, ['ServiceRequest'], 'Encounter.basedOn', sxpNormal);
   indexes.add('Encounter', 'class', 'Classification of patient encounter', sptTOKEN, [], 'Encounter.class', sxpNormal);
-  indexes.add('Encounter', 'date', '): A date within the period the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Encounter', 'date', '): A date within the actualPeriod the Encounter lasted', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Encounter', 'diagnosis', 'The diagnosis or procedure relevant to the encounter', sptREFERENCE, ['Condition', 'Procedure'], 'Encounter.diagnosis.condition', sxpNormal);
   indexes.add('Encounter', 'episode-of-care', 'Episode(s) of care that this encounter should be recorded against', sptREFERENCE, ['EpisodeOfCare'], 'Encounter.episodeOfCare', sxpNormal);
   indexes.add('Encounter', 'identifier', '): Identifier(s) by which this encounter is known', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -2216,16 +2362,16 @@ begin
   indexes.add('Encounter', 'location', 'Location the encounter takes place', sptREFERENCE, ['Location'], 'Encounter.location.location', sxpNormal);
   indexes.add('Encounter', 'location-period', 'Time period during which the patient was present at the location', sptDATE, [], 'Encounter.location.period', sxpNormal);
   indexes.add('Encounter', 'part-of', 'Another Encounter this encounter is part of', sptREFERENCE, ['Encounter'], 'Encounter.partOf', sxpNormal);
-  indexes.add('Encounter', 'participant', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.individual', sxpNormal);
+  indexes.add('Encounter', 'participant', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.actor', sxpNormal);
   indexes.add('Encounter', 'participant-type', 'Role of participant in encounter', sptTOKEN, [], 'Encounter.participant.type', sxpNormal);
-  indexes.add('Encounter', 'patient', '): The patient or group present at the encounter', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+  indexes.add('Encounter', 'patient', '): The patient present at the encounter', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
-      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunizati'+
-   'on.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
+      +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patien'+
+   't | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('Encounter', 'practitioner', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.individual.where(resolve() is Practitioner)', sxpNormal);
+  indexes.add('Encounter', 'practitioner', 'Persons involved in the encounter other than the patient', sptREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'Encounter.participant.actor.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('Encounter', 'reason-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Encounter.reason.concept', sxpNormal);
   indexes.add('Encounter', 'reason-reference', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Encounter.reason.reference', sxpNormal);
   indexes.add('Encounter', 'service-provider', 'The organization (facility) responsible for this encounter', sptREFERENCE, ['Organization'], 'Encounter.serviceProvider', sxpNormal);
@@ -2249,7 +2395,8 @@ begin
   indexes.add('Endpoint', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Endpoint', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Endpoint', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Endpoint', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Endpoint', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Endpoint', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Endpoint', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Endpoint', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Endpoint', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2271,7 +2418,8 @@ begin
   indexes.add('EnrollmentRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EnrollmentRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EnrollmentRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EnrollmentRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EnrollmentRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EnrollmentRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EnrollmentRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EnrollmentRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EnrollmentRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2292,7 +2440,8 @@ begin
   indexes.add('EnrollmentResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EnrollmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EnrollmentResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EnrollmentResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EnrollmentResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EnrollmentResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EnrollmentResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EnrollmentResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EnrollmentResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2311,15 +2460,16 @@ begin
   indexes.add('EpisodeOfCare', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EpisodeOfCare', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EpisodeOfCare', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EpisodeOfCare', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EpisodeOfCare', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EpisodeOfCare', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EpisodeOfCare', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EpisodeOfCare', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EpisodeOfCare', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('EpisodeOfCare', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('EpisodeOfCare', 'care-manager', 'Care manager/care coordinator for the patient', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'EpisodeOfCare.careManager.where(resolve() is Practitioner)', sxpNormal);
   indexes.add('EpisodeOfCare', 'condition', 'Conditions/problems/diagnoses this episode of care is for', sptREFERENCE, ['Condition'], 'EpisodeOfCare.diagnosis.condition', sxpNormal);
-  indexes.add('EpisodeOfCare', 'date', '): The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('EpisodeOfCare', 'date', '): The provided date search value falls within the episode of care''s period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('EpisodeOfCare', 'identifier', '): Business Identifier(s) relevant for this EpisodeOfCare', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -2328,7 +2478,7 @@ begin
   indexes.add('EpisodeOfCare', 'incoming-referral', 'Incoming Referral Request', sptREFERENCE, ['ServiceRequest'], 'EpisodeOfCare.referralRequest', sxpNormal);
   indexes.add('EpisodeOfCare', 'organization', 'The organization that has assumed the specific responsibilities of this EpisodeOfCare', sptREFERENCE, ['Organization'], 'EpisodeOfCare.managingOrganization', sxpNormal);
   indexes.add('EpisodeOfCare', 'patient', '): The patient who is the focus of this episode of care', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) |'+
    ' Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2349,7 +2499,8 @@ begin
   indexes.add('EventDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EventDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EventDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EventDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EventDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EventDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EventDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EventDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EventDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2387,7 +2538,8 @@ begin
   indexes.add('Evidence', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Evidence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Evidence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Evidence', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Evidence', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Evidence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Evidence', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Evidence', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Evidence', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2416,7 +2568,8 @@ begin
   indexes.add('EvidenceReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EvidenceReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EvidenceReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EvidenceReport', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EvidenceReport', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EvidenceReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EvidenceReport', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EvidenceReport', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EvidenceReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2441,7 +2594,8 @@ begin
   indexes.add('EvidenceVariable', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('EvidenceVariable', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('EvidenceVariable', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('EvidenceVariable', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('EvidenceVariable', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('EvidenceVariable', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('EvidenceVariable', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('EvidenceVariable', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('EvidenceVariable', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2477,7 +2631,8 @@ begin
   indexes.add('ExampleScenario', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ExampleScenario', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ExampleScenario', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ExampleScenario', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ExampleScenario', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ExampleScenario', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ExampleScenario', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ExampleScenario', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ExampleScenario', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2506,7 +2661,8 @@ begin
   indexes.add('ExplanationOfBenefit', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ExplanationOfBenefit', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ExplanationOfBenefit', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ExplanationOfBenefit', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ExplanationOfBenefit', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2544,15 +2700,16 @@ begin
   indexes.add('FamilyMemberHistory', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('FamilyMemberHistory', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('FamilyMemberHistory', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('FamilyMemberHistory', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('FamilyMemberHistory', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('FamilyMemberHistory', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('FamilyMemberHistory', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('FamilyMemberHistory', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('FamilyMemberHistory', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('FamilyMemberHistory', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('FamilyMemberHistory', 'code', '): A search by a condition code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('FamilyMemberHistory', 'date', '): When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('FamilyMemberHistory', 'date', '): When history was recorded or last updated', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('FamilyMemberHistory', 'identifier', '): A search by a record identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -2561,7 +2718,7 @@ begin
   indexes.add('FamilyMemberHistory', 'instantiates-canonical', 'Instantiates FHIR protocol or definition', sptREFERENCE, ['Questionnaire', 'Measure', 'PlanDefinition', 'OperationDefinition', 'ActivityDefinition'], 'FamilyMemberHistory.instantiatesCanonical', sxpNormal);
   indexes.add('FamilyMemberHistory', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'FamilyMemberHistory.instantiatesUri', sxpNormal);
   indexes.add('FamilyMemberHistory', 'patient', '): The identity of a subject to list family member history items for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(reso'+
    'lve() is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2582,19 +2739,20 @@ begin
   indexes.add('Flag', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Flag', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Flag', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Flag', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Flag', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Flag', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Flag', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Flag', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Flag', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Flag', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Flag', 'author', 'Flag creator', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole'], 'Flag.author', sxpNormal);
-  indexes.add('Flag', 'date', '): Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Flag', 'date', '): Time period when flag is active', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Flag', 'encounter', '): Alert relevant during encounter', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Flag', 'identifier', 'Business identifier', sptTOKEN, [], 'Flag.identifier', sxpNormal);
   indexes.add('Flag', 'patient', '): The identity of a subject to list flags for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.pati'+
    'ent | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2616,7 +2774,8 @@ begin
   indexes.add('Goal', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Goal', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Goal', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Goal', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Goal', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Goal', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Goal', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Goal', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Goal', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2629,7 +2788,7 @@ begin
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('Goal', 'lifecycle-status', 'proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected', sptTOKEN, [], 'Goal.lifecycleStatus', sxpNormal);
   indexes.add('Goal', 'patient', '): Who this goal is intended for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.sub'+
    'ject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2650,7 +2809,8 @@ begin
   indexes.add('GraphDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('GraphDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('GraphDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('GraphDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('GraphDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('GraphDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('GraphDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('GraphDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('GraphDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2700,7 +2860,8 @@ begin
   indexes.add('Group', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Group', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Group', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Group', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Group', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Group', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Group', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Group', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Group', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2729,7 +2890,8 @@ begin
   indexes.add('GuidanceResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('GuidanceResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('GuidanceResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('GuidanceResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('GuidanceResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('GuidanceResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('GuidanceResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('GuidanceResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('GuidanceResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2750,7 +2912,8 @@ begin
   indexes.add('HealthcareService', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('HealthcareService', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('HealthcareService', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('HealthcareService', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('HealthcareService', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('HealthcareService', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('HealthcareService', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('HealthcareService', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('HealthcareService', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2771,6 +2934,33 @@ begin
 end;
 {$ENDIF FHIR_HEALTHCARESERVICE}
 
+{$IFDEF FHIR_IMAGINGSELECTION}
+procedure TFHIRIndexBuilderR5.buildIndexesForImagingSelection(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ImagingSelection', '_content', 'Search on the entire content of the resource', sptNULL, [], '', sxpNormal);
+  indexes.add('ImagingSelection', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
+  indexes.add('ImagingSelection', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
+  indexes.add('ImagingSelection', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
+  indexes.add('ImagingSelection', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ImagingSelection', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ImagingSelection', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
+  indexes.add('ImagingSelection', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
+  indexes.add('ImagingSelection', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
+  indexes.add('ImagingSelection', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('ImagingSelection', 'based-on', 'The request associated with an imaging selection', sptREFERENCE, ['Appointment', 'AppointmentResponse', 'CarePlan', 'Task', 'ServiceRequest'], 'ImagingSelection.basedOn', sxpNormal);
+  indexes.add('ImagingSelection', 'body-site', 'The body site associated with the imaging selection', sptTOKEN, [], 'ImagingSelection.bodySite', sxpNormal);
+  indexes.add('ImagingSelection', 'code', 'The imaging selection description text or code', sptTOKEN, [], 'ImagingSelection.code', sxpNormal);
+  indexes.add('ImagingSelection', 'derived-from', 'The imaging study from which the imaging selection was derived', sptREFERENCE, ['ImagingStudy'], 'ImagingSelection.derivedFrom', sxpNormal);
+  indexes.add('ImagingSelection', 'identifier', 'Identifiers for the imaging selection', sptTOKEN, [], 'ImagingSelection.identifier', sxpNormal);
+  indexes.add('ImagingSelection', 'issued', 'The date / time the imaging selection was created', sptDATE, [], 'ImagingSelection.issued', sxpNormal);
+  indexes.add('ImagingSelection', 'patient', 'Who the study is about', sptREFERENCE, ['Practitioner', 'Group', 'Specimen', 'Organization', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'ImagingSelection.subject.where(resolve() is Patient)', sxpNormal);
+  indexes.add('ImagingSelection', 'study-uid', 'The DICOM Study Instance UID from which the images were selected', sptURI, [], 'ImagingSelection.studyUid', sxpNormal);
+  indexes.add('ImagingSelection', 'subject', 'The subject of the Imaging Selection, such as the associated Patient', sptREFERENCE, ['Practitioner', 'Group', 'Specimen', 'Organization', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'ImagingSelection.subject', sxpNormal);
+  indexes.add('ImagingSelection', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
+  compartments.register('Patient', 'ImagingSelection', ['patient']);
+end;
+{$ENDIF FHIR_IMAGINGSELECTION}
+
 {$IFDEF FHIR_IMAGINGSTUDY}
 procedure TFHIRIndexBuilderR5.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -2778,7 +2968,8 @@ begin
   indexes.add('ImagingStudy', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImagingStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImagingStudy', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ImagingStudy', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ImagingStudy', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ImagingStudy', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ImagingStudy', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ImagingStudy', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ImagingStudy', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2797,7 +2988,7 @@ begin
   indexes.add('ImagingStudy', 'interpreter', 'Who interpreted the images', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'ImagingStudy.interpreter', sxpNormal);
   indexes.add('ImagingStudy', 'modality', 'The modality of the series', sptTOKEN, [], 'ImagingStudy.series.modality', sxpNormal);
   indexes.add('ImagingStudy', 'patient', '): Who the study is about', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | List.su'+
    'bject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2822,13 +3013,14 @@ begin
   indexes.add('Immunization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Immunization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Immunization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Immunization', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Immunization', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Immunization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Immunization', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Immunization', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Immunization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Immunization', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('Immunization', 'date', '): Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Immunization', 'date', '): Vaccination  (non)-Administration Date', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Immunization', 'identifier', '): Business identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -2837,7 +3029,7 @@ begin
   indexes.add('Immunization', 'lot-number', 'Vaccine Lot Number', sptSTRING, [], 'Immunization.lotNumber', sxpNormal);
   indexes.add('Immunization', 'manufacturer', 'Vaccine Manufacturer', sptREFERENCE, ['Organization'], 'Immunization.manufacturer', sxpNormal);
   indexes.add('Immunization', 'patient', '): The patient for the vaccination record', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.p'+
    'atient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -2866,7 +3058,8 @@ begin
   indexes.add('ImmunizationEvaluation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImmunizationEvaluation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ImmunizationEvaluation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ImmunizationEvaluation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ImmunizationEvaluation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ImmunizationEvaluation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2890,7 +3083,8 @@ begin
   indexes.add('ImmunizationRecommendation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImmunizationRecommendation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ImmunizationRecommendation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ImmunizationRecommendation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ImmunizationRecommendation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2915,7 +3109,8 @@ begin
   indexes.add('ImplementationGuide', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ImplementationGuide', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ImplementationGuide', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ImplementationGuide', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ImplementationGuide', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ImplementationGuide', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ImplementationGuide', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ImplementationGuide', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ImplementationGuide', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -2969,18 +3164,17 @@ begin
   indexes.add('Ingredient', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Ingredient', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Ingredient', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Ingredient', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Ingredient', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Ingredient', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Ingredient', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Ingredient', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Ingredient', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Ingredient', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('Ingredient', 'for', 'The product which this ingredient is a constituent part of', sptREFERENCE, ['AdministrableProductDefinition', 'ManufacturedItemDefinition', 'MedicinalProductDefinition'], 'Ingredient.for', sxpNormal);
   indexes.add('Ingredient', 'function', 'A classification of the ingredient identifying its precise purpose(s) in the drug product. This extends the Ingredient.role to add more detail. Example: Antioxidant, Alkalizing Agent', sptTOKEN, [], 'Ingredient.function', sxpNormal);
   indexes.add('Ingredient', 'identifier', 'An identifier or code by which the ingredient can be referenced', sptTOKEN, [], 'Ingredient.identifier', sxpNormal);
-  indexes.add('Ingredient', 'manufacturer', 'The organization that manufactures this ingredient', sptREFERENCE, ['Organization'], 'Ingredient.manufacturer', sxpNormal);
+  indexes.add('Ingredient', 'manufacturer', 'The organization that manufactures this ingredient', sptREFERENCE, [], 'Ingredient.manufacturer', sxpNormal);
   indexes.add('Ingredient', 'role', 'A classification of the ingredient identifying its purpose within the product, e.g. active, inactive', sptTOKEN, [], 'Ingredient.role', sxpNormal);
-  indexes.add('Ingredient', 'specified-substance', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Ingredient.specifiedSubstance.code.reference', sxpNormal);
-  indexes.add('Ingredient', 'specified-substance-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Ingredient.specifiedSubstance.code.concept', sxpNormal);
-  indexes.add('Ingredient', 'specified-substance-definition', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Ingredient.specifiedSubstance.code.reference', sxpNormal);
   indexes.add('Ingredient', 'substance', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Ingredient.substance.code.reference', sxpNormal);
   indexes.add('Ingredient', 'substance-code', 'Reference to a concept (by class)', sptTOKEN, [], 'Ingredient.substance.code.concept', sxpNormal);
   indexes.add('Ingredient', 'substance-definition', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Ingredient.substance.code.reference', sxpNormal);
@@ -2995,7 +3189,8 @@ begin
   indexes.add('InsurancePlan', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('InsurancePlan', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('InsurancePlan', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('InsurancePlan', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('InsurancePlan', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('InsurancePlan', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('InsurancePlan', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('InsurancePlan', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('InsurancePlan', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3009,7 +3204,7 @@ begin
   indexes.add('InsurancePlan', 'administered-by', 'Product administrator', sptREFERENCE, ['Organization'], 'InsurancePlan.administeredBy', sxpNormal);
   indexes.add('InsurancePlan', 'endpoint', 'Technical endpoint', sptREFERENCE, ['Endpoint'], 'InsurancePlan.endpoint', sxpNormal);
   indexes.add('InsurancePlan', 'identifier', 'Any identifier for the organization (not the accreditation issuer''s identifier)', sptTOKEN, [], 'InsurancePlan.identifier', sxpNormal);
-  indexes.add('InsurancePlan', 'name', 'A portion of the organization''s name or alias', sptSTRING, [], 'name | alias', sxpNormal);
+  indexes.add('InsurancePlan', 'name', 'A portion of the organization''s name or alias', sptSTRING, [], 'InsurancePlan.name | InsurancePlan.alias', sxpNormal);
   indexes.add('InsurancePlan', 'owned-by', 'An organization of which this organization forms a part', sptREFERENCE, ['Organization'], 'InsurancePlan.ownedBy', sxpNormal);
   indexes.add('InsurancePlan', 'phonetic', 'A portion of the organization''s name using some kind of phonetic matching algorithm', sptSTRING, [], 'InsurancePlan.name', sxpPhonetic);
   indexes.add('InsurancePlan', 'status', 'Is the Organization record active', sptTOKEN, [], 'InsurancePlan.status', sxpNormal);
@@ -3025,7 +3220,8 @@ begin
   indexes.add('InventoryReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('InventoryReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('InventoryReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('InventoryReport', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('InventoryReport', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('InventoryReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('InventoryReport', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('InventoryReport', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('InventoryReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3041,7 +3237,8 @@ begin
   indexes.add('Invoice', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Invoice', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Invoice', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Invoice', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Invoice', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Invoice', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Invoice', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Invoice', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Invoice', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3074,7 +3271,8 @@ begin
   indexes.add('Library', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Library', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Library', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Library', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Library', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Library', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Library', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Library', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Library', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3114,7 +3312,8 @@ begin
   indexes.add('Linkage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Linkage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Linkage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Linkage', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Linkage', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Linkage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Linkage', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Linkage', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Linkage', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3134,15 +3333,16 @@ begin
   indexes.add('List', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('List', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('List', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('List', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('List', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('List', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('List', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('List', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('List', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('List', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('List', 'code', '): What the purpose of this list is', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('List', 'date', '): When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('List', 'date', '): When the list was prepared', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('List', 'empty-reason', 'Why list is empty', sptTOKEN, [], 'List.emptyReason', sxpNormal);
   indexes.add('List', 'encounter', '): Context in which list created', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
@@ -3153,7 +3353,7 @@ begin
   indexes.add('List', 'item', 'Actual entry', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'List.entry.item', sxpNormal);
   indexes.add('List', 'notes', 'The annotation  - text content (as markdown)', sptSTRING, [], 'List.note.text', sxpNormal);
   indexes.add('List', 'patient', '): If all resources have the same subject', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient |'+
    ' List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3177,7 +3377,8 @@ begin
   indexes.add('Location', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Location', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Location', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Location', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Location', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Location', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Location', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Location', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Location', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3193,7 +3394,7 @@ begin
   indexes.add('Location', 'name', 'A portion of the location''s name or alias', sptSTRING, [], 'Location.name | Location.alias', sxpNormal);
   indexes.add('Location', 'near', 'Search for locations where the location.position is near to, or within a specified distance of, the provided coordinates expressed as [latitude]|[longitude]|[distance]|[units] (using the WGS84 datum, see notes). If the units are omitted, then kms sho'
       +'uld be assumed. If the distance is omitted, then the server can use its own discretion as to what distances should be considered near (and units are irrelevant)  Servers may search using various techniques that might have differing accuracies'
-      +', depending on implementation efficiency.  Requires the near-distance parameter to be provided also', sptNULL, [], 'Location.position', sxpNearby);
+      +', depending on implementation efficiency.', sptNULL, [], 'Location.position', sxpNearby);
   indexes.add('Location', 'operational-status', 'Searches for locations (typically bed/room) that have an operational status (e.g. contaminated, housekeeping)', sptTOKEN, [], 'Location.operationalStatus', sxpNormal);
   indexes.add('Location', 'organization', 'Searches for locations that are managed by the provided organization', sptREFERENCE, ['Organization'], 'Location.managingOrganization', sxpNormal);
   indexes.add('Location', 'partof', 'A location of which this location is a part', sptREFERENCE, ['Location'], 'Location.partOf', sxpNormal);
@@ -3210,15 +3411,15 @@ begin
   indexes.add('ManufacturedItemDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ManufacturedItemDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ManufacturedItemDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ManufacturedItemDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ManufacturedItemDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('ManufacturedItemDefinition', 'dose-form', 'Dose form as manufactured and before any transformation into the pharmaceutical product', sptTOKEN, [], 'ManufacturedItemDefinition.manufacturedDoseForm', sxpNormal);
   indexes.add('ManufacturedItemDefinition', 'identifier', 'Unique identifier', sptTOKEN, [], 'ManufacturedItemDefinition.identifier', sxpNormal);
-  indexes.add('ManufacturedItemDefinition', 'ingredient', 'Reference to a resource (by instance)', sptREFERENCE, [], 'ManufacturedItemDefinition.ingredient.reference', sxpNormal);
-  indexes.add('ManufacturedItemDefinition', 'ingredient-code', 'Reference to a concept (by class)', sptTOKEN, [], 'ManufacturedItemDefinition.ingredient.concept', sxpNormal);
+  indexes.add('ManufacturedItemDefinition', 'ingredient', 'An ingredient of this item', sptTOKEN, [], 'ManufacturedItemDefinition.ingredient', sxpNormal);
   indexes.add('ManufacturedItemDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
@@ -3230,7 +3431,8 @@ begin
   indexes.add('Measure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Measure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Measure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Measure', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Measure', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Measure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Measure', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Measure', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Measure', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3268,7 +3470,8 @@ begin
   indexes.add('MeasureReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MeasureReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MeasureReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MeasureReport', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MeasureReport', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MeasureReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MeasureReport', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MeasureReport', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MeasureReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3294,7 +3497,8 @@ begin
   indexes.add('Medication', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Medication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Medication', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Medication', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Medication', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Medication', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Medication', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Medication', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Medication', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3307,7 +3511,7 @@ begin
   indexes.add('Medication', 'ingredient', 'Returns medications for this ingredient reference', sptREFERENCE, [], 'Medication.ingredient.item.reference', sxpNormal);
   indexes.add('Medication', 'ingredient-code', 'Returns medications for this ingredient code', sptTOKEN, [], 'Medication.ingredient.item.concept', sxpNormal);
   indexes.add('Medication', 'lot-number', 'Returns medications in a batch with this lot number', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
-  indexes.add('Medication', 'sponsor', 'Returns medications made or sold for this manufacturer', sptREFERENCE, ['Organization'], 'Medication.sponsor', sxpNull);
+  indexes.add('Medication', 'marketingauthorizationholder', 'Returns medications made or sold for this marketing authorization holder', sptREFERENCE, ['Organization'], 'Medication.marketingAuthorizationHolder', sxpNull);
   indexes.add('Medication', 'status', 'Returns medications for this status', sptTOKEN, [], 'Medication.status', sxpNormal);
   indexes.add('Medication', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
@@ -3320,7 +3524,8 @@ begin
   indexes.add('MedicationAdministration', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationAdministration', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationAdministration', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicationAdministration', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicationAdministration', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicationAdministration', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicationAdministration', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicationAdministration', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationAdministration', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3337,7 +3542,7 @@ begin
    'st.identifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('MedicationAdministration', 'medication', '): Return administrations of this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationAdministration', 'patient', '): The identity of a patient to list administrations  for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() '+
    'is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3366,7 +3571,8 @@ begin
   indexes.add('MedicationDispense', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationDispense', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationDispense', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicationDispense', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicationDispense', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicationDispense', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicationDispense', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicationDispense', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationDispense', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3380,9 +3586,10 @@ begin
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifi'+
    'er | VisionPrescription.identifier', sxpNormal);
+  indexes.add('MedicationDispense', 'location', 'Returns dispense for a given location', sptREFERENCE, ['Location'], 'MedicationDispense.location', sxpNull);
   indexes.add('MedicationDispense', 'medication', '): Returns dispenses of this medicine resource', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationDispense', 'patient', '): The identity of a patient to list dispenses  for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) '+
    '| Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3391,6 +3598,7 @@ begin
   indexes.add('MedicationDispense', 'performer', 'Returns dispenses performed by a specific individual', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'MedicationDispense.performer.actor', sxpNormal);
   indexes.add('MedicationDispense', 'prescription', '): The identity of a prescription to list dispenses from', sptREFERENCE, ['MedicationRequest'], 'MedicationDispense.authorizingPrescription', sxpNormal);
   indexes.add('MedicationDispense', 'receiver', 'The identity of a receiver to list dispenses for', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson', 'Location'], 'MedicationDispense.receiver', sxpNormal);
+  indexes.add('MedicationDispense', 'recorded', 'Returns dispenses where dispensing activity began on this date', sptDATE, [], 'MedicationDispense.recorded', sxpNull);
   indexes.add('MedicationDispense', 'responsibleparty', 'Returns dispenses with the specified responsible party', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'MedicationDispense.substitution.responsibleParty', sxpNormal);
   indexes.add('MedicationDispense', 'status', '): Returns dispenses with a specified dispense status', sptTOKEN, [], 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationUsage.status', sxpNormal);
   indexes.add('MedicationDispense', 'subject', 'The identity of a patient for whom to list dispenses', sptREFERENCE, ['Group', 'Patient'], 'MedicationDispense.subject', sxpNormal);
@@ -3411,7 +3619,8 @@ begin
   indexes.add('MedicationKnowledge', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationKnowledge', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationKnowledge', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicationKnowledge', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicationKnowledge', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicationKnowledge', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicationKnowledge', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicationKnowledge', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationKnowledge', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3419,10 +3628,10 @@ begin
   indexes.add('MedicationKnowledge', 'classification', 'Specific category assigned to the medication', sptTOKEN, [], 'MedicationKnowledge.medicineClassification.classification', sxpNormal);
   indexes.add('MedicationKnowledge', 'classification-type', 'The type of category for the medication (for example, therapeutic classification, therapeutic sub-classification)', sptTOKEN, [], 'MedicationKnowledge.medicineClassification.type', sxpNormal);
   indexes.add('MedicationKnowledge', 'code', 'Code that identifies this medication', sptTOKEN, [], 'MedicationKnowledge.code', sxpNormal);
-  indexes.add('MedicationKnowledge', 'doseform', 'powder | tablets | capsule +', sptTOKEN, [], 'MedicationKnowledge.doseForm', sxpNormal);
+  indexes.add('MedicationKnowledge', 'doseform', 'powder | tablets | capsule +', sptTOKEN, [], 'MedicationKnowledge.definitional.doseForm', sxpNormal);
   indexes.add('MedicationKnowledge', 'identifier', 'Business identifier for this medication', sptTOKEN, [], 'MedicationKnowledge.identifier', sxpNormal);
-  indexes.add('MedicationKnowledge', 'ingredient', 'Reference to a resource (by instance)', sptREFERENCE, [], 'MedicationKnowledge.ingredient.item.reference', sxpNormal);
-  indexes.add('MedicationKnowledge', 'ingredient-code', 'Reference to a concept (by class)', sptTOKEN, [], 'MedicationKnowledge.ingredient.item.concept', sxpNormal);
+  indexes.add('MedicationKnowledge', 'ingredient', 'Reference to a resource (by instance)', sptREFERENCE, [], 'MedicationKnowledge.definitional.ingredient.item.reference', sxpNormal);
+  indexes.add('MedicationKnowledge', 'ingredient-code', 'Reference to a concept (by class)', sptTOKEN, [], 'MedicationKnowledge.definitional.ingredient.item.concept', sxpNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-name', 'Name of the reviewing program', sptTOKEN, [], 'MedicationKnowledge.monitoringProgram.name', sxpNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-type', 'Type of program under which the medication is monitored', sptTOKEN, [], 'MedicationKnowledge.monitoringProgram.type', sxpNormal);
   indexes.add('MedicationKnowledge', 'monograph', 'Associated documentation about the medication', sptREFERENCE, ['DocumentReference'], 'MedicationKnowledge.monograph.source', sxpNormal);
@@ -3431,7 +3640,6 @@ begin
   indexes.add('MedicationKnowledge', 'packaging-cost-concept', 'The cost of the packaged medication, if the cost is a CodeableConcept', sptTOKEN, [], '', sxpNormal);
   indexes.add('MedicationKnowledge', 'product-type', 'Category of the medication or product', sptTOKEN, [], 'MedicationKnowledge.productType', sxpNormal);
   indexes.add('MedicationKnowledge', 'source-cost', 'The source or owner for the price information', sptTOKEN, [], 'MedicationKnowledge.cost.source', sxpNormal);
-  indexes.add('MedicationKnowledge', 'sponsor', 'Organization responsible for manufacturing of the item', sptREFERENCE, ['Organization'], 'MedicationKnowledge.sponsor', sxpNull);
   indexes.add('MedicationKnowledge', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'MedicationKnowledge.status', sxpNormal);
   indexes.add('MedicationKnowledge', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
@@ -3444,7 +3652,8 @@ begin
   indexes.add('MedicationRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicationRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicationRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicationRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicationRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicationRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3453,7 +3662,7 @@ begin
   indexes.add('MedicationRequest', 'category', 'Returns prescriptions with different categories', sptTOKEN, [], 'MedicationRequest.category', sxpNormal);
   indexes.add('MedicationRequest', 'code', '): Return prescriptions of this medication code', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('MedicationRequest', 'combo-date', 'Returns medication request to be administered on a specific date or within a date range', sptDATE, [], 'MedicationRequest.dosageInstruction.timing.event | (MedicationRequest.dosageInstruction.timing.repeat.bounds as Period)', sxpNormal);
+  indexes.add('MedicationRequest', 'combo-date', 'Returns medication request to be administered on a specific date or within a date range', sptDATE, [], 'MedicationRequest.dose.dosageInstruction.timing.event | (MedicationRequest.dose.dosageInstruction.timing.repeat.bounds as Period)', sxpNormal);
   indexes.add('MedicationRequest', 'encounter', '): Return prescriptions with this encounter identifier', sptREFERENCE, ['Encounter'], 'MedicationAdministration.encounter | MedicationRequest.encounter', sxpNormal);
   indexes.add('MedicationRequest', 'identifier', '): Return prescriptions with this external identifier', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
@@ -3466,7 +3675,7 @@ begin
   indexes.add('MedicationRequest', 'intent', 'Returns prescriptions with different intents', sptTOKEN, [], 'MedicationRequest.intent', sxpNormal);
   indexes.add('MedicationRequest', 'medication', '): Return prescriptions for this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
   indexes.add('MedicationRequest', 'patient', '): Returns prescriptions for a specific patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Imm'+
    'unization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3490,7 +3699,8 @@ begin
   indexes.add('MedicationUsage', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicationUsage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicationUsage', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicationUsage', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicationUsage', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicationUsage', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicationUsage', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicationUsage', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicationUsage', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3507,9 +3717,8 @@ begin
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier '+
    '| VisionPrescription.identifier', sxpNormal);
   indexes.add('MedicationUsage', 'medication', '): Return statements of this medication reference', sptREFERENCE, [], 'MedicationAdministration.medication.reference | MedicationDispense.medication.reference | MedicationRequest.medication.reference | MedicationUsage.medication.reference', sxpNormal);
-  indexes.add('MedicationUsage', 'part-of', 'Returns statements that are part of another event.', sptREFERENCE, ['MedicationDispense', 'Observation', 'MedicationAdministration', 'Procedure', 'MedicationUsage'], 'MedicationUsage.partOf', sxpNormal);
   indexes.add('MedicationUsage', 'patient', '): Returns statements for a specific patient.', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immuniz'+
    'ation.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3533,17 +3742,18 @@ begin
   indexes.add('MedicinalProductDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MedicinalProductDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MedicinalProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MedicinalProductDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MedicinalProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('MedicinalProductDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('MedicinalProductDefinition', 'characteristic', 'Allows the key product features to be recorded, such as "sugar free", "modified release", "parallel import"', sptTOKEN, [], 'MedicinalProductDefinition.characteristic', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'characteristic', 'Allows the key product features to be recorded, such as "sugar free", "modified release", "parallel import"', sptTOKEN, [], 'MedicinalProductDefinition.characteristic.value', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'characteristic-type', 'A category for the characteristic', sptTOKEN, [], 'MedicinalProductDefinition.characteristic.type', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'contact', 'A product specific contact, person (in a role), or an organization', sptREFERENCE, ['Organization', 'PractitionerRole'], 'MedicinalProductDefinition.contact.contact', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'domain', 'If this medicine applies to human or veterinary uses', sptTOKEN, [], 'MedicinalProductDefinition.domain', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'identifier', 'Business identifier for this product. Could be an MPID', sptTOKEN, [], 'MedicinalProductDefinition.identifier', sxpNormal);
-  indexes.add('MedicinalProductDefinition', 'ingredient', 'Reference to a resource (by instance)', sptREFERENCE, [], 'MedicinalProductDefinition.ingredient.reference', sxpNormal);
-  indexes.add('MedicinalProductDefinition', 'ingredient-code', 'Reference to a concept (by class)', sptTOKEN, [], 'MedicinalProductDefinition.ingredient.concept', sxpNormal);
+  indexes.add('MedicinalProductDefinition', 'ingredient', 'An ingredient of this product', sptTOKEN, [], 'MedicinalProductDefinition.ingredient', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'master-file', 'A master file for to the medicinal product (e.g. Pharmacovigilance System Master File)', sptREFERENCE, ['DocumentReference'], 'MedicinalProductDefinition.masterFile', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'name', 'The full product name', sptSTRING, [], 'MedicinalProductDefinition.name.productName', sxpNormal);
   indexes.add('MedicinalProductDefinition', 'name-language', 'Language code for this name', sptTOKEN, [], 'MedicinalProductDefinition.name.countryLanguage.language', sxpNormal);
@@ -3561,7 +3771,8 @@ begin
   indexes.add('MessageDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MessageDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MessageDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MessageDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MessageDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MessageDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MessageDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MessageDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MessageDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3616,7 +3827,8 @@ begin
   indexes.add('MessageHeader', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MessageHeader', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MessageHeader', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MessageHeader', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MessageHeader', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MessageHeader', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MessageHeader', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MessageHeader', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MessageHeader', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3648,7 +3860,8 @@ begin
   indexes.add('MolecularSequence', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('MolecularSequence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('MolecularSequence', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('MolecularSequence', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('MolecularSequence', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('MolecularSequence', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('MolecularSequence', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('MolecularSequence', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('MolecularSequence', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3690,7 +3903,8 @@ begin
   indexes.add('NamingSystem', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NamingSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NamingSystem', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('NamingSystem', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('NamingSystem', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('NamingSystem', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('NamingSystem', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('NamingSystem', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('NamingSystem', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3747,7 +3961,8 @@ begin
   indexes.add('NutritionIntake', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NutritionIntake', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NutritionIntake', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('NutritionIntake', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('NutritionIntake', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('NutritionIntake', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('NutritionIntake', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('NutritionIntake', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('NutritionIntake', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3777,7 +3992,8 @@ begin
   indexes.add('NutritionOrder', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NutritionOrder', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NutritionOrder', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('NutritionOrder', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('NutritionOrder', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('NutritionOrder', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('NutritionOrder', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('NutritionOrder', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('NutritionOrder', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3796,7 +4012,7 @@ begin
   indexes.add('NutritionOrder', 'instantiates-uri', 'Instantiates external protocol or definition', sptURI, [], 'NutritionOrder.instantiatesUri', sxpNormal);
   indexes.add('NutritionOrder', 'oraldiet', 'Type of diet that can be consumed orally (i.e., take via the mouth).', sptTOKEN, [], 'NutritionOrder.oralDiet.type', sxpNormal);
   indexes.add('NutritionOrder', 'patient', '): The identity of the person who requires the diet, formula or nutritional supplement', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subje'+
    'ct.where(resolve() is Patient) | Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3819,11 +4035,13 @@ begin
   indexes.add('NutritionProduct', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('NutritionProduct', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('NutritionProduct', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('NutritionProduct', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('NutritionProduct', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('NutritionProduct', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('NutritionProduct', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('NutritionProduct', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('NutritionProduct', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('NutritionProduct', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
+  indexes.add('NutritionProduct', 'biological-source', 'The biological source for the nutrition product', sptTOKEN, [], 'NutritionProduct.instance.biologicalSource', sxpNormal);
   indexes.add('NutritionProduct', 'identifier', 'The identifier for the physical instance, typically a serial number', sptTOKEN, [], 'NutritionProduct.instance.identifier', sxpNormal);
   indexes.add('NutritionProduct', 'status', 'active | inactive | entered-in-error', sptTOKEN, [], 'NutritionProduct.status', sxpNormal);
   indexes.add('NutritionProduct', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -3837,7 +4055,8 @@ begin
   indexes.add('Observation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Observation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Observation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Observation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Observation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Observation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Observation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Observation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Observation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3863,8 +4082,8 @@ begin
   indexes.add('Observation', 'component-value-concept', 'The value of the component observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.component.value as CodeableConcept)', sxpNormal);
   indexes.add('Observation', 'component-value-quantity', 'The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.component.value as Quantity) | (Observation.component.value as SampledData)', sxpNormal);
   indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', sptTOKEN, [], 'Observation.dataAbsentReason', sxpNormal);
-  indexes.add('Observation', 'date', '): Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Observation', 'date', '): Obtained date/time. If the obtained element is a period, a date that falls in the period', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Observation', 'derived-from', 'Related measurements the observation is made from', sptREFERENCE, ['Observation', 'ImagingStudy', 'MolecularSequence', 'QuestionnaireResponse', 'DocumentReference'], 'Observation.derivedFrom', sxpNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', sptREFERENCE, ['Device', 'DeviceMetric'], 'Observation.device', sxpNormal);
   indexes.add('Observation', 'encounter', '): Encounter related to the observation', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
@@ -3879,7 +4098,7 @@ begin
   indexes.add('Observation', 'method', 'The method used for the observation', sptTOKEN, [], 'Observation.method', sxpNormal);
   indexes.add('Observation', 'part-of', 'Part of referenced event', sptREFERENCE, ['Immunization', 'MedicationDispense', 'MedicationAdministration', 'Procedure', 'ImagingStudy', 'MedicationUsage'], 'Observation.partOf', sxpNormal);
   indexes.add('Observation', 'patient', '): The subject that the observation is about (if patient)', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) |'+
    ' Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -3888,7 +4107,7 @@ begin
   indexes.add('Observation', 'performer', 'Who performed the observation', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Observation.performer', sxpNormal);
   indexes.add('Observation', 'specimen', 'Specimen used for this observation', sptREFERENCE, ['Specimen'], 'Observation.specimen', sxpNormal);
   indexes.add('Observation', 'status', 'The status of the observation', sptTOKEN, [], 'Observation.status', sxpNormal);
-  indexes.add('Observation', 'subject', 'The subject that the observation is about', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'Observation.subject', sxpNormal);
+  indexes.add('Observation', 'subject', 'The subject that the observation is about', sptREFERENCE, ['Practitioner', 'Group', 'Organization', 'BiologicallyDerivedProduct', 'NutritionProduct', 'Device', 'Medication', 'Patient', 'Procedure', 'Substance', 'Location'], 'Observation.subject', sxpNormal);
   indexes.add('Observation', 'value-concept', 'The value of the observation, if the value is a CodeableConcept', sptTOKEN, [], '(Observation.value as CodeableConcept)', sxpNormal);
   indexes.add('Observation', 'value-date', 'The value of the observation, if the value is a date or period of time', sptDATE, [], '(Observation.value as dateTime) | (Observation.value as Period)', sxpNormal);
   indexes.add('Observation', 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', sptQUANTITY, [], '(Observation.value as Quantity) | (Observation.value as SampledData)', sxpNormal);
@@ -3909,7 +4128,8 @@ begin
   indexes.add('ObservationDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ObservationDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ObservationDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ObservationDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ObservationDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ObservationDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ObservationDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ObservationDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ObservationDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3933,7 +4153,8 @@ begin
   indexes.add('OperationDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OperationDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OperationDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('OperationDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('OperationDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('OperationDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('OperationDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('OperationDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('OperationDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -3991,7 +4212,8 @@ begin
   indexes.add('OperationOutcome', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OperationOutcome', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OperationOutcome', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('OperationOutcome', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('OperationOutcome', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('OperationOutcome', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('OperationOutcome', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('OperationOutcome', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('OperationOutcome', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4007,7 +4229,8 @@ begin
   indexes.add('Organization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Organization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Organization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Organization', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Organization', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Organization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Organization', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Organization', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Organization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4036,7 +4259,8 @@ begin
   indexes.add('OrganizationAffiliation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('OrganizationAffiliation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('OrganizationAffiliation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('OrganizationAffiliation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('OrganizationAffiliation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('OrganizationAffiliation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('OrganizationAffiliation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('OrganizationAffiliation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('OrganizationAffiliation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4066,7 +4290,8 @@ begin
   indexes.add('PackagedProductDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PackagedProductDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PackagedProductDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('PackagedProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('PackagedProductDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('PackagedProductDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('PackagedProductDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('PackagedProductDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('PackagedProductDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4080,8 +4305,8 @@ begin
   indexes.add('PackagedProductDefinition', 'name', 'A name for this package. Typically what it would be listed as in a drug formulary or catalogue, inventory etc', sptTOKEN, [], 'PackagedProductDefinition.name', sxpNormal);
   indexes.add('PackagedProductDefinition', 'nutrition', 'A nutrition product within this packaged product', sptREFERENCE, [], 'PackagedProductDefinition.package.containedItem.item.reference', sxpNormal);
   indexes.add('PackagedProductDefinition', 'package', 'A complete packaged product within this packaged product', sptREFERENCE, [], 'PackagedProductDefinition.package.containedItem.item.reference', sxpNormal);
+  indexes.add('PackagedProductDefinition', 'package-for', 'The product that this is a pack for', sptREFERENCE, ['MedicinalProductDefinition'], 'PackagedProductDefinition.packageFor', sxpNormal);
   indexes.add('PackagedProductDefinition', 'status', 'The status within the lifecycle of this item. A high level status, this is not intended to duplicate details carried elsewhere such as legal status, or authorization or marketing status', sptTOKEN, [], 'PackagedProductDefinition.status', sxpNormal);
-  indexes.add('PackagedProductDefinition', 'subject', 'The product that this is a pack for', sptREFERENCE, ['MedicinalProductDefinition'], 'PackagedProductDefinition.subject', sxpNormal);
   indexes.add('PackagedProductDefinition', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
 end;
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
@@ -4093,7 +4318,8 @@ begin
   indexes.add('Parameters', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Parameters', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Parameters', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Parameters', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Parameters', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Parameters', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Parameters', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Parameters', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Parameters', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4109,7 +4335,8 @@ begin
   indexes.add('Patient', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Patient', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Patient', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Patient', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Patient', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Patient', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Patient', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Patient', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Patient', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4125,7 +4352,7 @@ begin
   indexes.add('Patient', 'birthOrderBoolean', 'Search based on whether a patient was part of a multiple birth or not.', sptTOKEN, [], '', sxpNormal);
   indexes.add('Patient', 'birthdate', '): The patient''s date of birth', sptDATE, [], 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate', sxpNormal);
   indexes.add('Patient', 'death-date', 'The date of death has been provided and satisfies this search value', sptDATE, [], '(Patient.deceased as dateTime)', sxpNormal);
-  indexes.add('Patient', 'deceased', 'This patient has been marked as deceased, or as a death date entered', sptTOKEN, [], 'Patient.deceased.exists() and Patient.deceased != false', sxpNormal);
+  indexes.add('Patient', 'deceased', 'This patient has been marked as deceased, or has a death date entered', sptTOKEN, [], 'Patient.deceased.exists() and Patient.deceased != false', sxpNormal);
   indexes.add('Patient', 'email', '): A value in an email contact', sptTOKEN, [], 'Patient.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'')', sxpNormal);
   indexes.add('Patient', 'family', '): A portion of the family name of the patient', sptSTRING, [], 'Patient.name.family | Practitioner.name.family', sxpNormal);
   indexes.add('Patient', 'gender', '): Gender of the patient', sptTOKEN, [], 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender', sxpNormal);
@@ -4135,7 +4362,7 @@ begin
   indexes.add('Patient', 'language', 'Language code (irrespective of use value)', sptTOKEN, [], 'Patient.communication.language', sxpNormal);
   indexes.add('Patient', 'link', 'All patients linked to the given patient', sptREFERENCE, ['Patient', 'RelatedPerson'], 'Patient.link.other', sxpNormal);
   indexes.add('Patient', 'mothersMaidenName', 'Search based on patient''s mother''s maiden name', sptSTRING, [], 'Patient.extension(''http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName'')', sxpNormal);
-  indexes.add('Patient', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', sptSTRING, [], 'Patient.name', sxpNormal);
+  indexes.add('Patient', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, given, prefix, suffix, and/or text', sptSTRING, [], 'Patient.name', sxpNormal);
   indexes.add('Patient', 'organization', 'The organization that is the custodian of the patient record', sptREFERENCE, ['Organization'], 'Patient.managingOrganization', sxpNormal);
   indexes.add('Patient', 'phone', '): A value in a phone contact', sptTOKEN, [], 'Patient.telecom.where(system=''phone'') | Person.telecom.where(system=''phone'') | Practitioner.telecom.where(system=''phone'') | PractitionerRole.telecom.where(system=''phone'') | RelatedPerson.telecom.where(system=''phone'')', sxpNormal);
   indexes.add('Patient', 'phonetic', '): A portion of either family or given name using some kind of phonetic matching algorithm', sptSTRING, [], 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name', sxpPhonetic);
@@ -4154,7 +4381,8 @@ begin
   indexes.add('PaymentNotice', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PaymentNotice', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PaymentNotice', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('PaymentNotice', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('PaymentNotice', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('PaymentNotice', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('PaymentNotice', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('PaymentNotice', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('PaymentNotice', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4178,7 +4406,8 @@ begin
   indexes.add('PaymentReconciliation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PaymentReconciliation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PaymentReconciliation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('PaymentReconciliation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('PaymentReconciliation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('PaymentReconciliation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('PaymentReconciliation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('PaymentReconciliation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('PaymentReconciliation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4203,7 +4432,8 @@ begin
   indexes.add('Permission', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Permission', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Permission', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Permission', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Permission', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Permission', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Permission', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Permission', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Permission', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4220,7 +4450,8 @@ begin
   indexes.add('Person', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Person', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Person', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Person', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Person', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Person', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Person', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Person', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Person', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4232,8 +4463,12 @@ begin
   indexes.add('Person', 'address-state', '): A state specified in an address', sptSTRING, [], 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state', sxpNormal);
   indexes.add('Person', 'address-use', '): A use code specified in an address', sptTOKEN, [], 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use', sxpNormal);
   indexes.add('Person', 'birthdate', '): The person''s date of birth', sptDATE, [], 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate', sxpNormal);
+  indexes.add('Person', 'death-date', 'The date of death has been provided and satisfies this search value', sptDATE, [], '(Person.deceased as dateTime)', sxpNormal);
+  indexes.add('Person', 'deceased', 'This person has been marked as deceased, or has a death date entered', sptTOKEN, [], 'Person.deceased.exists() and Person.deceased != false', sxpNormal);
   indexes.add('Person', 'email', '): A value in an email contact', sptTOKEN, [], 'Patient.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'')', sxpNormal);
+  indexes.add('Person', 'family', 'A portion of the family name of the person', sptSTRING, [], 'Person.name.family', sxpNormal);
   indexes.add('Person', 'gender', '): The gender of the person', sptTOKEN, [], 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender', sxpNormal);
+  indexes.add('Person', 'given', 'A portion of the given name of the person', sptSTRING, [], 'Person.name.given', sxpNormal);
   indexes.add('Person', 'identifier', 'A person Identifier', sptTOKEN, [], 'Person.identifier', sxpNormal);
   indexes.add('Person', 'link', 'Any link has this Patient, Person, RelatedPerson or Practitioner reference', sptREFERENCE, ['Practitioner', 'Patient', 'Person', 'RelatedPerson'], 'Person.link.target', sxpNormal);
   indexes.add('Person', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', sptSTRING, [], 'Person.name', sxpNormal);
@@ -4258,7 +4493,8 @@ begin
   indexes.add('PlanDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PlanDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PlanDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('PlanDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('PlanDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('PlanDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('PlanDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('PlanDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('PlanDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4270,7 +4506,7 @@ begin
   indexes.add('PlanDefinition', 'context-type-quantity', 'A use context type and quantity- or range-based value assigned to the plan definition', sptCOMPOSITE, [], 'PlanDefinition.useContext', sxpNormal);
   indexes.add('PlanDefinition', 'context-type-value', 'A use context type and value assigned to the plan definition', sptCOMPOSITE, [], 'PlanDefinition.useContext', sxpNormal);
   indexes.add('PlanDefinition', 'date', 'The plan definition publication date', sptDATE, [], 'PlanDefinition.date', sxpNormal);
-  indexes.add('PlanDefinition', 'definition', 'Activity or plan definitions used by plan definition', sptREFERENCE, ['Questionnaire', 'PlanDefinition', 'ActivityDefinition'], 'PlanDefinition.action.definition', sxpNormal);
+  indexes.add('PlanDefinition', 'definition', 'Activity or plan definitions used by plan definition', sptREFERENCE, ['Questionnaire', 'ObservationDefinition', 'PlanDefinition', 'ActivityDefinition'], 'PlanDefinition.action.definition', sxpNormal);
   indexes.add('PlanDefinition', 'depends-on', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''depends-on'').resource | PlanDefinition.library', sxpNormal);
   indexes.add('PlanDefinition', 'derived-from', 'What resource is being referenced', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''derived-from'').resource', sxpNormal);
   indexes.add('PlanDefinition', 'description', 'The description of the plan definition', sptSTRING, [], 'PlanDefinition.description', sxpNormal);
@@ -4298,7 +4534,8 @@ begin
   indexes.add('Practitioner', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Practitioner', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Practitioner', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Practitioner', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Practitioner', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Practitioner', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Practitioner', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Practitioner', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Practitioner', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4311,6 +4548,8 @@ begin
   indexes.add('Practitioner', 'address-state', '): A state specified in an address', sptSTRING, [], 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state', sxpNormal);
   indexes.add('Practitioner', 'address-use', '): A use code specified in an address', sptTOKEN, [], 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use', sxpNormal);
   indexes.add('Practitioner', 'communication', 'One of the languages that the practitioner can communicate with', sptTOKEN, [], 'Practitioner.communication', sxpNormal);
+  indexes.add('Practitioner', 'death-date', 'The date of death has been provided and satisfies this search value', sptDATE, [], '(Practitioner.deceased as dateTime)', sxpNormal);
+  indexes.add('Practitioner', 'deceased', 'This Practitioner has been marked as deceased, or has a death date entered', sptTOKEN, [], 'Practitioner.deceased.exists() and Practitioner.deceased != false', sxpNormal);
   indexes.add('Practitioner', 'email', '): A value in an email contact', sptTOKEN, [], 'Patient.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'')', sxpNormal);
   indexes.add('Practitioner', 'family', '): A portion of the family name', sptSTRING, [], 'Patient.name.family | Practitioner.name.family', sxpNormal);
   indexes.add('Practitioner', 'gender', '): Gender of the practitioner', sptTOKEN, [], 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender', sxpNormal);
@@ -4332,7 +4571,8 @@ begin
   indexes.add('PractitionerRole', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('PractitionerRole', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('PractitionerRole', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('PractitionerRole', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('PractitionerRole', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('PractitionerRole', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('PractitionerRole', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('PractitionerRole', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('PractitionerRole', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4362,7 +4602,8 @@ begin
   indexes.add('Procedure', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Procedure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Procedure', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Procedure', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Procedure', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Procedure', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Procedure', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Procedure', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Procedure', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4371,8 +4612,8 @@ begin
   indexes.add('Procedure', 'category', 'Classification of the procedure', sptTOKEN, [], 'Procedure.category', sxpNormal);
   indexes.add('Procedure', 'code', '): A code to identify a  procedure', sptTOKEN, [], 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | DeviceRequest.code.concept | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | MedicationAdministration.medication.concept | M'
       +'edicationDispense.medication.concept | MedicationRequest.medication.concept | MedicationUsage.medication.concept | Observation.code | Procedure.code | ServiceRequest.code', sxpNormal);
-  indexes.add('Procedure', 'date', '): When the procedure occurred or is occurring', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('Procedure', 'date', '): When the procedure occurred or is occurring', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('Procedure', 'encounter', '): The Encounter during which this Procedure was created', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('Procedure', 'identifier', '): A unique identifier for a procedure', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -4385,7 +4626,7 @@ begin
   indexes.add('Procedure', 'location', 'Where the procedure happened', sptREFERENCE, ['Location'], 'Procedure.location', sxpNormal);
   indexes.add('Procedure', 'part-of', 'Part of referenced event', sptREFERENCE, ['Observation', 'Procedure', 'MedicationAdministration'], 'Procedure.partOf', sxpNormal);
   indexes.add('Procedure', 'patient', '): Search by subject - a patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient | Lis'+
    't.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -4412,16 +4653,17 @@ begin
   indexes.add('Provenance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Provenance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Provenance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Provenance', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Provenance', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Provenance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Provenance', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Provenance', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Provenance', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Provenance', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Provenance', 'activity', 'Activity that occurred', sptTOKEN, [], 'Provenance.activity', sxpNormal);
-  indexes.add('Provenance', 'agent', 'Who participated', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Provenance.agent.who', sxpNormal);
+  indexes.add('Provenance', 'agent', 'Who participated', sptREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Provenance.agent.who', sxpNormal);
   indexes.add('Provenance', 'agent-role', 'What the agents role was', sptTOKEN, [], 'Provenance.agent.role', sxpNormal);
   indexes.add('Provenance', 'agent-type', 'How the agent participated', sptTOKEN, [], 'Provenance.agent.type', sxpNormal);
-  indexes.add('Provenance', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'Provenance.basedOn', sxpNormal);
+  indexes.add('Provenance', 'based-on', 'Reference to the service request.', sptREFERENCE, ['CarePlan', 'MedicationRequest', 'Task', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'], 'Provenance.basedOn', sxpNormal);
   indexes.add('Provenance', 'encounter', 'Encounter related to the Provenance', sptREFERENCE, ['Encounter'], 'Provenance.encounter', sxpNormal);
   indexes.add('Provenance', 'entity', 'Identity of entity', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Provenance.entity.what', sxpNormal);
   indexes.add('Provenance', 'location', 'Where the activity occurred, if relevant', sptREFERENCE, ['Location'], 'Provenance.location', sxpNormal);
@@ -4445,7 +4687,8 @@ begin
   indexes.add('Questionnaire', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Questionnaire', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Questionnaire', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Questionnaire', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Questionnaire', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Questionnaire', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Questionnaire', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Questionnaire', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Questionnaire', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4482,7 +4725,8 @@ begin
   indexes.add('QuestionnaireResponse', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('QuestionnaireResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('QuestionnaireResponse', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('QuestionnaireResponse', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('QuestionnaireResponse', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('QuestionnaireResponse', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('QuestionnaireResponse', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('QuestionnaireResponse', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('QuestionnaireResponse', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4496,7 +4740,7 @@ begin
   indexes.add('QuestionnaireResponse', 'part-of', 'Procedure or observation this questionnaire response was performed as a part of', sptREFERENCE, ['Observation', 'Procedure'], 'QuestionnaireResponse.partOf', sxpNormal);
   indexes.add('QuestionnaireResponse', 'patient', 'The patient that is the subject of the questionnaire response', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'QuestionnaireResponse.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('QuestionnaireResponse', 'questionnaire', 'The questionnaire the answers are provided for', sptREFERENCE, ['Questionnaire'], 'QuestionnaireResponse.questionnaire', sxpNormal);
-  indexes.add('QuestionnaireResponse', 'source', 'The individual providing the information reflected in the questionnaire respose', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'QuestionnaireResponse.source', sxpNormal);
+  indexes.add('QuestionnaireResponse', 'source', 'The individual providing the information reflected in the questionnaire respose', sptREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'QuestionnaireResponse.source', sxpNormal);
   indexes.add('QuestionnaireResponse', 'status', 'The status of the questionnaire response', sptTOKEN, [], 'QuestionnaireResponse.status', sxpNormal);
   indexes.add('QuestionnaireResponse', 'subject', 'The subject of the questionnaire response', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'QuestionnaireResponse.subject', sxpNormal);
   indexes.add('QuestionnaireResponse', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
@@ -4515,7 +4759,8 @@ begin
   indexes.add('RegulatedAuthorization', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RegulatedAuthorization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RegulatedAuthorization', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('RegulatedAuthorization', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('RegulatedAuthorization', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('RegulatedAuthorization', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('RegulatedAuthorization', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('RegulatedAuthorization', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('RegulatedAuthorization', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4538,7 +4783,8 @@ begin
   indexes.add('RelatedPerson', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RelatedPerson', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RelatedPerson', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('RelatedPerson', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('RelatedPerson', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('RelatedPerson', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('RelatedPerson', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('RelatedPerson', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('RelatedPerson', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4552,7 +4798,9 @@ begin
   indexes.add('RelatedPerson', 'address-use', '): A use code specified in an address', sptTOKEN, [], 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use', sxpNormal);
   indexes.add('RelatedPerson', 'birthdate', '): The Related Person''s date of birth', sptDATE, [], 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate', sxpNormal);
   indexes.add('RelatedPerson', 'email', '): A value in an email contact', sptTOKEN, [], 'Patient.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'')', sxpNormal);
+  indexes.add('RelatedPerson', 'family', 'A portion of the family name of the related person', sptSTRING, [], 'RelatedPerson.name.family', sxpNormal);
   indexes.add('RelatedPerson', 'gender', '): Gender of the related person', sptTOKEN, [], 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender', sxpNormal);
+  indexes.add('RelatedPerson', 'given', 'A portion of the given name of the related person', sptSTRING, [], 'RelatedPerson.name.given', sxpNormal);
   indexes.add('RelatedPerson', 'identifier', 'An Identifier of the RelatedPerson', sptTOKEN, [], 'RelatedPerson.identifier', sxpNormal);
   indexes.add('RelatedPerson', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', sptSTRING, [], 'RelatedPerson.name', sxpNormal);
   indexes.add('RelatedPerson', 'patient', 'The patient this related person is related to', sptREFERENCE, ['Patient'], 'RelatedPerson.patient', sxpNormal);
@@ -4573,7 +4821,8 @@ begin
   indexes.add('RequestGroup', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RequestGroup', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RequestGroup', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('RequestGroup', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('RequestGroup', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('RequestGroup', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('RequestGroup', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('RequestGroup', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('RequestGroup', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4608,7 +4857,8 @@ begin
   indexes.add('ResearchStudy', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchStudy', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ResearchStudy', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ResearchStudy', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ResearchStudy', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ResearchStudy', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ResearchStudy', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ResearchStudy', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4641,7 +4891,8 @@ begin
   indexes.add('ResearchSubject', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ResearchSubject', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ResearchSubject', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ResearchSubject', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ResearchSubject', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ResearchSubject', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ResearchSubject', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ResearchSubject', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ResearchSubject', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4666,14 +4917,15 @@ begin
   indexes.add('RiskAssessment', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('RiskAssessment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('RiskAssessment', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('RiskAssessment', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('RiskAssessment', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('RiskAssessment', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('RiskAssessment', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('RiskAssessment', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('RiskAssessment', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('RiskAssessment', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('RiskAssessment', 'condition', 'Condition assessed', sptREFERENCE, ['Condition'], 'RiskAssessment.condition', sxpNormal);
-  indexes.add('RiskAssessment', 'date', '): When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('RiskAssessment', 'date', '): When was assessment made?', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('RiskAssessment', 'encounter', '): Where was assessment performed?', sptREFERENCE, ['Encounter'], 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.encounter | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | Service'
       +'Request.encounter | VisionPrescription.encounter', sxpNormal);
   indexes.add('RiskAssessment', 'identifier', '): Unique identifier for the assessment', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
@@ -4683,13 +4935,13 @@ begin
    'cription.identifier', sxpNormal);
   indexes.add('RiskAssessment', 'method', 'Evaluation mechanism', sptTOKEN, [], 'RiskAssessment.method', sxpNormal);
   indexes.add('RiskAssessment', 'patient', '): Who/what does assessment apply to?', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.pat'+
    'ient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
       +'ubject.where(resolve() is Patient) | MedicationRequest.subject.where(resolve() is Patient) | MedicationUsage.subject.where(resolve() is Patient) | NutritionOrder.patient | Observation.subject.where(resolve() is Patient) | Procedure.subject.wh'
       +'ere(resolve() is Patient) | RiskAssessment.subject.where(resolve() is Patient) | ServiceRequest.subject.where(resolve() is Patient) | SupplyDelivery.patient | VisionPrescription.patient', sxpNormal);
-  indexes.add('RiskAssessment', 'performer', 'Who did assessment?', sptREFERENCE, ['Practitioner', 'Device', 'PractitionerRole'], 'RiskAssessment.performer', sxpNormal);
+  indexes.add('RiskAssessment', 'performer', 'Who did assessment?', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'RiskAssessment.performer', sxpNormal);
   indexes.add('RiskAssessment', 'probability', 'Likelihood of specified outcome', sptNUMBER, [], 'RiskAssessment.prediction.probability', sxpNormal);
   indexes.add('RiskAssessment', 'risk', 'Likelihood of specified outcome as a qualitative value', sptTOKEN, [], 'RiskAssessment.prediction.qualitativeRisk', sxpNormal);
   indexes.add('RiskAssessment', 'subject', 'Who/what does assessment apply to?', sptREFERENCE, ['Group', 'Patient'], 'RiskAssessment.subject', sxpNormal);
@@ -4707,13 +4959,14 @@ begin
   indexes.add('Schedule', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Schedule', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Schedule', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Schedule', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Schedule', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Schedule', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Schedule', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Schedule', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Schedule', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Schedule', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Schedule', 'active', 'Is the schedule in active use', sptTOKEN, [], 'Schedule.active', sxpNormal);
-  indexes.add('Schedule', 'actor', 'The individual(HealthcareService, Practitioner, Location, ...) to find a Schedule for', sptREFERENCE, ['Practitioner', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Schedule.actor', sxpNormal);
+  indexes.add('Schedule', 'actor', 'The individual(HealthcareService, Practitioner, Location, ...) to find a Schedule for', sptREFERENCE, ['Practitioner', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson', 'Location'], 'Schedule.actor', sxpNormal);
   indexes.add('Schedule', 'date', 'Search for Schedule resources that have a period that contains this date specified', sptDATE, [], 'Schedule.planningHorizon', sxpNormal);
   indexes.add('Schedule', 'identifier', 'A Schedule Identifier', sptTOKEN, [], 'Schedule.identifier', sxpNormal);
   indexes.add('Schedule', 'service-category', 'High-level category', sptTOKEN, [], 'Schedule.serviceCategory', sxpNormal);
@@ -4734,7 +4987,8 @@ begin
   indexes.add('SearchParameter', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SearchParameter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SearchParameter', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SearchParameter', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SearchParameter', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SearchParameter', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SearchParameter', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SearchParameter', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SearchParameter', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4789,7 +5043,8 @@ begin
   indexes.add('ServiceRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ServiceRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ServiceRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ServiceRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ServiceRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ServiceRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ServiceRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ServiceRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ServiceRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4812,7 +5067,7 @@ begin
   indexes.add('ServiceRequest', 'intent', 'proposal | plan | directive | order +', sptTOKEN, [], 'ServiceRequest.intent', sxpNormal);
   indexes.add('ServiceRequest', 'occurrence', 'When service should occur', sptDATE, [], 'ServiceRequest.occurrence', sxpNormal);
   indexes.add('ServiceRequest', 'patient', '): Search by subject - a patient', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.patient '+
    '| List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -4843,7 +5098,8 @@ begin
   indexes.add('Slot', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Slot', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Slot', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Slot', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Slot', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Slot', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Slot', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Slot', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Slot', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4867,22 +5123,23 @@ begin
   indexes.add('Specimen', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Specimen', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Specimen', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Specimen', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Specimen', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Specimen', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Specimen', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Specimen', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Specimen', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('Specimen', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('Specimen', 'accession', 'The accession number associated with the specimen', sptTOKEN, [], 'Specimen.accessionIdentifier', sxpNormal);
-  indexes.add('Specimen', 'bodysite', 'The code for the body site from where the specimen originated', sptTOKEN, [], 'Specimen.collection.bodySite', sxpNormal);
+  indexes.add('Specimen', 'bodysite', 'Reference to a resource (by instance)', sptREFERENCE, [], 'Specimen.collection.bodySite.reference', sxpNormal);
   indexes.add('Specimen', 'collected', 'The date the specimen was collected', sptDATE, [], 'Specimen.collection.collected', sxpNormal);
-  indexes.add('Specimen', 'collector', 'Who collected the specimen', sptREFERENCE, ['Practitioner', 'PractitionerRole'], 'Specimen.collection.collector', sxpNormal);
+  indexes.add('Specimen', 'collector', 'Who collected the specimen', sptREFERENCE, ['Practitioner', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Specimen.collection.collector', sxpNormal);
   indexes.add('Specimen', 'container', 'The kind of specimen container', sptTOKEN, [], 'Specimen.container.type', sxpNormal);
   indexes.add('Specimen', 'container-id', 'The unique identifier associated with the specimen container', sptTOKEN, [], 'Specimen.container.identifier', sxpNormal);
   indexes.add('Specimen', 'identifier', 'The unique identifier associated with the specimen', sptTOKEN, [], 'Specimen.identifier', sxpNormal);
   indexes.add('Specimen', 'parent', 'The parent of the specimen', sptREFERENCE, ['Specimen'], 'Specimen.parent', sxpNormal);
-  indexes.add('Specimen', 'patient', 'The patient the specimen comes from', sptREFERENCE, ['Group', 'Device', 'Patient', 'Substance', 'Location'], 'Specimen.subject.where(resolve() is Patient)', sxpNormal);
+  indexes.add('Specimen', 'patient', 'The patient the specimen comes from', sptREFERENCE, ['Group', 'BiologicallyDerivedProduct', 'Device', 'Patient', 'Substance', 'Location'], 'Specimen.subject.where(resolve() is Patient)', sxpNormal);
   indexes.add('Specimen', 'status', 'available | unavailable | unsatisfactory | entered-in-error', sptTOKEN, [], 'Specimen.status', sxpNormal);
-  indexes.add('Specimen', 'subject', 'The subject of the specimen', sptREFERENCE, ['Group', 'Device', 'Patient', 'Substance', 'Location'], 'Specimen.subject', sxpNormal);
+  indexes.add('Specimen', 'subject', 'The subject of the specimen', sptREFERENCE, ['Group', 'BiologicallyDerivedProduct', 'Device', 'Patient', 'Substance', 'Location'], 'Specimen.subject', sxpNormal);
   indexes.add('Specimen', 'type', 'The specimen type', sptTOKEN, [], 'Specimen.type', sxpNormal);
   indexes.add('Specimen', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
   compartments.register('Device', 'Specimen', ['subject']);
@@ -4898,7 +5155,8 @@ begin
   indexes.add('SpecimenDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SpecimenDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SpecimenDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SpecimenDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SpecimenDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SpecimenDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SpecimenDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SpecimenDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SpecimenDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4923,7 +5181,8 @@ begin
   indexes.add('StructureDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('StructureDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('StructureDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('StructureDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('StructureDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('StructureDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('StructureDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('StructureDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('StructureDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -4985,7 +5244,8 @@ begin
   indexes.add('StructureMap', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('StructureMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('StructureMap', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('StructureMap', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('StructureMap', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('StructureMap', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('StructureMap', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('StructureMap', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('StructureMap', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5036,7 +5296,8 @@ begin
   indexes.add('Subscription', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Subscription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Subscription', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Subscription', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Subscription', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Subscription', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Subscription', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Subscription', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Subscription', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5058,7 +5319,8 @@ begin
   indexes.add('SubscriptionStatus', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubscriptionStatus', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubscriptionStatus', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubscriptionStatus', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubscriptionStatus', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubscriptionStatus', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubscriptionStatus', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubscriptionStatus', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubscriptionStatus', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5074,7 +5336,8 @@ begin
   indexes.add('SubscriptionTopic', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubscriptionTopic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubscriptionTopic', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubscriptionTopic', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubscriptionTopic', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubscriptionTopic', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubscriptionTopic', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubscriptionTopic', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubscriptionTopic', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5082,8 +5345,7 @@ begin
   indexes.add('SubscriptionTopic', 'date', 'Date status first applied', sptDATE, [], 'SubscriptionTopic.date', sxpNormal);
   indexes.add('SubscriptionTopic', 'derived-or-self', 'A server defined search that matches either the url or derivedFrom', sptURI, [], 'SubscriptionTopic.url | SubscriptionTopic.derivedFrom', sxpNormal);
   indexes.add('SubscriptionTopic', 'identifier', 'Business Identifier for SubscriptionTopic', sptTOKEN, [], 'SubscriptionTopic.identifier', sxpNormal);
-  indexes.add('SubscriptionTopic', 'publisher', 'The name of the individual or organization that published the SubscriptionTopic', sptREFERENCE, ['Practitioner', 'Organization', 'PractitionerRole'], 'SubscriptionTopic.publisher', sxpNormal);
-  indexes.add('SubscriptionTopic', 'resource-type', 'Allowed Data type or Resource (reference to definition) for this definition', sptURI, [], 'SubscriptionTopic.resourceTrigger.resourceType', sxpNormal);
+  indexes.add('SubscriptionTopic', 'resource', 'Allowed Data type or Resource (reference to definition) for this definition, searches resourceTrigger, eventTrigger, and notificationShape for matches.', sptURI, [], 'SubscriptionTopic.resourceTrigger.resource', sxpNormal);
   indexes.add('SubscriptionTopic', 'status', 'draft | active | retired | unknown', sptTOKEN, [], 'SubscriptionTopic.status', sxpNormal);
   indexes.add('SubscriptionTopic', 'title', 'Name for this SubscriptionTopic (Human friendly)', sptSTRING, [], 'SubscriptionTopic.title', sxpNormal);
   indexes.add('SubscriptionTopic', 'trigger-description', 'Text representation of the trigger', sptSTRING, [], 'SubscriptionTopic.resourceTrigger.description', sxpNormal);
@@ -5100,7 +5362,8 @@ begin
   indexes.add('Substance', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Substance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Substance', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Substance', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Substance', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Substance', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Substance', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Substance', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Substance', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5124,12 +5387,13 @@ begin
   indexes.add('SubstanceDefinition', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceDefinition', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstanceDefinition', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceDefinition', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstanceDefinition', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstanceDefinition', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstanceDefinition', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceDefinition', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SubstanceDefinition', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
-  indexes.add('SubstanceDefinition', 'category', 'High level categorization, e.g. polymer or nucleic acid, or food, chemical, biological', sptTOKEN, [], 'SubstanceDefinition.category', sxpNormal);
+  indexes.add('SubstanceDefinition', 'classification', 'High or low level categorization, e.g. polymer vs. nucleic acid or linear vs. branch chain', sptTOKEN, [], 'SubstanceDefinition.classification', sxpNormal);
   indexes.add('SubstanceDefinition', 'code', 'The specific code', sptTOKEN, [], 'SubstanceDefinition.code.code', sxpNormal);
   indexes.add('SubstanceDefinition', 'domain', 'If the substance applies to only human or veterinary use', sptTOKEN, [], 'SubstanceDefinition.domain', sxpNormal);
   indexes.add('SubstanceDefinition', 'identifier', 'Identifier by which this substance is known', sptTOKEN, [], 'SubstanceDefinition.identifier', sxpNormal);
@@ -5145,7 +5409,8 @@ begin
   indexes.add('SubstanceNucleicAcid', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceNucleicAcid', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstanceNucleicAcid', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstanceNucleicAcid', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceNucleicAcid', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5161,7 +5426,8 @@ begin
   indexes.add('SubstancePolymer', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstancePolymer', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstancePolymer', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstancePolymer', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstancePolymer', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstancePolymer', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstancePolymer', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstancePolymer', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstancePolymer', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5177,7 +5443,8 @@ begin
   indexes.add('SubstanceProtein', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceProtein', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceProtein', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstanceProtein', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceProtein', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstanceProtein', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstanceProtein', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstanceProtein', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceProtein', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5193,7 +5460,8 @@ begin
   indexes.add('SubstanceReferenceInformation', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceReferenceInformation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstanceReferenceInformation', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceReferenceInformation', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstanceReferenceInformation', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceReferenceInformation', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5209,7 +5477,8 @@ begin
   indexes.add('SubstanceSourceMaterial', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SubstanceSourceMaterial', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SubstanceSourceMaterial', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SubstanceSourceMaterial', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SubstanceSourceMaterial', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5225,7 +5494,8 @@ begin
   indexes.add('SupplyDelivery', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SupplyDelivery', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SupplyDelivery', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SupplyDelivery', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SupplyDelivery', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SupplyDelivery', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SupplyDelivery', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SupplyDelivery', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SupplyDelivery', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5236,7 +5506,7 @@ begin
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifi'+
    'er', sxpNormal);
   indexes.add('SupplyDelivery', 'patient', '): Patient for whom the item is supplied', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) | Immunization.'+
    'patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -5258,14 +5528,15 @@ begin
   indexes.add('SupplyRequest', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('SupplyRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('SupplyRequest', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('SupplyRequest', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('SupplyRequest', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('SupplyRequest', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('SupplyRequest', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('SupplyRequest', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('SupplyRequest', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('SupplyRequest', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('SupplyRequest', 'category', 'The kind of supply (central, non-stock, etc.)', sptTOKEN, [], 'SupplyRequest.category', sxpNormal);
-  indexes.add('SupplyRequest', 'date', '): When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurren'
-      +'ce as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
+  indexes.add('SupplyRequest', 'date', '): When the request was made', sptDATE, [], 'AllergyIntolerance.recordedDate | CarePlan.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.actualPeriod | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.oc'
+      +'currence as dateTime) | List.date | Observation.effective | Procedure.occurrence | (RiskAssessment.occurrence as dateTime) | SupplyRequest.authoredOn', sxpNormal);
   indexes.add('SupplyRequest', 'identifier', '): Business Identifier for SupplyRequest', sptTOKEN, [], 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.mast'
       +'erIdentifier | DocumentManifest.identifier | DocumentReference.content.identifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | '
       +'Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationUsage.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.ident'
@@ -5290,7 +5561,8 @@ begin
   indexes.add('Task', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('Task', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('Task', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('Task', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('Task', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('Task', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('Task', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('Task', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('Task', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5325,7 +5597,8 @@ begin
   indexes.add('TerminologyCapabilities', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TerminologyCapabilities', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TerminologyCapabilities', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('TerminologyCapabilities', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('TerminologyCapabilities', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('TerminologyCapabilities', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('TerminologyCapabilities', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('TerminologyCapabilities', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('TerminologyCapabilities', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5376,7 +5649,8 @@ begin
   indexes.add('TestReport', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TestReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TestReport', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('TestReport', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('TestReport', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('TestReport', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('TestReport', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('TestReport', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('TestReport', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5398,7 +5672,8 @@ begin
   indexes.add('TestScript', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('TestScript', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('TestScript', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('TestScript', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('TestScript', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('TestScript', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('TestScript', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('TestScript', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('TestScript', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5433,7 +5708,8 @@ begin
   indexes.add('ValueSet', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('ValueSet', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('ValueSet', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('ValueSet', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('ValueSet', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('ValueSet', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('ValueSet', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('ValueSet', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('ValueSet', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5487,7 +5763,8 @@ begin
   indexes.add('VerificationResult', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('VerificationResult', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('VerificationResult', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('VerificationResult', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('VerificationResult', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('VerificationResult', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('VerificationResult', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('VerificationResult', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('VerificationResult', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5504,7 +5781,8 @@ begin
   indexes.add('VisionPrescription', '_filter', 'This is the formal declaration for the _filter parameter, documented at [http://hl7.org/fhir/search_filter.html](http://hl7.org/fhir/search_filter.html)', sptNULL, [], '', sxpNull);
   indexes.add('VisionPrescription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
   indexes.add('VisionPrescription', '_lastUpdated', 'When the resource version last changed', sptDATE, [], 'Resource.meta.lastUpdated', sxpNormal);
-  indexes.add('VisionPrescription', '_profile', 'Profiles this resource claims to conform to', sptURI, [], 'Resource.meta.profile', sxpNormal);
+  indexes.add('VisionPrescription', '_list', 'Allows for the retrieval of resources that are referenced by a List resource or by one of the pre-defined functional lists', sptNULL, [], '', sxpNormal);
+  indexes.add('VisionPrescription', '_profile', 'Profiles this resource claims to conform to', sptREFERENCE, ['StructureDefinition'], 'Resource.meta.profile', sxpNormal);
   indexes.add('VisionPrescription', '_query', 'A custom search profile that describes a specific defined query operation', sptNULL, [], '', sxpNormal);
   indexes.add('VisionPrescription', '_security', 'Security Labels applied to this resource', sptTOKEN, [], 'Resource.meta.security', sxpNormal);
   indexes.add('VisionPrescription', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
@@ -5518,7 +5796,7 @@ begin
       +'ifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.ident'+
    'ifier | VisionPrescription.identifier', sxpNormal);
   indexes.add('VisionPrescription', 'patient', '): The identity of a patient to list dispenses for', sptREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'AllergyIntolerance.patient | CarePlan.subject.where(resolve() is Patient) | CareTeam.subject.where(resolve() is Patient) | ClinicalImpression.subject.where(resolve() is Patient) | Composition.subject.where(resolve() is Patient) | Condition.subject.wh'
-      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.subject | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
+      +'ere(resolve() is Patient) | Consent.subject.where(resolve() is Patient) | DetectedIssue.patient | DeviceRequest.subject.where(resolve() is Patient) | DeviceUsage.patient | DiagnosticReport.subject.where(resolve() is Patient) | DocumentManifes'
       +'t.subject.where(resolve() is Patient) | DocumentReference.subject.where(resolve() is Patient) | Encounter.subject.where(resolve() is Patient) | EpisodeOfCare.patient | FamilyMemberHistory.patient | Flag.subject.where(resolve() is Patient) | G'
       +'oal.subject.where(resolve() is Patient) | ImagingStudy.subject.where(resolve() is Patient) |'+
    ' Immunization.patient | List.subject.where(resolve() is Patient) | MedicationAdministration.subject.where(resolve() is Patient) | MedicationDispense.s'
@@ -5558,6 +5836,9 @@ begin
   {$IFDEF FHIR_APPOINTMENTRESPONSE}
   buildIndexesForAppointmentResponse(Indexes, compartments);
   {$ENDIF}
+  {$IFDEF FHIR_ARTIFACTASSESSMENT}
+  buildIndexesForArtifactAssessment(Indexes, compartments);
+  {$ENDIF}
   {$IFDEF FHIR_AUDITEVENT}
   buildIndexesForAuditEvent(Indexes, compartments);
   {$ENDIF}
@@ -5588,9 +5869,6 @@ begin
   {$IFDEF FHIR_CARETEAM}
   buildIndexesForCareTeam(Indexes, compartments);
   {$ENDIF}
-  {$IFDEF FHIR_CATALOGENTRY}
-  buildIndexesForCatalogEntry(Indexes, compartments);
-  {$ENDIF}
   {$IFDEF FHIR_CHARGEITEM}
   buildIndexesForChargeItem(Indexes, compartments);
   {$ENDIF}
@@ -5608,6 +5886,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_CLINICALIMPRESSION}
   buildIndexesForClinicalImpression(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CLINICALUSEDEFINITION}
+  buildIndexesForClinicalUseDefinition(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_CLINICALUSEISSUE}
   buildIndexesForClinicalUseIssue(Indexes, compartments);
@@ -5629,6 +5910,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_CONCEPTMAP}
   buildIndexesForConceptMap(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CONCEPTMAP2}
+  buildIndexesForConceptMap2(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_CONDITION}
   buildIndexesForCondition(Indexes, compartments);
@@ -5659,6 +5943,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_DEVICEDEFINITION}
   buildIndexesForDeviceDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICEDISPENSE}
+  buildIndexesForDeviceDispense(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_DEVICEMETRIC}
   buildIndexesForDeviceMetric(Indexes, compartments);
@@ -5731,6 +6018,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_HEALTHCARESERVICE}
   buildIndexesForHealthcareService(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMAGINGSELECTION}
+  buildIndexesForImagingSelection(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_IMAGINGSTUDY}
   buildIndexesForImagingStudy(Indexes, compartments);

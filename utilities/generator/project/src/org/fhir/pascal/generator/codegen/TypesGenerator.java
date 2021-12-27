@@ -27,7 +27,7 @@ public class TypesGenerator extends ClassGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("fhir5_types");
+	  String template = config.getTemplate("fhir{N}_types");
 	  
 	  template = template.replace("{{mark}}", startVMarkValue());
 	  template = template.replace("{{type.abstract.fwds}}", ta0.toString());

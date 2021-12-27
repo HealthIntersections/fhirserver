@@ -155,6 +155,7 @@ type
     procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure doListDoubleClick(Sender: TObject);
     procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure doMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure populateEntry(entry : TListItem; item : T);
     procedure SetImages(AValue: TImagelist); override;
     procedure internalAddItem(item : T);
@@ -1004,7 +1005,10 @@ begin
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
   List.OnCustomDrawSubItem := doListDrawSubItem;
+  List.OnMouseMove := doMouseMove;
   List.smallImages := FImages;
+  List.Hint := 'List';
+  List.showHint := true;
   FPopup.Images := FImages;
   FPopup.OnPopup := doPopup;
   buildMenu;
@@ -1044,13 +1048,14 @@ procedure TListManager<T>.updateStatus;
 var
   i : integer;
   ops : TNodeOperationSet;
-  op : TControlOperation;
+  item : T;
 begin
   i := FList.itemIndex;
   if i = -1 then
-    ops := allowedOperations(nil)
+    item := nil
   else
-    ops := allowedOperations(FFiltered[i]);
+    item := FFiltered[i];
+  ops := allowedOperations(item);
 
   updateControls(copAdd, opAdd in ops);
   updateControls(copAddSet, opAdd in ops);
@@ -1066,7 +1071,7 @@ begin
   updateMenuControls();
   FCanEdit := opEdit in ops;
 
-  focusItemChange(focus);
+  focusItemChange(item);
   if assigned(FOnSetFocus) then
     FOnSetFocus(self);
 end;
@@ -1118,6 +1123,21 @@ begin
   begin
     sender.Canvas.Font.Color := fore;
     sender.Canvas.Brush.Color := back;
+  end;
+end;
+
+procedure TListManager<T>.doMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+var
+  li : TListItem;
+  i : T;
+begin
+  li := FList.getItemAt(x, y);
+  if (li = nil) then
+    List.Hint := '--'
+  else
+  begin
+    i := T(li.data);
+    List.Hint := getSummaryText(i);
   end;
 end;
 

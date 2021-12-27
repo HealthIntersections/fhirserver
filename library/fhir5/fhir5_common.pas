@@ -3994,7 +3994,9 @@ var
 begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
-  c := ae.event.subtypeList.Append;;
+  if ae.event.code = nil then
+    ae.event.code := TFhirCodeableConcept.Create;
+  c := ae.event.code.codingList.Append;
   c.code := code;
   c.system := system;
   c.Display := display;
@@ -4006,8 +4008,10 @@ var
 begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
+  if ae.event.categoryList.IsEmpty then
+    ae.event.categoryList.Append;
   c := TFHIRCoding.Create;
-  ae.event.type_ := c;
+  ae.event.categoryList[0].codingList.add(c);
   c.code := code;
   c.system := system;
   c.Display := display;
@@ -4027,8 +4031,7 @@ begin
   p.who.identifier := TFhirIdentifier.Create;
   p.who.identifier.system := system;
   p.who.identifier.value := value;
-  p.altId := alt;
-  p.name := name;
+  p.who.display := name;
 end;
 
 procedure TFHIRAuditEvent5.participantIp(ip: String);
@@ -4036,9 +4039,7 @@ var
   p: TFhirAuditEventParticipant;
 begin
   p := ae.participantList.append;
-  p.network := TFhirAuditEventParticipantNetwork.Create;
-  p.network.address := ip;
-  p.network.type_ := AuditEventAgentNetworkType2;
+  p.network := TFhirString.create(ip);
 end;
 
 procedure TFHIRAuditEvent5.SetLanguage(const Value: String);
@@ -4050,7 +4051,9 @@ procedure TFHIRAuditEvent5.source(name, system, value: String);
 begin
   if ae.source = nil then
     ae.source := TFhirAuditEventSource.Create;
-  ae.source.site := name;
+  if ae.source.site = nil then
+    ae.source.site := TFhirReference.Create;
+  ae.source.site.display := name;
   ae.source.observer := TFhirReference.Create();
   ae.source.observer.identifier := TFhirIdentifier.Create;
   ae.source.observer.identifier.system := system;
@@ -4063,7 +4066,9 @@ var
 begin
   if ae.source = nil then
     ae.source := TFhirAuditEventSource.Create;
-  c := ae.source.type_List.Append;
+  if ae.source.type_List.IsEmpty then
+    ae.source.type_List.Append;
+  c := ae.source.type_List[0].codingList.Append;
   c.code := code;
   c.system := system;
   c.Display := display;
@@ -4074,7 +4079,9 @@ begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
   ae.event.action := AuditEventActionE;
-  ae.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
+  if ae.event.outcome = nil then
+    ae.event.outcome := TFhirAuditEventOutcome.Create;
+  ae.event.outcome.code := TFhirCoding.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
   ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 
@@ -5782,37 +5789,37 @@ begin
     statement.restList.append.mode := RestfulCapabilityModeServer;
 
   f := statement.restList[0].featureList.Append;
-  f.code := 'security-cors';
-  f.value := 'true';
+  f.code := CapabilityFeatureSecurityCors;
+  f.value := CapabilityFeatureValueTrue;
 
   if authorize <> '' then
   begin
-    f := statement.restList[0].featureList.Append;
-    f.code := 'security-service';
-    f.value := 'SMART-on-FHIR';
+//    f := statement.restList[0].featureList.Append;
+//    f.code := CapabilityFeatureSecurityService;
+//    f.value := CapabilityFeatureValue;
 
-    f := statement.restList[0].featureList.Append;
-    f.code := 'oauth-uris-register';
-    f.value := register;
-
-    f := statement.restList[0].featureList.Append;
-    f.code := 'oauth-uris-authorize';
-    f.value := authorize;
-
-    f := statement.restList[0].featureList.Append;
-    f.code := 'oauth-uris-token';
-    f.value := token;
-
-    f := statement.restList[0].featureList.Append;
-    f.code := 'oauth-uris-manage';
-    f.value := manage;
-
-    for s in caps do
-    begin
-      f := statement.restList[0].featureList.Append;
-      f.code := 'smart-capabilities';
-      f.value := s;
-    end;
+//    f := statement.restList[0].featureList.Append;
+//    f.code := 'oauth-uris-register';
+//    f.value := register;
+//
+//    f := statement.restList[0].featureList.Append;
+//    f.code := 'oauth-uris-authorize';
+//    f.value := authorize;
+//
+//    f := statement.restList[0].featureList.Append;
+//    f.code := 'oauth-uris-token';
+//    f.value := token;
+//
+//    f := statement.restList[0].featureList.Append;
+//    f.code := 'oauth-uris-manage';
+//    f.value := manage;
+//
+//    for s in caps do
+//    begin
+//      f := statement.restList[0].featureList.Append;
+//      f.code := 'smart-capabilities';
+//      f.value := s;
+//    end;
   end;
 end;
 
@@ -6216,8 +6223,8 @@ var
 begin
   result := false;
   for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
-    if f.code = 'readHistory' then
-      exit(f.value = 'true');
+    if f.code = CapabilityFeatureReadHistory then
+      exit(f.value = CapabilityFeatureValueTrue);
 end;
 
 function TFhirCapabilityStatementRestResource25.hasInteraction: boolean;
@@ -6231,15 +6238,15 @@ var
 begin
   for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
   begin
-    if f.code = 'readHistory' then
+    if f.code = CapabilityFeatureReadHistory then
     begin
-      f.value := 'true';
+      f.value := CapabilityFeatureValueTrue;
       exit;
     end;
   end;
   f := (Element as TFhirCapabilityStatement2RestResource).featureList.Append;
-  f.code := 'readHistory';
-  f.value := 'true';
+  f.code := CapabilityFeatureReadHistory;
+  f.value := CapabilityFeatureValueTrue;
 end;
 
 

@@ -4,7 +4,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import org.fhir.delphi.DelphiGenerator.ClassCategory;
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.codegen.ClassGenerator.ClassGeneratorCategory;
@@ -27,7 +26,7 @@ public class JavascriptGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("fhir5_javascript");
+	  String template = config.getTemplate("fhir{N}_javascript");
 
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{js.register.routines}}", r1.toString());

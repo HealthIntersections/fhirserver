@@ -34,7 +34,7 @@ unit fhir5_resources_base;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -46,7 +46,7 @@ uses
 
 type
   TFhirResourceType = (
-    frtNull, // Resource type not known / not Specified 
+    frtNull, // Resource type not known / not Specified
     {$IFDEF FHIR_ACCOUNT}frtAccount, {$ENDIF}
     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition, {$ENDIF}
     {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}frtAdministrableProductDefinition, {$ENDIF}
@@ -54,6 +54,7 @@ type
     {$IFDEF FHIR_ALLERGYINTOLERANCE}frtAllergyIntolerance, {$ENDIF}
     {$IFDEF FHIR_APPOINTMENT}frtAppointment, {$ENDIF}
     {$IFDEF FHIR_APPOINTMENTRESPONSE}frtAppointmentResponse, {$ENDIF}
+    {$IFDEF FHIR_ARTIFACTASSESSMENT}frtArtifactAssessment, {$ENDIF}
     {$IFDEF FHIR_AUDITEVENT}frtAuditEvent, {$ENDIF}
     {$IFDEF FHIR_BASIC}frtBasic, {$ENDIF}
     {$IFDEF FHIR_BINARY}frtBinary, {$ENDIF}
@@ -64,13 +65,13 @@ type
     {$IFDEF FHIR_CAPABILITYSTATEMENT2}frtCapabilityStatement2, {$ENDIF}
     {$IFDEF FHIR_CAREPLAN}frtCarePlan, {$ENDIF}
     {$IFDEF FHIR_CARETEAM}frtCareTeam, {$ENDIF}
-    {$IFDEF FHIR_CATALOGENTRY}frtCatalogEntry, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}frtChargeItem, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION}frtChargeItemDefinition, {$ENDIF}
     {$IFDEF FHIR_CITATION}frtCitation, {$ENDIF}
     {$IFDEF FHIR_CLAIM}frtClaim, {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE}frtClaimResponse, {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION}frtClinicalImpression, {$ENDIF}
+    {$IFDEF FHIR_CLINICALUSEDEFINITION}frtClinicalUseDefinition, {$ENDIF}
     {$IFDEF FHIR_CLINICALUSEISSUE}frtClinicalUseIssue, {$ENDIF}
     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem, {$ENDIF}
     {$IFDEF FHIR_COMMUNICATION}frtCommunication, {$ENDIF}
@@ -78,6 +79,7 @@ type
     {$IFDEF FHIR_COMPARTMENTDEFINITION}frtCompartmentDefinition, {$ENDIF}
     {$IFDEF FHIR_COMPOSITION}frtComposition, {$ENDIF}
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
+    {$IFDEF FHIR_CONCEPTMAP2}frtConceptMap2, {$ENDIF}
     {$IFDEF FHIR_CONDITION}frtCondition, {$ENDIF}
     {$IFDEF FHIR_CONDITIONDEFINITION}frtConditionDefinition, {$ENDIF}
     {$IFDEF FHIR_CONSENT}frtConsent, {$ENDIF}
@@ -88,6 +90,7 @@ type
     {$IFDEF FHIR_DETECTEDISSUE}frtDetectedIssue, {$ENDIF}
     {$IFDEF FHIR_DEVICE}frtDevice, {$ENDIF}
     {$IFDEF FHIR_DEVICEDEFINITION}frtDeviceDefinition, {$ENDIF}
+    {$IFDEF FHIR_DEVICEDISPENSE}frtDeviceDispense, {$ENDIF}
     {$IFDEF FHIR_DEVICEMETRIC}frtDeviceMetric, {$ENDIF}
     {$IFDEF FHIR_DEVICEREQUEST}frtDeviceRequest, {$ENDIF}
     {$IFDEF FHIR_DEVICEUSAGE}frtDeviceUsage, {$ENDIF}
@@ -112,6 +115,7 @@ type
     {$IFDEF FHIR_GROUP}frtGroup, {$ENDIF}
     {$IFDEF FHIR_GUIDANCERESPONSE}frtGuidanceResponse, {$ENDIF}
     {$IFDEF FHIR_HEALTHCARESERVICE}frtHealthcareService, {$ENDIF}
+    {$IFDEF FHIR_IMAGINGSELECTION}frtImagingSelection, {$ENDIF}
     {$IFDEF FHIR_IMAGINGSTUDY}frtImagingStudy, {$ENDIF}
     {$IFDEF FHIR_IMMUNIZATION}frtImmunization, {$ENDIF}
     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}frtImmunizationEvaluation, {$ENDIF}
@@ -222,7 +226,7 @@ type
     procedure SetLanguage(value : TFhirCode);
     function GetLanguageST : String;
     procedure SetLanguageST(value : String);
-  
+
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
     procedure listFieldsInOrder(fields : TStringList); override;
@@ -302,7 +306,7 @@ type
     
     
     // Add an already existing FhirResource to the end of the list.
-function AddItem(value : TFhirResource): TFhirResource; overload;
+    function AddItem(value : TFhirResource) : TFhirResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirResource) : Integer;
@@ -587,7 +591,7 @@ begin
 end;
 
 procedure TFhirResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('id');
   fields.add('meta');
@@ -596,7 +600,7 @@ begin
 end;
 
 function TFhirResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -734,6 +738,7 @@ end;
 
 function TFhirResourceList.AddItem(value: TFhirResource): TFhirResource;
 begin
+  assert(value.ClassName = 'TFhirResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResource');
   add(value);
   result := value;
 end;
@@ -1052,7 +1057,7 @@ begin
 end;
 
 procedure TFhirDomainResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('text');
   fields.add('contained');
@@ -1061,7 +1066,7 @@ begin
 end;
 
 function TFhirDomainResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FContainedList.sizeInBytes(magic));
   inc(result, FExtensionList.sizeInBytes(magic));

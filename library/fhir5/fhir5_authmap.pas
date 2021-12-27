@@ -43,7 +43,7 @@ uses
 const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
-    tcOther, // frtNull
+    tcOther,
 {$IFDEF FHIR_ACCOUNT}                            tcFinancial, {$ENDIF}
 {$IFDEF FHIR_ACTIVITYDEFINITION}                 tcOther, {$ENDIF}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}     tcMedicationDefinition, {$ENDIF}
@@ -51,6 +51,7 @@ const
 {$IFDEF FHIR_ALLERGYINTOLERANCE}                 tcClinical, {$ENDIF}
 {$IFDEF FHIR_APPOINTMENT}                        tcSchedule, {$ENDIF}
 {$IFDEF FHIR_APPOINTMENTRESPONSE}                tcSchedule, {$ENDIF}
+{$IFDEF FHIR_ARTIFACTASSESSMENT}                 tcOther, {$ENDIF}
 {$IFDEF FHIR_AUDITEVENT}                         tcAudit, {$ENDIF}
 {$IFDEF FHIR_BASIC}                              tcClinical, {$ENDIF}
 {$IFDEF FHIR_BINARY}                             tcDocuments, {$ENDIF}
@@ -61,7 +62,6 @@ const
 {$IFDEF FHIR_CAPABILITYSTATEMENT2}               tcOther, {$ENDIF}
 {$IFDEF FHIR_CAREPLAN}                           tcClinical, {$ENDIF}
 {$IFDEF FHIR_CARETEAM}                           tcClinical, {$ENDIF}
-{$IFDEF FHIR_CATALOGENTRY}                       tcOther, {$ENDIF}
 {$IFDEF FHIR_CHARGEITEM}                         tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CHARGEITEMDEFINITION}               tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CITATION}                           tcData, {$ENDIF}
@@ -69,12 +69,14 @@ const
 {$IFDEF FHIR_CLAIMRESPONSE}                      tcFinancial, {$ENDIF}
 {$IFDEF FHIR_CLINICALIMPRESSION}                 tcClinical, {$ENDIF}
 {$IFDEF FHIR_CLINICALUSEISSUE}                   tcMedicationDefinition, {$ENDIF}
+{$IFDEF FHIR_CLINICALUSEISSUE}                   tcMedicationDefinition, {$ENDIF}
 {$IFDEF FHIR_CODESYSTEM}                         tcOther, {$ENDIF}
 {$IFDEF FHIR_COMMUNICATION}                      tcDocuments, {$ENDIF}
 {$IFDEF FHIR_COMMUNICATIONREQUEST}               tcDocuments, {$ENDIF}
 {$IFDEF FHIR_COMPARTMENTDEFINITION}              tcOther, {$ENDIF}
 {$IFDEF FHIR_COMPOSITION}                        tcDocuments, {$ENDIF}
 {$IFDEF FHIR_CONCEPTMAP}                         tcOther, {$ENDIF}
+{$IFDEF FHIR_CONCEPTMAP2}                        tcOther, {$ENDIF}
 {$IFDEF FHIR_CONDITION}                          tcClinical, {$ENDIF}
 {$IFDEF FHIR_CONDITIONDEFINITION}                tcOther, {$ENDIF}
 {$IFDEF FHIR_CONSENT}                            tcData, {$ENDIF}
@@ -85,6 +87,7 @@ const
 {$IFDEF FHIR_DETECTEDISSUE}                      tcClinical, {$ENDIF}
 {$IFDEF FHIR_DEVICE}                             tcData, {$ENDIF}
 {$IFDEF FHIR_DEVICEDEFINITION}                   tcOther, {$ENDIF}
+{$IFDEF FHIR_DEVICEDISPENSE}                     tcOther, {$ENDIF}
 {$IFDEF FHIR_DEVICEMETRIC}                       tcData, {$ENDIF}
 {$IFDEF FHIR_DEVICEREQUEST}                      tcClinical, {$ENDIF}
 {$IFDEF FHIR_DEVICEUSAGE}                        tcClinical, {$ENDIF}
@@ -109,6 +112,7 @@ const
 {$IFDEF FHIR_GROUP}                              tcData, {$ENDIF}
 {$IFDEF FHIR_GUIDANCERESPONSE}                   tcClinical, {$ENDIF}
 {$IFDEF FHIR_HEALTHCARESERVICE}                  tcData, {$ENDIF}
+{$IFDEF FHIR_IMAGINGSELECTION}                   tcClinical, {$ENDIF}
 {$IFDEF FHIR_IMAGINGSTUDY}                       tcClinical, {$ENDIF}
 {$IFDEF FHIR_IMMUNIZATION}                       tcClinical, {$ENDIF}
 {$IFDEF FHIR_IMMUNIZATIONEVALUATION}             tcClinical, {$ENDIF}
@@ -192,7 +196,7 @@ const
 {$IFDEF FHIR_VALUESET}                           tcOther, {$ENDIF}
 {$IFDEF FHIR_VERIFICATIONRESULT}                 tcMedicationDefinition, {$ENDIF}
 {$IFDEF FHIR_VISIONPRESCRIPTION}                 tcClinical, {$ENDIF}
-    tcOther); // frtCustom)
+    tcOther);
 
 implementation
 

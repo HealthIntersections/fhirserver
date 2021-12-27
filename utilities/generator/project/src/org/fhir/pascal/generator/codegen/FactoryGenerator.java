@@ -22,7 +22,7 @@ public class FactoryGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String source = TextFile.fileToString(Utilities.path(config.masterSource(), "fhir5_factory.pas"));
+	  String source = TextFile.fileToString(Utilities.path(config.masterSource(), "fhir"+N()+"_factory.pas"));
 	  int start = source.indexOf("{gen-factory-start}");
 	  int end = source.indexOf("{gen-factory-end}");
     source = source.substring(0, start+"{gen-factory-start}".length()+1) + gen.toString()+source.substring(end);

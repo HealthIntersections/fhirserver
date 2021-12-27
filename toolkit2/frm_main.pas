@@ -863,7 +863,7 @@ begin
       editor := FFactory.makeEditor(session.link, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab);
+      editor.bindToTab(tab, editor.makeRootPanel(tab));
       editor.LoadBytes(FTempStore.fetchContent(session.Guid));
       editor.session.NeedsSaving := ns;
       editor.lastChangeChecked := true;
@@ -1420,7 +1420,7 @@ begin
       editor := FFactory.makeEditor(session.link, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab);
+      editor.bindToTab(tab, editor.makeRootPanel(tab));
       if path <> '' then
       begin
         BytesToFile(bytes, path);
@@ -1473,7 +1473,7 @@ begin
       editor := FFactory.makeEditor(session, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab);
+      editor.bindToTab(tab, editor.makeRootPanel(tab));
       editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
@@ -1566,7 +1566,7 @@ begin
       editor := FFactory.makeEditor(session, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab);
+      editor.bindToTab(tab, editor.makeRootPanel(tab));
       editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
@@ -1833,7 +1833,7 @@ begin
     worker := FFactory.makeEditor(session, FTempStore) as TServerWorker;
     FContext.addEditor(worker);
     tab := pgEditors.AddTabSheet;
-    worker.bindToTab(tab);
+    worker.bindToTab(tab, worker.makeRootPanel(tab));
     worker.newContent;
     worker.session.NeedsSaving := false;
     worker.lastChangeChecked := true;
@@ -1894,7 +1894,7 @@ begin
       editor := FFactory.makeEditor(session, FTempStore);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab);
+      editor.bindToTab(tab, editor.makeRootPanel(tab));
       editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
@@ -1926,7 +1926,7 @@ begin
   editor := FFactory.makeEditor(session, FTempStore);
   FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;
-  editor.bindToTab(tab);
+  editor.bindToTab(tab, editor.makeRootPanel(tab));
   editor.loadBytes(src);
   editor.session.NeedsSaving := false;
   editor.lastChangeChecked := true;
@@ -1951,7 +1951,7 @@ begin
   editor := FFactory.makeEditor(session, FTempStore);
   FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;
-  editor.bindToTab(tab);
+  editor.bindToTab(tab, editor.makeRootPanel(tab));
   editor.loadBytes(src);
   editor.session.NeedsSaving := false;
   editor.lastChangeChecked := true;

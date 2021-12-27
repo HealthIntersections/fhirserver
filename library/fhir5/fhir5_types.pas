@@ -3,10 +3,10 @@ unit fhir5_types;
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
-  
+
   Redistribution and use in source and binary forms, with or without modification, 
   are permitted provided that the following conditions are met:
-  
+
    * Redistributions of source code must retain the above copyright notice, this 
      list of conditions and the following disclaimer.
    * Redistributions in binary form must reproduce the above copyright notice, 
@@ -15,7 +15,7 @@ unit fhir5_types;
    * Neither the name of HL7 nor the names of its contributors may be used to 
      endorse or promote products derived from this software without specific 
      prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
@@ -26,7 +26,7 @@ unit fhir5_types;
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
   POSSIBILITY OF SUCH DAMAGE.
-  
+
 }
 
 {$I fhir5.inc}
@@ -34,7 +34,7 @@ unit fhir5_types;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -192,28 +192,12 @@ type
   TFhirElementDefinitionList = class;
   TFhirMarketingStatus = class;
   TFhirMarketingStatusList = class;
-  TFhirOrderedDistributionInterval = class;
-  TFhirOrderedDistributionIntervalList = class;
-  TFhirOrderedDistribution = class;
-  TFhirOrderedDistributionList = class;
   TFhirPopulation = class;
   TFhirPopulationList = class;
   TFhirProdCharacteristic = class;
   TFhirProdCharacteristicList = class;
   TFhirProductShelfLife = class;
   TFhirProductShelfLifeList = class;
-  TFhirStatisticSampleSize = class;
-  TFhirStatisticSampleSizeList = class;
-  TFhirStatisticAttributeEstimate = class;
-  TFhirStatisticAttributeEstimateList = class;
-  TFhirStatisticAttributeEstimateAttributeEstimate = class;
-  TFhirStatisticAttributeEstimateAttributeEstimateList = class;
-  TFhirStatisticModelCharacteristic = class;
-  TFhirStatisticModelCharacteristicList = class;
-  TFhirStatisticModelCharacteristicVariable = class;
-  TFhirStatisticModelCharacteristicVariableList = class;
-  TFhirStatistic = class;
-  TFhirStatisticList = class;
   TFhirTimingRepeat = class;
   TFhirTimingRepeatList = class;
   TFhirTiming = class;
@@ -391,7 +375,7 @@ type
   public
     constructor Create(system : String; value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirEnum; overload;
     function Clone : TFhirEnum; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -437,46 +421,40 @@ type
     function Link : TFhirEnumList; overload;
     function Clone : TFhirEnumList; overload;
     function GetEnumerator : TFhirEnumListEnumerator;
-    
 
     //  Add a FhirEnum to the end of the list.
     function Append : TFhirEnum;
 
-    
     // Add an already existing FhirEnum to the end of the list.
-function AddItem(value : TFhirEnum): TFhirEnum; overload;
+    function AddItem(value : TFhirEnum): TFhirEnum; overload;
 
-    
     // Add an already existing FhirEnum to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String): TFhirEnum; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirEnum) : Integer;
-    
 
     // Insert FhirEnum before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirEnum;
-    
 
     // Insert an existing FhirEnum before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirEnum);
-    
+
     // Get the iIndexth FhirEnum. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirEnum);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirEnum;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirEnums[index : Integer] : TFhirEnum read GetItemN write SetItemN; default;
   End;
 
@@ -496,7 +474,7 @@ function AddItem(value : TFhirEnum): TFhirEnum; overload;
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDate; overload;
     function Clone : TFhirDate; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -537,46 +515,40 @@ function AddItem(value : TFhirEnum): TFhirEnum; overload;
     function Link : TFhirDateList; overload;
     function Clone : TFhirDateList; overload;
     function GetEnumerator : TFhirDateListEnumerator;
-    
 
     //  Add a FhirDate to the end of the list.
     function Append : TFhirDate;
 
-    
     // Add an already existing FhirDate to the end of the list.
-function AddItem(value : TFhirDate): TFhirDate; overload;
+    function AddItem(value : TFhirDate) : TFhirDate; overload;
 
-    
     // Add an already existing FhirDate to the end of the list.
-function AddItem(value : TFslDateTime): TFslDateTime; overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDate) : Integer;
-    
 
     // Insert FhirDate before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDate;
-    
 
     // Insert an existing FhirDate before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDate);
-    
+
     // Get the iIndexth FhirDate. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDate);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDate;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDates[index : Integer] : TFhirDate read GetItemN write SetItemN; default;
   End;
 
@@ -596,7 +568,7 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDateTime; overload;
     function Clone : TFhirDateTime; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -637,46 +609,40 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
     function Link : TFhirDateTimeList; overload;
     function Clone : TFhirDateTimeList; overload;
     function GetEnumerator : TFhirDateTimeListEnumerator;
-    
 
     //  Add a FhirDateTime to the end of the list.
     function Append : TFhirDateTime;
 
-    
     // Add an already existing FhirDateTime to the end of the list.
-function AddItem(value : TFhirDateTime): TFhirDateTime; overload;
+    function AddItem(value : TFhirDateTime) : TFhirDateTime; overload;
 
-    
     // Add an already existing FhirDateTime to the end of the list.
-function AddItem(value : TFslDateTime): TFslDateTime; overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDateTime) : Integer;
-    
 
     // Insert FhirDateTime before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDateTime;
-    
 
     // Insert an existing FhirDateTime before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDateTime);
-    
+
     // Get the iIndexth FhirDateTime. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDateTime);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDateTime;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDateTimes[index : Integer] : TFhirDateTime read GetItemN write SetItemN; default;
   End;
 
@@ -696,7 +662,7 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirString; overload;
     function Clone : TFhirString; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -734,46 +700,40 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
     function Link : TFhirStringList; overload;
     function Clone : TFhirStringList; overload;
     function GetEnumerator : TFhirStringListEnumerator;
-    
 
     //  Add a FhirString to the end of the list.
     function Append : TFhirString;
 
-    
     // Add an already existing FhirString to the end of the list.
-function AddItem(value : TFhirString): TFhirString; overload;
+    function AddItem(value : TFhirString) : TFhirString; overload;
 
-    
     // Add an already existing FhirString to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirString; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirString) : Integer;
-    
 
     // Insert FhirString before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirString;
-    
 
     // Insert an existing FhirString before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirString);
-    
+
     // Get the iIndexth FhirString. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirString);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirString;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirStrings[index : Integer] : TFhirString read GetItemN write SetItemN; default;
   End;
 
@@ -793,7 +753,7 @@ function AddItem(value : TFhirString): TFhirString; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInteger; overload;
     function Clone : TFhirInteger; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -831,46 +791,40 @@ function AddItem(value : TFhirString): TFhirString; overload;
     function Link : TFhirIntegerList; overload;
     function Clone : TFhirIntegerList; overload;
     function GetEnumerator : TFhirIntegerListEnumerator;
-    
 
     //  Add a FhirInteger to the end of the list.
     function Append : TFhirInteger;
 
-    
     // Add an already existing FhirInteger to the end of the list.
-function AddItem(value : TFhirInteger): TFhirInteger; overload;
+    function AddItem(value : TFhirInteger) : TFhirInteger; overload;
 
-    
     // Add an already existing FhirInteger to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirInteger; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInteger) : Integer;
-    
 
     // Insert FhirInteger before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInteger;
-    
 
     // Insert an existing FhirInteger before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInteger);
-    
+
     // Get the iIndexth FhirInteger. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInteger);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInteger;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirIntegers[index : Integer] : TFhirInteger read GetItemN write SetItemN; default;
   End;
 
@@ -890,7 +844,7 @@ function AddItem(value : TFhirInteger): TFhirInteger; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUri; overload;
     function Clone : TFhirUri; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -928,46 +882,40 @@ function AddItem(value : TFhirInteger): TFhirInteger; overload;
     function Link : TFhirUriList; overload;
     function Clone : TFhirUriList; overload;
     function GetEnumerator : TFhirUriListEnumerator;
-    
 
     //  Add a FhirUri to the end of the list.
     function Append : TFhirUri;
 
-    
     // Add an already existing FhirUri to the end of the list.
-function AddItem(value : TFhirUri): TFhirUri; overload;
+    function AddItem(value : TFhirUri) : TFhirUri; overload;
 
-    
     // Add an already existing FhirUri to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUri; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUri) : Integer;
-    
 
     // Insert FhirUri before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUri;
-    
 
     // Insert an existing FhirUri before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUri);
-    
+
     // Get the iIndexth FhirUri. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUri);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUri;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUris[index : Integer] : TFhirUri read GetItemN write SetItemN; default;
   End;
 
@@ -987,7 +935,7 @@ function AddItem(value : TFhirUri): TFhirUri; overload;
   public
     constructor Create(value : TFslDateTime); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInstant; overload;
     function Clone : TFhirInstant; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1028,46 +976,40 @@ function AddItem(value : TFhirUri): TFhirUri; overload;
     function Link : TFhirInstantList; overload;
     function Clone : TFhirInstantList; overload;
     function GetEnumerator : TFhirInstantListEnumerator;
-    
 
     //  Add a FhirInstant to the end of the list.
     function Append : TFhirInstant;
 
-    
     // Add an already existing FhirInstant to the end of the list.
-function AddItem(value : TFhirInstant): TFhirInstant; overload;
+    function AddItem(value : TFhirInstant) : TFhirInstant; overload;
 
-    
     // Add an already existing FhirInstant to the end of the list.
-function AddItem(value : TFslDateTime): TFslDateTime; overload;
+    function AddItem(value : TFslDateTime) : TFslDateTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInstant) : Integer;
-    
 
     // Insert FhirInstant before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInstant;
-    
 
     // Insert an existing FhirInstant before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInstant);
-    
+
     // Get the iIndexth FhirInstant. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInstant);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInstant;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirInstants[index : Integer] : TFhirInstant read GetItemN write SetItemN; default;
   End;
 
@@ -1087,7 +1029,7 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirXhtml; overload;
     function Clone : TFhirXhtml; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1125,46 +1067,40 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
     function Link : TFhirXhtmlList; overload;
     function Clone : TFhirXhtmlList; overload;
     function GetEnumerator : TFhirXhtmlListEnumerator;
-    
 
     //  Add a FhirXhtml to the end of the list.
     function Append : TFhirXhtml;
 
-    
     // Add an already existing FhirXhtml to the end of the list.
-function AddItem(value : TFhirXhtml): TFhirXhtml; overload;
+    function AddItem(value : TFhirXhtml) : TFhirXhtml; overload;
 
-    
     // Add an already existing FhirXhtml to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirXhtml; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirXhtml) : Integer;
-    
 
     // Insert FhirXhtml before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirXhtml;
-    
 
     // Insert an existing FhirXhtml before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirXhtml);
-    
+
     // Get the iIndexth FhirXhtml. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirXhtml);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirXhtml;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirXhtmls[index : Integer] : TFhirXhtml read GetItemN write SetItemN; default;
   End;
 
@@ -1184,7 +1120,7 @@ function AddItem(value : TFhirXhtml): TFhirXhtml; overload;
   public
     constructor Create(value : Boolean); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirBoolean; overload;
     function Clone : TFhirBoolean; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1223,46 +1159,40 @@ function AddItem(value : TFhirXhtml): TFhirXhtml; overload;
     function Link : TFhirBooleanList; overload;
     function Clone : TFhirBooleanList; overload;
     function GetEnumerator : TFhirBooleanListEnumerator;
-    
 
     //  Add a FhirBoolean to the end of the list.
     function Append : TFhirBoolean;
 
-    
     // Add an already existing FhirBoolean to the end of the list.
-function AddItem(value : TFhirBoolean): TFhirBoolean; overload;
+    function AddItem(value : TFhirBoolean) : TFhirBoolean; overload;
 
-    
     // Add an already existing FhirBoolean to the end of the list.
-    procedure AddItem(value : Boolean); overload;
+    function AddItem(value : Boolean) : Boolean; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBoolean) : Integer;
-    
 
     // Insert FhirBoolean before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirBoolean;
-    
 
     // Insert an existing FhirBoolean before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirBoolean);
-    
+
     // Get the iIndexth FhirBoolean. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirBoolean);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirBoolean;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirBooleans[index : Integer] : TFhirBoolean read GetItemN write SetItemN; default;
   End;
 
@@ -1282,7 +1212,7 @@ function AddItem(value : TFhirBoolean): TFhirBoolean; overload;
   public
     constructor Create(value : TBytes); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirBase64Binary; overload;
     function Clone : TFhirBase64Binary; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1320,46 +1250,40 @@ function AddItem(value : TFhirBoolean): TFhirBoolean; overload;
     function Link : TFhirBase64BinaryList; overload;
     function Clone : TFhirBase64BinaryList; overload;
     function GetEnumerator : TFhirBase64BinaryListEnumerator;
-    
 
     //  Add a FhirBase64Binary to the end of the list.
     function Append : TFhirBase64Binary;
 
-    
     // Add an already existing FhirBase64Binary to the end of the list.
-function AddItem(value : TFhirBase64Binary): TFhirBase64Binary; overload;
+    function AddItem(value : TFhirBase64Binary) : TFhirBase64Binary; overload;
 
-    
     // Add an already existing FhirBase64Binary to the end of the list.
-function AddItem(value : TBytes): TBytes; overload;
+    function AddItem(value : TBytes) : TBytes; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBase64Binary) : Integer;
-    
 
     // Insert FhirBase64Binary before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirBase64Binary;
-    
 
     // Insert an existing FhirBase64Binary before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirBase64Binary);
-    
+
     // Get the iIndexth FhirBase64Binary. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirBase64Binary);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirBase64Binary;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirBase64Binaries[index : Integer] : TFhirBase64Binary read GetItemN write SetItemN; default;
   End;
 
@@ -1379,7 +1303,7 @@ function AddItem(value : TBytes): TBytes; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirTime; overload;
     function Clone : TFhirTime; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1417,46 +1341,40 @@ function AddItem(value : TBytes): TBytes; overload;
     function Link : TFhirTimeList; overload;
     function Clone : TFhirTimeList; overload;
     function GetEnumerator : TFhirTimeListEnumerator;
-    
 
     //  Add a FhirTime to the end of the list.
     function Append : TFhirTime;
 
-    
     // Add an already existing FhirTime to the end of the list.
-function AddItem(value : TFhirTime): TFhirTime; overload;
+    function AddItem(value : TFhirTime) : TFhirTime; overload;
 
-    
     // Add an already existing FhirTime to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirTime; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTime) : Integer;
-    
 
     // Insert FhirTime before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirTime;
-    
 
     // Insert an existing FhirTime before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirTime);
-    
+
     // Get the iIndexth FhirTime. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirTime);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirTime;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirTimes[index : Integer] : TFhirTime read GetItemN write SetItemN; default;
   End;
 
@@ -1476,7 +1394,7 @@ function AddItem(value : TFhirTime): TFhirTime; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirDecimal; overload;
     function Clone : TFhirDecimal; overload;
     procedure Assign(oSource : TFslObject); override;
@@ -1514,46 +1432,40 @@ function AddItem(value : TFhirTime): TFhirTime; overload;
     function Link : TFhirDecimalList; overload;
     function Clone : TFhirDecimalList; overload;
     function GetEnumerator : TFhirDecimalListEnumerator;
-    
 
     //  Add a FhirDecimal to the end of the list.
     function Append : TFhirDecimal;
 
-    
     // Add an already existing FhirDecimal to the end of the list.
-function AddItem(value : TFhirDecimal): TFhirDecimal; overload;
+    function AddItem(value : TFhirDecimal) : TFhirDecimal; overload;
 
-    
     // Add an already existing FhirDecimal to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirDecimal; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDecimal) : Integer;
-    
 
     // Insert FhirDecimal before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirDecimal;
-    
 
     // Insert an existing FhirDecimal before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirDecimal);
-    
+
     // Get the iIndexth FhirDecimal. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirDecimal);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirDecimal;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirDecimals[index : Integer] : TFhirDecimal read GetItemN write SetItemN; default;
   End;
 
@@ -1566,7 +1478,7 @@ function AddItem(value : TFhirDecimal): TFhirDecimal; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirCode; overload;
     function Clone : TFhirCode; overload;
     function fhirType : string; override;
@@ -1598,46 +1510,40 @@ function AddItem(value : TFhirDecimal): TFhirDecimal; overload;
     function Link : TFhirCodeList; overload;
     function Clone : TFhirCodeList; overload;
     function GetEnumerator : TFhirCodeListEnumerator;
-    
 
     //  Add a FhirCode to the end of the list.
     function Append : TFhirCode;
 
-    
     // Add an already existing FhirCode to the end of the list.
-function AddItem(value : TFhirCode): TFhirCode; overload;
+    function AddItem(value : TFhirCode) : TFhirCode; overload;
 
-    
     // Add an already existing FhirCode to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirCode; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCode) : Integer;
-    
 
     // Insert FhirCode before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirCode;
-    
 
     // Insert an existing FhirCode before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirCode);
-    
+
     // Get the iIndexth FhirCode. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirCode);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirCode;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirCodes[index : Integer] : TFhirCode read GetItemN write SetItemN; default;
   End;
 
@@ -1650,7 +1556,7 @@ function AddItem(value : TFhirCode): TFhirCode; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirCanonical; overload;
     function Clone : TFhirCanonical; overload;
     function fhirType : string; override;
@@ -1682,46 +1588,40 @@ function AddItem(value : TFhirCode): TFhirCode; overload;
     function Link : TFhirCanonicalList; overload;
     function Clone : TFhirCanonicalList; overload;
     function GetEnumerator : TFhirCanonicalListEnumerator;
-    
 
     //  Add a FhirCanonical to the end of the list.
     function Append : TFhirCanonical;
 
-    
     // Add an already existing FhirCanonical to the end of the list.
-function AddItem(value : TFhirCanonical): TFhirCanonical; overload;
+    function AddItem(value : TFhirCanonical) : TFhirCanonical; overload;
 
-    
     // Add an already existing FhirCanonical to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirCanonical; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCanonical) : Integer;
-    
 
     // Insert FhirCanonical before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirCanonical;
-    
 
     // Insert an existing FhirCanonical before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirCanonical);
-    
+
     // Get the iIndexth FhirCanonical. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirCanonical);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirCanonical;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirCanonicals[index : Integer] : TFhirCanonical read GetItemN write SetItemN; default;
   End;
 
@@ -1734,7 +1634,7 @@ function AddItem(value : TFhirCanonical): TFhirCanonical; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirOid; overload;
     function Clone : TFhirOid; overload;
     function fhirType : string; override;
@@ -1766,46 +1666,40 @@ function AddItem(value : TFhirCanonical): TFhirCanonical; overload;
     function Link : TFhirOidList; overload;
     function Clone : TFhirOidList; overload;
     function GetEnumerator : TFhirOidListEnumerator;
-    
 
     //  Add a FhirOid to the end of the list.
     function Append : TFhirOid;
 
-    
     // Add an already existing FhirOid to the end of the list.
-function AddItem(value : TFhirOid): TFhirOid; overload;
+    function AddItem(value : TFhirOid) : TFhirOid; overload;
 
-    
     // Add an already existing FhirOid to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirOid; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOid) : Integer;
-    
 
     // Insert FhirOid before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirOid;
-    
 
     // Insert an existing FhirOid before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirOid);
-    
+
     // Get the iIndexth FhirOid. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirOid);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirOid;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirOids[index : Integer] : TFhirOid read GetItemN write SetItemN; default;
   End;
 
@@ -1818,7 +1712,7 @@ function AddItem(value : TFhirOid): TFhirOid; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUuid; overload;
     function Clone : TFhirUuid; overload;
     function fhirType : string; override;
@@ -1850,46 +1744,40 @@ function AddItem(value : TFhirOid): TFhirOid; overload;
     function Link : TFhirUuidList; overload;
     function Clone : TFhirUuidList; overload;
     function GetEnumerator : TFhirUuidListEnumerator;
-    
 
     //  Add a FhirUuid to the end of the list.
     function Append : TFhirUuid;
 
-    
     // Add an already existing FhirUuid to the end of the list.
-function AddItem(value : TFhirUuid): TFhirUuid; overload;
+    function AddItem(value : TFhirUuid) : TFhirUuid; overload;
 
-    
     // Add an already existing FhirUuid to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUuid; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUuid) : Integer;
-    
 
     // Insert FhirUuid before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUuid;
-    
 
     // Insert an existing FhirUuid before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUuid);
-    
+
     // Get the iIndexth FhirUuid. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUuid);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUuid;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUuids[index : Integer] : TFhirUuid read GetItemN write SetItemN; default;
   End;
 
@@ -1902,7 +1790,7 @@ function AddItem(value : TFhirUuid): TFhirUuid; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUrl; overload;
     function Clone : TFhirUrl; overload;
     function fhirType : string; override;
@@ -1934,46 +1822,40 @@ function AddItem(value : TFhirUuid): TFhirUuid; overload;
     function Link : TFhirUrlList; overload;
     function Clone : TFhirUrlList; overload;
     function GetEnumerator : TFhirUrlListEnumerator;
-    
 
     //  Add a FhirUrl to the end of the list.
     function Append : TFhirUrl;
 
-    
     // Add an already existing FhirUrl to the end of the list.
-function AddItem(value : TFhirUrl): TFhirUrl; overload;
+    function AddItem(value : TFhirUrl) : TFhirUrl; overload;
 
-    
     // Add an already existing FhirUrl to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUrl; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUrl) : Integer;
-    
 
     // Insert FhirUrl before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUrl;
-    
 
     // Insert an existing FhirUrl before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUrl);
-    
+
     // Get the iIndexth FhirUrl. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUrl);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUrl;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUrls[index : Integer] : TFhirUrl read GetItemN write SetItemN; default;
   End;
 
@@ -1986,7 +1868,7 @@ function AddItem(value : TFhirUrl): TFhirUrl; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirMarkdown; overload;
     function Clone : TFhirMarkdown; overload;
     function fhirType : string; override;
@@ -2018,46 +1900,40 @@ function AddItem(value : TFhirUrl): TFhirUrl; overload;
     function Link : TFhirMarkdownList; overload;
     function Clone : TFhirMarkdownList; overload;
     function GetEnumerator : TFhirMarkdownListEnumerator;
-    
 
     //  Add a FhirMarkdown to the end of the list.
     function Append : TFhirMarkdown;
 
-    
     // Add an already existing FhirMarkdown to the end of the list.
-function AddItem(value : TFhirMarkdown): TFhirMarkdown; overload;
+    function AddItem(value : TFhirMarkdown) : TFhirMarkdown; overload;
 
-    
     // Add an already existing FhirMarkdown to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirMarkdown; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMarkdown) : Integer;
-    
 
     // Insert FhirMarkdown before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirMarkdown;
-    
 
     // Insert an existing FhirMarkdown before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirMarkdown);
-    
+
     // Get the iIndexth FhirMarkdown. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirMarkdown);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirMarkdown;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirMarkdowns[index : Integer] : TFhirMarkdown read GetItemN write SetItemN; default;
   End;
 
@@ -2070,7 +1946,7 @@ function AddItem(value : TFhirMarkdown): TFhirMarkdown; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirUnsignedInt; overload;
     function Clone : TFhirUnsignedInt; overload;
     function fhirType : string; override;
@@ -2102,46 +1978,40 @@ function AddItem(value : TFhirMarkdown): TFhirMarkdown; overload;
     function Link : TFhirUnsignedIntList; overload;
     function Clone : TFhirUnsignedIntList; overload;
     function GetEnumerator : TFhirUnsignedIntListEnumerator;
-    
 
     //  Add a FhirUnsignedInt to the end of the list.
     function Append : TFhirUnsignedInt;
 
-    
     // Add an already existing FhirUnsignedInt to the end of the list.
-function AddItem(value : TFhirUnsignedInt): TFhirUnsignedInt; overload;
+    function AddItem(value : TFhirUnsignedInt) : TFhirUnsignedInt; overload;
 
-    
     // Add an already existing FhirUnsignedInt to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirUnsignedInt; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUnsignedInt) : Integer;
-    
 
     // Insert FhirUnsignedInt before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirUnsignedInt;
-    
 
     // Insert an existing FhirUnsignedInt before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirUnsignedInt);
-    
+
     // Get the iIndexth FhirUnsignedInt. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirUnsignedInt);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirUnsignedInt;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirUnsignedInts[index : Integer] : TFhirUnsignedInt read GetItemN write SetItemN; default;
   End;
 
@@ -2154,7 +2024,7 @@ function AddItem(value : TFhirUnsignedInt): TFhirUnsignedInt; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirId; overload;
     function Clone : TFhirId; overload;
     function fhirType : string; override;
@@ -2186,46 +2056,40 @@ function AddItem(value : TFhirUnsignedInt): TFhirUnsignedInt; overload;
     function Link : TFhirIdList; overload;
     function Clone : TFhirIdList; overload;
     function GetEnumerator : TFhirIdListEnumerator;
-    
 
     //  Add a FhirId to the end of the list.
     function Append : TFhirId;
 
-    
     // Add an already existing FhirId to the end of the list.
-function AddItem(value : TFhirId): TFhirId; overload;
+    function AddItem(value : TFhirId) : TFhirId; overload;
 
-    
     // Add an already existing FhirId to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirId; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirId) : Integer;
-    
 
     // Insert FhirId before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirId;
-    
 
     // Insert an existing FhirId before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirId);
-    
+
     // Get the iIndexth FhirId. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirId);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirId;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirIds[index : Integer] : TFhirId read GetItemN write SetItemN; default;
   End;
 
@@ -2238,7 +2102,7 @@ function AddItem(value : TFhirId): TFhirId; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirPositiveInt; overload;
     function Clone : TFhirPositiveInt; overload;
     function fhirType : string; override;
@@ -2270,46 +2134,40 @@ function AddItem(value : TFhirId): TFhirId; overload;
     function Link : TFhirPositiveIntList; overload;
     function Clone : TFhirPositiveIntList; overload;
     function GetEnumerator : TFhirPositiveIntListEnumerator;
-    
 
     //  Add a FhirPositiveInt to the end of the list.
     function Append : TFhirPositiveInt;
 
-    
     // Add an already existing FhirPositiveInt to the end of the list.
-function AddItem(value : TFhirPositiveInt): TFhirPositiveInt; overload;
+    function AddItem(value : TFhirPositiveInt) : TFhirPositiveInt; overload;
 
-    
     // Add an already existing FhirPositiveInt to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirPositiveInt; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPositiveInt) : Integer;
-    
 
     // Insert FhirPositiveInt before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirPositiveInt;
-    
 
     // Insert an existing FhirPositiveInt before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirPositiveInt);
-    
+
     // Get the iIndexth FhirPositiveInt. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirPositiveInt);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirPositiveInt;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirPositiveInts[index : Integer] : TFhirPositiveInt read GetItemN write SetItemN; default;
   End;
 
@@ -2322,7 +2180,7 @@ function AddItem(value : TFhirPositiveInt): TFhirPositiveInt; overload;
   public
     constructor Create(value : String); overload;
     destructor Destroy; override;
-    
+
     function Link : TFhirInteger64; overload;
     function Clone : TFhirInteger64; overload;
     function fhirType : string; override;
@@ -2354,46 +2212,40 @@ function AddItem(value : TFhirPositiveInt): TFhirPositiveInt; overload;
     function Link : TFhirInteger64List; overload;
     function Clone : TFhirInteger64List; overload;
     function GetEnumerator : TFhirInteger64ListEnumerator;
-    
 
     //  Add a FhirInteger64 to the end of the list.
     function Append : TFhirInteger64;
 
-    
     // Add an already existing FhirInteger64 to the end of the list.
-function AddItem(value : TFhirInteger64): TFhirInteger64; overload;
+    function AddItem(value : TFhirInteger64) : TFhirInteger64; overload;
 
-    
     // Add an already existing FhirInteger64 to the end of the list.
-    procedure AddItem(value : String); overload;
+    function AddItem(value : String) : TFhirInteger64; overload;
 
-    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInteger64) : Integer;
-    
 
     // Insert FhirInteger64 before the designated index (0 = first item)
     function Insert(index : Integer) : TFhirInteger64;
-    
 
     // Insert an existing FhirInteger64 before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirInteger64);
-    
+
     // Get the iIndexth FhirInteger64. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirInteger64);
-    
+
     // The number of items in the collection
     function Item(index : Integer) : TFhirInteger64;
-    
+
     // The number of items in the collection
     function Count : Integer; overload;
-    
+
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-    
+
     // Remove All Items from the list
     procedure ClearItems;
-    
+
     property FhirInteger64s[index : Integer] : TFhirInteger64 read GetItemN write SetItemN; default;
   End;
 
@@ -2537,7 +2389,7 @@ function AddItem(value : TFhirInteger64): TFhirInteger64; overload;
     function Append : TFhirAddress;
     
     // Add an already existing FhirAddress to the end of the list.
-function AddItem(value : TFhirAddress): TFhirAddress; overload;
+    function AddItem(value : TFhirAddress) : TFhirAddress; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAddress) : Integer;
@@ -2647,7 +2499,7 @@ function AddItem(value : TFhirAddress): TFhirAddress; overload;
     function Append : TFhirAnnotation;
     
     // Add an already existing FhirAnnotation to the end of the list.
-function AddItem(value : TFhirAnnotation): TFhirAnnotation; overload;
+    function AddItem(value : TFhirAnnotation) : TFhirAnnotation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAnnotation) : Integer;
@@ -2849,7 +2701,7 @@ function AddItem(value : TFhirAnnotation): TFhirAnnotation; overload;
     function Append : TFhirAttachment;
     
     // Add an already existing FhirAttachment to the end of the list.
-function AddItem(value : TFhirAttachment): TFhirAttachment; overload;
+    function AddItem(value : TFhirAttachment) : TFhirAttachment; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAttachment) : Integer;
@@ -2950,7 +2802,7 @@ function AddItem(value : TFhirAttachment): TFhirAttachment; overload;
     function Append : TFhirCodeableConcept;
     
     // Add an already existing FhirCodeableConcept to the end of the list.
-function AddItem(value : TFhirCodeableConcept): TFhirCodeableConcept; overload;
+    function AddItem(value : TFhirCodeableConcept) : TFhirCodeableConcept; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeableConcept) : Integer;
@@ -3049,7 +2901,7 @@ function AddItem(value : TFhirCodeableConcept): TFhirCodeableConcept; overload;
     function Append : TFhirCodeableReference;
     
     // Add an already existing FhirCodeableReference to the end of the list.
-function AddItem(value : TFhirCodeableReference): TFhirCodeableReference; overload;
+    function AddItem(value : TFhirCodeableReference) : TFhirCodeableReference; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeableReference) : Integer;
@@ -3179,7 +3031,7 @@ function AddItem(value : TFhirCodeableReference): TFhirCodeableReference; overlo
     function Append : TFhirCoding;
     
     // Add an already existing FhirCoding to the end of the list.
-function AddItem(value : TFhirCoding): TFhirCoding; overload;
+    function AddItem(value : TFhirCoding) : TFhirCoding; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoding) : Integer;
@@ -3280,7 +3132,7 @@ function AddItem(value : TFhirCoding): TFhirCoding; overload;
     function Append : TFhirContactDetail;
     
     // Add an already existing FhirContactDetail to the end of the list.
-function AddItem(value : TFhirContactDetail): TFhirContactDetail; overload;
+    function AddItem(value : TFhirContactDetail) : TFhirContactDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirContactDetail) : Integer;
@@ -3406,7 +3258,7 @@ function AddItem(value : TFhirContactDetail): TFhirContactDetail; overload;
     function Append : TFhirContactPoint;
     
     // Add an already existing FhirContactPoint to the end of the list.
-function AddItem(value : TFhirContactPoint): TFhirContactPoint; overload;
+    function AddItem(value : TFhirContactPoint) : TFhirContactPoint; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirContactPoint) : Integer;
@@ -3515,7 +3367,7 @@ function AddItem(value : TFhirContactPoint): TFhirContactPoint; overload;
     function Append : TFhirContributor;
     
     // Add an already existing FhirContributor to the end of the list.
-function AddItem(value : TFhirContributor): TFhirContributor; overload;
+    function AddItem(value : TFhirContributor) : TFhirContributor; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirContributor) : Integer;
@@ -3634,7 +3486,7 @@ function AddItem(value : TFhirContributor): TFhirContributor; overload;
     function Append : TFhirDataRequirementCodeFilter;
     
     // Add an already existing FhirDataRequirementCodeFilter to the end of the list.
-function AddItem(value : TFhirDataRequirementCodeFilter): TFhirDataRequirementCodeFilter; overload;
+    function AddItem(value : TFhirDataRequirementCodeFilter) : TFhirDataRequirementCodeFilter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDataRequirementCodeFilter) : Integer;
@@ -3744,7 +3596,7 @@ function AddItem(value : TFhirDataRequirementCodeFilter): TFhirDataRequirementCo
     function Append : TFhirDataRequirementDateFilter;
     
     // Add an already existing FhirDataRequirementDateFilter to the end of the list.
-function AddItem(value : TFhirDataRequirementDateFilter): TFhirDataRequirementDateFilter; overload;
+    function AddItem(value : TFhirDataRequirementDateFilter) : TFhirDataRequirementDateFilter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDataRequirementDateFilter) : Integer;
@@ -3846,7 +3698,7 @@ function AddItem(value : TFhirDataRequirementDateFilter): TFhirDataRequirementDa
     function Append : TFhirDataRequirementSort;
     
     // Add an already existing FhirDataRequirementSort to the end of the list.
-function AddItem(value : TFhirDataRequirementSort): TFhirDataRequirementSort; overload;
+    function AddItem(value : TFhirDataRequirementSort) : TFhirDataRequirementSort; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDataRequirementSort) : Integer;
@@ -3990,7 +3842,7 @@ function AddItem(value : TFhirDataRequirementSort): TFhirDataRequirementSort; ov
     function Append : TFhirDataRequirement;
     
     // Add an already existing FhirDataRequirement to the end of the list.
-function AddItem(value : TFhirDataRequirement): TFhirDataRequirement; overload;
+    function AddItem(value : TFhirDataRequirement) : TFhirDataRequirement; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDataRequirement) : Integer;
@@ -4120,7 +3972,7 @@ function AddItem(value : TFhirDataRequirement): TFhirDataRequirement; overload;
     function Append : TFhirExpression;
     
     // Add an already existing FhirExpression to the end of the list.
-function AddItem(value : TFhirExpression): TFhirExpression; overload;
+    function AddItem(value : TFhirExpression) : TFhirExpression; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExpression) : Integer;
@@ -4221,7 +4073,7 @@ function AddItem(value : TFhirExpression): TFhirExpression; overload;
     function Append : TFhirExtension;
     
     // Add an already existing FhirExtension to the end of the list.
-function AddItem(value : TFhirExtension): TFhirExtension; overload;
+    function AddItem(value : TFhirExtension) : TFhirExtension; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExtension) : Integer;
@@ -4360,7 +4212,7 @@ function AddItem(value : TFhirExtension): TFhirExtension; overload;
     function Append : TFhirHumanName;
     
     // Add an already existing FhirHumanName to the end of the list.
-function AddItem(value : TFhirHumanName): TFhirHumanName; overload;
+    function AddItem(value : TFhirHumanName) : TFhirHumanName; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirHumanName) : Integer;
@@ -4492,7 +4344,7 @@ function AddItem(value : TFhirHumanName): TFhirHumanName; overload;
     function Append : TFhirIdentifier;
     
     // Add an already existing FhirIdentifier to the end of the list.
-function AddItem(value : TFhirIdentifier): TFhirIdentifier; overload;
+    function AddItem(value : TFhirIdentifier) : TFhirIdentifier; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirIdentifier) : Integer;
@@ -4625,7 +4477,7 @@ function AddItem(value : TFhirIdentifier): TFhirIdentifier; overload;
     function Append : TFhirMeta;
     
     // Add an already existing FhirMeta to the end of the list.
-function AddItem(value : TFhirMeta): TFhirMeta; overload;
+    function AddItem(value : TFhirMeta) : TFhirMeta; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeta) : Integer;
@@ -4728,7 +4580,7 @@ function AddItem(value : TFhirMeta): TFhirMeta; overload;
     function Append : TFhirMoney;
     
     // Add an already existing FhirMoney to the end of the list.
-function AddItem(value : TFhirMoney): TFhirMoney; overload;
+    function AddItem(value : TFhirMoney) : TFhirMoney; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMoney) : Integer;
@@ -4828,7 +4680,7 @@ function AddItem(value : TFhirMoney): TFhirMoney; overload;
     function Append : TFhirNarrative;
     
     // Add an already existing FhirNarrative to the end of the list.
-function AddItem(value : TFhirNarrative): TFhirNarrative; overload;
+    function AddItem(value : TFhirNarrative) : TFhirNarrative; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNarrative) : Integer;
@@ -4974,7 +4826,7 @@ function AddItem(value : TFhirNarrative): TFhirNarrative; overload;
     function Append : TFhirParameterDefinition;
     
     // Add an already existing FhirParameterDefinition to the end of the list.
-function AddItem(value : TFhirParameterDefinition): TFhirParameterDefinition; overload;
+    function AddItem(value : TFhirParameterDefinition) : TFhirParameterDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirParameterDefinition) : Integer;
@@ -5077,7 +4929,7 @@ function AddItem(value : TFhirParameterDefinition): TFhirParameterDefinition; ov
     function Append : TFhirPeriod;
     
     // Add an already existing FhirPeriod to the end of the list.
-function AddItem(value : TFhirPeriod): TFhirPeriod; overload;
+    function AddItem(value : TFhirPeriod) : TFhirPeriod; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPeriod) : Integer;
@@ -5206,7 +5058,7 @@ function AddItem(value : TFhirPeriod): TFhirPeriod; overload;
     function Append : TFhirQuantity;
     
     // Add an already existing FhirQuantity to the end of the list.
-function AddItem(value : TFhirQuantity): TFhirQuantity; overload;
+    function AddItem(value : TFhirQuantity) : TFhirQuantity; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuantity) : Integer;
@@ -5305,7 +5157,7 @@ function AddItem(value : TFhirQuantity): TFhirQuantity; overload;
     function Append : TFhirRange;
     
     // Add an already existing FhirRange to the end of the list.
-function AddItem(value : TFhirRange): TFhirRange; overload;
+    function AddItem(value : TFhirRange) : TFhirRange; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRange) : Integer;
@@ -5404,7 +5256,7 @@ function AddItem(value : TFhirRange): TFhirRange; overload;
     function Append : TFhirRatio;
     
     // Add an already existing FhirRatio to the end of the list.
-function AddItem(value : TFhirRatio): TFhirRatio; overload;
+    function AddItem(value : TFhirRatio) : TFhirRatio; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRatio) : Integer;
@@ -5510,7 +5362,7 @@ function AddItem(value : TFhirRatio): TFhirRatio; overload;
     function Append : TFhirRatioRange;
     
     // Add an already existing FhirRatioRange to the end of the list.
-function AddItem(value : TFhirRatioRange): TFhirRatioRange; overload;
+    function AddItem(value : TFhirRatioRange) : TFhirRatioRange; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRatioRange) : Integer;
@@ -5629,7 +5481,7 @@ function AddItem(value : TFhirRatioRange): TFhirRatioRange; overload;
     function Append : TFhirReference;
     
     // Add an already existing FhirReference to the end of the list.
-function AddItem(value : TFhirReference): TFhirReference; overload;
+    function AddItem(value : TFhirReference) : TFhirReference; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirReference) : Integer;
@@ -5662,15 +5514,18 @@ function AddItem(value : TFhirReference): TFhirReference; overload;
   TFhirRelatedArtifact = class (TFhirDataType)
   protected
     FType_ : TFhirEnum;
+    FclassifierList : TFhirCodeableConceptList;
     FLabel_ : TFhirString;
     FDisplay : TFhirString;
     FCitation : TFhirMarkdown;
-    FUrl : TFhirUrl;
     FDocument : TFhirAttachment;
     FResource : TFhirCanonical;
+    FResourceReference : TFhirReference;
     procedure SetType_(value : TFhirEnum);
     function GetType_ST : TFhirRelatedArtifactTypeEnum;
     procedure SetType_ST(value : TFhirRelatedArtifactTypeEnum);
+    function GetClassifierList : TFhirCodeableConceptList;
+    function GetHasClassifierList : Boolean;
     procedure SetLabel_(value : TFhirString);
     function GetLabel_ST : String;
     procedure SetLabel_ST(value : String);
@@ -5680,13 +5535,11 @@ function AddItem(value : TFhirReference): TFhirReference; overload;
     procedure SetCitation(value : TFhirMarkdown);
     function GetCitationST : String;
     procedure SetCitationST(value : String);
-    procedure SetUrl(value : TFhirUrl);
-    function GetUrlST : String;
-    procedure SetUrlST(value : String);
     procedure SetDocument(value : TFhirAttachment);
     procedure SetResource(value : TFhirCanonical);
     function GetResourceST : String;
     procedure SetResourceST(value : String);
+    procedure SetResourceReference(value : TFhirReference);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -5713,6 +5566,10 @@ function AddItem(value : TFhirReference): TFhirReference; overload;
     property type_ : TFhirRelatedArtifactTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
 
+    // Provides additional classifiers of the related artifact.
+    property classifierList : TFhirCodeableConceptList read GetClassifierList;
+    property hasClassifierList : boolean read GetHasClassifierList;
+
     // Typed access to A short label that can be used to reference the citation from elsewhere in the containing artifact, such as a footnote index.
     property label_ : String read GetLabel_ST write SetLabel_ST;
     // A short label that can be used to reference the citation from elsewhere in the containing artifact, such as a footnote index.
@@ -5728,20 +5585,20 @@ function AddItem(value : TFhirReference): TFhirReference; overload;
     // A bibliographic citation for the related artifact. This text SHOULD be formatted according to an accepted citation format.
     property citationElement : TFhirMarkdown read FCitation write SetCitation;
 
-    // Typed access to A url for the artifact that can be followed to access the actual content.
-    property url : String read GetUrlST write SetUrlST;
-    // A url for the artifact that can be followed to access the actual content.
-    property urlElement : TFhirUrl read FUrl write SetUrl;
-
     // Typed access to The document being referenced, represented as an attachment. This is exclusive with the resource element. (defined for API consistency)
     property document : TFhirAttachment read FDocument write SetDocument;
     // The document being referenced, represented as an attachment. This is exclusive with the resource element.
     property documentElement : TFhirAttachment read FDocument write SetDocument;
 
-    // Typed access to The related resource, such as a library, value set, profile, or other knowledge resource.
+    // Typed access to The related artifact, such as a library, value set, profile, or other knowledge resource.
     property resource : String read GetResourceST write SetResourceST;
-    // The related resource, such as a library, value set, profile, or other knowledge resource.
+    // The related artifact, such as a library, value set, profile, or other knowledge resource.
     property resourceElement : TFhirCanonical read FResource write SetResource;
+
+    // Typed access to The related artifact, if the artifact is not a canonical resource, or a resource reference to a canonical resource. (defined for API consistency)
+    property resourceReference : TFhirReference read FResourceReference write SetResourceReference;
+    // The related artifact, if the artifact is not a canonical resource, or a resource reference to a canonical resource.
+    property resourceReferenceElement : TFhirReference read FResourceReference write SetResourceReference;
 
   end;
 
@@ -5774,7 +5631,7 @@ function AddItem(value : TFhirReference): TFhirReference; overload;
     function Append : TFhirRelatedArtifact;
     
     // Add an already existing FhirRelatedArtifact to the end of the list.
-function AddItem(value : TFhirRelatedArtifact): TFhirRelatedArtifact; overload;
+    function AddItem(value : TFhirRelatedArtifact) : TFhirRelatedArtifact; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRelatedArtifact) : Integer;
@@ -5920,7 +5777,7 @@ function AddItem(value : TFhirRelatedArtifact): TFhirRelatedArtifact; overload;
     function Append : TFhirSampledData;
     
     // Add an already existing FhirSampledData to the end of the list.
-function AddItem(value : TFhirSampledData): TFhirSampledData; overload;
+    function AddItem(value : TFhirSampledData) : TFhirSampledData; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSampledData) : Integer;
@@ -6062,7 +5919,7 @@ function AddItem(value : TFhirSampledData): TFhirSampledData; overload;
     function Append : TFhirSignature;
     
     // Add an already existing FhirSignature to the end of the list.
-function AddItem(value : TFhirSignature): TFhirSignature; overload;
+    function AddItem(value : TFhirSignature) : TFhirSignature; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSignature) : Integer;
@@ -6185,7 +6042,7 @@ function AddItem(value : TFhirSignature): TFhirSignature; overload;
     function Append : TFhirTriggerDefinition;
     
     // Add an already existing FhirTriggerDefinition to the end of the list.
-function AddItem(value : TFhirTriggerDefinition): TFhirTriggerDefinition; overload;
+    function AddItem(value : TFhirTriggerDefinition) : TFhirTriggerDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTriggerDefinition) : Integer;
@@ -6284,7 +6141,7 @@ function AddItem(value : TFhirTriggerDefinition): TFhirTriggerDefinition; overlo
     function Append : TFhirUsageContext;
     
     // Add an already existing FhirUsageContext to the end of the list.
-function AddItem(value : TFhirUsageContext): TFhirUsageContext; overload;
+    function AddItem(value : TFhirUsageContext) : TFhirUsageContext; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirUsageContext) : Integer;
@@ -6353,7 +6210,7 @@ function AddItem(value : TFhirUsageContext): TFhirUsageContext; overload;
     function Append : TFhirAge;
     
     // Add an already existing FhirAge to the end of the list.
-function AddItem(value : TFhirAge): TFhirAge; overload;
+    function AddItem(value : TFhirAge) : TFhirAge; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAge) : Integer;
@@ -6422,7 +6279,7 @@ function AddItem(value : TFhirAge): TFhirAge; overload;
     function Append : TFhirCount;
     
     // Add an already existing FhirCount to the end of the list.
-function AddItem(value : TFhirCount): TFhirCount; overload;
+    function AddItem(value : TFhirCount) : TFhirCount; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCount) : Integer;
@@ -6491,7 +6348,7 @@ function AddItem(value : TFhirCount): TFhirCount; overload;
     function Append : TFhirDistance;
     
     // Add an already existing FhirDistance to the end of the list.
-function AddItem(value : TFhirDistance): TFhirDistance; overload;
+    function AddItem(value : TFhirDistance) : TFhirDistance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDistance) : Integer;
@@ -6597,7 +6454,7 @@ function AddItem(value : TFhirDistance): TFhirDistance; overload;
     function Append : TFhirDosageDoseAndRate;
     
     // Add an already existing FhirDosageDoseAndRate to the end of the list.
-function AddItem(value : TFhirDosageDoseAndRate): TFhirDosageDoseAndRate; overload;
+    function AddItem(value : TFhirDosageDoseAndRate) : TFhirDosageDoseAndRate; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDosageDoseAndRate) : Integer;
@@ -6779,7 +6636,7 @@ function AddItem(value : TFhirDosageDoseAndRate): TFhirDosageDoseAndRate; overlo
     function Append : TFhirDosage;
     
     // Add an already existing FhirDosage to the end of the list.
-function AddItem(value : TFhirDosage): TFhirDosage; overload;
+    function AddItem(value : TFhirDosage) : TFhirDosage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDosage) : Integer;
@@ -6848,7 +6705,7 @@ function AddItem(value : TFhirDosage): TFhirDosage; overload;
     function Append : TFhirDuration;
     
     // Add an already existing FhirDuration to the end of the list.
-function AddItem(value : TFhirDuration): TFhirDuration; overload;
+    function AddItem(value : TFhirDuration) : TFhirDuration; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDuration) : Integer;
@@ -6966,7 +6823,7 @@ function AddItem(value : TFhirDuration): TFhirDuration; overload;
     function Append : TFhirElementDefinitionSlicing;
     
     // Add an already existing FhirElementDefinitionSlicing to the end of the list.
-function AddItem(value : TFhirElementDefinitionSlicing): TFhirElementDefinitionSlicing; overload;
+    function AddItem(value : TFhirElementDefinitionSlicing) : TFhirElementDefinitionSlicing; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionSlicing) : Integer;
@@ -7068,7 +6925,7 @@ function AddItem(value : TFhirElementDefinitionSlicing): TFhirElementDefinitionS
     function Append : TFhirElementDefinitionSlicingDiscriminator;
     
     // Add an already existing FhirElementDefinitionSlicingDiscriminator to the end of the list.
-function AddItem(value : TFhirElementDefinitionSlicingDiscriminator): TFhirElementDefinitionSlicingDiscriminator; overload;
+    function AddItem(value : TFhirElementDefinitionSlicingDiscriminator) : TFhirElementDefinitionSlicingDiscriminator; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionSlicingDiscriminator) : Integer;
@@ -7180,7 +7037,7 @@ function AddItem(value : TFhirElementDefinitionSlicingDiscriminator): TFhirEleme
     function Append : TFhirElementDefinitionBase;
     
     // Add an already existing FhirElementDefinitionBase to the end of the list.
-function AddItem(value : TFhirElementDefinitionBase): TFhirElementDefinitionBase; overload;
+    function AddItem(value : TFhirElementDefinitionBase) : TFhirElementDefinitionBase; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionBase) : Integer;
@@ -7305,7 +7162,7 @@ function AddItem(value : TFhirElementDefinitionBase): TFhirElementDefinitionBase
     function Append : TFhirElementDefinitionType;
     
     // Add an already existing FhirElementDefinitionType to the end of the list.
-function AddItem(value : TFhirElementDefinitionType): TFhirElementDefinitionType; overload;
+    function AddItem(value : TFhirElementDefinitionType) : TFhirElementDefinitionType; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionType) : Integer;
@@ -7406,7 +7263,7 @@ function AddItem(value : TFhirElementDefinitionType): TFhirElementDefinitionType
     function Append : TFhirElementDefinitionExample;
     
     // Add an already existing FhirElementDefinitionExample to the end of the list.
-function AddItem(value : TFhirElementDefinitionExample): TFhirElementDefinitionExample; overload;
+    function AddItem(value : TFhirElementDefinitionExample) : TFhirElementDefinitionExample; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionExample) : Integer;
@@ -7553,7 +7410,7 @@ function AddItem(value : TFhirElementDefinitionExample): TFhirElementDefinitionE
     function Append : TFhirElementDefinitionConstraint;
     
     // Add an already existing FhirElementDefinitionConstraint to the end of the list.
-function AddItem(value : TFhirElementDefinitionConstraint): TFhirElementDefinitionConstraint; overload;
+    function AddItem(value : TFhirElementDefinitionConstraint) : TFhirElementDefinitionConstraint; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionConstraint) : Integer;
@@ -7664,7 +7521,7 @@ function AddItem(value : TFhirElementDefinitionConstraint): TFhirElementDefiniti
     function Append : TFhirElementDefinitionBinding;
     
     // Add an already existing FhirElementDefinitionBinding to the end of the list.
-function AddItem(value : TFhirElementDefinitionBinding): TFhirElementDefinitionBinding; overload;
+    function AddItem(value : TFhirElementDefinitionBinding) : TFhirElementDefinitionBinding; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionBinding) : Integer;
@@ -7785,7 +7642,7 @@ function AddItem(value : TFhirElementDefinitionBinding): TFhirElementDefinitionB
     function Append : TFhirElementDefinitionMapping;
     
     // Add an already existing FhirElementDefinitionMapping to the end of the list.
-function AddItem(value : TFhirElementDefinitionMapping): TFhirElementDefinitionMapping; overload;
+    function AddItem(value : TFhirElementDefinitionMapping) : TFhirElementDefinitionMapping; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinitionMapping) : Integer;
@@ -8146,7 +8003,7 @@ function AddItem(value : TFhirElementDefinitionMapping): TFhirElementDefinitionM
     function Append : TFhirElementDefinition;
     
     // Add an already existing FhirElementDefinition to the end of the list.
-function AddItem(value : TFhirElementDefinition): TFhirElementDefinition; overload;
+    function AddItem(value : TFhirElementDefinition) : TFhirElementDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirElementDefinition) : Integer;
@@ -8268,7 +8125,7 @@ function AddItem(value : TFhirElementDefinition): TFhirElementDefinition; overlo
     function Append : TFhirMarketingStatus;
     
     // Add an already existing FhirMarketingStatus to the end of the list.
-function AddItem(value : TFhirMarketingStatus): TFhirMarketingStatus; overload;
+    function AddItem(value : TFhirMarketingStatus) : TFhirMarketingStatus; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMarketingStatus) : Integer;
@@ -8295,238 +8152,6 @@ function AddItem(value : TFhirMarketingStatus): TFhirMarketingStatus; overload;
     procedure ClearItems;
     
     property FhirMarketingStatuses[index : Integer] : TFhirMarketingStatus read GetItemN write SetItemN; default;
-  End;
-
-  // Interval.
-  TFhirOrderedDistributionInterval = class (TFhirElement)
-  protected
-    FRankOrder : TFhirInteger;
-    FintervalStatisticList : TFhirStatisticList;
-    procedure SetRankOrder(value : TFhirInteger);
-    function GetRankOrderST : String;
-    procedure SetRankOrderST(value : String);
-    function GetIntervalStatisticList : TFhirStatisticList;
-    function GetHasIntervalStatisticList : Boolean;
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirOrderedDistributionInterval; overload;
-    function Clone : TFhirOrderedDistributionInterval; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Relative order of interval.
-    property rankOrder : String read GetRankOrderST write SetRankOrderST;
-    // Relative order of interval.
-    property rankOrderElement : TFhirInteger read FRankOrder write SetRankOrder;
-
-    // Values and parameters for a single statistic related to the interval.
-    property intervalStatisticList : TFhirStatisticList read GetIntervalStatisticList;
-    property hasIntervalStatisticList : boolean read GetHasIntervalStatisticList;
-
-  end;
-
-  TFhirOrderedDistributionIntervalListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirOrderedDistributionIntervalList;
-    function GetCurrent : TFhirOrderedDistributionInterval;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirOrderedDistributionIntervalList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirOrderedDistributionInterval read GetCurrent;
-  end;
-
-  TFhirOrderedDistributionIntervalList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirOrderedDistributionInterval;
-    procedure SetItemN(index : Integer; value : TFhirOrderedDistributionInterval);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirOrderedDistributionIntervalList; overload;
-    function Clone : TFhirOrderedDistributionIntervalList; overload;
-    function GetEnumerator : TFhirOrderedDistributionIntervalListEnumerator;
-    
-    //  Add a FhirOrderedDistributionInterval to the end of the list.
-    function Append : TFhirOrderedDistributionInterval;
-    
-    // Add an already existing FhirOrderedDistributionInterval to the end of the list.
-function AddItem(value : TFhirOrderedDistributionInterval): TFhirOrderedDistributionInterval; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirOrderedDistributionInterval) : Integer;
-    
-    // Insert FhirOrderedDistributionInterval before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirOrderedDistributionInterval;
-    
-    // Insert an existing FhirOrderedDistributionInterval before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirOrderedDistributionInterval);
-    
-    // Get the iIndexth FhirOrderedDistributionInterval. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirOrderedDistributionInterval);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirOrderedDistributionInterval;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirOrderedDistributionIntervals[index : Integer] : TFhirOrderedDistributionInterval read GetItemN write SetItemN; default;
-  End;
-
-  // An ordered list (distribution) of statistics.
-  TFhirOrderedDistribution = class (TFhirBackboneType)
-  protected
-    FDescription : TFhirString;
-    FnoteList : TFhirAnnotationList;
-    FNumberOfIntervals : TFhirInteger;
-    FBottomOfFirstInterval : TFhirQuantity;
-    FintervalList : TFhirOrderedDistributionIntervalList;
-    FTopOfInterval : TFhirQuantity;
-    procedure SetDescription(value : TFhirString);
-    function GetDescriptionST : String;
-    procedure SetDescriptionST(value : String);
-    function GetNoteList : TFhirAnnotationList;
-    function GetHasNoteList : Boolean;
-    procedure SetNumberOfIntervals(value : TFhirInteger);
-    function GetNumberOfIntervalsST : String;
-    procedure SetNumberOfIntervalsST(value : String);
-    procedure SetBottomOfFirstInterval(value : TFhirQuantity);
-    function GetIntervalList : TFhirOrderedDistributionIntervalList;
-    function GetHasIntervalList : Boolean;
-    procedure SetTopOfInterval(value : TFhirQuantity);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirOrderedDistribution; overload;
-    function Clone : TFhirOrderedDistribution; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to A description of the content and value of the statistic.
-    property description : String read GetDescriptionST write SetDescriptionST;
-    // A description of the content and value of the statistic.
-    property descriptionElement : TFhirString read FDescription write SetDescription;
-
-    // Footnotes and/or explanatory notes.
-    property noteList : TFhirAnnotationList read GetNoteList;
-    property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to Number of intervals in an array, eg 4 for quartiles.
-    property numberOfIntervals : String read GetNumberOfIntervalsST write SetNumberOfIntervalsST;
-    // Number of intervals in an array, eg 4 for quartiles.
-    property numberOfIntervalsElement : TFhirInteger read FNumberOfIntervals write SetNumberOfIntervals;
-
-    // Typed access to Bottom of first interval. (defined for API consistency)
-    property bottomOfFirstInterval : TFhirQuantity read FBottomOfFirstInterval write SetBottomOfFirstInterval;
-    // Bottom of first interval.
-    property bottomOfFirstIntervalElement : TFhirQuantity read FBottomOfFirstInterval write SetBottomOfFirstInterval;
-
-    // Interval.
-    property intervalList : TFhirOrderedDistributionIntervalList read GetIntervalList;
-    property hasIntervalList : boolean read GetHasIntervalList;
-
-    // Typed access to Singular value of the statistic at the upper bound of the interval. (defined for API consistency)
-    property topOfInterval : TFhirQuantity read FTopOfInterval write SetTopOfInterval;
-    // Singular value of the statistic at the upper bound of the interval.
-    property topOfIntervalElement : TFhirQuantity read FTopOfInterval write SetTopOfInterval;
-
-  end;
-
-  TFhirOrderedDistributionListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirOrderedDistributionList;
-    function GetCurrent : TFhirOrderedDistribution;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirOrderedDistributionList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirOrderedDistribution read GetCurrent;
-  end;
-
-  TFhirOrderedDistributionList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirOrderedDistribution;
-    procedure SetItemN(index : Integer; value : TFhirOrderedDistribution);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirOrderedDistributionList; overload;
-    function Clone : TFhirOrderedDistributionList; overload;
-    function GetEnumerator : TFhirOrderedDistributionListEnumerator;
-    
-    //  Add a FhirOrderedDistribution to the end of the list.
-    function Append : TFhirOrderedDistribution;
-    
-    // Add an already existing FhirOrderedDistribution to the end of the list.
-function AddItem(value : TFhirOrderedDistribution): TFhirOrderedDistribution; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirOrderedDistribution) : Integer;
-    
-    // Insert FhirOrderedDistribution before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirOrderedDistribution;
-    
-    // Insert an existing FhirOrderedDistribution before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirOrderedDistribution);
-    
-    // Get the iIndexth FhirOrderedDistribution. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirOrderedDistribution);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirOrderedDistribution;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirOrderedDistributions[index : Integer] : TFhirOrderedDistribution read GetItemN write SetItemN; default;
   End;
 
   // A populatioof people with some set of grouping criteria.
@@ -8613,7 +8238,7 @@ function AddItem(value : TFhirOrderedDistribution): TFhirOrderedDistribution; ov
     function Append : TFhirPopulation;
     
     // Add an already existing FhirPopulation to the end of the list.
-function AddItem(value : TFhirPopulation): TFhirPopulation; overload;
+    function AddItem(value : TFhirPopulation) : TFhirPopulation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPopulation) : Integer;
@@ -8777,7 +8402,7 @@ function AddItem(value : TFhirPopulation): TFhirPopulation; overload;
     function Append : TFhirProdCharacteristic;
     
     // Add an already existing FhirProdCharacteristic to the end of the list.
-function AddItem(value : TFhirProdCharacteristic): TFhirProdCharacteristic; overload;
+    function AddItem(value : TFhirProdCharacteristic) : TFhirProdCharacteristic; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProdCharacteristic) : Integer;
@@ -8883,7 +8508,7 @@ function AddItem(value : TFhirProdCharacteristic): TFhirProdCharacteristic; over
     function Append : TFhirProductShelfLife;
     
     // Add an already existing FhirProductShelfLife to the end of the list.
-function AddItem(value : TFhirProductShelfLife): TFhirProductShelfLife; overload;
+    function AddItem(value : TFhirProductShelfLife) : TFhirProductShelfLife; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProductShelfLife) : Integer;
@@ -8910,791 +8535,6 @@ function AddItem(value : TFhirProductShelfLife): TFhirProductShelfLife; overload
     procedure ClearItems;
     
     property FhirProductShelfLives[index : Integer] : TFhirProductShelfLife read GetItemN write SetItemN; default;
-  End;
-
-  // Number of samples in the statistic.
-  TFhirStatisticSampleSize = class (TFhirElement)
-  protected
-    FDescription : TFhirString;
-    FnoteList : TFhirAnnotationList;
-    FNumberOfStudies : TFhirUnsignedInt;
-    FNumberOfParticipants : TFhirUnsignedInt;
-    FKnownDataCount : TFhirUnsignedInt;
-    procedure SetDescription(value : TFhirString);
-    function GetDescriptionST : String;
-    procedure SetDescriptionST(value : String);
-    function GetNoteList : TFhirAnnotationList;
-    function GetHasNoteList : Boolean;
-    procedure SetNumberOfStudies(value : TFhirUnsignedInt);
-    function GetNumberOfStudiesST : String;
-    procedure SetNumberOfStudiesST(value : String);
-    procedure SetNumberOfParticipants(value : TFhirUnsignedInt);
-    function GetNumberOfParticipantsST : String;
-    procedure SetNumberOfParticipantsST(value : String);
-    procedure SetKnownDataCount(value : TFhirUnsignedInt);
-    function GetKnownDataCountST : String;
-    procedure SetKnownDataCountST(value : String);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticSampleSize; overload;
-    function Clone : TFhirStatisticSampleSize; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Human-readable summary of population sample size.
-    property description : String read GetDescriptionST write SetDescriptionST;
-    // Human-readable summary of population sample size.
-    property descriptionElement : TFhirString read FDescription write SetDescription;
-
-    // Footnote or explanatory note about the sample size.
-    property noteList : TFhirAnnotationList read GetNoteList;
-    property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to Number of participants in the population.
-    property numberOfStudies : String read GetNumberOfStudiesST write SetNumberOfStudiesST;
-    // Number of participants in the population.
-    property numberOfStudiesElement : TFhirUnsignedInt read FNumberOfStudies write SetNumberOfStudies;
-
-    // Typed access to A human-readable string to clarify or explain concepts about the sample size.
-    property numberOfParticipants : String read GetNumberOfParticipantsST write SetNumberOfParticipantsST;
-    // A human-readable string to clarify or explain concepts about the sample size.
-    property numberOfParticipantsElement : TFhirUnsignedInt read FNumberOfParticipants write SetNumberOfParticipants;
-
-    // Typed access to Number of participants with known results for measured variables.
-    property knownDataCount : String read GetKnownDataCountST write SetKnownDataCountST;
-    // Number of participants with known results for measured variables.
-    property knownDataCountElement : TFhirUnsignedInt read FKnownDataCount write SetKnownDataCount;
-
-  end;
-
-  TFhirStatisticSampleSizeListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticSampleSizeList;
-    function GetCurrent : TFhirStatisticSampleSize;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticSampleSizeList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatisticSampleSize read GetCurrent;
-  end;
-
-  TFhirStatisticSampleSizeList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatisticSampleSize;
-    procedure SetItemN(index : Integer; value : TFhirStatisticSampleSize);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticSampleSizeList; overload;
-    function Clone : TFhirStatisticSampleSizeList; overload;
-    function GetEnumerator : TFhirStatisticSampleSizeListEnumerator;
-    
-    //  Add a FhirStatisticSampleSize to the end of the list.
-    function Append : TFhirStatisticSampleSize;
-    
-    // Add an already existing FhirStatisticSampleSize to the end of the list.
-function AddItem(value : TFhirStatisticSampleSize): TFhirStatisticSampleSize; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticSampleSize) : Integer;
-    
-    // Insert FhirStatisticSampleSize before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticSampleSize;
-    
-    // Insert an existing FhirStatisticSampleSize before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticSampleSize);
-    
-    // Get the iIndexth FhirStatisticSampleSize. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticSampleSize);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticSampleSize;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatisticSampleSizes[index : Integer] : TFhirStatisticSampleSize read GetItemN write SetItemN; default;
-  End;
-
-  // A statistical attribute of the statistic such as a measure of heterogeneity.
-  TFhirStatisticAttributeEstimate = class (TFhirElement)
-  protected
-    FDescription : TFhirString;
-    FnoteList : TFhirAnnotationList;
-    FType_ : TFhirCodeableConcept;
-    FQuantity : TFhirQuantity;
-    FLevel : TFhirDecimal;
-    FRange : TFhirRange;
-    FattributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
-    procedure SetDescription(value : TFhirString);
-    function GetDescriptionST : String;
-    procedure SetDescriptionST(value : String);
-    function GetNoteList : TFhirAnnotationList;
-    function GetHasNoteList : Boolean;
-    procedure SetType_(value : TFhirCodeableConcept);
-    procedure SetQuantity(value : TFhirQuantity);
-    procedure SetLevel(value : TFhirDecimal);
-    function GetLevelST : String;
-    procedure SetLevelST(value : String);
-    procedure SetRange(value : TFhirRange);
-    function GetAttributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
-    function GetHasAttributeEstimateList : Boolean;
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticAttributeEstimate; overload;
-    function Clone : TFhirStatisticAttributeEstimate; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Human-readable summary of the estimate.
-    property description : String read GetDescriptionST write SetDescriptionST;
-    // Human-readable summary of the estimate.
-    property descriptionElement : TFhirString read FDescription write SetDescription;
-
-    // Footnote or explanatory note about the estimate.
-    property noteList : TFhirAnnotationList read GetNoteList;
-    property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to The type of attribute estimate, eg confidence interval or p value. (defined for API consistency)
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
-    // The type of attribute estimate, eg confidence interval or p value.
-    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
-
-    // Typed access to The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure. (defined for API consistency)
-    property quantity : TFhirQuantity read FQuantity write SetQuantity;
-    // The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure.
-    property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
-
-    // Typed access to Use 95 for a 95% confidence interval.
-    property level : String read GetLevelST write SetLevelST;
-    // Use 95 for a 95% confidence interval.
-    property levelElement : TFhirDecimal read FLevel write SetLevel;
-
-    // Typed access to Lower bound of confidence interval. (defined for API consistency)
-    property range : TFhirRange read FRange write SetRange;
-    // Lower bound of confidence interval.
-    property rangeElement : TFhirRange read FRange write SetRange;
-
-    // A nested attribute estimate; which is the attribute estimate of an attribute estimate.
-    property attributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList read GetAttributeEstimateList;
-    property hasAttributeEstimateList : boolean read GetHasAttributeEstimateList;
-
-  end;
-
-  TFhirStatisticAttributeEstimateListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticAttributeEstimateList;
-    function GetCurrent : TFhirStatisticAttributeEstimate;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticAttributeEstimateList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatisticAttributeEstimate read GetCurrent;
-  end;
-
-  TFhirStatisticAttributeEstimateList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatisticAttributeEstimate;
-    procedure SetItemN(index : Integer; value : TFhirStatisticAttributeEstimate);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticAttributeEstimateList; overload;
-    function Clone : TFhirStatisticAttributeEstimateList; overload;
-    function GetEnumerator : TFhirStatisticAttributeEstimateListEnumerator;
-    
-    //  Add a FhirStatisticAttributeEstimate to the end of the list.
-    function Append : TFhirStatisticAttributeEstimate;
-    
-    // Add an already existing FhirStatisticAttributeEstimate to the end of the list.
-function AddItem(value : TFhirStatisticAttributeEstimate): TFhirStatisticAttributeEstimate; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticAttributeEstimate) : Integer;
-    
-    // Insert FhirStatisticAttributeEstimate before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticAttributeEstimate;
-    
-    // Insert an existing FhirStatisticAttributeEstimate before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticAttributeEstimate);
-    
-    // Get the iIndexth FhirStatisticAttributeEstimate. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticAttributeEstimate);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticAttributeEstimate;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatisticAttributeEstimates[index : Integer] : TFhirStatisticAttributeEstimate read GetItemN write SetItemN; default;
-  End;
-
-  // A nested attribute estimate; which is the attribute estimate of an attribute estimate.
-  TFhirStatisticAttributeEstimateAttributeEstimate = class (TFhirElement)
-  protected
-    FDescription : TFhirString;
-    FnoteList : TFhirAnnotationList;
-    FType_ : TFhirCodeableConcept;
-    FQuantity : TFhirQuantity;
-    FLevel : TFhirDecimal;
-    FRange : TFhirRange;
-    procedure SetDescription(value : TFhirString);
-    function GetDescriptionST : String;
-    procedure SetDescriptionST(value : String);
-    function GetNoteList : TFhirAnnotationList;
-    function GetHasNoteList : Boolean;
-    procedure SetType_(value : TFhirCodeableConcept);
-    procedure SetQuantity(value : TFhirQuantity);
-    procedure SetLevel(value : TFhirDecimal);
-    function GetLevelST : String;
-    procedure SetLevelST(value : String);
-    procedure SetRange(value : TFhirRange);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticAttributeEstimateAttributeEstimate; overload;
-    function Clone : TFhirStatisticAttributeEstimateAttributeEstimate; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Human-readable summary of the estimate.
-    property description : String read GetDescriptionST write SetDescriptionST;
-    // Human-readable summary of the estimate.
-    property descriptionElement : TFhirString read FDescription write SetDescription;
-
-    // Footnote or explanatory note about the estimate.
-    property noteList : TFhirAnnotationList read GetNoteList;
-    property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to The type of attribute estimate, eg confidence interval or p value. (defined for API consistency)
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
-    // The type of attribute estimate, eg confidence interval or p value.
-    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
-
-    // Typed access to The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure. (defined for API consistency)
-    property quantity : TFhirQuantity read FQuantity write SetQuantity;
-    // The singular quantity of the attribute estimate, for attribute estimates represented as single values; also used to report unit of measure.
-    property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
-
-    // Typed access to Use 95 for a 95% confidence interval.
-    property level : String read GetLevelST write SetLevelST;
-    // Use 95 for a 95% confidence interval.
-    property levelElement : TFhirDecimal read FLevel write SetLevel;
-
-    // Typed access to Lower bound of confidence interval. (defined for API consistency)
-    property range : TFhirRange read FRange write SetRange;
-    // Lower bound of confidence interval.
-    property rangeElement : TFhirRange read FRange write SetRange;
-
-  end;
-
-  TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticAttributeEstimateAttributeEstimateList;
-    function GetCurrent : TFhirStatisticAttributeEstimateAttributeEstimate;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticAttributeEstimateAttributeEstimateList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatisticAttributeEstimateAttributeEstimate read GetCurrent;
-  end;
-
-  TFhirStatisticAttributeEstimateAttributeEstimateList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
-    procedure SetItemN(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticAttributeEstimateAttributeEstimateList; overload;
-    function Clone : TFhirStatisticAttributeEstimateAttributeEstimateList; overload;
-    function GetEnumerator : TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator;
-    
-    //  Add a FhirStatisticAttributeEstimateAttributeEstimate to the end of the list.
-    function Append : TFhirStatisticAttributeEstimateAttributeEstimate;
-    
-    // Add an already existing FhirStatisticAttributeEstimateAttributeEstimate to the end of the list.
-function AddItem(value : TFhirStatisticAttributeEstimateAttributeEstimate): TFhirStatisticAttributeEstimateAttributeEstimate; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticAttributeEstimateAttributeEstimate) : Integer;
-    
-    // Insert FhirStatisticAttributeEstimateAttributeEstimate before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
-    
-    // Insert an existing FhirStatisticAttributeEstimateAttributeEstimate before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
-    
-    // Get the iIndexth FhirStatisticAttributeEstimateAttributeEstimate. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticAttributeEstimateAttributeEstimate);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticAttributeEstimateAttributeEstimate;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatisticAttributeEstimateAttributeEstimates[index : Integer] : TFhirStatisticAttributeEstimateAttributeEstimate read GetItemN write SetItemN; default;
-  End;
-
-  // A component of the method to generate the statistic.
-  TFhirStatisticModelCharacteristic = class (TFhirElement)
-  protected
-    FCode : TFhirCodeableConcept;
-    FValue : TFhirQuantity;
-    FvariableList : TFhirStatisticModelCharacteristicVariableList;
-    procedure SetCode(value : TFhirCodeableConcept);
-    procedure SetValue(value : TFhirQuantity);
-    function GetVariableList : TFhirStatisticModelCharacteristicVariableList;
-    function GetHasVariableList : Boolean;
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticModelCharacteristic; overload;
-    function Clone : TFhirStatisticModelCharacteristic; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Description of a component of the method to generate the statistic. (defined for API consistency)
-    property code : TFhirCodeableConcept read FCode write SetCode;
-    // Description of a component of the method to generate the statistic.
-    property codeElement : TFhirCodeableConcept read FCode write SetCode;
-
-    // Typed access to Further specification of the quantified value of the component of the method to generate the statistic. (defined for API consistency)
-    property value : TFhirQuantity read FValue write SetValue;
-    // Further specification of the quantified value of the component of the method to generate the statistic.
-    property valueElement : TFhirQuantity read FValue write SetValue;
-
-    // A variable adjusted for in the adjusted analysis.
-    property variableList : TFhirStatisticModelCharacteristicVariableList read GetVariableList;
-    property hasVariableList : boolean read GetHasVariableList;
-
-  end;
-
-  TFhirStatisticModelCharacteristicListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticModelCharacteristicList;
-    function GetCurrent : TFhirStatisticModelCharacteristic;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticModelCharacteristicList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatisticModelCharacteristic read GetCurrent;
-  end;
-
-  TFhirStatisticModelCharacteristicList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatisticModelCharacteristic;
-    procedure SetItemN(index : Integer; value : TFhirStatisticModelCharacteristic);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticModelCharacteristicList; overload;
-    function Clone : TFhirStatisticModelCharacteristicList; overload;
-    function GetEnumerator : TFhirStatisticModelCharacteristicListEnumerator;
-    
-    //  Add a FhirStatisticModelCharacteristic to the end of the list.
-    function Append : TFhirStatisticModelCharacteristic;
-    
-    // Add an already existing FhirStatisticModelCharacteristic to the end of the list.
-function AddItem(value : TFhirStatisticModelCharacteristic): TFhirStatisticModelCharacteristic; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticModelCharacteristic) : Integer;
-    
-    // Insert FhirStatisticModelCharacteristic before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticModelCharacteristic;
-    
-    // Insert an existing FhirStatisticModelCharacteristic before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticModelCharacteristic);
-    
-    // Get the iIndexth FhirStatisticModelCharacteristic. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticModelCharacteristic);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticModelCharacteristic;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatisticModelCharacteristics[index : Integer] : TFhirStatisticModelCharacteristic read GetItemN write SetItemN; default;
-  End;
-
-  // A variable adjusted for in the adjusted analysis.
-  TFhirStatisticModelCharacteristicVariable = class (TFhirElement)
-  protected
-    FVariableDefinition : TFhirReference;
-    FHandling : TFhirEnum;
-    FvalueCategoryList : TFhirCodeableConceptList;
-    FvalueQuantityList : TFhirQuantityList;
-    FvalueRangeList : TFhirRangeList;
-    procedure SetVariableDefinition(value : TFhirReference);
-    procedure SetHandling(value : TFhirEnum);
-    function GetHandlingST : TFhirEvidenceVariableHandlingEnum;
-    procedure SetHandlingST(value : TFhirEvidenceVariableHandlingEnum);
-    function GetValueCategoryList : TFhirCodeableConceptList;
-    function GetHasValueCategoryList : Boolean;
-    function GetValueQuantityList : TFhirQuantityList;
-    function GetHasValueQuantityList : Boolean;
-    function GetValueRangeList : TFhirRangeList;
-    function GetHasValueRangeList : Boolean;
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatisticModelCharacteristicVariable; overload;
-    function Clone : TFhirStatisticModelCharacteristicVariable; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Description of the variable. (defined for API consistency)
-    property variableDefinition : TFhirReference read FVariableDefinition write SetVariableDefinition;
-    // Description of the variable.
-    property variableDefinitionElement : TFhirReference read FVariableDefinition write SetVariableDefinition;
-
-    // How the variable is classified for use in adjusted analysis.
-    property handling : TFhirEvidenceVariableHandlingEnum read GetHandlingST write SetHandlingST;
-    property handlingElement : TFhirEnum read FHandling write SetHandling;
-
-    // Description for grouping of ordinal or polychotomous variables.
-    property valueCategoryList : TFhirCodeableConceptList read GetValueCategoryList;
-    property hasValueCategoryList : boolean read GetHasValueCategoryList;
-
-    // Discrete value for grouping of ordinal or polychotomous variables.
-    property valueQuantityList : TFhirQuantityList read GetValueQuantityList;
-    property hasValueQuantityList : boolean read GetHasValueQuantityList;
-
-    // Range of values for grouping of ordinal or polychotomous variables.
-    property valueRangeList : TFhirRangeList read GetValueRangeList;
-    property hasValueRangeList : boolean read GetHasValueRangeList;
-
-  end;
-
-  TFhirStatisticModelCharacteristicVariableListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticModelCharacteristicVariableList;
-    function GetCurrent : TFhirStatisticModelCharacteristicVariable;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticModelCharacteristicVariableList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatisticModelCharacteristicVariable read GetCurrent;
-  end;
-
-  TFhirStatisticModelCharacteristicVariableList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatisticModelCharacteristicVariable;
-    procedure SetItemN(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticModelCharacteristicVariableList; overload;
-    function Clone : TFhirStatisticModelCharacteristicVariableList; overload;
-    function GetEnumerator : TFhirStatisticModelCharacteristicVariableListEnumerator;
-    
-    //  Add a FhirStatisticModelCharacteristicVariable to the end of the list.
-    function Append : TFhirStatisticModelCharacteristicVariable;
-    
-    // Add an already existing FhirStatisticModelCharacteristicVariable to the end of the list.
-function AddItem(value : TFhirStatisticModelCharacteristicVariable): TFhirStatisticModelCharacteristicVariable; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatisticModelCharacteristicVariable) : Integer;
-    
-    // Insert FhirStatisticModelCharacteristicVariable before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatisticModelCharacteristicVariable;
-    
-    // Insert an existing FhirStatisticModelCharacteristicVariable before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
-    
-    // Get the iIndexth FhirStatisticModelCharacteristicVariable. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatisticModelCharacteristicVariable);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatisticModelCharacteristicVariable;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatisticModelCharacteristicVariables[index : Integer] : TFhirStatisticModelCharacteristicVariable read GetItemN write SetItemN; default;
-  End;
-
-  // A fact or piece of data from a  study of a large quantity of numerical data.  A mathematical or quantified characteristic of a group of observations.
-  TFhirStatistic = class (TFhirBackboneType)
-  protected
-    FDescription : TFhirString;
-    FnoteList : TFhirAnnotationList;
-    FStatisticType : TFhirCodeableConcept;
-    FCategory : TFhirCodeableConcept;
-    FQuantity : TFhirQuantity;
-    FNumberOfEvents : TFhirUnsignedInt;
-    FNumberAffected : TFhirUnsignedInt;
-    FSampleSize : TFhirStatisticSampleSize;
-    FattributeEstimateList : TFhirStatisticAttributeEstimateList;
-    FmodelCharacteristicList : TFhirStatisticModelCharacteristicList;
-    procedure SetDescription(value : TFhirString);
-    function GetDescriptionST : String;
-    procedure SetDescriptionST(value : String);
-    function GetNoteList : TFhirAnnotationList;
-    function GetHasNoteList : Boolean;
-    procedure SetStatisticType(value : TFhirCodeableConcept);
-    procedure SetCategory(value : TFhirCodeableConcept);
-    procedure SetQuantity(value : TFhirQuantity);
-    procedure SetNumberOfEvents(value : TFhirUnsignedInt);
-    function GetNumberOfEventsST : String;
-    procedure SetNumberOfEventsST(value : String);
-    procedure SetNumberAffected(value : TFhirUnsignedInt);
-    function GetNumberAffectedST : String;
-    procedure SetNumberAffectedST(value : String);
-    procedure SetSampleSize(value : TFhirStatisticSampleSize);
-    function GetAttributeEstimateList : TFhirStatisticAttributeEstimateList;
-    function GetHasAttributeEstimateList : Boolean;
-    function GetModelCharacteristicList : TFhirStatisticModelCharacteristicList;
-    function GetHasModelCharacteristicList : Boolean;
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirStatistic; overload;
-    function Clone : TFhirStatistic; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to A description of the content value of the statistic.
-    property description : String read GetDescriptionST write SetDescriptionST;
-    // A description of the content value of the statistic.
-    property descriptionElement : TFhirString read FDescription write SetDescription;
-
-    // Footnotes and/or explanatory notes.
-    property noteList : TFhirAnnotationList read GetNoteList;
-    property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to Type of statistic, eg relative risk. (defined for API consistency)
-    property statisticType : TFhirCodeableConcept read FStatisticType write SetStatisticType;
-    // Type of statistic, eg relative risk.
-    property statisticTypeElement : TFhirCodeableConcept read FStatisticType write SetStatisticType;
-
-    // Typed access to When the measured variable is handled categorically, the category element is used to define which category the statistic is reporting. (defined for API consistency)
-    property category : TFhirCodeableConcept read FCategory write SetCategory;
-    // When the measured variable is handled categorically, the category element is used to define which category the statistic is reporting.
-    property categoryElement : TFhirCodeableConcept read FCategory write SetCategory;
-
-    // Typed access to Statistic value. (defined for API consistency)
-    property quantity : TFhirQuantity read FQuantity write SetQuantity;
-    // Statistic value.
-    property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
-
-    // Typed access to The number of events associated with the statistic, where the unit of analysis is different from numberAffected, sampleSize.knownDataCount and sampleSize.numberOfParticipants.
-    property numberOfEvents : String read GetNumberOfEventsST write SetNumberOfEventsST;
-    // The number of events associated with the statistic, where the unit of analysis is different from numberAffected, sampleSize.knownDataCount and sampleSize.numberOfParticipants.
-    property numberOfEventsElement : TFhirUnsignedInt read FNumberOfEvents write SetNumberOfEvents;
-
-    // Typed access to The number of participants affected where the unit of analysis is the same as sampleSize.knownDataCount and sampleSize.numberOfParticipants.
-    property numberAffected : String read GetNumberAffectedST write SetNumberAffectedST;
-    // The number of participants affected where the unit of analysis is the same as sampleSize.knownDataCount and sampleSize.numberOfParticipants.
-    property numberAffectedElement : TFhirUnsignedInt read FNumberAffected write SetNumberAffected;
-
-    // Typed access to Number of samples in the statistic. (defined for API consistency)
-    property sampleSize : TFhirStatisticSampleSize read FSampleSize write SetSampleSize;
-    // Number of samples in the statistic.
-    property sampleSizeElement : TFhirStatisticSampleSize read FSampleSize write SetSampleSize;
-
-    // A statistical attribute of the statistic such as a measure of heterogeneity.
-    property attributeEstimateList : TFhirStatisticAttributeEstimateList read GetAttributeEstimateList;
-    property hasAttributeEstimateList : boolean read GetHasAttributeEstimateList;
-
-    // A component of the method to generate the statistic.
-    property modelCharacteristicList : TFhirStatisticModelCharacteristicList read GetModelCharacteristicList;
-    property hasModelCharacteristicList : boolean read GetHasModelCharacteristicList;
-
-  end;
-
-  TFhirStatisticListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirStatisticList;
-    function GetCurrent : TFhirStatistic;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirStatisticList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirStatistic read GetCurrent;
-  end;
-
-  TFhirStatisticList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirStatistic;
-    procedure SetItemN(index : Integer; value : TFhirStatistic);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirStatisticList; overload;
-    function Clone : TFhirStatisticList; overload;
-    function GetEnumerator : TFhirStatisticListEnumerator;
-    
-    //  Add a FhirStatistic to the end of the list.
-    function Append : TFhirStatistic;
-    
-    // Add an already existing FhirStatistic to the end of the list.
-function AddItem(value : TFhirStatistic): TFhirStatistic; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirStatistic) : Integer;
-    
-    // Insert FhirStatistic before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirStatistic;
-    
-    // Insert an existing FhirStatistic before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirStatistic);
-    
-    // Get the iIndexth FhirStatistic. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirStatistic);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirStatistic;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirStatistics[index : Integer] : TFhirStatistic read GetItemN write SetItemN; default;
   End;
 
   // A set of rules that describe when the event is scheduled.
@@ -9882,7 +8722,7 @@ function AddItem(value : TFhirStatistic): TFhirStatistic; overload;
     function Append : TFhirTimingRepeat;
     
     // Add an already existing FhirTimingRepeat to the end of the list.
-function AddItem(value : TFhirTimingRepeat): TFhirTimingRepeat; overload;
+    function AddItem(value : TFhirTimingRepeat) : TFhirTimingRepeat; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTimingRepeat) : Integer;
@@ -9988,7 +8828,7 @@ function AddItem(value : TFhirTimingRepeat): TFhirTimingRepeat; overload;
     function Append : TFhirTiming;
     
     // Add an already existing FhirTiming to the end of the list.
-function AddItem(value : TFhirTiming): TFhirTiming; overload;
+    function AddItem(value : TFhirTiming) : TFhirTiming; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTiming) : Integer;
@@ -10184,14 +9024,14 @@ begin
 end;
 
 procedure TFhirElement.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('@id');
   fields.add('extension');
 end;
 
 function TFhirElement.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FExtensionList.sizeInBytes(magic));
 end;
@@ -10431,13 +9271,13 @@ begin
 end;
 
 procedure TFhirBackboneElement.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('modifierExtension');
 end;
 
 function TFhirBackboneElement.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierExtensionList.sizeInBytes(magic));
 end;
@@ -10599,13 +9439,13 @@ begin
 end;
 
 procedure TFhirBackboneType.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('modifierExtension');
 end;
 
 function TFhirBackboneType.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierExtensionList.sizeInBytes(magic));
 end;
@@ -10822,10 +9662,10 @@ end;
 
 { TFhirEnumList }
 
-function TFhirEnumList.AddItem(value: TFhirEnum): TFhirEnum;
+function TFhirEnumList.AddItem(value: TFhirEnum) : TFhirEnum;
 begin
+  assert(value.ClassName = 'TFhirEnum', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnum');
   add(value);
-  result := value;
 end;
 
 constructor TFhirEnumList.Create(Systems, Codes : Array Of String);
@@ -10842,9 +9682,10 @@ begin
   end;
 end;
 
-procedure TFhirEnumList.AddItem(value: String);
+function TFhirEnumList.AddItem(value: String) : TFhirEnum;
 begin
-  add(TFhirEnum.create(FSystems[StringArrayIndexOf(FCodes, value)], value));
+  result := TFhirEnum.create(FSystems[StringArrayIndexOf(FCodes, value)], value);
+  add(result);
 end;
 
 function TFhirEnumList.Append: TFhirEnum;
@@ -11084,16 +9925,15 @@ end;
 
 { TFhirDateList }
 
-function TFhirDateList.AddItem(value: TFhirDate): TFhirDate;
+function TFhirDateList.AddItem(value: TFhirDate) : TFhirDate;
 begin
+  assert(value.ClassName = 'TFhirDate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDate');
   add(value);
-  result := value;
 end;
 
-function TFhirDateList.AddItem(value: TFslDateTime): TFslDateTime;
+function TFhirDateList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirDate.create(value));
-  result := value;
 end;
 
 function TFhirDateList.Append: TFhirDate;
@@ -11333,16 +10173,15 @@ end;
 
 { TFhirDateTimeList }
 
-function TFhirDateTimeList.AddItem(value: TFhirDateTime): TFhirDateTime;
+function TFhirDateTimeList.AddItem(value: TFhirDateTime) : TFhirDateTime;
 begin
+  assert(value.ClassName = 'TFhirDateTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDateTime');
   add(value);
-  result := value;
 end;
 
-function TFhirDateTimeList.AddItem(value: TFslDateTime): TFslDateTime;
+function TFhirDateTimeList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirDateTime.create(value));
-  result := value;
 end;
 
 function TFhirDateTimeList.Append: TFhirDateTime;
@@ -11561,15 +10400,16 @@ end;
 
 { TFhirStringList }
 
-function TFhirStringList.AddItem(value: TFhirString): TFhirString;
+function TFhirStringList.AddItem(value: TFhirString) : TFhirString;
 begin
+  assert(value.ClassName = 'TFhirString', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirString');
   add(value);
-  result := value;
 end;
 
-procedure TFhirStringList.AddItem(value: String);
+function TFhirStringList.AddItem(value: String) : TFhirString;
 begin
-  add(TFhirString.create(value));
+  result := TFhirString.create(value);
+  add(result);
 end;
 
 function TFhirStringList.Append: TFhirString;
@@ -11788,15 +10628,16 @@ end;
 
 { TFhirIntegerList }
 
-function TFhirIntegerList.AddItem(value: TFhirInteger): TFhirInteger;
+function TFhirIntegerList.AddItem(value: TFhirInteger) : TFhirInteger;
 begin
+  assert(value.ClassName = 'TFhirInteger', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInteger');
   add(value);
-  result := value;
 end;
 
-procedure TFhirIntegerList.AddItem(value: String);
+function TFhirIntegerList.AddItem(value: String) : TFhirInteger;
 begin
-  add(TFhirInteger.create(value));
+  result := TFhirInteger.create(value);
+  add(result);
 end;
 
 function TFhirIntegerList.Append: TFhirInteger;
@@ -12015,15 +10856,16 @@ end;
 
 { TFhirUriList }
 
-function TFhirUriList.AddItem(value: TFhirUri): TFhirUri;
+function TFhirUriList.AddItem(value: TFhirUri) : TFhirUri;
 begin
+  assert(value.ClassName = 'TFhirUri', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUri');
   add(value);
-  result := value;
 end;
 
-procedure TFhirUriList.AddItem(value: String);
+function TFhirUriList.AddItem(value: String) : TFhirUri;
 begin
-  add(TFhirUri.create(value));
+  result := TFhirUri.create(value);
+  add(result);
 end;
 
 function TFhirUriList.Append: TFhirUri;
@@ -12263,16 +11105,15 @@ end;
 
 { TFhirInstantList }
 
-function TFhirInstantList.AddItem(value: TFhirInstant): TFhirInstant;
+function TFhirInstantList.AddItem(value: TFhirInstant) : TFhirInstant;
 begin
+  assert(value.ClassName = 'TFhirInstant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInstant');
   add(value);
-  result := value;
 end;
 
-function TFhirInstantList.AddItem(value: TFslDateTime): TFslDateTime;
+function TFhirInstantList.AddItem(value: TFslDateTime) : TFslDateTime;
 begin
   add(TFhirInstant.create(value));
-  result := value;
 end;
 
 function TFhirInstantList.Append: TFhirInstant;
@@ -12491,15 +11332,16 @@ end;
 
 { TFhirXhtmlList }
 
-function TFhirXhtmlList.AddItem(value: TFhirXhtml): TFhirXhtml;
+function TFhirXhtmlList.AddItem(value: TFhirXhtml) : TFhirXhtml;
 begin
+  assert(value.ClassName = 'TFhirXhtml', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirXhtml');
   add(value);
-  result := value;
 end;
 
-procedure TFhirXhtmlList.AddItem(value: String);
+function TFhirXhtmlList.AddItem(value: String) : TFhirXhtml;
 begin
-  add(TFhirXhtml.create(value));
+  result := TFhirXhtml.create(value);
+  add(result);
 end;
 
 function TFhirXhtmlList.Append: TFhirXhtml;
@@ -12722,13 +11564,13 @@ end;
 
 { TFhirBooleanList }
 
-function TFhirBooleanList.AddItem(value: TFhirBoolean): TFhirBoolean;
+function TFhirBooleanList.AddItem(value: TFhirBoolean) : TFhirBoolean;
 begin
+  assert(value.ClassName = 'TFhirBoolean', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBoolean');
   add(value);
-  result := value;
 end;
 
-procedure TFhirBooleanList.AddItem(value: Boolean);
+function TFhirBooleanList.AddItem(value: Boolean) : Boolean;
 begin
   add(TFhirBoolean.create(value));
 end;
@@ -12949,16 +11791,15 @@ end;
 
 { TFhirBase64BinaryList }
 
-function TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary): TFhirBase64Binary;
+function TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary) : TFhirBase64Binary;
 begin
+  assert(value.ClassName = 'TFhirBase64Binary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBase64Binary');
   add(value);
-  result := value;
 end;
 
-function TFhirBase64BinaryList.AddItem(value: TBytes): TBytes;
+function TFhirBase64BinaryList.AddItem(value: TBytes) : TBytes;
 begin
   add(TFhirBase64Binary.create(value));
-  result := value;
 end;
 
 function TFhirBase64BinaryList.Append: TFhirBase64Binary;
@@ -13177,15 +12018,16 @@ end;
 
 { TFhirTimeList }
 
-function TFhirTimeList.AddItem(value: TFhirTime): TFhirTime;
+function TFhirTimeList.AddItem(value: TFhirTime) : TFhirTime;
 begin
+  assert(value.ClassName = 'TFhirTime', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTime');
   add(value);
-  result := value;
 end;
 
-procedure TFhirTimeList.AddItem(value: String);
+function TFhirTimeList.AddItem(value: String) : TFhirTime;
 begin
-  add(TFhirTime.create(value));
+  result := TFhirTime.create(value);
+  add(result);
 end;
 
 function TFhirTimeList.Append: TFhirTime;
@@ -13404,15 +12246,16 @@ end;
 
 { TFhirDecimalList }
 
-function TFhirDecimalList.AddItem(value: TFhirDecimal): TFhirDecimal;
+function TFhirDecimalList.AddItem(value: TFhirDecimal) : TFhirDecimal;
 begin
+  assert(value.ClassName = 'TFhirDecimal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDecimal');
   add(value);
-  result := value;
 end;
 
-procedure TFhirDecimalList.AddItem(value: String);
+function TFhirDecimalList.AddItem(value: String) : TFhirDecimal;
 begin
-  add(TFhirDecimal.create(value));
+  result := TFhirDecimal.create(value);
+  add(result);
 end;
 
 function TFhirDecimalList.Append: TFhirDecimal;
@@ -13570,15 +12413,16 @@ end;
 
 { TFhirCodeList }
 
-function TFhirCodeList.AddItem(value: TFhirCode): TFhirCode;
+function TFhirCodeList.AddItem(value: TFhirCode) : TFhirCode;
 begin
+  assert(value.ClassName = 'TFhirCode', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCode');
   add(value);
-  result := value;
 end;
 
-procedure TFhirCodeList.AddItem(value: String);
+function TFhirCodeList.AddItem(value: String) : TFhirCode;
 begin
-  add(TFhirCode.create(value));
+  result := TFhirCode.create(value);
+  add(result);
 end;
 
 function TFhirCodeList.Append: TFhirCode;
@@ -13736,15 +12580,16 @@ end;
 
 { TFhirCanonicalList }
 
-function TFhirCanonicalList.AddItem(value: TFhirCanonical): TFhirCanonical;
+function TFhirCanonicalList.AddItem(value: TFhirCanonical) : TFhirCanonical;
 begin
+  assert(value.ClassName = 'TFhirCanonical', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCanonical');
   add(value);
-  result := value;
 end;
 
-procedure TFhirCanonicalList.AddItem(value: String);
+function TFhirCanonicalList.AddItem(value: String) : TFhirCanonical;
 begin
-  add(TFhirCanonical.create(value));
+  result := TFhirCanonical.create(value);
+  add(result);
 end;
 
 function TFhirCanonicalList.Append: TFhirCanonical;
@@ -13902,15 +12747,16 @@ end;
 
 { TFhirOidList }
 
-function TFhirOidList.AddItem(value: TFhirOid): TFhirOid;
+function TFhirOidList.AddItem(value: TFhirOid) : TFhirOid;
 begin
+  assert(value.ClassName = 'TFhirOid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOid');
   add(value);
-  result := value;
 end;
 
-procedure TFhirOidList.AddItem(value: String);
+function TFhirOidList.AddItem(value: String) : TFhirOid;
 begin
-  add(TFhirOid.create(value));
+  result := TFhirOid.create(value);
+  add(result);
 end;
 
 function TFhirOidList.Append: TFhirOid;
@@ -14068,15 +12914,16 @@ end;
 
 { TFhirUuidList }
 
-function TFhirUuidList.AddItem(value: TFhirUuid): TFhirUuid;
+function TFhirUuidList.AddItem(value: TFhirUuid) : TFhirUuid;
 begin
+  assert(value.ClassName = 'TFhirUuid', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUuid');
   add(value);
-  result := value;
 end;
 
-procedure TFhirUuidList.AddItem(value: String);
+function TFhirUuidList.AddItem(value: String) : TFhirUuid;
 begin
-  add(TFhirUuid.create(value));
+  result := TFhirUuid.create(value);
+  add(result);
 end;
 
 function TFhirUuidList.Append: TFhirUuid;
@@ -14234,15 +13081,16 @@ end;
 
 { TFhirUrlList }
 
-function TFhirUrlList.AddItem(value: TFhirUrl): TFhirUrl;
+function TFhirUrlList.AddItem(value: TFhirUrl) : TFhirUrl;
 begin
+  assert(value.ClassName = 'TFhirUrl', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUrl');
   add(value);
-  result := value;
 end;
 
-procedure TFhirUrlList.AddItem(value: String);
+function TFhirUrlList.AddItem(value: String) : TFhirUrl;
 begin
-  add(TFhirUrl.create(value));
+  result := TFhirUrl.create(value);
+  add(result);
 end;
 
 function TFhirUrlList.Append: TFhirUrl;
@@ -14400,15 +13248,16 @@ end;
 
 { TFhirMarkdownList }
 
-function TFhirMarkdownList.AddItem(value: TFhirMarkdown): TFhirMarkdown;
+function TFhirMarkdownList.AddItem(value: TFhirMarkdown) : TFhirMarkdown;
 begin
+  assert(value.ClassName = 'TFhirMarkdown', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMarkdown');
   add(value);
-  result := value;
 end;
 
-procedure TFhirMarkdownList.AddItem(value: String);
+function TFhirMarkdownList.AddItem(value: String) : TFhirMarkdown;
 begin
-  add(TFhirMarkdown.create(value));
+  result := TFhirMarkdown.create(value);
+  add(result);
 end;
 
 function TFhirMarkdownList.Append: TFhirMarkdown;
@@ -14566,15 +13415,16 @@ end;
 
 { TFhirUnsignedIntList }
 
-function TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt): TFhirUnsignedInt;
+function TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt) : TFhirUnsignedInt;
 begin
+  assert(value.ClassName = 'TFhirUnsignedInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUnsignedInt');
   add(value);
-  result := value;
 end;
 
-procedure TFhirUnsignedIntList.AddItem(value: String);
+function TFhirUnsignedIntList.AddItem(value: String) : TFhirUnsignedInt;
 begin
-  add(TFhirUnsignedInt.create(value));
+  result := TFhirUnsignedInt.create(value);
+  add(result);
 end;
 
 function TFhirUnsignedIntList.Append: TFhirUnsignedInt;
@@ -14732,15 +13582,16 @@ end;
 
 { TFhirIdList }
 
-function TFhirIdList.AddItem(value: TFhirId): TFhirId;
+function TFhirIdList.AddItem(value: TFhirId) : TFhirId;
 begin
+  assert(value.ClassName = 'TFhirId', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirId');
   add(value);
-  result := value;
 end;
 
-procedure TFhirIdList.AddItem(value: String);
+function TFhirIdList.AddItem(value: String) : TFhirId;
 begin
-  add(TFhirId.create(value));
+  result := TFhirId.create(value);
+  add(result);
 end;
 
 function TFhirIdList.Append: TFhirId;
@@ -14898,15 +13749,16 @@ end;
 
 { TFhirPositiveIntList }
 
-function TFhirPositiveIntList.AddItem(value: TFhirPositiveInt): TFhirPositiveInt;
+function TFhirPositiveIntList.AddItem(value: TFhirPositiveInt) : TFhirPositiveInt;
 begin
+  assert(value.ClassName = 'TFhirPositiveInt', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPositiveInt');
   add(value);
-  result := value;
 end;
 
-procedure TFhirPositiveIntList.AddItem(value: String);
+function TFhirPositiveIntList.AddItem(value: String) : TFhirPositiveInt;
 begin
-  add(TFhirPositiveInt.create(value));
+  result := TFhirPositiveInt.create(value);
+  add(result);
 end;
 
 function TFhirPositiveIntList.Append: TFhirPositiveInt;
@@ -15064,15 +13916,16 @@ end;
 
 { TFhirInteger64List }
 
-function TFhirInteger64List.AddItem(value: TFhirInteger64): TFhirInteger64;
+function TFhirInteger64List.AddItem(value: TFhirInteger64) : TFhirInteger64;
 begin
+  assert(value.ClassName = 'TFhirInteger64', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInteger64');
   add(value);
-  result := value;
 end;
 
-procedure TFhirInteger64List.AddItem(value: String);
+function TFhirInteger64List.AddItem(value: String) : TFhirInteger64;
 begin
-  add(TFhirInteger64.create(value));
+  result := TFhirInteger64.create(value);
+  add(result);
 end;
 
 function TFhirInteger64List.Append: TFhirInteger64;
@@ -15419,7 +14272,7 @@ begin
 end;
 
 procedure TFhirAddress.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('use');
   fields.add('type');
@@ -15434,7 +14287,7 @@ begin
 end;
 
 function TFhirAddress.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLineList.sizeInBytes(magic));
 end;
@@ -15693,6 +14546,7 @@ end;
 
 function TFhirAddressList.AddItem(value: TFhirAddress): TFhirAddress;
 begin
+  assert(value.ClassName = 'TFhirAddress', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAddress');
   add(value);
   result := value;
 end;
@@ -15927,7 +14781,7 @@ begin
 end;
 
 procedure TFhirAnnotation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('author[x]');
   fields.add('time');
@@ -15935,7 +14789,7 @@ begin
 end;
 
 function TFhirAnnotation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -16028,6 +14882,7 @@ end;
 
 function TFhirAnnotationList.AddItem(value: TFhirAnnotation): TFhirAnnotation;
 begin
+  assert(value.ClassName = 'TFhirAnnotation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAnnotation');
   add(value);
   result := value;
 end;
@@ -16407,7 +15262,7 @@ begin
 end;
 
 procedure TFhirAttachment.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('contentType');
   fields.add('language');
@@ -16425,7 +15280,7 @@ begin
 end;
 
 function TFhirAttachment.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -16798,6 +15653,7 @@ end;
 
 function TFhirAttachmentList.AddItem(value: TFhirAttachment): TFhirAttachment;
 begin
+  assert(value.ClassName = 'TFhirAttachment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAttachment');
   add(value);
   result := value;
 end;
@@ -17030,14 +15886,14 @@ begin
 end;
 
 procedure TFhirCodeableConcept.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('coding');
   fields.add('text');
 end;
 
 function TFhirCodeableConcept.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCodingList.sizeInBytes(magic));
 end;
@@ -17116,6 +15972,7 @@ end;
 
 function TFhirCodeableConceptList.AddItem(value: TFhirCodeableConcept): TFhirCodeableConcept;
 begin
+  assert(value.ClassName = 'TFhirCodeableConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeableConcept');
   add(value);
   result := value;
 end;
@@ -17335,14 +16192,14 @@ begin
 end;
 
 procedure TFhirCodeableReference.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('concept');
   fields.add('reference');
 end;
 
 function TFhirCodeableReference.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -17394,6 +16251,7 @@ end;
 
 function TFhirCodeableReferenceList.AddItem(value: TFhirCodeableReference): TFhirCodeableReference;
 begin
+  assert(value.ClassName = 'TFhirCodeableReference', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeableReference');
   add(value);
   result := value;
 end;
@@ -17657,7 +16515,7 @@ begin
 end;
 
 procedure TFhirCoding.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('system');
   fields.add('version');
@@ -17667,7 +16525,7 @@ begin
 end;
 
 function TFhirCoding.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -17832,6 +16690,7 @@ end;
 
 function TFhirCodingList.AddItem(value: TFhirCoding): TFhirCoding;
 begin
+  assert(value.ClassName = 'TFhirCoding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoding');
   add(value);
   result := value;
 end;
@@ -18064,14 +16923,14 @@ begin
 end;
 
 procedure TFhirContactDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('telecom');
 end;
 
 function TFhirContactDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTelecomList.sizeInBytes(magic));
 end;
@@ -18150,6 +17009,7 @@ end;
 
 function TFhirContactDetailList.AddItem(value: TFhirContactDetail): TFhirContactDetail;
 begin
+  assert(value.ClassName = 'TFhirContactDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirContactDetail');
   add(value);
   result := value;
 end;
@@ -18413,7 +17273,7 @@ begin
 end;
 
 procedure TFhirContactPoint.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('system');
   fields.add('value');
@@ -18423,7 +17283,7 @@ begin
 end;
 
 function TFhirContactPoint.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -18565,6 +17425,7 @@ end;
 
 function TFhirContactPointList.AddItem(value: TFhirContactPoint): TFhirContactPoint;
 begin
+  assert(value.ClassName = 'TFhirContactPoint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirContactPoint');
   add(value);
   result := value;
 end;
@@ -18812,7 +17673,7 @@ begin
 end;
 
 procedure TFhirContributor.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('name');
@@ -18820,7 +17681,7 @@ begin
 end;
 
 function TFhirContributor.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FContactList.sizeInBytes(magic));
 end;
@@ -18921,6 +17782,7 @@ end;
 
 function TFhirContributorList.AddItem(value: TFhirContributor): TFhirContributor;
 begin
+  assert(value.ClassName = 'TFhirContributor', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirContributor');
   add(value);
   result := value;
 end;
@@ -19182,7 +18044,7 @@ begin
 end;
 
 procedure TFhirDataRequirementCodeFilter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('searchParam');
@@ -19191,7 +18053,7 @@ begin
 end;
 
 function TFhirDataRequirementCodeFilter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCodeList.sizeInBytes(magic));
 end;
@@ -19322,6 +18184,7 @@ end;
 
 function TFhirDataRequirementCodeFilterList.AddItem(value: TFhirDataRequirementCodeFilter): TFhirDataRequirementCodeFilter;
 begin
+  assert(value.ClassName = 'TFhirDataRequirementCodeFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataRequirementCodeFilter');
   add(value);
   result := value;
 end;
@@ -19556,7 +18419,7 @@ begin
 end;
 
 procedure TFhirDataRequirementDateFilter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('searchParam');
@@ -19564,7 +18427,7 @@ begin
 end;
 
 function TFhirDataRequirementDateFilter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -19662,6 +18525,7 @@ end;
 
 function TFhirDataRequirementDateFilterList.AddItem(value: TFhirDataRequirementDateFilter): TFhirDataRequirementDateFilter;
 begin
+  assert(value.ClassName = 'TFhirDataRequirementDateFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataRequirementDateFilter');
   add(value);
   result := value;
 end;
@@ -19881,14 +18745,14 @@ begin
 end;
 
 procedure TFhirDataRequirementSort.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('direction');
 end;
 
 function TFhirDataRequirementSort.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -19976,6 +18840,7 @@ end;
 
 function TFhirDataRequirementSortList.AddItem(value: TFhirDataRequirementSort): TFhirDataRequirementSort;
 begin
+  assert(value.ClassName = 'TFhirDataRequirementSort', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataRequirementSort');
   add(value);
   result := value;
 end;
@@ -20343,7 +19208,7 @@ begin
 end;
 
 procedure TFhirDataRequirement.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('profile');
@@ -20356,7 +19221,7 @@ begin
 end;
 
 function TFhirDataRequirement.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FProfileList.sizeInBytes(magic));
   inc(result, FMustSupportList.sizeInBytes(magic));
@@ -20515,6 +19380,7 @@ end;
 
 function TFhirDataRequirementList.AddItem(value: TFhirDataRequirement): TFhirDataRequirement;
 begin
+  assert(value.ClassName = 'TFhirDataRequirement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataRequirement');
   add(value);
   result := value;
 end;
@@ -20778,7 +19644,7 @@ begin
 end;
 
 procedure TFhirExpression.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('description');
   fields.add('name');
@@ -20788,7 +19654,7 @@ begin
 end;
 
 function TFhirExpression.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -20958,6 +19824,7 @@ end;
 
 function TFhirExpressionList.AddItem(value: TFhirExpression): TFhirExpression;
 begin
+  assert(value.ClassName = 'TFhirExpression', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExpression');
   add(value);
   result := value;
 end;
@@ -21083,7 +19950,7 @@ procedure TFhirExtension.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FValue.Link));
 end;
 
 function TFhirExtension.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -21093,7 +19960,7 @@ begin
     UrlElement := asUri(propValue);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
   begin
     Value := propValue as TFhirDataType;
     result := propValue;
@@ -21109,21 +19976,21 @@ end;
 function TFhirExtension.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'url') then result := TFhirUri.create()
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Value')
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Value')
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirExtension.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'url') then result := 'uri'
-  else if (propName = 'value[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'value[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirExtension.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := nil
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := nil
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -21131,7 +19998,7 @@ end;
 procedure TFhirExtension.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'url') then UrlElement := asUri(new)
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := new as TFhirDataType
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -21177,14 +20044,14 @@ begin
 end;
 
 procedure TFhirExtension.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('@url');
   fields.add('value[x]');
 end;
 
 function TFhirExtension.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -21256,6 +20123,7 @@ end;
 
 function TFhirExtensionList.AddItem(value: TFhirExtension): TFhirExtension;
 begin
+  assert(value.ClassName = 'TFhirExtension', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExtension');
   add(value);
   result := value;
 end;
@@ -21585,7 +20453,7 @@ begin
 end;
 
 procedure TFhirHumanName.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('use');
   fields.add('text');
@@ -21597,7 +20465,7 @@ begin
 end;
 
 function TFhirHumanName.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FGivenList.sizeInBytes(magic));
   inc(result, FPrefixList.sizeInBytes(magic));
@@ -21756,6 +20624,7 @@ end;
 
 function TFhirHumanNameList.AddItem(value: TFhirHumanName): TFhirHumanName;
 begin
+  assert(value.ClassName = 'TFhirHumanName', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirHumanName');
   add(value);
   result := value;
 end;
@@ -22033,7 +20902,7 @@ begin
 end;
 
 procedure TFhirIdentifier.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('use');
   fields.add('type');
@@ -22044,7 +20913,7 @@ begin
 end;
 
 function TFhirIdentifier.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -22176,6 +21045,7 @@ end;
 
 function TFhirIdentifierList.AddItem(value: TFhirIdentifier): TFhirIdentifier;
 begin
+  assert(value.ClassName = 'TFhirIdentifier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirIdentifier');
   add(value);
   result := value;
 end;
@@ -22490,7 +21360,7 @@ begin
 end;
 
 procedure TFhirMeta.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('versionId');
   fields.add('lastUpdated');
@@ -22501,7 +21371,7 @@ begin
 end;
 
 function TFhirMeta.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FProfileList.sizeInBytes(magic));
   inc(result, FSecurityList.sizeInBytes(magic));
@@ -22653,6 +21523,7 @@ end;
 
 function TFhirMetaList.AddItem(value: TFhirMeta): TFhirMeta;
 begin
+  assert(value.ClassName = 'TFhirMeta', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeta');
   add(value);
   result := value;
 end;
@@ -22872,14 +21743,14 @@ begin
 end;
 
 procedure TFhirMoney.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value');
   fields.add('currency');
 end;
 
 function TFhirMoney.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -22971,6 +21842,7 @@ end;
 
 function TFhirMoneyList.AddItem(value: TFhirMoney): TFhirMoney;
 begin
+  assert(value.ClassName = 'TFhirMoney', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMoney');
   add(value);
   result := value;
 end;
@@ -23190,14 +22062,14 @@ begin
 end;
 
 procedure TFhirNarrative.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('status');
   fields.add('div');
 end;
 
 function TFhirNarrative.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -23265,6 +22137,7 @@ end;
 
 function TFhirNarrativeList.AddItem(value: TFhirNarrative): TFhirNarrative;
 begin
+  assert(value.ClassName = 'TFhirNarrative', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNarrative');
   add(value);
   result := value;
 end;
@@ -23557,7 +22430,7 @@ begin
 end;
 
 procedure TFhirParameterDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('use');
@@ -23569,7 +22442,7 @@ begin
 end;
 
 function TFhirParameterDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -23783,6 +22656,7 @@ end;
 
 function TFhirParameterDefinitionList.AddItem(value: TFhirParameterDefinition): TFhirParameterDefinition;
 begin
+  assert(value.ClassName = 'TFhirParameterDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirParameterDefinition');
   add(value);
   result := value;
 end;
@@ -24002,14 +22876,14 @@ begin
 end;
 
 procedure TFhirPeriod.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('start');
   fields.add('end');
 end;
 
 function TFhirPeriod.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -24091,6 +22965,7 @@ end;
 
 function TFhirPeriodList.AddItem(value: TFhirPeriod): TFhirPeriod;
 begin
+  assert(value.ClassName = 'TFhirPeriod', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPeriod');
   add(value);
   result := value;
 end;
@@ -24354,7 +23229,7 @@ begin
 end;
 
 procedure TFhirQuantity.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value');
   fields.add('comparator');
@@ -24364,7 +23239,7 @@ begin
 end;
 
 function TFhirQuantity.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -24530,6 +23405,7 @@ end;
 
 function TFhirQuantityList.AddItem(value: TFhirQuantity): TFhirQuantity;
 begin
+  assert(value.ClassName = 'TFhirQuantity', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuantity');
   add(value);
   result := value;
 end;
@@ -24749,14 +23625,14 @@ begin
 end;
 
 procedure TFhirRange.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('low');
   fields.add('high');
 end;
 
 function TFhirRange.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -24808,6 +23684,7 @@ end;
 
 function TFhirRangeList.AddItem(value: TFhirRange): TFhirRange;
 begin
+  assert(value.ClassName = 'TFhirRange', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRange');
   add(value);
   result := value;
 end;
@@ -25027,14 +23904,14 @@ begin
 end;
 
 procedure TFhirRatio.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('numerator');
   fields.add('denominator');
 end;
 
 function TFhirRatio.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -25086,6 +23963,7 @@ end;
 
 function TFhirRatioList.AddItem(value: TFhirRatio): TFhirRatio;
 begin
+  assert(value.ClassName = 'TFhirRatio', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRatio');
   add(value);
   result := value;
 end;
@@ -25320,7 +24198,7 @@ begin
 end;
 
 procedure TFhirRatioRange.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('lowNumerator');
   fields.add('highNumerator');
@@ -25328,7 +24206,7 @@ begin
 end;
 
 function TFhirRatioRange.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -25386,6 +24264,7 @@ end;
 
 function TFhirRatioRangeList.AddItem(value: TFhirRatioRange): TFhirRatioRange;
 begin
+  assert(value.ClassName = 'TFhirRatioRange', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRatioRange');
   add(value);
   result := value;
 end;
@@ -25634,7 +24513,7 @@ begin
 end;
 
 procedure TFhirReference.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('reference');
   fields.add('type');
@@ -25643,7 +24522,7 @@ begin
 end;
 
 function TFhirReference.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -25767,6 +24646,7 @@ end;
 
 function TFhirReferenceList.AddItem(value: TFhirReference): TFhirReference;
 begin
+  assert(value.ClassName = 'TFhirReference', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirReference');
   add(value);
   result := value;
 end;
@@ -25868,12 +24748,13 @@ end;
 destructor TFhirRelatedArtifact.Destroy;
 begin
   FType_.free;
+  FClassifierList.Free;
   FLabel_.free;
   FDisplay.free;
   FCitation.free;
-  FUrl.free;
   FDocument.free;
   FResource.free;
+  FResourceReference.free;
   inherited;
 end;
 
@@ -25881,12 +24762,23 @@ procedure TFhirRelatedArtifact.Assign(oSource : TFslObject);
 begin
   inherited;
   type_Element := TFhirRelatedArtifact(oSource).type_Element.Clone;
+  if (TFhirRelatedArtifact(oSource).FClassifierList = nil) then
+  begin
+    FClassifierList.free;
+    FClassifierList := nil;
+  end
+  else
+  begin
+    if FClassifierList = nil then
+      FClassifierList := TFhirCodeableConceptList.Create;
+    FClassifierList.Assign(TFhirRelatedArtifact(oSource).FClassifierList);
+  end;
   label_Element := TFhirRelatedArtifact(oSource).label_Element.Clone;
   displayElement := TFhirRelatedArtifact(oSource).displayElement.Clone;
   citationElement := TFhirRelatedArtifact(oSource).citationElement.Clone;
-  urlElement := TFhirRelatedArtifact(oSource).urlElement.Clone;
   document := TFhirRelatedArtifact(oSource).document.Clone;
   resourceElement := TFhirRelatedArtifact(oSource).resourceElement.Clone;
+  resourceReference := TFhirRelatedArtifact(oSource).resourceReference.Clone;
 end;
 
 procedure TFhirRelatedArtifact.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
@@ -25894,30 +24786,33 @@ begin
   inherited;
   if (child_name = 'type') Then
      list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'classifier') Then
+    list.addAll(self, 'classifier', FClassifierList);
   if (child_name = 'label') Then
      list.add(self.link, 'label', FLabel_.Link);
   if (child_name = 'display') Then
      list.add(self.link, 'display', FDisplay.Link);
   if (child_name = 'citation') Then
      list.add(self.link, 'citation', FCitation.Link);
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
   if (child_name = 'document') Then
      list.add(self.link, 'document', FDocument.Link);
   if (child_name = 'resource') Then
      list.add(self.link, 'resource', FResource.Link);
+  if (child_name = 'resourceReference') Then
+     list.add(self.link, 'resourceReference', FResourceReference.Link);
 end;
 
 procedure TFhirRelatedArtifact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'classifier', 'CodeableConcept', true, TFhirCodeableConcept, FClassifierList.Link));
   oList.add(TFHIRProperty.create(self, 'label', 'string', false, TFhirString, FLabel_.Link));
   oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));
   oList.add(TFHIRProperty.create(self, 'citation', 'markdown', false, TFhirMarkdown, FCitation.Link));
-  oList.add(TFHIRProperty.create(self, 'url', 'url', false, TFhirUrl, FUrl.Link));
   oList.add(TFHIRProperty.create(self, 'document', 'Attachment', false, TFhirAttachment, FDocument.Link));
   oList.add(TFHIRProperty.create(self, 'resource', 'canonical', false, TFhirCanonical, FResource.Link));
+  oList.add(TFHIRProperty.create(self, 'resourceReference', 'Reference', false, TFhirReference, FResourceReference.Link));
 end;
 
 function TFhirRelatedArtifact.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -25925,6 +24820,11 @@ begin
   if (propName = 'type') then
   begin
     Type_Element := asEnum(SYSTEMS_TFhirRelatedArtifactTypeEnum, CODES_TFhirRelatedArtifactTypeEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'classifier') then
+  begin
+    ClassifierList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'label') then
@@ -25942,11 +24842,6 @@ begin
     CitationElement := asMarkdown(propValue);
     result := propValue;
   end
-  else if (propName = 'url') then
-  begin
-    UrlElement := asUrl(propValue);
-    result := propValue;
-  end
   else if (propName = 'document') then
   begin
     Document := propValue as TFhirAttachment;
@@ -25957,47 +24852,56 @@ begin
     ResourceElement := asCanonical(propValue);
     result := propValue;
   end
+  else if (propName = 'resourceReference') then
+  begin
+    ResourceReference := propValue as TFhirReference;
+    result := propValue;
+  end
   else result := inherited setProperty(propName, propValue);
 end;
 
 procedure TFhirRelatedArtifact.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  inherited;
+  if (propName = 'classifier') then ClassifierList.insertItem(index, propValue as TFhirCodeableConcept)
+  else inherited;
 end;
 
 function TFhirRelatedArtifact.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirRelatedArtifactTypeEnum[RelatedArtifactTypeNull], CODES_TFhirRelatedArtifactTypeEnum[RelatedArtifactTypeNull]) 
+  else if (propName = 'classifier') then result := ClassifierList.new()
   else if (propName = 'label') then result := TFhirString.create()
   else if (propName = 'display') then result := TFhirString.create()
   else if (propName = 'citation') then result := TFhirMarkdown.create()
-  else if (propName = 'url') then result := TFhirUrl.create()
   else if (propName = 'document') then result := TFhirAttachment.create()
   else if (propName = 'resource') then result := TFhirCanonical.create()
+  else if (propName = 'resourceReference') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirRelatedArtifact.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'type') then result := 'code'
+  else if (propName = 'classifier') then result := 'CodeableConcept'
   else if (propName = 'label') then result := 'string'
   else if (propName = 'display') then result := 'string'
   else if (propName = 'citation') then result := 'markdown'
-  else if (propName = 'url') then result := 'url'
   else if (propName = 'document') then result := 'Attachment'
   else if (propName = 'resource') then result := 'canonical'
+  else if (propName = 'resourceReference') then result := 'Reference'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirRelatedArtifact.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
+  else if (propName = 'classifier') then deletePropertyValue('classifier', ClassifierList, value)
   else if (propName = 'label') then Label_Element := nil
   else if (propName = 'display') then DisplayElement := nil
   else if (propName = 'citation') then CitationElement := nil
-  else if (propName = 'url') then UrlElement := nil
   else if (propName = 'document') then DocumentElement := nil
   else if (propName = 'resource') then ResourceElement := nil
+  else if (propName = 'resourceReference') then ResourceReferenceElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -26005,19 +24909,22 @@ end;
 procedure TFhirRelatedArtifact.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirRelatedArtifactTypeEnum, CODES_TFhirRelatedArtifactTypeEnum, new)
+  else if (propName = 'classifier') then replacePropertyValue('classifier', ClassifierList, existing, new)
   else if (propName = 'label') then Label_Element := asString(new)
   else if (propName = 'display') then DisplayElement := asString(new)
   else if (propName = 'citation') then CitationElement := asMarkdown(new)
-  else if (propName = 'url') then UrlElement := asUrl(new)
   else if (propName = 'document') then DocumentElement := new as TFhirAttachment
   else if (propName = 'resource') then ResourceElement := asCanonical(new)
+  else if (propName = 'resourceReference') then ResourceReferenceElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirRelatedArtifact.reorderProperty(propName : string; source, destination : integer);
 begin
-  inherited reorderProperty(propName, source, destination);
+  if (propName = 'classifier') then ClassifierList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirRelatedArtifact.fhirType : string;
@@ -26046,33 +24953,35 @@ begin
   else
   begin
     o := TFhirRelatedArtifact(other);
-    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(label_Element, o.label_Element, true) and 
-      compareDeep(displayElement, o.displayElement, true) and compareDeep(citationElement, o.citationElement, true) and 
-      compareDeep(urlElement, o.urlElement, true) and compareDeep(documentElement, o.documentElement, true) and 
-      compareDeep(resourceElement, o.resourceElement, true);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(classifierList, o.classifierList, true) and 
+      compareDeep(label_Element, o.label_Element, true) and compareDeep(displayElement, o.displayElement, true) and 
+      compareDeep(citationElement, o.citationElement, true) and compareDeep(documentElement, o.documentElement, true) and 
+      compareDeep(resourceElement, o.resourceElement, true) and compareDeep(resourceReferenceElement, o.resourceReferenceElement, true);
   end;
 end;
 
 function TFhirRelatedArtifact.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FLabel_) and isEmptyProp(FDisplay) and isEmptyProp(FCitation) and isEmptyProp(FUrl) and isEmptyProp(FDocument) and isEmptyProp(FResource);
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FclassifierList) and isEmptyProp(FLabel_) and isEmptyProp(FDisplay) and isEmptyProp(FCitation) and isEmptyProp(FDocument) and isEmptyProp(FResource) and isEmptyProp(FResourceReference);
 end;
 
 procedure TFhirRelatedArtifact.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
+  fields.add('classifier');
   fields.add('label');
   fields.add('display');
   fields.add('citation');
-  fields.add('url');
   fields.add('document');
   fields.add('resource');
+  fields.add('resourceReference');
 end;
 
 function TFhirRelatedArtifact.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
+  inc(result, FClassifierList.sizeInBytes(magic));
 end;
 
 procedure TFhirRelatedArtifact.SetType_(value : TFhirEnum);
@@ -26095,6 +25004,18 @@ begin
     Type_Element := nil
   else
     Type_Element := TFhirEnum.create(SYSTEMS_TFhirRelatedArtifactTypeEnum[value], CODES_TFhirRelatedArtifactTypeEnum[value]);
+end;
+
+function TFhirRelatedArtifact.GetClassifierList : TFhirCodeableConceptList;
+begin
+  if FClassifierList = nil then
+    FClassifierList := TFhirCodeableConceptList.Create;
+  result := FClassifierList;
+end;
+
+function TFhirRelatedArtifact.GetHasClassifierList : boolean;
+begin
+  result := (FClassifierList <> nil) and (FClassifierList.count > 0);
 end;
 
 procedure TFhirRelatedArtifact.SetLabel_(value : TFhirString);
@@ -26175,32 +25096,6 @@ begin
     FCitation.value := '';
 end;
 
-procedure TFhirRelatedArtifact.SetUrl(value : TFhirUrl);
-begin
-  FUrl.free;
-  FUrl := value;
-end;
-
-function TFhirRelatedArtifact.GetUrlST : String;
-begin
-  if FUrl = nil then
-    result := ''
-  else
-    result := FUrl.value;
-end;
-
-procedure TFhirRelatedArtifact.SetUrlST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FUrl = nil then
-      FUrl := TFhirUrl.create;
-    FUrl.value := value
-  end
-  else if FUrl <> nil then
-    FUrl.value := '';
-end;
-
 procedure TFhirRelatedArtifact.SetDocument(value : TFhirAttachment);
 begin
   FDocument.free;
@@ -26231,6 +25126,12 @@ begin
   end
   else if FResource <> nil then
     FResource.value := '';
+end;
+
+procedure TFhirRelatedArtifact.SetResourceReference(value : TFhirReference);
+begin
+  FResourceReference.free;
+  FResourceReference := value;
 end;
 
 { TFhirRelatedArtifactListEnumerator }
@@ -26269,6 +25170,7 @@ end;
 
 function TFhirRelatedArtifactList.AddItem(value: TFhirRelatedArtifact): TFhirRelatedArtifact;
 begin
+  assert(value.ClassName = 'TFhirRelatedArtifact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRelatedArtifact');
   add(value);
   result := value;
 end;
@@ -26561,7 +25463,7 @@ begin
 end;
 
 procedure TFhirSampledData.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('origin');
   fields.add('period');
@@ -26573,7 +25475,7 @@ begin
 end;
 
 function TFhirSampledData.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -26775,6 +25677,7 @@ end;
 
 function TFhirSampledDataList.AddItem(value: TFhirSampledData): TFhirSampledData;
 begin
+  assert(value.ClassName = 'TFhirSampledData', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSampledData');
   add(value);
   result := value;
 end;
@@ -27080,7 +25983,7 @@ begin
 end;
 
 procedure TFhirSignature.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('when');
@@ -27092,7 +25995,7 @@ begin
 end;
 
 function TFhirSignature.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
 end;
@@ -27256,6 +26159,7 @@ end;
 
 function TFhirSignatureList.AddItem(value: TFhirSignature): TFhirSignature;
 begin
+  assert(value.ClassName = 'TFhirSignature', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSignature');
   add(value);
   result := value;
 end;
@@ -27532,7 +26436,7 @@ begin
 end;
 
 procedure TFhirTriggerDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('name');
@@ -27542,7 +26446,7 @@ begin
 end;
 
 function TFhirTriggerDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDataList.sizeInBytes(magic));
 end;
@@ -27655,6 +26559,7 @@ end;
 
 function TFhirTriggerDefinitionList.AddItem(value: TFhirTriggerDefinition): TFhirTriggerDefinition;
 begin
+  assert(value.ClassName = 'TFhirTriggerDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTriggerDefinition');
   add(value);
   result := value;
 end;
@@ -27874,14 +26779,14 @@ begin
 end;
 
 procedure TFhirUsageContext.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('value[x]');
 end;
 
 function TFhirUsageContext.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -27933,6 +26838,7 @@ end;
 
 function TFhirUsageContextList.AddItem(value: TFhirUsageContext): TFhirUsageContext;
 begin
+  assert(value.ClassName = 'TFhirUsageContext', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirUsageContext');
   add(value);
   result := value;
 end;
@@ -28077,6 +26983,7 @@ end;
 
 function TFhirAgeList.AddItem(value: TFhirAge): TFhirAge;
 begin
+  assert(value.ClassName = 'TFhirAge', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAge');
   add(value);
   result := value;
 end;
@@ -28221,6 +27128,7 @@ end;
 
 function TFhirCountList.AddItem(value: TFhirCount): TFhirCount;
 begin
+  assert(value.ClassName = 'TFhirCount', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCount');
   add(value);
   result := value;
 end;
@@ -28365,6 +27273,7 @@ end;
 
 function TFhirDistanceList.AddItem(value: TFhirDistance): TFhirDistance;
 begin
+  assert(value.ClassName = 'TFhirDistance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDistance');
   add(value);
   result := value;
 end;
@@ -28599,7 +27508,7 @@ begin
 end;
 
 procedure TFhirDosageDoseAndRate.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('dose[x]');
@@ -28607,7 +27516,7 @@ begin
 end;
 
 function TFhirDosageDoseAndRate.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -28665,6 +27574,7 @@ end;
 
 function TFhirDosageDoseAndRateList.AddItem(value: TFhirDosageDoseAndRate): TFhirDosageDoseAndRate;
 begin
+  assert(value.ClassName = 'TFhirDosageDoseAndRate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDosageDoseAndRate');
   add(value);
   result := value;
 end;
@@ -29070,7 +27980,7 @@ begin
 end;
 
 procedure TFhirDosage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('text');
@@ -29088,7 +27998,7 @@ begin
 end;
 
 function TFhirDosage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FAdditionalInstructionList.sizeInBytes(magic));
   inc(result, FDoseAndRateList.sizeInBytes(magic));
@@ -29280,6 +28190,7 @@ end;
 
 function TFhirDosageList.AddItem(value: TFhirDosage): TFhirDosage;
 begin
+  assert(value.ClassName = 'TFhirDosage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDosage');
   add(value);
   result := value;
 end;
@@ -29424,6 +28335,7 @@ end;
 
 function TFhirDurationList.AddItem(value: TFhirDuration): TFhirDuration;
 begin
+  assert(value.ClassName = 'TFhirDuration', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDuration');
   add(value);
   result := value;
 end;
@@ -29685,7 +28597,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionSlicing.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('discriminator');
   fields.add('description');
@@ -29694,7 +28606,7 @@ begin
 end;
 
 function TFhirElementDefinitionSlicing.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDiscriminatorList.sizeInBytes(magic));
 end;
@@ -29816,6 +28728,7 @@ end;
 
 function TFhirElementDefinitionSlicingList.AddItem(value: TFhirElementDefinitionSlicing): TFhirElementDefinitionSlicing;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionSlicing', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionSlicing');
   add(value);
   result := value;
 end;
@@ -30035,14 +28948,14 @@ begin
 end;
 
 procedure TFhirElementDefinitionSlicingDiscriminator.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('path');
 end;
 
 function TFhirElementDefinitionSlicingDiscriminator.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30130,6 +29043,7 @@ end;
 
 function TFhirElementDefinitionSlicingDiscriminatorList.AddItem(value: TFhirElementDefinitionSlicingDiscriminator): TFhirElementDefinitionSlicingDiscriminator;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionSlicingDiscriminator', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionSlicingDiscriminator');
   add(value);
   result := value;
 end;
@@ -30364,7 +29278,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionBase.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('min');
@@ -30372,7 +29286,7 @@ begin
 end;
 
 function TFhirElementDefinitionBase.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30490,6 +29404,7 @@ end;
 
 function TFhirElementDefinitionBaseList.AddItem(value: TFhirElementDefinitionBase): TFhirElementDefinitionBase;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionBase', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionBase');
   add(value);
   result := value;
 end;
@@ -30786,7 +29701,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionType.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('profile');
@@ -30796,7 +29711,7 @@ begin
 end;
 
 function TFhirElementDefinitionType.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FProfileList.sizeInBytes(magic));
   inc(result, FTargetProfileList.sizeInBytes(magic));
@@ -30947,6 +29862,7 @@ end;
 
 function TFhirElementDefinitionTypeList.AddItem(value: TFhirElementDefinitionType): TFhirElementDefinitionType;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionType', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionType');
   add(value);
   result := value;
 end;
@@ -31072,7 +29988,7 @@ procedure TFhirElementDefinitionExample.ListProperties(oList: TFHIRPropertyList;
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'label', 'string', false, TFhirString, FLabel_.Link));
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FValue.Link));
 end;
 
 function TFhirElementDefinitionExample.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -31082,7 +29998,7 @@ begin
     Label_Element := asString(propValue);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
   begin
     Value := propValue as TFhirDataType;
     result := propValue;
@@ -31098,21 +30014,21 @@ end;
 function TFhirElementDefinitionExample.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'label') then result := TFhirString.create()
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Value')
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Value')
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirElementDefinitionExample.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'label') then result := 'string'
-  else if (propName = 'value[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'value[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirElementDefinitionExample.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'label') then Label_Element := nil
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := nil
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -31120,7 +30036,7 @@ end;
 procedure TFhirElementDefinitionExample.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'label') then Label_Element := asString(new)
-  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'value', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then ValueElement := new as TFhirDataType
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -31166,14 +30082,14 @@ begin
 end;
 
 procedure TFhirElementDefinitionExample.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('label');
   fields.add('value[x]');
 end;
 
 function TFhirElementDefinitionExample.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -31245,6 +30161,7 @@ end;
 
 function TFhirElementDefinitionExampleList.AddItem(value: TFhirElementDefinitionExample): TFhirElementDefinitionExample;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionExample', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionExample');
   add(value);
   result := value;
 end;
@@ -31537,7 +30454,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionConstraint.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('key');
   fields.add('requirements');
@@ -31549,7 +30466,7 @@ begin
 end;
 
 function TFhirElementDefinitionConstraint.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -31767,6 +30684,7 @@ end;
 
 function TFhirElementDefinitionConstraintList.AddItem(value: TFhirElementDefinitionConstraint): TFhirElementDefinitionConstraint;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionConstraint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionConstraint');
   add(value);
   result := value;
 end;
@@ -32001,7 +30919,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionBinding.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('strength');
   fields.add('description');
@@ -32009,7 +30927,7 @@ begin
 end;
 
 function TFhirElementDefinitionBinding.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -32123,6 +31041,7 @@ end;
 
 function TFhirElementDefinitionBindingList.AddItem(value: TFhirElementDefinitionBinding): TFhirElementDefinitionBinding;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionBinding');
   add(value);
   result := value;
 end;
@@ -32371,7 +31290,7 @@ begin
 end;
 
 procedure TFhirElementDefinitionMapping.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identity');
   fields.add('language');
@@ -32380,7 +31299,7 @@ begin
 end;
 
 function TFhirElementDefinitionMapping.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -32524,6 +31443,7 @@ end;
 
 function TFhirElementDefinitionMappingList.AddItem(value: TFhirElementDefinitionMapping): TFhirElementDefinitionMapping;
 begin
+  assert(value.ClassName = 'TFhirElementDefinitionMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinitionMapping');
   add(value);
   result := value;
 end;
@@ -32872,11 +31792,11 @@ begin
   oList.add(TFHIRProperty.create(self, 'base', 'Element', false, TFhirElementDefinitionBase, FBase.Link));
   oList.add(TFHIRProperty.create(self, 'contentReference', 'uri', false, TFhirUri, FContentReference.Link));
   oList.add(TFHIRProperty.create(self, 'type', 'Element', true, TFhirElementDefinitionType, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'defaultValue[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FDefaultValue.Link));
+  oList.add(TFHIRProperty.create(self, 'defaultValue[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FDefaultValue.Link));
   oList.add(TFHIRProperty.create(self, 'meaningWhenMissing', 'markdown', false, TFhirMarkdown, FMeaningWhenMissing.Link));
   oList.add(TFHIRProperty.create(self, 'orderMeaning', 'string', false, TFhirString, FOrderMeaning.Link));
-  oList.add(TFHIRProperty.create(self, 'fixed[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FFixed.Link));
-  oList.add(TFHIRProperty.create(self, 'pattern[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FPattern.Link));
+  oList.add(TFHIRProperty.create(self, 'fixed[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FFixed.Link));
+  oList.add(TFHIRProperty.create(self, 'pattern[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FPattern.Link));
   oList.add(TFHIRProperty.create(self, 'example', 'Element', true, TFhirElementDefinitionExample, FExampleList.Link));
   oList.add(TFHIRProperty.create(self, 'minValue[x]', 'date|dateTime|instant|time|decimal|integer|integer64|positiveInt|unsignedInt|Quantity', false, TFhirDataType, FMinValue.Link));
   oList.add(TFHIRProperty.create(self, 'maxValue[x]', 'date|dateTime|instant|time|decimal|integer|integer64|positiveInt|unsignedInt|Quantity', false, TFhirDataType, FMaxValue.Link));
@@ -32978,7 +31898,7 @@ begin
     Type_List.add(propValue as TFhirElementDefinitionType);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
   begin
     DefaultValue := propValue as TFhirDataType;
     result := propValue;
@@ -32993,12 +31913,12 @@ begin
     OrderMeaningElement := asString(propValue);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
   begin
     Fixed := propValue as TFhirDataType;
     result := propValue;
   end
-  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
   begin
     Pattern := propValue as TFhirDataType;
     result := propValue;
@@ -33097,11 +32017,11 @@ begin
   else if (propName = 'base') then result := TFhirElementDefinitionBase.create()
   else if (propName = 'contentReference') then result := TFhirUri.create()
   else if (propName = 'type') then result := Type_List.new()
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property DefaultValue')
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property DefaultValue')
   else if (propName = 'meaningWhenMissing') then result := TFhirMarkdown.create()
   else if (propName = 'orderMeaning') then result := TFhirString.create()
-  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Fixed')
-  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Pattern')
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Fixed')
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property Pattern')
   else if (propName = 'example') then result := ExampleList.new()
   else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then raise EFHIRException.create('Cannot make property MinValue')
   else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then raise EFHIRException.create('Cannot make property MaxValue')
@@ -33136,11 +32056,11 @@ begin
   else if (propName = 'base') then result := 'Element'
   else if (propName = 'contentReference') then result := 'uri'
   else if (propName = 'type') then result := 'Element'
-  else if (propName = 'defaultValue[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'defaultValue[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
   else if (propName = 'meaningWhenMissing') then result := 'markdown'
   else if (propName = 'orderMeaning') then result := 'string'
-  else if (propName = 'fixed[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
-  else if (propName = 'pattern[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'fixed[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'pattern[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|CodeableReference|Coding|ContactPoint|Count|Distanc'+'e|Duration|HumanName|Identifier|Money|Period|Quantity|Range|Ratio|RatioRange|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
   else if (propName = 'example') then result := 'Element'
   else if (propName = 'minValue[x]') then result := 'date|dateTime|instant|time|decimal|integer|integer64|positiveInt|unsignedInt|Quantity'
   else if (propName = 'maxValue[x]') then result := 'date|dateTime|instant|time|decimal|integer|integer64|positiveInt|unsignedInt|Quantity'
@@ -33174,11 +32094,11 @@ begin
   else if (propName = 'base') then BaseElement := nil
   else if (propName = 'contentReference') then ContentReferenceElement := nil
   else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := nil
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := nil
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := nil
   else if (propName = 'orderMeaning') then OrderMeaningElement := nil
-  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then FixedElement := nil
-  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then PatternElement := nil
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then FixedElement := nil
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then PatternElement := nil
   else if (propName = 'example') then deletePropertyValue('example', ExampleList, value)
   else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MinValueElement := nil
   else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MaxValueElement := nil
@@ -33213,11 +32133,11 @@ begin
   else if (propName = 'base') then BaseElement := new as TFhirElementDefinitionBase
   else if (propName = 'contentReference') then ContentReferenceElement := asUri(new)
   else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := new as TFhirDataType
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(new)
   else if (propName = 'orderMeaning') then OrderMeaningElement := asString(new)
-  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then FixedElement := new as TFhirDataType
-  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then PatternElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'fixed', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then FixedElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'pattern', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'CodeableReference', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'RatioRange', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then PatternElement := new as TFhirDataType
   else if (propName = 'example') then replacePropertyValue('example', ExampleList, existing, new)
   else if (isMatchingName(propName, 'minValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MinValueElement := new as TFhirDataType
   else if (isMatchingName(propName, 'maxValue', ['Date', 'DateTime', 'Instant', 'Time', 'Decimal', 'Integer', 'Integer64', 'PositiveInt', 'UnsignedInt', 'Quantity'])) then MaxValueElement := new as TFhirDataType
@@ -33301,7 +32221,7 @@ begin
 end;
 
 procedure TFhirElementDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('representation');
@@ -33340,7 +32260,7 @@ begin
 end;
 
 function TFhirElementDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FRepresentation.sizeInBytes(magic));
   inc(result, FCodeList.sizeInBytes(magic));
@@ -34004,6 +32924,7 @@ end;
 
 function TFhirElementDefinitionList.AddItem(value: TFhirElementDefinition): TFhirElementDefinition;
 begin
+  assert(value.ClassName = 'TFhirElementDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirElementDefinition');
   add(value);
   result := value;
 end;
@@ -34267,7 +33188,7 @@ begin
 end;
 
 procedure TFhirMarketingStatus.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('country');
   fields.add('jurisdiction');
@@ -34277,7 +33198,7 @@ begin
 end;
 
 function TFhirMarketingStatus.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -34362,6 +33283,7 @@ end;
 
 function TFhirMarketingStatusList.AddItem(value: TFhirMarketingStatus): TFhirMarketingStatus;
 begin
+  assert(value.ClassName = 'TFhirMarketingStatus', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMarketingStatus');
   add(value);
   result := value;
 end;
@@ -34450,767 +33372,6 @@ end;
 procedure TFhirMarketingStatusList.SetItemN(index: Integer; value: TFhirMarketingStatus);
 begin
   assert(value is TFhirMarketingStatus);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirOrderedDistributionInterval }
-
-constructor TFhirOrderedDistributionInterval.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirOrderedDistributionInterval.Destroy;
-begin
-  FRankOrder.free;
-  FIntervalStatisticList.Free;
-  inherited;
-end;
-
-procedure TFhirOrderedDistributionInterval.Assign(oSource : TFslObject);
-begin
-  inherited;
-  rankOrderElement := TFhirOrderedDistributionInterval(oSource).rankOrderElement.Clone;
-  if (TFhirOrderedDistributionInterval(oSource).FIntervalStatisticList = nil) then
-  begin
-    FIntervalStatisticList.free;
-    FIntervalStatisticList := nil;
-  end
-  else
-  begin
-    if FIntervalStatisticList = nil then
-      FIntervalStatisticList := TFhirStatisticList.Create;
-    FIntervalStatisticList.Assign(TFhirOrderedDistributionInterval(oSource).FIntervalStatisticList);
-  end;
-end;
-
-procedure TFhirOrderedDistributionInterval.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'rankOrder') Then
-     list.add(self.link, 'rankOrder', FRankOrder.Link);
-  if (child_name = 'intervalStatistic') Then
-    list.addAll(self, 'intervalStatistic', FIntervalStatisticList);
-end;
-
-procedure TFhirOrderedDistributionInterval.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'rankOrder', 'integer', false, TFhirInteger, FRankOrder.Link));
-  oList.add(TFHIRProperty.create(self, 'intervalStatistic', 'Statistic', true, TFhirStatistic, FIntervalStatisticList.Link));
-end;
-
-function TFhirOrderedDistributionInterval.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'rankOrder') then
-  begin
-    RankOrderElement := asInteger(propValue);
-    result := propValue;
-  end
-  else if (propName = 'intervalStatistic') then
-  begin
-    IntervalStatisticList.add(propValue as TFhirStatistic);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirOrderedDistributionInterval.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'intervalStatistic') then IntervalStatisticList.insertItem(index, propValue as TFhirStatistic)
-  else inherited;
-end;
-
-function TFhirOrderedDistributionInterval.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'rankOrder') then result := TFhirInteger.create()
-  else if (propName = 'intervalStatistic') then result := IntervalStatisticList.new()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirOrderedDistributionInterval.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'rankOrder') then result := 'integer'
-  else if (propName = 'intervalStatistic') then result := 'Statistic'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirOrderedDistributionInterval.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'rankOrder') then RankOrderElement := nil
-  else if (propName = 'intervalStatistic') then deletePropertyValue('intervalStatistic', IntervalStatisticList, value)
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirOrderedDistributionInterval.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'rankOrder') then RankOrderElement := asInteger(new)
-  else if (propName = 'intervalStatistic') then replacePropertyValue('intervalStatistic', IntervalStatisticList, existing, new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirOrderedDistributionInterval.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'intervalStatistic') then IntervalStatisticList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirOrderedDistributionInterval.fhirType : string;
-begin
-  result := 'OrderedDistribution.interval';
-end;
-
-function TFhirOrderedDistributionInterval.Link : TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval(inherited Link);
-end;
-
-function TFhirOrderedDistributionInterval.Clone : TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval(inherited Clone);
-end;
-
-function TFhirOrderedDistributionInterval.equals(other : TObject) : boolean; 
-var
-  o : TFhirOrderedDistributionInterval;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirOrderedDistributionInterval)) then
-    result := false
-  else
-  begin
-    o := TFhirOrderedDistributionInterval(other);
-    result := compareDeep(rankOrderElement, o.rankOrderElement, true) and compareDeep(intervalStatisticList, o.intervalStatisticList, true);
-  end;
-end;
-
-function TFhirOrderedDistributionInterval.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FRankOrder) and isEmptyProp(FintervalStatisticList);
-end;
-
-procedure TFhirOrderedDistributionInterval.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('rankOrder');
-  fields.add('intervalStatistic');
-end;
-
-function TFhirOrderedDistributionInterval.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FIntervalStatisticList.sizeInBytes(magic));
-end;
-
-procedure TFhirOrderedDistributionInterval.SetRankOrder(value : TFhirInteger);
-begin
-  FRankOrder.free;
-  FRankOrder := value;
-end;
-
-function TFhirOrderedDistributionInterval.GetRankOrderST : String;
-begin
-  if FRankOrder = nil then
-    result := ''
-  else
-    result := FRankOrder.value;
-end;
-
-procedure TFhirOrderedDistributionInterval.SetRankOrderST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FRankOrder = nil then
-      FRankOrder := TFhirInteger.create;
-    FRankOrder.value := value
-  end
-  else if FRankOrder <> nil then
-    FRankOrder.value := '';
-end;
-
-function TFhirOrderedDistributionInterval.GetIntervalStatisticList : TFhirStatisticList;
-begin
-  if FIntervalStatisticList = nil then
-    FIntervalStatisticList := TFhirStatisticList.Create;
-  result := FIntervalStatisticList;
-end;
-
-function TFhirOrderedDistributionInterval.GetHasIntervalStatisticList : boolean;
-begin
-  result := (FIntervalStatisticList <> nil) and (FIntervalStatisticList.count > 0);
-end;
-
-{ TFhirOrderedDistributionIntervalListEnumerator }
-
-constructor TFhirOrderedDistributionIntervalListEnumerator.Create(list : TFhirOrderedDistributionIntervalList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirOrderedDistributionIntervalListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirOrderedDistributionIntervalListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirOrderedDistributionIntervalListEnumerator.GetCurrent : TFhirOrderedDistributionInterval;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirOrderedDistributionIntervalListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirOrderedDistributionIntervalList }
-
-function TFhirOrderedDistributionIntervalList.AddItem(value: TFhirOrderedDistributionInterval): TFhirOrderedDistributionInterval;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirOrderedDistributionIntervalList.Append: TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirOrderedDistributionIntervalList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirOrderedDistributionIntervalList.GetEnumerator : TFhirOrderedDistributionIntervalListEnumerator;
-begin
-  result := TFhirOrderedDistributionIntervalListEnumerator.Create(self.link);
-end;
-
-function TFhirOrderedDistributionIntervalList.Clone: TFhirOrderedDistributionIntervalList;
-begin
-  result := TFhirOrderedDistributionIntervalList(inherited Clone);
-end;
-
-function TFhirOrderedDistributionIntervalList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirOrderedDistributionIntervalList.GetItemN(index: Integer): TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval(ObjectByIndex[index]);
-end;
-
-function TFhirOrderedDistributionIntervalList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirOrderedDistributionInterval;
-end;
-function TFhirOrderedDistributionIntervalList.IndexOf(value: TFhirOrderedDistributionInterval): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirOrderedDistributionIntervalList.Insert(index: Integer): TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirOrderedDistributionIntervalList.InsertItem(index: Integer; value: TFhirOrderedDistributionInterval);
-begin
-  assert(value is TFhirOrderedDistributionInterval);
-  Inherited Insert(index, value);
-end;
-
-function TFhirOrderedDistributionIntervalList.Item(index: Integer): TFhirOrderedDistributionInterval;
-begin
-  result := TFhirOrderedDistributionInterval(ObjectByIndex[index]);
-end;
-
-function TFhirOrderedDistributionIntervalList.Link: TFhirOrderedDistributionIntervalList;
-begin
-  result := TFhirOrderedDistributionIntervalList(inherited Link);
-end;
-
-procedure TFhirOrderedDistributionIntervalList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirOrderedDistributionIntervalList.SetItemByIndex(index: Integer; value: TFhirOrderedDistributionInterval);
-begin
-  assert(value is TFhirOrderedDistributionInterval);
-  FhirOrderedDistributionIntervals[index] := value;
-end;
-
-procedure TFhirOrderedDistributionIntervalList.SetItemN(index: Integer; value: TFhirOrderedDistributionInterval);
-begin
-  assert(value is TFhirOrderedDistributionInterval);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirOrderedDistribution }
-
-constructor TFhirOrderedDistribution.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirOrderedDistribution.Destroy;
-begin
-  FDescription.free;
-  FNoteList.Free;
-  FNumberOfIntervals.free;
-  FBottomOfFirstInterval.free;
-  FIntervalList.Free;
-  FTopOfInterval.free;
-  inherited;
-end;
-
-procedure TFhirOrderedDistribution.Assign(oSource : TFslObject);
-begin
-  inherited;
-  descriptionElement := TFhirOrderedDistribution(oSource).descriptionElement.Clone;
-  if (TFhirOrderedDistribution(oSource).FNoteList = nil) then
-  begin
-    FNoteList.free;
-    FNoteList := nil;
-  end
-  else
-  begin
-    if FNoteList = nil then
-      FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirOrderedDistribution(oSource).FNoteList);
-  end;
-  numberOfIntervalsElement := TFhirOrderedDistribution(oSource).numberOfIntervalsElement.Clone;
-  bottomOfFirstInterval := TFhirOrderedDistribution(oSource).bottomOfFirstInterval.Clone;
-  if (TFhirOrderedDistribution(oSource).FIntervalList = nil) then
-  begin
-    FIntervalList.free;
-    FIntervalList := nil;
-  end
-  else
-  begin
-    if FIntervalList = nil then
-      FIntervalList := TFhirOrderedDistributionIntervalList.Create;
-    FIntervalList.Assign(TFhirOrderedDistribution(oSource).FIntervalList);
-  end;
-  topOfInterval := TFhirOrderedDistribution(oSource).topOfInterval.Clone;
-end;
-
-procedure TFhirOrderedDistribution.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'note') Then
-    list.addAll(self, 'note', FNoteList);
-  if (child_name = 'numberOfIntervals') Then
-     list.add(self.link, 'numberOfIntervals', FNumberOfIntervals.Link);
-  if (child_name = 'bottomOfFirstInterval') Then
-     list.add(self.link, 'bottomOfFirstInterval', FBottomOfFirstInterval.Link);
-  if (child_name = 'interval') Then
-    list.addAll(self, 'interval', FIntervalList);
-  if (child_name = 'topOfInterval') Then
-     list.add(self.link, 'topOfInterval', FTopOfInterval.Link);
-end;
-
-procedure TFhirOrderedDistribution.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'numberOfIntervals', 'integer', false, TFhirInteger, FNumberOfIntervals.Link));
-  oList.add(TFHIRProperty.create(self, 'bottomOfFirstInterval', 'Quantity', false, TFhirQuantity, FBottomOfFirstInterval.Link));
-  oList.add(TFHIRProperty.create(self, 'interval', 'Element', true, TFhirOrderedDistributionInterval, FIntervalList.Link));
-  oList.add(TFHIRProperty.create(self, 'topOfInterval', 'Quantity', false, TFhirQuantity, FTopOfInterval.Link));
-end;
-
-function TFhirOrderedDistribution.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'description') then
-  begin
-    DescriptionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'note') then
-  begin
-    NoteList.add(propValue as TFhirAnnotation);
-    result := propValue;
-  end
-  else if (propName = 'numberOfIntervals') then
-  begin
-    NumberOfIntervalsElement := asInteger(propValue);
-    result := propValue;
-  end
-  else if (propName = 'bottomOfFirstInterval') then
-  begin
-    BottomOfFirstInterval := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else if (propName = 'interval') then
-  begin
-    IntervalList.add(propValue as TFhirOrderedDistributionInterval);
-    result := propValue;
-  end
-  else if (propName = 'topOfInterval') then
-  begin
-    TopOfInterval := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirOrderedDistribution.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
-  else if (propName = 'interval') then IntervalList.insertItem(index, propValue as TFhirOrderedDistributionInterval)
-  else inherited;
-end;
-
-function TFhirOrderedDistribution.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'numberOfIntervals') then result := TFhirInteger.create()
-  else if (propName = 'bottomOfFirstInterval') then result := TFhirQuantity.create()
-  else if (propName = 'interval') then result := IntervalList.new()
-  else if (propName = 'topOfInterval') then result := TFhirQuantity.create()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirOrderedDistribution.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'description') then result := 'string'
-  else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'numberOfIntervals') then result := 'integer'
-  else if (propName = 'bottomOfFirstInterval') then result := 'Quantity'
-  else if (propName = 'interval') then result := 'Element'
-  else if (propName = 'topOfInterval') then result := 'Quantity'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirOrderedDistribution.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
-  else if (propName = 'numberOfIntervals') then NumberOfIntervalsElement := nil
-  else if (propName = 'bottomOfFirstInterval') then BottomOfFirstIntervalElement := nil
-  else if (propName = 'interval') then deletePropertyValue('interval', IntervalList, value)
-  else if (propName = 'topOfInterval') then TopOfIntervalElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirOrderedDistribution.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := asString(new)
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
-  else if (propName = 'numberOfIntervals') then NumberOfIntervalsElement := asInteger(new)
-  else if (propName = 'bottomOfFirstInterval') then BottomOfFirstIntervalElement := new as TFhirQuantity
-  else if (propName = 'interval') then replacePropertyValue('interval', IntervalList, existing, new)
-  else if (propName = 'topOfInterval') then TopOfIntervalElement := new as TFhirQuantity
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirOrderedDistribution.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'note') then NoteList.move(source, destination)
-  else if (propName = 'interval') then IntervalList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirOrderedDistribution.fhirType : string;
-begin
-  result := 'OrderedDistribution';
-end;
-
-function TFhirOrderedDistribution.Link : TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution(inherited Link);
-end;
-
-function TFhirOrderedDistribution.Clone : TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution(inherited Clone);
-end;
-
-function TFhirOrderedDistribution.equals(other : TObject) : boolean; 
-var
-  o : TFhirOrderedDistribution;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirOrderedDistribution)) then
-    result := false
-  else
-  begin
-    o := TFhirOrderedDistribution(other);
-    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
-      compareDeep(numberOfIntervalsElement, o.numberOfIntervalsElement, true) and compareDeep(bottomOfFirstIntervalElement, o.bottomOfFirstIntervalElement, true) and 
-      compareDeep(intervalList, o.intervalList, true) and compareDeep(topOfIntervalElement, o.topOfIntervalElement, true);
-  end;
-end;
-
-function TFhirOrderedDistribution.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FNumberOfIntervals) and isEmptyProp(FBottomOfFirstInterval) and isEmptyProp(FintervalList) and isEmptyProp(FTopOfInterval);
-end;
-
-procedure TFhirOrderedDistribution.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('note');
-  fields.add('numberOfIntervals');
-  fields.add('bottomOfFirstInterval');
-  fields.add('interval');
-  fields.add('topOfInterval');
-end;
-
-function TFhirOrderedDistribution.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FNoteList.sizeInBytes(magic));
-  inc(result, FIntervalList.sizeInBytes(magic));
-end;
-
-procedure TFhirOrderedDistribution.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-function TFhirOrderedDistribution.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := FDescription.value;
-end;
-
-procedure TFhirOrderedDistribution.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-function TFhirOrderedDistribution.GetNoteList : TFhirAnnotationList;
-begin
-  if FNoteList = nil then
-    FNoteList := TFhirAnnotationList.Create;
-  result := FNoteList;
-end;
-
-function TFhirOrderedDistribution.GetHasNoteList : boolean;
-begin
-  result := (FNoteList <> nil) and (FNoteList.count > 0);
-end;
-
-procedure TFhirOrderedDistribution.SetNumberOfIntervals(value : TFhirInteger);
-begin
-  FNumberOfIntervals.free;
-  FNumberOfIntervals := value;
-end;
-
-function TFhirOrderedDistribution.GetNumberOfIntervalsST : String;
-begin
-  if FNumberOfIntervals = nil then
-    result := ''
-  else
-    result := FNumberOfIntervals.value;
-end;
-
-procedure TFhirOrderedDistribution.SetNumberOfIntervalsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumberOfIntervals = nil then
-      FNumberOfIntervals := TFhirInteger.create;
-    FNumberOfIntervals.value := value
-  end
-  else if FNumberOfIntervals <> nil then
-    FNumberOfIntervals.value := '';
-end;
-
-procedure TFhirOrderedDistribution.SetBottomOfFirstInterval(value : TFhirQuantity);
-begin
-  FBottomOfFirstInterval.free;
-  FBottomOfFirstInterval := value;
-end;
-
-function TFhirOrderedDistribution.GetIntervalList : TFhirOrderedDistributionIntervalList;
-begin
-  if FIntervalList = nil then
-    FIntervalList := TFhirOrderedDistributionIntervalList.Create;
-  result := FIntervalList;
-end;
-
-function TFhirOrderedDistribution.GetHasIntervalList : boolean;
-begin
-  result := (FIntervalList <> nil) and (FIntervalList.count > 0);
-end;
-
-procedure TFhirOrderedDistribution.SetTopOfInterval(value : TFhirQuantity);
-begin
-  FTopOfInterval.free;
-  FTopOfInterval := value;
-end;
-
-{ TFhirOrderedDistributionListEnumerator }
-
-constructor TFhirOrderedDistributionListEnumerator.Create(list : TFhirOrderedDistributionList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirOrderedDistributionListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirOrderedDistributionListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirOrderedDistributionListEnumerator.GetCurrent : TFhirOrderedDistribution;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirOrderedDistributionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirOrderedDistributionList }
-
-function TFhirOrderedDistributionList.AddItem(value: TFhirOrderedDistribution): TFhirOrderedDistribution;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirOrderedDistributionList.Append: TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirOrderedDistributionList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirOrderedDistributionList.GetEnumerator : TFhirOrderedDistributionListEnumerator;
-begin
-  result := TFhirOrderedDistributionListEnumerator.Create(self.link);
-end;
-
-function TFhirOrderedDistributionList.Clone: TFhirOrderedDistributionList;
-begin
-  result := TFhirOrderedDistributionList(inherited Clone);
-end;
-
-function TFhirOrderedDistributionList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirOrderedDistributionList.GetItemN(index: Integer): TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution(ObjectByIndex[index]);
-end;
-
-function TFhirOrderedDistributionList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirOrderedDistribution;
-end;
-function TFhirOrderedDistributionList.IndexOf(value: TFhirOrderedDistribution): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirOrderedDistributionList.Insert(index: Integer): TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirOrderedDistributionList.InsertItem(index: Integer; value: TFhirOrderedDistribution);
-begin
-  assert(value is TFhirOrderedDistribution);
-  Inherited Insert(index, value);
-end;
-
-function TFhirOrderedDistributionList.Item(index: Integer): TFhirOrderedDistribution;
-begin
-  result := TFhirOrderedDistribution(ObjectByIndex[index]);
-end;
-
-function TFhirOrderedDistributionList.Link: TFhirOrderedDistributionList;
-begin
-  result := TFhirOrderedDistributionList(inherited Link);
-end;
-
-procedure TFhirOrderedDistributionList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirOrderedDistributionList.SetItemByIndex(index: Integer; value: TFhirOrderedDistribution);
-begin
-  assert(value is TFhirOrderedDistribution);
-  FhirOrderedDistributions[index] := value;
-end;
-
-procedure TFhirOrderedDistributionList.SetItemN(index: Integer; value: TFhirOrderedDistribution);
-begin
-  assert(value is TFhirOrderedDistribution);
   ObjectByIndex[index] := value;
 end;
 
@@ -35371,7 +33532,7 @@ begin
 end;
 
 procedure TFhirPopulation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('age[x]');
   fields.add('gender');
@@ -35380,7 +33541,7 @@ begin
 end;
 
 function TFhirPopulation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -35444,6 +33605,7 @@ end;
 
 function TFhirPopulationList.AddItem(value: TFhirPopulation): TFhirPopulation;
 begin
+  assert(value.ClassName = 'TFhirPopulation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPopulation');
   add(value);
   result := value;
 end;
@@ -35831,7 +33993,7 @@ begin
 end;
 
 procedure TFhirProdCharacteristic.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('height');
   fields.add('width');
@@ -35847,7 +34009,7 @@ begin
 end;
 
 function TFhirProdCharacteristic.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FColorList.sizeInBytes(magic));
   inc(result, FImprintList.sizeInBytes(magic));
@@ -35994,6 +34156,7 @@ end;
 
 function TFhirProdCharacteristicList.AddItem(value: TFhirProdCharacteristic): TFhirProdCharacteristic;
 begin
+  assert(value.ClassName = 'TFhirProdCharacteristic', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProdCharacteristic');
   add(value);
   result := value;
 end;
@@ -36133,7 +34296,7 @@ procedure TFhirProductShelfLife.ListProperties(oList: TFHIRPropertyList; bInheri
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'period[x]', 'Quantity|string', false, TFhirDataType, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'period[x]', 'Duration|string', false, TFhirDataType, FPeriod.Link));
   oList.add(TFHIRProperty.create(self, 'specialPrecautionsForStorage', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialPrecautionsForStorageList.Link));
 end;
 
@@ -36144,7 +34307,7 @@ begin
     Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
-  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then
+  else if (isMatchingName(propName, 'period', ['Duration', 'String'])) then
   begin
     Period := propValue as TFhirDataType;
     result := propValue;
@@ -36166,7 +34329,7 @@ end;
 function TFhirProductShelfLife.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then raise EFHIRException.create('Cannot make property Period')
+  else if (isMatchingName(propName, 'period', ['Duration', 'String'])) then raise EFHIRException.create('Cannot make property Period')
   else if (propName = 'specialPrecautionsForStorage') then result := SpecialPrecautionsForStorageList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -36174,7 +34337,7 @@ end;
 function TFhirProductShelfLife.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'type') then result := 'CodeableConcept'
-  else if (propName = 'period[x]') then result := 'Quantity|string'
+  else if (propName = 'period[x]') then result := 'Duration|string'
   else if (propName = 'specialPrecautionsForStorage') then result := 'CodeableConcept'
   else result := inherited getTypesForProperty(propName);
 end;
@@ -36182,7 +34345,7 @@ end;
 procedure TFhirProductShelfLife.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
-  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then PeriodElement := nil
+  else if (isMatchingName(propName, 'period', ['Duration', 'String'])) then PeriodElement := nil
   else if (propName = 'specialPrecautionsForStorage') then deletePropertyValue('specialPrecautionsForStorage', SpecialPrecautionsForStorageList, value)
   else
     inherited deleteProperty(propName, value);
@@ -36191,7 +34354,7 @@ end;
 procedure TFhirProductShelfLife.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
-  else if (isMatchingName(propName, 'period', ['Quantity', 'String'])) then PeriodElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'period', ['Duration', 'String'])) then PeriodElement := new as TFhirDataType
   else if (propName = 'specialPrecautionsForStorage') then replacePropertyValue('specialPrecautionsForStorage', SpecialPrecautionsForStorageList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
@@ -36241,7 +34404,7 @@ begin
 end;
 
 procedure TFhirProductShelfLife.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('period[x]');
@@ -36249,7 +34412,7 @@ begin
 end;
 
 function TFhirProductShelfLife.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSpecialPrecautionsForStorageList.sizeInBytes(magic));
 end;
@@ -36314,6 +34477,7 @@ end;
 
 function TFhirProductShelfLifeList.AddItem(value: TFhirProductShelfLife): TFhirProductShelfLife;
 begin
+  assert(value.ClassName = 'TFhirProductShelfLife', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProductShelfLife');
   add(value);
   result := value;
 end;
@@ -36402,2643 +34566,6 @@ end;
 procedure TFhirProductShelfLifeList.SetItemN(index: Integer; value: TFhirProductShelfLife);
 begin
   assert(value is TFhirProductShelfLife);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatisticSampleSize }
-
-constructor TFhirStatisticSampleSize.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatisticSampleSize.Destroy;
-begin
-  FDescription.free;
-  FNoteList.Free;
-  FNumberOfStudies.free;
-  FNumberOfParticipants.free;
-  FKnownDataCount.free;
-  inherited;
-end;
-
-procedure TFhirStatisticSampleSize.Assign(oSource : TFslObject);
-begin
-  inherited;
-  descriptionElement := TFhirStatisticSampleSize(oSource).descriptionElement.Clone;
-  if (TFhirStatisticSampleSize(oSource).FNoteList = nil) then
-  begin
-    FNoteList.free;
-    FNoteList := nil;
-  end
-  else
-  begin
-    if FNoteList = nil then
-      FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirStatisticSampleSize(oSource).FNoteList);
-  end;
-  numberOfStudiesElement := TFhirStatisticSampleSize(oSource).numberOfStudiesElement.Clone;
-  numberOfParticipantsElement := TFhirStatisticSampleSize(oSource).numberOfParticipantsElement.Clone;
-  knownDataCountElement := TFhirStatisticSampleSize(oSource).knownDataCountElement.Clone;
-end;
-
-procedure TFhirStatisticSampleSize.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'note') Then
-    list.addAll(self, 'note', FNoteList);
-  if (child_name = 'numberOfStudies') Then
-     list.add(self.link, 'numberOfStudies', FNumberOfStudies.Link);
-  if (child_name = 'numberOfParticipants') Then
-     list.add(self.link, 'numberOfParticipants', FNumberOfParticipants.Link);
-  if (child_name = 'knownDataCount') Then
-     list.add(self.link, 'knownDataCount', FKnownDataCount.Link);
-end;
-
-procedure TFhirStatisticSampleSize.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'numberOfStudies', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfStudies.Link));
-  oList.add(TFHIRProperty.create(self, 'numberOfParticipants', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfParticipants.Link));
-  oList.add(TFHIRProperty.create(self, 'knownDataCount', 'unsignedInt', false, TFhirUnsignedInt, FKnownDataCount.Link));
-end;
-
-function TFhirStatisticSampleSize.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'description') then
-  begin
-    DescriptionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'note') then
-  begin
-    NoteList.add(propValue as TFhirAnnotation);
-    result := propValue;
-  end
-  else if (propName = 'numberOfStudies') then
-  begin
-    NumberOfStudiesElement := asUnsignedInt(propValue);
-    result := propValue;
-  end
-  else if (propName = 'numberOfParticipants') then
-  begin
-    NumberOfParticipantsElement := asUnsignedInt(propValue);
-    result := propValue;
-  end
-  else if (propName = 'knownDataCount') then
-  begin
-    KnownDataCountElement := asUnsignedInt(propValue);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatisticSampleSize.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
-  else inherited;
-end;
-
-function TFhirStatisticSampleSize.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'numberOfStudies') then result := TFhirUnsignedInt.create()
-  else if (propName = 'numberOfParticipants') then result := TFhirUnsignedInt.create()
-  else if (propName = 'knownDataCount') then result := TFhirUnsignedInt.create()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatisticSampleSize.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'description') then result := 'string'
-  else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'numberOfStudies') then result := 'unsignedInt'
-  else if (propName = 'numberOfParticipants') then result := 'unsignedInt'
-  else if (propName = 'knownDataCount') then result := 'unsignedInt'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatisticSampleSize.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
-  else if (propName = 'numberOfStudies') then NumberOfStudiesElement := nil
-  else if (propName = 'numberOfParticipants') then NumberOfParticipantsElement := nil
-  else if (propName = 'knownDataCount') then KnownDataCountElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatisticSampleSize.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := asString(new)
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
-  else if (propName = 'numberOfStudies') then NumberOfStudiesElement := asUnsignedInt(new)
-  else if (propName = 'numberOfParticipants') then NumberOfParticipantsElement := asUnsignedInt(new)
-  else if (propName = 'knownDataCount') then KnownDataCountElement := asUnsignedInt(new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatisticSampleSize.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'note') then NoteList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatisticSampleSize.fhirType : string;
-begin
-  result := 'Statistic.sampleSize';
-end;
-
-function TFhirStatisticSampleSize.Link : TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize(inherited Link);
-end;
-
-function TFhirStatisticSampleSize.Clone : TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize(inherited Clone);
-end;
-
-function TFhirStatisticSampleSize.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatisticSampleSize;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatisticSampleSize)) then
-    result := false
-  else
-  begin
-    o := TFhirStatisticSampleSize(other);
-    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
-      compareDeep(numberOfStudiesElement, o.numberOfStudiesElement, true) and compareDeep(numberOfParticipantsElement, o.numberOfParticipantsElement, true) and 
-      compareDeep(knownDataCountElement, o.knownDataCountElement, true);
-  end;
-end;
-
-function TFhirStatisticSampleSize.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FNumberOfStudies) and isEmptyProp(FNumberOfParticipants) and isEmptyProp(FKnownDataCount);
-end;
-
-procedure TFhirStatisticSampleSize.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('note');
-  fields.add('numberOfStudies');
-  fields.add('numberOfParticipants');
-  fields.add('knownDataCount');
-end;
-
-function TFhirStatisticSampleSize.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FNoteList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatisticSampleSize.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-function TFhirStatisticSampleSize.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := FDescription.value;
-end;
-
-procedure TFhirStatisticSampleSize.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-function TFhirStatisticSampleSize.GetNoteList : TFhirAnnotationList;
-begin
-  if FNoteList = nil then
-    FNoteList := TFhirAnnotationList.Create;
-  result := FNoteList;
-end;
-
-function TFhirStatisticSampleSize.GetHasNoteList : boolean;
-begin
-  result := (FNoteList <> nil) and (FNoteList.count > 0);
-end;
-
-procedure TFhirStatisticSampleSize.SetNumberOfStudies(value : TFhirUnsignedInt);
-begin
-  FNumberOfStudies.free;
-  FNumberOfStudies := value;
-end;
-
-function TFhirStatisticSampleSize.GetNumberOfStudiesST : String;
-begin
-  if FNumberOfStudies = nil then
-    result := ''
-  else
-    result := FNumberOfStudies.value;
-end;
-
-procedure TFhirStatisticSampleSize.SetNumberOfStudiesST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumberOfStudies = nil then
-      FNumberOfStudies := TFhirUnsignedInt.create;
-    FNumberOfStudies.value := value
-  end
-  else if FNumberOfStudies <> nil then
-    FNumberOfStudies.value := '';
-end;
-
-procedure TFhirStatisticSampleSize.SetNumberOfParticipants(value : TFhirUnsignedInt);
-begin
-  FNumberOfParticipants.free;
-  FNumberOfParticipants := value;
-end;
-
-function TFhirStatisticSampleSize.GetNumberOfParticipantsST : String;
-begin
-  if FNumberOfParticipants = nil then
-    result := ''
-  else
-    result := FNumberOfParticipants.value;
-end;
-
-procedure TFhirStatisticSampleSize.SetNumberOfParticipantsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumberOfParticipants = nil then
-      FNumberOfParticipants := TFhirUnsignedInt.create;
-    FNumberOfParticipants.value := value
-  end
-  else if FNumberOfParticipants <> nil then
-    FNumberOfParticipants.value := '';
-end;
-
-procedure TFhirStatisticSampleSize.SetKnownDataCount(value : TFhirUnsignedInt);
-begin
-  FKnownDataCount.free;
-  FKnownDataCount := value;
-end;
-
-function TFhirStatisticSampleSize.GetKnownDataCountST : String;
-begin
-  if FKnownDataCount = nil then
-    result := ''
-  else
-    result := FKnownDataCount.value;
-end;
-
-procedure TFhirStatisticSampleSize.SetKnownDataCountST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FKnownDataCount = nil then
-      FKnownDataCount := TFhirUnsignedInt.create;
-    FKnownDataCount.value := value
-  end
-  else if FKnownDataCount <> nil then
-    FKnownDataCount.value := '';
-end;
-
-{ TFhirStatisticSampleSizeListEnumerator }
-
-constructor TFhirStatisticSampleSizeListEnumerator.Create(list : TFhirStatisticSampleSizeList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticSampleSizeListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticSampleSizeListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticSampleSizeListEnumerator.GetCurrent : TFhirStatisticSampleSize;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticSampleSizeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticSampleSizeList }
-
-function TFhirStatisticSampleSizeList.AddItem(value: TFhirStatisticSampleSize): TFhirStatisticSampleSize;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticSampleSizeList.Append: TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticSampleSizeList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticSampleSizeList.GetEnumerator : TFhirStatisticSampleSizeListEnumerator;
-begin
-  result := TFhirStatisticSampleSizeListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticSampleSizeList.Clone: TFhirStatisticSampleSizeList;
-begin
-  result := TFhirStatisticSampleSizeList(inherited Clone);
-end;
-
-function TFhirStatisticSampleSizeList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticSampleSizeList.GetItemN(index: Integer): TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticSampleSizeList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatisticSampleSize;
-end;
-function TFhirStatisticSampleSizeList.IndexOf(value: TFhirStatisticSampleSize): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticSampleSizeList.Insert(index: Integer): TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticSampleSizeList.InsertItem(index: Integer; value: TFhirStatisticSampleSize);
-begin
-  assert(value is TFhirStatisticSampleSize);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticSampleSizeList.Item(index: Integer): TFhirStatisticSampleSize;
-begin
-  result := TFhirStatisticSampleSize(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticSampleSizeList.Link: TFhirStatisticSampleSizeList;
-begin
-  result := TFhirStatisticSampleSizeList(inherited Link);
-end;
-
-procedure TFhirStatisticSampleSizeList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticSampleSizeList.SetItemByIndex(index: Integer; value: TFhirStatisticSampleSize);
-begin
-  assert(value is TFhirStatisticSampleSize);
-  FhirStatisticSampleSizes[index] := value;
-end;
-
-procedure TFhirStatisticSampleSizeList.SetItemN(index: Integer; value: TFhirStatisticSampleSize);
-begin
-  assert(value is TFhirStatisticSampleSize);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatisticAttributeEstimate }
-
-constructor TFhirStatisticAttributeEstimate.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatisticAttributeEstimate.Destroy;
-begin
-  FDescription.free;
-  FNoteList.Free;
-  FType_.free;
-  FQuantity.free;
-  FLevel.free;
-  FRange.free;
-  FAttributeEstimateList.Free;
-  inherited;
-end;
-
-procedure TFhirStatisticAttributeEstimate.Assign(oSource : TFslObject);
-begin
-  inherited;
-  descriptionElement := TFhirStatisticAttributeEstimate(oSource).descriptionElement.Clone;
-  if (TFhirStatisticAttributeEstimate(oSource).FNoteList = nil) then
-  begin
-    FNoteList.free;
-    FNoteList := nil;
-  end
-  else
-  begin
-    if FNoteList = nil then
-      FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirStatisticAttributeEstimate(oSource).FNoteList);
-  end;
-  type_ := TFhirStatisticAttributeEstimate(oSource).type_.Clone;
-  quantity := TFhirStatisticAttributeEstimate(oSource).quantity.Clone;
-  levelElement := TFhirStatisticAttributeEstimate(oSource).levelElement.Clone;
-  range := TFhirStatisticAttributeEstimate(oSource).range.Clone;
-  if (TFhirStatisticAttributeEstimate(oSource).FAttributeEstimateList = nil) then
-  begin
-    FAttributeEstimateList.free;
-    FAttributeEstimateList := nil;
-  end
-  else
-  begin
-    if FAttributeEstimateList = nil then
-      FAttributeEstimateList := TFhirStatisticAttributeEstimateAttributeEstimateList.Create;
-    FAttributeEstimateList.Assign(TFhirStatisticAttributeEstimate(oSource).FAttributeEstimateList);
-  end;
-end;
-
-procedure TFhirStatisticAttributeEstimate.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'note') Then
-    list.addAll(self, 'note', FNoteList);
-  if (child_name = 'type') Then
-     list.add(self.link, 'type', FType_.Link);
-  if (child_name = 'quantity') Then
-     list.add(self.link, 'quantity', FQuantity.Link);
-  if (child_name = 'level') Then
-     list.add(self.link, 'level', FLevel.Link);
-  if (child_name = 'range') Then
-     list.add(self.link, 'range', FRange.Link);
-  if (child_name = 'attributeEstimate') Then
-    list.addAll(self, 'attributeEstimate', FAttributeEstimateList);
-end;
-
-procedure TFhirStatisticAttributeEstimate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));
-  oList.add(TFHIRProperty.create(self, 'level', 'decimal', false, TFhirDecimal, FLevel.Link));
-  oList.add(TFHIRProperty.create(self, 'range', 'Range', false, TFhirRange, FRange.Link));
-  oList.add(TFHIRProperty.create(self, 'attributeEstimate', 'Element', true, TFhirStatisticAttributeEstimateAttributeEstimate, FAttributeEstimateList.Link));
-end;
-
-function TFhirStatisticAttributeEstimate.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'description') then
-  begin
-    DescriptionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'note') then
-  begin
-    NoteList.add(propValue as TFhirAnnotation);
-    result := propValue;
-  end
-  else if (propName = 'type') then
-  begin
-    Type_ := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'quantity') then
-  begin
-    Quantity := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else if (propName = 'level') then
-  begin
-    LevelElement := asDecimal(propValue);
-    result := propValue;
-  end
-  else if (propName = 'range') then
-  begin
-    Range := propValue as TFhirRange;
-    result := propValue;
-  end
-  else if (propName = 'attributeEstimate') then
-  begin
-    AttributeEstimateList.add(propValue as TFhirStatisticAttributeEstimateAttributeEstimate);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatisticAttributeEstimate.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
-  else if (propName = 'attributeEstimate') then AttributeEstimateList.insertItem(index, propValue as TFhirStatisticAttributeEstimateAttributeEstimate)
-  else inherited;
-end;
-
-function TFhirStatisticAttributeEstimate.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'quantity') then result := TFhirQuantity.create()
-  else if (propName = 'level') then result := TFhirDecimal.create()
-  else if (propName = 'range') then result := TFhirRange.create()
-  else if (propName = 'attributeEstimate') then result := AttributeEstimateList.new()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatisticAttributeEstimate.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'description') then result := 'string'
-  else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'type') then result := 'CodeableConcept'
-  else if (propName = 'quantity') then result := 'Quantity'
-  else if (propName = 'level') then result := 'decimal'
-  else if (propName = 'range') then result := 'Range'
-  else if (propName = 'attributeEstimate') then result := 'Element'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatisticAttributeEstimate.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
-  else if (propName = 'type') then Type_Element := nil
-  else if (propName = 'quantity') then QuantityElement := nil
-  else if (propName = 'level') then LevelElement := nil
-  else if (propName = 'range') then RangeElement := nil
-  else if (propName = 'attributeEstimate') then deletePropertyValue('attributeEstimate', AttributeEstimateList, value)
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatisticAttributeEstimate.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := asString(new)
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
-  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
-  else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity
-  else if (propName = 'level') then LevelElement := asDecimal(new)
-  else if (propName = 'range') then RangeElement := new as TFhirRange
-  else if (propName = 'attributeEstimate') then replacePropertyValue('attributeEstimate', AttributeEstimateList, existing, new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatisticAttributeEstimate.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'note') then NoteList.move(source, destination)
-  else if (propName = 'attributeEstimate') then AttributeEstimateList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatisticAttributeEstimate.fhirType : string;
-begin
-  result := 'Statistic.attributeEstimate';
-end;
-
-function TFhirStatisticAttributeEstimate.Link : TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate(inherited Link);
-end;
-
-function TFhirStatisticAttributeEstimate.Clone : TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate(inherited Clone);
-end;
-
-function TFhirStatisticAttributeEstimate.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatisticAttributeEstimate;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatisticAttributeEstimate)) then
-    result := false
-  else
-  begin
-    o := TFhirStatisticAttributeEstimate(other);
-    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
-      compareDeep(type_Element, o.type_Element, true) and compareDeep(quantityElement, o.quantityElement, true) and 
-      compareDeep(levelElement, o.levelElement, true) and compareDeep(rangeElement, o.rangeElement, true) and 
-      compareDeep(attributeEstimateList, o.attributeEstimateList, true);
-  end;
-end;
-
-function TFhirStatisticAttributeEstimate.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FType_) and isEmptyProp(FQuantity) and isEmptyProp(FLevel) and isEmptyProp(FRange) and isEmptyProp(FattributeEstimateList);
-end;
-
-procedure TFhirStatisticAttributeEstimate.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('note');
-  fields.add('type');
-  fields.add('quantity');
-  fields.add('level');
-  fields.add('range');
-  fields.add('attributeEstimate');
-end;
-
-function TFhirStatisticAttributeEstimate.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FNoteList.sizeInBytes(magic));
-  inc(result, FAttributeEstimateList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-function TFhirStatisticAttributeEstimate.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := FDescription.value;
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-function TFhirStatisticAttributeEstimate.GetNoteList : TFhirAnnotationList;
-begin
-  if FNoteList = nil then
-    FNoteList := TFhirAnnotationList.Create;
-  result := FNoteList;
-end;
-
-function TFhirStatisticAttributeEstimate.GetHasNoteList : boolean;
-begin
-  result := (FNoteList <> nil) and (FNoteList.count > 0);
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetType_(value : TFhirCodeableConcept);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetQuantity(value : TFhirQuantity);
-begin
-  FQuantity.free;
-  FQuantity := value;
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetLevel(value : TFhirDecimal);
-begin
-  FLevel.free;
-  FLevel := value;
-end;
-
-function TFhirStatisticAttributeEstimate.GetLevelST : String;
-begin
-  if FLevel = nil then
-    result := ''
-  else
-    result := FLevel.value;
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetLevelST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FLevel = nil then
-      FLevel := TFhirDecimal.create;
-    FLevel.value := value
-  end
-  else if FLevel <> nil then
-    FLevel.value := '';
-end;
-
-procedure TFhirStatisticAttributeEstimate.SetRange(value : TFhirRange);
-begin
-  FRange.free;
-  FRange := value;
-end;
-
-function TFhirStatisticAttributeEstimate.GetAttributeEstimateList : TFhirStatisticAttributeEstimateAttributeEstimateList;
-begin
-  if FAttributeEstimateList = nil then
-    FAttributeEstimateList := TFhirStatisticAttributeEstimateAttributeEstimateList.Create;
-  result := FAttributeEstimateList;
-end;
-
-function TFhirStatisticAttributeEstimate.GetHasAttributeEstimateList : boolean;
-begin
-  result := (FAttributeEstimateList <> nil) and (FAttributeEstimateList.count > 0);
-end;
-
-{ TFhirStatisticAttributeEstimateListEnumerator }
-
-constructor TFhirStatisticAttributeEstimateListEnumerator.Create(list : TFhirStatisticAttributeEstimateList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticAttributeEstimateListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticAttributeEstimateListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticAttributeEstimateListEnumerator.GetCurrent : TFhirStatisticAttributeEstimate;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticAttributeEstimateListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticAttributeEstimateList }
-
-function TFhirStatisticAttributeEstimateList.AddItem(value: TFhirStatisticAttributeEstimate): TFhirStatisticAttributeEstimate;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticAttributeEstimateList.Append: TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticAttributeEstimateList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticAttributeEstimateList.GetEnumerator : TFhirStatisticAttributeEstimateListEnumerator;
-begin
-  result := TFhirStatisticAttributeEstimateListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticAttributeEstimateList.Clone: TFhirStatisticAttributeEstimateList;
-begin
-  result := TFhirStatisticAttributeEstimateList(inherited Clone);
-end;
-
-function TFhirStatisticAttributeEstimateList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticAttributeEstimateList.GetItemN(index: Integer): TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticAttributeEstimateList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatisticAttributeEstimate;
-end;
-function TFhirStatisticAttributeEstimateList.IndexOf(value: TFhirStatisticAttributeEstimate): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticAttributeEstimateList.Insert(index: Integer): TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticAttributeEstimateList.InsertItem(index: Integer; value: TFhirStatisticAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimate);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticAttributeEstimateList.Item(index: Integer): TFhirStatisticAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimate(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticAttributeEstimateList.Link: TFhirStatisticAttributeEstimateList;
-begin
-  result := TFhirStatisticAttributeEstimateList(inherited Link);
-end;
-
-procedure TFhirStatisticAttributeEstimateList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticAttributeEstimateList.SetItemByIndex(index: Integer; value: TFhirStatisticAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimate);
-  FhirStatisticAttributeEstimates[index] := value;
-end;
-
-procedure TFhirStatisticAttributeEstimateList.SetItemN(index: Integer; value: TFhirStatisticAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimate);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatisticAttributeEstimateAttributeEstimate }
-
-constructor TFhirStatisticAttributeEstimateAttributeEstimate.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatisticAttributeEstimateAttributeEstimate.Destroy;
-begin
-  FDescription.free;
-  FNoteList.Free;
-  FType_.free;
-  FQuantity.free;
-  FLevel.free;
-  FRange.free;
-  inherited;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.Assign(oSource : TFslObject);
-begin
-  inherited;
-  descriptionElement := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).descriptionElement.Clone;
-  if (TFhirStatisticAttributeEstimateAttributeEstimate(oSource).FNoteList = nil) then
-  begin
-    FNoteList.free;
-    FNoteList := nil;
-  end
-  else
-  begin
-    if FNoteList = nil then
-      FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirStatisticAttributeEstimateAttributeEstimate(oSource).FNoteList);
-  end;
-  type_ := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).type_.Clone;
-  quantity := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).quantity.Clone;
-  levelElement := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).levelElement.Clone;
-  range := TFhirStatisticAttributeEstimateAttributeEstimate(oSource).range.Clone;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'note') Then
-    list.addAll(self, 'note', FNoteList);
-  if (child_name = 'type') Then
-     list.add(self.link, 'type', FType_.Link);
-  if (child_name = 'quantity') Then
-     list.add(self.link, 'quantity', FQuantity.Link);
-  if (child_name = 'level') Then
-     list.add(self.link, 'level', FLevel.Link);
-  if (child_name = 'range') Then
-     list.add(self.link, 'range', FRange.Link);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));
-  oList.add(TFHIRProperty.create(self, 'level', 'decimal', false, TFhirDecimal, FLevel.Link));
-  oList.add(TFHIRProperty.create(self, 'range', 'Range', false, TFhirRange, FRange.Link));
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'description') then
-  begin
-    DescriptionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'note') then
-  begin
-    NoteList.add(propValue as TFhirAnnotation);
-    result := propValue;
-  end
-  else if (propName = 'type') then
-  begin
-    Type_ := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'quantity') then
-  begin
-    Quantity := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else if (propName = 'level') then
-  begin
-    LevelElement := asDecimal(propValue);
-    result := propValue;
-  end
-  else if (propName = 'range') then
-  begin
-    Range := propValue as TFhirRange;
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
-  else inherited;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'quantity') then result := TFhirQuantity.create()
-  else if (propName = 'level') then result := TFhirDecimal.create()
-  else if (propName = 'range') then result := TFhirRange.create()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'description') then result := 'string'
-  else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'type') then result := 'CodeableConcept'
-  else if (propName = 'quantity') then result := 'Quantity'
-  else if (propName = 'level') then result := 'decimal'
-  else if (propName = 'range') then result := 'Range'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
-  else if (propName = 'type') then Type_Element := nil
-  else if (propName = 'quantity') then QuantityElement := nil
-  else if (propName = 'level') then LevelElement := nil
-  else if (propName = 'range') then RangeElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := asString(new)
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
-  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
-  else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity
-  else if (propName = 'level') then LevelElement := asDecimal(new)
-  else if (propName = 'range') then RangeElement := new as TFhirRange
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'note') then NoteList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.fhirType : string;
-begin
-  result := 'Statistic.attributeEstimate.attributeEstimate';
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.Link : TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate(inherited Link);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.Clone : TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate(inherited Clone);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatisticAttributeEstimateAttributeEstimate)) then
-    result := false
-  else
-  begin
-    o := TFhirStatisticAttributeEstimateAttributeEstimate(other);
-    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
-      compareDeep(type_Element, o.type_Element, true) and compareDeep(quantityElement, o.quantityElement, true) and 
-      compareDeep(levelElement, o.levelElement, true) and compareDeep(rangeElement, o.rangeElement, true);
-  end;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FType_) and isEmptyProp(FQuantity) and isEmptyProp(FLevel) and isEmptyProp(FRange);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('note');
-  fields.add('type');
-  fields.add('quantity');
-  fields.add('level');
-  fields.add('range');
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FNoteList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := FDescription.value;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.GetNoteList : TFhirAnnotationList;
-begin
-  if FNoteList = nil then
-    FNoteList := TFhirAnnotationList.Create;
-  result := FNoteList;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.GetHasNoteList : boolean;
-begin
-  result := (FNoteList <> nil) and (FNoteList.count > 0);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetType_(value : TFhirCodeableConcept);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetQuantity(value : TFhirQuantity);
-begin
-  FQuantity.free;
-  FQuantity := value;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetLevel(value : TFhirDecimal);
-begin
-  FLevel.free;
-  FLevel := value;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimate.GetLevelST : String;
-begin
-  if FLevel = nil then
-    result := ''
-  else
-    result := FLevel.value;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetLevelST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FLevel = nil then
-      FLevel := TFhirDecimal.create;
-    FLevel.value := value
-  end
-  else if FLevel <> nil then
-    FLevel.value := '';
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimate.SetRange(value : TFhirRange);
-begin
-  FRange.free;
-  FRange := value;
-end;
-
-{ TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator }
-
-constructor TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Create(list : TFhirStatisticAttributeEstimateAttributeEstimateList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.GetCurrent : TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticAttributeEstimateAttributeEstimateList }
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.AddItem(value: TFhirStatisticAttributeEstimateAttributeEstimate): TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Append: TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimateList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.GetEnumerator : TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimateListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Clone: TFhirStatisticAttributeEstimateAttributeEstimateList;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimateList(inherited Clone);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.GetItemN(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate;
-end;
-function TFhirStatisticAttributeEstimateAttributeEstimateList.IndexOf(value: TFhirStatisticAttributeEstimateAttributeEstimate): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Insert(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimateList.InsertItem(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Item(index: Integer): TFhirStatisticAttributeEstimateAttributeEstimate;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimate(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticAttributeEstimateAttributeEstimateList.Link: TFhirStatisticAttributeEstimateAttributeEstimateList;
-begin
-  result := TFhirStatisticAttributeEstimateAttributeEstimateList(inherited Link);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimateList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimateList.SetItemByIndex(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
-  FhirStatisticAttributeEstimateAttributeEstimates[index] := value;
-end;
-
-procedure TFhirStatisticAttributeEstimateAttributeEstimateList.SetItemN(index: Integer; value: TFhirStatisticAttributeEstimateAttributeEstimate);
-begin
-  assert(value is TFhirStatisticAttributeEstimateAttributeEstimate);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatisticModelCharacteristic }
-
-constructor TFhirStatisticModelCharacteristic.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatisticModelCharacteristic.Destroy;
-begin
-  FCode.free;
-  FValue.free;
-  FVariableList.Free;
-  inherited;
-end;
-
-procedure TFhirStatisticModelCharacteristic.Assign(oSource : TFslObject);
-begin
-  inherited;
-  code := TFhirStatisticModelCharacteristic(oSource).code.Clone;
-  value := TFhirStatisticModelCharacteristic(oSource).value.Clone;
-  if (TFhirStatisticModelCharacteristic(oSource).FVariableList = nil) then
-  begin
-    FVariableList.free;
-    FVariableList := nil;
-  end
-  else
-  begin
-    if FVariableList = nil then
-      FVariableList := TFhirStatisticModelCharacteristicVariableList.Create;
-    FVariableList.Assign(TFhirStatisticModelCharacteristic(oSource).FVariableList);
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristic.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'code') Then
-     list.add(self.link, 'code', FCode.Link);
-  if (child_name = 'value') Then
-     list.add(self.link, 'value', FValue.Link);
-  if (child_name = 'variable') Then
-    list.addAll(self, 'variable', FVariableList);
-end;
-
-procedure TFhirStatisticModelCharacteristic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
-  oList.add(TFHIRProperty.create(self, 'value', 'Quantity', false, TFhirQuantity, FValue.Link));
-  oList.add(TFHIRProperty.create(self, 'variable', 'Element', true, TFhirStatisticModelCharacteristicVariable, FVariableList.Link));
-end;
-
-function TFhirStatisticModelCharacteristic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'code') then
-  begin
-    Code := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'value') then
-  begin
-    Value := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else if (propName = 'variable') then
-  begin
-    VariableList.add(propValue as TFhirStatisticModelCharacteristicVariable);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatisticModelCharacteristic.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'variable') then VariableList.insertItem(index, propValue as TFhirStatisticModelCharacteristicVariable)
-  else inherited;
-end;
-
-function TFhirStatisticModelCharacteristic.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create()
-  else if (propName = 'value') then result := TFhirQuantity.create()
-  else if (propName = 'variable') then result := VariableList.new()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatisticModelCharacteristic.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'code') then result := 'CodeableConcept'
-  else if (propName = 'value') then result := 'Quantity'
-  else if (propName = 'variable') then result := 'Element'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatisticModelCharacteristic.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'code') then CodeElement := nil
-  else if (propName = 'value') then ValueElement := nil
-  else if (propName = 'variable') then deletePropertyValue('variable', VariableList, value)
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatisticModelCharacteristic.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
-  else if (propName = 'value') then ValueElement := new as TFhirQuantity
-  else if (propName = 'variable') then replacePropertyValue('variable', VariableList, existing, new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatisticModelCharacteristic.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'variable') then VariableList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatisticModelCharacteristic.fhirType : string;
-begin
-  result := 'Statistic.modelCharacteristic';
-end;
-
-function TFhirStatisticModelCharacteristic.Link : TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic(inherited Link);
-end;
-
-function TFhirStatisticModelCharacteristic.Clone : TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic(inherited Clone);
-end;
-
-function TFhirStatisticModelCharacteristic.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatisticModelCharacteristic;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatisticModelCharacteristic)) then
-    result := false
-  else
-  begin
-    o := TFhirStatisticModelCharacteristic(other);
-    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(valueElement, o.valueElement, true) and 
-      compareDeep(variableList, o.variableList, true);
-  end;
-end;
-
-function TFhirStatisticModelCharacteristic.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue) and isEmptyProp(FvariableList);
-end;
-
-procedure TFhirStatisticModelCharacteristic.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('code');
-  fields.add('value');
-  fields.add('variable');
-end;
-
-function TFhirStatisticModelCharacteristic.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FVariableList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatisticModelCharacteristic.SetCode(value : TFhirCodeableConcept);
-begin
-  FCode.free;
-  FCode := value;
-end;
-
-procedure TFhirStatisticModelCharacteristic.SetValue(value : TFhirQuantity);
-begin
-  FValue.free;
-  FValue := value;
-end;
-
-function TFhirStatisticModelCharacteristic.GetVariableList : TFhirStatisticModelCharacteristicVariableList;
-begin
-  if FVariableList = nil then
-    FVariableList := TFhirStatisticModelCharacteristicVariableList.Create;
-  result := FVariableList;
-end;
-
-function TFhirStatisticModelCharacteristic.GetHasVariableList : boolean;
-begin
-  result := (FVariableList <> nil) and (FVariableList.count > 0);
-end;
-
-{ TFhirStatisticModelCharacteristicListEnumerator }
-
-constructor TFhirStatisticModelCharacteristicListEnumerator.Create(list : TFhirStatisticModelCharacteristicList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticModelCharacteristicListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticModelCharacteristicListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticModelCharacteristicListEnumerator.GetCurrent : TFhirStatisticModelCharacteristic;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticModelCharacteristicListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticModelCharacteristicList }
-
-function TFhirStatisticModelCharacteristicList.AddItem(value: TFhirStatisticModelCharacteristic): TFhirStatisticModelCharacteristic;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticModelCharacteristicList.Append: TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristicList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticModelCharacteristicList.GetEnumerator : TFhirStatisticModelCharacteristicListEnumerator;
-begin
-  result := TFhirStatisticModelCharacteristicListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticModelCharacteristicList.Clone: TFhirStatisticModelCharacteristicList;
-begin
-  result := TFhirStatisticModelCharacteristicList(inherited Clone);
-end;
-
-function TFhirStatisticModelCharacteristicList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticModelCharacteristicList.GetItemN(index: Integer): TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticModelCharacteristicList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatisticModelCharacteristic;
-end;
-function TFhirStatisticModelCharacteristicList.IndexOf(value: TFhirStatisticModelCharacteristic): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticModelCharacteristicList.Insert(index: Integer): TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristicList.InsertItem(index: Integer; value: TFhirStatisticModelCharacteristic);
-begin
-  assert(value is TFhirStatisticModelCharacteristic);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticModelCharacteristicList.Item(index: Integer): TFhirStatisticModelCharacteristic;
-begin
-  result := TFhirStatisticModelCharacteristic(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticModelCharacteristicList.Link: TFhirStatisticModelCharacteristicList;
-begin
-  result := TFhirStatisticModelCharacteristicList(inherited Link);
-end;
-
-procedure TFhirStatisticModelCharacteristicList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticModelCharacteristicList.SetItemByIndex(index: Integer; value: TFhirStatisticModelCharacteristic);
-begin
-  assert(value is TFhirStatisticModelCharacteristic);
-  FhirStatisticModelCharacteristics[index] := value;
-end;
-
-procedure TFhirStatisticModelCharacteristicList.SetItemN(index: Integer; value: TFhirStatisticModelCharacteristic);
-begin
-  assert(value is TFhirStatisticModelCharacteristic);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatisticModelCharacteristicVariable }
-
-constructor TFhirStatisticModelCharacteristicVariable.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatisticModelCharacteristicVariable.Destroy;
-begin
-  FVariableDefinition.free;
-  FHandling.free;
-  FValueCategoryList.Free;
-  FValueQuantityList.Free;
-  FValueRangeList.Free;
-  inherited;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.Assign(oSource : TFslObject);
-begin
-  inherited;
-  variableDefinition := TFhirStatisticModelCharacteristicVariable(oSource).variableDefinition.Clone;
-  handlingElement := TFhirStatisticModelCharacteristicVariable(oSource).handlingElement.Clone;
-  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueCategoryList = nil) then
-  begin
-    FValueCategoryList.free;
-    FValueCategoryList := nil;
-  end
-  else
-  begin
-    if FValueCategoryList = nil then
-      FValueCategoryList := TFhirCodeableConceptList.Create;
-    FValueCategoryList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueCategoryList);
-  end;
-  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueQuantityList = nil) then
-  begin
-    FValueQuantityList.free;
-    FValueQuantityList := nil;
-  end
-  else
-  begin
-    if FValueQuantityList = nil then
-      FValueQuantityList := TFhirQuantityList.Create;
-    FValueQuantityList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueQuantityList);
-  end;
-  if (TFhirStatisticModelCharacteristicVariable(oSource).FValueRangeList = nil) then
-  begin
-    FValueRangeList.free;
-    FValueRangeList := nil;
-  end
-  else
-  begin
-    if FValueRangeList = nil then
-      FValueRangeList := TFhirRangeList.Create;
-    FValueRangeList.Assign(TFhirStatisticModelCharacteristicVariable(oSource).FValueRangeList);
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'variableDefinition') Then
-     list.add(self.link, 'variableDefinition', FVariableDefinition.Link);
-  if (child_name = 'handling') Then
-     list.add(self.link, 'handling', FHandling.Link);
-  if (child_name = 'valueCategory') Then
-    list.addAll(self, 'valueCategory', FValueCategoryList);
-  if (child_name = 'valueQuantity') Then
-    list.addAll(self, 'valueQuantity', FValueQuantityList);
-  if (child_name = 'valueRange') Then
-    list.addAll(self, 'valueRange', FValueRangeList);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'variableDefinition', 'Reference', false, TFhirReference, FVariableDefinition.Link));
-  oList.add(TFHIRProperty.create(self, 'handling', 'code', false, TFhirEnum, FHandling.Link));
-  oList.add(TFHIRProperty.create(self, 'valueCategory', 'CodeableConcept', true, TFhirCodeableConcept, FValueCategoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
-  oList.add(TFHIRProperty.create(self, 'valueRange', 'Range', true, TFhirRange, FValueRangeList.Link));
-end;
-
-function TFhirStatisticModelCharacteristicVariable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'variableDefinition') then
-  begin
-    VariableDefinition := propValue as TFhirReference;
-    result := propValue;
-  end
-  else if (propName = 'handling') then
-  begin
-    HandlingElement := asEnum(SYSTEMS_TFhirEvidenceVariableHandlingEnum, CODES_TFhirEvidenceVariableHandlingEnum, propValue);
-    result := propValue;
-  end
-  else if (propName = 'valueCategory') then
-  begin
-    ValueCategoryList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (propName = 'valueQuantity') then
-  begin
-    ValueQuantityList.add(propValue as TFhirQuantity);
-    result := propValue;
-  end
-  else if (propName = 'valueRange') then
-  begin
-    ValueRangeList.add(propValue as TFhirRange);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'valueCategory') then ValueCategoryList.insertItem(index, propValue as TFhirCodeableConcept)
-  else if (propName = 'valueQuantity') then ValueQuantityList.insertItem(index, propValue as TFhirQuantity)
-  else if (propName = 'valueRange') then ValueRangeList.insertItem(index, propValue as TFhirRange)
-  else inherited;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'variableDefinition') then result := TFhirReference.create()
-  else if (propName = 'handling') then result := TFhirEnum.create(SYSTEMS_TFhirEvidenceVariableHandlingEnum[EvidenceVariableHandlingNull], CODES_TFhirEvidenceVariableHandlingEnum[EvidenceVariableHandlingNull]) 
-  else if (propName = 'valueCategory') then result := ValueCategoryList.new()
-  else if (propName = 'valueQuantity') then result := ValueQuantityList.new()
-  else if (propName = 'valueRange') then result := ValueRangeList.new()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'variableDefinition') then result := 'Reference'
-  else if (propName = 'handling') then result := 'code'
-  else if (propName = 'valueCategory') then result := 'CodeableConcept'
-  else if (propName = 'valueQuantity') then result := 'Quantity'
-  else if (propName = 'valueRange') then result := 'Range'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'variableDefinition') then VariableDefinitionElement := nil
-  else if (propName = 'handling') then HandlingElement := nil
-  else if (propName = 'valueCategory') then deletePropertyValue('valueCategory', ValueCategoryList, value)
-  else if (propName = 'valueQuantity') then deletePropertyValue('valueQuantity', ValueQuantityList, value)
-  else if (propName = 'valueRange') then deletePropertyValue('valueRange', ValueRangeList, value)
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'variableDefinition') then VariableDefinitionElement := new as TFhirReference
-  else if (propName = 'handling') then HandlingElement := asEnum(SYSTEMS_TFhirEvidenceVariableHandlingEnum, CODES_TFhirEvidenceVariableHandlingEnum, new)
-  else if (propName = 'valueCategory') then replacePropertyValue('valueCategory', ValueCategoryList, existing, new)
-  else if (propName = 'valueQuantity') then replacePropertyValue('valueQuantity', ValueQuantityList, existing, new)
-  else if (propName = 'valueRange') then replacePropertyValue('valueRange', ValueRangeList, existing, new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'valueCategory') then ValueCategoryList.move(source, destination)
-  else if (propName = 'valueQuantity') then ValueQuantityList.move(source, destination)
-  else if (propName = 'valueRange') then ValueRangeList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.fhirType : string;
-begin
-  result := 'Statistic.modelCharacteristic.variable';
-end;
-
-function TFhirStatisticModelCharacteristicVariable.Link : TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable(inherited Link);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.Clone : TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable(inherited Clone);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatisticModelCharacteristicVariable;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatisticModelCharacteristicVariable)) then
-    result := false
-  else
-  begin
-    o := TFhirStatisticModelCharacteristicVariable(other);
-    result := compareDeep(variableDefinitionElement, o.variableDefinitionElement, true) and 
-      compareDeep(handlingElement, o.handlingElement, true) and compareDeep(valueCategoryList, o.valueCategoryList, true) and 
-      compareDeep(valueQuantityList, o.valueQuantityList, true) and compareDeep(valueRangeList, o.valueRangeList, true);
-  end;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FVariableDefinition) and isEmptyProp(FHandling) and isEmptyProp(FvalueCategoryList) and isEmptyProp(FvalueQuantityList) and isEmptyProp(FvalueRangeList);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('variableDefinition');
-  fields.add('handling');
-  fields.add('valueCategory');
-  fields.add('valueQuantity');
-  fields.add('valueRange');
-end;
-
-function TFhirStatisticModelCharacteristicVariable.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FValueCategoryList.sizeInBytes(magic));
-  inc(result, FValueQuantityList.sizeInBytes(magic));
-  inc(result, FValueRangeList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.SetVariableDefinition(value : TFhirReference);
-begin
-  FVariableDefinition.free;
-  FVariableDefinition := value;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.SetHandling(value : TFhirEnum);
-begin
-  FHandling.free;
-  FHandling := value;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetHandlingST : TFhirEvidenceVariableHandlingEnum;
-begin
-  if FHandling = nil then
-    result := TFhirEvidenceVariableHandlingEnum(0)
-  else
-    result := TFhirEvidenceVariableHandlingEnum(StringArrayIndexOfSensitive(CODES_TFhirEvidenceVariableHandlingEnum, FHandling.value));
-end;
-
-procedure TFhirStatisticModelCharacteristicVariable.SetHandlingST(value : TFhirEvidenceVariableHandlingEnum);
-begin
-  if ord(value) = 0 then
-    HandlingElement := nil
-  else
-    HandlingElement := TFhirEnum.create(SYSTEMS_TFhirEvidenceVariableHandlingEnum[value], CODES_TFhirEvidenceVariableHandlingEnum[value]);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetValueCategoryList : TFhirCodeableConceptList;
-begin
-  if FValueCategoryList = nil then
-    FValueCategoryList := TFhirCodeableConceptList.Create;
-  result := FValueCategoryList;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetHasValueCategoryList : boolean;
-begin
-  result := (FValueCategoryList <> nil) and (FValueCategoryList.count > 0);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetValueQuantityList : TFhirQuantityList;
-begin
-  if FValueQuantityList = nil then
-    FValueQuantityList := TFhirQuantityList.Create;
-  result := FValueQuantityList;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetHasValueQuantityList : boolean;
-begin
-  result := (FValueQuantityList <> nil) and (FValueQuantityList.count > 0);
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetValueRangeList : TFhirRangeList;
-begin
-  if FValueRangeList = nil then
-    FValueRangeList := TFhirRangeList.Create;
-  result := FValueRangeList;
-end;
-
-function TFhirStatisticModelCharacteristicVariable.GetHasValueRangeList : boolean;
-begin
-  result := (FValueRangeList <> nil) and (FValueRangeList.count > 0);
-end;
-
-{ TFhirStatisticModelCharacteristicVariableListEnumerator }
-
-constructor TFhirStatisticModelCharacteristicVariableListEnumerator.Create(list : TFhirStatisticModelCharacteristicVariableList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticModelCharacteristicVariableListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticModelCharacteristicVariableListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticModelCharacteristicVariableListEnumerator.GetCurrent : TFhirStatisticModelCharacteristicVariable;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticModelCharacteristicVariableListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticModelCharacteristicVariableList }
-
-function TFhirStatisticModelCharacteristicVariableList.AddItem(value: TFhirStatisticModelCharacteristicVariable): TFhirStatisticModelCharacteristicVariable;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Append: TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariableList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.GetEnumerator : TFhirStatisticModelCharacteristicVariableListEnumerator;
-begin
-  result := TFhirStatisticModelCharacteristicVariableListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Clone: TFhirStatisticModelCharacteristicVariableList;
-begin
-  result := TFhirStatisticModelCharacteristicVariableList(inherited Clone);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.GetItemN(index: Integer): TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatisticModelCharacteristicVariable;
-end;
-function TFhirStatisticModelCharacteristicVariableList.IndexOf(value: TFhirStatisticModelCharacteristicVariable): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Insert(index: Integer): TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariableList.InsertItem(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
-begin
-  assert(value is TFhirStatisticModelCharacteristicVariable);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Item(index: Integer): TFhirStatisticModelCharacteristicVariable;
-begin
-  result := TFhirStatisticModelCharacteristicVariable(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticModelCharacteristicVariableList.Link: TFhirStatisticModelCharacteristicVariableList;
-begin
-  result := TFhirStatisticModelCharacteristicVariableList(inherited Link);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariableList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticModelCharacteristicVariableList.SetItemByIndex(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
-begin
-  assert(value is TFhirStatisticModelCharacteristicVariable);
-  FhirStatisticModelCharacteristicVariables[index] := value;
-end;
-
-procedure TFhirStatisticModelCharacteristicVariableList.SetItemN(index: Integer; value: TFhirStatisticModelCharacteristicVariable);
-begin
-  assert(value is TFhirStatisticModelCharacteristicVariable);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirStatistic }
-
-constructor TFhirStatistic.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirStatistic.Destroy;
-begin
-  FDescription.free;
-  FNoteList.Free;
-  FStatisticType.free;
-  FCategory.free;
-  FQuantity.free;
-  FNumberOfEvents.free;
-  FNumberAffected.free;
-  FSampleSize.free;
-  FAttributeEstimateList.Free;
-  FModelCharacteristicList.Free;
-  inherited;
-end;
-
-procedure TFhirStatistic.Assign(oSource : TFslObject);
-begin
-  inherited;
-  descriptionElement := TFhirStatistic(oSource).descriptionElement.Clone;
-  if (TFhirStatistic(oSource).FNoteList = nil) then
-  begin
-    FNoteList.free;
-    FNoteList := nil;
-  end
-  else
-  begin
-    if FNoteList = nil then
-      FNoteList := TFhirAnnotationList.Create;
-    FNoteList.Assign(TFhirStatistic(oSource).FNoteList);
-  end;
-  statisticType := TFhirStatistic(oSource).statisticType.Clone;
-  category := TFhirStatistic(oSource).category.Clone;
-  quantity := TFhirStatistic(oSource).quantity.Clone;
-  numberOfEventsElement := TFhirStatistic(oSource).numberOfEventsElement.Clone;
-  numberAffectedElement := TFhirStatistic(oSource).numberAffectedElement.Clone;
-  sampleSize := TFhirStatistic(oSource).sampleSize.Clone;
-  if (TFhirStatistic(oSource).FAttributeEstimateList = nil) then
-  begin
-    FAttributeEstimateList.free;
-    FAttributeEstimateList := nil;
-  end
-  else
-  begin
-    if FAttributeEstimateList = nil then
-      FAttributeEstimateList := TFhirStatisticAttributeEstimateList.Create;
-    FAttributeEstimateList.Assign(TFhirStatistic(oSource).FAttributeEstimateList);
-  end;
-  if (TFhirStatistic(oSource).FModelCharacteristicList = nil) then
-  begin
-    FModelCharacteristicList.free;
-    FModelCharacteristicList := nil;
-  end
-  else
-  begin
-    if FModelCharacteristicList = nil then
-      FModelCharacteristicList := TFhirStatisticModelCharacteristicList.Create;
-    FModelCharacteristicList.Assign(TFhirStatistic(oSource).FModelCharacteristicList);
-  end;
-end;
-
-procedure TFhirStatistic.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'note') Then
-    list.addAll(self, 'note', FNoteList);
-  if (child_name = 'statisticType') Then
-     list.add(self.link, 'statisticType', FStatisticType.Link);
-  if (child_name = 'category') Then
-     list.add(self.link, 'category', FCategory.Link);
-  if (child_name = 'quantity') Then
-     list.add(self.link, 'quantity', FQuantity.Link);
-  if (child_name = 'numberOfEvents') Then
-     list.add(self.link, 'numberOfEvents', FNumberOfEvents.Link);
-  if (child_name = 'numberAffected') Then
-     list.add(self.link, 'numberAffected', FNumberAffected.Link);
-  if (child_name = 'sampleSize') Then
-     list.add(self.link, 'sampleSize', FSampleSize.Link);
-  if (child_name = 'attributeEstimate') Then
-    list.addAll(self, 'attributeEstimate', FAttributeEstimateList);
-  if (child_name = 'modelCharacteristic') Then
-    list.addAll(self, 'modelCharacteristic', FModelCharacteristicList);
-end;
-
-procedure TFhirStatistic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'statisticType', 'CodeableConcept', false, TFhirCodeableConcept, FStatisticType.Link));
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));
-  oList.add(TFHIRProperty.create(self, 'numberOfEvents', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfEvents.Link));
-  oList.add(TFHIRProperty.create(self, 'numberAffected', 'unsignedInt', false, TFhirUnsignedInt, FNumberAffected.Link));
-  oList.add(TFHIRProperty.create(self, 'sampleSize', 'Element', false, TFhirStatisticSampleSize, FSampleSize.Link));
-  oList.add(TFHIRProperty.create(self, 'attributeEstimate', 'Element', true, TFhirStatisticAttributeEstimate, FAttributeEstimateList.Link));
-  oList.add(TFHIRProperty.create(self, 'modelCharacteristic', 'Element', true, TFhirStatisticModelCharacteristic, FModelCharacteristicList.Link));
-end;
-
-function TFhirStatistic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'description') then
-  begin
-    DescriptionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'note') then
-  begin
-    NoteList.add(propValue as TFhirAnnotation);
-    result := propValue;
-  end
-  else if (propName = 'statisticType') then
-  begin
-    StatisticType := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'category') then
-  begin
-    Category := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'quantity') then
-  begin
-    Quantity := propValue as TFhirQuantity;
-    result := propValue;
-  end
-  else if (propName = 'numberOfEvents') then
-  begin
-    NumberOfEventsElement := asUnsignedInt(propValue);
-    result := propValue;
-  end
-  else if (propName = 'numberAffected') then
-  begin
-    NumberAffectedElement := asUnsignedInt(propValue);
-    result := propValue;
-  end
-  else if (propName = 'sampleSize') then
-  begin
-    SampleSize := propValue as TFhirStatisticSampleSize;
-    result := propValue;
-  end
-  else if (propName = 'attributeEstimate') then
-  begin
-    AttributeEstimateList.add(propValue as TFhirStatisticAttributeEstimate);
-    result := propValue;
-  end
-  else if (propName = 'modelCharacteristic') then
-  begin
-    ModelCharacteristicList.add(propValue as TFhirStatisticModelCharacteristic);
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirStatistic.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
-  else if (propName = 'attributeEstimate') then AttributeEstimateList.insertItem(index, propValue as TFhirStatisticAttributeEstimate)
-  else if (propName = 'modelCharacteristic') then ModelCharacteristicList.insertItem(index, propValue as TFhirStatisticModelCharacteristic)
-  else inherited;
-end;
-
-function TFhirStatistic.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'statisticType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'category') then result := TFhirCodeableConcept.create()
-  else if (propName = 'quantity') then result := TFhirQuantity.create()
-  else if (propName = 'numberOfEvents') then result := TFhirUnsignedInt.create()
-  else if (propName = 'numberAffected') then result := TFhirUnsignedInt.create()
-  else if (propName = 'sampleSize') then result := TFhirStatisticSampleSize.create()
-  else if (propName = 'attributeEstimate') then result := AttributeEstimateList.new()
-  else if (propName = 'modelCharacteristic') then result := ModelCharacteristicList.new()
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirStatistic.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'description') then result := 'string'
-  else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'statisticType') then result := 'CodeableConcept'
-  else if (propName = 'category') then result := 'CodeableConcept'
-  else if (propName = 'quantity') then result := 'Quantity'
-  else if (propName = 'numberOfEvents') then result := 'unsignedInt'
-  else if (propName = 'numberAffected') then result := 'unsignedInt'
-  else if (propName = 'sampleSize') then result := 'Element'
-  else if (propName = 'attributeEstimate') then result := 'Element'
-  else if (propName = 'modelCharacteristic') then result := 'Element'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirStatistic.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
-  else if (propName = 'statisticType') then StatisticTypeElement := nil
-  else if (propName = 'category') then CategoryElement := nil
-  else if (propName = 'quantity') then QuantityElement := nil
-  else if (propName = 'numberOfEvents') then NumberOfEventsElement := nil
-  else if (propName = 'numberAffected') then NumberAffectedElement := nil
-  else if (propName = 'sampleSize') then SampleSizeElement := nil
-  else if (propName = 'attributeEstimate') then deletePropertyValue('attributeEstimate', AttributeEstimateList, value)
-  else if (propName = 'modelCharacteristic') then deletePropertyValue('modelCharacteristic', ModelCharacteristicList, value)
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirStatistic.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'description') then DescriptionElement := asString(new)
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
-  else if (propName = 'statisticType') then StatisticTypeElement := new as TFhirCodeableConcept
-  else if (propName = 'category') then CategoryElement := new as TFhirCodeableConcept
-  else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity
-  else if (propName = 'numberOfEvents') then NumberOfEventsElement := asUnsignedInt(new)
-  else if (propName = 'numberAffected') then NumberAffectedElement := asUnsignedInt(new)
-  else if (propName = 'sampleSize') then SampleSizeElement := new as TFhirStatisticSampleSize
-  else if (propName = 'attributeEstimate') then replacePropertyValue('attributeEstimate', AttributeEstimateList, existing, new)
-  else if (propName = 'modelCharacteristic') then replacePropertyValue('modelCharacteristic', ModelCharacteristicList, existing, new)
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirStatistic.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'note') then NoteList.move(source, destination)
-  else if (propName = 'attributeEstimate') then AttributeEstimateList.move(source, destination)
-  else if (propName = 'modelCharacteristic') then ModelCharacteristicList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirStatistic.fhirType : string;
-begin
-  result := 'Statistic';
-end;
-
-function TFhirStatistic.Link : TFhirStatistic;
-begin
-  result := TFhirStatistic(inherited Link);
-end;
-
-function TFhirStatistic.Clone : TFhirStatistic;
-begin
-  result := TFhirStatistic(inherited Clone);
-end;
-
-function TFhirStatistic.equals(other : TObject) : boolean; 
-var
-  o : TFhirStatistic;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirStatistic)) then
-    result := false
-  else
-  begin
-    o := TFhirStatistic(other);
-    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(noteList, o.noteList, true) and 
-      compareDeep(statisticTypeElement, o.statisticTypeElement, true) and compareDeep(categoryElement, o.categoryElement, true) and 
-      compareDeep(quantityElement, o.quantityElement, true) and compareDeep(numberOfEventsElement, o.numberOfEventsElement, true) and 
-      compareDeep(numberAffectedElement, o.numberAffectedElement, true) and compareDeep(sampleSizeElement, o.sampleSizeElement, true) and 
-      compareDeep(attributeEstimateList, o.attributeEstimateList, true) and compareDeep(modelCharacteristicList, o.modelCharacteristicList, true);
-  end;
-end;
-
-function TFhirStatistic.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FnoteList) and isEmptyProp(FStatisticType) and isEmptyProp(FCategory) and isEmptyProp(FQuantity) and isEmptyProp(FNumberOfEvents) and isEmptyProp(FNumberAffected) and isEmptyProp(FSampleSize) and isEmptyProp(FattributeEstimateList) and isEmptyProp(FmodelCharacteristicList);
-end;
-
-procedure TFhirStatistic.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('note');
-  fields.add('statisticType');
-  fields.add('category');
-  fields.add('quantity');
-  fields.add('numberOfEvents');
-  fields.add('numberAffected');
-  fields.add('sampleSize');
-  fields.add('attributeEstimate');
-  fields.add('modelCharacteristic');
-end;
-
-function TFhirStatistic.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FNoteList.sizeInBytes(magic));
-  inc(result, FAttributeEstimateList.sizeInBytes(magic));
-  inc(result, FModelCharacteristicList.sizeInBytes(magic));
-end;
-
-procedure TFhirStatistic.SetDescription(value : TFhirString);
-begin
-  FDescription.free;
-  FDescription := value;
-end;
-
-function TFhirStatistic.GetDescriptionST : String;
-begin
-  if FDescription = nil then
-    result := ''
-  else
-    result := FDescription.value;
-end;
-
-procedure TFhirStatistic.SetDescriptionST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDescription = nil then
-      FDescription := TFhirString.create;
-    FDescription.value := value
-  end
-  else if FDescription <> nil then
-    FDescription.value := '';
-end;
-
-function TFhirStatistic.GetNoteList : TFhirAnnotationList;
-begin
-  if FNoteList = nil then
-    FNoteList := TFhirAnnotationList.Create;
-  result := FNoteList;
-end;
-
-function TFhirStatistic.GetHasNoteList : boolean;
-begin
-  result := (FNoteList <> nil) and (FNoteList.count > 0);
-end;
-
-procedure TFhirStatistic.SetStatisticType(value : TFhirCodeableConcept);
-begin
-  FStatisticType.free;
-  FStatisticType := value;
-end;
-
-procedure TFhirStatistic.SetCategory(value : TFhirCodeableConcept);
-begin
-  FCategory.free;
-  FCategory := value;
-end;
-
-procedure TFhirStatistic.SetQuantity(value : TFhirQuantity);
-begin
-  FQuantity.free;
-  FQuantity := value;
-end;
-
-procedure TFhirStatistic.SetNumberOfEvents(value : TFhirUnsignedInt);
-begin
-  FNumberOfEvents.free;
-  FNumberOfEvents := value;
-end;
-
-function TFhirStatistic.GetNumberOfEventsST : String;
-begin
-  if FNumberOfEvents = nil then
-    result := ''
-  else
-    result := FNumberOfEvents.value;
-end;
-
-procedure TFhirStatistic.SetNumberOfEventsST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumberOfEvents = nil then
-      FNumberOfEvents := TFhirUnsignedInt.create;
-    FNumberOfEvents.value := value
-  end
-  else if FNumberOfEvents <> nil then
-    FNumberOfEvents.value := '';
-end;
-
-procedure TFhirStatistic.SetNumberAffected(value : TFhirUnsignedInt);
-begin
-  FNumberAffected.free;
-  FNumberAffected := value;
-end;
-
-function TFhirStatistic.GetNumberAffectedST : String;
-begin
-  if FNumberAffected = nil then
-    result := ''
-  else
-    result := FNumberAffected.value;
-end;
-
-procedure TFhirStatistic.SetNumberAffectedST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FNumberAffected = nil then
-      FNumberAffected := TFhirUnsignedInt.create;
-    FNumberAffected.value := value
-  end
-  else if FNumberAffected <> nil then
-    FNumberAffected.value := '';
-end;
-
-procedure TFhirStatistic.SetSampleSize(value : TFhirStatisticSampleSize);
-begin
-  FSampleSize.free;
-  FSampleSize := value;
-end;
-
-function TFhirStatistic.GetAttributeEstimateList : TFhirStatisticAttributeEstimateList;
-begin
-  if FAttributeEstimateList = nil then
-    FAttributeEstimateList := TFhirStatisticAttributeEstimateList.Create;
-  result := FAttributeEstimateList;
-end;
-
-function TFhirStatistic.GetHasAttributeEstimateList : boolean;
-begin
-  result := (FAttributeEstimateList <> nil) and (FAttributeEstimateList.count > 0);
-end;
-
-function TFhirStatistic.GetModelCharacteristicList : TFhirStatisticModelCharacteristicList;
-begin
-  if FModelCharacteristicList = nil then
-    FModelCharacteristicList := TFhirStatisticModelCharacteristicList.Create;
-  result := FModelCharacteristicList;
-end;
-
-function TFhirStatistic.GetHasModelCharacteristicList : boolean;
-begin
-  result := (FModelCharacteristicList <> nil) and (FModelCharacteristicList.count > 0);
-end;
-
-{ TFhirStatisticListEnumerator }
-
-constructor TFhirStatisticListEnumerator.Create(list : TFhirStatisticList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirStatisticListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirStatisticListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirStatisticListEnumerator.GetCurrent : TFhirStatistic;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirStatisticListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirStatisticList }
-
-function TFhirStatisticList.AddItem(value: TFhirStatistic): TFhirStatistic;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirStatisticList.Append: TFhirStatistic;
-begin
-  result := TFhirStatistic.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirStatisticList.GetEnumerator : TFhirStatisticListEnumerator;
-begin
-  result := TFhirStatisticListEnumerator.Create(self.link);
-end;
-
-function TFhirStatisticList.Clone: TFhirStatisticList;
-begin
-  result := TFhirStatisticList(inherited Clone);
-end;
-
-function TFhirStatisticList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirStatisticList.GetItemN(index: Integer): TFhirStatistic;
-begin
-  result := TFhirStatistic(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirStatistic;
-end;
-function TFhirStatisticList.IndexOf(value: TFhirStatistic): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirStatisticList.Insert(index: Integer): TFhirStatistic;
-begin
-  result := TFhirStatistic.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirStatisticList.InsertItem(index: Integer; value: TFhirStatistic);
-begin
-  assert(value is TFhirStatistic);
-  Inherited Insert(index, value);
-end;
-
-function TFhirStatisticList.Item(index: Integer): TFhirStatistic;
-begin
-  result := TFhirStatistic(ObjectByIndex[index]);
-end;
-
-function TFhirStatisticList.Link: TFhirStatisticList;
-begin
-  result := TFhirStatisticList(inherited Link);
-end;
-
-procedure TFhirStatisticList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirStatisticList.SetItemByIndex(index: Integer; value: TFhirStatistic);
-begin
-  assert(value is TFhirStatistic);
-  FhirStatistics[index] := value;
-end;
-
-procedure TFhirStatisticList.SetItemN(index: Integer; value: TFhirStatistic);
-begin
-  assert(value is TFhirStatistic);
   ObjectByIndex[index] := value;
 end;
 
@@ -39388,7 +34915,7 @@ begin
 end;
 
 procedure TFhirTimingRepeat.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('bounds[x]');
   fields.add('count');
@@ -39408,7 +34935,7 @@ begin
 end;
 
 function TFhirTimingRepeat.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDayOfWeek.sizeInBytes(magic));
   inc(result, FTimeOfDayList.sizeInBytes(magic));
@@ -39819,6 +35346,7 @@ end;
 
 function TFhirTimingRepeatList.AddItem(value: TFhirTimingRepeat): TFhirTimingRepeat;
 begin
+  assert(value.ClassName = 'TFhirTimingRepeat', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTimingRepeat');
   add(value);
   result := value;
 end;
@@ -40066,7 +35594,7 @@ begin
 end;
 
 procedure TFhirTiming.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('event');
   fields.add('repeat');
@@ -40074,7 +35602,7 @@ begin
 end;
 
 function TFhirTiming.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FEventList.sizeInBytes(magic));
 end;
@@ -40139,6 +35667,7 @@ end;
 
 function TFhirTimingList.AddItem(value: TFhirTiming): TFhirTiming;
 begin
+  assert(value.ClassName = 'TFhirTiming', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTiming');
   add(value);
   result := value;
 end;
