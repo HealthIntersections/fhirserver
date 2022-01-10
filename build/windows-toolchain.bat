@@ -18,7 +18,7 @@ rem ---- download the installer
 
 md tools
 
-curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0g/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
+curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
 curl -L https://github.com/LongDirtyAnimAlf/fpcupdeluxe/releases/download/crosslibs_v1.3/CrossLibsLinuxx64.zip --output tools\CrossLibsLinuxx64.zip
 curl -L https://github.com/LongDirtyAnimAlf/fpcupdeluxe/releases/download/wincrossbins_v1.0/WinCrossBinsLinuxx64.zip --output tools\WinCrossBinsLinuxx64.zip
 
