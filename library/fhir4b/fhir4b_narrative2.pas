@@ -37,7 +37,7 @@ uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities,
   fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
-  fhir4b_resources, fhir4b_types, fhir4b_constants, fhir4b_utilities, fhir4b_profiles, fhir4b_questionnaire;
+  fhir4b_resources, fhir4b_enums, fhir4b_types, fhir4b_constants, fhir4b_utilities, fhir4b_profiles, fhir4b_questionnaire;
 
 type
 
@@ -266,7 +266,7 @@ function TNarrativeGenerator.isDefaultValue(displayHints : TFslStringDictionary;
 begin
   if (list.count <> 1) then
     result := false
-  else if (list[0] is TFHIRType) and (list[0] is TFHIRPrimitiveType) then
+  else if (list[0] is TFHIRDataType) and (list[0] is TFHIRPrimitiveType) then
     result := isDefault(displayHints, TFHIRPrimitiveType(list[0]))
   else
     result := false;
@@ -543,7 +543,7 @@ begin
     if (name.endsWith('[x]')) then
       name := name.substring(0, name.length - 3);
 
-    if (not showCodeDetails) and (e is TFHIRType) and (e is TFHIRPrimitiveType) and isDefault(displayHints, TFHIRPrimitiveType(e)) then
+    if (not showCodeDetails) and (e is TFHIRDataType) and (e is TFHIRPrimitiveType) and isDefault(displayHints, TFHIRPrimitiveType(e)) then
      exit;
 
     if (e is TFHIRString) then

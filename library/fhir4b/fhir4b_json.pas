@@ -46,7 +46,7 @@ uses
 
 Type
 
-  TFHIRJsonParser = class (TFHIRJsonParserBase5)
+  TFHIRJsonParser = class (TFHIRJsonParserBase4b)
   private
     procedure ParseBaseProperties(jsn : TJsonObject; value : TFhirBase); overload;
     procedure ParseBaseProperties(jsn : TJsonObject; value : TFhirResource); overload;
@@ -55,6 +55,7 @@ Type
     procedure ParseElementProperties(jsn : TJsonObject; value : TFhirElement);
     procedure ParseBackboneElementProperties(jsn : TJsonObject; value : TFhirBackboneElement);
     procedure ParseDataTypeProperties(jsn : TJsonObject; value : TFhirDataType);
+    procedure ParseBackboneTypeProperties(jsn : TJsonObject; value : TFhirBackboneType);
 
 
     procedure ParseEnum(path :String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
@@ -2421,15 +2422,15 @@ Type
     function ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;  overload;
   end;
 
-  TFHIRJsonComposer = class (TFHIRJsonComposerBase5)
+  TFHIRJsonComposer = class (TFHIRJsonComposerBase4B)
   private
     Procedure ComposeBaseProperties(json : TJSONWriter; value : TFhirBase); overload;
     Procedure ComposeBaseProperties(json : TJSONWriter; value : TFhirResource); overload;
-
   protected
     Procedure ComposeElementProperties(json : TJSONWriter; value : TFhirElement);
     Procedure ComposeBackboneElementProperties(json : TJSONWriter; value : TFhirBackboneElement);
     Procedure ComposeDataTypeProperties(json : TJSONWriter; value : TFhirDataType);
+    Procedure ComposeBackboneTypeProperties(json : TJSONWriter; value : TFhirBackboneType);
 
 
     Procedure ComposeEnumValue(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
@@ -3557,16 +3558,6 @@ begin
       ComposeExtension(json, '', value.modifierExtensionList[i]); {L682}
     finishArray(json, value.modifierExtensionList);
   end;
-end;
-
-procedure TFHIRJsonParser.ParsePrimitiveTypeProperties(jsn : TJsonObject; value : TFhirPrimitiveType);
-begin
-  ParseDataTypeProperties(jsn, value); {jp2}
-end;
-
-Procedure TFHIRJsonComposer.ComposePrimitiveTypeProperties(json : TJSONWriter; value : TFhirPrimitiveType);
-begin
-  ComposeDataTypeProperties(json, value);  {L430}
 end;
 
 procedure TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
@@ -6156,7 +6147,7 @@ end;
 
 procedure TFHIRJsonParser.ParseDosageProperties(jsn : TJsonObject; value : TFhirDosage);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('sequence') or jsn.has('_sequence') then
         value.sequenceElement := parseInteger(jsn.node['sequence'], jsn.vObj['_sequence']);
     if jsn.has('text') or jsn.has('_text') then
@@ -6194,7 +6185,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  composeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'sequence', value.sequenceElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -7007,7 +6998,7 @@ end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionProperties(jsn : TJsonObject; value : TFhirElementDefinition);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('path') or jsn.has('_path') then
         value.pathElement := parseString(jsn.node['path'], jsn.vObj['_path']);
     if jsn.has('representation') or jsn.has('_representation') then
@@ -7425,7 +7416,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   ComposeStringValue(json, 'path', value.pathElement, false);
   ComposeStringProps(json, 'path', value.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.representationList.Count > 0) then
@@ -8744,7 +8735,7 @@ end;
 
 procedure TFHIRJsonParser.ParseMarketingStatusProperties(jsn : TJsonObject; value : TFhirMarketingStatus);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('country') then
         value.country := ParseCodeableConcept(jsn.vObj['country']);
     if jsn.has('jurisdiction') then
@@ -8762,7 +8753,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'country', value.country);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -9078,7 +9069,7 @@ end;
 
 procedure TFHIRJsonParser.ParsePopulationProperties(jsn : TJsonObject; value : TFhirPopulation);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('ageRange') {a4} then
       value.age := ParseRange(jsn.vObj['ageRange']);
     if jsn.has('ageCodeableConcept') {a4} then
@@ -9096,7 +9087,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.age is TFhirRange) then 
     ComposeRange(json, 'ageRange', TFhirRange(value.age)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.age is TFhirCodeableConcept) then 
@@ -9128,7 +9119,7 @@ end;
 
 procedure TFHIRJsonParser.ParseProdCharacteristicProperties(jsn : TJsonObject; value : TFhirProdCharacteristic);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('height') then
         value.height := ParseQuantity(jsn.vObj['height']);
     if jsn.has('width') then
@@ -9162,7 +9153,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(json, 'height', value.height);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -9257,7 +9248,7 @@ end;
 
 procedure TFHIRJsonParser.ParseProductShelfLifeProperties(jsn : TJsonObject; value : TFhirProductShelfLife);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
     if jsn.has('type') then
         value.type_ := ParseCodeableConcept(jsn.vObj['type']);
     if jsn.has('periodDuration') {a4} then
@@ -9275,7 +9266,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', value.type_);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.period is TFhirDuration) then 
@@ -9887,7 +9878,7 @@ end;
 
 procedure TFHIRJsonParser.ParseTimingProperties(jsn : TJsonObject; value : TFhirTiming);
 begin
-    ParseBackboneElementProperties(jsn, value);
+    ParseBackboneTypeProperties(jsn, value);
       if jsn.has('event') or jsn.has('_event') then
       iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], value.eventList, parseDateTime);
     if jsn.has('repeat') then
@@ -9905,7 +9896,7 @@ begin
   if (value = nil) then
     exit;
   startElement(json, name, value, noObj);
-  ComposeBackboneElementProperties(json, value);
+  ComposeBackboneTypeProperties(json, value);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.eventList.Count > 0) then
   begin
     ext := false;

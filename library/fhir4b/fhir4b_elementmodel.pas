@@ -39,7 +39,7 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_xml, fsl_json,
   cda_narrative,
   fhir_objects,  fhir_xhtml, fhir_common, fhir_elementmodel,
-  fhir4b_base, fhir4b_types, fhir4b_resources, fhir4b_context, fhir4b_utilities, fhir4b_pathnode, fhir4b_resources_base, fhir4b_common;
+  fhir4b_base, fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_context, fhir4b_utilities, fhir4b_pathnode, fhir4b_resources_base, fhir4b_common;
 
 
 type
@@ -123,7 +123,7 @@ type
    * name, maybe a stated type, maybe an id, and either a value or child elements
    * (one or the other, but not both or neither)
    *}
-  TFHIRMMElement = class (TFHIRObject4)
+  TFHIRMMElement = class (TFHIRObject4B)
   private
     FComments : TStringList;// not relevant for production, but useful in documentation
     FName : String;

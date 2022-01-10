@@ -47,6 +47,8 @@ uses
 
 
 type
+  TFhirCanonicalResource = class;
+  TFhirMetadataResource = class;
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
   TFhirCapabilityStatementSoftware = class;
   TFhirCapabilityStatementSoftwareList = class;
@@ -366,6 +368,251 @@ type
   TFhirValueSetList = class;
 {$ENDIF FHIR_VALUESET}
 
+
+  // Common Ancestor declaration for conformance and knowledge artifact resources.
+  TFhirCanonicalResource = class abstract (TFhirDomainResource)
+  protected
+    FUrl : TFhirUri;
+    FidentifierList : TFhirIdentifierList;
+    FVersion : TFhirString;
+    FName : TFhirString;
+    FTitle : TFhirString;
+    FStatus : TFhirEnum;
+    FExperimental : TFhirBoolean;
+    FDate : TFhirDateTime;
+    FPublisher : TFhirString;
+    FcontactList : TFhirContactDetailList;
+    FDescription : TFhirMarkdown;
+    FuseContextList : TFhirUsageContextList;
+    FjurisdictionList : TFhirCodeableConceptList;
+    FPurpose : TFhirMarkdown;
+    FCopyright : TFhirMarkdown;
+    procedure SetUrl(value : TFhirUri);
+    function GetUrlST : String;
+    procedure SetUrlST(value : String);
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
+    procedure SetVersion(value : TFhirString);
+    function GetVersionST : String;
+    procedure SetVersionST(value : String);
+    procedure SetName(value : TFhirString);
+    function GetNameST : String;
+    procedure SetNameST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetStatus(value : TFhirEnum);
+    function GetStatusST : TFhirPublicationStatusEnum;
+    procedure SetStatusST(value : TFhirPublicationStatusEnum);
+    procedure SetExperimental(value : TFhirBoolean);
+    function GetExperimentalST : Boolean;
+    procedure SetExperimentalST(value : Boolean);
+    procedure SetDate(value : TFhirDateTime);
+    function GetDateST : TFslDateTime;
+    procedure SetDateST(value : TFslDateTime);
+    procedure SetPublisher(value : TFhirString);
+    function GetPublisherST : String;
+    procedure SetPublisherST(value : String);
+    function GetContactList : TFhirContactDetailList;
+    function GetHasContactList : Boolean;
+    procedure SetDescription(value : TFhirMarkdown);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    function GetUseContextList : TFhirUsageContextList;
+    function GetHasUseContextList : Boolean;
+    function GetJurisdictionList : TFhirCodeableConceptList;
+    function GetHasJurisdictionList : Boolean;
+    procedure SetPurpose(value : TFhirMarkdown);
+    function GetPurposeST : String;
+    procedure SetPurposeST(value : String);
+    procedure SetCopyright(value : TFhirMarkdown);
+    function GetCopyrightST : String;
+    procedure SetCopyrightST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirCanonicalResource; overload;
+    function Clone : TFhirCanonicalResource; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to An absolute URI that is used to identify this {{title)))) when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this {{title)))) is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the {{title)))) is stored on different servers.
+    property url : String read GetUrlST write SetUrlST;
+    // An absolute URI that is used to identify this {{title)))) when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this {{title)))) is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the {{title)))) is stored on different servers.
+    property urlElement : TFhirUri read FUrl write SetUrl;
+
+    // A formal identifier that is used to identify this {{title)))) when it is represented in other formats, or referenced in a specification, model, design or an instance.
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
+
+    // Typed access to The identifier that is used to identify this version of the {{title)))) when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the {{title)))) author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
+    property version : String read GetVersionST write SetVersionST;
+    // The identifier that is used to identify this version of the {{title)))) when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the {{title)))) author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
+    property versionElement : TFhirString read FVersion write SetVersion;
+
+    // Typed access to A natural language name identifying the {{title)))). This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property name : String read GetNameST write SetNameST;
+    // A natural language name identifying the {{title)))). This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property nameElement : TFhirString read FName write SetName;
+
+    // Typed access to A short, descriptive, user-friendly title for the {{title)))).
+    property title : String read GetTitleST write SetTitleST;
+    // A short, descriptive, user-friendly title for the {{title)))).
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // The status of this {{title)))). Enables tracking the life-cycle of the content.
+    property status : TFhirPublicationStatusEnum read GetStatusST write SetStatusST;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Typed access to A Boolean value to indicate that this {{title)))) is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    // A Boolean value to indicate that this {{title)))) is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimentalElement : TFhirBoolean read FExperimental write SetExperimental;
+
+    // Typed access to The date  (and optionally time) when the {{title)))) was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the {{title)))) changes.
+    property date : TFslDateTime read GetDateST write SetDateST;
+    // The date  (and optionally time) when the {{title)))) was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the {{title)))) changes.
+    property dateElement : TFhirDateTime read FDate write SetDate;
+
+    // Typed access to The name of the organization or individual that published the {{title)))).
+    property publisher : String read GetPublisherST write SetPublisherST;
+    // The name of the organization or individual that published the {{title)))).
+    property publisherElement : TFhirString read FPublisher write SetPublisher;
+
+    // Contact details to assist a user in finding and communicating with the publisher.
+    property contactList : TFhirContactDetailList read GetContactList;
+    property hasContactList : boolean read GetHasContactList;
+
+    // Typed access to A free text natural language description of the {{title)))) from a consumer's perspective.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A free text natural language description of the {{title)))) from a consumer's perspective.
+    property descriptionElement : TFhirMarkdown read FDescription write SetDescription;
+
+    // The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate {{title)))) instances.
+    property useContextList : TFhirUsageContextList read GetUseContextList;
+    property hasUseContextList : boolean read GetHasUseContextList;
+
+    // A legal or geographic region in which the {{title)))) is intended to be used.
+    property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
+    property hasJurisdictionList : boolean read GetHasJurisdictionList;
+
+    // Typed access to Explanation of why this {{title)))) is needed and why it has been designed as it has.
+    property purpose : String read GetPurposeST write SetPurposeST;
+    // Explanation of why this {{title)))) is needed and why it has been designed as it has.
+    property purposeElement : TFhirMarkdown read FPurpose write SetPurpose;
+
+    // Typed access to A copyright statement relating to the {{title)))) and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the {{title)))).
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    // A copyright statement relating to the {{title)))) and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the {{title)))).
+    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
+
+  end;
+
+  // Common Ancestor declaration for conformance and knowledge artifact resources.
+  TFhirMetadataResource = class abstract (TFhirCanonicalResource)
+  protected
+    FApprovalDate : TFhirDate;
+    FLastReviewDate : TFhirDate;
+    FEffectivePeriod : TFhirPeriod;
+    FtopicList : TFhirCodeableConceptList;
+    FauthorList : TFhirContactDetailList;
+    FeditorList : TFhirContactDetailList;
+    FreviewerList : TFhirContactDetailList;
+    FendorserList : TFhirContactDetailList;
+    FrelatedArtifactList : TFhirRelatedArtifactList;
+    procedure SetApprovalDate(value : TFhirDate);
+    function GetApprovalDateST : TFslDateTime;
+    procedure SetApprovalDateST(value : TFslDateTime);
+    procedure SetLastReviewDate(value : TFhirDate);
+    function GetLastReviewDateST : TFslDateTime;
+    procedure SetLastReviewDateST(value : TFslDateTime);
+    procedure SetEffectivePeriod(value : TFhirPeriod);
+    function GetTopicList : TFhirCodeableConceptList;
+    function GetHasTopicList : Boolean;
+    function GetAuthorList : TFhirContactDetailList;
+    function GetHasAuthorList : Boolean;
+    function GetEditorList : TFhirContactDetailList;
+    function GetHasEditorList : Boolean;
+    function GetReviewerList : TFhirContactDetailList;
+    function GetHasReviewerList : Boolean;
+    function GetEndorserList : TFhirContactDetailList;
+    function GetHasEndorserList : Boolean;
+    function GetRelatedArtifactList : TFhirRelatedArtifactList;
+    function GetHasRelatedArtifactList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirMetadataResource; overload;
+    function Clone : TFhirMetadataResource; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDate : TFslDateTime read GetApprovalDateST write SetApprovalDateST;
+    // The date on which the resource content was approved by the publisher. Approval happens once when the content is officially approved for usage.
+    property approvalDateElement : TFhirDate read FApprovalDate write SetApprovalDate;
+
+    // Typed access to The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDate : TFslDateTime read GetLastReviewDateST write SetLastReviewDateST;
+    // The date on which the resource content was last reviewed. Review happens periodically after approval but does not change the original approval date.
+    property lastReviewDateElement : TFhirDate read FLastReviewDate write SetLastReviewDate;
+
+    // Typed access to The period during which the {{title)))) content was or is planned to be in active use. (defined for API consistency)
+    property effectivePeriod : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+    // The period during which the {{title)))) content was or is planned to be in active use.
+    property effectivePeriodElement : TFhirPeriod read FEffectivePeriod write SetEffectivePeriod;
+
+    // Descriptive topics related to the content of the library. Topics provide a high-level categorization of the library that can be useful for filtering and searching.
+    property topicList : TFhirCodeableConceptList read GetTopicList;
+    property hasTopicList : boolean read GetHasTopicList;
+
+    // An individiual or organization primarily involved in the creation and maintenance of the {{title)))).
+    property authorList : TFhirContactDetailList read GetAuthorList;
+    property hasAuthorList : boolean read GetHasAuthorList;
+
+    // An individual or organization primarily responsible for internal coherence of the {{title)))).
+    property editorList : TFhirContactDetailList read GetEditorList;
+    property hasEditorList : boolean read GetHasEditorList;
+
+    // An individual or organization primarily responsible for review of some aspect of the {{title)))).
+    property reviewerList : TFhirContactDetailList read GetReviewerList;
+    property hasReviewerList : boolean read GetHasReviewerList;
+
+    // An individual or organization responsible for officially endorsing the {{title)))) for use in some setting.
+    property endorserList : TFhirContactDetailList read GetEndorserList;
+    property hasEndorserList : boolean read GetHasEndorserList;
+
+    // Related artifacts such as additional documentation, justification, dependencies, bibliographic references, and predecessor and successor artifacts.
+    property relatedArtifactList : TFhirRelatedArtifactList read GetRelatedArtifactList;
+    property hasRelatedArtifactList : boolean read GetHasRelatedArtifactList;
+
+  end;
 
 
 
@@ -1936,22 +2183,8 @@ type
   End;
 
   // A Capability Statement documents a set of capabilities (behaviors) of a FHIR Server for a particular version of FHIR that may be used as a statement of actual server functionality or a statement of required or desired server implementation.
-  TFhirCapabilityStatement = class (TFhirDomainResource)
+  TFhirCapabilityStatement = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FKind : TFhirEnum;
     FinstantiatesList : TFhirCanonicalList;
     FimportsList : TFhirCanonicalList;
@@ -2814,23 +3047,8 @@ type
   End;
 
   // The CodeSystem resource is used to declare the existence of and describe a code system or code system supplement and its key properties, and optionally define a part or all of its content.
-  TFhirCodeSystem = class (TFhirDomainResource)
+  TFhirCodeSystem = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FCaseSensitive : TFhirBoolean;
     FValueSet : TFhirCanonical;
     FHierarchyMeaning : TFhirEnum;
@@ -3228,19 +3446,8 @@ type
   End;
 
   // A compartment definition that defines how resources are accessed on a server.
-  TFhirCompartmentDefinition = class (TFhirDomainResource)
+  TFhirCompartmentDefinition = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FPurpose : TFhirMarkdown;
     FCode : TFhirEnum;
     FSearch : TFhirBoolean;
     FresourceList : TFhirCompartmentDefinitionResourceList;
@@ -4054,30 +4261,14 @@ type
   End;
 
   // A statement of relationships from one set of concepts to one or more other concepts - either concepts in code systems, or data element/data element concepts, or classes in class models.
-  TFhirConceptMap = class (TFhirDomainResource)
+  TFhirConceptMap = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FIdentifier : TFhirIdentifier;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FSource : TFhirDataType;
     FTarget : TFhirDataType;
     FgroupList : TFhirConceptMapGroupList;
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
     procedure SetUrlST(value : String);
-    procedure SetIdentifier(value : TFhirIdentifier);
     procedure SetVersion(value : TFhirString);
     function GetVersionST : String;
     procedure SetVersionST(value : String);
@@ -4118,7 +4309,11 @@ type
     procedure SetTarget(value : TFhirDataType);
     function GetGroupList : TFhirConceptMapGroupList;
     function GetHasGroupList : Boolean;
-  
+
+    function GetIdentifier : TFHIRIdentifier;
+    procedure SetIdentifier(value : TFHIRIdentifier);
+    function GetHasIdentifier : boolean;
+
     function GetResourceType : TFhirResourceType; override;
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -4146,10 +4341,9 @@ type
     // An absolute URI that is used to identify this concept map when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this concept map is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the concept map is stored on different servers.
     property urlElement : TFhirUri read FUrl write SetUrl;
 
-    // Typed access to A formal identifier that is used to identify this concept map when it is represented in other formats, or referenced in a specification, model, design or an instance. (defined for API consistency)
-    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
     // A formal identifier that is used to identify this concept map when it is represented in other formats, or referenced in a specification, model, design or an instance.
-    property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
+    property identifier : TFhirIdentifier read GetIdentifier write SetIdentifier;
+    property hasIdentifier : boolean read GetHasIdentifier;
 
     // Typed access to The identifier that is used to identify this version of the concept map when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the concept map author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
     property version : String read GetVersionST write SetVersionST;
@@ -4289,35 +4483,11 @@ type
 {$ENDIF FHIR_CONCEPTMAP}
 {$IFDEF FHIR_EVENTDEFINITION}
   // The EventDefinition resource provides a reusable description of when a particular event can occur.
-  TFhirEventDefinition = class (TFhirDomainResource)
+  TFhirEventDefinition = class (TFhirMetadataResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
     FSubtitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
     FSubject : TFhirDataType;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
     FUsage : TFhirString;
-    FCopyright : TFhirMarkdown;
-    FApprovalDate : TFhirDate;
-    FLastReviewDate : TFhirDate;
-    FEffectivePeriod : TFhirPeriod;
-    FtopicList : TFhirCodeableConceptList;
-    FauthorList : TFhirContactDetailList;
-    FeditorList : TFhirContactDetailList;
-    FreviewerList : TFhirContactDetailList;
-    FendorserList : TFhirContactDetailList;
-    FrelatedArtifactList : TFhirRelatedArtifactList;
     FtriggerList : TFhirTriggerDefinitionList;
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
@@ -5586,21 +5756,8 @@ type
   End;
 
   // Example of workflow instance.
-  TFhirExampleScenario = class (TFhirDomainResource)
+  TFhirExampleScenario = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FCopyright : TFhirMarkdown;
-    FPurpose : TFhirMarkdown;
     FactorList : TFhirExampleScenarioActorList;
     FinstanceList : TFhirExampleScenarioInstanceList;
     FprocessList : TFhirExampleScenarioProcessList;
@@ -5634,12 +5791,12 @@ type
     function GetHasUseContextList : Boolean;
     function GetJurisdictionList : TFhirCodeableConceptList;
     function GetHasJurisdictionList : Boolean;
-    procedure SetCopyright(value : TFhirMarkdown);
-    function GetCopyrightST : String;
-    procedure SetCopyrightST(value : String);
     procedure SetPurpose(value : TFhirMarkdown);
     function GetPurposeST : String;
     procedure SetPurposeST(value : String);
+    procedure SetCopyright(value : TFhirMarkdown);
+    function GetCopyrightST : String;
+    procedure SetCopyrightST(value : String);
     function GetActorList : TFhirExampleScenarioActorList;
     function GetHasActorList : Boolean;
     function GetInstanceList : TFhirExampleScenarioInstanceList;
@@ -5721,15 +5878,15 @@ type
     property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
     property hasJurisdictionList : boolean read GetHasJurisdictionList;
 
-    // Typed access to A copyright statement relating to the example scenario and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the example scenario.
-    property copyright : String read GetCopyrightST write SetCopyrightST;
-    // A copyright statement relating to the example scenario and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the example scenario.
-    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
-
     // Typed access to What the example scenario resource is created for. This should not be used to show the business purpose of the scenario itself, but the purpose of documenting a scenario.
     property purpose : String read GetPurposeST write SetPurposeST;
     // What the example scenario resource is created for. This should not be used to show the business purpose of the scenario itself, but the purpose of documenting a scenario.
     property purposeElement : TFhirMarkdown read FPurpose write SetPurpose;
+
+    // Typed access to A copyright statement relating to the example scenario and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the example scenario.
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    // A copyright statement relating to the example scenario and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the example scenario.
+    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
 
     // Actor participating in the resource.
     property actorList : TFhirExampleScenarioActorList read GetActorList;
@@ -6199,20 +6356,8 @@ type
   End;
 
   // A formal computable definition of a graph of resources - that is, a coherent set of resources that form a graph by following references. The Graph Definition resource defines a set and makes rules about the set.
-  TFhirGraphDefinition = class (TFhirDomainResource)
+  TFhirGraphDefinition = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
     FStart : TFhirEnum;
     FProfile : TFhirCanonical;
     Flink_List : TFhirGraphDefinitionLinkList;
@@ -6860,8 +7005,6 @@ type
     procedure SetReference(value : TFhirReference);
     function GetFhirVersion : TFhirEnumList;
     function GetHasFhirVersion : Boolean;
-    function GetFhirVersionST : TFhirFHIRVersionEnumList;
-    procedure SetFhirVersionST(value : TFhirFHIRVersionEnumList);
     procedure SetName(value : TFhirString);
     function GetNameST : String;
     procedure SetNameST(value : String);
@@ -6899,8 +7042,7 @@ type
     // Where this resource is found.
     property referenceElement : TFhirReference read FReference write SetReference;
 
-    // Indicates the FHIR Version(s) this artifact is intended to apply to. If no versions are specified, the resource is assumed to apply to all the versions stated in ImplementationGuide.fhirVersion.
-    property fhirVersion : TFhirFHIRVersionEnumList read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : TFhirEnumList read GetFhirVersion;
     property fhirVersionList : TFhirEnumList read GetFhirVersion;
     property hasFhirVersion : boolean read GetHasFhirVersion;
     // Typed access to A human assigned name for the resource. All resources SHOULD have a name, but the name may be extracted from the resource (e.g. ValueSet.name).
@@ -7654,21 +7796,8 @@ type
   End;
 
   // A set of rules of how a particular interoperability or standards problem is solved - typically through the use of FHIR resources. This resource is used to gather all the parts of an implementation guide into a logical whole and to publish a computable definition of all the parts.
-  TFhirImplementationGuide = class (TFhirDomainResource)
+  TFhirImplementationGuide = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FCopyright : TFhirMarkdown;
     FPackageId : TFhirId;
     FLicense : TFhirEnum;
     FFhirVersion : TFhirEnumList;
@@ -7720,8 +7849,6 @@ type
     procedure SetLicenseST(value : TFhirSPDXLicenseEnum);
     function GetFhirVersion : TFhirEnumList;
     function GetHasFhirVersion : Boolean;
-    function GetFhirVersionST : TFhirFHIRVersionEnumList;
-    procedure SetFhirVersionST(value : TFhirFHIRVersionEnumList);
     function GetDependsOnList : TFhirImplementationGuideDependsOnList;
     function GetHasDependsOnList : Boolean;
     function GetGlobalList : TFhirImplementationGuideGlobalList;
@@ -7821,8 +7948,7 @@ type
     property license : TFhirSPDXLicenseEnum read GetLicenseST write SetLicenseST;
     property licenseElement : TFhirEnum read FLicense write SetLicense;
 
-    // The version(s) of the FHIR specification that this ImplementationGuide targets - e.g. describes how to use. The value of this element is the formal version of the specification, without the revision number, e.g. [publication].[major].[minor], which is 4.3.0-snapshot1. for this version.
-    property fhirVersion : TFhirFHIRVersionEnumList read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : TFhirEnumList read GetFhirVersion;
     property fhirVersionList : TFhirEnumList read GetFhirVersion;
     property hasFhirVersion : boolean read GetHasFhirVersion;
     // Another implementation guide that this implementation depends on. Typically, an implementation guide uses value sets, profiles etc.defined in other implementation guides.
@@ -7906,36 +8032,12 @@ type
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 {$IFDEF FHIR_LIBRARY}
   // The Library resource is a general-purpose container for knowledge asset definitions. It can be used to describe and expose existing knowledge assets such as logic libraries and information model descriptions, as well as to describe a collection of knowledge assets.
-  TFhirLibrary = class (TFhirDomainResource)
+  TFhirLibrary = class (TFhirMetadataResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
     FSubtitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
     FType_ : TFhirCodeableConcept;
     FSubject : TFhirDataType;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
     FUsage : TFhirString;
-    FCopyright : TFhirMarkdown;
-    FApprovalDate : TFhirDate;
-    FLastReviewDate : TFhirDate;
-    FEffectivePeriod : TFhirPeriod;
-    FtopicList : TFhirCodeableConceptList;
-    FauthorList : TFhirContactDetailList;
-    FeditorList : TFhirContactDetailList;
-    FreviewerList : TFhirContactDetailList;
-    FendorserList : TFhirContactDetailList;
-    FrelatedArtifactList : TFhirRelatedArtifactList;
     FparameterList : TFhirParameterDefinitionList;
     FdataRequirementList : TFhirDataRequirementList;
     FcontentList : TFhirAttachmentList;
@@ -8801,35 +8903,12 @@ type
   End;
 
   // The Measure resource provides the definition of a quality measure.
-  TFhirMeasure = class (TFhirDomainResource)
+  TFhirMeasure = class (TFhirMetadataResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
     FSubtitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
     FSubject : TFhirDataType;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
+    FBasis : TFhirEnum;
     FUsage : TFhirString;
-    FCopyright : TFhirMarkdown;
-    FApprovalDate : TFhirDate;
-    FLastReviewDate : TFhirDate;
-    FEffectivePeriod : TFhirPeriod;
-    FtopicList : TFhirCodeableConceptList;
-    FauthorList : TFhirContactDetailList;
-    FeditorList : TFhirContactDetailList;
-    FreviewerList : TFhirContactDetailList;
-    FendorserList : TFhirContactDetailList;
-    FrelatedArtifactList : TFhirRelatedArtifactList;
     Flibrary_List : TFhirCanonicalList;
     FDisclaimer : TFhirMarkdown;
     FScoring : TFhirCodeableConcept;
@@ -9440,24 +9519,9 @@ type
   End;
 
   // Defines the characteristics of a message that can be shared between systems, including the type of event that initiates the message, the content to be transmitted and what response(s), if any, are permitted.
-  TFhirMessageDefinition = class (TFhirDomainResource)
+  TFhirMessageDefinition = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
     FreplacesList : TFhirCanonicalList;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FBase : TFhirCanonical;
     FparentList : TFhirCanonicalList;
     FEvent : TFhirDataType;
@@ -9848,19 +9912,11 @@ type
   End;
 
   // A curated namespace that issues unique symbols within that namespace for the identification of concepts, people, devices, etc.  Represents a "System" used within the Identifier and Coding data types.
-  TFhirNamingSystem = class (TFhirDomainResource)
+  TFhirNamingSystem = class (TFhirCanonicalResource)
   protected
-    FName : TFhirString;
-    FStatus : TFhirEnum;
     FKind : TFhirEnum;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
     FResponsible : TFhirString;
     FType_ : TFhirCodeableConcept;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
     FUsage : TFhirString;
     FuniqueIdList : TFhirNamingSystemUniqueIdList;
     procedure SetName(value : TFhirString);
@@ -10967,22 +11023,9 @@ type
   End;
 
   // A formal computable definition of an operation (on the RESTful interface) or a named query (using the search interaction).
-  TFhirOperationDefinition = class (TFhirDomainResource)
+  TFhirOperationDefinition = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
     FKind : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
     FAffectsState : TFhirBoolean;
     FCode : TFhirCode;
     FComment : TFhirMarkdown;
@@ -11793,28 +11836,10 @@ type
   End;
 
   // A structured set of questions intended to guide the collection of answers from end-users. Questionnaires provide detailed control over order, presentation, phraseology and grouping to allow coherent, consistent data collection.
-  TFhirQuestionnaire = class (TFhirDomainResource)
+  TFhirQuestionnaire = class (TFhirMetadataResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
     FderivedFromList : TFhirCanonicalList;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
     FSubjectType : TFhirEnumList;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
-    FApprovalDate : TFhirDate;
-    FLastReviewDate : TFhirDate;
-    FEffectivePeriod : TFhirPeriod;
     FcodeList : TFhirCodingList;
     FitemList : TFhirQuestionnaireItemList;
     procedure SetUrl(value : TFhirUri);
@@ -12162,21 +12187,9 @@ type
   End;
 
   // A search parameter that defines a named search item that can be used to search/filter on a resource.
-  TFhirSearchParameter = class (TFhirDomainResource)
+  TFhirSearchParameter = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
     FDerivedFrom : TFhirCanonical;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
     FCode : TFhirCode;
     FBase : TFhirEnumList;
     FType_ : TFhirEnum;
@@ -13502,23 +13515,8 @@ type
   End;
 
   // A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.
-  TFhirStructureDefinition = class (TFhirDomainResource)
+  TFhirStructureDefinition = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FkeywordList : TFhirCodingList;
     FFhirVersion : TFhirEnum;
     FmappingList : TFhirStructureDefinitionMappingList;
@@ -14841,23 +14839,8 @@ type
   End;
 
   // A Map of relationships between 2 structures that can be used to transform data.
-  TFhirStructureMap = class (TFhirDomainResource)
+  TFhirStructureMap = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FstructureList : TFhirStructureMapStructureList;
     FimportList : TFhirCanonicalList;
     FgroupList : TFhirStructureMapGroupList;
@@ -16139,22 +16122,8 @@ type
   End;
 
   // A TerminologyCapabilities resource documents a set of capabilities (behaviors) of a FHIR Terminology Server that may be used as a statement of actual server functionality or a statement of required or desired server implementation.
-  TFhirTerminologyCapabilities = class (TFhirDomainResource)
+  TFhirTerminologyCapabilities = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FKind : TFhirEnum;
     FSoftware : TFhirTerminologyCapabilitiesSoftware;
     FImplementation_ : TFhirTerminologyCapabilitiesImplementation;
@@ -18432,23 +18401,8 @@ type
   End;
 
   // A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification.
-  TFhirTestScript = class (TFhirDomainResource)
+  TFhirTestScript = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FIdentifier : TFhirIdentifier;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     ForiginList : TFhirTestScriptOriginList;
     FdestinationList : TFhirTestScriptDestinationList;
     FMetadata : TFhirTestScriptMetadata;
@@ -18461,7 +18415,6 @@ type
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
     procedure SetUrlST(value : String);
-    procedure SetIdentifier(value : TFhirIdentifier);
     procedure SetVersion(value : TFhirString);
     function GetVersionST : String;
     procedure SetVersionST(value : String);
@@ -18513,7 +18466,11 @@ type
     function GetTestList : TFhirTestScriptTestList;
     function GetHasTestList : Boolean;
     procedure SetTeardown(value : TFhirTestScriptTeardown);
-  
+
+    function GetIdentifier : TFHIRIdentifier;
+    procedure SetIdentifier(value : TFHIRIdentifier);
+    function GetHasIdentifier : boolean;
+
     function GetResourceType : TFhirResourceType; override;
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -18541,11 +18498,6 @@ type
     // An absolute URI that is used to identify this test script when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this test script is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the test script is stored on different servers.
     property urlElement : TFhirUri read FUrl write SetUrl;
 
-    // Typed access to A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance. (defined for API consistency)
-    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
-    // A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance.
-    property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
-
     // Typed access to The identifier that is used to identify this version of the test script when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the test script author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
     property version : String read GetVersionST write SetVersionST;
     // The identifier that is used to identify this version of the test script when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the test script author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
@@ -18555,6 +18507,10 @@ type
     property name : String read GetNameST write SetNameST;
     // A natural language name identifying the test script. This name should be usable as an identifier for the module by machine processing applications such as code generation.
     property nameElement : TFhirString read FName write SetName;
+
+    // A formal identifier that is used to identify this concept map when it is represented in other formats, or referenced in a specification, model, design or an instance.
+    property identifier : TFhirIdentifier read GetIdentifier write SetIdentifier;
+    property hasIdentifier : boolean read GetHasIdentifier;
 
     // Typed access to A short, descriptive, user-friendly title for the test script.
     property title : String read GetTitleST write SetTitleST;
@@ -19670,24 +19626,9 @@ type
   End;
 
   // A ValueSet resource instance specifies a set of codes drawn from one or more code systems, intended for use in a particular context. Value sets link between [CodeSystem](codesystem.html) definitions and their use in [coded elements](terminologies.html).
-  TFhirValueSet = class (TFhirDomainResource)
+  TFhirValueSet = class (TFhirCanonicalResource)
   protected
-    FUrl : TFhirUri;
-    FidentifierList : TFhirIdentifierList;
-    FVersion : TFhirString;
-    FName : TFhirString;
-    FTitle : TFhirString;
-    FStatus : TFhirEnum;
-    FExperimental : TFhirBoolean;
-    FDate : TFhirDateTime;
-    FPublisher : TFhirString;
-    FcontactList : TFhirContactDetailList;
-    FDescription : TFhirMarkdown;
-    FuseContextList : TFhirUsageContextList;
-    FjurisdictionList : TFhirCodeableConceptList;
     FImmutable : TFhirBoolean;
-    FPurpose : TFhirMarkdown;
-    FCopyright : TFhirMarkdown;
     FCompose : TFhirValueSetCompose;
     FExpansion : TFhirValueSetExpansion;
     procedure SetUrl(value : TFhirUri);
@@ -19912,6 +19853,1159 @@ implementation
 
 uses
   fhir4b_utilities;
+
+{ TFhirCanonicalResource }
+
+constructor TFhirCanonicalResource.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCanonicalResource.Destroy;
+begin
+  FUrl.free;
+  FIdentifierList.Free;
+  FVersion.free;
+  FName.free;
+  FTitle.free;
+  FStatus.free;
+  FExperimental.free;
+  FDate.free;
+  FPublisher.free;
+  FContactList.Free;
+  FDescription.free;
+  FUseContextList.Free;
+  FJurisdictionList.Free;
+  FPurpose.free;
+  FCopyright.free;
+  inherited;
+end;
+
+procedure TFhirCanonicalResource.Assign(oSource : TFslObject);
+begin
+  inherited;
+  urlElement := TFhirCanonicalResource(oSource).urlElement.Clone;
+  if (TFhirCanonicalResource(oSource).FIdentifierList = nil) then
+  begin
+    FIdentifierList.free;
+    FIdentifierList := nil;
+  end
+  else
+  begin
+    if FIdentifierList = nil then
+      FIdentifierList := TFhirIdentifierList.Create;
+    FIdentifierList.Assign(TFhirCanonicalResource(oSource).FIdentifierList);
+  end;
+  versionElement := TFhirCanonicalResource(oSource).versionElement.Clone;
+  nameElement := TFhirCanonicalResource(oSource).nameElement.Clone;
+  titleElement := TFhirCanonicalResource(oSource).titleElement.Clone;
+  statusElement := TFhirCanonicalResource(oSource).statusElement.Clone;
+  experimentalElement := TFhirCanonicalResource(oSource).experimentalElement.Clone;
+  dateElement := TFhirCanonicalResource(oSource).dateElement.Clone;
+  publisherElement := TFhirCanonicalResource(oSource).publisherElement.Clone;
+  if (TFhirCanonicalResource(oSource).FContactList = nil) then
+  begin
+    FContactList.free;
+    FContactList := nil;
+  end
+  else
+  begin
+    if FContactList = nil then
+      FContactList := TFhirContactDetailList.Create;
+    FContactList.Assign(TFhirCanonicalResource(oSource).FContactList);
+  end;
+  descriptionElement := TFhirCanonicalResource(oSource).descriptionElement.Clone;
+  if (TFhirCanonicalResource(oSource).FUseContextList = nil) then
+  begin
+    FUseContextList.free;
+    FUseContextList := nil;
+  end
+  else
+  begin
+    if FUseContextList = nil then
+      FUseContextList := TFhirUsageContextList.Create;
+    FUseContextList.Assign(TFhirCanonicalResource(oSource).FUseContextList);
+  end;
+  if (TFhirCanonicalResource(oSource).FJurisdictionList = nil) then
+  begin
+    FJurisdictionList.free;
+    FJurisdictionList := nil;
+  end
+  else
+  begin
+    if FJurisdictionList = nil then
+      FJurisdictionList := TFhirCodeableConceptList.Create;
+    FJurisdictionList.Assign(TFhirCanonicalResource(oSource).FJurisdictionList);
+  end;
+  purposeElement := TFhirCanonicalResource(oSource).purposeElement.Clone;
+  copyrightElement := TFhirCanonicalResource(oSource).copyrightElement.Clone;
+end;
+
+procedure TFhirCanonicalResource.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'url') Then
+     list.add(self.link, 'url', FUrl.Link);
+  if (child_name = 'identifier') Then
+    list.addAll(self, 'identifier', FIdentifierList);
+  if (child_name = 'version') Then
+     list.add(self.link, 'version', FVersion.Link);
+  if (child_name = 'name') Then
+     list.add(self.link, 'name', FName.Link);
+  if (child_name = 'title') Then
+     list.add(self.link, 'title', FTitle.Link);
+  if (child_name = 'status') Then
+     list.add(self.link, 'status', FStatus.Link);
+  if (child_name = 'experimental') Then
+     list.add(self.link, 'experimental', FExperimental.Link);
+  if (child_name = 'date') Then
+     list.add(self.link, 'date', FDate.Link);
+  if (child_name = 'publisher') Then
+     list.add(self.link, 'publisher', FPublisher.Link);
+  if (child_name = 'contact') Then
+    list.addAll(self, 'contact', FContactList);
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'useContext') Then
+    list.addAll(self, 'useContext', FUseContextList);
+  if (child_name = 'jurisdiction') Then
+    list.addAll(self, 'jurisdiction', FJurisdictionList);
+  if (child_name = 'purpose') Then
+     list.add(self.link, 'purpose', FPurpose.Link);
+  if (child_name = 'copyright') Then
+     list.add(self.link, 'copyright', FCopyright.Link);
+end;
+
+procedure TFhirCanonicalResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
+  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
+  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
+  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
+  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link));
+  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
+  oList.add(TFHIRProperty.create(self, 'copyright', 'markdown', false, TFhirMarkdown, FCopyright.Link));
+end;
+
+function TFhirCanonicalResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'url') then
+  begin
+    UrlElement := asUri(propValue);
+    result := propValue;
+  end
+  else if (propName = 'identifier') then
+  begin
+    IdentifierList.add(propValue as TFhirIdentifier);
+    result := propValue;
+  end
+  else if (propName = 'version') then
+  begin
+    VersionElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'name') then
+  begin
+    NameElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'title') then
+  begin
+    TitleElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'status') then
+  begin
+    StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'experimental') then
+  begin
+    ExperimentalElement := asBoolean(propValue);
+    result := propValue;
+  end
+  else if (propName = 'date') then
+  begin
+    DateElement := asDateTime(propValue);
+    result := propValue;
+  end
+  else if (propName = 'publisher') then
+  begin
+    PublisherElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'contact') then
+  begin
+    ContactList.add(propValue as TFhirContactDetail);
+    result := propValue;
+  end
+  else if (propName = 'description') then
+  begin
+    DescriptionElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'useContext') then
+  begin
+    UseContextList.add(propValue as TFhirUsageContext);
+    result := propValue;
+  end
+  else if (propName = 'jurisdiction') then
+  begin
+    JurisdictionList.add(propValue as TFhirCodeableConcept);
+    result := propValue;
+  end
+  else if (propName = 'purpose') then
+  begin
+    PurposeElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'copyright') then
+  begin
+    CopyrightElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else
+    result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCanonicalResource.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail)
+  else if (propName = 'useContext') then UseContextList.insertItem(index, propValue as TFhirUsageContext)
+  else if (propName = 'jurisdiction') then JurisdictionList.insertItem(index, propValue as TFhirCodeableConcept)
+  else inherited;
+end;
+
+function TFhirCanonicalResource.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'url') then result := TFhirUri.create()
+  else if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'version') then result := TFhirString.create()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'title') then result := TFhirString.create()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
+  else if (propName = 'experimental') then result := TFhirBoolean.create()
+  else if (propName = 'date') then result := TFhirDateTime.create()
+  else if (propName = 'publisher') then result := TFhirString.create()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'description') then result := TFhirMarkdown.create()
+  else if (propName = 'useContext') then result := UseContextList.new()
+  else if (propName = 'jurisdiction') then result := JurisdictionList.new()
+  else if (propName = 'purpose') then result := TFhirMarkdown.create()
+  else if (propName = 'copyright') then result := TFhirMarkdown.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCanonicalResource.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'url') then result := 'uri'
+  else if (propName = 'identifier') then result := 'Identifier'
+  else if (propName = 'version') then result := 'string'
+  else if (propName = 'name') then result := 'string'
+  else if (propName = 'title') then result := 'string'
+  else if (propName = 'status') then result := 'code'
+  else if (propName = 'experimental') then result := 'boolean'
+  else if (propName = 'date') then result := 'dateTime'
+  else if (propName = 'publisher') then result := 'string'
+  else if (propName = 'contact') then result := 'ContactDetail'
+  else if (propName = 'description') then result := 'markdown'
+  else if (propName = 'useContext') then result := 'UsageContext'
+  else if (propName = 'jurisdiction') then result := 'CodeableConcept'
+  else if (propName = 'purpose') then result := 'markdown'
+  else if (propName = 'copyright') then result := 'markdown'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCanonicalResource.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'url') then UrlElement := nil
+  else if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
+  else if (propName = 'version') then VersionElement := nil
+  else if (propName = 'name') then NameElement := nil
+  else if (propName = 'title') then TitleElement := nil
+  else if (propName = 'status') then StatusElement := nil
+  else if (propName = 'experimental') then ExperimentalElement := nil
+  else if (propName = 'date') then DateElement := nil
+  else if (propName = 'publisher') then PublisherElement := nil
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
+  else if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
+  else if (propName = 'jurisdiction') then deletePropertyValue('jurisdiction', JurisdictionList, value)
+  else if (propName = 'purpose') then PurposeElement := nil
+  else if (propName = 'copyright') then CopyrightElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCanonicalResource.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'url') then UrlElement := asUri(new)
+  else if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'version') then VersionElement := asString(new)
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'title') then TitleElement := asString(new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
+  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
+  else if (propName = 'date') then DateElement := asDateTime(new)
+  else if (propName = 'publisher') then PublisherElement := asString(new)
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
+  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
+  else if (propName = 'jurisdiction') then replacePropertyValue('jurisdiction', JurisdictionList, existing, new)
+  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
+  else if (propName = 'copyright') then CopyrightElement := asMarkdown(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCanonicalResource.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'useContext') then UseContextList.move(source, destination)
+  else if (propName = 'jurisdiction') then JurisdictionList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCanonicalResource.equals(other : TObject) : boolean; 
+var
+  o : TFhirCanonicalResource;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCanonicalResource)) then
+    result := false
+  else
+  begin
+    o := TFhirCanonicalResource(other);
+    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(identifierList, o.identifierList, true) and 
+      compareDeep(versionElement, o.versionElement, true) and compareDeep(nameElement, o.nameElement, true) and 
+      compareDeep(titleElement, o.titleElement, true) and compareDeep(statusElement, o.statusElement, true) and 
+      compareDeep(experimentalElement, o.experimentalElement, true) and compareDeep(dateElement, o.dateElement, true) and 
+      compareDeep(publisherElement, o.publisherElement, true) and compareDeep(contactList, o.contactList, true) and 
+      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(useContextList, o.useContextList, true) and 
+      compareDeep(jurisdictionList, o.jurisdictionList, true) and compareDeep(purposeElement, o.purposeElement, true) and 
+      compareDeep(copyrightElement, o.copyrightElement, true);
+  end;
+end;
+
+function TFhirCanonicalResource.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FidentifierList) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright);
+end;
+
+procedure TFhirCanonicalResource.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('url');
+  fields.add('identifier');
+  fields.add('version');
+  fields.add('name');
+  fields.add('title');
+  fields.add('status');
+  fields.add('experimental');
+  fields.add('date');
+  fields.add('publisher');
+  fields.add('contact');
+  fields.add('description');
+  fields.add('useContext');
+  fields.add('jurisdiction');
+  fields.add('purpose');
+  fields.add('copyright');
+end;
+
+function TFhirCanonicalResource.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifierList.sizeInBytes(magic));
+  inc(result, FContactList.sizeInBytes(magic));
+  inc(result, FUseContextList.sizeInBytes(magic));
+  inc(result, FJurisdictionList.sizeInBytes(magic));
+end;
+
+function TFhirCanonicalResource.Link : TFhirCanonicalResource;
+begin
+  result := TFhirCanonicalResource(inherited Link);
+end;
+
+function TFhirCanonicalResource.Clone : TFhirCanonicalResource;
+begin
+  result := TFhirCanonicalResource(inherited Clone);
+end;
+
+procedure TFhirCanonicalResource.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+function TFhirCanonicalResource.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirCanonicalResource.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+function TFhirCanonicalResource.GetIdentifierList : TFhirIdentifierList;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
+end;
+
+function TFhirCanonicalResource.GetHasIdentifierList : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
+end;
+
+procedure TFhirCanonicalResource.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value;
+end;
+
+function TFhirCanonicalResource.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirCanonicalResource.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirCanonicalResource.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirCanonicalResource.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirCanonicalResource.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirCanonicalResource.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value;
+end;
+
+function TFhirCanonicalResource.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirCanonicalResource.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirCanonicalResource.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirCanonicalResource.GetStatusST : TFhirPublicationStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirPublicationStatusEnum(0)
+  else
+    result := TFhirPublicationStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirPublicationStatusEnum, FStatus.value));
+end;
+
+procedure TFhirCanonicalResource.SetStatusST(value : TFhirPublicationStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+end;
+
+procedure TFhirCanonicalResource.SetExperimental(value : TFhirBoolean);
+begin
+  FExperimental.free;
+  FExperimental := value;
+end;
+
+function TFhirCanonicalResource.GetExperimentalST : Boolean;
+begin
+  if FExperimental = nil then
+    result := false
+  else
+    result := FExperimental.value;
+end;
+
+procedure TFhirCanonicalResource.SetExperimentalST(value : Boolean);
+begin
+  if FExperimental = nil then
+    FExperimental := TFhirBoolean.create;
+  FExperimental.value := value
+end;
+
+procedure TFhirCanonicalResource.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+function TFhirCanonicalResource.GetDateST : TFslDateTime;
+begin
+  if FDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FDate.value;
+end;
+
+procedure TFhirCanonicalResource.SetDateST(value : TFslDateTime);
+begin
+  if FDate = nil then
+    FDate := TFhirDateTime.create;
+  FDate.value := value
+end;
+
+procedure TFhirCanonicalResource.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value;
+end;
+
+function TFhirCanonicalResource.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := FPublisher.value;
+end;
+
+procedure TFhirCanonicalResource.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+function TFhirCanonicalResource.GetContactList : TFhirContactDetailList;
+begin
+  if FContactList = nil then
+    FContactList := TFhirContactDetailList.Create;
+  result := FContactList;
+end;
+
+function TFhirCanonicalResource.GetHasContactList : boolean;
+begin
+  result := (FContactList <> nil) and (FContactList.count > 0);
+end;
+
+procedure TFhirCanonicalResource.SetDescription(value : TFhirMarkdown);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+function TFhirCanonicalResource.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirCanonicalResource.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirMarkdown.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+function TFhirCanonicalResource.GetUseContextList : TFhirUsageContextList;
+begin
+  if FUseContextList = nil then
+    FUseContextList := TFhirUsageContextList.Create;
+  result := FUseContextList;
+end;
+
+function TFhirCanonicalResource.GetHasUseContextList : boolean;
+begin
+  result := (FUseContextList <> nil) and (FUseContextList.count > 0);
+end;
+
+function TFhirCanonicalResource.GetJurisdictionList : TFhirCodeableConceptList;
+begin
+  if FJurisdictionList = nil then
+    FJurisdictionList := TFhirCodeableConceptList.Create;
+  result := FJurisdictionList;
+end;
+
+function TFhirCanonicalResource.GetHasJurisdictionList : boolean;
+begin
+  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+end;
+
+procedure TFhirCanonicalResource.SetPurpose(value : TFhirMarkdown);
+begin
+  FPurpose.free;
+  FPurpose := value;
+end;
+
+function TFhirCanonicalResource.GetPurposeST : String;
+begin
+  if FPurpose = nil then
+    result := ''
+  else
+    result := FPurpose.value;
+end;
+
+procedure TFhirCanonicalResource.SetPurposeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPurpose = nil then
+      FPurpose := TFhirMarkdown.create;
+    FPurpose.value := value
+  end
+  else if FPurpose <> nil then
+    FPurpose.value := '';
+end;
+
+procedure TFhirCanonicalResource.SetCopyright(value : TFhirMarkdown);
+begin
+  FCopyright.free;
+  FCopyright := value;
+end;
+
+function TFhirCanonicalResource.GetCopyrightST : String;
+begin
+  if FCopyright = nil then
+    result := ''
+  else
+    result := FCopyright.value;
+end;
+
+procedure TFhirCanonicalResource.SetCopyrightST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCopyright = nil then
+      FCopyright := TFhirMarkdown.create;
+    FCopyright.value := value
+  end
+  else if FCopyright <> nil then
+    FCopyright.value := '';
+end;
+
+{ TFhirMetadataResource }
+
+constructor TFhirMetadataResource.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirMetadataResource.Destroy;
+begin
+  FApprovalDate.free;
+  FLastReviewDate.free;
+  FEffectivePeriod.free;
+  FTopicList.Free;
+  FAuthorList.Free;
+  FEditorList.Free;
+  FReviewerList.Free;
+  FEndorserList.Free;
+  FRelatedArtifactList.Free;
+  inherited;
+end;
+
+procedure TFhirMetadataResource.Assign(oSource : TFslObject);
+begin
+  inherited;
+  approvalDateElement := TFhirMetadataResource(oSource).approvalDateElement.Clone;
+  lastReviewDateElement := TFhirMetadataResource(oSource).lastReviewDateElement.Clone;
+  effectivePeriod := TFhirMetadataResource(oSource).effectivePeriod.Clone;
+  if (TFhirMetadataResource(oSource).FTopicList = nil) then
+  begin
+    FTopicList.free;
+    FTopicList := nil;
+  end
+  else
+  begin
+    if FTopicList = nil then
+      FTopicList := TFhirCodeableConceptList.Create;
+    FTopicList.Assign(TFhirMetadataResource(oSource).FTopicList);
+  end;
+  if (TFhirMetadataResource(oSource).FAuthorList = nil) then
+  begin
+    FAuthorList.free;
+    FAuthorList := nil;
+  end
+  else
+  begin
+    if FAuthorList = nil then
+      FAuthorList := TFhirContactDetailList.Create;
+    FAuthorList.Assign(TFhirMetadataResource(oSource).FAuthorList);
+  end;
+  if (TFhirMetadataResource(oSource).FEditorList = nil) then
+  begin
+    FEditorList.free;
+    FEditorList := nil;
+  end
+  else
+  begin
+    if FEditorList = nil then
+      FEditorList := TFhirContactDetailList.Create;
+    FEditorList.Assign(TFhirMetadataResource(oSource).FEditorList);
+  end;
+  if (TFhirMetadataResource(oSource).FReviewerList = nil) then
+  begin
+    FReviewerList.free;
+    FReviewerList := nil;
+  end
+  else
+  begin
+    if FReviewerList = nil then
+      FReviewerList := TFhirContactDetailList.Create;
+    FReviewerList.Assign(TFhirMetadataResource(oSource).FReviewerList);
+  end;
+  if (TFhirMetadataResource(oSource).FEndorserList = nil) then
+  begin
+    FEndorserList.free;
+    FEndorserList := nil;
+  end
+  else
+  begin
+    if FEndorserList = nil then
+      FEndorserList := TFhirContactDetailList.Create;
+    FEndorserList.Assign(TFhirMetadataResource(oSource).FEndorserList);
+  end;
+  if (TFhirMetadataResource(oSource).FRelatedArtifactList = nil) then
+  begin
+    FRelatedArtifactList.free;
+    FRelatedArtifactList := nil;
+  end
+  else
+  begin
+    if FRelatedArtifactList = nil then
+      FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+    FRelatedArtifactList.Assign(TFhirMetadataResource(oSource).FRelatedArtifactList);
+  end;
+end;
+
+procedure TFhirMetadataResource.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'approvalDate') Then
+     list.add(self.link, 'approvalDate', FApprovalDate.Link);
+  if (child_name = 'lastReviewDate') Then
+     list.add(self.link, 'lastReviewDate', FLastReviewDate.Link);
+  if (child_name = 'effectivePeriod') Then
+     list.add(self.link, 'effectivePeriod', FEffectivePeriod.Link);
+  if (child_name = 'topic') Then
+    list.addAll(self, 'topic', FTopicList);
+  if (child_name = 'author') Then
+    list.addAll(self, 'author', FAuthorList);
+  if (child_name = 'editor') Then
+    list.addAll(self, 'editor', FEditorList);
+  if (child_name = 'reviewer') Then
+    list.addAll(self, 'reviewer', FReviewerList);
+  if (child_name = 'endorser') Then
+    list.addAll(self, 'endorser', FEndorserList);
+  if (child_name = 'relatedArtifact') Then
+    list.addAll(self, 'relatedArtifact', FRelatedArtifactList);
+end;
+
+procedure TFhirMetadataResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'approvalDate', 'date', false, TFhirDate, FApprovalDate.Link));
+  oList.add(TFHIRProperty.create(self, 'lastReviewDate', 'date', false, TFhirDate, FLastReviewDate.Link));
+  oList.add(TFHIRProperty.create(self, 'effectivePeriod', 'Period', false, TFhirPeriod, FEffectivePeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'topic', 'CodeableConcept', true, TFhirCodeableConcept, FTopicList.Link));
+  oList.add(TFHIRProperty.create(self, 'author', 'ContactDetail', true, TFhirContactDetail, FAuthorList.Link));
+  oList.add(TFHIRProperty.create(self, 'editor', 'ContactDetail', true, TFhirContactDetail, FEditorList.Link));
+  oList.add(TFHIRProperty.create(self, 'reviewer', 'ContactDetail', true, TFhirContactDetail, FReviewerList.Link));
+  oList.add(TFHIRProperty.create(self, 'endorser', 'ContactDetail', true, TFhirContactDetail, FEndorserList.Link));
+  oList.add(TFHIRProperty.create(self, 'relatedArtifact', 'RelatedArtifact', true, TFhirRelatedArtifact, FRelatedArtifactList.Link));
+end;
+
+function TFhirMetadataResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'approvalDate') then
+  begin
+    ApprovalDateElement := asDate(propValue);
+    result := propValue;
+  end
+  else if (propName = 'lastReviewDate') then
+  begin
+    LastReviewDateElement := asDate(propValue);
+    result := propValue;
+  end
+  else if (propName = 'effectivePeriod') then
+  begin
+    EffectivePeriod := propValue as TFhirPeriod;
+    result := propValue;
+  end
+  else if (propName = 'topic') then
+  begin
+    TopicList.add(propValue as TFhirCodeableConcept);
+    result := propValue;
+  end
+  else if (propName = 'author') then
+  begin
+    AuthorList.add(propValue as TFhirContactDetail);
+    result := propValue;
+  end
+  else if (propName = 'editor') then
+  begin
+    EditorList.add(propValue as TFhirContactDetail);
+    result := propValue;
+  end
+  else if (propName = 'reviewer') then
+  begin
+    ReviewerList.add(propValue as TFhirContactDetail);
+    result := propValue;
+  end
+  else if (propName = 'endorser') then
+  begin
+    EndorserList.add(propValue as TFhirContactDetail);
+    result := propValue;
+  end
+  else if (propName = 'relatedArtifact') then
+  begin
+    RelatedArtifactList.add(propValue as TFhirRelatedArtifact);
+    result := propValue;
+  end
+  else
+    result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirMetadataResource.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'topic') then TopicList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'author') then AuthorList.insertItem(index, propValue as TFhirContactDetail)
+  else if (propName = 'editor') then EditorList.insertItem(index, propValue as TFhirContactDetail)
+  else if (propName = 'reviewer') then ReviewerList.insertItem(index, propValue as TFhirContactDetail)
+  else if (propName = 'endorser') then EndorserList.insertItem(index, propValue as TFhirContactDetail)
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.insertItem(index, propValue as TFhirRelatedArtifact)
+  else inherited;
+end;
+
+function TFhirMetadataResource.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'approvalDate') then result := TFhirDate.create()
+  else if (propName = 'lastReviewDate') then result := TFhirDate.create()
+  else if (propName = 'effectivePeriod') then result := TFhirPeriod.create()
+  else if (propName = 'topic') then result := TopicList.new()
+  else if (propName = 'author') then result := AuthorList.new()
+  else if (propName = 'editor') then result := EditorList.new()
+  else if (propName = 'reviewer') then result := ReviewerList.new()
+  else if (propName = 'endorser') then result := EndorserList.new()
+  else if (propName = 'relatedArtifact') then result := RelatedArtifactList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirMetadataResource.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'approvalDate') then result := 'date'
+  else if (propName = 'lastReviewDate') then result := 'date'
+  else if (propName = 'effectivePeriod') then result := 'Period'
+  else if (propName = 'topic') then result := 'CodeableConcept'
+  else if (propName = 'author') then result := 'ContactDetail'
+  else if (propName = 'editor') then result := 'ContactDetail'
+  else if (propName = 'reviewer') then result := 'ContactDetail'
+  else if (propName = 'endorser') then result := 'ContactDetail'
+  else if (propName = 'relatedArtifact') then result := 'RelatedArtifact'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirMetadataResource.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'approvalDate') then ApprovalDateElement := nil
+  else if (propName = 'lastReviewDate') then LastReviewDateElement := nil
+  else if (propName = 'effectivePeriod') then EffectivePeriodElement := nil
+  else if (propName = 'topic') then deletePropertyValue('topic', TopicList, value)
+  else if (propName = 'author') then deletePropertyValue('author', AuthorList, value)
+  else if (propName = 'editor') then deletePropertyValue('editor', EditorList, value)
+  else if (propName = 'reviewer') then deletePropertyValue('reviewer', ReviewerList, value)
+  else if (propName = 'endorser') then deletePropertyValue('endorser', EndorserList, value)
+  else if (propName = 'relatedArtifact') then deletePropertyValue('relatedArtifact', RelatedArtifactList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirMetadataResource.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'approvalDate') then ApprovalDateElement := asDate(new)
+  else if (propName = 'lastReviewDate') then LastReviewDateElement := asDate(new)
+  else if (propName = 'effectivePeriod') then EffectivePeriodElement := new as TFhirPeriod
+  else if (propName = 'topic') then replacePropertyValue('topic', TopicList, existing, new)
+  else if (propName = 'author') then replacePropertyValue('author', AuthorList, existing, new)
+  else if (propName = 'editor') then replacePropertyValue('editor', EditorList, existing, new)
+  else if (propName = 'reviewer') then replacePropertyValue('reviewer', ReviewerList, existing, new)
+  else if (propName = 'endorser') then replacePropertyValue('endorser', EndorserList, existing, new)
+  else if (propName = 'relatedArtifact') then replacePropertyValue('relatedArtifact', RelatedArtifactList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirMetadataResource.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'topic') then TopicList.move(source, destination)
+  else if (propName = 'author') then AuthorList.move(source, destination)
+  else if (propName = 'editor') then EditorList.move(source, destination)
+  else if (propName = 'reviewer') then ReviewerList.move(source, destination)
+  else if (propName = 'endorser') then EndorserList.move(source, destination)
+  else if (propName = 'relatedArtifact') then RelatedArtifactList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirMetadataResource.equals(other : TObject) : boolean; 
+var
+  o : TFhirMetadataResource;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirMetadataResource)) then
+    result := false
+  else
+  begin
+    o := TFhirMetadataResource(other);
+    result := compareDeep(approvalDateElement, o.approvalDateElement, true) and 
+      compareDeep(lastReviewDateElement, o.lastReviewDateElement, true) and compareDeep(effectivePeriodElement, o.effectivePeriodElement, true) and 
+      compareDeep(topicList, o.topicList, true) and compareDeep(authorList, o.authorList, true) and 
+      compareDeep(editorList, o.editorList, true) and compareDeep(reviewerList, o.reviewerList, true) and 
+      compareDeep(endorserList, o.endorserList, true) and compareDeep(relatedArtifactList, o.relatedArtifactList, true);
+  end;
+end;
+
+function TFhirMetadataResource.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FApprovalDate) and isEmptyProp(FLastReviewDate) and isEmptyProp(FEffectivePeriod) and isEmptyProp(FtopicList) and isEmptyProp(FauthorList) and isEmptyProp(FeditorList) and isEmptyProp(FreviewerList) and isEmptyProp(FendorserList) and isEmptyProp(FrelatedArtifactList);
+end;
+
+procedure TFhirMetadataResource.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('approvalDate');
+  fields.add('lastReviewDate');
+  fields.add('effectivePeriod');
+  fields.add('topic');
+  fields.add('author');
+  fields.add('editor');
+  fields.add('reviewer');
+  fields.add('endorser');
+  fields.add('relatedArtifact');
+end;
+
+function TFhirMetadataResource.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTopicList.sizeInBytes(magic));
+  inc(result, FAuthorList.sizeInBytes(magic));
+  inc(result, FEditorList.sizeInBytes(magic));
+  inc(result, FReviewerList.sizeInBytes(magic));
+  inc(result, FEndorserList.sizeInBytes(magic));
+  inc(result, FRelatedArtifactList.sizeInBytes(magic));
+end;
+
+function TFhirMetadataResource.Link : TFhirMetadataResource;
+begin
+  result := TFhirMetadataResource(inherited Link);
+end;
+
+function TFhirMetadataResource.Clone : TFhirMetadataResource;
+begin
+  result := TFhirMetadataResource(inherited Clone);
+end;
+
+procedure TFhirMetadataResource.SetApprovalDate(value : TFhirDate);
+begin
+  FApprovalDate.free;
+  FApprovalDate := value;
+end;
+
+function TFhirMetadataResource.GetApprovalDateST : TFslDateTime;
+begin
+  if FApprovalDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FApprovalDate.value;
+end;
+
+procedure TFhirMetadataResource.SetApprovalDateST(value : TFslDateTime);
+begin
+  if FApprovalDate = nil then
+    FApprovalDate := TFhirDate.create;
+  FApprovalDate.value := value
+end;
+
+procedure TFhirMetadataResource.SetLastReviewDate(value : TFhirDate);
+begin
+  FLastReviewDate.free;
+  FLastReviewDate := value;
+end;
+
+function TFhirMetadataResource.GetLastReviewDateST : TFslDateTime;
+begin
+  if FLastReviewDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FLastReviewDate.value;
+end;
+
+procedure TFhirMetadataResource.SetLastReviewDateST(value : TFslDateTime);
+begin
+  if FLastReviewDate = nil then
+    FLastReviewDate := TFhirDate.create;
+  FLastReviewDate.value := value
+end;
+
+procedure TFhirMetadataResource.SetEffectivePeriod(value : TFhirPeriod);
+begin
+  FEffectivePeriod.free;
+  FEffectivePeriod := value;
+end;
+
+function TFhirMetadataResource.GetTopicList : TFhirCodeableConceptList;
+begin
+  if FTopicList = nil then
+    FTopicList := TFhirCodeableConceptList.Create;
+  result := FTopicList;
+end;
+
+function TFhirMetadataResource.GetHasTopicList : boolean;
+begin
+  result := (FTopicList <> nil) and (FTopicList.count > 0);
+end;
+
+function TFhirMetadataResource.GetAuthorList : TFhirContactDetailList;
+begin
+  if FAuthorList = nil then
+    FAuthorList := TFhirContactDetailList.Create;
+  result := FAuthorList;
+end;
+
+function TFhirMetadataResource.GetHasAuthorList : boolean;
+begin
+  result := (FAuthorList <> nil) and (FAuthorList.count > 0);
+end;
+
+function TFhirMetadataResource.GetEditorList : TFhirContactDetailList;
+begin
+  if FEditorList = nil then
+    FEditorList := TFhirContactDetailList.Create;
+  result := FEditorList;
+end;
+
+function TFhirMetadataResource.GetHasEditorList : boolean;
+begin
+  result := (FEditorList <> nil) and (FEditorList.count > 0);
+end;
+
+function TFhirMetadataResource.GetReviewerList : TFhirContactDetailList;
+begin
+  if FReviewerList = nil then
+    FReviewerList := TFhirContactDetailList.Create;
+  result := FReviewerList;
+end;
+
+function TFhirMetadataResource.GetHasReviewerList : boolean;
+begin
+  result := (FReviewerList <> nil) and (FReviewerList.count > 0);
+end;
+
+function TFhirMetadataResource.GetEndorserList : TFhirContactDetailList;
+begin
+  if FEndorserList = nil then
+    FEndorserList := TFhirContactDetailList.Create;
+  result := FEndorserList;
+end;
+
+function TFhirMetadataResource.GetHasEndorserList : boolean;
+begin
+  result := (FEndorserList <> nil) and (FEndorserList.count > 0);
+end;
+
+function TFhirMetadataResource.GetRelatedArtifactList : TFhirRelatedArtifactList;
+begin
+  if FRelatedArtifactList = nil then
+    FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+  result := FRelatedArtifactList;
+end;
+
+function TFhirMetadataResource.GetHasRelatedArtifactList : boolean;
+begin
+  result := (FRelatedArtifactList <> nil) and (FRelatedArtifactList.count > 0);
+end;
 
 
 
@@ -25199,20 +26293,6 @@ end;
 
 destructor TFhirCapabilityStatement.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FKind.free;
   FInstantiatesList.Free;
   FImportsList.Free;
@@ -25231,50 +26311,6 @@ end;
 procedure TFhirCapabilityStatement.Assign(oSource : TFslObject);
 begin
   inherited;
-  urlElement := TFhirCapabilityStatement(oSource).urlElement.Clone;
-  versionElement := TFhirCapabilityStatement(oSource).versionElement.Clone;
-  nameElement := TFhirCapabilityStatement(oSource).nameElement.Clone;
-  titleElement := TFhirCapabilityStatement(oSource).titleElement.Clone;
-  statusElement := TFhirCapabilityStatement(oSource).statusElement.Clone;
-  experimentalElement := TFhirCapabilityStatement(oSource).experimentalElement.Clone;
-  dateElement := TFhirCapabilityStatement(oSource).dateElement.Clone;
-  publisherElement := TFhirCapabilityStatement(oSource).publisherElement.Clone;
-  if (TFhirCapabilityStatement(oSource).FContactList = nil) then
-  begin
-    FContactList.free;
-    FContactList := nil;
-  end
-  else
-  begin
-    if FContactList = nil then
-      FContactList := TFhirContactDetailList.Create;
-    FContactList.Assign(TFhirCapabilityStatement(oSource).FContactList);
-  end;
-  descriptionElement := TFhirCapabilityStatement(oSource).descriptionElement.Clone;
-  if (TFhirCapabilityStatement(oSource).FUseContextList = nil) then
-  begin
-    FUseContextList.free;
-    FUseContextList := nil;
-  end
-  else
-  begin
-    if FUseContextList = nil then
-      FUseContextList := TFhirUsageContextList.Create;
-    FUseContextList.Assign(TFhirCapabilityStatement(oSource).FUseContextList);
-  end;
-  if (TFhirCapabilityStatement(oSource).FJurisdictionList = nil) then
-  begin
-    FJurisdictionList.free;
-    FJurisdictionList := nil;
-  end
-  else
-  begin
-    if FJurisdictionList = nil then
-      FJurisdictionList := TFhirCodeableConceptList.Create;
-    FJurisdictionList.Assign(TFhirCapabilityStatement(oSource).FJurisdictionList);
-  end;
-  purposeElement := TFhirCapabilityStatement(oSource).purposeElement.Clone;
-  copyrightElement := TFhirCapabilityStatement(oSource).copyrightElement.Clone;
   kindElement := TFhirCapabilityStatement(oSource).kindElement.Clone;
   if (TFhirCapabilityStatement(oSource).FInstantiatesList = nil) then
   begin
@@ -25377,34 +26413,6 @@ end;
 procedure TFhirCapabilityStatement.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
-  if (child_name = 'version') Then
-     list.add(self.link, 'version', FVersion.Link);
-  if (child_name = 'name') Then
-     list.add(self.link, 'name', FName.Link);
-  if (child_name = 'title') Then
-     list.add(self.link, 'title', FTitle.Link);
-  if (child_name = 'status') Then
-     list.add(self.link, 'status', FStatus.Link);
-  if (child_name = 'experimental') Then
-     list.add(self.link, 'experimental', FExperimental.Link);
-  if (child_name = 'date') Then
-     list.add(self.link, 'date', FDate.Link);
-  if (child_name = 'publisher') Then
-     list.add(self.link, 'publisher', FPublisher.Link);
-  if (child_name = 'contact') Then
-    list.addAll(self, 'contact', FContactList);
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'useContext') Then
-    list.addAll(self, 'useContext', FUseContextList);
-  if (child_name = 'jurisdiction') Then
-    list.addAll(self, 'jurisdiction', FJurisdictionList);
-  if (child_name = 'purpose') Then
-     list.add(self.link, 'purpose', FPurpose.Link);
-  if (child_name = 'copyright') Then
-     list.add(self.link, 'copyright', FCopyright.Link);
   if (child_name = 'kind') Then
      list.add(self.link, 'kind', FKind.Link);
   if (child_name = 'instantiates') Then
@@ -25434,20 +26442,6 @@ end;
 procedure TFhirCapabilityStatement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link));
-  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
-  oList.add(TFHIRProperty.create(self, 'copyright', 'markdown', false, TFhirMarkdown, FCopyright.Link));
   oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirEnum, FKind.Link));
   oList.add(TFHIRProperty.create(self, 'instantiates', 'canonical', true, TFhirCanonical, FInstantiatesList.Link));
   oList.add(TFHIRProperty.create(self, 'imports', 'canonical', true, TFhirCanonical, FImportsList.Link));
@@ -25464,77 +26458,7 @@ end;
 
 function TFhirCapabilityStatement.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'url') then
-  begin
-    UrlElement := asUri(propValue);
-    result := propValue;
-  end
-  else if (propName = 'version') then
-  begin
-    VersionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'name') then
-  begin
-    NameElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'title') then
-  begin
-    TitleElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'status') then
-  begin
-    StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, propValue);
-    result := propValue;
-  end
-  else if (propName = 'experimental') then
-  begin
-    ExperimentalElement := asBoolean(propValue);
-    result := propValue;
-  end
-  else if (propName = 'date') then
-  begin
-    DateElement := asDateTime(propValue);
-    result := propValue;
-  end
-  else if (propName = 'publisher') then
-  begin
-    PublisherElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'contact') then
-  begin
-    ContactList.add(propValue as TFhirContactDetail);
-    result := propValue;
-  end
-  else if (propName = 'description') then
-  begin
-    DescriptionElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'useContext') then
-  begin
-    UseContextList.add(propValue as TFhirUsageContext);
-    result := propValue;
-  end
-  else if (propName = 'jurisdiction') then
-  begin
-    JurisdictionList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (propName = 'purpose') then
-  begin
-    PurposeElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'copyright') then
-  begin
-    CopyrightElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'kind') then
+  if (propName = 'kind') then
   begin
     KindElement := asEnum(SYSTEMS_TFhirCapabilityStatementKindEnum, CODES_TFhirCapabilityStatementKindEnum, propValue);
     result := propValue;
@@ -25599,10 +26523,7 @@ end;
 
 procedure TFhirCapabilityStatement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail)
-  else if (propName = 'useContext') then UseContextList.insertItem(index, propValue as TFhirUsageContext)
-  else if (propName = 'jurisdiction') then JurisdictionList.insertItem(index, propValue as TFhirCodeableConcept)
-  else if (propName = 'instantiates') then InstantiatesList.insertItem(index, asCanonical(propValue))
+  if (propName = 'instantiates') then InstantiatesList.insertItem(index, asCanonical(propValue))
   else if (propName = 'imports') then ImportsList.insertItem(index, asCanonical(propValue))
   else if (propName = 'format') then FormatList.insertItem(index, asCode(propValue))
   else if (propName = 'patchFormat') then PatchFormatList.insertItem(index, asCode(propValue))
@@ -25615,21 +26536,7 @@ end;
 
 function TFhirCapabilityStatement.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'url') then result := TFhirUri.create()
-  else if (propName = 'version') then result := TFhirString.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'title') then result := TFhirString.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
-  else if (propName = 'experimental') then result := TFhirBoolean.create()
-  else if (propName = 'date') then result := TFhirDateTime.create()
-  else if (propName = 'publisher') then result := TFhirString.create()
-  else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'description') then result := TFhirMarkdown.create()
-  else if (propName = 'useContext') then result := UseContextList.new()
-  else if (propName = 'jurisdiction') then result := JurisdictionList.new()
-  else if (propName = 'purpose') then result := TFhirMarkdown.create()
-  else if (propName = 'copyright') then result := TFhirMarkdown.create()
-  else if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull], CODES_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull]) 
+  if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull], CODES_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull]) 
   else if (propName = 'instantiates') then result := InstantiatesList.new()
   else if (propName = 'imports') then result := ImportsList.new()
   else if (propName = 'software') then result := TFhirCapabilityStatementSoftware.create()
@@ -25646,21 +26553,7 @@ end;
 
 function TFhirCapabilityStatement.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'url') then result := 'uri'
-  else if (propName = 'version') then result := 'string'
-  else if (propName = 'name') then result := 'string'
-  else if (propName = 'title') then result := 'string'
-  else if (propName = 'status') then result := 'code'
-  else if (propName = 'experimental') then result := 'boolean'
-  else if (propName = 'date') then result := 'dateTime'
-  else if (propName = 'publisher') then result := 'string'
-  else if (propName = 'contact') then result := 'ContactDetail'
-  else if (propName = 'description') then result := 'markdown'
-  else if (propName = 'useContext') then result := 'UsageContext'
-  else if (propName = 'jurisdiction') then result := 'CodeableConcept'
-  else if (propName = 'purpose') then result := 'markdown'
-  else if (propName = 'copyright') then result := 'markdown'
-  else if (propName = 'kind') then result := 'code'
+  if (propName = 'kind') then result := 'code'
   else if (propName = 'instantiates') then result := 'canonical'
   else if (propName = 'imports') then result := 'canonical'
   else if (propName = 'software') then result := 'BackboneElement'
@@ -25677,21 +26570,7 @@ end;
 
 procedure TFhirCapabilityStatement.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := nil
-  else if (propName = 'version') then VersionElement := nil
-  else if (propName = 'name') then NameElement := nil
-  else if (propName = 'title') then TitleElement := nil
-  else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'experimental') then ExperimentalElement := nil
-  else if (propName = 'date') then DateElement := nil
-  else if (propName = 'publisher') then PublisherElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
-  else if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
-  else if (propName = 'jurisdiction') then deletePropertyValue('jurisdiction', JurisdictionList, value)
-  else if (propName = 'purpose') then PurposeElement := nil
-  else if (propName = 'copyright') then CopyrightElement := nil
-  else if (propName = 'kind') then KindElement := nil
+  if (propName = 'kind') then KindElement := nil
   else if (propName = 'instantiates') then deletePropertyValue('instantiates', InstantiatesList, value)
   else if (propName = 'imports') then deletePropertyValue('imports', ImportsList, value)
   else if (propName = 'software') then SoftwareElement := nil
@@ -25709,21 +26588,7 @@ end;
 
 procedure TFhirCapabilityStatement.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := asUri(new)
-  else if (propName = 'version') then VersionElement := asString(new)
-  else if (propName = 'name') then NameElement := asString(new)
-  else if (propName = 'title') then TitleElement := asString(new)
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
-  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
-  else if (propName = 'date') then DateElement := asDateTime(new)
-  else if (propName = 'publisher') then PublisherElement := asString(new)
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
-  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
-  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
-  else if (propName = 'jurisdiction') then replacePropertyValue('jurisdiction', JurisdictionList, existing, new)
-  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
-  else if (propName = 'copyright') then CopyrightElement := asMarkdown(new)
-  else if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirCapabilityStatementKindEnum, CODES_TFhirCapabilityStatementKindEnum, new)
+  if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirCapabilityStatementKindEnum, CODES_TFhirCapabilityStatementKindEnum, new)
   else if (propName = 'instantiates') then replacePropertyValue('instantiates', InstantiatesList, existing, new)
   else if (propName = 'imports') then replacePropertyValue('imports', ImportsList, existing, new)
   else if (propName = 'software') then SoftwareElement := new as TFhirCapabilityStatementSoftware
@@ -25741,10 +26606,7 @@ end;
 
 procedure TFhirCapabilityStatement.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'contact') then ContactList.move(source, destination)
-  else if (propName = 'useContext') then UseContextList.move(source, destination)
-  else if (propName = 'jurisdiction') then JurisdictionList.move(source, destination)
-  else if (propName = 'instantiates') then InstantiatesList.move(source, destination)
+  if (propName = 'instantiates') then InstantiatesList.move(source, destination)
   else if (propName = 'imports') then ImportsList.move(source, destination)
   else if (propName = 'format') then FormatList.move(source, destination)
   else if (propName = 'patchFormat') then PatchFormatList.move(source, destination)
@@ -25782,14 +26644,7 @@ begin
   else
   begin
     o := TFhirCapabilityStatement(other);
-    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(versionElement, o.versionElement, true) and 
-      compareDeep(nameElement, o.nameElement, true) and compareDeep(titleElement, o.titleElement, true) and 
-      compareDeep(statusElement, o.statusElement, true) and compareDeep(experimentalElement, o.experimentalElement, true) and 
-      compareDeep(dateElement, o.dateElement, true) and compareDeep(publisherElement, o.publisherElement, true) and 
-      compareDeep(contactList, o.contactList, true) and compareDeep(descriptionElement, o.descriptionElement, true) and 
-      compareDeep(useContextList, o.useContextList, true) and compareDeep(jurisdictionList, o.jurisdictionList, true) and 
-      compareDeep(purposeElement, o.purposeElement, true) and compareDeep(copyrightElement, o.copyrightElement, true) and 
-      compareDeep(kindElement, o.kindElement, true) and compareDeep(instantiatesList, o.instantiatesList, true) and 
+    result := compareDeep(kindElement, o.kindElement, true) and compareDeep(instantiatesList, o.instantiatesList, true) and 
       compareDeep(importsList, o.importsList, true) and compareDeep(softwareElement, o.softwareElement, true) and 
       compareDeep(implementation_Element, o.implementation_Element, true) and compareDeep(fhirVersionElement, o.fhirVersionElement, true) and 
       compareDeep(formatList, o.formatList, true) and compareDeep(patchFormatList, o.patchFormatList, true) and 
@@ -25800,7 +26655,7 @@ end;
 
 function TFhirCapabilityStatement.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(FKind) and isEmptyProp(FinstantiatesList) and isEmptyProp(FimportsList) and isEmptyProp(FSoftware) and isEmptyProp(FImplementation_) and isEmptyProp(FFhirVersion) and isEmptyProp(FformatList) and isEmptyProp(FpatchFormatList) and isEmptyProp(FimplementationGuideList) and isEmptyProp(FrestList) and isEmptyProp(FmessagingList) and isEmptyProp(FdocumentList);
+  result := inherited isEmpty  and isEmptyProp(FKind) and isEmptyProp(FinstantiatesList) and isEmptyProp(FimportsList) and isEmptyProp(FSoftware) and isEmptyProp(FImplementation_) and isEmptyProp(FFhirVersion) and isEmptyProp(FformatList) and isEmptyProp(FpatchFormatList) and isEmptyProp(FimplementationGuideList) and isEmptyProp(FrestList) and isEmptyProp(FmessagingList) and isEmptyProp(FdocumentList);
 end;
 
 procedure TFhirCapabilityStatement.listFieldsInOrder(fields : TStringList);
@@ -25837,9 +26692,6 @@ end;
 function TFhirCapabilityStatement.sizeInBytesV(magic : integer) : cardinal;
 begin;
   result := inherited sizeInBytesV(magic);
-  inc(result, FContactList.sizeInBytes(magic));
-  inc(result, FUseContextList.sizeInBytes(magic));
-  inc(result, FJurisdictionList.sizeInBytes(magic));
   inc(result, FInstantiatesList.sizeInBytes(magic));
   inc(result, FImportsList.sizeInBytes(magic));
   inc(result, FFormatList.sizeInBytes(magic));
@@ -26439,6 +27291,4616 @@ begin
 end;
 
 {$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAPABILITYSTATEMENT2}
+{ TFhirCapabilityStatement2Software }
+
+constructor TFhirCapabilityStatement2Software.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2Software.Destroy;
+begin
+  FName.free;
+  FVersion.free;
+  FReleaseDate.free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2Software.Assign(oSource : TFslObject);
+begin
+  inherited;
+  nameElement := TFhirCapabilityStatement2Software(oSource).nameElement.Clone;
+  versionElement := TFhirCapabilityStatement2Software(oSource).versionElement.Clone;
+  releaseDateElement := TFhirCapabilityStatement2Software(oSource).releaseDateElement.Clone;
+end;
+
+procedure TFhirCapabilityStatement2Software.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(self.link, 'name', FName.Link);
+  if (child_name = 'version') Then
+     list.add(self.link, 'version', FVersion.Link);
+  if (child_name = 'releaseDate') Then
+     list.add(self.link, 'releaseDate', FReleaseDate.Link);
+end;
+
+procedure TFhirCapabilityStatement2Software.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
+  oList.add(TFHIRProperty.create(self, 'releaseDate', 'dateTime', false, TFhirDateTime, FReleaseDate.Link));
+end;
+
+function TFhirCapabilityStatement2Software.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'name') then
+  begin
+    NameElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'version') then
+  begin
+    VersionElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'releaseDate') then
+  begin
+    ReleaseDateElement := asDateTime(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2Software.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirCapabilityStatement2Software.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'version') then result := TFhirString.create()
+  else if (propName = 'releaseDate') then result := TFhirDateTime.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2Software.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'name') then result := 'string'
+  else if (propName = 'version') then result := 'string'
+  else if (propName = 'releaseDate') then result := 'dateTime'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2Software.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'version') then VersionElement := nil
+  else if (propName = 'releaseDate') then ReleaseDateElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2Software.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'version') then VersionElement := asString(new)
+  else if (propName = 'releaseDate') then ReleaseDateElement := asDateTime(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2Software.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2Software.fhirType : string;
+begin
+  result := 'CapabilityStatement2.software';
+end;
+
+function TFhirCapabilityStatement2Software.Link : TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software(inherited Link);
+end;
+
+function TFhirCapabilityStatement2Software.Clone : TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2Software.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2Software;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2Software)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2Software(other);
+    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(versionElement, o.versionElement, true) and 
+      compareDeep(releaseDateElement, o.releaseDateElement, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2Software.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FVersion) and isEmptyProp(FReleaseDate);
+end;
+
+procedure TFhirCapabilityStatement2Software.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('version');
+  fields.add('releaseDate');
+end;
+
+function TFhirCapabilityStatement2Software.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirCapabilityStatement2Software.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirCapabilityStatement2Software.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirCapabilityStatement2Software.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirCapabilityStatement2Software.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value;
+end;
+
+function TFhirCapabilityStatement2Software.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirCapabilityStatement2Software.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirCapabilityStatement2Software.SetReleaseDate(value : TFhirDateTime);
+begin
+  FReleaseDate.free;
+  FReleaseDate := value;
+end;
+
+function TFhirCapabilityStatement2Software.GetReleaseDateST : TFslDateTime;
+begin
+  if FReleaseDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FReleaseDate.value;
+end;
+
+procedure TFhirCapabilityStatement2Software.SetReleaseDateST(value : TFslDateTime);
+begin
+  if FReleaseDate = nil then
+    FReleaseDate := TFhirDateTime.create;
+  FReleaseDate.value := value
+end;
+
+{ TFhirCapabilityStatement2SoftwareListEnumerator }
+
+constructor TFhirCapabilityStatement2SoftwareListEnumerator.Create(list : TFhirCapabilityStatement2SoftwareList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2SoftwareListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2SoftwareListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2SoftwareListEnumerator.GetCurrent : TFhirCapabilityStatement2Software;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2SoftwareListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2SoftwareList }
+
+function TFhirCapabilityStatement2SoftwareList.AddItem(value: TFhirCapabilityStatement2Software): TFhirCapabilityStatement2Software;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Software', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Software');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Append: TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2SoftwareList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2SoftwareList.GetEnumerator : TFhirCapabilityStatement2SoftwareListEnumerator;
+begin
+  result := TFhirCapabilityStatement2SoftwareListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Clone: TFhirCapabilityStatement2SoftwareList;
+begin
+  result := TFhirCapabilityStatement2SoftwareList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2SoftwareList.GetItemN(index: Integer): TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2Software;
+end;
+function TFhirCapabilityStatement2SoftwareList.IndexOf(value: TFhirCapabilityStatement2Software): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Insert(index: Integer): TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2SoftwareList.InsertItem(index: Integer; value: TFhirCapabilityStatement2Software);
+begin
+  assert(value is TFhirCapabilityStatement2Software);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Item(index: Integer): TFhirCapabilityStatement2Software;
+begin
+  result := TFhirCapabilityStatement2Software(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2SoftwareList.Link: TFhirCapabilityStatement2SoftwareList;
+begin
+  result := TFhirCapabilityStatement2SoftwareList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2SoftwareList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2SoftwareList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2Software);
+begin
+  assert(value is TFhirCapabilityStatement2Software);
+  FhirCapabilityStatement2Softwares[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2SoftwareList.SetItemN(index: Integer; value: TFhirCapabilityStatement2Software);
+begin
+  assert(value is TFhirCapabilityStatement2Software);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2Implementation }
+
+constructor TFhirCapabilityStatement2Implementation.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2Implementation.Destroy;
+begin
+  FDescription.free;
+  FUrl.free;
+  FCustodian.free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2Implementation.Assign(oSource : TFslObject);
+begin
+  inherited;
+  descriptionElement := TFhirCapabilityStatement2Implementation(oSource).descriptionElement.Clone;
+  urlElement := TFhirCapabilityStatement2Implementation(oSource).urlElement.Clone;
+  custodian := TFhirCapabilityStatement2Implementation(oSource).custodian.Clone;
+end;
+
+procedure TFhirCapabilityStatement2Implementation.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'url') Then
+     list.add(self.link, 'url', FUrl.Link);
+  if (child_name = 'custodian') Then
+     list.add(self.link, 'custodian', FCustodian.Link);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.create(self, 'url', 'url', false, TFhirUrl, FUrl.Link));
+  oList.add(TFHIRProperty.create(self, 'custodian', 'Reference', false, TFhirReference, FCustodian.Link));
+end;
+
+function TFhirCapabilityStatement2Implementation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'description') then
+  begin
+    DescriptionElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'url') then
+  begin
+    UrlElement := asUrl(propValue);
+    result := propValue;
+  end
+  else if (propName = 'custodian') then
+  begin
+    Custodian := propValue as TFhirReference;
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirCapabilityStatement2Implementation.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'description') then result := TFhirString.create()
+  else if (propName = 'url') then result := TFhirUrl.create()
+  else if (propName = 'custodian') then result := TFhirReference.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2Implementation.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'description') then result := 'string'
+  else if (propName = 'url') then result := 'url'
+  else if (propName = 'custodian') then result := 'Reference'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'url') then UrlElement := nil
+  else if (propName = 'custodian') then CustodianElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'description') then DescriptionElement := asString(new)
+  else if (propName = 'url') then UrlElement := asUrl(new)
+  else if (propName = 'custodian') then CustodianElement := new as TFhirReference
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2Implementation.fhirType : string;
+begin
+  result := 'CapabilityStatement2.implementation';
+end;
+
+function TFhirCapabilityStatement2Implementation.Link : TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation(inherited Link);
+end;
+
+function TFhirCapabilityStatement2Implementation.Clone : TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2Implementation.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2Implementation;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2Implementation)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2Implementation(other);
+    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(urlElement, o.urlElement, true) and 
+      compareDeep(custodianElement, o.custodianElement, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2Implementation.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FUrl) and isEmptyProp(FCustodian);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('url');
+  fields.add('custodian');
+end;
+
+function TFhirCapabilityStatement2Implementation.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirCapabilityStatement2Implementation.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+function TFhirCapabilityStatement2Implementation.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirCapabilityStatement2Implementation.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+procedure TFhirCapabilityStatement2Implementation.SetUrl(value : TFhirUrl);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+function TFhirCapabilityStatement2Implementation.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirCapabilityStatement2Implementation.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUrl.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+procedure TFhirCapabilityStatement2Implementation.SetCustodian(value : TFhirReference);
+begin
+  FCustodian.free;
+  FCustodian := value;
+end;
+
+{ TFhirCapabilityStatement2ImplementationListEnumerator }
+
+constructor TFhirCapabilityStatement2ImplementationListEnumerator.Create(list : TFhirCapabilityStatement2ImplementationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2ImplementationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2ImplementationListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2ImplementationListEnumerator.GetCurrent : TFhirCapabilityStatement2Implementation;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2ImplementationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2ImplementationList }
+
+function TFhirCapabilityStatement2ImplementationList.AddItem(value: TFhirCapabilityStatement2Implementation): TFhirCapabilityStatement2Implementation;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Implementation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Implementation');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Append: TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2ImplementationList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2ImplementationList.GetEnumerator : TFhirCapabilityStatement2ImplementationListEnumerator;
+begin
+  result := TFhirCapabilityStatement2ImplementationListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Clone: TFhirCapabilityStatement2ImplementationList;
+begin
+  result := TFhirCapabilityStatement2ImplementationList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2ImplementationList.GetItemN(index: Integer): TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2Implementation;
+end;
+function TFhirCapabilityStatement2ImplementationList.IndexOf(value: TFhirCapabilityStatement2Implementation): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Insert(index: Integer): TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2ImplementationList.InsertItem(index: Integer; value: TFhirCapabilityStatement2Implementation);
+begin
+  assert(value is TFhirCapabilityStatement2Implementation);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Item(index: Integer): TFhirCapabilityStatement2Implementation;
+begin
+  result := TFhirCapabilityStatement2Implementation(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2ImplementationList.Link: TFhirCapabilityStatement2ImplementationList;
+begin
+  result := TFhirCapabilityStatement2ImplementationList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2ImplementationList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2ImplementationList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2Implementation);
+begin
+  assert(value is TFhirCapabilityStatement2Implementation);
+  FhirCapabilityStatement2Implementations[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2ImplementationList.SetItemN(index: Integer; value: TFhirCapabilityStatement2Implementation);
+begin
+  assert(value is TFhirCapabilityStatement2Implementation);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2Rest }
+
+constructor TFhirCapabilityStatement2Rest.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2Rest.Destroy;
+begin
+  FMode.free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  FResourceList.Free;
+  FInteractionList.Free;
+  FSearchParamList.Free;
+  FOperationList.Free;
+  FCompartmentList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2Rest.Assign(oSource : TFslObject);
+begin
+  inherited;
+  modeElement := TFhirCapabilityStatement2Rest(oSource).modeElement.Clone;
+  documentationElement := TFhirCapabilityStatement2Rest(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2Rest(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2Rest(oSource).FFeatureList);
+  end;
+  if (TFhirCapabilityStatement2Rest(oSource).FResourceList = nil) then
+  begin
+    FResourceList.free;
+    FResourceList := nil;
+  end
+  else
+  begin
+    if FResourceList = nil then
+      FResourceList := TFhirCapabilityStatement2RestResourceList.Create;
+    FResourceList.Assign(TFhirCapabilityStatement2Rest(oSource).FResourceList);
+  end;
+  if (TFhirCapabilityStatement2Rest(oSource).FInteractionList = nil) then
+  begin
+    FInteractionList.free;
+    FInteractionList := nil;
+  end
+  else
+  begin
+    if FInteractionList = nil then
+      FInteractionList := TFhirCapabilityStatement2RestInteractionList.Create;
+    FInteractionList.Assign(TFhirCapabilityStatement2Rest(oSource).FInteractionList);
+  end;
+  if (TFhirCapabilityStatement2Rest(oSource).FSearchParamList = nil) then
+  begin
+    FSearchParamList.free;
+    FSearchParamList := nil;
+  end
+  else
+  begin
+    if FSearchParamList = nil then
+      FSearchParamList := TFhirCapabilityStatement2RestResourceSearchParamList.Create;
+    FSearchParamList.Assign(TFhirCapabilityStatement2Rest(oSource).FSearchParamList);
+  end;
+  if (TFhirCapabilityStatement2Rest(oSource).FOperationList = nil) then
+  begin
+    FOperationList.free;
+    FOperationList := nil;
+  end
+  else
+  begin
+    if FOperationList = nil then
+      FOperationList := TFhirCapabilityStatement2RestResourceOperationList.Create;
+    FOperationList.Assign(TFhirCapabilityStatement2Rest(oSource).FOperationList);
+  end;
+  if (TFhirCapabilityStatement2Rest(oSource).FCompartmentList = nil) then
+  begin
+    FCompartmentList.free;
+    FCompartmentList := nil;
+  end
+  else
+  begin
+    if FCompartmentList = nil then
+      FCompartmentList := TFhirCanonicalList.Create;
+    FCompartmentList.Assign(TFhirCapabilityStatement2Rest(oSource).FCompartmentList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2Rest.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'mode') Then
+     list.add(self.link, 'mode', FMode.Link);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+  if (child_name = 'resource') Then
+    list.addAll(self, 'resource', FResourceList);
+  if (child_name = 'interaction') Then
+    list.addAll(self, 'interaction', FInteractionList);
+  if (child_name = 'searchParam') Then
+    list.addAll(self, 'searchParam', FSearchParamList);
+  if (child_name = 'operation') Then
+    list.addAll(self, 'operation', FOperationList);
+  if (child_name = 'compartment') Then
+    list.addAll(self, 'compartment', FCompartmentList);
+end;
+
+procedure TFhirCapabilityStatement2Rest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFhirEnum, FMode.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', 'BackboneElement', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+  oList.add(TFHIRProperty.create(self, 'resource', 'BackboneElement', true, TFhirCapabilityStatement2RestResource, FResourceList.Link));
+  oList.add(TFHIRProperty.create(self, 'interaction', 'BackboneElement', true, TFhirCapabilityStatement2RestInteraction, FInteractionList.Link));
+  oList.add(TFHIRProperty.create(self, 'searchParam', '', true, TFhirCapabilityStatement2RestResourceSearchParam, FSearchParamList.Link));
+  oList.add(TFHIRProperty.create(self, 'operation', '', true, TFhirCapabilityStatement2RestResourceOperation, FOperationList.Link));
+  oList.add(TFHIRProperty.create(self, 'compartment', 'canonical', true, TFhirCanonical, FCompartmentList.Link));
+end;
+
+function TFhirCapabilityStatement2Rest.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'mode') then
+  begin
+    ModeElement := asEnum(SYSTEMS_TFhirRestfulCapabilityModeEnum, CODES_TFhirRestfulCapabilityModeEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else if (propName = 'resource') then
+  begin
+    ResourceList.add(propValue as TFhirCapabilityStatement2RestResource);
+    result := propValue;
+  end
+  else if (propName = 'interaction') then
+  begin
+    InteractionList.add(propValue as TFhirCapabilityStatement2RestInteraction);
+    result := propValue;
+  end
+  else if (propName = 'searchParam') then
+  begin
+    SearchParamList.add(propValue as TFhirCapabilityStatement2RestResourceSearchParam);
+    result := propValue;
+  end
+  else if (propName = 'operation') then
+  begin
+    OperationList.add(propValue as TFhirCapabilityStatement2RestResourceOperation);
+    result := propValue;
+  end
+  else if (propName = 'compartment') then
+  begin
+    CompartmentList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2Rest.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else if (propName = 'resource') then ResourceList.insertItem(index, propValue as TFhirCapabilityStatement2RestResource)
+  else if (propName = 'interaction') then InteractionList.insertItem(index, propValue as TFhirCapabilityStatement2RestInteraction)
+  else if (propName = 'searchParam') then SearchParamList.insertItem(index, propValue as TFhirCapabilityStatement2RestResourceSearchParam)
+  else if (propName = 'operation') then OperationList.insertItem(index, propValue as TFhirCapabilityStatement2RestResourceOperation)
+  else if (propName = 'compartment') then CompartmentList.insertItem(index, asCanonical(propValue))
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2Rest.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'mode') then result := TFhirEnum.create(SYSTEMS_TFhirRestfulCapabilityModeEnum[RestfulCapabilityModeNull], CODES_TFhirRestfulCapabilityModeEnum[RestfulCapabilityModeNull]) 
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else if (propName = 'resource') then result := ResourceList.new()
+  else if (propName = 'interaction') then result := InteractionList.new()
+  else if (propName = 'searchParam') then result := SearchParamList.new()
+  else if (propName = 'operation') then result := OperationList.new()
+  else if (propName = 'compartment') then result := CompartmentList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2Rest.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'mode') then result := 'code'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := 'BackboneElement'
+  else if (propName = 'resource') then result := 'BackboneElement'
+  else if (propName = 'interaction') then result := 'BackboneElement'
+  else if (propName = 'searchParam') then result := ''
+  else if (propName = 'operation') then result := ''
+  else if (propName = 'compartment') then result := 'canonical'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2Rest.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'mode') then ModeElement := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else if (propName = 'resource') then deletePropertyValue('resource', ResourceList, value)
+  else if (propName = 'interaction') then deletePropertyValue('interaction', InteractionList, value)
+  else if (propName = 'searchParam') then deletePropertyValue('searchParam', SearchParamList, value)
+  else if (propName = 'operation') then deletePropertyValue('operation', OperationList, value)
+  else if (propName = 'compartment') then deletePropertyValue('compartment', CompartmentList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2Rest.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'mode') then ModeElement := asEnum(SYSTEMS_TFhirRestfulCapabilityModeEnum, CODES_TFhirRestfulCapabilityModeEnum, new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else if (propName = 'resource') then replacePropertyValue('resource', ResourceList, existing, new)
+  else if (propName = 'interaction') then replacePropertyValue('interaction', InteractionList, existing, new)
+  else if (propName = 'searchParam') then replacePropertyValue('searchParam', SearchParamList, existing, new)
+  else if (propName = 'operation') then replacePropertyValue('operation', OperationList, existing, new)
+  else if (propName = 'compartment') then replacePropertyValue('compartment', CompartmentList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2Rest.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'feature') then FeatureList.move(source, destination)
+  else if (propName = 'resource') then ResourceList.move(source, destination)
+  else if (propName = 'interaction') then InteractionList.move(source, destination)
+  else if (propName = 'searchParam') then SearchParamList.move(source, destination)
+  else if (propName = 'operation') then OperationList.move(source, destination)
+  else if (propName = 'compartment') then CompartmentList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2Rest.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest';
+end;
+
+function TFhirCapabilityStatement2Rest.Link : TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest(inherited Link);
+end;
+
+function TFhirCapabilityStatement2Rest.Clone : TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2Rest.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2Rest;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2Rest)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2Rest(other);
+    result := compareDeep(modeElement, o.modeElement, true) and compareDeep(documentationElement, o.documentationElement, true) and 
+      compareDeep(featureList, o.featureList, true) and compareDeep(resourceList, o.resourceList, true) and 
+      compareDeep(interactionList, o.interactionList, true) and compareDeep(searchParamList, o.searchParamList, true) and 
+      compareDeep(operationList, o.operationList, true) and compareDeep(compartmentList, o.compartmentList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2Rest.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FMode) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList) and isEmptyProp(FresourceList) and isEmptyProp(FinteractionList) and isEmptyProp(FsearchParamList) and isEmptyProp(FoperationList) and isEmptyProp(FcompartmentList);
+end;
+
+procedure TFhirCapabilityStatement2Rest.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('mode');
+  fields.add('documentation');
+  fields.add('feature');
+  fields.add('resource');
+  fields.add('interaction');
+  fields.add('searchParam');
+  fields.add('operation');
+  fields.add('compartment');
+end;
+
+function TFhirCapabilityStatement2Rest.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFeatureList.sizeInBytes(magic));
+  inc(result, FResourceList.sizeInBytes(magic));
+  inc(result, FInteractionList.sizeInBytes(magic));
+  inc(result, FSearchParamList.sizeInBytes(magic));
+  inc(result, FOperationList.sizeInBytes(magic));
+  inc(result, FCompartmentList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2Rest.SetMode(value : TFhirEnum);
+begin
+  FMode.free;
+  FMode := value;
+end;
+
+function TFhirCapabilityStatement2Rest.GetModeST : TFhirRestfulCapabilityModeEnum;
+begin
+  if FMode = nil then
+    result := TFhirRestfulCapabilityModeEnum(0)
+  else
+    result := TFhirRestfulCapabilityModeEnum(StringArrayIndexOfSensitive(CODES_TFhirRestfulCapabilityModeEnum, FMode.value));
+end;
+
+procedure TFhirCapabilityStatement2Rest.SetModeST(value : TFhirRestfulCapabilityModeEnum);
+begin
+  if ord(value) = 0 then
+    ModeElement := nil
+  else
+    ModeElement := TFhirEnum.create(SYSTEMS_TFhirRestfulCapabilityModeEnum[value], CODES_TFhirRestfulCapabilityModeEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2Rest.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2Rest.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2Rest.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2Rest.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+function TFhirCapabilityStatement2Rest.GetResourceList : TFhirCapabilityStatement2RestResourceList;
+begin
+  if FResourceList = nil then
+    FResourceList := TFhirCapabilityStatement2RestResourceList.Create;
+  result := FResourceList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasResourceList : boolean;
+begin
+  result := (FResourceList <> nil) and (FResourceList.count > 0);
+end;
+
+function TFhirCapabilityStatement2Rest.GetInteractionList : TFhirCapabilityStatement2RestInteractionList;
+begin
+  if FInteractionList = nil then
+    FInteractionList := TFhirCapabilityStatement2RestInteractionList.Create;
+  result := FInteractionList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasInteractionList : boolean;
+begin
+  result := (FInteractionList <> nil) and (FInteractionList.count > 0);
+end;
+
+function TFhirCapabilityStatement2Rest.GetSearchParamList : TFhirCapabilityStatement2RestResourceSearchParamList;
+begin
+  if FSearchParamList = nil then
+    FSearchParamList := TFhirCapabilityStatement2RestResourceSearchParamList.Create;
+  result := FSearchParamList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasSearchParamList : boolean;
+begin
+  result := (FSearchParamList <> nil) and (FSearchParamList.count > 0);
+end;
+
+function TFhirCapabilityStatement2Rest.GetOperationList : TFhirCapabilityStatement2RestResourceOperationList;
+begin
+  if FOperationList = nil then
+    FOperationList := TFhirCapabilityStatement2RestResourceOperationList.Create;
+  result := FOperationList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasOperationList : boolean;
+begin
+  result := (FOperationList <> nil) and (FOperationList.count > 0);
+end;
+
+function TFhirCapabilityStatement2Rest.GetCompartmentList : TFhirCanonicalList;
+begin
+  if FCompartmentList = nil then
+    FCompartmentList := TFhirCanonicalList.Create;
+  result := FCompartmentList;
+end;
+
+function TFhirCapabilityStatement2Rest.GetHasCompartmentList : boolean;
+begin
+  result := (FCompartmentList <> nil) and (FCompartmentList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestListEnumerator }
+
+constructor TFhirCapabilityStatement2RestListEnumerator.Create(list : TFhirCapabilityStatement2RestList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestListEnumerator.GetCurrent : TFhirCapabilityStatement2Rest;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestList }
+
+function TFhirCapabilityStatement2RestList.AddItem(value: TFhirCapabilityStatement2Rest): TFhirCapabilityStatement2Rest;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Rest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Rest');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestList.Append: TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestList.GetEnumerator : TFhirCapabilityStatement2RestListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestList.Clone: TFhirCapabilityStatement2RestList;
+begin
+  result := TFhirCapabilityStatement2RestList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestList.GetItemN(index: Integer): TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2Rest;
+end;
+function TFhirCapabilityStatement2RestList.IndexOf(value: TFhirCapabilityStatement2Rest): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestList.Insert(index: Integer): TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestList.InsertItem(index: Integer; value: TFhirCapabilityStatement2Rest);
+begin
+  assert(value is TFhirCapabilityStatement2Rest);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestList.Item(index: Integer): TFhirCapabilityStatement2Rest;
+begin
+  result := TFhirCapabilityStatement2Rest(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestList.Link: TFhirCapabilityStatement2RestList;
+begin
+  result := TFhirCapabilityStatement2RestList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2Rest);
+begin
+  assert(value is TFhirCapabilityStatement2Rest);
+  FhirCapabilityStatement2Rests[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestList.SetItemN(index: Integer; value: TFhirCapabilityStatement2Rest);
+begin
+  assert(value is TFhirCapabilityStatement2Rest);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestFeature }
+
+constructor TFhirCapabilityStatement2RestFeature.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestFeature.Destroy;
+begin
+  FCode.free;
+  FValue.free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.Assign(oSource : TFslObject);
+begin
+  inherited;
+  codeElement := TFhirCapabilityStatement2RestFeature(oSource).codeElement.Clone;
+  valueElement := TFhirCapabilityStatement2RestFeature(oSource).valueElement.Clone;
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'value') Then
+     list.add(self.link, 'value', FValue.Link);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirEnum, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'value', 'code', false, TFhirEnum, FValue.Link));
+end;
+
+function TFhirCapabilityStatement2RestFeature.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'value') then
+  begin
+    ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestFeature.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureEnum[CapabilityFeatureNull], CODES_TFhirCapabilityFeatureEnum[CapabilityFeatureNull]) 
+  else if (propName = 'value') then result := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureValueEnum[CapabilityFeatureValueNull], CODES_TFhirCapabilityFeatureValueEnum[CapabilityFeatureValueNull]) 
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestFeature.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'code'
+  else if (propName = 'value') then result := 'code'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'value') then ValueElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, new)
+  else if (propName = 'value') then ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestFeature.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.feature';
+end;
+
+function TFhirCapabilityStatement2RestFeature.Link : TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestFeature.Clone : TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestFeature.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestFeature;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestFeature)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestFeature(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(valueElement, o.valueElement, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestFeature.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('value');
+end;
+
+function TFhirCapabilityStatement2RestFeature.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.SetCode(value : TFhirEnum);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirCapabilityStatement2RestFeature.GetCodeST : TFhirCapabilityFeatureEnum;
+begin
+  if FCode = nil then
+    result := TFhirCapabilityFeatureEnum(0)
+  else
+    result := TFhirCapabilityFeatureEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureEnum, FCode.value));
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.SetCodeST(value : TFhirCapabilityFeatureEnum);
+begin
+  if ord(value) = 0 then
+    CodeElement := nil
+  else
+    CodeElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureEnum[value], CODES_TFhirCapabilityFeatureEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.SetValue(value : TFhirEnum);
+begin
+  FValue.free;
+  FValue := value;
+end;
+
+function TFhirCapabilityStatement2RestFeature.GetValueST : TFhirCapabilityFeatureValueEnum;
+begin
+  if FValue = nil then
+    result := TFhirCapabilityFeatureValueEnum(0)
+  else
+    result := TFhirCapabilityFeatureValueEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureValueEnum, FValue.value));
+end;
+
+procedure TFhirCapabilityStatement2RestFeature.SetValueST(value : TFhirCapabilityFeatureValueEnum);
+begin
+  if ord(value) = 0 then
+    ValueElement := nil
+  else
+    ValueElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureValueEnum[value], CODES_TFhirCapabilityFeatureValueEnum[value]);
+end;
+
+{ TFhirCapabilityStatement2RestFeatureListEnumerator }
+
+constructor TFhirCapabilityStatement2RestFeatureListEnumerator.Create(list : TFhirCapabilityStatement2RestFeatureList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestFeatureListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestFeatureListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestFeatureListEnumerator.GetCurrent : TFhirCapabilityStatement2RestFeature;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestFeatureListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestFeatureList }
+
+function TFhirCapabilityStatement2RestFeatureList.AddItem(value: TFhirCapabilityStatement2RestFeature): TFhirCapabilityStatement2RestFeature;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestFeature', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestFeature');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Append: TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestFeatureList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.GetEnumerator : TFhirCapabilityStatement2RestFeatureListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestFeatureListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Clone: TFhirCapabilityStatement2RestFeatureList;
+begin
+  result := TFhirCapabilityStatement2RestFeatureList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.GetItemN(index: Integer): TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestFeature;
+end;
+function TFhirCapabilityStatement2RestFeatureList.IndexOf(value: TFhirCapabilityStatement2RestFeature): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Insert(index: Integer): TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestFeatureList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestFeature);
+begin
+  assert(value is TFhirCapabilityStatement2RestFeature);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Item(index: Integer): TFhirCapabilityStatement2RestFeature;
+begin
+  result := TFhirCapabilityStatement2RestFeature(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestFeatureList.Link: TFhirCapabilityStatement2RestFeatureList;
+begin
+  result := TFhirCapabilityStatement2RestFeatureList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestFeatureList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestFeatureList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestFeature);
+begin
+  assert(value is TFhirCapabilityStatement2RestFeature);
+  FhirCapabilityStatement2RestFeatures[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestFeatureList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestFeature);
+begin
+  assert(value is TFhirCapabilityStatement2RestFeature);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestResource }
+
+constructor TFhirCapabilityStatement2RestResource.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestResource.Destroy;
+begin
+  FType_.free;
+  FProfile.free;
+  FSupportedProfileList.Free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  FInteractionList.Free;
+  FSearchParamList.Free;
+  FOperationList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestResource.Assign(oSource : TFslObject);
+begin
+  inherited;
+  type_Element := TFhirCapabilityStatement2RestResource(oSource).type_Element.Clone;
+  profileElement := TFhirCapabilityStatement2RestResource(oSource).profileElement.Clone;
+  if (TFhirCapabilityStatement2RestResource(oSource).FSupportedProfileList = nil) then
+  begin
+    FSupportedProfileList.free;
+    FSupportedProfileList := nil;
+  end
+  else
+  begin
+    if FSupportedProfileList = nil then
+      FSupportedProfileList := TFhirCanonicalList.Create;
+    FSupportedProfileList.Assign(TFhirCapabilityStatement2RestResource(oSource).FSupportedProfileList);
+  end;
+  documentationElement := TFhirCapabilityStatement2RestResource(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2RestResource(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2RestResource(oSource).FFeatureList);
+  end;
+  if (TFhirCapabilityStatement2RestResource(oSource).FInteractionList = nil) then
+  begin
+    FInteractionList.free;
+    FInteractionList := nil;
+  end
+  else
+  begin
+    if FInteractionList = nil then
+      FInteractionList := TFhirCapabilityStatement2RestResourceInteractionList.Create;
+    FInteractionList.Assign(TFhirCapabilityStatement2RestResource(oSource).FInteractionList);
+  end;
+  if (TFhirCapabilityStatement2RestResource(oSource).FSearchParamList = nil) then
+  begin
+    FSearchParamList.free;
+    FSearchParamList := nil;
+  end
+  else
+  begin
+    if FSearchParamList = nil then
+      FSearchParamList := TFhirCapabilityStatement2RestResourceSearchParamList.Create;
+    FSearchParamList.Assign(TFhirCapabilityStatement2RestResource(oSource).FSearchParamList);
+  end;
+  if (TFhirCapabilityStatement2RestResource(oSource).FOperationList = nil) then
+  begin
+    FOperationList.free;
+    FOperationList := nil;
+  end
+  else
+  begin
+    if FOperationList = nil then
+      FOperationList := TFhirCapabilityStatement2RestResourceOperationList.Create;
+    FOperationList.Assign(TFhirCapabilityStatement2RestResource(oSource).FOperationList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResource.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'profile') Then
+     list.add(self.link, 'profile', FProfile.Link);
+  if (child_name = 'supportedProfile') Then
+    list.addAll(self, 'supportedProfile', FSupportedProfileList);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+  if (child_name = 'interaction') Then
+    list.addAll(self, 'interaction', FInteractionList);
+  if (child_name = 'searchParam') Then
+    list.addAll(self, 'searchParam', FSearchParamList);
+  if (child_name = 'operation') Then
+    list.addAll(self, 'operation', FOperationList);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'profile', 'canonical', false, TFhirCanonical, FProfile.Link));
+  oList.add(TFHIRProperty.create(self, 'supportedProfile', 'canonical', true, TFhirCanonical, FSupportedProfileList.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', '', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+  oList.add(TFHIRProperty.create(self, 'interaction', 'BackboneElement', true, TFhirCapabilityStatement2RestResourceInteraction, FInteractionList.Link));
+  oList.add(TFHIRProperty.create(self, 'searchParam', 'BackboneElement', true, TFhirCapabilityStatement2RestResourceSearchParam, FSearchParamList.Link));
+  oList.add(TFHIRProperty.create(self, 'operation', 'BackboneElement', true, TFhirCapabilityStatement2RestResourceOperation, FOperationList.Link));
+end;
+
+function TFhirCapabilityStatement2RestResource.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'type') then
+  begin
+    Type_Element := asEnum(SYSTEMS_TFhirResourceTypesEnum, CODES_TFhirResourceTypesEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'profile') then
+  begin
+    ProfileElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'supportedProfile') then
+  begin
+    SupportedProfileList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else if (propName = 'interaction') then
+  begin
+    InteractionList.add(propValue as TFhirCapabilityStatement2RestResourceInteraction);
+    result := propValue;
+  end
+  else if (propName = 'searchParam') then
+  begin
+    SearchParamList.add(propValue as TFhirCapabilityStatement2RestResourceSearchParam);
+    result := propValue;
+  end
+  else if (propName = 'operation') then
+  begin
+    OperationList.add(propValue as TFhirCapabilityStatement2RestResourceOperation);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'supportedProfile') then SupportedProfileList.insertItem(index, asCanonical(propValue))
+  else if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else if (propName = 'interaction') then InteractionList.insertItem(index, propValue as TFhirCapabilityStatement2RestResourceInteraction)
+  else if (propName = 'searchParam') then SearchParamList.insertItem(index, propValue as TFhirCapabilityStatement2RestResourceSearchParam)
+  else if (propName = 'operation') then OperationList.insertItem(index, propValue as TFhirCapabilityStatement2RestResourceOperation)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2RestResource.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirResourceTypesEnum[ResourceTypesNull], CODES_TFhirResourceTypesEnum[ResourceTypesNull]) 
+  else if (propName = 'profile') then result := TFhirCanonical.create()
+  else if (propName = 'supportedProfile') then result := SupportedProfileList.new()
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else if (propName = 'interaction') then result := InteractionList.new()
+  else if (propName = 'searchParam') then result := SearchParamList.new()
+  else if (propName = 'operation') then result := OperationList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestResource.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'type') then result := 'code'
+  else if (propName = 'profile') then result := 'canonical'
+  else if (propName = 'supportedProfile') then result := 'canonical'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := ''
+  else if (propName = 'interaction') then result := 'BackboneElement'
+  else if (propName = 'searchParam') then result := 'BackboneElement'
+  else if (propName = 'operation') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'profile') then ProfileElement := nil
+  else if (propName = 'supportedProfile') then deletePropertyValue('supportedProfile', SupportedProfileList, value)
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else if (propName = 'interaction') then deletePropertyValue('interaction', InteractionList, value)
+  else if (propName = 'searchParam') then deletePropertyValue('searchParam', SearchParamList, value)
+  else if (propName = 'operation') then deletePropertyValue('operation', OperationList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirResourceTypesEnum, CODES_TFhirResourceTypesEnum, new)
+  else if (propName = 'profile') then ProfileElement := asCanonical(new)
+  else if (propName = 'supportedProfile') then replacePropertyValue('supportedProfile', SupportedProfileList, existing, new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else if (propName = 'interaction') then replacePropertyValue('interaction', InteractionList, existing, new)
+  else if (propName = 'searchParam') then replacePropertyValue('searchParam', SearchParamList, existing, new)
+  else if (propName = 'operation') then replacePropertyValue('operation', OperationList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'supportedProfile') then SupportedProfileList.move(source, destination)
+  else if (propName = 'feature') then FeatureList.move(source, destination)
+  else if (propName = 'interaction') then InteractionList.move(source, destination)
+  else if (propName = 'searchParam') then SearchParamList.move(source, destination)
+  else if (propName = 'operation') then OperationList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestResource.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.resource';
+end;
+
+function TFhirCapabilityStatement2RestResource.Link : TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestResource.Clone : TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResource.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestResource;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestResource)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestResource(other);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(profileElement, o.profileElement, true) and 
+      compareDeep(supportedProfileList, o.supportedProfileList, true) and compareDeep(documentationElement, o.documentationElement, true) and 
+      compareDeep(featureList, o.featureList, true) and compareDeep(interactionList, o.interactionList, true) and 
+      compareDeep(searchParamList, o.searchParamList, true) and compareDeep(operationList, o.operationList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestResource.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FProfile) and isEmptyProp(FsupportedProfileList) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList) and isEmptyProp(FinteractionList) and isEmptyProp(FsearchParamList) and isEmptyProp(FoperationList);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('profile');
+  fields.add('supportedProfile');
+  fields.add('documentation');
+  fields.add('feature');
+  fields.add('interaction');
+  fields.add('searchParam');
+  fields.add('operation');
+end;
+
+function TFhirCapabilityStatement2RestResource.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSupportedProfileList.sizeInBytes(magic));
+  inc(result, FFeatureList.sizeInBytes(magic));
+  inc(result, FInteractionList.sizeInBytes(magic));
+  inc(result, FSearchParamList.sizeInBytes(magic));
+  inc(result, FOperationList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetType_(value : TFhirEnum);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetType_ST : TFhirResourceTypesEnum;
+begin
+  if FType_ = nil then
+    result := TFhirResourceTypesEnum(0)
+  else
+    result := TFhirResourceTypesEnum(StringArrayIndexOfSensitive(CODES_TFhirResourceTypesEnum, FType_.value));
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetType_ST(value : TFhirResourceTypesEnum);
+begin
+  if ord(value) = 0 then
+    Type_Element := nil
+  else
+    Type_Element := TFhirEnum.create(SYSTEMS_TFhirResourceTypesEnum[value], CODES_TFhirResourceTypesEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetProfile(value : TFhirCanonical);
+begin
+  FProfile.free;
+  FProfile := value;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetProfileST : String;
+begin
+  if FProfile = nil then
+    result := ''
+  else
+    result := FProfile.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetProfileST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FProfile = nil then
+      FProfile := TFhirCanonical.create;
+    FProfile.value := value
+  end
+  else if FProfile <> nil then
+    FProfile.value := '';
+end;
+
+function TFhirCapabilityStatement2RestResource.GetSupportedProfileList : TFhirCanonicalList;
+begin
+  if FSupportedProfileList = nil then
+    FSupportedProfileList := TFhirCanonicalList.Create;
+  result := FSupportedProfileList;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetHasSupportedProfileList : boolean;
+begin
+  result := (FSupportedProfileList <> nil) and (FSupportedProfileList.count > 0);
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResource.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2RestResource.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+function TFhirCapabilityStatement2RestResource.GetInteractionList : TFhirCapabilityStatement2RestResourceInteractionList;
+begin
+  if FInteractionList = nil then
+    FInteractionList := TFhirCapabilityStatement2RestResourceInteractionList.Create;
+  result := FInteractionList;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetHasInteractionList : boolean;
+begin
+  result := (FInteractionList <> nil) and (FInteractionList.count > 0);
+end;
+
+function TFhirCapabilityStatement2RestResource.GetSearchParamList : TFhirCapabilityStatement2RestResourceSearchParamList;
+begin
+  if FSearchParamList = nil then
+    FSearchParamList := TFhirCapabilityStatement2RestResourceSearchParamList.Create;
+  result := FSearchParamList;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetHasSearchParamList : boolean;
+begin
+  result := (FSearchParamList <> nil) and (FSearchParamList.count > 0);
+end;
+
+function TFhirCapabilityStatement2RestResource.GetOperationList : TFhirCapabilityStatement2RestResourceOperationList;
+begin
+  if FOperationList = nil then
+    FOperationList := TFhirCapabilityStatement2RestResourceOperationList.Create;
+  result := FOperationList;
+end;
+
+function TFhirCapabilityStatement2RestResource.GetHasOperationList : boolean;
+begin
+  result := (FOperationList <> nil) and (FOperationList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestResourceListEnumerator }
+
+constructor TFhirCapabilityStatement2RestResourceListEnumerator.Create(list : TFhirCapabilityStatement2RestResourceList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestResourceListEnumerator.GetCurrent : TFhirCapabilityStatement2RestResource;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestResourceList }
+
+function TFhirCapabilityStatement2RestResourceList.AddItem(value: TFhirCapabilityStatement2RestResource): TFhirCapabilityStatement2RestResource;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResource');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Append: TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestResourceList.GetEnumerator : TFhirCapabilityStatement2RestResourceListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestResourceListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Clone: TFhirCapabilityStatement2RestResourceList;
+begin
+  result := TFhirCapabilityStatement2RestResourceList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestResourceList.GetItemN(index: Integer): TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestResource;
+end;
+function TFhirCapabilityStatement2RestResourceList.IndexOf(value: TFhirCapabilityStatement2RestResource): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Insert(index: Integer): TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestResource);
+begin
+  assert(value is TFhirCapabilityStatement2RestResource);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Item(index: Integer): TFhirCapabilityStatement2RestResource;
+begin
+  result := TFhirCapabilityStatement2RestResource(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceList.Link: TFhirCapabilityStatement2RestResourceList;
+begin
+  result := TFhirCapabilityStatement2RestResourceList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestResource);
+begin
+  assert(value is TFhirCapabilityStatement2RestResource);
+  FhirCapabilityStatement2RestResources[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestResource);
+begin
+  assert(value is TFhirCapabilityStatement2RestResource);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestResourceInteraction }
+
+constructor TFhirCapabilityStatement2RestResourceInteraction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceInteraction.Destroy;
+begin
+  FCode.free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  codeElement := TFhirCapabilityStatement2RestResourceInteraction(oSource).codeElement.Clone;
+  documentationElement := TFhirCapabilityStatement2RestResourceInteraction(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2RestResourceInteraction(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2RestResourceInteraction(oSource).FFeatureList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirEnum, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', '', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    CodeElement := asEnum(SYSTEMS_TFhirTypeRestfulInteractionEnum, CODES_TFhirTypeRestfulInteractionEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirEnum.create(SYSTEMS_TFhirTypeRestfulInteractionEnum[TypeRestfulInteractionNull], CODES_TFhirTypeRestfulInteractionEnum[TypeRestfulInteractionNull]) 
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'code'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirTypeRestfulInteractionEnum, CODES_TFhirTypeRestfulInteractionEnum, new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'feature') then FeatureList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.resource.interaction';
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.Link : TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.Clone : TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestResourceInteraction)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestResourceInteraction(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(documentationElement, o.documentationElement, true) and 
+      compareDeep(featureList, o.featureList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('documentation');
+  fields.add('feature');
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFeatureList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.SetCode(value : TFhirEnum);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.GetCodeST : TFhirTypeRestfulInteractionEnum;
+begin
+  if FCode = nil then
+    result := TFhirTypeRestfulInteractionEnum(0)
+  else
+    result := TFhirTypeRestfulInteractionEnum(StringArrayIndexOfSensitive(CODES_TFhirTypeRestfulInteractionEnum, FCode.value));
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.SetCodeST(value : TFhirTypeRestfulInteractionEnum);
+begin
+  if ord(value) = 0 then
+    CodeElement := nil
+  else
+    CodeElement := TFhirEnum.create(SYSTEMS_TFhirTypeRestfulInteractionEnum[value], CODES_TFhirTypeRestfulInteractionEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteraction.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteraction.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestResourceInteractionListEnumerator }
+
+constructor TFhirCapabilityStatement2RestResourceInteractionListEnumerator.Create(list : TFhirCapabilityStatement2RestResourceInteractionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceInteractionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionListEnumerator.GetCurrent : TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestResourceInteractionList }
+
+function TFhirCapabilityStatement2RestResourceInteractionList.AddItem(value: TFhirCapabilityStatement2RestResourceInteraction): TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceInteraction');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Append: TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteractionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.GetEnumerator : TFhirCapabilityStatement2RestResourceInteractionListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteractionListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Clone: TFhirCapabilityStatement2RestResourceInteractionList;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteractionList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.GetItemN(index: Integer): TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction;
+end;
+function TFhirCapabilityStatement2RestResourceInteractionList.IndexOf(value: TFhirCapabilityStatement2RestResourceInteraction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Insert(index: Integer): TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteractionList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestResourceInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceInteraction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Item(index: Integer): TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceInteractionList.Link: TFhirCapabilityStatement2RestResourceInteractionList;
+begin
+  result := TFhirCapabilityStatement2RestResourceInteractionList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteractionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteractionList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestResourceInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceInteraction);
+  FhirCapabilityStatement2RestResourceInteractions[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceInteractionList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestResourceInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceInteraction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestResourceSearchParam }
+
+constructor TFhirCapabilityStatement2RestResourceSearchParam.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceSearchParam.Destroy;
+begin
+  FName.free;
+  FDefinition.free;
+  FType_.free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.Assign(oSource : TFslObject);
+begin
+  inherited;
+  nameElement := TFhirCapabilityStatement2RestResourceSearchParam(oSource).nameElement.Clone;
+  definitionElement := TFhirCapabilityStatement2RestResourceSearchParam(oSource).definitionElement.Clone;
+  type_Element := TFhirCapabilityStatement2RestResourceSearchParam(oSource).type_Element.Clone;
+  documentationElement := TFhirCapabilityStatement2RestResourceSearchParam(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2RestResourceSearchParam(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2RestResourceSearchParam(oSource).FFeatureList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(self.link, 'name', FName.Link);
+  if (child_name = 'definition') Then
+     list.add(self.link, 'definition', FDefinition.Link);
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'definition', 'canonical', false, TFhirCanonical, FDefinition.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', '', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'name') then
+  begin
+    NameElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'definition') then
+  begin
+    DefinitionElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'type') then
+  begin
+    Type_Element := asEnum(SYSTEMS_TFhirSearchParamTypeEnum, CODES_TFhirSearchParamTypeEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'definition') then result := TFhirCanonical.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirSearchParamTypeEnum[SearchParamTypeNull], CODES_TFhirSearchParamTypeEnum[SearchParamTypeNull]) 
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'name') then result := 'string'
+  else if (propName = 'definition') then result := 'canonical'
+  else if (propName = 'type') then result := 'code'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'definition') then DefinitionElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'definition') then DefinitionElement := asCanonical(new)
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirSearchParamTypeEnum, CODES_TFhirSearchParamTypeEnum, new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'feature') then FeatureList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.resource.searchParam';
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.Link : TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.Clone : TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestResourceSearchParam)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestResourceSearchParam(other);
+    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(definitionElement, o.definitionElement, true) and 
+      compareDeep(type_Element, o.type_Element, true) and compareDeep(documentationElement, o.documentationElement, true) and 
+      compareDeep(featureList, o.featureList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FDefinition) and isEmptyProp(FType_) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('definition');
+  fields.add('type');
+  fields.add('documentation');
+  fields.add('feature');
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFeatureList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetDefinition(value : TFhirCanonical);
+begin
+  FDefinition.free;
+  FDefinition := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetDefinitionST : String;
+begin
+  if FDefinition = nil then
+    result := ''
+  else
+    result := FDefinition.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetDefinitionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDefinition = nil then
+      FDefinition := TFhirCanonical.create;
+    FDefinition.value := value
+  end
+  else if FDefinition <> nil then
+    FDefinition.value := '';
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetType_(value : TFhirEnum);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetType_ST : TFhirSearchParamTypeEnum;
+begin
+  if FType_ = nil then
+    result := TFhirSearchParamTypeEnum(0)
+  else
+    result := TFhirSearchParamTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirSearchParamTypeEnum, FType_.value));
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetType_ST(value : TFhirSearchParamTypeEnum);
+begin
+  if ord(value) = 0 then
+    Type_Element := nil
+  else
+    Type_Element := TFhirEnum.create(SYSTEMS_TFhirSearchParamTypeEnum[value], CODES_TFhirSearchParamTypeEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParam.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParam.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestResourceSearchParamListEnumerator }
+
+constructor TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.Create(list : TFhirCapabilityStatement2RestResourceSearchParamList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.GetCurrent : TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestResourceSearchParamList }
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.AddItem(value: TFhirCapabilityStatement2RestResourceSearchParam): TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceSearchParam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceSearchParam');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Append: TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParamList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.GetEnumerator : TFhirCapabilityStatement2RestResourceSearchParamListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParamListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Clone: TFhirCapabilityStatement2RestResourceSearchParamList;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParamList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.GetItemN(index: Integer): TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam;
+end;
+function TFhirCapabilityStatement2RestResourceSearchParamList.IndexOf(value: TFhirCapabilityStatement2RestResourceSearchParam): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Insert(index: Integer): TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParamList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestResourceSearchParam);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceSearchParam);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Item(index: Integer): TFhirCapabilityStatement2RestResourceSearchParam;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParam(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceSearchParamList.Link: TFhirCapabilityStatement2RestResourceSearchParamList;
+begin
+  result := TFhirCapabilityStatement2RestResourceSearchParamList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParamList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParamList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestResourceSearchParam);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceSearchParam);
+  FhirCapabilityStatement2RestResourceSearchParams[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceSearchParamList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestResourceSearchParam);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceSearchParam);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestResourceOperation }
+
+constructor TFhirCapabilityStatement2RestResourceOperation.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceOperation.Destroy;
+begin
+  FName.free;
+  FDefinition.free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.Assign(oSource : TFslObject);
+begin
+  inherited;
+  nameElement := TFhirCapabilityStatement2RestResourceOperation(oSource).nameElement.Clone;
+  definitionElement := TFhirCapabilityStatement2RestResourceOperation(oSource).definitionElement.Clone;
+  documentationElement := TFhirCapabilityStatement2RestResourceOperation(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2RestResourceOperation(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2RestResourceOperation(oSource).FFeatureList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(self.link, 'name', FName.Link);
+  if (child_name = 'definition') Then
+     list.add(self.link, 'definition', FDefinition.Link);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'definition', 'canonical', false, TFhirCanonical, FDefinition.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', '', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'name') then
+  begin
+    NameElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'definition') then
+  begin
+    DefinitionElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'definition') then result := TFhirCanonical.create()
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'name') then result := 'string'
+  else if (propName = 'definition') then result := 'canonical'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'definition') then DefinitionElement := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'definition') then DefinitionElement := asCanonical(new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'feature') then FeatureList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.resource.operation';
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.Link : TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.Clone : TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestResourceOperation;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestResourceOperation)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestResourceOperation(other);
+    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(definitionElement, o.definitionElement, true) and 
+      compareDeep(documentationElement, o.documentationElement, true) and compareDeep(featureList, o.featureList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FDefinition) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('definition');
+  fields.add('documentation');
+  fields.add('feature');
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFeatureList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetDefinition(value : TFhirCanonical);
+begin
+  FDefinition.free;
+  FDefinition := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.GetDefinitionST : String;
+begin
+  if FDefinition = nil then
+    result := ''
+  else
+    result := FDefinition.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetDefinitionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDefinition = nil then
+      FDefinition := TFhirCanonical.create;
+    FDefinition.value := value
+  end
+  else if FDefinition <> nil then
+    FDefinition.value := '';
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperation.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperation.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestResourceOperationListEnumerator }
+
+constructor TFhirCapabilityStatement2RestResourceOperationListEnumerator.Create(list : TFhirCapabilityStatement2RestResourceOperationList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestResourceOperationListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationListEnumerator.GetCurrent : TFhirCapabilityStatement2RestResourceOperation;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestResourceOperationList }
+
+function TFhirCapabilityStatement2RestResourceOperationList.AddItem(value: TFhirCapabilityStatement2RestResourceOperation): TFhirCapabilityStatement2RestResourceOperation;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceOperation');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Append: TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperationList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.GetEnumerator : TFhirCapabilityStatement2RestResourceOperationListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperationListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Clone: TFhirCapabilityStatement2RestResourceOperationList;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperationList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.GetItemN(index: Integer): TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation;
+end;
+function TFhirCapabilityStatement2RestResourceOperationList.IndexOf(value: TFhirCapabilityStatement2RestResourceOperation): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Insert(index: Integer): TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperationList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestResourceOperation);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceOperation);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Item(index: Integer): TFhirCapabilityStatement2RestResourceOperation;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperation(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestResourceOperationList.Link: TFhirCapabilityStatement2RestResourceOperationList;
+begin
+  result := TFhirCapabilityStatement2RestResourceOperationList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperationList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperationList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestResourceOperation);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceOperation);
+  FhirCapabilityStatement2RestResourceOperations[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestResourceOperationList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestResourceOperation);
+begin
+  assert(value is TFhirCapabilityStatement2RestResourceOperation);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2RestInteraction }
+
+constructor TFhirCapabilityStatement2RestInteraction.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2RestInteraction.Destroy;
+begin
+  FCode.free;
+  FDocumentation.free;
+  FFeatureList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.Assign(oSource : TFslObject);
+begin
+  inherited;
+  codeElement := TFhirCapabilityStatement2RestInteraction(oSource).codeElement.Clone;
+  documentationElement := TFhirCapabilityStatement2RestInteraction(oSource).documentationElement.Clone;
+  if (TFhirCapabilityStatement2RestInteraction(oSource).FFeatureList = nil) then
+  begin
+    FFeatureList.free;
+    FFeatureList := nil;
+  end
+  else
+  begin
+    if FFeatureList = nil then
+      FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+    FFeatureList.Assign(TFhirCapabilityStatement2RestInteraction(oSource).FFeatureList);
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'documentation') Then
+     list.add(self.link, 'documentation', FDocumentation.Link);
+  if (child_name = 'feature') Then
+    list.addAll(self, 'feature', FFeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirEnum, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'documentation', 'markdown', false, TFhirMarkdown, FDocumentation.Link));
+  oList.add(TFHIRProperty.create(self, 'feature', '', true, TFhirCapabilityStatement2RestFeature, FFeatureList.Link));
+end;
+
+function TFhirCapabilityStatement2RestInteraction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    CodeElement := asEnum(SYSTEMS_TFhirSystemRestfulInteractionEnum, CODES_TFhirSystemRestfulInteractionEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'documentation') then
+  begin
+    DocumentationElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else if (propName = 'feature') then
+  begin
+    FeatureList.add(propValue as TFhirCapabilityStatement2RestFeature);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'feature') then FeatureList.insertItem(index, propValue as TFhirCapabilityStatement2RestFeature)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2RestInteraction.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirEnum.create(SYSTEMS_TFhirSystemRestfulInteractionEnum[SystemRestfulInteractionNull], CODES_TFhirSystemRestfulInteractionEnum[SystemRestfulInteractionNull]) 
+  else if (propName = 'documentation') then result := TFhirMarkdown.create()
+  else if (propName = 'feature') then result := FeatureList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2RestInteraction.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'code'
+  else if (propName = 'documentation') then result := 'markdown'
+  else if (propName = 'feature') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'feature') then deletePropertyValue('feature', FeatureList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirSystemRestfulInteractionEnum, CODES_TFhirSystemRestfulInteractionEnum, new)
+  else if (propName = 'documentation') then DocumentationElement := asMarkdown(new)
+  else if (propName = 'feature') then replacePropertyValue('feature', FeatureList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'feature') then FeatureList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2RestInteraction.fhirType : string;
+begin
+  result := 'CapabilityStatement2.rest.interaction';
+end;
+
+function TFhirCapabilityStatement2RestInteraction.Link : TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction(inherited Link);
+end;
+
+function TFhirCapabilityStatement2RestInteraction.Clone : TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestInteraction.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2RestInteraction;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2RestInteraction)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2RestInteraction(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(documentationElement, o.documentationElement, true) and 
+      compareDeep(featureList, o.featureList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2RestInteraction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FDocumentation) and isEmptyProp(FfeatureList);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('documentation');
+  fields.add('feature');
+end;
+
+function TFhirCapabilityStatement2RestInteraction.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFeatureList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.SetCode(value : TFhirEnum);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirCapabilityStatement2RestInteraction.GetCodeST : TFhirSystemRestfulInteractionEnum;
+begin
+  if FCode = nil then
+    result := TFhirSystemRestfulInteractionEnum(0)
+  else
+    result := TFhirSystemRestfulInteractionEnum(StringArrayIndexOfSensitive(CODES_TFhirSystemRestfulInteractionEnum, FCode.value));
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.SetCodeST(value : TFhirSystemRestfulInteractionEnum);
+begin
+  if ord(value) = 0 then
+    CodeElement := nil
+  else
+    CodeElement := TFhirEnum.create(SYSTEMS_TFhirSystemRestfulInteractionEnum[value], CODES_TFhirSystemRestfulInteractionEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.SetDocumentation(value : TFhirMarkdown);
+begin
+  FDocumentation.free;
+  FDocumentation := value;
+end;
+
+function TFhirCapabilityStatement2RestInteraction.GetDocumentationST : String;
+begin
+  if FDocumentation = nil then
+    result := ''
+  else
+    result := FDocumentation.value;
+end;
+
+procedure TFhirCapabilityStatement2RestInteraction.SetDocumentationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDocumentation = nil then
+      FDocumentation := TFhirMarkdown.create;
+    FDocumentation.value := value
+  end
+  else if FDocumentation <> nil then
+    FDocumentation.value := '';
+end;
+
+function TFhirCapabilityStatement2RestInteraction.GetFeatureList : TFhirCapabilityStatement2RestFeatureList;
+begin
+  if FFeatureList = nil then
+    FFeatureList := TFhirCapabilityStatement2RestFeatureList.Create;
+  result := FFeatureList;
+end;
+
+function TFhirCapabilityStatement2RestInteraction.GetHasFeatureList : boolean;
+begin
+  result := (FFeatureList <> nil) and (FFeatureList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2RestInteractionListEnumerator }
+
+constructor TFhirCapabilityStatement2RestInteractionListEnumerator.Create(list : TFhirCapabilityStatement2RestInteractionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2RestInteractionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2RestInteractionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2RestInteractionListEnumerator.GetCurrent : TFhirCapabilityStatement2RestInteraction;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2RestInteractionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2RestInteractionList }
+
+function TFhirCapabilityStatement2RestInteractionList.AddItem(value: TFhirCapabilityStatement2RestInteraction): TFhirCapabilityStatement2RestInteraction;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestInteraction');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Append: TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestInteractionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.GetEnumerator : TFhirCapabilityStatement2RestInteractionListEnumerator;
+begin
+  result := TFhirCapabilityStatement2RestInteractionListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Clone: TFhirCapabilityStatement2RestInteractionList;
+begin
+  result := TFhirCapabilityStatement2RestInteractionList(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.GetItemN(index: Integer): TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2RestInteraction;
+end;
+function TFhirCapabilityStatement2RestInteractionList.IndexOf(value: TFhirCapabilityStatement2RestInteraction): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Insert(index: Integer): TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2RestInteractionList.InsertItem(index: Integer; value: TFhirCapabilityStatement2RestInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestInteraction);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Item(index: Integer): TFhirCapabilityStatement2RestInteraction;
+begin
+  result := TFhirCapabilityStatement2RestInteraction(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2RestInteractionList.Link: TFhirCapabilityStatement2RestInteractionList;
+begin
+  result := TFhirCapabilityStatement2RestInteractionList(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2RestInteractionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2RestInteractionList.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2RestInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestInteraction);
+  FhirCapabilityStatement2RestInteractions[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2RestInteractionList.SetItemN(index: Integer; value: TFhirCapabilityStatement2RestInteraction);
+begin
+  assert(value is TFhirCapabilityStatement2RestInteraction);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirCapabilityStatement2 }
+
+constructor TFhirCapabilityStatement2.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCapabilityStatement2.Destroy;
+begin
+  FKind.free;
+  FInstantiatesList.Free;
+  FImportsList.Free;
+  FSoftware.free;
+  FImplementation_.free;
+  FFhirVersion.free;
+  FFormatList.Free;
+  FPatchFormatList.Free;
+  FImplementationGuideList.Free;
+  FRestList.Free;
+  inherited;
+end;
+
+procedure TFhirCapabilityStatement2.Assign(oSource : TFslObject);
+begin
+  inherited;
+  kindElement := TFhirCapabilityStatement2(oSource).kindElement.Clone;
+  if (TFhirCapabilityStatement2(oSource).FInstantiatesList = nil) then
+  begin
+    FInstantiatesList.free;
+    FInstantiatesList := nil;
+  end
+  else
+  begin
+    if FInstantiatesList = nil then
+      FInstantiatesList := TFhirCanonicalList.Create;
+    FInstantiatesList.Assign(TFhirCapabilityStatement2(oSource).FInstantiatesList);
+  end;
+  if (TFhirCapabilityStatement2(oSource).FImportsList = nil) then
+  begin
+    FImportsList.free;
+    FImportsList := nil;
+  end
+  else
+  begin
+    if FImportsList = nil then
+      FImportsList := TFhirCanonicalList.Create;
+    FImportsList.Assign(TFhirCapabilityStatement2(oSource).FImportsList);
+  end;
+  software := TFhirCapabilityStatement2(oSource).software.Clone;
+  implementation_ := TFhirCapabilityStatement2(oSource).implementation_.Clone;
+  fhirVersionElement := TFhirCapabilityStatement2(oSource).fhirVersionElement.Clone;
+  if (TFhirCapabilityStatement2(oSource).FFormatList = nil) then
+  begin
+    FFormatList.free;
+    FFormatList := nil;
+  end
+  else
+  begin
+    if FFormatList = nil then
+      FFormatList := TFhirCodeList.Create;
+    FFormatList.Assign(TFhirCapabilityStatement2(oSource).FFormatList);
+  end;
+  if (TFhirCapabilityStatement2(oSource).FPatchFormatList = nil) then
+  begin
+    FPatchFormatList.free;
+    FPatchFormatList := nil;
+  end
+  else
+  begin
+    if FPatchFormatList = nil then
+      FPatchFormatList := TFhirCodeList.Create;
+    FPatchFormatList.Assign(TFhirCapabilityStatement2(oSource).FPatchFormatList);
+  end;
+  if (TFhirCapabilityStatement2(oSource).FImplementationGuideList = nil) then
+  begin
+    FImplementationGuideList.free;
+    FImplementationGuideList := nil;
+  end
+  else
+  begin
+    if FImplementationGuideList = nil then
+      FImplementationGuideList := TFhirCanonicalList.Create;
+    FImplementationGuideList.Assign(TFhirCapabilityStatement2(oSource).FImplementationGuideList);
+  end;
+  if (TFhirCapabilityStatement2(oSource).FRestList = nil) then
+  begin
+    FRestList.free;
+    FRestList := nil;
+  end
+  else
+  begin
+    if FRestList = nil then
+      FRestList := TFhirCapabilityStatement2RestList.Create;
+    FRestList.Assign(TFhirCapabilityStatement2(oSource).FRestList);
+  end;
+end;
+
+function TFhirCapabilityStatement2.GetResourceType : TFhirResourceType;
+begin
+  result := frtCapabilityStatement2;
+end;
+
+procedure TFhirCapabilityStatement2.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'kind') Then
+     list.add(self.link, 'kind', FKind.Link);
+  if (child_name = 'instantiates') Then
+    list.addAll(self, 'instantiates', FInstantiatesList);
+  if (child_name = 'imports') Then
+    list.addAll(self, 'imports', FImportsList);
+  if (child_name = 'software') Then
+     list.add(self.link, 'software', FSoftware.Link);
+  if (child_name = 'implementation') Then
+     list.add(self.link, 'implementation', FImplementation_.Link);
+  if (child_name = 'fhirVersion') Then
+     list.add(self.link, 'fhirVersion', FFhirVersion.Link);
+  if (child_name = 'format') Then
+    list.addAll(self, 'format', FFormatList);
+  if (child_name = 'patchFormat') Then
+    list.addAll(self, 'patchFormat', FPatchFormatList);
+  if (child_name = 'implementationGuide') Then
+    list.addAll(self, 'implementationGuide', FImplementationGuideList);
+  if (child_name = 'rest') Then
+    list.addAll(self, 'rest', FRestList);
+end;
+
+procedure TFhirCapabilityStatement2.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirEnum, FKind.Link));
+  oList.add(TFHIRProperty.create(self, 'instantiates', 'canonical', true, TFhirCanonical, FInstantiatesList.Link));
+  oList.add(TFHIRProperty.create(self, 'imports', 'canonical', true, TFhirCanonical, FImportsList.Link));
+  oList.add(TFHIRProperty.create(self, 'software', 'BackboneElement', false, TFhirCapabilityStatement2Software, FSoftware.Link));
+  oList.add(TFHIRProperty.create(self, 'implementation', 'BackboneElement', false, TFhirCapabilityStatement2Implementation, FImplementation_.Link));
+  oList.add(TFHIRProperty.create(self, 'fhirVersion', 'code', false, TFhirEnum, FFhirVersion.Link));
+  oList.add(TFHIRProperty.create(self, 'format', 'code', true, TFhirCode, FFormatList.Link));
+  oList.add(TFHIRProperty.create(self, 'patchFormat', 'code', true, TFhirCode, FPatchFormatList.Link));
+  oList.add(TFHIRProperty.create(self, 'implementationGuide', 'canonical', true, TFhirCanonical, FImplementationGuideList.Link));
+  oList.add(TFHIRProperty.create(self, 'rest', 'BackboneElement', true, TFhirCapabilityStatement2Rest, FRestList.Link));
+end;
+
+function TFhirCapabilityStatement2.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'kind') then
+  begin
+    KindElement := asEnum(SYSTEMS_TFhirCapabilityStatementKindEnum, CODES_TFhirCapabilityStatementKindEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'instantiates') then
+  begin
+    InstantiatesList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'imports') then
+  begin
+    ImportsList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'software') then
+  begin
+    Software := propValue as TFhirCapabilityStatement2Software;
+    result := propValue;
+  end
+  else if (propName = 'implementation') then
+  begin
+    Implementation_ := propValue as TFhirCapabilityStatement2Implementation;
+    result := propValue;
+  end
+  else if (propName = 'fhirVersion') then
+  begin
+    FhirVersionElement := asEnum(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'format') then
+  begin
+    FormatList.add(asCode(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'patchFormat') then
+  begin
+    PatchFormatList.add(asCode(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'implementationGuide') then
+  begin
+    ImplementationGuideList.add(asCanonical(propValue)){2};     result := propValue;
+
+  end
+  else if (propName = 'rest') then
+  begin
+    RestList.add(propValue as TFhirCapabilityStatement2Rest);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCapabilityStatement2.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'instantiates') then InstantiatesList.insertItem(index, asCanonical(propValue))
+  else if (propName = 'imports') then ImportsList.insertItem(index, asCanonical(propValue))
+  else if (propName = 'format') then FormatList.insertItem(index, asCode(propValue))
+  else if (propName = 'patchFormat') then PatchFormatList.insertItem(index, asCode(propValue))
+  else if (propName = 'implementationGuide') then ImplementationGuideList.insertItem(index, asCanonical(propValue))
+  else if (propName = 'rest') then RestList.insertItem(index, propValue as TFhirCapabilityStatement2Rest)
+  else inherited;
+end;
+
+function TFhirCapabilityStatement2.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'kind') then result := TFhirEnum.create(SYSTEMS_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull], CODES_TFhirCapabilityStatementKindEnum[CapabilityStatementKindNull]) 
+  else if (propName = 'instantiates') then result := InstantiatesList.new()
+  else if (propName = 'imports') then result := ImportsList.new()
+  else if (propName = 'software') then result := TFhirCapabilityStatement2Software.create()
+  else if (propName = 'implementation') then result := TFhirCapabilityStatement2Implementation.create()
+  else if (propName = 'fhirVersion') then result := TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[FHIRVersionNull], CODES_TFhirFHIRVersionEnum[FHIRVersionNull]) 
+  else if (propName = 'format') then result := FormatList.new()
+  else if (propName = 'patchFormat') then result := PatchFormatList.new()
+  else if (propName = 'implementationGuide') then result := ImplementationGuideList.new()
+  else if (propName = 'rest') then result := RestList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCapabilityStatement2.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'kind') then result := 'code'
+  else if (propName = 'instantiates') then result := 'canonical'
+  else if (propName = 'imports') then result := 'canonical'
+  else if (propName = 'software') then result := 'BackboneElement'
+  else if (propName = 'implementation') then result := 'BackboneElement'
+  else if (propName = 'fhirVersion') then result := 'code'
+  else if (propName = 'format') then result := 'code'
+  else if (propName = 'patchFormat') then result := 'code'
+  else if (propName = 'implementationGuide') then result := 'canonical'
+  else if (propName = 'rest') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCapabilityStatement2.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := nil
+  else if (propName = 'instantiates') then deletePropertyValue('instantiates', InstantiatesList, value)
+  else if (propName = 'imports') then deletePropertyValue('imports', ImportsList, value)
+  else if (propName = 'software') then SoftwareElement := nil
+  else if (propName = 'implementation') then Implementation_Element := nil
+  else if (propName = 'fhirVersion') then FhirVersionElement := nil
+  else if (propName = 'format') then deletePropertyValue('format', FormatList, value)
+  else if (propName = 'patchFormat') then deletePropertyValue('patchFormat', PatchFormatList, value)
+  else if (propName = 'implementationGuide') then deletePropertyValue('implementationGuide', ImplementationGuideList, value)
+  else if (propName = 'rest') then deletePropertyValue('rest', RestList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCapabilityStatement2.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'kind') then KindElement := asEnum(SYSTEMS_TFhirCapabilityStatementKindEnum, CODES_TFhirCapabilityStatementKindEnum, new)
+  else if (propName = 'instantiates') then replacePropertyValue('instantiates', InstantiatesList, existing, new)
+  else if (propName = 'imports') then replacePropertyValue('imports', ImportsList, existing, new)
+  else if (propName = 'software') then SoftwareElement := new as TFhirCapabilityStatement2Software
+  else if (propName = 'implementation') then Implementation_Element := new as TFhirCapabilityStatement2Implementation
+  else if (propName = 'fhirVersion') then FhirVersionElement := asEnum(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum, new)
+  else if (propName = 'format') then replacePropertyValue('format', FormatList, existing, new)
+  else if (propName = 'patchFormat') then replacePropertyValue('patchFormat', PatchFormatList, existing, new)
+  else if (propName = 'implementationGuide') then replacePropertyValue('implementationGuide', ImplementationGuideList, existing, new)
+  else if (propName = 'rest') then replacePropertyValue('rest', RestList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCapabilityStatement2.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'instantiates') then InstantiatesList.move(source, destination)
+  else if (propName = 'imports') then ImportsList.move(source, destination)
+  else if (propName = 'format') then FormatList.move(source, destination)
+  else if (propName = 'patchFormat') then PatchFormatList.move(source, destination)
+  else if (propName = 'implementationGuide') then ImplementationGuideList.move(source, destination)
+  else if (propName = 'rest') then RestList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCapabilityStatement2.fhirType : string;
+begin
+  result := 'CapabilityStatement2';
+end;
+
+function TFhirCapabilityStatement2.Link : TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2(inherited Link);
+end;
+
+function TFhirCapabilityStatement2.Clone : TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2.equals(other : TObject) : boolean; 
+var
+  o : TFhirCapabilityStatement2;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCapabilityStatement2)) then
+    result := false
+  else
+  begin
+    o := TFhirCapabilityStatement2(other);
+    result := compareDeep(kindElement, o.kindElement, true) and compareDeep(instantiatesList, o.instantiatesList, true) and 
+      compareDeep(importsList, o.importsList, true) and compareDeep(softwareElement, o.softwareElement, true) and 
+      compareDeep(implementation_Element, o.implementation_Element, true) and compareDeep(fhirVersionElement, o.fhirVersionElement, true) and 
+      compareDeep(formatList, o.formatList, true) and compareDeep(patchFormatList, o.patchFormatList, true) and 
+      compareDeep(implementationGuideList, o.implementationGuideList, true) and compareDeep(restList, o.restList, true);
+  end;
+end;
+
+function TFhirCapabilityStatement2.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FKind) and isEmptyProp(FinstantiatesList) and isEmptyProp(FimportsList) and isEmptyProp(FSoftware) and isEmptyProp(FImplementation_) and isEmptyProp(FFhirVersion) and isEmptyProp(FformatList) and isEmptyProp(FpatchFormatList) and isEmptyProp(FimplementationGuideList) and isEmptyProp(FrestList);
+end;
+
+procedure TFhirCapabilityStatement2.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('url');
+  fields.add('version');
+  fields.add('name');
+  fields.add('title');
+  fields.add('status');
+  fields.add('experimental');
+  fields.add('date');
+  fields.add('publisher');
+  fields.add('contact');
+  fields.add('description');
+  fields.add('useContext');
+  fields.add('jurisdiction');
+  fields.add('purpose');
+  fields.add('copyright');
+  fields.add('kind');
+  fields.add('instantiates');
+  fields.add('imports');
+  fields.add('software');
+  fields.add('implementation');
+  fields.add('fhirVersion');
+  fields.add('format');
+  fields.add('patchFormat');
+  fields.add('implementationGuide');
+  fields.add('rest');
+end;
+
+function TFhirCapabilityStatement2.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FInstantiatesList.sizeInBytes(magic));
+  inc(result, FImportsList.sizeInBytes(magic));
+  inc(result, FFormatList.sizeInBytes(magic));
+  inc(result, FPatchFormatList.sizeInBytes(magic));
+  inc(result, FImplementationGuideList.sizeInBytes(magic));
+  inc(result, FRestList.sizeInBytes(magic));
+end;
+
+procedure TFhirCapabilityStatement2.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+function TFhirCapabilityStatement2.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value;
+end;
+
+function TFhirCapabilityStatement2.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirCapabilityStatement2.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value;
+end;
+
+function TFhirCapabilityStatement2.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirCapabilityStatement2.GetStatusST : TFhirPublicationStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirPublicationStatusEnum(0)
+  else
+    result := TFhirPublicationStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirPublicationStatusEnum, FStatus.value));
+end;
+
+procedure TFhirCapabilityStatement2.SetStatusST(value : TFhirPublicationStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+end;
+
+procedure TFhirCapabilityStatement2.SetExperimental(value : TFhirBoolean);
+begin
+  FExperimental.free;
+  FExperimental := value;
+end;
+
+function TFhirCapabilityStatement2.GetExperimentalST : Boolean;
+begin
+  if FExperimental = nil then
+    result := false
+  else
+    result := FExperimental.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetExperimentalST(value : Boolean);
+begin
+  if FExperimental = nil then
+    FExperimental := TFhirBoolean.create;
+  FExperimental.value := value
+end;
+
+procedure TFhirCapabilityStatement2.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+function TFhirCapabilityStatement2.GetDateST : TFslDateTime;
+begin
+  if FDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FDate.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetDateST(value : TFslDateTime);
+begin
+  if FDate = nil then
+    FDate := TFhirDateTime.create;
+  FDate.value := value
+end;
+
+procedure TFhirCapabilityStatement2.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value;
+end;
+
+function TFhirCapabilityStatement2.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := FPublisher.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+function TFhirCapabilityStatement2.GetContactList : TFhirContactDetailList;
+begin
+  if FContactList = nil then
+    FContactList := TFhirContactDetailList.Create;
+  result := FContactList;
+end;
+
+function TFhirCapabilityStatement2.GetHasContactList : boolean;
+begin
+  result := (FContactList <> nil) and (FContactList.count > 0);
+end;
+
+procedure TFhirCapabilityStatement2.SetDescription(value : TFhirMarkdown);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+function TFhirCapabilityStatement2.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirMarkdown.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+function TFhirCapabilityStatement2.GetUseContextList : TFhirUsageContextList;
+begin
+  if FUseContextList = nil then
+    FUseContextList := TFhirUsageContextList.Create;
+  result := FUseContextList;
+end;
+
+function TFhirCapabilityStatement2.GetHasUseContextList : boolean;
+begin
+  result := (FUseContextList <> nil) and (FUseContextList.count > 0);
+end;
+
+function TFhirCapabilityStatement2.GetJurisdictionList : TFhirCodeableConceptList;
+begin
+  if FJurisdictionList = nil then
+    FJurisdictionList := TFhirCodeableConceptList.Create;
+  result := FJurisdictionList;
+end;
+
+function TFhirCapabilityStatement2.GetHasJurisdictionList : boolean;
+begin
+  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+end;
+
+procedure TFhirCapabilityStatement2.SetPurpose(value : TFhirMarkdown);
+begin
+  FPurpose.free;
+  FPurpose := value;
+end;
+
+function TFhirCapabilityStatement2.GetPurposeST : String;
+begin
+  if FPurpose = nil then
+    result := ''
+  else
+    result := FPurpose.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetPurposeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPurpose = nil then
+      FPurpose := TFhirMarkdown.create;
+    FPurpose.value := value
+  end
+  else if FPurpose <> nil then
+    FPurpose.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetCopyright(value : TFhirMarkdown);
+begin
+  FCopyright.free;
+  FCopyright := value;
+end;
+
+function TFhirCapabilityStatement2.GetCopyrightST : String;
+begin
+  if FCopyright = nil then
+    result := ''
+  else
+    result := FCopyright.value;
+end;
+
+procedure TFhirCapabilityStatement2.SetCopyrightST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCopyright = nil then
+      FCopyright := TFhirMarkdown.create;
+    FCopyright.value := value
+  end
+  else if FCopyright <> nil then
+    FCopyright.value := '';
+end;
+
+procedure TFhirCapabilityStatement2.SetKind(value : TFhirEnum);
+begin
+  FKind.free;
+  FKind := value;
+end;
+
+function TFhirCapabilityStatement2.GetKindST : TFhirCapabilityStatementKindEnum;
+begin
+  if FKind = nil then
+    result := TFhirCapabilityStatementKindEnum(0)
+  else
+    result := TFhirCapabilityStatementKindEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityStatementKindEnum, FKind.value));
+end;
+
+procedure TFhirCapabilityStatement2.SetKindST(value : TFhirCapabilityStatementKindEnum);
+begin
+  if ord(value) = 0 then
+    KindElement := nil
+  else
+    KindElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityStatementKindEnum[value], CODES_TFhirCapabilityStatementKindEnum[value]);
+end;
+
+function TFhirCapabilityStatement2.GetInstantiatesList : TFhirCanonicalList;
+begin
+  if FInstantiatesList = nil then
+    FInstantiatesList := TFhirCanonicalList.Create;
+  result := FInstantiatesList;
+end;
+
+function TFhirCapabilityStatement2.GetHasInstantiatesList : boolean;
+begin
+  result := (FInstantiatesList <> nil) and (FInstantiatesList.count > 0);
+end;
+
+function TFhirCapabilityStatement2.GetImportsList : TFhirCanonicalList;
+begin
+  if FImportsList = nil then
+    FImportsList := TFhirCanonicalList.Create;
+  result := FImportsList;
+end;
+
+function TFhirCapabilityStatement2.GetHasImportsList : boolean;
+begin
+  result := (FImportsList <> nil) and (FImportsList.count > 0);
+end;
+
+procedure TFhirCapabilityStatement2.SetSoftware(value : TFhirCapabilityStatement2Software);
+begin
+  FSoftware.free;
+  FSoftware := value;
+end;
+
+procedure TFhirCapabilityStatement2.SetImplementation_(value : TFhirCapabilityStatement2Implementation);
+begin
+  FImplementation_.free;
+  FImplementation_ := value;
+end;
+
+procedure TFhirCapabilityStatement2.SetFhirVersion(value : TFhirEnum);
+begin
+  FFhirVersion.free;
+  FFhirVersion := value;
+end;
+
+function TFhirCapabilityStatement2.GetFhirVersionST : TFhirFHIRVersionEnum;
+begin
+  if FFhirVersion = nil then
+    result := TFhirFHIRVersionEnum(0)
+  else
+    result := TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, FFhirVersion.value));
+end;
+
+procedure TFhirCapabilityStatement2.SetFhirVersionST(value : TFhirFHIRVersionEnum);
+begin
+  if ord(value) = 0 then
+    FhirVersionElement := nil
+  else
+    FhirVersionElement := TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[value], CODES_TFhirFHIRVersionEnum[value]);
+end;
+
+function TFhirCapabilityStatement2.GetFormatList : TFhirCodeList;
+begin
+  if FFormatList = nil then
+    FFormatList := TFhirCodeList.Create;
+  result := FFormatList;
+end;
+
+function TFhirCapabilityStatement2.GetHasFormatList : boolean;
+begin
+  result := (FFormatList <> nil) and (FFormatList.count > 0);
+end;
+
+function TFhirCapabilityStatement2.GetPatchFormatList : TFhirCodeList;
+begin
+  if FPatchFormatList = nil then
+    FPatchFormatList := TFhirCodeList.Create;
+  result := FPatchFormatList;
+end;
+
+function TFhirCapabilityStatement2.GetHasPatchFormatList : boolean;
+begin
+  result := (FPatchFormatList <> nil) and (FPatchFormatList.count > 0);
+end;
+
+function TFhirCapabilityStatement2.GetImplementationGuideList : TFhirCanonicalList;
+begin
+  if FImplementationGuideList = nil then
+    FImplementationGuideList := TFhirCanonicalList.Create;
+  result := FImplementationGuideList;
+end;
+
+function TFhirCapabilityStatement2.GetHasImplementationGuideList : boolean;
+begin
+  result := (FImplementationGuideList <> nil) and (FImplementationGuideList.count > 0);
+end;
+
+function TFhirCapabilityStatement2.GetRestList : TFhirCapabilityStatement2RestList;
+begin
+  if FRestList = nil then
+    FRestList := TFhirCapabilityStatement2RestList.Create;
+  result := FRestList;
+end;
+
+function TFhirCapabilityStatement2.GetHasRestList : boolean;
+begin
+  result := (FRestList <> nil) and (FRestList.count > 0);
+end;
+
+{ TFhirCapabilityStatement2ListEnumerator }
+
+constructor TFhirCapabilityStatement2ListEnumerator.Create(list : TFhirCapabilityStatement2List);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCapabilityStatement2ListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCapabilityStatement2ListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCapabilityStatement2ListEnumerator.GetCurrent : TFhirCapabilityStatement2;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCapabilityStatement2ListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCapabilityStatement2List }
+
+function TFhirCapabilityStatement2List.AddItem(value: TFhirCapabilityStatement2): TFhirCapabilityStatement2;
+begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2');
+  add(value);
+  result := value;
+end;
+
+function TFhirCapabilityStatement2List.Append: TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2List.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCapabilityStatement2List.GetEnumerator : TFhirCapabilityStatement2ListEnumerator;
+begin
+  result := TFhirCapabilityStatement2ListEnumerator.Create(self.link);
+end;
+
+function TFhirCapabilityStatement2List.Clone: TFhirCapabilityStatement2List;
+begin
+  result := TFhirCapabilityStatement2List(inherited Clone);
+end;
+
+function TFhirCapabilityStatement2List.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCapabilityStatement2List.GetItemN(index: Integer): TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2List.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCapabilityStatement2;
+end;
+function TFhirCapabilityStatement2List.IndexOf(value: TFhirCapabilityStatement2): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCapabilityStatement2List.Insert(index: Integer): TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCapabilityStatement2List.InsertItem(index: Integer; value: TFhirCapabilityStatement2);
+begin
+  assert(value is TFhirCapabilityStatement2);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCapabilityStatement2List.Item(index: Integer): TFhirCapabilityStatement2;
+begin
+  result := TFhirCapabilityStatement2(ObjectByIndex[index]);
+end;
+
+function TFhirCapabilityStatement2List.Link: TFhirCapabilityStatement2List;
+begin
+  result := TFhirCapabilityStatement2List(inherited Link);
+end;
+
+procedure TFhirCapabilityStatement2List.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCapabilityStatement2List.SetItemByIndex(index: Integer; value: TFhirCapabilityStatement2);
+begin
+  assert(value is TFhirCapabilityStatement2);
+  FhirCapabilityStatement2s[index] := value;
+end;
+
+procedure TFhirCapabilityStatement2List.SetItemN(index: Integer; value: TFhirCapabilityStatement2);
+begin
+  assert(value is TFhirCapabilityStatement2);
+  ObjectByIndex[index] := value;
+end;
+
+{$ENDIF FHIR_CAPABILITYSTATEMENT2}
 {$IFDEF FHIR_CODESYSTEM}
 { TFhirCodeSystemFilter }
 
@@ -28392,21 +33854,6 @@ end;
 
 destructor TFhirCodeSystem.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FCaseSensitive.free;
   FValueSet.free;
   FHierarchyMeaning.free;
@@ -28424,61 +33871,6 @@ end;
 procedure TFhirCodeSystem.Assign(oSource : TFslObject);
 begin
   inherited;
-  urlElement := TFhirCodeSystem(oSource).urlElement.Clone;
-  if (TFhirCodeSystem(oSource).FIdentifierList = nil) then
-  begin
-    FIdentifierList.free;
-    FIdentifierList := nil;
-  end
-  else
-  begin
-    if FIdentifierList = nil then
-      FIdentifierList := TFhirIdentifierList.Create;
-    FIdentifierList.Assign(TFhirCodeSystem(oSource).FIdentifierList);
-  end;
-  versionElement := TFhirCodeSystem(oSource).versionElement.Clone;
-  nameElement := TFhirCodeSystem(oSource).nameElement.Clone;
-  titleElement := TFhirCodeSystem(oSource).titleElement.Clone;
-  statusElement := TFhirCodeSystem(oSource).statusElement.Clone;
-  experimentalElement := TFhirCodeSystem(oSource).experimentalElement.Clone;
-  dateElement := TFhirCodeSystem(oSource).dateElement.Clone;
-  publisherElement := TFhirCodeSystem(oSource).publisherElement.Clone;
-  if (TFhirCodeSystem(oSource).FContactList = nil) then
-  begin
-    FContactList.free;
-    FContactList := nil;
-  end
-  else
-  begin
-    if FContactList = nil then
-      FContactList := TFhirContactDetailList.Create;
-    FContactList.Assign(TFhirCodeSystem(oSource).FContactList);
-  end;
-  descriptionElement := TFhirCodeSystem(oSource).descriptionElement.Clone;
-  if (TFhirCodeSystem(oSource).FUseContextList = nil) then
-  begin
-    FUseContextList.free;
-    FUseContextList := nil;
-  end
-  else
-  begin
-    if FUseContextList = nil then
-      FUseContextList := TFhirUsageContextList.Create;
-    FUseContextList.Assign(TFhirCodeSystem(oSource).FUseContextList);
-  end;
-  if (TFhirCodeSystem(oSource).FJurisdictionList = nil) then
-  begin
-    FJurisdictionList.free;
-    FJurisdictionList := nil;
-  end
-  else
-  begin
-    if FJurisdictionList = nil then
-      FJurisdictionList := TFhirCodeableConceptList.Create;
-    FJurisdictionList.Assign(TFhirCodeSystem(oSource).FJurisdictionList);
-  end;
-  purposeElement := TFhirCodeSystem(oSource).purposeElement.Clone;
-  copyrightElement := TFhirCodeSystem(oSource).copyrightElement.Clone;
   caseSensitiveElement := TFhirCodeSystem(oSource).caseSensitiveElement.Clone;
   valueSetElement := TFhirCodeSystem(oSource).valueSetElement.Clone;
   hierarchyMeaningElement := TFhirCodeSystem(oSource).hierarchyMeaningElement.Clone;
@@ -28530,36 +33922,6 @@ end;
 procedure TFhirCodeSystem.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
-  if (child_name = 'identifier') Then
-    list.addAll(self, 'identifier', FIdentifierList);
-  if (child_name = 'version') Then
-     list.add(self.link, 'version', FVersion.Link);
-  if (child_name = 'name') Then
-     list.add(self.link, 'name', FName.Link);
-  if (child_name = 'title') Then
-     list.add(self.link, 'title', FTitle.Link);
-  if (child_name = 'status') Then
-     list.add(self.link, 'status', FStatus.Link);
-  if (child_name = 'experimental') Then
-     list.add(self.link, 'experimental', FExperimental.Link);
-  if (child_name = 'date') Then
-     list.add(self.link, 'date', FDate.Link);
-  if (child_name = 'publisher') Then
-     list.add(self.link, 'publisher', FPublisher.Link);
-  if (child_name = 'contact') Then
-    list.addAll(self, 'contact', FContactList);
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'useContext') Then
-    list.addAll(self, 'useContext', FUseContextList);
-  if (child_name = 'jurisdiction') Then
-    list.addAll(self, 'jurisdiction', FJurisdictionList);
-  if (child_name = 'purpose') Then
-     list.add(self.link, 'purpose', FPurpose.Link);
-  if (child_name = 'copyright') Then
-     list.add(self.link, 'copyright', FCopyright.Link);
   if (child_name = 'caseSensitive') Then
      list.add(self.link, 'caseSensitive', FCaseSensitive.Link);
   if (child_name = 'valueSet') Then
@@ -28587,21 +33949,6 @@ end;
 procedure TFhirCodeSystem.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link));
-  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
-  oList.add(TFHIRProperty.create(self, 'copyright', 'markdown', false, TFhirMarkdown, FCopyright.Link));
   oList.add(TFHIRProperty.create(self, 'caseSensitive', 'boolean', false, TFhirBoolean, FCaseSensitive.Link));
   oList.add(TFHIRProperty.create(self, 'valueSet', 'canonical', false, TFhirCanonical, FValueSet.Link));
   oList.add(TFHIRProperty.create(self, 'hierarchyMeaning', 'code', false, TFhirEnum, FHierarchyMeaning.Link));
@@ -28617,82 +33964,7 @@ end;
 
 function TFhirCodeSystem.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'url') then
-  begin
-    UrlElement := asUri(propValue);
-    result := propValue;
-  end
-  else if (propName = 'identifier') then
-  begin
-    IdentifierList.add(propValue as TFhirIdentifier);
-    result := propValue;
-  end
-  else if (propName = 'version') then
-  begin
-    VersionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'name') then
-  begin
-    NameElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'title') then
-  begin
-    TitleElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'status') then
-  begin
-    StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, propValue);
-    result := propValue;
-  end
-  else if (propName = 'experimental') then
-  begin
-    ExperimentalElement := asBoolean(propValue);
-    result := propValue;
-  end
-  else if (propName = 'date') then
-  begin
-    DateElement := asDateTime(propValue);
-    result := propValue;
-  end
-  else if (propName = 'publisher') then
-  begin
-    PublisherElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'contact') then
-  begin
-    ContactList.add(propValue as TFhirContactDetail);
-    result := propValue;
-  end
-  else if (propName = 'description') then
-  begin
-    DescriptionElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'useContext') then
-  begin
-    UseContextList.add(propValue as TFhirUsageContext);
-    result := propValue;
-  end
-  else if (propName = 'jurisdiction') then
-  begin
-    JurisdictionList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (propName = 'purpose') then
-  begin
-    PurposeElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'copyright') then
-  begin
-    CopyrightElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'caseSensitive') then
+  if (propName = 'caseSensitive') then
   begin
     CaseSensitiveElement := asBoolean(propValue);
     result := propValue;
@@ -28752,11 +34024,7 @@ end;
 
 procedure TFhirCodeSystem.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail)
-  else if (propName = 'useContext') then UseContextList.insertItem(index, propValue as TFhirUsageContext)
-  else if (propName = 'jurisdiction') then JurisdictionList.insertItem(index, propValue as TFhirCodeableConcept)
-  else if (propName = 'filter') then FilterList.insertItem(index, propValue as TFhirCodeSystemFilter)
+  if (propName = 'filter') then FilterList.insertItem(index, propValue as TFhirCodeSystemFilter)
   else if (propName = 'property') then Property_List.insertItem(index, propValue as TFhirCodeSystemProperty)
   else if (propName = 'concept') then ConceptList.insertItem(index, propValue as TFhirCodeSystemConcept)
   else inherited;
@@ -28764,22 +34032,7 @@ end;
 
 function TFhirCodeSystem.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'url') then result := TFhirUri.create()
-  else if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'version') then result := TFhirString.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'title') then result := TFhirString.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
-  else if (propName = 'experimental') then result := TFhirBoolean.create()
-  else if (propName = 'date') then result := TFhirDateTime.create()
-  else if (propName = 'publisher') then result := TFhirString.create()
-  else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'description') then result := TFhirMarkdown.create()
-  else if (propName = 'useContext') then result := UseContextList.new()
-  else if (propName = 'jurisdiction') then result := JurisdictionList.new()
-  else if (propName = 'purpose') then result := TFhirMarkdown.create()
-  else if (propName = 'copyright') then result := TFhirMarkdown.create()
-  else if (propName = 'caseSensitive') then result := TFhirBoolean.create()
+  if (propName = 'caseSensitive') then result := TFhirBoolean.create()
   else if (propName = 'valueSet') then result := TFhirCanonical.create()
   else if (propName = 'hierarchyMeaning') then result := TFhirEnum.create(SYSTEMS_TFhirCodeSystemHierarchyMeaningEnum[CodeSystemHierarchyMeaningNull], CODES_TFhirCodeSystemHierarchyMeaningEnum[CodeSystemHierarchyMeaningNull]) 
   else if (propName = 'compositional') then result := TFhirBoolean.create()
@@ -28795,22 +34048,7 @@ end;
 
 function TFhirCodeSystem.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'url') then result := 'uri'
-  else if (propName = 'identifier') then result := 'Identifier'
-  else if (propName = 'version') then result := 'string'
-  else if (propName = 'name') then result := 'string'
-  else if (propName = 'title') then result := 'string'
-  else if (propName = 'status') then result := 'code'
-  else if (propName = 'experimental') then result := 'boolean'
-  else if (propName = 'date') then result := 'dateTime'
-  else if (propName = 'publisher') then result := 'string'
-  else if (propName = 'contact') then result := 'ContactDetail'
-  else if (propName = 'description') then result := 'markdown'
-  else if (propName = 'useContext') then result := 'UsageContext'
-  else if (propName = 'jurisdiction') then result := 'CodeableConcept'
-  else if (propName = 'purpose') then result := 'markdown'
-  else if (propName = 'copyright') then result := 'markdown'
-  else if (propName = 'caseSensitive') then result := 'boolean'
+  if (propName = 'caseSensitive') then result := 'boolean'
   else if (propName = 'valueSet') then result := 'canonical'
   else if (propName = 'hierarchyMeaning') then result := 'code'
   else if (propName = 'compositional') then result := 'boolean'
@@ -28826,22 +34064,7 @@ end;
 
 procedure TFhirCodeSystem.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := nil
-  else if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
-  else if (propName = 'version') then VersionElement := nil
-  else if (propName = 'name') then NameElement := nil
-  else if (propName = 'title') then TitleElement := nil
-  else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'experimental') then ExperimentalElement := nil
-  else if (propName = 'date') then DateElement := nil
-  else if (propName = 'publisher') then PublisherElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
-  else if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
-  else if (propName = 'jurisdiction') then deletePropertyValue('jurisdiction', JurisdictionList, value)
-  else if (propName = 'purpose') then PurposeElement := nil
-  else if (propName = 'copyright') then CopyrightElement := nil
-  else if (propName = 'caseSensitive') then CaseSensitiveElement := nil
+  if (propName = 'caseSensitive') then CaseSensitiveElement := nil
   else if (propName = 'valueSet') then ValueSetElement := nil
   else if (propName = 'hierarchyMeaning') then HierarchyMeaningElement := nil
   else if (propName = 'compositional') then CompositionalElement := nil
@@ -28858,22 +34081,7 @@ end;
 
 procedure TFhirCodeSystem.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := asUri(new)
-  else if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
-  else if (propName = 'version') then VersionElement := asString(new)
-  else if (propName = 'name') then NameElement := asString(new)
-  else if (propName = 'title') then TitleElement := asString(new)
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
-  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
-  else if (propName = 'date') then DateElement := asDateTime(new)
-  else if (propName = 'publisher') then PublisherElement := asString(new)
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
-  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
-  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
-  else if (propName = 'jurisdiction') then replacePropertyValue('jurisdiction', JurisdictionList, existing, new)
-  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
-  else if (propName = 'copyright') then CopyrightElement := asMarkdown(new)
-  else if (propName = 'caseSensitive') then CaseSensitiveElement := asBoolean(new)
+  if (propName = 'caseSensitive') then CaseSensitiveElement := asBoolean(new)
   else if (propName = 'valueSet') then ValueSetElement := asCanonical(new)
   else if (propName = 'hierarchyMeaning') then HierarchyMeaningElement := asEnum(SYSTEMS_TFhirCodeSystemHierarchyMeaningEnum, CODES_TFhirCodeSystemHierarchyMeaningEnum, new)
   else if (propName = 'compositional') then CompositionalElement := asBoolean(new)
@@ -28890,11 +34098,7 @@ end;
 
 procedure TFhirCodeSystem.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination)
-  else if (propName = 'contact') then ContactList.move(source, destination)
-  else if (propName = 'useContext') then UseContextList.move(source, destination)
-  else if (propName = 'jurisdiction') then JurisdictionList.move(source, destination)
-  else if (propName = 'filter') then FilterList.move(source, destination)
+  if (propName = 'filter') then FilterList.move(source, destination)
   else if (propName = 'property') then Property_List.move(source, destination)
   else if (propName = 'concept') then ConceptList.move(source, destination)
   else
@@ -28927,14 +34131,7 @@ begin
   else
   begin
     o := TFhirCodeSystem(other);
-    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(identifierList, o.identifierList, true) and 
-      compareDeep(versionElement, o.versionElement, true) and compareDeep(nameElement, o.nameElement, true) and 
-      compareDeep(titleElement, o.titleElement, true) and compareDeep(statusElement, o.statusElement, true) and 
-      compareDeep(experimentalElement, o.experimentalElement, true) and compareDeep(dateElement, o.dateElement, true) and 
-      compareDeep(publisherElement, o.publisherElement, true) and compareDeep(contactList, o.contactList, true) and 
-      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(useContextList, o.useContextList, true) and 
-      compareDeep(jurisdictionList, o.jurisdictionList, true) and compareDeep(purposeElement, o.purposeElement, true) and 
-      compareDeep(copyrightElement, o.copyrightElement, true) and compareDeep(caseSensitiveElement, o.caseSensitiveElement, true) and 
+    result := compareDeep(caseSensitiveElement, o.caseSensitiveElement, true) and 
       compareDeep(valueSetElement, o.valueSetElement, true) and compareDeep(hierarchyMeaningElement, o.hierarchyMeaningElement, true) and 
       compareDeep(compositionalElement, o.compositionalElement, true) and compareDeep(versionNeededElement, o.versionNeededElement, true) and 
       compareDeep(contentElement, o.contentElement, true) and compareDeep(supplementsElement, o.supplementsElement, true) and 
@@ -28945,7 +34142,7 @@ end;
 
 function TFhirCodeSystem.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FidentifierList) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(FCaseSensitive) and isEmptyProp(FValueSet) and isEmptyProp(FHierarchyMeaning) and isEmptyProp(FCompositional) and isEmptyProp(FVersionNeeded) and isEmptyProp(FContent) and isEmptyProp(FSupplements) and isEmptyProp(FCount) and isEmptyProp(FfilterList) and isEmptyProp(Fproperty_List) and isEmptyProp(FconceptList);
+  result := inherited isEmpty  and isEmptyProp(FCaseSensitive) and isEmptyProp(FValueSet) and isEmptyProp(FHierarchyMeaning) and isEmptyProp(FCompositional) and isEmptyProp(FVersionNeeded) and isEmptyProp(FContent) and isEmptyProp(FSupplements) and isEmptyProp(FCount) and isEmptyProp(FfilterList) and isEmptyProp(Fproperty_List) and isEmptyProp(FconceptList);
 end;
 
 procedure TFhirCodeSystem.listFieldsInOrder(fields : TStringList);
@@ -28982,10 +34179,6 @@ end;
 function TFhirCodeSystem.sizeInBytesV(magic : integer) : cardinal;
 begin;
   result := inherited sizeInBytesV(magic);
-  inc(result, FIdentifierList.sizeInBytes(magic));
-  inc(result, FContactList.sizeInBytes(magic));
-  inc(result, FUseContextList.sizeInBytes(magic));
-  inc(result, FJurisdictionList.sizeInBytes(magic));
   inc(result, FFilterList.sizeInBytes(magic));
   inc(result, FProperty_List.sizeInBytes(magic));
   inc(result, FConceptList.sizeInBytes(magic));
@@ -30028,17 +35221,6 @@ end;
 
 destructor TFhirCompartmentDefinition.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FPurpose.free;
   FCode.free;
   FSearch.free;
   FResourceList.Free;
@@ -30048,37 +35230,6 @@ end;
 procedure TFhirCompartmentDefinition.Assign(oSource : TFslObject);
 begin
   inherited;
-  urlElement := TFhirCompartmentDefinition(oSource).urlElement.Clone;
-  versionElement := TFhirCompartmentDefinition(oSource).versionElement.Clone;
-  nameElement := TFhirCompartmentDefinition(oSource).nameElement.Clone;
-  statusElement := TFhirCompartmentDefinition(oSource).statusElement.Clone;
-  experimentalElement := TFhirCompartmentDefinition(oSource).experimentalElement.Clone;
-  dateElement := TFhirCompartmentDefinition(oSource).dateElement.Clone;
-  publisherElement := TFhirCompartmentDefinition(oSource).publisherElement.Clone;
-  if (TFhirCompartmentDefinition(oSource).FContactList = nil) then
-  begin
-    FContactList.free;
-    FContactList := nil;
-  end
-  else
-  begin
-    if FContactList = nil then
-      FContactList := TFhirContactDetailList.Create;
-    FContactList.Assign(TFhirCompartmentDefinition(oSource).FContactList);
-  end;
-  descriptionElement := TFhirCompartmentDefinition(oSource).descriptionElement.Clone;
-  if (TFhirCompartmentDefinition(oSource).FUseContextList = nil) then
-  begin
-    FUseContextList.free;
-    FUseContextList := nil;
-  end
-  else
-  begin
-    if FUseContextList = nil then
-      FUseContextList := TFhirUsageContextList.Create;
-    FUseContextList.Assign(TFhirCompartmentDefinition(oSource).FUseContextList);
-  end;
-  purposeElement := TFhirCompartmentDefinition(oSource).purposeElement.Clone;
   codeElement := TFhirCompartmentDefinition(oSource).codeElement.Clone;
   searchElement := TFhirCompartmentDefinition(oSource).searchElement.Clone;
   if (TFhirCompartmentDefinition(oSource).FResourceList = nil) then
@@ -30102,28 +35253,6 @@ end;
 procedure TFhirCompartmentDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
-  if (child_name = 'version') Then
-     list.add(self.link, 'version', FVersion.Link);
-  if (child_name = 'name') Then
-     list.add(self.link, 'name', FName.Link);
-  if (child_name = 'status') Then
-     list.add(self.link, 'status', FStatus.Link);
-  if (child_name = 'experimental') Then
-     list.add(self.link, 'experimental', FExperimental.Link);
-  if (child_name = 'date') Then
-     list.add(self.link, 'date', FDate.Link);
-  if (child_name = 'publisher') Then
-     list.add(self.link, 'publisher', FPublisher.Link);
-  if (child_name = 'contact') Then
-    list.addAll(self, 'contact', FContactList);
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'useContext') Then
-    list.addAll(self, 'useContext', FUseContextList);
-  if (child_name = 'purpose') Then
-     list.add(self.link, 'purpose', FPurpose.Link);
   if (child_name = 'code') Then
      list.add(self.link, 'code', FCode.Link);
   if (child_name = 'search') Then
@@ -30135,17 +35264,6 @@ end;
 procedure TFhirCompartmentDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
-  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
   oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirEnum, FCode.Link));
   oList.add(TFHIRProperty.create(self, 'search', 'boolean', false, TFhirBoolean, FSearch.Link));
   oList.add(TFHIRProperty.create(self, 'resource', 'BackboneElement', true, TFhirCompartmentDefinitionResource, FResourceList.Link));
@@ -30153,62 +35271,7 @@ end;
 
 function TFhirCompartmentDefinition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'url') then
-  begin
-    UrlElement := asUri(propValue);
-    result := propValue;
-  end
-  else if (propName = 'version') then
-  begin
-    VersionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'name') then
-  begin
-    NameElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'status') then
-  begin
-    StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, propValue);
-    result := propValue;
-  end
-  else if (propName = 'experimental') then
-  begin
-    ExperimentalElement := asBoolean(propValue);
-    result := propValue;
-  end
-  else if (propName = 'date') then
-  begin
-    DateElement := asDateTime(propValue);
-    result := propValue;
-  end
-  else if (propName = 'publisher') then
-  begin
-    PublisherElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'contact') then
-  begin
-    ContactList.add(propValue as TFhirContactDetail);
-    result := propValue;
-  end
-  else if (propName = 'description') then
-  begin
-    DescriptionElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'useContext') then
-  begin
-    UseContextList.add(propValue as TFhirUsageContext);
-    result := propValue;
-  end
-  else if (propName = 'purpose') then
-  begin
-    PurposeElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'code') then
+  if (propName = 'code') then
   begin
     CodeElement := asEnum(SYSTEMS_TFhirCompartmentTypeEnum, CODES_TFhirCompartmentTypeEnum, propValue);
     result := propValue;
@@ -30228,26 +35291,13 @@ end;
 
 procedure TFhirCompartmentDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail)
-  else if (propName = 'useContext') then UseContextList.insertItem(index, propValue as TFhirUsageContext)
-  else if (propName = 'resource') then ResourceList.insertItem(index, propValue as TFhirCompartmentDefinitionResource)
+  if (propName = 'resource') then ResourceList.insertItem(index, propValue as TFhirCompartmentDefinitionResource)
   else inherited;
 end;
 
 function TFhirCompartmentDefinition.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'url') then result := TFhirUri.create()
-  else if (propName = 'version') then result := TFhirString.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
-  else if (propName = 'experimental') then result := TFhirBoolean.create()
-  else if (propName = 'date') then result := TFhirDateTime.create()
-  else if (propName = 'publisher') then result := TFhirString.create()
-  else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'description') then result := TFhirMarkdown.create()
-  else if (propName = 'useContext') then result := UseContextList.new()
-  else if (propName = 'purpose') then result := TFhirMarkdown.create()
-  else if (propName = 'code') then result := TFhirEnum.create(SYSTEMS_TFhirCompartmentTypeEnum[CompartmentTypeNull], CODES_TFhirCompartmentTypeEnum[CompartmentTypeNull]) 
+  if (propName = 'code') then result := TFhirEnum.create(SYSTEMS_TFhirCompartmentTypeEnum[CompartmentTypeNull], CODES_TFhirCompartmentTypeEnum[CompartmentTypeNull]) 
   else if (propName = 'search') then result := TFhirBoolean.create()
   else if (propName = 'resource') then result := ResourceList.new()
   else result := inherited createPropertyValue(propName);
@@ -30255,18 +35305,7 @@ end;
 
 function TFhirCompartmentDefinition.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'url') then result := 'uri'
-  else if (propName = 'version') then result := 'string'
-  else if (propName = 'name') then result := 'string'
-  else if (propName = 'status') then result := 'code'
-  else if (propName = 'experimental') then result := 'boolean'
-  else if (propName = 'date') then result := 'dateTime'
-  else if (propName = 'publisher') then result := 'string'
-  else if (propName = 'contact') then result := 'ContactDetail'
-  else if (propName = 'description') then result := 'markdown'
-  else if (propName = 'useContext') then result := 'UsageContext'
-  else if (propName = 'purpose') then result := 'markdown'
-  else if (propName = 'code') then result := 'code'
+  if (propName = 'code') then result := 'code'
   else if (propName = 'search') then result := 'boolean'
   else if (propName = 'resource') then result := 'BackboneElement'
   else result := inherited getTypesForProperty(propName);
@@ -30274,18 +35313,7 @@ end;
 
 procedure TFhirCompartmentDefinition.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := nil
-  else if (propName = 'version') then VersionElement := nil
-  else if (propName = 'name') then NameElement := nil
-  else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'experimental') then ExperimentalElement := nil
-  else if (propName = 'date') then DateElement := nil
-  else if (propName = 'publisher') then PublisherElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
-  else if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
-  else if (propName = 'purpose') then PurposeElement := nil
-  else if (propName = 'code') then CodeElement := nil
+  if (propName = 'code') then CodeElement := nil
   else if (propName = 'search') then SearchElement := nil
   else if (propName = 'resource') then deletePropertyValue('resource', ResourceList, value)
   else
@@ -30294,18 +35322,7 @@ end;
 
 procedure TFhirCompartmentDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := asUri(new)
-  else if (propName = 'version') then VersionElement := asString(new)
-  else if (propName = 'name') then NameElement := asString(new)
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
-  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
-  else if (propName = 'date') then DateElement := asDateTime(new)
-  else if (propName = 'publisher') then PublisherElement := asString(new)
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
-  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
-  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
-  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
-  else if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirCompartmentTypeEnum, CODES_TFhirCompartmentTypeEnum, new)
+  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirCompartmentTypeEnum, CODES_TFhirCompartmentTypeEnum, new)
   else if (propName = 'search') then SearchElement := asBoolean(new)
   else if (propName = 'resource') then replacePropertyValue('resource', ResourceList, existing, new)
   else
@@ -30314,9 +35331,7 @@ end;
 
 procedure TFhirCompartmentDefinition.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'contact') then ContactList.move(source, destination)
-  else if (propName = 'useContext') then UseContextList.move(source, destination)
-  else if (propName = 'resource') then ResourceList.move(source, destination)
+  if (propName = 'resource') then ResourceList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -30347,19 +35362,14 @@ begin
   else
   begin
     o := TFhirCompartmentDefinition(other);
-    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(versionElement, o.versionElement, true) and 
-      compareDeep(nameElement, o.nameElement, true) and compareDeep(statusElement, o.statusElement, true) and 
-      compareDeep(experimentalElement, o.experimentalElement, true) and compareDeep(dateElement, o.dateElement, true) and 
-      compareDeep(publisherElement, o.publisherElement, true) and compareDeep(contactList, o.contactList, true) and 
-      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(useContextList, o.useContextList, true) and 
-      compareDeep(purposeElement, o.purposeElement, true) and compareDeep(codeElement, o.codeElement, true) and 
-      compareDeep(searchElement, o.searchElement, true) and compareDeep(resourceList, o.resourceList, true);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(searchElement, o.searchElement, true) and 
+      compareDeep(resourceList, o.resourceList, true);
   end;
 end;
 
 function TFhirCompartmentDefinition.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FPurpose) and isEmptyProp(FCode) and isEmptyProp(FSearch) and isEmptyProp(FresourceList);
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FSearch) and isEmptyProp(FresourceList);
 end;
 
 procedure TFhirCompartmentDefinition.listFieldsInOrder(fields : TStringList);
@@ -30384,8 +35394,6 @@ end;
 function TFhirCompartmentDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin;
   result := inherited sizeInBytesV(magic);
-  inc(result, FContactList.sizeInBytes(magic));
-  inc(result, FUseContextList.sizeInBytes(magic));
   inc(result, FResourceList.sizeInBytes(magic));
 end;
 
@@ -32933,21 +37941,6 @@ end;
 
 destructor TFhirConceptMap.Destroy;
 begin
-  FUrl.free;
-  FIdentifier.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FSource.free;
   FTarget.free;
   FGroupList.Free;
@@ -32957,51 +37950,6 @@ end;
 procedure TFhirConceptMap.Assign(oSource : TFslObject);
 begin
   inherited;
-  urlElement := TFhirConceptMap(oSource).urlElement.Clone;
-  identifier := TFhirConceptMap(oSource).identifier.Clone;
-  versionElement := TFhirConceptMap(oSource).versionElement.Clone;
-  nameElement := TFhirConceptMap(oSource).nameElement.Clone;
-  titleElement := TFhirConceptMap(oSource).titleElement.Clone;
-  statusElement := TFhirConceptMap(oSource).statusElement.Clone;
-  experimentalElement := TFhirConceptMap(oSource).experimentalElement.Clone;
-  dateElement := TFhirConceptMap(oSource).dateElement.Clone;
-  publisherElement := TFhirConceptMap(oSource).publisherElement.Clone;
-  if (TFhirConceptMap(oSource).FContactList = nil) then
-  begin
-    FContactList.free;
-    FContactList := nil;
-  end
-  else
-  begin
-    if FContactList = nil then
-      FContactList := TFhirContactDetailList.Create;
-    FContactList.Assign(TFhirConceptMap(oSource).FContactList);
-  end;
-  descriptionElement := TFhirConceptMap(oSource).descriptionElement.Clone;
-  if (TFhirConceptMap(oSource).FUseContextList = nil) then
-  begin
-    FUseContextList.free;
-    FUseContextList := nil;
-  end
-  else
-  begin
-    if FUseContextList = nil then
-      FUseContextList := TFhirUsageContextList.Create;
-    FUseContextList.Assign(TFhirConceptMap(oSource).FUseContextList);
-  end;
-  if (TFhirConceptMap(oSource).FJurisdictionList = nil) then
-  begin
-    FJurisdictionList.free;
-    FJurisdictionList := nil;
-  end
-  else
-  begin
-    if FJurisdictionList = nil then
-      FJurisdictionList := TFhirCodeableConceptList.Create;
-    FJurisdictionList.Assign(TFhirConceptMap(oSource).FJurisdictionList);
-  end;
-  purposeElement := TFhirConceptMap(oSource).purposeElement.Clone;
-  copyrightElement := TFhirConceptMap(oSource).copyrightElement.Clone;
   source := TFhirConceptMap(oSource).source.Clone;
   target := TFhirConceptMap(oSource).target.Clone;
   if (TFhirConceptMap(oSource).FGroupList = nil) then
@@ -33025,36 +37973,6 @@ end;
 procedure TFhirConceptMap.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
-  if (child_name = 'identifier') Then
-     list.add(self.link, 'identifier', FIdentifier.Link);
-  if (child_name = 'version') Then
-     list.add(self.link, 'version', FVersion.Link);
-  if (child_name = 'name') Then
-     list.add(self.link, 'name', FName.Link);
-  if (child_name = 'title') Then
-     list.add(self.link, 'title', FTitle.Link);
-  if (child_name = 'status') Then
-     list.add(self.link, 'status', FStatus.Link);
-  if (child_name = 'experimental') Then
-     list.add(self.link, 'experimental', FExperimental.Link);
-  if (child_name = 'date') Then
-     list.add(self.link, 'date', FDate.Link);
-  if (child_name = 'publisher') Then
-     list.add(self.link, 'publisher', FPublisher.Link);
-  if (child_name = 'contact') Then
-    list.addAll(self, 'contact', FContactList);
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'useContext') Then
-    list.addAll(self, 'useContext', FUseContextList);
-  if (child_name = 'jurisdiction') Then
-    list.addAll(self, 'jurisdiction', FJurisdictionList);
-  if (child_name = 'purpose') Then
-     list.add(self.link, 'purpose', FPurpose.Link);
-  if (child_name = 'copyright') Then
-     list.add(self.link, 'copyright', FCopyright.Link);
   if (child_name = 'source[x]') or (child_name = 'source') Then
      list.add(self.link, 'source[x]', FSource.Link);
   if (child_name = 'target[x]') or (child_name = 'target') Then
@@ -33066,21 +37984,6 @@ end;
 procedure TFhirConceptMap.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link));
-  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
-  oList.add(TFHIRProperty.create(self, 'copyright', 'markdown', false, TFhirMarkdown, FCopyright.Link));
   oList.add(TFHIRProperty.create(self, 'source[x]', 'uri|canonical', false, TFhirDataType, FSource.Link));
   oList.add(TFHIRProperty.create(self, 'target[x]', 'uri|canonical', false, TFhirDataType, FTarget.Link));
   oList.add(TFHIRProperty.create(self, 'group', 'BackboneElement', true, TFhirConceptMapGroup, FGroupList.Link));
@@ -33088,82 +37991,7 @@ end;
 
 function TFhirConceptMap.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'url') then
-  begin
-    UrlElement := asUri(propValue);
-    result := propValue;
-  end
-  else if (propName = 'identifier') then
-  begin
-    Identifier := propValue as TFhirIdentifier;
-    result := propValue;
-  end
-  else if (propName = 'version') then
-  begin
-    VersionElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'name') then
-  begin
-    NameElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'title') then
-  begin
-    TitleElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'status') then
-  begin
-    StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, propValue);
-    result := propValue;
-  end
-  else if (propName = 'experimental') then
-  begin
-    ExperimentalElement := asBoolean(propValue);
-    result := propValue;
-  end
-  else if (propName = 'date') then
-  begin
-    DateElement := asDateTime(propValue);
-    result := propValue;
-  end
-  else if (propName = 'publisher') then
-  begin
-    PublisherElement := asString(propValue);
-    result := propValue;
-  end
-  else if (propName = 'contact') then
-  begin
-    ContactList.add(propValue as TFhirContactDetail);
-    result := propValue;
-  end
-  else if (propName = 'description') then
-  begin
-    DescriptionElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'useContext') then
-  begin
-    UseContextList.add(propValue as TFhirUsageContext);
-    result := propValue;
-  end
-  else if (propName = 'jurisdiction') then
-  begin
-    JurisdictionList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (propName = 'purpose') then
-  begin
-    PurposeElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (propName = 'copyright') then
-  begin
-    CopyrightElement := asMarkdown(propValue);
-    result := propValue;
-  end
-  else if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then
   begin
     Source := propValue as TFhirDataType;
     result := propValue;
@@ -33183,31 +38011,13 @@ end;
 
 procedure TFhirConceptMap.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail)
-  else if (propName = 'useContext') then UseContextList.insertItem(index, propValue as TFhirUsageContext)
-  else if (propName = 'jurisdiction') then JurisdictionList.insertItem(index, propValue as TFhirCodeableConcept)
-  else if (propName = 'group') then GroupList.insertItem(index, propValue as TFhirConceptMapGroup)
+  if (propName = 'group') then GroupList.insertItem(index, propValue as TFhirConceptMapGroup)
   else inherited;
 end;
 
 function TFhirConceptMap.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'url') then result := TFhirUri.create()
-  else if (propName = 'identifier') then result := TFhirIdentifier.create()
-  else if (propName = 'version') then result := TFhirString.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'title') then result := TFhirString.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
-  else if (propName = 'experimental') then result := TFhirBoolean.create()
-  else if (propName = 'date') then result := TFhirDateTime.create()
-  else if (propName = 'publisher') then result := TFhirString.create()
-  else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'description') then result := TFhirMarkdown.create()
-  else if (propName = 'useContext') then result := UseContextList.new()
-  else if (propName = 'jurisdiction') then result := JurisdictionList.new()
-  else if (propName = 'purpose') then result := TFhirMarkdown.create()
-  else if (propName = 'copyright') then result := TFhirMarkdown.create()
-  else if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then raise EFHIRException.create('Cannot make property Source')
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then raise EFHIRException.create('Cannot make property Source')
   else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then raise EFHIRException.create('Cannot make property Target')
   else if (propName = 'group') then result := GroupList.new()
   else result := inherited createPropertyValue(propName);
@@ -33215,22 +38025,7 @@ end;
 
 function TFhirConceptMap.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'url') then result := 'uri'
-  else if (propName = 'identifier') then result := 'Identifier'
-  else if (propName = 'version') then result := 'string'
-  else if (propName = 'name') then result := 'string'
-  else if (propName = 'title') then result := 'string'
-  else if (propName = 'status') then result := 'code'
-  else if (propName = 'experimental') then result := 'boolean'
-  else if (propName = 'date') then result := 'dateTime'
-  else if (propName = 'publisher') then result := 'string'
-  else if (propName = 'contact') then result := 'ContactDetail'
-  else if (propName = 'description') then result := 'markdown'
-  else if (propName = 'useContext') then result := 'UsageContext'
-  else if (propName = 'jurisdiction') then result := 'CodeableConcept'
-  else if (propName = 'purpose') then result := 'markdown'
-  else if (propName = 'copyright') then result := 'markdown'
-  else if (propName = 'source[x]') then result := 'uri|canonical'
+  if (propName = 'source[x]') then result := 'uri|canonical'
   else if (propName = 'target[x]') then result := 'uri|canonical'
   else if (propName = 'group') then result := 'BackboneElement'
   else result := inherited getTypesForProperty(propName);
@@ -33238,22 +38033,7 @@ end;
 
 procedure TFhirConceptMap.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := nil
-  else if (propName = 'identifier') then IdentifierElement := nil
-  else if (propName = 'version') then VersionElement := nil
-  else if (propName = 'name') then NameElement := nil
-  else if (propName = 'title') then TitleElement := nil
-  else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'experimental') then ExperimentalElement := nil
-  else if (propName = 'date') then DateElement := nil
-  else if (propName = 'publisher') then PublisherElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
-  else if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
-  else if (propName = 'jurisdiction') then deletePropertyValue('jurisdiction', JurisdictionList, value)
-  else if (propName = 'purpose') then PurposeElement := nil
-  else if (propName = 'copyright') then CopyrightElement := nil
-  else if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := nil
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := nil
   else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then TargetElement := nil
   else if (propName = 'group') then deletePropertyValue('group', GroupList, value)
   else
@@ -33262,22 +38042,7 @@ end;
 
 procedure TFhirConceptMap.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := asUri(new)
-  else if (propName = 'identifier') then IdentifierElement := new as TFhirIdentifier
-  else if (propName = 'version') then VersionElement := asString(new)
-  else if (propName = 'name') then NameElement := asString(new)
-  else if (propName = 'title') then TitleElement := asString(new)
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
-  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
-  else if (propName = 'date') then DateElement := asDateTime(new)
-  else if (propName = 'publisher') then PublisherElement := asString(new)
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
-  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
-  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
-  else if (propName = 'jurisdiction') then replacePropertyValue('jurisdiction', JurisdictionList, existing, new)
-  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
-  else if (propName = 'copyright') then CopyrightElement := asMarkdown(new)
-  else if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := new as TFhirDataType
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := new as TFhirDataType
   else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then TargetElement := new as TFhirDataType
   else if (propName = 'group') then replacePropertyValue('group', GroupList, existing, new)
   else
@@ -33286,10 +38051,7 @@ end;
 
 procedure TFhirConceptMap.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'contact') then ContactList.move(source, destination)
-  else if (propName = 'useContext') then UseContextList.move(source, destination)
-  else if (propName = 'jurisdiction') then JurisdictionList.move(source, destination)
-  else if (propName = 'group') then GroupList.move(source, destination)
+  if (propName = 'group') then GroupList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -33320,21 +38082,14 @@ begin
   else
   begin
     o := TFhirConceptMap(other);
-    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(identifierElement, o.identifierElement, true) and 
-      compareDeep(versionElement, o.versionElement, true) and compareDeep(nameElement, o.nameElement, true) and 
-      compareDeep(titleElement, o.titleElement, true) and compareDeep(statusElement, o.statusElement, true) and 
-      compareDeep(experimentalElement, o.experimentalElement, true) and compareDeep(dateElement, o.dateElement, true) and 
-      compareDeep(publisherElement, o.publisherElement, true) and compareDeep(contactList, o.contactList, true) and 
-      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(useContextList, o.useContextList, true) and 
-      compareDeep(jurisdictionList, o.jurisdictionList, true) and compareDeep(purposeElement, o.purposeElement, true) and 
-      compareDeep(copyrightElement, o.copyrightElement, true) and compareDeep(sourceElement, o.sourceElement, true) and 
-      compareDeep(targetElement, o.targetElement, true) and compareDeep(groupList, o.groupList, true);
+    result := compareDeep(sourceElement, o.sourceElement, true) and compareDeep(targetElement, o.targetElement, true) and 
+      compareDeep(groupList, o.groupList, true);
   end;
 end;
 
 function TFhirConceptMap.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FIdentifier) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(FSource) and isEmptyProp(FTarget) and isEmptyProp(FgroupList);
+  result := inherited isEmpty  and isEmptyProp(FSource) and isEmptyProp(FTarget) and isEmptyProp(FgroupList);
 end;
 
 procedure TFhirConceptMap.listFieldsInOrder(fields : TStringList);
@@ -33363,9 +38118,6 @@ end;
 function TFhirConceptMap.sizeInBytesV(magic : integer) : cardinal;
 begin;
   result := inherited sizeInBytesV(magic);
-  inc(result, FContactList.sizeInBytes(magic));
-  inc(result, FUseContextList.sizeInBytes(magic));
-  inc(result, FJurisdictionList.sizeInBytes(magic));
   inc(result, FGroupList.sizeInBytes(magic));
 end;
 
@@ -33395,10 +38147,35 @@ begin
     FUrl.value := '';
 end;
 
+function TFhirConceptMap.GetIdentifier : TFhirIdentifier;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  if FIdentifierList.Count > 0 then
+    result := FIdentifierList[0]
+  else
+    result := nil;
+end;
+
 procedure TFhirConceptMap.SetIdentifier(value : TFhirIdentifier);
 begin
-  FIdentifier.free;
-  FIdentifier := value;
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  if value = nil then
+    FIdentifierList.clear
+  else
+  begin
+    if FIdentifierList.Count > 0 then
+      FIdentifierList[0] := value
+    else
+      FIdentifierList.Add(value);
+
+  end
+end;
+
+function TFhirConceptMap.GetHasIdentifier : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
 end;
 
 procedure TFhirConceptMap.SetVersion(value : TFhirString);
@@ -43240,30 +48017,6 @@ begin
   result := (FFhirVersion <> nil) and (FFhirVersion.count > 0);
 end;
 
-function TFhirImplementationGuideDefinitionResource.GetFhirVersionST : TFhirFHIRVersionEnumList;
-  var i : integer;
-begin
-  result := [];
-  if FfhirVersion <> nil then
-    for i := 0 to FfhirVersion.count - 1 do
-      result := result + [TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, FfhirVersion[i].value))];
-end;
-
-procedure TFhirImplementationGuideDefinitionResource.SetFhirVersionST(value : TFhirFHIRVersionEnumList);
-var a : TFhirFHIRVersionEnum;
-begin
-  if FfhirVersion = nil then
-    FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-  FfhirVersion.clear;
-  for a := low(TFhirFHIRVersionEnum) to high(TFhirFHIRVersionEnum) do
-    if a in value then
-      begin
-         if FfhirVersion = nil then
-           FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-         FfhirVersion.add(TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[a], CODES_TFhirFHIRVersionEnum[a]));
-      end;
-end;
-
 procedure TFhirImplementationGuideDefinitionResource.SetName(value : TFhirString);
 begin
   FName.free;
@@ -46491,30 +51244,6 @@ end;
 function TFhirImplementationGuide.GetHasFhirVersion : boolean;
 begin
   result := (FFhirVersion <> nil) and (FFhirVersion.count > 0);
-end;
-
-function TFhirImplementationGuide.GetFhirVersionST : TFhirFHIRVersionEnumList;
-  var i : integer;
-begin
-  result := [];
-  if FfhirVersion <> nil then
-    for i := 0 to FfhirVersion.count - 1 do
-      result := result + [TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, FfhirVersion[i].value))];
-end;
-
-procedure TFhirImplementationGuide.SetFhirVersionST(value : TFhirFHIRVersionEnumList);
-var a : TFhirFHIRVersionEnum;
-begin
-  if FfhirVersion = nil then
-    FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-  FfhirVersion.clear;
-  for a := low(TFhirFHIRVersionEnum) to high(TFhirFHIRVersionEnum) do
-    if a in value then
-      begin
-         if FfhirVersion = nil then
-           FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-         FfhirVersion.add(TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[a], CODES_TFhirFHIRVersionEnum[a]));
-      end;
 end;
 
 function TFhirImplementationGuide.GetDependsOnList : TFhirImplementationGuideDependsOnList;
@@ -83934,20 +88663,6 @@ end;
 
 destructor TFhirTestScript.Destroy;
 begin
-  FUrl.free;
-  FIdentifier.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FCopyright.free;
   FOriginList.Free;
   FDestinationList.Free;
@@ -84088,36 +88803,6 @@ end;
 procedure TFhirTestScript.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'url') Then
-     list.add(self.link, 'url', FUrl.Link);
-  if (child_name = 'identifier') Then
-     list.add(self.link, 'identifier', FIdentifier.Link);
-  if (child_name = 'version') Then
-     list.add(self.link, 'version', FVersion.Link);
-  if (child_name = 'name') Then
-     list.add(self.link, 'name', FName.Link);
-  if (child_name = 'title') Then
-     list.add(self.link, 'title', FTitle.Link);
-  if (child_name = 'status') Then
-     list.add(self.link, 'status', FStatus.Link);
-  if (child_name = 'experimental') Then
-     list.add(self.link, 'experimental', FExperimental.Link);
-  if (child_name = 'date') Then
-     list.add(self.link, 'date', FDate.Link);
-  if (child_name = 'publisher') Then
-     list.add(self.link, 'publisher', FPublisher.Link);
-  if (child_name = 'contact') Then
-    list.addAll(self, 'contact', FContactList);
-  if (child_name = 'description') Then
-     list.add(self.link, 'description', FDescription.Link);
-  if (child_name = 'useContext') Then
-    list.addAll(self, 'useContext', FUseContextList);
-  if (child_name = 'jurisdiction') Then
-    list.addAll(self, 'jurisdiction', FJurisdictionList);
-  if (child_name = 'purpose') Then
-     list.add(self.link, 'purpose', FPurpose.Link);
-  if (child_name = 'copyright') Then
-     list.add(self.link, 'copyright', FCopyright.Link);
   if (child_name = 'origin') Then
     list.addAll(self, 'origin', FOriginList);
   if (child_name = 'destination') Then
@@ -84141,21 +88826,6 @@ end;
 procedure TFhirTestScript.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'experimental', 'boolean', false, TFhirBoolean, FExperimental.Link));
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));
-  oList.add(TFHIRProperty.create(self, 'publisher', 'string', false, TFhirString, FPublisher.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactDetail', true, TFhirContactDetail, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'markdown', false, TFhirMarkdown, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'useContext', 'UsageContext', true, TFhirUsageContext, FUseContextList.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link));
-  oList.add(TFHIRProperty.create(self, 'purpose', 'markdown', false, TFhirMarkdown, FPurpose.Link));
-  oList.add(TFHIRProperty.create(self, 'copyright', 'markdown', false, TFhirMarkdown, FCopyright.Link));
   oList.add(TFHIRProperty.create(self, 'origin', 'BackboneElement', true, TFhirTestScriptOrigin, FOriginList.Link));
   oList.add(TFHIRProperty.create(self, 'destination', 'BackboneElement', true, TFhirTestScriptDestination, FDestinationList.Link));
   oList.add(TFHIRProperty.create(self, 'metadata', 'BackboneElement', false, TFhirTestScriptMetadata, FMetadata.Link));
@@ -84366,22 +89036,7 @@ end;
 
 procedure TFhirTestScript.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := nil
-  else if (propName = 'identifier') then IdentifierElement := nil
-  else if (propName = 'version') then VersionElement := nil
-  else if (propName = 'name') then NameElement := nil
-  else if (propName = 'title') then TitleElement := nil
-  else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'experimental') then ExperimentalElement := nil
-  else if (propName = 'date') then DateElement := nil
-  else if (propName = 'publisher') then PublisherElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
-  else if (propName = 'description') then DescriptionElement := nil
-  else if (propName = 'useContext') then deletePropertyValue('useContext', UseContextList, value)
-  else if (propName = 'jurisdiction') then deletePropertyValue('jurisdiction', JurisdictionList, value)
-  else if (propName = 'purpose') then PurposeElement := nil
-  else if (propName = 'copyright') then CopyrightElement := nil
-  else if (propName = 'origin') then deletePropertyValue('origin', OriginList, value)
+  if (propName = 'origin') then deletePropertyValue('origin', OriginList, value)
   else if (propName = 'destination') then deletePropertyValue('destination', DestinationList, value)
   else if (propName = 'metadata') then MetadataElement := nil
   else if (propName = 'fixture') then deletePropertyValue('fixture', FixtureList, value)
@@ -84396,22 +89051,7 @@ end;
 
 procedure TFhirTestScript.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := asUri(new)
-  else if (propName = 'identifier') then IdentifierElement := new as TFhirIdentifier
-  else if (propName = 'version') then VersionElement := asString(new)
-  else if (propName = 'name') then NameElement := asString(new)
-  else if (propName = 'title') then TitleElement := asString(new)
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirPublicationStatusEnum, CODES_TFhirPublicationStatusEnum, new)
-  else if (propName = 'experimental') then ExperimentalElement := asBoolean(new)
-  else if (propName = 'date') then DateElement := asDateTime(new)
-  else if (propName = 'publisher') then PublisherElement := asString(new)
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
-  else if (propName = 'description') then DescriptionElement := asMarkdown(new)
-  else if (propName = 'useContext') then replacePropertyValue('useContext', UseContextList, existing, new)
-  else if (propName = 'jurisdiction') then replacePropertyValue('jurisdiction', JurisdictionList, existing, new)
-  else if (propName = 'purpose') then PurposeElement := asMarkdown(new)
-  else if (propName = 'copyright') then CopyrightElement := asMarkdown(new)
-  else if (propName = 'origin') then replacePropertyValue('origin', OriginList, existing, new)
+  if (propName = 'origin') then replacePropertyValue('origin', OriginList, existing, new)
   else if (propName = 'destination') then replacePropertyValue('destination', DestinationList, existing, new)
   else if (propName = 'metadata') then MetadataElement := new as TFhirTestScriptMetadata
   else if (propName = 'fixture') then replacePropertyValue('fixture', FixtureList, existing, new)
@@ -84465,14 +89105,7 @@ begin
   else
   begin
     o := TFhirTestScript(other);
-    result := compareDeep(urlElement, o.urlElement, true) and compareDeep(identifierElement, o.identifierElement, true) and 
-      compareDeep(versionElement, o.versionElement, true) and compareDeep(nameElement, o.nameElement, true) and 
-      compareDeep(titleElement, o.titleElement, true) and compareDeep(statusElement, o.statusElement, true) and 
-      compareDeep(experimentalElement, o.experimentalElement, true) and compareDeep(dateElement, o.dateElement, true) and 
-      compareDeep(publisherElement, o.publisherElement, true) and compareDeep(contactList, o.contactList, true) and 
-      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(useContextList, o.useContextList, true) and 
-      compareDeep(jurisdictionList, o.jurisdictionList, true) and compareDeep(purposeElement, o.purposeElement, true) and 
-      compareDeep(copyrightElement, o.copyrightElement, true) and compareDeep(originList, o.originList, true) and 
+    result := compareDeep(originList, o.originList, true) and 
       compareDeep(destinationList, o.destinationList, true) and compareDeep(metadataElement, o.metadataElement, true) and 
       compareDeep(fixtureList, o.fixtureList, true) and compareDeep(profileList, o.profileList, true) and 
       compareDeep(variableList, o.variableList, true) and compareDeep(setupElement, o.setupElement, true) and 
@@ -84482,7 +89115,7 @@ end;
 
 function TFhirTestScript.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FIdentifier) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(ForiginList) and isEmptyProp(FdestinationList) and isEmptyProp(FMetadata) and isEmptyProp(FfixtureList) and isEmptyProp(FprofileList) and isEmptyProp(FvariableList) and isEmptyProp(FSetup) and isEmptyProp(FtestList) and isEmptyProp(FTeardown);
+  result := inherited isEmpty and isEmptyProp(ForiginList) and isEmptyProp(FdestinationList) and isEmptyProp(FMetadata) and isEmptyProp(FfixtureList) and isEmptyProp(FprofileList) and isEmptyProp(FvariableList) and isEmptyProp(FSetup) and isEmptyProp(FtestList) and isEmptyProp(FTeardown);
 end;
 
 procedure TFhirTestScript.listFieldsInOrder(fields : TStringList);
@@ -84552,12 +89185,6 @@ begin
   end
   else if FUrl <> nil then
     FUrl.value := '';
-end;
-
-procedure TFhirTestScript.SetIdentifier(value : TFhirIdentifier);
-begin
-  FIdentifier.free;
-  FIdentifier := value;
 end;
 
 procedure TFhirTestScript.SetVersion(value : TFhirString);
@@ -84930,6 +89557,37 @@ procedure TFhirTestScript.SetTeardown(value : TFhirTestScriptTeardown);
 begin
   FTeardown.free;
   FTeardown := value;
+end;
+
+function TFhirTestScript.GetIdentifier : TFhirIdentifier;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  if FIdentifierList.Count > 0 then
+    result := FIdentifierList[0]
+  else
+    result := nil;
+end;
+
+procedure TFhirTestScript.SetIdentifier(value : TFhirIdentifier);
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  if value = nil then
+    FIdentifierList.clear
+  else
+  begin
+    if FIdentifierList.Count > 0 then
+      FIdentifierList[0] := value
+    else
+      FIdentifierList.Add(value);
+
+  end
+end;
+
+function TFhirTestScript.GetHasIdentifier : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
 end;
 
 { TFhirTestScriptListEnumerator }

@@ -47,7 +47,7 @@ uses
 
 Type
 
-  TFHIRXmlParser = class (TFHIRXmlParserBase5)
+  TFHIRXmlParser = class (TFHIRXmlParserBase4b)
   protected
     Procedure ParseBaseAttributes(value : TFhirBase; path : string; element : TMXmlElement); overload;
     Function ParseBaseChild(value : TFhirBase; path : string; child : TMXmlElement) : boolean;  overload;
@@ -1733,7 +1733,7 @@ Type
     function ParseFragment(element : TMXmlElement) : TFHIRObject; overload;
   end;
 
-  TFHIRXmlComposer = class (TFHIRXmlComposerBase5)
+  TFHIRXmlComposer = class (TFHIRXmlComposerBase4B)
   protected
     Procedure ComposeBaseAttributes(xml : TXmlBuilder; res : TFhirBase); overload;
     Procedure ComposeBaseChildren(xml : TXmlBuilder; value : TFhirBase); overload;
@@ -1746,6 +1746,8 @@ Type
     Procedure ComposeBackboneElementChildren(xml : TXmlBuilder; value : TFhirBackboneElement);
     Procedure ComposeDataTypeAttributes(xml : TXmlBuilder; value : TFhirDataType);
     Procedure ComposeDataTypeChildren(xml : TXmlBuilder; value : TFhirDataType);
+    Procedure ComposeBackboneTypeAttributes(xml : TXmlBuilder; value : TFhirBackboneType);
+    Procedure ComposeBackboneTypeChildren(xml : TXmlBuilder; value : TFhirBackboneType);
 
 
     Procedure ComposeEnum(xml : TXmlBuilder; name : String; value : TFhirEnum; Const aNames : Array Of String);
@@ -3517,6 +3519,21 @@ begin
 end;
 
 Procedure TFHIRXmlComposer.ComposeBackboneElementChildren(xml : TXmlBuilder; value : TFhirBackboneElement);
+var
+  i : integer;
+begin
+  composeElementChildren(xml, value);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to value.modifierExtensionList.Count - 1 do
+      ComposeExtension(xml, 'modifierExtension', value.modifierExtensionList[i]);
+end;
+
+procedure TFHIRXmlComposer.ComposeBackboneTypeAttributes(xml: TXmlBuilder; value: TFhirBackboneType);
+begin
+  ComposeElementAttributes(xml, value);
+end;
+
+procedure TFHIRXmlComposer.ComposeBackboneTypeChildren(xml: TXmlBuilder; value: TFhirBackboneType);
 var
   i : integer;
 begin
@@ -5589,7 +5606,7 @@ procedure TFHIRXmlComposer.ComposeDosageChildren(xml : TXmlBuilder; value : TFhi
 var
   i : integer;
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInteger(xml, 'sequence', value.sequenceElement);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -6815,7 +6832,7 @@ procedure TFHIRXmlComposer.ComposeElementDefinitionChildren(xml : TXmlBuilder; v
 var
   i : integer;
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   ComposeString(xml, 'path', value.pathElement);
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.representationList.Count - 1 do
@@ -7759,7 +7776,7 @@ end;
 
 procedure TFHIRXmlComposer.ComposeMarketingStatusChildren(xml : TXmlBuilder; value : TFhirMarketingStatus);
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(xml, 'country', value.country);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -8137,7 +8154,7 @@ end;
 
 procedure TFHIRXmlComposer.ComposePopulationChildren(xml : TXmlBuilder; value : TFhirPopulation);
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.age is TFhirRange) {6} then
     ComposeRange(xml, 'ageRange', TFhirRange(value.age))
   else if (SummaryOption in [soFull, soSummary, soData]) and (value.age is TFhirCodeableConcept) {6} then
@@ -8218,7 +8235,7 @@ procedure TFHIRXmlComposer.ComposeProdCharacteristicChildren(xml : TXmlBuilder; 
 var
   i : integer;
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(xml, 'height', value.height);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -8300,7 +8317,7 @@ procedure TFHIRXmlComposer.ComposeProductShelfLifeChildren(xml : TXmlBuilder; va
 var
   i : integer;
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(xml, 'type', value.type_);
   if (SummaryOption in [soFull, soSummary, soData]) and (value.period is TFhirDuration) {6} then
@@ -8945,7 +8962,7 @@ procedure TFHIRXmlComposer.ComposeTimingChildren(xml : TXmlBuilder; value : TFhi
 var
   i : integer;
 begin
-  composeBackboneElementChildren(xml, value);
+  composeBackboneTypeChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.eventList.Count - 1 do
       ComposeDateTime(xml, 'event', value.eventList[i]);

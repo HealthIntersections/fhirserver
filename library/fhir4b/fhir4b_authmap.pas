@@ -47,6 +47,7 @@ const
     tcOther, // frtNull
     tcFinancial, // frtAccount
     tcOther, // frtActivityDefinition
+    tcMedicationDefinition, // frtAdministrableProductDefinition
     tcClinical, // frtAdverseEvent
     tcClinical, // frtAllergyIntolerance
     tcSchedule, // frtAppointment
@@ -63,9 +64,11 @@ const
     tcOther,
     tcFinancial, // frtChargeItem
     tcFinancial, // frtChargeItemDefinition
+    tcOther, // frtCitation
     tcFinancial, // frtClaim
     tcFinancial, // frtClaimResponse
     tcClinical, // frtClinicalImpression
+    tcClinical, // frtClinicalUseDefinition
     tcOther, // frtCodeSystem
     tcDocuments, // frtCommunication
     tcDocuments, // frtCommunicationRequest
@@ -87,7 +90,6 @@ const
     tcClinical, // frtDiagnosticReport
     tcDocuments, // frtDocumentManifest
     tcDocuments, // frtDocumentReference
-    tcOther, // frtEffectEvidenceSynthesis
     tcSchedule, // frtEncounter
     tcData, // frtEndpoint
     tcFinancial, // frtEnrollmentRequest
@@ -95,6 +97,7 @@ const
     tcSchedule, // frtEpisodeOfCare
     tcOther, // frtEventDefinition
     tcOther, // frtEvidence
+    tcOther, // frtEvidenceReport
     tcOther, // frtEvidenceVariable
     tcOther, // frtExampleScenario
     tcFinancial, // frtExplanationOfBenefit
@@ -110,12 +113,14 @@ const
     tcClinical, // frtImmunizationEvaluation
     tcClinical, // frtImmunizationRecommendation
     tcOther, // frtImplementationGuide
+    tcMedicationDefinition, // frtIngredient
     tcFinancial, // frtInsurancePlan
     tcFinancial, // frtInvoice
     tcOther, // frtLibrary
     tcData, // frtLinkage
     tcDocuments, // frtList
     tcData, // frtLocation
+    tcMedicationDefinition, // frtManufacturedItemDefinition
     tcOther, // frtMeasure
     tcData, // frtMeasureReport
     tcDocuments, // frtMedia
@@ -125,27 +130,20 @@ const
     tcMedicationDefinition, // frtMedicationKnowledge
     tcMeds, // frtMedicationRequest
     tcMeds, // frtMedicationStatement
-    tcMedicationDefinition, // frtMedicinalProduct
-    tcMedicationDefinition, // frtMedicinalProductAuthorization
-    tcMedicationDefinition, // frtMedicinalProductContraindication
-    tcMedicationDefinition, // frtMedicinalProductIndication
-    tcMedicationDefinition, // frtMedicinalProductIngredient
-    tcMedicationDefinition, // frtMedicinalProductInteraction
-    tcMedicationDefinition, // frtMedicinalProductManufactured
-    tcMedicationDefinition, // frtMedicinalProductPackaged
-    tcMedicationDefinition, // frtMedicinalProductPharmaceutical
-    tcMedicationDefinition, // frtMedicinalProductUndesirableEffect
+    tcMedicationDefinition, // frtMedicinalProductDefinition
     tcOther, // frtMessageDefinition
     tcData, // frtMessageHeader
     tcClinical, // frtSequence
     tcOther, // frtNamingSystem
     tcClinical, // frtNutritionOrder
+    tcClinical, // frtNutritionProduct
     tcClinical, // frtObservation
     tcOther, // frtObservationDefinition
     tcOther, // frtOperationDefinition
     tcData, // frtOperationOutcome
     tcData, // frtOrganization
     tcData, // frtOrganizationAffiliation
+    tcMedicationDefinition, // frtPackagedProductDefinition
     tcData, // frtParameters
     tcData, // frtPatient
     tcFinancial, // frtPaymentNotice
@@ -158,14 +156,14 @@ const
     tcAudit, // frtProvenance
     tcOther, // frtQuestionnaire
     tcClinical, // frtQuestionnaireResponse
+    tcMedicationDefinition, // frtRegulatedAuthorization
     tcData, // frtRelatedPerson
     tcOther, // frtRequestGroup
-    tcOther, // frtResearchDefinition
-    tcOther, // frtResearchElementDefinition
+    tcData, // frtResearchDefinition
+    tcData, // frtResearchELementDefinition
     tcData, // frtResearchStudy
     tcData, // frtResearchSubject
     tcClinical, // frtRiskAssessment
-    tcOther, // frtRiskEvidenceSynthesis
     tcSchedule, // frtSchedule
     tcOther, // frtSearchParameter
     tcClinical, // frtServiceRequest
@@ -175,13 +173,10 @@ const
     tcOther, // frtStructureDefinition
     tcOther, // frtStructureMap
     tcData, // frtSubscription
+    tcData, // frtSubscriptionStatus
+    tcData, // frtSubscriptionTopic
     tcData, // frtSubstance
-    tcMedicationDefinition, // frtSubstanceNucleicAcid
-    tcMedicationDefinition, // frtSubstancePolymer
-    tcMedicationDefinition, // frtSubstanceProtein
-    tcMedicationDefinition, // frtSubstanceReferenceInformation
-    tcMedicationDefinition, // frtSubstanceSourceMaterial
-    tcMedicationDefinition, // frtSubstanceSpecification
+    tcMedicationDefinition, // frtSubstanceDefinition
     tcData, // frtSupplyDelivery
     tcData, // frtSupplyRequest
     tcData, // frtTask

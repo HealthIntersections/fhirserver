@@ -38,7 +38,7 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF} Types,
   fsl_base, fsl_utilities, fsl_fpc, fsl_threads, fsl_stream, fsl_collections, fsl_http, fsl_npm_cache,
   fhir_objects, fhir_parser, fhir_factory, fhir_uris,
-  fhir4b_resources, fhir4b_parser, fhir4b_types, fhir4b_context, fhir4b_utilities, fhir4b_constants, fhir4b_resources_base;
+  fhir4b_resources, fhir4b_parser, fhir4b_enums, fhir4b_types, fhir4b_context, fhir4b_utilities, fhir4b_constants, fhir4b_resources_base;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';

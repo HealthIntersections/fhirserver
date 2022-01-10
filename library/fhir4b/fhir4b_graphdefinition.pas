@@ -39,7 +39,7 @@ uses
   fsl_graphql, fsl_http,
   fhir_objects, fhir_graphdefinition, fhir_pathengine,  fhir_factory,
   fhir_graphql,
-  fhir4b_resources, fhir4b_types, fhir4b_pathengine, fhir4b_pathnode, fhir4b_context, fhir4b_utilities;
+  fhir4b_resources, fhir4b_enums, fhir4b_types, fhir4b_pathengine, fhir4b_pathnode, fhir4b_context, fhir4b_utilities;
 
 type
   TFHIRGraphDefinitionParser4 = class (TFHIRGraphDefinitionParser)

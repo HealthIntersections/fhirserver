@@ -41,7 +41,7 @@ uses
   fsl_fetcher,
 
   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
-  fhir4b_context, fhir4b_types, fhir4b_resources, fhir4b_constants, fhir4b_resources_base;
+  fhir4b_context, fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_constants, fhir4b_resources_base;
 
 const
 
@@ -95,8 +95,8 @@ procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource; overload;
 function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource; overload;
 function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages) : TFhirResource;
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 
 function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
@@ -267,7 +267,7 @@ type
     function addExtension(ext : TFHIRExtension) : TFHIRExtension; overload;
     function forceExtension(url : String) : TFHIRExtension; overload;
     function addExtension(url : String) : TFHIRExtension; overload;
-    procedure addExtension(url : String; t : TFhirType); overload;
+    procedure addExtension(url : String; t : TFhirDataType); overload;
     procedure addExtension(url : String; v : String); overload;
     procedure addExtensionUri(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
@@ -280,7 +280,7 @@ type
     function getExtensionString(url : String; index : integer) : String; overload;
     function listExtensions(url : String) : TFslList<TFhirExtension>; overload;
     procedure removeExtension(url : String);
-    procedure setExtension(url : String; t : TFHIRType);
+    procedure setExtension(url : String; t : TFHIRDataType);
     procedure setExtensionString(url, value : String);
     procedure setExtensionMarkdown(url, value : String);
     procedure setExtensionCanonical(url, value : String);
@@ -371,13 +371,13 @@ type
   public
     property Contained[id : String] : TFhirResource read GetContained; default;
     procedure collapseAllContained;
-    function addExtension(url : String; t : TFhirType) : TFhirExtension; overload;
+    function addExtension(url : String; t : TFhirDataType) : TFhirExtension; overload;
     function addExtension(url : String) : TFhirExtension; overload;
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer; overload;
     function getExtension(url : String; index : integer) : TFhirExtension; overload;
-    function getExtensionValue(url : String) : TFHIRType;
+    function getExtensionValue(url : String) : TFHIRDataType;
     function listExtensions(url : String) : TFslList<TFhirExtension>; overload;
     function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
@@ -390,7 +390,7 @@ type
     procedure setExtensionString(url, value : String);
     procedure setExtensionBool(url : String; value : boolean);
     procedure setExtensionCode(url, value : String);
-    procedure setExtension(url : String; t : TFHIRType);
+    procedure setExtension(url : String; t : TFHIRDataType);
     procedure checkNoModifiers(place, role : String; allowed : TArray<String> = nil);
   end;
 
@@ -451,8 +451,8 @@ type
 
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
-    function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
-    procedure removeInteraction(type_ : TFhirTypeRestfulInteractionEnum);
+    function interaction(type_ : TFHIRTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
+    procedure removeInteraction(type_ : TFHIRTypeRestfulInteractionEnum);
   end;
 
   TFhirConformanceRestHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRest
@@ -637,7 +637,7 @@ type
     Property str[name : String] : String read GetStringParameter;
     Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
     Property bool[name : String] : boolean read GetBooleanParameter;
-    procedure AddParameter(name: String; value: TFhirType); overload;
+    procedure AddParameter(name: String; value: TFHIRDataType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name, value: string); overload;
@@ -655,7 +655,7 @@ type
     Property NamedParameter[name : String] : TFHIRObject read GetNamedParameter; default;
     Property str[name : String] : String read GetStringParameter;
     Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
-    procedure AddParameter(name: String; value: TFhirType); overload;
+    procedure AddParameter(name: String; value: TFHIRDataType); overload;
     procedure AddParameter(name: String; value: TFhirResource); overload;
     procedure AddParameter(name: String; value: boolean); overload;
     procedure AddParameter(name: String; value: integer); overload;
@@ -724,8 +724,8 @@ type
 
   TFhirQuestionnaireItemHelper = class helper for TFhirQuestionnaireItem
   private
-    function getinitial: TFHIRType;
-    procedure SetInitial(const Value: TFHIRType);
+    function getinitial: TFHIRDataType;
+    procedure SetInitial(const Value: TFHIRDataType);
     function getOptions: String;
 
     procedure SetOptions(const Value: String);
@@ -733,7 +733,7 @@ type
   public
     function countDescendents : integer;
 
-    property initial : TFHIRType read GetInitial write SetInitial;
+    property initial : TFHIRDataType read GetInitial write SetInitial;
     property options : String read getOptions write SetOptions;
     property optionList : TFhirQuestionnaireItemAnswerOptionList read GetOptionList;
   end;
@@ -900,7 +900,7 @@ function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
 function gen(extension : TFHIRExtension) : String; overload;
 
-function gen(t : TFhirType):String; overload;
+function gen(t : TFHIRDataType):String; overload;
 
 procedure genHtml(b : TFslHtmlBuilder; name : TFhirHumanName); overload;
 procedure genHtml(b : TFslHtmlBuilder; id : TFhirIdentifier); overload;
@@ -1872,7 +1872,7 @@ end;
 
 
 
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1900,7 +1900,7 @@ begin
       try
         s.Stream := mem.Link;
         parser.source := s;
-        result := parser.ParseDT(name, type_) as TFhirType;
+        result := parser.ParseDT(name, type_) as TFHIRDataType;
       finally
         s.Free;
       end;
@@ -1912,7 +1912,7 @@ begin
   end;
 end;
 
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 var
   parser : TFHIRParser;
   mem : TStringStream;
@@ -1923,7 +1923,7 @@ begin
     mem := TStringStream.Create(value, TEncoding.UTF8);
     try
       parser.source := mem;
-      result := parser.ParseDT(name, type_) as TFHIRType;
+      result := parser.ParseDT(name, type_) as TFHIRDataType;
     finally
       mem.Free;
     end;
@@ -2288,7 +2288,7 @@ end;
 
 { TFHIRElementHelper }
 
-procedure TFHIRElementHelper.addExtension(url: String; t: TFhirType);
+procedure TFHIRElementHelper.addExtension(url: String; t: TFHIRDataType);
 var
   ex : TFhirExtension;
 begin
@@ -2422,7 +2422,7 @@ begin
 
 end;
 
-procedure TFHIRElementHelper.setExtension(url: String; t: TFHIRType);
+procedure TFHIRElementHelper.setExtension(url: String; t: TFHIRDataType);
 var
   ext : TFhirExtension;
 begin
@@ -2617,7 +2617,7 @@ end;
 
 { TFHIRDomainResourceHelper }
 
-function TFHIRDomainResourceHelper.addExtension(url: String; t: TFhirType) : TFhirExtension;
+function TFHIRDomainResourceHelper.addExtension(url: String; t: TFHIRDataType) : TFhirExtension;
 begin
   result := self.ExtensionList.Append;
   result.url := url;
@@ -2715,7 +2715,7 @@ begin
   end;
 end;
 
-function TFHIRDomainResourceHelper.getExtensionValue(url: String): TFHIRType;
+function TFHIRDomainResourceHelper.getExtensionValue(url: String): TFHIRDataType;
 var
   index : integer;
 begin
@@ -2792,7 +2792,7 @@ begin
 
 end;
 
-procedure TFHIRDomainResourceHelper.setExtension(url: String; t : TFHIRType);
+procedure TFHIRDomainResourceHelper.setExtension(url: String; t : TFHIRDataType);
 var
   ext : TFHIRExtension;
 begin
@@ -2948,7 +2948,7 @@ begin
           if c in commands then
           begin
             for cmd in res.interactionList do
-              if CODES_TFhirTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
+              if CODES_TFHIRTypeRestfulInteractionEnum[cmd.code] = CODES_TFHIRCommandType[c] then
                 found := true;
           end;
         if found then
@@ -2960,7 +2960,7 @@ end;
 
 { TFhirCapabilityStatementRestResourceHelper }
 
-function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteractionEnum): TFhirCapabilityStatementRestResourceInteraction;
+function TFhirConformanceRestResourceHelper.interaction(type_: TFHIRTypeRestfulInteractionEnum): TFhirCapabilityStatementRestResourceInteraction;
 var
   i : integer;
 begin
@@ -3571,7 +3571,7 @@ end;
 
 { TFhirParametersHelper }
 
-procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirType);
+procedure TFhirParametersHelper.AddParameter(name: String; value: TFHIRDataType);
 var
   p : TFhirParametersParameter;
 begin
@@ -3718,7 +3718,7 @@ end;
 
 { TFhirParametersParameterHelper }
 
-procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirType);
+procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFHIRDataType);
 var
   p : TFhirParametersParameter;
 begin
@@ -3818,7 +3818,7 @@ var
 begin
   p := self.partList.Append;
   p.name := name;
-  p.value := TFhirInteger.Create(value);
+  p.value := TFhirInteger.Create(inttostr(value));
 end;
 
 { TFHIRCodeableConceptHelper }
@@ -4066,7 +4066,7 @@ begin
   end;
 end;
 
-function gen(t : TFhirType):String;
+function gen(t : TFHIRDataType):String;
 begin
   if (t = nil) then
     result := ''
@@ -5410,7 +5410,7 @@ var
 begin
   result := '';
   for input in groupList[0].inputList do
-    if input.mode = MapInputModeTarget then
+    if input.mode = StructureMapInputModeTarget then
       if result = '' then
         result := input.type_
       else
@@ -6271,7 +6271,7 @@ begin
     inc(result, c.countDescendents);
 end;
 
-function TFhirQuestionnaireItemHelper.getinitial: TFHIRType;
+function TFhirQuestionnaireItemHelper.getinitial: TFHIRDataType;
 begin
   if initialList.Count = 0 then
     result := nil
@@ -6289,7 +6289,7 @@ begin
   result := answerValueSet;
 end;
 
-procedure TFhirQuestionnaireItemHelper.SetInitial(const Value: TFHIRType);
+procedure TFhirQuestionnaireItemHelper.SetInitial(const Value: TFHIRDataType);
 begin
   if initialList.Count = 0 then
     initialList.Append.value := value
@@ -6481,7 +6481,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TFhirConformanceRestResourceHelper.removeInteraction(type_: TFhirTypeRestfulInteractionEnum);
+procedure TFhirConformanceRestResourceHelper.removeInteraction(type_: TFHIRTypeRestfulInteractionEnum);
 var
   i : integer;
 begin

@@ -39,7 +39,20 @@ uses
   fhir_objects;
 
 type
-  TFHIRObject4 = class (TFHIRObject)
+  TFHIRObject4b = class (TFHIRObject)
+  public
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
+    function JSType : String; override;
+    function asJson : String; override;
+  end;
+  TFhirBase = TFhirObject4b;
+
+  TFHIRObjectX = TFHIRObject4b;
+
+  TFHIRResource4b = class (TFHIRResourceV)
   public
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
@@ -49,22 +62,10 @@ type
     function asJson : String; override;
   end;
 
-  TFHIRObjectX = TFHIRObject4;
-
-  TFHIRResource4 = class (TFHIRResourceV)
-  public
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
-    function makeIntValue(v : String) : TFHIRObject; override;
-    function GetFhirObjectVersion: TFHIRVersion; override;
-    function JSType : String; override;
-    function asJson : String; override;
-  end;
-
-  TFHIRResourceX = TFHIRResource4;
+  TFHIRResourceX = TFHIRResource4b;
 
   // a set of named properties
-  TFHIRTuple4 = class (TFHIRObject4)
+  TFHIRTuple4b = class (TFHIRObject4b)
   private
     FProperties : TFslMap<TFHIRSelectionList>;
   protected
@@ -83,7 +84,7 @@ type
 
     procedure addProperty(name : String; values : TFHIRSelectionList);
   end;
-  TFHIRTuple = TFHIRTuple4;
+  TFHIRTuple = TFHIRTuple4b;
 
 implementation
 
@@ -91,9 +92,9 @@ uses
   fhir4b_types, fhir4b_utilities, fhir4b_json;
 
 
-{ TFHIRObject4 }
+{ TFHIRObject4b }
 
-function TFHIRObject4.asJson: String;
+function TFHIRObject4b.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
@@ -105,34 +106,34 @@ begin
   end;
 end;
 
-function TFHIRObject4.GetFhirObjectVersion: TFHIRVersion;
+function TFHIRObject4b.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease4;
 end;
 
-function TFHIRObject4.JSType: String;
+function TFHIRObject4b.JSType: String;
 begin
-  result := fhirType+'4';
+  result := fhirType+'4b';
 end;
 
-function TFHIRObject4.makeCodeValue(v: String): TFHIRObject;
+function TFHIRObject4b.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
 end;
 
-function TFHIRObject4.makeIntValue(v: String): TFHIRObject;
+function TFHIRObject4b.makeIntValue(v: String): TFHIRObject;
 begin
   result := TFhirInteger.Create(v);
 end;
 
-function TFHIRObject4.makeStringValue(v: String): TFHIRObject;
+function TFHIRObject4b.makeStringValue(v: String): TFHIRObject;
 begin
   result := TFhirString.Create(v);
 end;
 
-{ TFHIRResource4 }
+{ TFHIRResource4b }
 
-function TFHIRResource4.asJson: String;
+function TFHIRResource4b.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
@@ -144,92 +145,92 @@ begin
   end;
 end;
 
-function TFHIRResource4.GetFhirObjectVersion: TFHIRVersion;
+function TFHIRResource4b.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease4;
 end;
 
-function TFHIRResource4.JSType: String;
+function TFHIRResource4b.JSType: String;
 begin
   result := fhirType+'4';
 end;
 
-function TFHIRResource4.makeCodeValue(v: String): TFHIRObject;
+function TFHIRResource4b.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
 end;
 
-function TFHIRResource4.makeIntValue(v: String): TFHIRObject;
+function TFHIRResource4b.makeIntValue(v: String): TFHIRObject;
 begin
   result := TFhirInteger.Create(v);
 end;
 
-function TFHIRResource4.makeStringValue(v: String): TFHIRObject;
+function TFHIRResource4b.makeStringValue(v: String): TFHIRObject;
 begin
   result := TFhirString.Create(v);
 end;
 
-{ TFHIRTuple4 }
+{ TFHIRTuple4b }
 
-constructor TFHIRTuple4.Create;
+constructor TFHIRTuple4b.Create;
 begin
   inherited;
   FProperties := TFslMap<TFHIRSelectionList>.create('tuple');
 end;
 
-destructor TFHIRTuple4.Destroy;
+destructor TFHIRTuple4b.Destroy;
 begin
   FProperties.free;
   inherited;
 end;
 
-procedure TFHIRTuple4.addProperty(name: String; values: TFHIRSelectionList);
+procedure TFHIRTuple4b.addProperty(name: String; values: TFHIRSelectionList);
 begin
   FProperties.Add(name, values);
 end;
 
-function TFHIRTuple4.createPropertyValue(propName: string): TFHIRObject;
+function TFHIRTuple4b.createPropertyValue(propName: string): TFHIRObject;
 begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-function TFHIRTuple4.fhirType: String;
+function TFHIRTuple4b.fhirType: String;
 begin
   result := 'Tuple';
 end;
 
-procedure TFHIRTuple4.GetChildrenByName(name: string; list: TFHIRSelectionList);
+procedure TFHIRTuple4b.GetChildrenByName(name: string; list: TFHIRSelectionList);
 begin
   if FProperties.ContainsKey(name) then
     list.addAll(FProperties[name]);
 end;
 
-function TFHIRTuple4.getId: String;
+function TFHIRTuple4b.getId: String;
 begin
   result := '';
 end;
 
-function TFHIRTuple4.hasExtensions: boolean;
+function TFHIRTuple4b.hasExtensions: boolean;
 begin
   result := false;
 end;
 
-function TFHIRTuple4.JSType: String;
+function TFHIRTuple4b.JSType: String;
 begin
-  result := fhirType+'4';
+  result := fhirType+'4b';
 end;
 
-procedure TFHIRTuple4.setIdValue(id: String);
-begin
-  raise EFHIRException.Create('Operation not supported on Tuple');
-end;
-
-function TFHIRTuple4.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+procedure TFHIRTuple4b.setIdValue(id: String);
 begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-function TFHIRTuple4.sizeInBytesV(magic : integer) : cardinal;
+function TFHIRTuple4b.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+function TFHIRTuple4b.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FProperties.sizeInBytes(magic));

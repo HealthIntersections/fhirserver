@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_xml, fsl_json,
   fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
-  fhir4b_pathnode, fhir4b_types, fhir4b_resources, fhir4b_utilities, fhir4b_context, fhir4b_constants;
+  fhir4b_pathnode, fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_utilities, fhir4b_context, fhir4b_constants;
 
 const
   FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');
@@ -1090,8 +1090,8 @@ begin
       result := q.value+' '+u;
     end;
   end
-  else if item is TFhirType then
-    result := gen(item as TFHIRType)
+  else if item is TFhirDataType then
+    result := gen(item as TFHIRDataType)
   else
     result := '';
 end;
@@ -2076,8 +2076,8 @@ begin
     for item in focus do
     begin
       if first then first := false else b.Append(', ');
-      if item.value is TFhirType then
-        b.Append(FormatTextToHTML(gen(item.value as TFhirType)))
+      if item.value is TFhirDataType then
+        b.Append(FormatTextToHTML(gen(item.value as TFhirDataType)))
       else
         b.Append('??');
     end;
@@ -6267,13 +6267,13 @@ end;
 
 
 
-function processDateConstant(s : String) : TFHIRType;
+function processDateConstant(s : String) : TFHIRDataType;
 var
   v : String;
   i : integer;
 begin
   if (s.startsWith('T')) then
-    exit(TFHIRTime.create(s.substring(1)).noExtensions as TFhirType);
+    exit(TFHIRTime.create(s.substring(1)).noExtensions as TFHIRDataType);
   v := s;
   if (v.length > 10) then
   begin
@@ -6288,9 +6288,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType
+    result := TFHIRDateTime.create(TFslDateTime.fromXML(s)).noExtensions as TFHIRDataType
   else
-    result := TFHIRDate.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType;
+    result := TFHIRDate.create(TFslDateTime.fromXML(s)).noExtensions as TFHIRDataType;
 end;
 
 //function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;

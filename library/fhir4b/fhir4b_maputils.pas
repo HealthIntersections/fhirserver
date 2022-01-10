@@ -37,7 +37,7 @@ uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities, fsl_stream,
   fhir_objects, fhir_xhtml,  fhir_pathengine, fhir_factory,
-  fhir4b_types, fhir4b_resources, fhir4b_context, fhir4b_pathengine, fhir4b_utilities, fhir4b_pathnode, fhir4b_factory, fhir4b_elementmodel;
+  fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_context, fhir4b_pathengine, fhir4b_utilities, fhir4b_pathnode, fhir4b_factory, fhir4b_elementmodel;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);
@@ -182,7 +182,7 @@ type
     function fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
     function readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
-    function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
+    function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRDataType;
     function isSimpleSyntax(rule : TFhirStructureMapGroupRule) : boolean;
     procedure parseConceptMap(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
     procedure parseUses(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -391,7 +391,7 @@ begin
       b.append(' ');
     end;
     b.append('as ');
-    b.append(CODES_TFhirMapModelModeEnum[s.Mode]);
+    b.append(CODES_TFhirStructureMapModelModeEnum[s.Mode]);
     b.append(#13#10);
     renderDoco(b, s.Documentation);
   end;
@@ -429,7 +429,7 @@ begin
       first := false
     else
       b.append(', ');
-    b.append(CODES_TFhirMapInputModeEnum[gi.Mode]);
+    b.append(CODES_TFhirStructureMapInputModeEnum[gi.Mode]);
     b.append(' ');
     b.append(gi.name);
     if (gi.type_ <> '') then
@@ -445,8 +445,8 @@ begin
     b.append(g.Extends);
   end;
   case g.typeMode of
-    MapGroupTypeModeTypes: b.append(' <<types>>');
-    MapGroupTypeModeTypeAndTypes: b.append(' <<type+>>');
+    StructureMapGroupTypeModeTypes: b.append(' <<types>>');
+    StructureMapGroupTypeModeTypeAndTypes: b.append(' <<type+>>');
   end;
   b.append(' {');
   if (g.Documentation <> '') then
@@ -460,7 +460,7 @@ begin
 function TFHIRStructureMapUtilities.checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
 begin
   result := (rule.sourceList.count = 1) and (rule.sourceList[0].element <> '') and (rule.sourceList[0].variable <> '') and
-        (rule.targetList.count = 1) and (rule.targetList[0].Variable <> '') and (rule.targetList[0].transform in [MapTransformNull, MapTransformCreate]) and (rule.targetList[0].parameterList.count = 0) and
+        (rule.targetList.count = 1) and (rule.targetList[0].Variable <> '') and (rule.targetList[0].transform in [StructureMapTransformNull, StructureMapTransformCreate]) and (rule.targetList[0].parameterList.count = 0) and
         (rule.dependentList.count = 0) and (rule.ruleList.count = 0);
 end;
 
@@ -607,10 +607,10 @@ begin
         b.append(rs.Max);
       end;
   end;
-  if (rs.ListMode <> MapSourceListModeNull) then
+  if (rs.ListMode <> StructureMapSourceListModeNull) then
   begin
     b.append(' ');
-    b.append(CODES_TFhirMapSourceListModeEnum[rs.ListMode]);
+    b.append(CODES_TFhirStructureMapSourceListModeEnum[rs.ListMode]);
   end;
   if (rs.defaultValue <> nil) then
   begin
@@ -644,11 +644,11 @@ procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIR
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
-  lm : TFhirMapTargetListModeEnum;
+  lm : TFhirStructureMapTargetListModeEnum;
 begin
   if (rt.context <> '') then
   begin
-    if (rt.contextType = MapContextTypeType) then
+    if (rt.contextType = StructureMapContextTypeType) then
       b.append('@');
     b.append(rt.Context);
     if (rt.Element <> '')  then
@@ -657,17 +657,17 @@ begin
       b.append(rt.Element);
     end;
   end;
-  if not canbeAbbreviated and (rt.Transform <> MapTransformNull) then
+  if not canbeAbbreviated and (rt.Transform <> StructureMapTransformNull) then
   begin
     if (rt.context <> '') then
       b.append(' = ');
-    if (rt.Transform = MapTransformCopy) and (rt.parameterList.count = 1) then
+    if (rt.Transform = StructureMapTransformCopy) and (rt.parameterList.count = 1) then
     begin
       renderTransformParam(b, rt.ParameterList[0]);
     end
-    else if (rt.Transform = MapTransformEVALUATE) and (rt.ParameterList.count = 2) then
+    else if (rt.Transform = StructureMapTransformEvaluate) and (rt.ParameterList.count = 2) then
     begin
-      b.append(CODES_TFhirMapTransformEnum[rt.Transform]);
+      b.append(CODES_TFhirStructureMapTransformEnum[rt.Transform]);
       b.append('(');
       b.append(TFHIRId(rt.ParameterList[0].Value).StringValue);
       b.append(TFHIRString(rt.ParameterList[1].Value).StringValue);
@@ -675,7 +675,7 @@ begin
     end
     else
     begin
-      b.append(CODES_TFhirMapTransformEnum[rt.Transform]);
+      b.append(CODES_TFhirStructureMapTransformEnum[rt.Transform]);
       b.append('(');
       first := true;
       for rtp in rt.ParameterList do
@@ -694,12 +694,12 @@ begin
     b.append(' as ');
     b.append(rt.Variable);
   end;
-  for lm := low(TFhirMapTargetListModeEnum) to high(TFhirMapTargetListModeEnum) do
+  for lm := low(TFhirStructureMapTargetListModeEnum) to high(TFhirStructureMapTargetListModeEnum) do
     if lm in rt.listMode then
     begin
       b.append(' ');
-      b.append(CODES_TFhirMapTargetListModeEnum[lm]);
-      if (lm = MapTargetListModeShare) then
+      b.append(CODES_TFhirStructureMapTargetListModeEnum[lm]);
+      if (lm = StructureMapTargetListModeShare) then
       begin
         b.append(' ');
         b.append(rt.listRuleId);
@@ -913,7 +913,7 @@ begin
         b.append('  unmapped for ');
         b.append(getUri(pmSource, g.source).FAbbrev);
         b.append(' = ');
-        b.append(CODES_TFhirConceptmapUnmappedModeEnum[g.unmapped.Create.mode]);
+        b.append(CODES_TFhirConceptMapGroupUnmappedModeEnum[g.unmapped.Create.mode]);
         b.append(#13#10#13#10);
       end;
     end;
@@ -1074,7 +1074,7 @@ begin
       lexer.token('=');
       v := lexer.take();
       if (v = 'provided') then
-        g.unmapped.Mode := ConceptmapUnmappedModeProvided
+        g.unmapped.Mode := ConceptMapGroupUnmappedModeProvided
       else
         raise lexer.error('Only unmapped mode PROVIDED is supported at this time');
     end;
@@ -1202,7 +1202,7 @@ begin
     st.alias := lexer.take;
   end;
   lexer.token('as');
-  st.Mode := TFhirMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirMapModelModeEnum, lexer));
+  st.Mode := TFhirStructureMapModelModeEnum(fromEnum(lexer.take(), CODES_TFhirStructureMapModelModeEnum, lexer));
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
@@ -1238,16 +1238,16 @@ begin
       lexer.token('type');
       lexer.token('+');
       lexer.token('types');
-      group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+      group.TypeMode := StructureMapGroupTypeModeTypeAndTypes;
     end
     else
     begin
       lexer.token('types');
-      group.TypeMode := MapGroupTypeModeTYPES;
+      group.TypeMode := StructureMapGroupTypeModeTypes;
      end;
   end
   else
-    group.TypeMode := MapGroupTypeModeNone;
+    group.TypeMode := StructureMapGroupTypeModeNone;
 
   group.Name := lexer.take();
 
@@ -1270,7 +1270,7 @@ begin
   end;
   if (newFmt) then
   begin
-    group.TypeMode := MapGroupTypeModeNone;
+    group.TypeMode := StructureMapGroupTypeModeNone;
     if (lexer.hasToken('<')) then
     begin
       lexer.token('<');
@@ -1278,13 +1278,13 @@ begin
       if (lexer.hasToken('types')) then
       begin
         lexer.token('types');
-        group.TypeMode := MapGroupTypeModeTYPES;
+        group.TypeMode := StructureMapGroupTypeModeTypes;
       end
       else
       begin
         lexer.token('type');
         lexer.token('+');
-        group.TypeMode := MapGroupTypeModeTYPEANDTYPES;
+        group.TypeMode := StructureMapGroupTypeModeTypeAndTypes;
       end;
       lexer.token('>');
       lexer.token('>');
@@ -1325,7 +1325,7 @@ var
 begin
   input := group.inputList.Append;
   if (newFmt) then
-    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer))
+    input.Mode := TFhirStructureMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirStructureMapInputModeEnum, lexer))
   else
     lexer.token('input');
   input.Name := lexer.take();
@@ -1337,7 +1337,7 @@ begin
   if (not newFmt) then
   begin
     lexer.token('as');
-    input.Mode := TFhirMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirMapInputModeEnum, lexer));
+    input.Mode := TFhirStructureMapInputModeEnum(fromEnum(lexer.take(), CODES_TFhirStructureMapInputModeEnum, lexer));
     if (lexer.hasComment()) then
       input.Documentation := lexer.take().substring(2).trim();
     lexer.skipToken(';');
@@ -1416,7 +1416,7 @@ begin
   begin
     rule.sourceList[0].variable := AUTO_VAR_NAME;
     rule.targetList[0].variable := AUTO_VAR_NAME;
-    rule.targetList[0].transform := MapTransformCreate; // with no parameter - e.g. imply what is to be created
+    rule.targetList[0].transform := StructureMapTransformCreate; // with no parameter - e.g. imply what is to be created
     // no dependencies - imply what is to be done based on types
   end;
   if (newFmt) then
@@ -1507,7 +1507,7 @@ begin
     source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
   end;
   if (StringArrayExistsSensitive(['first', 'last', 'not_first', 'not_last', 'only_one'], lexer.current)) then
-    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum, lexer));
+    source.ListMode := TFhirStructureMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirStructureMapSourceListModeEnum, lexer));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
@@ -1551,7 +1551,7 @@ begin
   if (lexer.hasToken('.')) then
   begin
     target.Context := start;
-    target.ContextType := MapContextTypeVariable;
+    target.ContextType := StructureMapContextTypeVariable;
     start := '';
     lexer.token('.');
     target.Element := lexer.take();
@@ -1571,7 +1571,7 @@ begin
   if (name = '(') then
   begin
     // inline fluentpath expression
-    target.transform := MapTransformEVALUATE;
+    target.transform := StructureMapTransformEvaluate;
     p := target.parameterList.Append;
     node := fpp.parse(lexer);
     p.Tag := node;
@@ -1580,9 +1580,9 @@ begin
   end
   else if (lexer.hasToken('(')) then
   begin
-    target.Transform := TFhirMapTransformEnum(fromEnum(name, CODES_TFhirMapTransformEnum, lexer));
+    target.Transform := TFhirStructureMapTransformEnum(fromEnum(name, CODES_TFhirStructureMapTransformEnum, lexer));
     lexer.token('(');
-    if (target.Transform = MapTransformEVALUATE) then
+    if (target.Transform = StructureMapTransformEvaluate) then
     begin
       parseParameter(target, lexer);
       lexer.token(',');
@@ -1604,7 +1604,7 @@ begin
   end
   else if (name <> '') then
   begin
-    target.Transform := MapTransformCopy;
+    target.Transform := StructureMapTransformCopy;
     if (not isConstant) then
     begin
       id := name;
@@ -1626,12 +1626,12 @@ begin
   begin
     if (lexer.current = 'share') then
     begin
-      target.listMode := target.listMode + [MapTargetListModeShare];
+      target.listMode := target.listMode + [StructureMapTargetListModeShare];
       lexer.next();
       target.ListRuleId := lexer.take();
     end
     else if (lexer.current = 'first') then
-      target.listMode := target.listMode + [MapTargetListModeFirst]
+      target.listMode := target.listMode + [StructureMapTargetListModeFirst]
     else
       target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
@@ -1650,7 +1650,7 @@ begin
     target.parameterList.Append.Value := readConstant(lexer.take(), lexer);
 end;
 
-function TFHIRStructureMapUtilities.readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
+function TFHIRStructureMapUtilities.readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRDataType;
 begin
   if (StringIsInteger32(s)) then
     result := TFHIRInteger.create(s)
@@ -1761,7 +1761,7 @@ begin
                 executeDependency(indent+'  ', appInfo, map, v, group, dependent, dbg1);
             end
             else if (rule.sourceList.count = 1) and (rule.sourceList[0].variable <> '') and (rule.targetList.count = 1) and
-               (rule.targetList[0].variable <> '') and (rule.targetList[0].transform = MapTransformCreate) and (not rule.targetList[0].hasParameterList) then
+               (rule.targetList[0].variable <> '') and (rule.targetList[0].transform = StructureMapTransformCreate) and (not rule.targetList[0].hasParameterList) then
             begin
               // simple inferred, map by type
               src := v.get(vmINPUT, rule.sourceList[0].variable);
@@ -1945,7 +1945,7 @@ begin
     begin
       input := target.InputList[i];
       vr := dependent.variableList[i];
-      if input.mode = MapInputModeSource then
+      if input.mode = StructureMapInputModeSource then
         mode := vmINPUT
       else
         mode := vmOUTPUT;
@@ -2104,14 +2104,14 @@ begin
       end;
     end;
 
-    if (src.listMode <> MapSourceListModeNull) and not items.Empty then
+    if (src.listMode <> StructureMapSourceListModeNull) and not items.Empty then
     begin
       case src.listMode of
-        MapSourceListModeFirst: if items.Count > 1 then items.DeleteRange(1, items.Count-1);
-        MapSourceListModeNotFirst: items.Delete(0);
-        MapSourceListModeLast: if items.Count > 1 then items.DeleteRange(0, items.Count-2);
-        MapSourceListModeNotLast:  items.Delete(items.Count - 1);
-        MapSourceListModeOnlyOne: if (items.count > 1) then
+        StructureMapSourceListModeFirst: if items.Count > 1 then items.DeleteRange(1, items.Count-1);
+        StructureMapSourceListModeNotFirst: items.Delete(0);
+        StructureMapSourceListModeLast: if items.Count > 1 then items.DeleteRange(0, items.Count-2);
+        StructureMapSourceListModeNotLast:  items.Delete(items.Count - 1);
+        StructureMapSourceListModeOnlyOne: if (items.count > 1) then
             raise EFHIRException.create('Rule "'+ruleId+'": Check condition failed: the collection has more than one item');
       end;
     end;
@@ -2154,7 +2154,7 @@ begin
 
   v := nil;
   try
-    if (tgt.transform <> MapTransformNull) then
+    if (tgt.transform <> StructureMapTransformNull) then
     begin
       v := runTransform(ruleId, appInfo, map, group, tgt, vars, dest, tgt.element, srcVar, atRoot);
       if (v <> nil) and (dest <> nil) then
@@ -2189,7 +2189,7 @@ var
   cc : TFhirCodeableConcept;
 begin
   case tgt.Transform of
-    MapTransformCreate :
+    StructureMapTransformCreate :
       begin
       if (tgt.parameterList.isEmpty) then
       begin
@@ -2207,7 +2207,7 @@ begin
       // ok, now we resolve the type name against the import statements
       for uses_ in map.structureList do
       begin
-        if (uses_.mode = MapModelModeTarget) and (uses_.alias = tn) then
+        if (uses_.mode = StructureMapModelModeTarget) and (uses_.alias = tn) then
         begin
           tn := uses_.url;
           break;
@@ -2231,11 +2231,11 @@ begin
         result.Free;
       end;
       end;
-    MapTransformCOPY :
+    StructureMapTransformCOPY :
       begin
         result := getParam(vars, tgt.ParameterList[0]).Link;
       end;
-    MapTransformEVALUATE :
+    StructureMapTransformEVALUATE :
       begin
         expr := tgt.Tag as TFHIRPathExpressionNode;
         if (expr = nil) then
@@ -2252,7 +2252,7 @@ begin
           v.Free;
         end;
       end;
-    MapTransformTRUNCATE :
+    StructureMapTransformTRUNCATE :
       begin
         src := getParamString(vars, tgt.ParameterList[0]);
         len := getParamString(vars, tgt.ParameterList[1]);
@@ -2264,11 +2264,11 @@ begin
         end;
         result := TFHIRString(src);
       end;
-    MapTransformESCAPE :
+    StructureMapTransformESCAPE :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.create('Transform '+CODES_TFhirStructureMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
-    MapTransformCAST :
+    StructureMapTransformCAST :
       begin
       src := getParamString(vars, tgt.parameterList[0]);
       if (tgt.parameterList.Count = 1) then
@@ -2279,7 +2279,7 @@ begin
       else
         raise EFHIRException.create('cast to '+tn+' not yet supported');
       end;
-    MapTransformAPPEND :
+    StructureMapTransformAPPEND :
       begin
         sb := TStringBuilder.create(getParamString(vars, tgt.parameterList[0]));
         try
@@ -2290,11 +2290,11 @@ begin
           sb.free;
         end;
       end;
-    MapTransformTRANSLATE :
+    StructureMapTransformTRANSLATE :
       begin
         result := translate(appInfo, map, vars, tgt.ParameterList);
       end;
-    MapTransformREFERENCE :
+    StructureMapTransformREFERENCE :
       begin
         b := getParam(vars, tgt.parameterList[0]).link;
         try
@@ -2313,15 +2313,15 @@ begin
           b.Free;
         end;
       end;
-    MapTransformDATEOP :
+    StructureMapTransformDATEOP :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.create('Transform '+CODES_TFhirStructureMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
-    MapTransformUUID :
+    StructureMapTransformUUID :
       begin
         result := TFHIRId.Create(NewGuidId);
       end;
-    MapTransformPOINTER :
+    StructureMapTransformPOINTER :
       begin
         b := getParam(vars, tgt.ParameterList[0]);
         if (b is TFHIRResource) then
@@ -2329,7 +2329,7 @@ begin
         else
           raise EFHIRException.create('Transform engine cannot point at an element of type '+b.fhirType());
       end;
-    MapTransformCC:
+    StructureMapTransformCC:
       begin
       cc := TFHIRCodeableConcept.Create;
       try
@@ -2339,7 +2339,7 @@ begin
         cc.Free;
       end;
       end;
-    MapTransformC:
+    StructureMapTransformC:
       result := buildCoding(getParamStringNoNull(vars, tgt.parameterList[0], tgt.toString()), getParamStringNoNull(vars, tgt.parameterList[1], tgt.toString()));
   else
     raise EFHIRException.create('Transform Unknown');
@@ -2408,9 +2408,9 @@ end;
 
 function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId : String; grp: TFHIRStructureMapGroup; tnSrc, tnTgt: String): boolean;
 begin
-  if (grp.typeMode in [MapGroupTypeModeNone, MapGroupTypeModeNull]) then
+  if (grp.typeMode in [StructureMapGroupTypeModeNone, StructureMapGroupTypeModeNull]) then
     exit(false);
-  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> MapInputModeSource) or (grp.inputList[1].mode <> MapInputModeTarget) then
+  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> StructureMapInputModeSource) or (grp.inputList[1].mode <> StructureMapInputModeTarget) then
     exit(false);
   if (grp.inputList[0].type_ = '') or (grp.inputList[1].type_ = '') then
     exit(false);
@@ -2419,9 +2419,9 @@ end;
 
 function TFHIRStructureMapUtilities.matchesByType(map: TFHIRStructureMap; ruleId: String; grp: TFHIRStructureMapGroup; tn: String): boolean;
 begin
-  if (grp.typeMode <> MapGroupTypeModeTypeAndTypes) then
+  if (grp.typeMode <> StructureMapGroupTypeModeTypeAndTypes) then
     exit(false);
-  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> MapInputModeSource) or (grp.inputList[1].mode <> MapInputModeTarget) then
+  if (grp.inputList.Count <> 2) or (grp.inputList[0].mode <> StructureMapInputModeSource) or (grp.inputList[1].mode <> StructureMapInputModeTarget) then
     exit(false);
   result := matchesType(map, tn, grp.inputList[0].type_);
 end;
@@ -2473,7 +2473,7 @@ end;
 
 function TFHIRStructureMapUtilities.getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
 var
-  p : TFhirType;
+  p : TFHIRDataType;
 begin
   p := parameter.Value;
   if not (p is TFHIRId) then

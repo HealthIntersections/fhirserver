@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_utilities,
   fsl_http,
   fhir_objects, fhir_common, fhir_features,
-  fhir4b_types, fhir4b_resources, fhir4b_operations, fhir4b_opbase;
+  fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_operations, fhir4b_opbase;
 
 const
   ExceptionTypeTranslations : array [TFhirIssueType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
@@ -1786,7 +1786,7 @@ end;
 
 procedure TFhirParametersParameter4.addParam(name: String; value: TFHIRObject);
 begin
-  parameter.AddParameter(name).value := value as TFHIRType;
+  parameter.AddParameter(name).value := value as TFHIRDataType;
 end;
 
 procedure TFhirParametersParameter4.addParamBool(name: String; value: boolean);
@@ -1891,7 +1891,7 @@ end;
 
 procedure TFhirParametersParameter4.SetValue(Value: TFHIRObject);
 begin
-  parameter.value := value as TFHIRType;
+  parameter.value := value as TFHIRDataType;
 end;
 
 function TFhirParametersParameter4.valueString: String;
@@ -1913,7 +1913,7 @@ end;
 
 procedure TFhirParameters4.addParam(name: String; value: TFHIRObject);
 begin
-  parameter.AddParameter(name).value := value as TFHIRType;
+  parameter.AddParameter(name).value := value as TFHIRDataType;
 end;
 
 procedure TFhirParameters4.addParamBool(name: String; value: boolean);
@@ -2891,7 +2891,7 @@ end;
 
 procedure TFHIRLookupOpRespProperty4.SetValue(Value: TFHIRObject);
 begin
-  (obj as TFHIRLookupOpRespProperty_).value := value as TFhirType;
+  (obj as TFHIRLookupOpRespProperty_).value := value as TFHIRDataType;
 end;
 
 { TFHIRExtension4 }
@@ -3981,7 +3981,7 @@ begin
   p := ae.participantList.append;
   p.network := TFhirAuditEventParticipantNetwork.Create;
   p.network.address := ip;
-  p.network.type_ := NetworkType2;
+  p.network.type_ := AuditEventAgentNetworkType2;
 end;
 
 procedure TFHIRAuditEvent4.SetLanguage(const Value: String);
@@ -4259,7 +4259,7 @@ end;
 
 procedure TFhirObservationComponent4.SetValue(Value: TFHIRObject);
 begin
-  comp.value := value as TFHIRType;
+  comp.value := value as TFHIRDataType;
 end;
 
 function TFhirObservationComponent4.valueString: String;
@@ -4377,7 +4377,7 @@ end;
 
 procedure TFhirObservation4.SetValue(Value: TFHIRObject);
 begin
-  obs.value := value as TFhirType;
+  obs.value := value as TFHIRDataType;
 end;
 
 function TFhirObservation4.valueW: TFHIRXVersionElementWrapper;
@@ -4466,7 +4466,7 @@ end;
 
 procedure TFhirObservation4.SetEffective(const Value: TFHIRObject);
 begin
-  obs.effective := Value as TFhirType;
+  obs.effective := Value as TFHIRDataType;
 end;
 
 procedure TFhirObservation4.SetEffectiveDateTime(const Value: TFslDateTime);
@@ -4476,7 +4476,7 @@ end;
 
 procedure TFhirObservation4.SetEffectivePeriod(const Value: TFHIRPeriodW);
 begin
-  obs.effective := (value.Element as TFHIRType).Link;
+  obs.effective := (value.Element as TFHIRDataType).Link;
 end;
 
 procedure TFhirObservation4.SetIssued(const Value: TFslDateTime);
@@ -5487,7 +5487,7 @@ end;
 
 function TFHIRConsent4.GetActive: boolean;
 begin
-  result := consent.status = ConsentStateCodesActive;
+  result := consent.status = ConsentStateActive;
 end;
 
 function TFHIRConsent4.GetDateTime: TFslDateTime;
@@ -5871,7 +5871,7 @@ end;
 procedure TFhirImmunization4.SetStatus(const Value: string);
 begin
   if imm.statusElement = nil then
-    imm.status := ImmunizationStatusCompleted; // force it to exist
+    imm.status := ImmunizationStatusCodesCompleted; // force it to exist
   imm.statusElement.value := value;
 end;
 

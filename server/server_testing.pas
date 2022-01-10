@@ -68,6 +68,8 @@ begin
   raise EFslException.Create('This is not supported in FPC');
   {$ELSE}
   FreeConsole;
+  Logging.LogToConsole := false;
+
   TestInsight.DUnit.RunRegisteredTests;
   {$ENDIF}
 end;

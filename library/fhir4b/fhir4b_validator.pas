@@ -40,7 +40,7 @@ Uses
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc,
 
   fhir_objects,  fhir_xhtml, fhir_factory, fhir_common, fhir_pathengine,
-  fhir4b_pathnode, fhir4b_context, fhir4b_resources, fhir4b_types, fhir4b_pathengine, fhir4b_elementmodel, fhir4b_resources_base;
+  fhir4b_pathnode, fhir4b_context, fhir4b_resources, fhir4b_enums, fhir4b_types, fhir4b_pathengine, fhir4b_elementmodel, fhir4b_resources_base;
 
 Type
   TFhirValidationMessage = class (TFslObject)
@@ -1671,9 +1671,9 @@ begin
         if (ei.path.endsWith('.extension')) then
           rule(ctxt, IssueTypeINVALID, ei.locationStart, ei.locationEnd, ei.path, ei.definition <> nil, 'Element is unknown or does not match any slice (url="' + ei.element.getNamedChildValue('url') + '")'+pu)
         else if (not unsupportedSlicing) then
-          if (ei.slice <> nil) and ((ei.slice.Slicing.Rules in [ResourceSlicingRulesOpen, ResourceSlicingRulesOpenAtEnd])) then
+          if (ei.slice <> nil) and ((ei.slice.Slicing.Rules in [SlicingRulesOpen, SlicingRulesOpenAtEnd])) then
             hint(ctxt, IssueTypeINFORMATIONAL, ei.locationStart, ei.locationEnd, ei.path, (ei.definition <> nil), 'Element ' + ei.element.Name + ' is unknown or does not match any slice ' + sliceInfo+pu)
-          else if (ei.slice <> nil) and (ei.slice.Slicing.Rules = ResourceSlicingRulesClosed) then
+          else if (ei.slice <> nil) and (ei.slice.Slicing.Rules = SlicingRulesClosed) then
             rule(ctxt, IssueTypeINVALID, ei.locationStart, ei.locationEnd, ei.path, ei.definition <> nil, 'Element ' + ei.element.name + ' is unknown or does not match any slice ' + sliceInfo + pu)
           else
             hint(ctxt, IssueTypeNOTSUPPORTED, ei.locationStart, ei.locationEnd, ei.path, ei.definition <> nil, 'Could not verify slice for profile' + pu);

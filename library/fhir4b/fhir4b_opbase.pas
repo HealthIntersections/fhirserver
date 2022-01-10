@@ -42,15 +42,15 @@ type
   TFHIROpExtension = class (TFslObject)
   private
     FName : String;
-    FValue : TFHIRType;
-    procedure SetValue(const Value: TFHIRType);
+    FValue : TFHIRDataType;
+    procedure SetValue(const Value: TFHIRDataType);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
     property name : String read FName write FName;
-    property value : TFHIRType read FValue write SetValue;
+    property value : TFHIRDataType read FValue write SetValue;
   end;
 
   TFHIROperationBaseObject = class (TFslObject)
@@ -68,7 +68,7 @@ type
   public
     destructor Destroy; override;
     property extensions : TFslList<TFHIROpExtension> read GetExtensions;
-    procedure addExtension(name : String; value : TFHIRType); overload;
+    procedure addExtension(name : String; value : TFHIRDataType); overload;
     procedure addExtension(name : String; value : string); overload;
     procedure addExtension(name : String; value : boolean); overload;
   end;
@@ -136,7 +136,7 @@ end;
 
 { TFHIROperationBaseObject }
 
-procedure TFHIROperationBaseObject.addExtension(name: String; value: TFHIRType);
+procedure TFHIROperationBaseObject.addExtension(name: String; value: TFHIRDataType);
 var
   ext : TFHIROpExtension;
 begin
@@ -251,7 +251,7 @@ begin
   inherited;
 end;
 
-procedure TFHIROpExtension.SetValue(const Value: TFHIRType);
+procedure TFHIROpExtension.SetValue(const Value: TFHIRDataType);
 begin
   FValue.Free;
   FValue := Value;

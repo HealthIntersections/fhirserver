@@ -143,7 +143,7 @@ implementation
 
 uses
   fhir_client_http,
-  fhir4b_types, fhir4b_resources, fhir4b_parser, fhir4b_context, fhir4b_validator, fhir4b_profiles, fhir4b_operations,
+  fhir4b_enums, fhir4b_types, fhir4b_resources, fhir4b_parser, fhir4b_context, fhir4b_validator, fhir4b_profiles, fhir4b_operations,
   fhir4b_narrative, fhir4b_pathengine, fhir4b_constants, fhir4b_client, fhir4b_common, fhir4b_utilities, fhir4b_authmap,
   fhir4b_elementmodel, fhir4b_resources_base;
 

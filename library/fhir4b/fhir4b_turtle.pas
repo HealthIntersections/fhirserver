@@ -46,7 +46,7 @@ uses
 
 Type
 
-  TFHIRTurtleParser = class (TFHIRTurtleParserBase5)
+  TFHIRTurtleParser = class (TFHIRTurtleParserBase4B)
   protected
     procedure ParseBaseProperties(obj : TTurtleComplex; value : TFhirBase); overload;
     procedure ParseBaseProperties(obj : TTurtleComplex; value : TFhirResource); overload;
@@ -54,6 +54,7 @@ Type
     procedure ParseElementProperties(obj : TTurtleComplex; value : TFhirElement);
     procedure ParseBackboneElementProperties(obj : TTurtleComplex; value : TFhirBackboneElement);
     procedure ParseDataTypeProperties(obj : TTurtleComplex; value : TFhirDataType);
+    procedure ParseBackboneTypeProperties(obj : TTurtleComplex; value : TFhirBackboneType);
 
 
     function ParseEnum(obj : TTurtleComplex; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
@@ -92,7 +93,7 @@ Type
     function ParseAttachment(obj : TTurtleComplex) : TFhirAttachment; overload; 
     procedure ParseAttachmentProperties(obj : TTurtleComplex; value : TFhirAttachment); overload; 
     function ParseCodeableConcept(obj : TTurtleComplex) : TFhirCodeableConcept; overload; 
-    procedure ParseCodeableConceptProperties(obj : TTurtleComplex; value : TFhirCodeableConcept); overload; 
+    procedure ParseCodeableConceptProperties(obj : TTurtleComplex; value : TFhirCodeableConcept); overload;
     function ParseCoding(obj : TTurtleComplex) : TFhirCoding; overload; 
     procedure ParseCodingProperties(obj : TTurtleComplex; value : TFhirCoding); overload; 
     function ParseContactDetail(obj : TTurtleComplex) : TFhirContactDetail; overload; 
@@ -1724,7 +1725,7 @@ Type
     function ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;  overload;
   end;
   
-  TFHIRTurtleComposer = class (TFHIRTurtleComposerBase5)
+  TFHIRTurtleComposer = class (TFHIRTurtleComposerBase4B)
   protected
     procedure ComposeBase(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBase; useType : boolean; index : integer); overload;
     procedure ComposeBase(parent :  TTurtleComplex; parentType, name : String; elem : TFhirResource; useType : boolean; index : integer); overload;
@@ -2776,6 +2777,15 @@ begin
 end;
 
 procedure TFHIRTurtleParser.ParseBackboneElementProperties(obj : TTurtleComplex; value : TFhirBackboneElement);
+var
+  item : TTurtleComplex;
+begin
+  ParseElementProperties(obj, value);
+  for item in obj.complexes('http://hl7.org/fhir/BackboneElement.modifierExtension') do
+    value.modifierExtensionList.Add(parseExtension(item));
+end;
+
+procedure TFHIRTurtleParser.ParseBackboneTypeProperties(obj: TTurtleComplex; value: TFhirBackboneType);
 var
   item : TTurtleComplex;
 begin
@@ -4338,7 +4348,7 @@ procedure TFHIRTurtleParser.ParseDosageProperties(obj : TTurtleComplex; value : 
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     value.sequenceElement := ParseInteger(obj.complex('http://hl7.org/fhir/Dosage.sequence'));
     value.textElement := ParseString(obj.complex('http://hl7.org/fhir/Dosage.text'));
     for item in obj.complexes('http://hl7.org/fhir/Dosage.additionalInstruction') do
@@ -5038,7 +5048,7 @@ procedure TFHIRTurtleParser.ParseElementDefinitionProperties(obj : TTurtleComple
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     value.pathElement := ParseString(obj.complex('http://hl7.org/fhir/ElementDefinition.path'));
     for item in obj.complexes('http://hl7.org/fhir/ElementDefinition.representation') do
       value.representationList.Add(parseEnum(item, CODES_TFhirPropertyRepresentationEnum, SYSTEMS_TFhirPropertyRepresentationEnum));
@@ -6288,7 +6298,7 @@ end;
 
 procedure TFHIRTurtleParser.ParseMarketingStatusProperties(obj : TTurtleComplex; value : TFhirMarketingStatus);
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     value.country := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MarketingStatus.country'));
     value.jurisdiction := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MarketingStatus.jurisdiction'));
     value.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MarketingStatus.status'));
@@ -6576,7 +6586,7 @@ procedure TFHIRTurtleParser.ParsePopulationProperties(obj : TTurtleComplex; valu
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     if obj.has('ageRange', item) then
       value.age := parseRange(item);
     if obj.has('ageCodeableConcept', item) then
@@ -6630,7 +6640,7 @@ procedure TFHIRTurtleParser.ParseProdCharacteristicProperties(obj : TTurtleCompl
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     value.height := ParseQuantity(obj.complex('http://hl7.org/fhir/ProdCharacteristic.height'));
     value.width := ParseQuantity(obj.complex('http://hl7.org/fhir/ProdCharacteristic.width'));
     value.depth := ParseQuantity(obj.complex('http://hl7.org/fhir/ProdCharacteristic.depth'));
@@ -6707,7 +6717,7 @@ procedure TFHIRTurtleParser.ParseProductShelfLifeProperties(obj : TTurtleComplex
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     value.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/ProductShelfLife.type'));
     if obj.has('periodDuration', item) then
       value.period := parseDuration(item);
@@ -7210,7 +7220,7 @@ procedure TFHIRTurtleParser.ParseTimingProperties(obj : TTurtleComplex; value : 
 var
   item : TTurtleComplex;
 begin
-    ParseBackboneElementProperties(obj, value);
+    ParseBackboneTypeProperties(obj, value);
     for item in obj.complexes('http://hl7.org/fhir/Timing.event') do
       value.eventList.Add(parseDateTime(item));
     value.repeat_ := ParseTimingRepeat(obj.complex('http://hl7.org/fhir/Timing.repeat'));
@@ -16936,7 +16946,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ConceptMap', 'url', value.urlElement, false, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(this, 'ConceptMap', 'identifier', value.identifierElement, false, -1);
+    ComposeIdentifier(this, 'ConceptMap', 'identifier', value.identifier, false, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ConceptMap', 'version', value.versionElement, false, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -47944,7 +47954,7 @@ begin
   composeDomainResource(this, '', name, value, false, index);
   ComposeUri(this, 'TestScript', 'url', value.urlElement, false, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(this, 'TestScript', 'identifier', value.identifierElement, false, -1);
+    ComposeIdentifier(this, 'TestScript', 'identifier', value.identifier, false, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestScript', 'version', value.versionElement, false, -1);
   ComposeString(this, 'TestScript', 'name', value.nameElement, false, -1);

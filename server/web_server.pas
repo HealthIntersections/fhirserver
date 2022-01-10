@@ -496,6 +496,11 @@ Begin
   end;
   if Common.WorkingSSLPort > 0 then
   begin
+    Logging.log('  SSL Certificate: '+FCertFile);
+    Logging.log('  SSL CA Cert '+FRootCertFile);
+    Logging.log('  SSL Key File: '+ChangeFileExt(FCertFile, '.key'));
+    Logging.log('  SSL Password: '+PadString('', length(FSSLPassword), '*'));
+
     If Not FileExists(FCertFile) Then
       raise EIOException.create('SSL Certificate "' + FCertFile + ' could not be found');
     If Not FileExists(ChangeFileExt(FCertFile, '.key')) Then
@@ -532,6 +537,7 @@ Begin
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
     FSSLServer.MaxConnections := Common.ConnLimit;
     FSSLServer.active := true;
+    Logging.log('  SSL Started');
   end;
 end;
 

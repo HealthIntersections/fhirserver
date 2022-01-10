@@ -37,7 +37,7 @@ uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities,
   fhir_objects, fhir_xhtml, fhir_narrative, fhir_uris,
-  fhir4b_resources, fhir4b_resources_base, fhir4b_types, fhir4b_constants, fhir4b_context, fhir4b_utilities;
+  fhir4b_resources, fhir4b_resources_base, fhir4b_enums, fhir4b_types, fhir4b_constants, fhir4b_context, fhir4b_utilities;
 
 Const
   BooleanStrings : array [boolean] of String = ('false', 'true');

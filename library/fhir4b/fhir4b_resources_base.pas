@@ -38,9 +38,9 @@ interface
 
 uses
   SysUtils, Classes, 
-  fsl_base, fsl_utilities, fsl_stream, 
-  fhir_objects, fhir_utilities,  
-  fhir4b_base, fhir4b_enums, fhir4b_types, fhir4b_resources_base, fhir4b_resources_canonical;
+  fsl_base, fsl_utilities, fsl_stream,
+  fhir_objects, fhir_utilities,
+  fhir4b_base, fhir4b_enums, fhir4b_types;
 
 type
   TFhirResourceType = (
@@ -197,7 +197,7 @@ type
 
 
   // This is the base resource type for everything.
-  TFhirResource = class abstract (TFhirResource5)
+  TFhirResource = class abstract (TFhirResource4b)
   protected
     FId : TFhirId;
     FMeta : TFhirMeta;

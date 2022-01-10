@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
   fhir_objects,  fhir4b_parser, fhir_factory, ftx_service, fhir_utilities, fhir_common, fhir_uris,
-  fhir4b_resources, fhir4b_types, fhir4b_constants, fhir4b_utilities, fhir4b_profiles;
+  fhir4b_resources, fhir4b_enums, fhir4b_types, fhir4b_constants, fhir4b_utilities, fhir4b_profiles;
 
 Const
   TYPE_EXTENSION = 'http://hl7.org/fhir/StructureDefinition/questionnnaire-baseType';
@@ -100,11 +100,11 @@ Type
     function expandTypeList(types: TFhirElementDefinitionTypeList): TFhirElementDefinitionTypeList;
     function makeTypeList(profile : TFHirStructureDefinition; types : TFhirElementDefinitionTypeList; path : String) : TFHIRValueSet;
     function convertType(v: TFhirElement; t: string; path : String): TFhirElement; overload;
-    function convertType(value : TFHIRObject; af : TFhirItemTypeEnum; vs : TFHIRValueSet; path : String) : TFhirType; overload;
+    function convertType(value : TFHIRObject; af : TFhirQuestionnaireItemTypeEnum; vs : TFHIRValueSet; path : String) : TFhirDataType; overload;
     procedure selectTypes(profile : TFHirStructureDefinition; sub : TFHIRQuestionnaireItem; t: TFhirElementDefinitionType; source, dest: TFhirQuestionnaireResponseItemList);
     function instanceOf(t : TFhirElementDefinitionType; obj : TFHIRObject) : boolean;
 
-    function addQuestion(group: TFHIRQuestionnaireItem; af: TFhirItemTypeEnum; path, id, name: String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet = nil): TFHIRQuestionnaireItem;
+    function addQuestion(group: TFHIRQuestionnaireItem; af: TFhirQuestionnaireItemTypeEnum; path, id, name: String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet = nil): TFHIRQuestionnaireItem;
 
     procedure addAddressQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addAgeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -300,7 +300,7 @@ begin
     FQuestionnaire.xmlId := nextId('qs');
     FAnswers.questionnaire := '#'+FQuestionnaire.xmlId;
     FAnswers.containedList.Add(FQuestionnaire.Link);
-    FAnswers.status := QuestionnaireAnswersStatusInProgress;
+    FAnswers.status := QuestionnaireResponseStatusInProgress;
     FAnswers.ItemList.Add(TFhirQuestionnaireResponseItem.Create);
     FAnswers.ItemList[0].Tag := FResource.Link;
   end;
@@ -1078,7 +1078,7 @@ begin
   begin
     types := expandTypeList(element.type_List);
     try
-      q := addQuestion(group, itemTypeChoice, element.path, '_type', 'type', true, nil, makeTypeList(profile, types, element.path));
+      q := addQuestion(group, QuestionnaireItemTypeChoice, element.path, '_type', 'type', true, nil, makeTypeList(profile, types, element.path));
       for t in types do
       begin
         sub := q.itemList.Append;
@@ -1169,31 +1169,31 @@ begin
             (obj is TFHIRDate) or (obj is TFHIRDateTime) or (obj is TFHIRTime) or (obj is TFHIRCode) or (obj is TFHIROid) or (obj is TFHIRUuid) or (obj is TFHIRId) or (obj is TFhirReference);
 end;
 
-function TQuestionnaireBuilder.convertType(value : TFHIRObject; af : TFhirItemTypeEnum; vs : TFHIRValueSet; path : String) : TFhirType;
+function TQuestionnaireBuilder.convertType(value : TFHIRObject; af : TFhirQuestionnaireItemTypeEnum; vs : TFHIRValueSet; path : String) : TFHIRDataType;
 begin
   result := nil;
   case af of
     // simple cases
-    itemTypeBoolean: if value is TFhirBoolean then result := value.link as TFhirType;
-    itemTypeDecimal: if value is TFhirDecimal then result := value.link as TFhirType;
-    itemTypeInteger: if value is TFhirInteger then result := value.link as TFhirType;
-    itemTypeDate: if value is TFhirDate then result := value.link as TFhirType;
-    itemTypeDateTime: if value is TFhirDateTime then result := value.link as TFhirType;
-    itemTypeTime: if value is TFhirTime then result := value.link as TFhirType;
-    itemTypeString:
+    QuestionnaireItemTypeBoolean: if value is TFhirBoolean then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeDecimal: if value is TFhirDecimal then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeInteger: if value is TFhirInteger then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeDate: if value is TFhirDate then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeDateTime: if value is TFhirDateTime then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeTime: if value is TFhirTime then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeString:
       if value is TFhirString then
-        result := value.link as TFhirType
+        result := value.link as TFHIRDataType
       else if value is TFhirUri then
         result := TFHIRString.Create(TFhirUri(value).value);
 
-    itemTypeText: if value is TFhirString then result := value.link as TFhirType;
-    itemTypeQuantity: if value is TFhirQuantity then result := value.link as TFhirType;
+    QuestionnaireItemTypeText: if value is TFhirString then result := value.link as TFHIRDataType;
+    QuestionnaireItemTypeQuantity: if value is TFhirQuantity then result := value.link as TFHIRDataType;
 
     // complex cases:
     // ? itemTypeAttachment: ...?
-    itemTypeChoice, itemTypeOpenChoice :
+    QuestionnaireItemTypeChoice, QuestionnaireItemTypeOpenChoice :
       if value is TFhirCoding then
-        result := value.link as TFhirType
+        result := value.link as TFHIRDataType
       else if value is TFHIREnum then
       begin
         result := TFhirCoding.create;
@@ -1207,9 +1207,9 @@ begin
         TFhirCoding(result).system := getSystemForCode(vs, TFHIRString(value).value, path);
       end;
 
-    itemTypeReference:
+    QuestionnaireItemTypeReference:
       if value is TFhirReference then
-        result := value.link as TFhirType
+        result := value.link as TFHIRDataType
       else if value is TFHIRString then
       begin
         result := TFhirReference.Create;
@@ -1218,7 +1218,7 @@ begin
   end;
 
   if (result = nil) then
-    raise EFHIRException.create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRitemTypeEnum[af]+', path = '+path);
+    raise EFHIRException.create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFhirQuestionnaireItemTypeEnum[af]+', path = '+path);
 end;
 
 
@@ -1231,7 +1231,7 @@ begin
   FLang := lang;
 end;
 
-function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : TFhirItemTypeEnum; path, id, name : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet) : TFHIRQuestionnaireItem;
+function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : TFhirQuestionnaireItemTypeEnum; path, id, name : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet) : TFHIRQuestionnaireItem;
 var
   ag : TFhirQuestionnaireResponseItem;
   aq : TFhirQuestionnaireResponseItem;
@@ -1348,7 +1348,7 @@ begin
   vs := resolveValueSet(nil, element.Binding);
   if vs = nil then
     vs := makeAnyValueSet;
-  addQuestion(group, itemTypeChoice, path, 'value', unCamelCase(Tail(element.path)), required, answerGroups, vs);
+  addQuestion(group, QuestionnaireItemTypeChoice, path, 'value', unCamelCase(Tail(element.path)), required, answerGroups, vs);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1360,7 +1360,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'string');
-  addQuestion(group, itemTypeString, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1371,7 +1371,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'time');
-  addQuestion(group, itemTypeTime, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeTime, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1382,7 +1382,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'uri');
-  addQuestion(group, itemTypeString, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1394,7 +1394,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'boolean');
-  addQuestion(group, itemTypeBoolean, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeBoolean, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1405,7 +1405,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'decimal');
-  addQuestion(group, itemTypeDecimal, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1416,7 +1416,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'integer');
-  addQuestion(group, itemTypeInteger, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeInteger, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1427,7 +1427,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'datetime');
-  addQuestion(group, itemTypeDateTime, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDateTime, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1441,14 +1441,14 @@ end;
 
 // Complex Types ---------------------------------------------------------------
 
-function AnswerTypeForBinding(binding : TFhirElementDefinitionBinding) : TFhirItemTypeEnum;
+function AnswerTypeForBinding(binding : TFhirElementDefinitionBinding) : TFhirQuestionnaireItemTypeEnum;
 begin
   if (binding = nil) then
-    result := itemTypeOpenChoice
+    result := QuestionnaireItemTypeOpenChoice
   else if (binding.Strength <> BindingStrengthRequired) then
-    result := itemTypeOpenChoice
+    result := QuestionnaireItemTypeOpenChoice
   else
-    result := itemTypeChoice;
+    result := QuestionnaireItemTypeChoice;
 end;
 
 procedure TQuestionnaireBuilder.addCodingQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1466,84 +1466,84 @@ procedure TQuestionnaireBuilder.addCodeableConceptQuestions(group : TFHIRQuestio
 begin
   group.setExtensionString(TYPE_EXTENSION, 'CodeableConcept');
   addQuestion(group, AnswerTypeForBinding(element.Binding), path, 'coding', 'code:', false, answerGroups, resolveValueSet(nil, element.Binding));
-  addQuestion(group, itemTypeOpenChoice, path, 'coding/1', 'other codes:', false, answerGroups, makeAnyValueSet).Repeats := true;
-  addQuestion(group, itemTypeString, path, 'text', 'text:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeOpenChoice, path, 'coding/1', 'other codes:', false, answerGroups, makeAnyValueSet).Repeats := true;
+  addQuestion(group, QuestionnaireItemTypeString, path, 'text', 'text:', required, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addPeriodQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Period');
-  addQuestion(group, itemTypeDateTime, path, 'start', 'start:', false, answerGroups);
-  addQuestion(group, itemTypeDateTime, path, 'end', 'end:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDateTime, path, 'start', 'start:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDateTime, path, 'end', 'end:', false, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addRatioQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Ratio');
-  addQuestion(group, itemTypeDecimal, path, 'numerator', 'numerator:', false, answerGroups);
-  addQuestion(group, itemTypeDecimal, path, 'denominator', 'denominator:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'units', 'units:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'numerator', 'numerator:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'denominator', 'denominator:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'units', 'units:', required, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addHumanNameQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Name');
-  addQuestion(group, itemTypeString, path, 'text', 'text:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'family', 'family:', required, answerGroups).Repeats := true;
-  addQuestion(group, itemTypeString, path, 'given', 'given:', false, answerGroups).Repeats := true;
+  addQuestion(group, QuestionnaireItemTypeString, path, 'text', 'text:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'family', 'family:', required, answerGroups).Repeats := true;
+  addQuestion(group, QuestionnaireItemTypeString, path, 'given', 'given:', false, answerGroups).Repeats := true;
 end;
 
 procedure TQuestionnaireBuilder.addAddressQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Address');
-  addQuestion(group, itemTypeString, path, 'text', 'text:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'line', 'line:', false, answerGroups).Repeats := true;
-  addQuestion(group, itemTypeString, path, 'city', 'city:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'state', 'state:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'zip', 'zip:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'country', 'country:', false, answerGroups);
-  addQuestion(group, itemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use'));
+  addQuestion(group, QuestionnaireItemTypeString, path, 'text', 'text:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'line', 'line:', false, answerGroups).Repeats := true;
+  addQuestion(group, QuestionnaireItemTypeString, path, 'city', 'city:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'state', 'state:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'zip', 'zip:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'country', 'country:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use'));
 end;
 
 procedure TQuestionnaireBuilder.addContactQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Contact');
-  addQuestion(group, itemTypeChoice, path, 'system', 'type:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system'));
-  addQuestion(group, itemTypeString, path, 'value', 'value:', required, answerGroups);
-  addQuestion(group, itemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use'));
+  addQuestion(group, QuestionnaireItemTypeChoice, path, 'system', 'type:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system'));
+  addQuestion(group, QuestionnaireItemTypeString, path, 'value', 'value:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use'));
 end;
 
 procedure TQuestionnaireBuilder.addIdentifierQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Identifier');
-  addQuestion(group, itemTypeString, path, 'label', 'label:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'system', 'system:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'value', 'value:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'label', 'label:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'system', 'system:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'value', 'value:', required, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addQuantityQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Quantity');
-   addQuestion(group, itemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
-   addQuestion(group, itemTypeDecimal, path, 'value', 'value:', required, answerGroups);
-  addQuestion(group, itemTypeString, path, 'units', 'units:', required, answerGroups);
-  addQuestion(group, itemTypeString, path, 'code', 'coded units:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'system', 'units system:', false, answerGroups);
+   addQuestion(group, QuestionnaireItemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
+   addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', 'value:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'units', 'units:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'code', 'coded units:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'system', 'units system:', false, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addAgeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Age');
-   addQuestion(group, itemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
-   addQuestion(group, itemTypeDecimal, path, 'value', 'value:', required, answerGroups);
-  addQuestion(group, itemTypeChoice, path, 'units', 'units:', required, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units'));
+   addQuestion(group, QuestionnaireItemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
+   addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', 'value:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeChoice, path, 'units', 'units:', required, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units'));
 end;
 
 procedure TQuestionnaireBuilder.addDurationQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Duration');
-  addQuestion(group, itemTypeDecimal, path, 'value', 'value:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'units', 'units:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', 'value:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'units', 'units:', false, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addAttachmentQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1555,9 +1555,9 @@ end;
 procedure TQuestionnaireBuilder.addRangeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Range');
-  addQuestion(group, itemTypeDecimal, path, 'low', 'low:', false, answerGroups);
-  addQuestion(group, itemTypeDecimal, path, 'high', 'high:', false, answerGroups);
-  addQuestion(group, itemTypeString, path, 'units', 'units:', required, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'low', 'low:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeDecimal, path, 'high', 'high:', false, answerGroups);
+  addQuestion(group, QuestionnaireItemTypeString, path, 'units', 'units:', required, answerGroups);
 end;
 
 procedure TQuestionnaireBuilder.addSampledDataQuestions(group: TFHIRQuestionnaireItem; element: TFhirElementDefinition; path: String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1581,7 +1581,7 @@ var
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Reference');
 
-  q := addQuestion(group, itemTypeReference, path, 'value', group.text, required, answerGroups);
+  q := addQuestion(group, QuestionnaireItemTypeReference, path, 'value', group.text, required, answerGroups);
   group.text := '';
   if profileURL.startsWith('http://hl7.org/fhir/Profile/') then
     rn := profileURL.Substring(28)

@@ -194,6 +194,8 @@ begin
     result := SameText(pi, 'STU3') or pi.StartsWith('3.0') or piv.StartsWith('3.0')
   else if version = 'r4' then
     result := SameText(pi, 'R4') or pi.StartsWith('4.0') or piv.StartsWith('4.0')
+  else if version = 'r4b' then
+    result := SameText(pi, 'R4B') or pi.StartsWith('4.3') or piv.StartsWith('4.3')
   else if version = 'r5' then
     result := SameText(pi, 'R5') or pi.StartsWith('4.6') or piv.StartsWith('4.6')
   else

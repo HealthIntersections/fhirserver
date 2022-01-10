@@ -1,4 +1,4 @@
-unit fhir5_tests_parser;
+unit fhir4b_tests_parser;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,16 +37,16 @@ uses
   fsl_testing,
   IdGlobalProtocols,
   fsl_utilities, fsl_stream, fsl_tests, fsl_comparisons, fsl_http, fsl_fpc,
-  fhir_objects, fhir5_parser, fhir_parser,
-  fhir5_resources, fhir5_elementmodel, fhir5_context, fhir5_tests_worker;
+  fhir_objects, fhir4b_parser, fhir_parser,
+  fhir4b_resources, fhir4b_elementmodel, fhir4b_context, fhir4b_tests_worker;
 
 type
-  TFHIRR5ParserTestCase = class (TFslTestSuiteCase)
+  TFHIRR4ParserTestCase = class (TFslTestSuiteCase)
   public
     procedure TestCase(name : String); override;
   end;
 
-  TFHIRParser5SpecialTests = class (TFslTestCase)
+  TFHIRParserSpecialTests = class (TFslTestCase)
   published
     procedure DecimalTest;
   end;
@@ -56,9 +56,9 @@ procedure registerTests;
 implementation
 
 
-{ TFHIRR5ParserTestCase }
+{ TFHIRR4ParserTestCase }
 
-procedure TFHIRR5ParserTestCase.TestCase(name: String);
+procedure TFHIRR4ParserTestCase.TestCase(name: String);
 var
   r : TFHIRResource;
   fn, j1, j2, x1, x2 : String;
@@ -68,24 +68,24 @@ var
   ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
-  r := TFHIRParsers5.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+  r := TFHIRParsers4.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
   try
     assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers5.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
+      TFHIRParsers4.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRParsers5.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
   finally
     r.Free;
   end;
 
-  ctxt := TTestingWorkerContext5.Use;
+  ctxt := TTestingWorkerContext4.Use;
   try
     re := TFHIRMMManager.parseFile(ctxt, filename, ffXml);
     try
@@ -112,24 +112,24 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRParsers5.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
+  r := TFHIRParsers4.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
   try
     assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers5.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
+      TFHIRParsers4.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers5.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
+    TFHIRParsers4.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
   finally
     r.Free;
   end;
 
-  ctxt := TTestingWorkerContext5.Use;
+  ctxt := TTestingWorkerContext4.Use;
   try
     re := TFHIRMMManager.parseFile(ctxt, j1, ffJson);
     try
@@ -179,9 +179,9 @@ begin
 end;
 
 
-{ TFHIRParser5SpecialTests }
+{ TFHIRParserSpecialTests }
 
-procedure TFHIRParser5SpecialTests.DecimalTest;
+procedure TFHIRParserSpecialTests.DecimalTest;
 var
   src, xml, json, json2 : String;
   obs : TFhirObservation;
@@ -192,17 +192,17 @@ begin
   json2 := FilePath(['[tmp]', 'json2.json']);
   if FileExists(src) then
     TFile.Delete(src);
-  TFile.Copy(TestSettings.fhirTestFile(['r5', 'examples', 'observation-decimal.xml']), src, false);
-  obs := TFHIRParsers5.ParseFile(nil, ffXml, THTTPLanguages.create('en'), src) as TFhirObservation;
+  TFile.Copy(TestSettings.fhirTestFile(['r4', 'examples', 'observation-decimal.xml']), src, false);
+  obs := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), src) as TFhirObservation;
   try
-    TFHIRParsers5.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json, OutputStylePretty);
   finally
     obs.Free;
   end;
-  obs := TFHIRParsers5.ParseFile(nil, ffJson, THTTPLanguages.create('en'), json) as TFhirObservation;
+  obs := TFHIRParsers4.ParseFile(nil, ffJson, THTTPLanguages.create('en'), json) as TFhirObservation;
   try
-    TFHIRParsers5.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json2, OutputStylePretty);
-    TFHIRParsers5.composeFile(nil, ffXml, obs, THTTPLanguages.create('en'), xml, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json2, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffXml, obs, THTTPLanguages.create('en'), xml, OutputStylePretty);
   finally
     obs.Free;
   end;
@@ -211,8 +211,8 @@ end;
 
 procedure registerTests;
 begin
-  registerTest('R5.Parser', TFslTestSuite.Create(TestSettings.fhirTestFile(['r5', 'examples']), '.xml', 20, TFHIRR5ParserTestCase));
-  registerTest('R5.Parser', TFHIRParser5SpecialTests.Suite);
+  registerTest('R4.Parser', TFslTestSuite.Create(TestSettings.fhirTestFile(['r4', 'examples']), '.xml', 20, TFHIRR4ParserTestCase));
+  registerTest('R4.Parser', TFHIRParserSpecialTests.Suite);
 end;
 
 end.

@@ -31,6 +31,7 @@ unit fhir4b_types;
 
 {$I fhir4b.inc}
 {$I fhir.inc}
+{$I fhir4b.inc}
 
 interface
 
@@ -48,6 +49,8 @@ type
   TFhirElement = class;
   TFhirBackboneElement = class;
   TFhirDataType = class;
+  TFhirBackboneType = class;
+  TFhirPrimitiveType = class;
 
   TFhirEnum = class;
   TFhirEnumList = class;
@@ -94,20 +97,16 @@ type
   TFhirInteger64 = class;
   TFhirInteger64List = class;
 
-  TFhirCodeableReference = class;
-  TFhirCodeableReferenceList = class;
-  TFhirRatioRange = class;
-  TFhirRatioRangeList = class;
   TFhirAddress = class;
   TFhirAddressList = class;
-  TFhirAge = class;
-  TFhirAgeList = class;
   TFhirAnnotation = class;
   TFhirAnnotationList = class;
   TFhirAttachment = class;
   TFhirAttachmentList = class;
   TFhirCodeableConcept = class;
   TFhirCodeableConceptList = class;
+  TFhirCodeableReference = class;
+  TFhirCodeableReferenceList = class;
   TFhirCoding = class;
   TFhirCodingList = class;
   TFhirContactDetail = class;
@@ -116,8 +115,6 @@ type
   TFhirContactPointList = class;
   TFhirContributor = class;
   TFhirContributorList = class;
-  TFhirCount = class;
-  TFhirCountList = class;
   TFhirDataRequirementCodeFilter = class;
   TFhirDataRequirementCodeFilterList = class;
   TFhirDataRequirementDateFilter = class;
@@ -126,6 +123,48 @@ type
   TFhirDataRequirementSortList = class;
   TFhirDataRequirement = class;
   TFhirDataRequirementList = class;
+  TFhirExpression = class;
+  TFhirExpressionList = class;
+  TFhirExtension = class;
+  TFhirExtensionList = class;
+  TFhirHumanName = class;
+  TFhirHumanNameList = class;
+  TFhirIdentifier = class;
+  TFhirIdentifierList = class;
+  TFhirMeta = class;
+  TFhirMetaList = class;
+  TFhirMoney = class;
+  TFhirMoneyList = class;
+  TFhirNarrative = class;
+  TFhirNarrativeList = class;
+  TFhirParameterDefinition = class;
+  TFhirParameterDefinitionList = class;
+  TFhirPeriod = class;
+  TFhirPeriodList = class;
+  TFhirQuantity = class;
+  TFhirQuantityList = class;
+  TFhirRange = class;
+  TFhirRangeList = class;
+  TFhirRatio = class;
+  TFhirRatioList = class;
+  TFhirRatioRange = class;
+  TFhirRatioRangeList = class;
+  TFhirReference = class;
+  TFhirReferenceList = class;
+  TFhirRelatedArtifact = class;
+  TFhirRelatedArtifactList = class;
+  TFhirSampledData = class;
+  TFhirSampledDataList = class;
+  TFhirSignature = class;
+  TFhirSignatureList = class;
+  TFhirTriggerDefinition = class;
+  TFhirTriggerDefinitionList = class;
+  TFhirUsageContext = class;
+  TFhirUsageContextList = class;
+  TFhirAge = class;
+  TFhirAgeList = class;
+  TFhirCount = class;
+  TFhirCountList = class;
   TFhirDistance = class;
   TFhirDistanceList = class;
   TFhirDosageDoseAndRate = class;
@@ -152,54 +191,18 @@ type
   TFhirElementDefinitionMappingList = class;
   TFhirElementDefinition = class;
   TFhirElementDefinitionList = class;
-  TFhirExpression = class;
-  TFhirExpressionList = class;
-  TFhirExtension = class;
-  TFhirExtensionList = class;
-  TFhirHumanName = class;
-  TFhirHumanNameList = class;
-  TFhirIdentifier = class;
-  TFhirIdentifierList = class;
   TFhirMarketingStatus = class;
   TFhirMarketingStatusList = class;
-  TFhirMeta = class;
-  TFhirMetaList = class;
-  TFhirMoney = class;
-  TFhirMoneyList = class;
-  TFhirNarrative = class;
-  TFhirNarrativeList = class;
-  TFhirParameterDefinition = class;
-  TFhirParameterDefinitionList = class;
-  TFhirPeriod = class;
-  TFhirPeriodList = class;
   TFhirPopulation = class;
   TFhirPopulationList = class;
   TFhirProdCharacteristic = class;
   TFhirProdCharacteristicList = class;
   TFhirProductShelfLife = class;
   TFhirProductShelfLifeList = class;
-  TFhirQuantity = class;
-  TFhirQuantityList = class;
-  TFhirRange = class;
-  TFhirRangeList = class;
-  TFhirRatio = class;
-  TFhirRatioList = class;
-  TFhirReference = class;
-  TFhirReferenceList = class;
-  TFhirRelatedArtifact = class;
-  TFhirRelatedArtifactList = class;
-  TFhirSampledData = class;
-  TFhirSampledDataList = class;
-  TFhirSignature = class;
-  TFhirSignatureList = class;
   TFhirTimingRepeat = class;
   TFhirTimingRepeatList = class;
   TFhirTiming = class;
   TFhirTimingList = class;
-  TFhirTriggerDefinition = class;
-  TFhirTriggerDefinitionList = class;
-  TFhirUsageContext = class;
-  TFhirUsageContextList = class;
 
 
   // Base StructureDefinition for Element Type: Base definition for all elements in a resource.
@@ -300,6 +303,59 @@ type
   end;
 
   TFHIRDataTypeClass = class of TFhirDataType;
+
+  // Base StructureDefinition for BackboneType Type: Base definition for the few data types that are allowed to carry modifier extensions.
+  TFhirBackboneType = class abstract (TFhirDataType)
+  protected
+    FmodifierExtensionList : TFhirExtensionList;
+    function GetModifierExtensionList : TFhirExtensionList;
+    function GetHasModifierExtensionList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirBackboneType; overload;
+    function Clone : TFhirBackboneType; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.  Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
+    property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
+    property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
+
+  end;
+
+  // Base StructureDefinition for PrimitiveType Type: The base type for all re-useable types defined that have a simple property.
+  TFhirPrimitiveType = class abstract (TFhirDataType)
+  private
+    function GetStringValue : String;
+    procedure SetStringValue(value : String); virtual; abstract;
+    function AsStringValue : String; Virtual; abstract;
+  
+  public
+    function Link : TFhirPrimitiveType; overload;
+    function Clone : TFhirPrimitiveType; overload;
+    property StringValue : String read GetStringValue write SetStringValue;
+    function isPrimitive : boolean; override;
+    function hasPrimitiveValue : boolean; override;
+    function primitiveValue : string; override;
+    function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
+    function ToString : String; override;
+  end;
+
+  TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
 
 
 
@@ -2400,7 +2456,7 @@ type
   End;
 
   // An address expressed using postal conventions (as opposed to GPS or other location definition formats).  This data type may be used to convey addresses for use in delivering mail as well as for visiting locations which might not be valid for mail delivery.  There are a variety of postal address formats defined around the world.
-  TFhirAddress = class (TFhirElement)
+  TFhirAddress = class (TFhirDataType)
   protected
     FUse : TFhirEnum;
     FType_ : TFhirEnum;
@@ -2568,6 +2624,136 @@ type
     property FhirAddresses[index : Integer] : TFhirAddress read GetItemN write SetItemN; default;
   End;
 
+    // A measured amount (or an amount that can potentially be measured). Note that measured amounts include amounts that are not precisely quantified, including amounts involving arbitrary units and floating currencies.
+  TFhirQuantity = class (TFhirDataType)
+  protected
+    FValue : TFhirDecimal;
+    FComparator : TFhirEnum;
+    FUnit_ : TFhirString;
+    FSystem : TFhirUri;
+    FCode : TFhirCode;
+    procedure SetValue(value : TFhirDecimal);
+    function GetValueST : String;
+    procedure SetValueST(value : String);
+    procedure SetComparator(value : TFhirEnum);
+    function GetComparatorST : TFhirQuantityComparatorEnum;
+    procedure SetComparatorST(value : TFhirQuantityComparatorEnum);
+    procedure SetUnit_(value : TFhirString);
+    function GetUnit_ST : String;
+    procedure SetUnit_ST(value : String);
+    procedure SetSystem(value : TFhirUri);
+    function GetSystemST : String;
+    procedure SetSystemST(value : String);
+    procedure SetCode(value : TFhirCode);
+    function GetCodeST : String;
+    procedure SetCodeST(value : String);
+
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirQuantity; overload;
+    function Clone : TFhirQuantity; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The value of the measured amount. The value includes an implicit precision in the presentation of the value.
+    property value : String read GetValueST write SetValueST;
+    // The value of the measured amount. The value includes an implicit precision in the presentation of the value.
+    property valueElement : TFhirDecimal read FValue write SetValue;
+
+    // How the value should be understood and represented - whether the actual value is greater or less than the stated value due to measurement issues; e.g. if the comparator is "<" , then the real value is < stated value.
+    property comparator : TFhirQuantityComparatorEnum read GetComparatorST write SetComparatorST;
+    property comparatorElement : TFhirEnum read FComparator write SetComparator;
+
+    // Typed access to A human-readable form of the unit.
+    property unit_ : String read GetUnit_ST write SetUnit_ST;
+    // A human-readable form of the unit.
+    property unit_Element : TFhirString read FUnit_ write SetUnit_;
+
+    // Typed access to The identification of the system that provides the coded form of the unit.
+    property system : String read GetSystemST write SetSystemST;
+    // The identification of the system that provides the coded form of the unit.
+    property systemElement : TFhirUri read FSystem write SetSystem;
+
+    // Typed access to A computer processable form of the unit in some unit representation system.
+    property code : String read GetCodeST write SetCodeST;
+    // A computer processable form of the unit in some unit representation system.
+    property codeElement : TFhirCode read FCode write SetCode;
+
+  end;
+
+  TFhirQuantityListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirQuantityList;
+    function GetCurrent : TFhirQuantity;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirQuantityList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirQuantity read GetCurrent;
+  end;
+
+  TFhirQuantityList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirQuantity;
+    procedure SetItemN(index : Integer; value : TFhirQuantity);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirQuantityList; overload;
+    function Clone : TFhirQuantityList; overload;
+    function GetEnumerator : TFhirQuantityListEnumerator;
+
+    //  Add a FhirQuantity to the end of the list.
+    function Append : TFhirQuantity;
+
+    // Add an already existing FhirQuantity to the end of the list.
+    function AddItem(value : TFhirQuantity) : TFhirQuantity; overload;
+
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirQuantity) : Integer;
+
+    // Insert FhirQuantity before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirQuantity;
+
+    // Insert an existing FhirQuantity before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirQuantity);
+
+    // Get the iIndexth FhirQuantity. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirQuantity);
+
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirQuantity;
+
+    // The number of items in the collection
+    function Count : Integer; overload;
+
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+
+    // Remove All Items from the list
+    procedure ClearItems;
+
+    property FhirQuantities[index : Integer] : TFhirQuantity read GetItemN write SetItemN; default;
+  End;
+
+
   // A duration of time during which an organism (or a process) has existed.
   TFhirAge = class (TFhirQuantity)
   protected
@@ -2638,7 +2824,7 @@ type
   End;
 
   // A  text note which also  contains information about who made the statement and when.
-  TFhirAnnotation = class (TFhirElement)
+  TFhirAnnotation = class (TFhirDataType)
   protected
     FAuthor : TFhirDataType;
     FTime : TFhirDateTime;
@@ -2748,7 +2934,7 @@ type
   End;
 
   // For referring to data content defined in other formats.
-  TFhirAttachment = class (TFhirElement)
+  TFhirAttachment = class (TFhirDataType)
   protected
     FContentType : TFhirCode;
     FLanguage : TFhirCode;
@@ -2905,7 +3091,7 @@ type
   End;
 
   // A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
-  TFhirCodeableConcept = class (TFhirElement)
+  TFhirCodeableConcept = class (TFhirDataType)
   protected
     FcodingList : TFhirCodingList;
     FText : TFhirString;
@@ -3006,7 +3192,7 @@ type
   End;
 
   // A reference to a code defined by a terminology system.
-  TFhirCoding = class (TFhirElement)
+  TFhirCoding = class (TFhirDataType)
   protected
     FSystem : TFhirUri;
     FVersion : TFhirString;
@@ -3136,7 +3322,7 @@ type
   End;
 
   // Specifies contact information for a person or organization.
-  TFhirContactDetail = class (TFhirElement)
+  TFhirContactDetail = class (TFhirDataType)
   protected
     FName : TFhirString;
     FtelecomList : TFhirContactPointList;
@@ -3237,7 +3423,7 @@ type
   End;
 
   // Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
-  TFhirContactPoint = class (TFhirElement)
+  TFhirContactPoint = class (TFhirDataType)
   protected
     FSystem : TFhirEnum;
     FValue : TFhirString;
@@ -3363,7 +3549,7 @@ type
   End;
 
   // A contributor to the content of a knowledge asset, including authors, editors, reviewers, and endorsers.
-  TFhirContributor = class (TFhirElement)
+  TFhirContributor = class (TFhirDataType)
   protected
     FType_ : TFhirEnum;
     FName : TFhirString;
@@ -3872,7 +4058,7 @@ type
   End;
 
   // Describes a required data item for evaluation in terms of the type of data, and optional code or date-based filters of the data.
-  TFhirDataRequirement = class (TFhirElement)
+  TFhirDataRequirement = class (TFhirDataType)
   protected
     FType_ : TFhirEnum;
     FprofileList : TFhirCanonicalList;
@@ -4191,7 +4377,7 @@ type
   End;
 
   // Indicates how the medication is/was taken or should be taken by the patient.
-  TFhirDosage = class (TFhirBackboneElement)
+  TFhirDosage = class (TFhirBackboneType)
   protected
     FSequence : TFhirInteger;
     FText : TFhirString;
@@ -5379,7 +5565,7 @@ type
   End;
 
   // Captures constraints on each element within the resource, profile, or extension.
-  TFhirElementDefinition = class (TFhirBackboneElement)
+  TFhirElementDefinition = class (TFhirBackboneType)
   protected
     FPath : TFhirString;
     FRepresentation : TFhirEnumList;
@@ -5740,7 +5926,7 @@ type
   End;
 
   // A expression that is evaluated in a specified context and returns a value. The context of use of the expression must specify the context in which the expression is evaluated, and how the result of the expression is used.
-  TFhirExpression = class (TFhirElement)
+  TFhirExpression = class (TFhirDataType)
   protected
     FDescription : TFhirString;
     FName : TFhirId;
@@ -5870,7 +6056,7 @@ type
   End;
 
   // Optional Extension Element - found in all resources.
-  TFhirExtension = class (TFhirElement)
+  TFhirExtension = class (TFhirDataType)
   protected
     FUrl : TFhirUri;
     FValue : TFhirDataType;
@@ -5971,7 +6157,7 @@ type
   End;
 
   // A human's name with the ability to identify parts and usage.
-  TFhirHumanName = class (TFhirElement)
+  TFhirHumanName = class (TFhirDataType)
   protected
     FUse : TFhirEnum;
     FText : TFhirString;
@@ -6110,7 +6296,7 @@ type
   End;
 
   // An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
-  TFhirIdentifier = class (TFhirElement)
+  TFhirIdentifier = class (TFhirDataType)
   protected
     FUse : TFhirEnum;
     FType_ : TFhirCodeableConcept;
@@ -6242,7 +6428,7 @@ type
   End;
 
   // The marketing status describes the date when a medicinal product is actually put on the market or the date as of which it is no longer available.
-  TFhirMarketingStatus = class (TFhirBackboneElement)
+  TFhirMarketingStatus = class (TFhirBackboneType)
   protected
     FCountry : TFhirCodeableConcept;
     FJurisdiction : TFhirCodeableConcept;
@@ -6497,7 +6683,7 @@ type
   End;
 
   // An amount of economic utility in some recognized currency.
-  TFhirMoney = class (TFhirElement)
+  TFhirMoney = class (TFhirDataType)
   protected
     FValue : TFhirDecimal;
     FCurrency : TFhirCode;
@@ -6600,7 +6786,7 @@ type
   End;
 
   // A human-readable summary of the resource conveying the essential clinical and business information for the resource.
-  TFhirNarrative = class (TFhirElement)
+  TFhirNarrative = class (TFhirDataType)
   protected
     FStatus : TFhirEnum;
     FDiv_ : TFhirXHtmlNode;
@@ -6700,7 +6886,7 @@ type
   End;
 
   // The parameters to the module. This collection specifies both the input and output parameters. Input parameters are provided by the caller as part of the $evaluate operation. Output parameters are included in the GuidanceResponse.
-  TFhirParameterDefinition = class (TFhirElement)
+  TFhirParameterDefinition = class (TFhirDataType)
   protected
     FName : TFhirCode;
     FUse : TFhirEnum;
@@ -6846,7 +7032,7 @@ type
   End;
 
   // A time period defined by a start and end date and optionally time.
-  TFhirPeriod = class (TFhirElement)
+  TFhirPeriod = class (TFhirDataType)
   protected
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
@@ -6949,7 +7135,7 @@ type
   End;
 
   // A populatioof people with some set of grouping criteria.
-  TFhirPopulation = class (TFhirBackboneElement)
+  TFhirPopulation = class (TFhirBackboneType)
   protected
     FAge : TFhirDataType;
     FGender : TFhirCodeableConcept;
@@ -7062,7 +7248,7 @@ type
   End;
 
   // The marketing status describes the date when a medicinal product is actually put on the market or the date as of which it is no longer available.
-  TFhirProdCharacteristic = class (TFhirBackboneElement)
+  TFhirProdCharacteristic = class (TFhirBackboneType)
   protected
     FHeight : TFhirQuantity;
     FWidth : TFhirQuantity;
@@ -7226,7 +7412,7 @@ type
   End;
 
   // The shelf-life and storage information for a medicinal product item or container can be described using this class.
-  TFhirProductShelfLife = class (TFhirBackboneElement)
+  TFhirProductShelfLife = class (TFhirBackboneType)
   protected
     FType_ : TFhirCodeableConcept;
     FPeriod : TFhirDataType;
@@ -7331,137 +7517,8 @@ type
     property FhirProductShelfLives[index : Integer] : TFhirProductShelfLife read GetItemN write SetItemN; default;
   End;
 
-  // A measured amount (or an amount that can potentially be measured). Note that measured amounts include amounts that are not precisely quantified, including amounts involving arbitrary units and floating currencies.
-  TFhirQuantity = class (TFhirElement)
-  protected
-    FValue : TFhirDecimal;
-    FComparator : TFhirEnum;
-    FUnit_ : TFhirString;
-    FSystem : TFhirUri;
-    FCode : TFhirCode;
-    procedure SetValue(value : TFhirDecimal);
-    function GetValueST : String;
-    procedure SetValueST(value : String);
-    procedure SetComparator(value : TFhirEnum);
-    function GetComparatorST : TFhirQuantityComparatorEnum;
-    procedure SetComparatorST(value : TFhirQuantityComparatorEnum);
-    procedure SetUnit_(value : TFhirString);
-    function GetUnit_ST : String;
-    procedure SetUnit_ST(value : String);
-    procedure SetSystem(value : TFhirUri);
-    function GetSystemST : String;
-    procedure SetSystemST(value : String);
-    procedure SetCode(value : TFhirCode);
-    function GetCodeST : String;
-    procedure SetCodeST(value : String);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirQuantity; overload;
-    function Clone : TFhirQuantity; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to The value of the measured amount. The value includes an implicit precision in the presentation of the value.
-    property value : String read GetValueST write SetValueST;
-    // The value of the measured amount. The value includes an implicit precision in the presentation of the value.
-    property valueElement : TFhirDecimal read FValue write SetValue;
-
-    // How the value should be understood and represented - whether the actual value is greater or less than the stated value due to measurement issues; e.g. if the comparator is "<" , then the real value is < stated value.
-    property comparator : TFhirQuantityComparatorEnum read GetComparatorST write SetComparatorST;
-    property comparatorElement : TFhirEnum read FComparator write SetComparator;
-
-    // Typed access to A human-readable form of the unit.
-    property unit_ : String read GetUnit_ST write SetUnit_ST;
-    // A human-readable form of the unit.
-    property unit_Element : TFhirString read FUnit_ write SetUnit_;
-
-    // Typed access to The identification of the system that provides the coded form of the unit.
-    property system : String read GetSystemST write SetSystemST;
-    // The identification of the system that provides the coded form of the unit.
-    property systemElement : TFhirUri read FSystem write SetSystem;
-
-    // Typed access to A computer processable form of the unit in some unit representation system.
-    property code : String read GetCodeST write SetCodeST;
-    // A computer processable form of the unit in some unit representation system.
-    property codeElement : TFhirCode read FCode write SetCode;
-
-  end;
-
-  TFhirQuantityListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirQuantityList;
-    function GetCurrent : TFhirQuantity;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirQuantityList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirQuantity read GetCurrent;
-  end;
-
-  TFhirQuantityList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirQuantity;
-    procedure SetItemN(index : Integer; value : TFhirQuantity);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirQuantityList; overload;
-    function Clone : TFhirQuantityList; overload;
-    function GetEnumerator : TFhirQuantityListEnumerator;
-    
-    //  Add a FhirQuantity to the end of the list.
-    function Append : TFhirQuantity;
-    
-    // Add an already existing FhirQuantity to the end of the list.
-    function AddItem(value : TFhirQuantity) : TFhirQuantity; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirQuantity) : Integer;
-    
-    // Insert FhirQuantity before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirQuantity;
-    
-    // Insert an existing FhirQuantity before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirQuantity);
-    
-    // Get the iIndexth FhirQuantity. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirQuantity);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirQuantity;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirQuantities[index : Integer] : TFhirQuantity read GetItemN write SetItemN; default;
-  End;
-
   // A set of ordered Quantities defined by a low and high limit.
-  TFhirRange = class (TFhirElement)
+  TFhirRange = class (TFhirDataType)
   protected
     FLow : TFhirQuantity;
     FHigh : TFhirQuantity;
@@ -7560,7 +7617,7 @@ type
   End;
 
   // A relationship of two Quantity values - expressed as a numerator and a denominator.
-  TFhirRatio = class (TFhirElement)
+  TFhirRatio = class (TFhirDataType)
   protected
     FNumerator : TFhirQuantity;
     FDenominator : TFhirQuantity;
@@ -7659,7 +7716,7 @@ type
   End;
 
   // A reference from one resource to another.
-  TFhirReference = class (TFhirElement)
+  TFhirReference = class (TFhirDataType)
   protected
     FReference : TFhirString;
     FType_ : TFhirUri;
@@ -7778,7 +7835,7 @@ type
   End;
 
   // Related artifacts such as additional documentation, justification, or bibliographic references.
-  TFhirRelatedArtifact = class (TFhirElement)
+  TFhirRelatedArtifact = class (TFhirDataType)
   protected
     FType_ : TFhirEnum;
     FLabel_ : TFhirString;
@@ -7923,7 +7980,7 @@ type
   End;
 
   // A series of measurements taken by a device, with upper and lower limits. There may be more than one dimension in the data.
-  TFhirSampledData = class (TFhirElement)
+  TFhirSampledData = class (TFhirDataType)
   protected
     FOrigin : TFhirQuantity;
     FPeriod : TFhirDecimal;
@@ -8069,7 +8126,7 @@ type
   End;
 
   // A signature along with supporting context. The signature may be a digital signature that is cryptographic in nature, or some other signature acceptable to the domain. This other signature may be as simple as a graphical image representing a hand-written signature, or a signature ceremony Different signature approaches have different utilities.
-  TFhirSignature = class (TFhirElement)
+  TFhirSignature = class (TFhirDataType)
   protected
     Ftype_List : TFhirCodingList;
     FWhen : TFhirInstant;
@@ -8425,7 +8482,7 @@ type
   End;
 
   // Specifies an event that may occur multiple times. Timing schedules are used to record when things are planned, expected or requested to occur. The most common usage is in dosage instructions for medications. They are also used when planning care of various kinds, and may be used for reporting the schedule to which past regular activities were carried out.
-  TFhirTiming = class (TFhirBackboneElement)
+  TFhirTiming = class (TFhirBackboneType)
   protected
     FeventList : TFhirDateTimeList;
     FRepeat_ : TFhirTimingRepeat;
@@ -8531,7 +8588,7 @@ type
   End;
 
   // A description of a triggering event. Triggering events can be named events, data events, or periodic, as determined by the type element.
-  TFhirTriggerDefinition = class (TFhirElement)
+  TFhirTriggerDefinition = class (TFhirDataType)
   protected
     FType_ : TFhirEnum;
     FName : TFhirString;
@@ -8654,7 +8711,7 @@ type
   End;
 
   // Specifies clinical/business/etc. metadata that can be used to retrieve, index and/or categorize an artifact. This metadata can either be specific to the applicable population (e.g., age category, DRG) or the specific context of care (e.g., venue, care setting, provider of care).
-  TFhirUsageContext = class (TFhirElement)
+  TFhirUsageContext = class (TFhirDataType)
   protected
     FCode : TFhirCoding;
     FValue : TFhirDataType;
@@ -9053,6 +9110,7 @@ begin
     end;
   end;
 end;
+
 { TFhirBackboneElement }
 
 constructor TFhirBackboneElement.Create;
@@ -9221,6 +9279,152 @@ begin
   result := true;
 end;
 
+
+{ TFhirBackboneType }
+
+constructor TFhirBackboneType.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirBackboneType.Destroy;
+begin
+  FModifierExtensionList.Free;
+  inherited;
+end;
+
+procedure TFhirBackboneType.Assign(oSource : TFslObject);
+begin
+  inherited;
+  if (TFhirBackboneType(oSource).FModifierExtensionList = nil) then
+  begin
+    FModifierExtensionList.free;
+    FModifierExtensionList := nil;
+  end
+  else
+  begin
+    if FModifierExtensionList = nil then
+      FModifierExtensionList := TFhirExtensionList.Create;
+    FModifierExtensionList.Assign(TFhirBackboneType(oSource).FModifierExtensionList);
+  end;
+end;
+
+procedure TFhirBackboneType.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'modifierExtension') Then
+    list.addAll(self, 'modifierExtension', FModifierExtensionList);
+end;
+
+procedure TFhirBackboneType.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'modifierExtension', 'Extension', true, TFhirExtension, FModifierExtensionList.Link));
+end;
+
+function TFhirBackboneType.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'modifierExtension') then
+  begin
+    ModifierExtensionList.add(propValue as TFhirExtension);
+    result := propValue;
+  end
+  else
+    result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirBackboneType.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension)
+  else inherited;
+end;
+
+function TFhirBackboneType.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'modifierExtension') then result := ModifierExtensionList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirBackboneType.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'modifierExtension') then result := 'Extension'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirBackboneType.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'modifierExtension') then deletePropertyValue('modifierExtension', ModifierExtensionList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirBackboneType.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'modifierExtension') then replacePropertyValue('modifierExtension', ModifierExtensionList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirBackboneType.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirBackboneType.equals(other : TObject) : boolean;
+var
+  o : TFhirBackboneType;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirBackboneType)) then
+    result := false
+  else
+  begin
+    o := TFhirBackboneType(other);
+    result := compareDeep(modifierExtensionList, o.modifierExtensionList, true);
+  end;
+end;
+
+function TFhirBackboneType.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FmodifierExtensionList);
+end;
+
+procedure TFhirBackboneType.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('modifierExtension');
+end;
+
+function TFhirBackboneType.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModifierExtensionList.sizeInBytes(magic));
+end;
+
+function TFhirBackboneType.Link : TFhirBackboneType;
+begin
+  result := TFhirBackboneType(inherited Link);
+end;
+
+function TFhirBackboneType.Clone : TFhirBackboneType;
+begin
+  result := TFhirBackboneType(inherited Clone);
+end;
+
+function TFhirBackboneType.GetModifierExtensionList : TFhirExtensionList;
+begin
+  if FModifierExtensionList = nil then
+    FModifierExtensionList := TFhirExtensionList.Create;
+  result := FModifierExtensionList;
+end;
+
+function TFhirBackboneType.GetHasModifierExtensionList : boolean;
+begin
+  result := (FModifierExtensionList <> nil) and (FModifierExtensionList.count > 0);
+end;
 
 
 { TFhirEnum }
@@ -35690,6 +35894,59 @@ begin
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger64"')
   end;
 end;
+
+{ TFhirPrimitiveType }
+
+function TFhirPrimitiveType.Link : TFhirPrimitiveType;
+begin
+  result := TFhirPrimitiveType(inherited Link);
+end;
+
+function TFhirPrimitiveType.Clone : TFhirPrimitiveType;
+begin
+  result := TFhirPrimitiveType(inherited Clone);
+end;
+
+function TFhirPrimitiveType.GetStringValue : string;
+begin
+  if self = nil then
+    result := ''
+  else
+    result := AsStringValue;
+end;
+
+function TFhirPrimitiveType.isPrimitive: boolean;
+begin
+  result := true;
+end;
+
+function TFhirPrimitiveType.hasPrimitiveValue: boolean;
+begin
+  result := StringValue <> '';
+end;
+
+function TFhirPrimitiveType.primitiveValue: string;
+begin
+  result := StringValue;
+end;
+
+function TFhirPrimitiveType.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'value') then
+  begin
+    StringValue := propValue.primitiveValue;
+    propValue.Free;
+    result := self;
+  end
+  else
+    result := inherited setProperty(propName, propValue);
+end;
+
+function TFhirPrimitiveType.toString : String;
+begin
+  result := StringValue;
+end;
+
 
 end.
 

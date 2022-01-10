@@ -39,53 +39,53 @@ uses
   fhir_objects,  fhir_parser, fhir4b_types, fhir4b_resources;
 
 type
-  TFHIRXmlParserBase4 = class (TFHIRXmlParserBase)
+  TFHIRXmlParserBase4B = class (TFHIRXmlParserBase)
   protected
     function ParseResource(element : TMXmlElement; path : String) : TFhirResource; virtual;
     Function ParseResourceV(element : TMXmlElement; path : String) : TFhirResourceV; override;
 
-    function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
+    function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType; virtual;
     function ParseDataTypeV(element : TMXmlElement; rootName : String; type_ : TClass) : TFHIRObject; override;
 
     Function ParseInnerResource(element : TMXmlElement; path : String) : TFhirResource;
   end;
 
-  TFHIRJsonParserBase4 = class (TFHIRJsonParserBase)
+  TFHIRJsonParserBase4B = class (TFHIRJsonParserBase)
   protected
     function ParseResource(jsn : TJsonObject) : TFhirResource; virtual;
     Function ParseResourceV(jsn : TJsonObject) : TFhirResourceV; override;
 
     function ParseDataTypeV(jsn : TJsonObject; name : String; type_ : TClass) : TFHIRObject; override;
-    function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
+    function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType; virtual;
 
     procedure ParseInnerResource(jsn : TJsonObject; ctxt : TFHIRObjectList);  overload;
     function ParseInnerResource(jsn: TJsonObject) : TFhirResource; overload;
   end;
 
-  TFHIRTurtleParserBase4 = class (TFHIRTurtleParserBase)
+  TFHIRTurtleParserBase4B = class (TFHIRTurtleParserBase)
   protected
     function ParseResource(obj : TTurtleComplex) : TFhirResource; overload; virtual;
     Function ParseResourceV(obj : TTurtleComplex) : TFhirResourceV; override;
 
-    function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
+    function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType; virtual;
 
     function ParseInnerResource(obj : TTurtleObject) : TFHIRResource;
   end;
 
-  TFHIRXmlComposerBase4 = class (TFHIRXmlComposerBase)
+  TFHIRXmlComposerBase4B = class (TFHIRXmlComposerBase)
   protected
     procedure ComposeResourceV(xml : TXmlBuilder; resource : TFhirResourceV); override;
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); virtual;
 
   end;
 
-  TFHIRJsonComposerBase4 = class (TFHIRJsonComposerBase)
+  TFHIRJsonComposerBase4B = class (TFHIRJsonComposerBase)
   protected
     procedure ComposeResourceV(json : TJSONWriter; resource : TFhirResourceV); override;
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); virtual;
   end;
 
-  TFHIRTurtleComposerBase4 = class (TFHIRTurtleComposerBase)
+  TFHIRTurtleComposerBase4B = class (TFHIRTurtleComposerBase)
   protected
     procedure ComposeResourceV(parent :  TTurtleComplex; resource : TFhirResourceV); overload; override;
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; virtual;
@@ -111,14 +111,14 @@ begin
   result := (c.system = 'http://hl7.org/fhir/v3/ObservationValue') and (c.code = 'SUBSETTED');
 end;
 
-{ TFHIRXmlParserBase4 }
+{ TFHIRXmlParserBase4B }
 
-function TFHIRXmlParserBase4.ParseDataTypeV(element : TMXmlElement; rootName: String; type_: TClass): TFHIRObject;
+function TFHIRXmlParserBase4B.ParseDataTypeV(element : TMXmlElement; rootName: String; type_: TClass): TFHIRObject;
 begin
-  result := ParseDataType(element, rootName, TFHIRTypeClass(type_));
+  result := ParseDataType(element, rootName, TFHIRDataTypeClass(type_));
 end;
 
-function TFHIRXmlParserBase4.ParseInnerResource(element: TMXmlElement; path: String): TFhirResource;
+function TFHIRXmlParserBase4B.ParseInnerResource(element: TMXmlElement; path: String): TFhirResource;
 var
   child : TMXmlElement;
 begin
@@ -134,89 +134,89 @@ begin
   end;
 end;
 
-function TFHIRXmlParserBase4.ParseResource(element: TMXmlElement; path: String): TFhirResource;
+function TFHIRXmlParserBase4B.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
   raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
-function TFHIRXmlParserBase4.ParseResourceV(element: TMXmlElement; path: String): TFhirResourceV;
+function TFHIRXmlParserBase4B.ParseResourceV(element: TMXmlElement; path: String): TFhirResourceV;
 begin
   result := ParseResource(element, path);
 end;
 
-function TFHIRXmlParserBase4.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRTypeClass): TFHIRType;
+function TFHIRXmlParserBase4B.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
   raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 
-{ TFHIRXmlComposerBase4 }
+{ TFHIRXmlComposerBase4B }
 
 
-{ TFHIRXmlComposerBase4 }
+{ TFHIRXmlComposerBase4B }
 
-procedure TFHIRXmlComposerBase4.ComposeResource(xml: TXmlBuilder; resource: TFhirResource);
+procedure TFHIRXmlComposerBase4B.ComposeResource(xml: TXmlBuilder; resource: TFhirResource);
 begin
   raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
-procedure TFHIRXmlComposerBase4.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
+procedure TFHIRXmlComposerBase4B.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
 begin
   ComposeResource(xml, resource as TFhirResource);
 end;
 
-{ TFHIRJsonParserBase4 }
+{ TFHIRJsonParserBase4B }
 
-function TFHIRJsonParserBase4.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass): TFHIRType;
+function TFHIRJsonParserBase4B.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass): TFHIRDataType;
 begin
   raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
-function TFHIRJsonParserBase4.ParseResource(jsn: TJsonObject): TFhirResource;
+function TFHIRJsonParserBase4B.ParseResource(jsn: TJsonObject): TFhirResource;
 begin
-  raise EFHIRException.create('don''t use TFHIRJsonParserBase4 directly - use TFHIRXmlComposer');
+  raise EFHIRException.create('don''t use TFHIRJsonParserBase4B directly - use TFHIRXmlComposer');
 end;
 
-function TFHIRJsonParserBase4.ParseResourceV(jsn: TJsonObject): TFhirResourceV;
+function TFHIRJsonParserBase4B.ParseResourceV(jsn: TJsonObject): TFhirResourceV;
 begin
   result := ParseResource(jsn);
 end;
 
-procedure TFHIRJsonParserBase4.ParseInnerResource(jsn: TJsonObject; ctxt: TFHIRObjectList);
+procedure TFHIRJsonParserBase4B.ParseInnerResource(jsn: TJsonObject; ctxt: TFHIRObjectList);
 begin
   ctxt.add(ParseResourceV(jsn));
 end;
 
-function TFHIRJsonParserBase4.ParseDataTypeV(jsn: TJsonObject; name: String; type_: TClass): TFHIRObject;
+function TFHIRJsonParserBase4B.ParseDataTypeV(jsn: TJsonObject; name: String; type_: TClass): TFHIRObject;
 begin
-  result := ParseDataType(jsn, name, TFHIRTypeClass(type_));
+  result := ParseDataType(jsn, name, TFHIRDataTypeClass(type_));
 end;
 
-function TFHIRJsonParserBase4.ParseInnerResource(jsn: TJsonObject) : TFhirResource;
+function TFHIRJsonParserBase4B.ParseInnerResource(jsn: TJsonObject) : TFhirResource;
 begin
   result := ParseResourceV(jsn) as TFhirResource;
 end;
 
-{ TFHIRJsonComposerBase4 }
+{ TFHIRJsonComposerBase4B }
 
-procedure TFHIRJsonComposerBase4.ComposeResource(json: TJSONWriter; resource: TFhirResource);
+procedure TFHIRJsonComposerBase4B.ComposeResource(json: TJSONWriter; resource: TFhirResource);
 begin
   raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
-procedure TFHIRJsonComposerBase4.ComposeResourceV(json: TJSONWriter; resource: TFhirResourceV);
+procedure TFHIRJsonComposerBase4B.ComposeResourceV(json: TJSONWriter; resource: TFhirResourceV);
 begin
   ComposeResource(json, resource as TFhirResource);
 end;
 
-{ TFHIRTurtleParserBase4 }
+{ TFHIRTurtleParserBase4B }
 
-function TFHIRTurtleParserBase4.ParseDataType(obj: TTurtleComplex; name: String; type_: TFHIRTypeClass): TFHIRType;
+function TFHIRTurtleParserBase4B.ParseDataType(obj: TTurtleComplex; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
-  raise EFHIRException.create('don''t use TFHIRTurtleParserBase4 directly - use TFHIRXmlParser');
+  raise EFHIRException.create('don''t use TFHIRTurtleParserBase4B directly - use TFHIRXmlParser');
 end;
 
-function TFHIRTurtleParserBase4.ParseInnerResource(obj: TTurtleObject): TFHIRResource;
+function TFHIRTurtleParserBase4B.ParseInnerResource(obj: TTurtleObject): TFHIRResource;
 var
   c : TTurtleComplex;
 begin
@@ -238,24 +238,24 @@ begin
   end;
 end;
 
-function TFHIRTurtleParserBase4.ParseResource(obj: TTurtleComplex): TFhirResource;
+function TFHIRTurtleParserBase4B.ParseResource(obj: TTurtleComplex): TFhirResource;
 begin
   raise ERdfException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
-function TFHIRTurtleParserBase4.ParseResourceV(obj: TTurtleComplex): TFhirResourceV;
+function TFHIRTurtleParserBase4B.ParseResourceV(obj: TTurtleComplex): TFhirResourceV;
 begin
   result := ParseResource(obj);
 end;
 
-{ TFHIRTurtleComposerBase4 }
+{ TFHIRTurtleComposerBase4B }
 
-procedure TFHIRTurtleComposerBase4.ComposeResource(parent: TTurtleComplex; resource: TFhirResource);
+procedure TFHIRTurtleComposerBase4B.ComposeResource(parent: TTurtleComplex; resource: TFhirResource);
 begin
   raise ERdfException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
-procedure TFHIRTurtleComposerBase4.ComposeResourceV(parent: TTurtleComplex; resource: TFhirResourceV);
+procedure TFHIRTurtleComposerBase4B.ComposeResourceV(parent: TTurtleComplex; resource: TFhirResourceV);
 begin
   ComposeResource(parent, resource as TFhirResource);
 end;
