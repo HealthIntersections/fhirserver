@@ -1,4 +1,4 @@
-unit indexing_r5;
+unit indexing_r4B;
 
 {$IFDEF FPC}
   {$MODE Delphi}
@@ -49,16 +49,17 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_xml,
   fhir_objects, fhir_xhtml, fhir_common, fhir_utilities, fhir_pathengine, fhir_uris,
-  fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_constants, fhir5_indexinfo, fhir5_utilities, fhir5_pathengine, fhir5_context,
+  fhir4B_enums, fhir4B_types, fhir4B_resources_base, fhir4B_resources, fhir4B_constants, fhir4B_indexinfo, fhir4B_utilities, fhir4B_pathengine, fhir4B_context,
   fhir_indexing,
   ftx_ucum_services,
   session, indexing, tags, utilities, server_constants;
 
 Type
-  TFhirIndexManageR5 = class (TFhirIndexManager)
+  TFhirIndexManager4B = class (TFhirIndexManager)
   private
     FMasterKey : Integer;
     FforTesting : boolean;
+    FReportErrors: boolean;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
@@ -110,6 +111,7 @@ Type
     procedure index(aType : String; key, parent : integer; value : TFhirHumanName; name, phoneticName : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirAddress; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirContactPoint; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirCodeableReference; name : String); overload;
     procedure index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value : TFhirReference; name : String; specificType : String = ''); overload;
     procedure index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value : TFhirReferenceList; name : String; specificType : String = ''); overload;
 
@@ -123,8 +125,9 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource; appInfo : TFslObject);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    function Link : TFhirIndexManageR5; overload;
+    function Link : TFhirIndexManager4B; overload;
     function execute(key : integer; id: String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>; override;
+    property reportErrors : boolean read FReportErrors write FReportErrors;
   end;
 
 implementation
@@ -137,9 +140,9 @@ begin
   result := EncodeNYSIIS(value.value);
 end;
 
-{ TFhirIndexManageR5 }
+{ TFhirIndexManager4B }
 
-function TFhirIndexManageR5.EncodeXhtml(r: TFhirDomainResource): TBytes;
+function TFhirIndexManager4B.EncodeXhtml(r: TFhirDomainResource): TBytes;
 var
   x, body : TFhirXHtmlNode;
 begin
@@ -165,19 +168,19 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirString; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirString; name: String);
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirUri; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirUri; name: String);
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirCodeableConcept; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirCodeableConcept; name: String);
 var
   i : integer;
 begin
@@ -190,7 +193,7 @@ begin
   End;
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value, name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
   types : TFhirSearchParamTypeList;
@@ -215,7 +218,7 @@ begin
   FEntries.add(FConnection, key, parent, ndx, 0, value, '', 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index2(aType : String; key, parent : integer; value, name: String);
+procedure TFhirIndexManager4B.index2(aType : String; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -230,12 +233,12 @@ begin
   FEntries.add(FConnection, key, parent, ndx, 0, '', value, 0, '', sptString);
 end;
 
-function TFhirIndexManageR5.Link: TFhirIndexManageR5;
+function TFhirIndexManager4B.Link: TFhirIndexManager4B;
 begin
-  result := TFhirIndexManageR5 (inherited Link);
+  result := TFhirIndexManager4B (inherited Link);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value1, value2, name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value1, value2, name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -261,7 +264,7 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: Boolean; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: Boolean; name: String);
 var
   ndx : TFhirIndex;
   concept : integer;
@@ -277,7 +280,7 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirEnum; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirEnum; name: String);
 var
   ndx : TFhirIndex;
   concept : integer;
@@ -308,18 +311,18 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirInstant; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirInstant; name: String);
 begin
   if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-function TFhirIndexManageR5.transform(base: TFHIRObject; uri: String): TFHIRObject;
+function TFhirIndexManager4B.transform(base: TFHIRObject; uri: String): TFHIRObject;
 begin
-  raise EFHIRTodo.create('TFhirIndexManageR5.transform');
+  raise EFHIRTodo.create('TFhirIndexManager4B.transform');
 end;
 
-function TFhirIndexManageR5.TypeForKey(key: integer): String;
+function TFhirIndexManager4B.TypeForKey(key: integer): String;
 var
   t : TFHIRResourceConfig;
 begin
@@ -329,7 +332,7 @@ begin
       result := t.name;
 end;
 
-procedure TFhirIndexManageR5.evaluateByFHIRPath(key : integer; context, resource: TFhirResource; appInfo : TFslObject);
+procedure TFhirIndexManager4B.evaluateByFHIRPath(key : integer; context, resource: TFhirResource; appInfo : TFslObject);
 var
   path : TFHIRPathEngine;
   i : integer;
@@ -361,12 +364,9 @@ begin
             if ndx.SearchType = sptComposite then
               // ignore for now
             else case ndx.Usage of
-              sxpNull: ; // nothing.. /// raise EFHIRException.create('Path is not defined properly');
+              sxpNull: raise EFHIRException.create('Path is not defined properly');
               sxpNormal:
                 begin
-                if work is TFHIRExtension then
-                  work := (work as TFHIRExtension).value;
-
                 if work is TFhirString then
                   index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
                 else if work is TFhirUri then
@@ -413,15 +413,15 @@ begin
                   index(appInfo, context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                 else if work is TFhirMoney then
                   index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
+                else if work is TFhirCodeableReference then
+                  index(resource.fhirType, key, 0, TFhirCodeableReference(work), ndx.Name)
                 else if work is TFhirStructureDefinitionContext then
                   index(resource.fhirType, key, 0, TFhirStructureDefinitionContext(work), ndx.Name)
                 else if work is TFhirResource then
                   // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                 else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
-                begin
-                  if DebugConsoleMessages then
-                    writeln('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
-                end;
+                  if reportErrors then
+                    raise EFHIRException.create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
                 end;
               sxpPhonetic:
                 begin
@@ -479,7 +479,7 @@ begin
   end;
 end;
 
-function TFhirIndexManageR5.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>;
+function TFhirIndexManager4B.execute(key : integer; id : String; res : TFhirResourceV; tags : TFHIRTagList; appInfo : TFslObject) : TFslList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;
@@ -603,7 +603,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirCoding; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirCoding; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -650,7 +650,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManageR5.GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
+procedure TFhirIndexManager4B.GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 var
   dec : TFslDecimal;
 begin
@@ -685,7 +685,7 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value : TFhirRange; name : String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value : TFhirRange; name : String);
 var
   ndx : TFhirIndex;
   v1, v2, crap : String;
@@ -752,7 +752,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = '');
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = '');
 var
   ndx : TFhirIndex;
   v1, v2 : String;
@@ -789,50 +789,54 @@ begin
   end;
 
   // ok, if there's a ucum code:
-  if (value.code <> '') and (value.system = URI_UCUM) and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
-  begin
-    specified := TUcumPair.create;
-    try
-      specified.Value := TFslDecimal.ValueOf(value.value);
-      specified.UnitCode := value.code;
-      canonical := FTerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(specified);
+  try
+    if (value.code <> '') and (value.system = URI_UCUM) and (FTerminologyServer.CommonTerminologies.Ucum <> Nil) then
+    begin
+      specified := TUcumPair.create;
       try
-        GetBoundaries(canonical.Value.AsString, value.comparator, v1, v2);
-        if (length(v1) > INDEX_ENTRY_LENGTH) then
-          raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        if (length(v2) > INDEX_ENTRY_LENGTH) then
-          raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
-          recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
-        FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        specified.Value := TFslDecimal.ValueOf(value.value);
+        specified.UnitCode := value.code;
+        canonical := FTerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(specified);
+        try
+          GetBoundaries(canonical.Value.AsString, value.comparator, v1, v2);
+          if (length(v1) > INDEX_ENTRY_LENGTH) then
+            raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+          if (length(v2) > INDEX_ENTRY_LENGTH) then
+            raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+          if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
+            recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
+          FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType, true);
+        finally
+          canonical.free;
+        end;
       finally
-        canonical.free;
+        specified.free;
       end;
-    finally
-      specified.free;
     end;
+  Except
+    // nothing; we just don't index by invalid UCUM codes
   end;
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value : TFhirPeriod; name : String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value : TFhirPeriod; name : String);
 begin
   if (value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value : TFhirTiming; name : String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value : TFhirTiming; name : String);
 begin
   if (value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirDateTime; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirDateTime; name: String);
 begin
   if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; min, max : TDateTime; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; min, max : TDateTime; name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -846,7 +850,7 @@ begin
   FEntries.add(FConnection, key, parent, ndx, 0, TFslDateTime.make(min, dttzUnknown).toHL7, TFslDateTime.make(max, dttzUnknown).toHL7, 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -869,7 +873,7 @@ begin
   FEntries.add(FConnection, key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirAddress; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirAddress; name: String);
 var
   i : integer;
 begin
@@ -889,7 +893,7 @@ begin
   index(aType, key, parent, value.useElement, name+'-use');
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirContactPoint; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirContactPoint; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -912,7 +916,7 @@ begin
   FEntries.add(FConnection, key, parent, ndx, ref, value.value, '', 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirIdentifierList; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirIdentifierList; name: String);
 var
   i : integer;
 begin
@@ -921,7 +925,7 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirCodingList; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirCodingList; name: String);
 var
   i : integer;
 begin
@@ -930,7 +934,7 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirCodeableConceptList; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirCodeableConceptList; name: String);
 var
   i : integer;
 begin
@@ -939,17 +943,17 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirSampledData; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirSampledData; name: String);
 begin
  // todo
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirRatio; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirRatio; name: String);
 begin
   // don't have a clue what to do here
 end;
 
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirHumanName; name, phoneticName: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirHumanName; name, phoneticName: String);
 var
   i : integer;
   s : String;
@@ -985,7 +989,7 @@ begin
 end;
 
 {
-procedure TFhirIndexManageR5.index(aType : String; key, parent : integer; value: TFhirDecimal; name: String);
+procedure TFhirIndexManager4B.index(aType : String; key, parent : integer; value: TFhirDecimal; name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -1030,7 +1034,7 @@ begin
   delete(result, 1, 1);
 end;
 
-procedure TFhirIndexManageR5.index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value: TFhirReference; name: String; specificType : String = '');
+procedure TFhirIndexManager4B.index(appInfo : TFslObject; context : TFhirResource; aType : String; key, parent : integer; value: TFhirReference; name: String; specificType : String = '');
 var
   ndx : TFhirIndex;
   ref, i : integer;
@@ -1141,7 +1145,7 @@ begin
 end;
 
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirInteger; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirInteger; name: String);
 var
   ndx : TFhirIndex;
   v1, v2 : String;
@@ -1162,19 +1166,19 @@ end;
 
 
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirDate; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirDate; name: String);
 begin
   if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirBoolean; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirBoolean; name: String);
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-//procedure TFhirIndexManageR5.patientCompartment(key : integer; reference: TFhirReference);
+//procedure TFhirIndexManager4B.patientCompartment(key : integer; reference: TFhirReference);
 //var
 //  sid : string;
 //begin
@@ -1193,7 +1197,7 @@ end;
 //end;
 
 
-procedure TFhirIndexManageR5.patientCompartment(key : integer; type_, id : String);
+procedure TFhirIndexManager4B.patientCompartment(key : integer; type_, id : String);
 begin
   FConnection.sql := 'Select i.ResourceTypeKey, ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
   FConnection.Prepare;
@@ -1205,12 +1209,12 @@ begin
   FConnection.Terminate;
 end;
 
-procedure TFhirIndexManageR5.patientCompartmentNot(key : integer; type_, id : String);
+procedure TFhirIndexManager4B.patientCompartmentNot(key : integer; type_, id : String);
 begin
   FCompartments.removeById(id);
 end;
 
-procedure TFhirIndexManageR5.processCompartmentTags(key: integer; id: String; tags: TFHIRTagList);
+procedure TFhirIndexManager4B.processCompartmentTags(key: integer; id: String; tags: TFHIRTagList);
 var
   i : integer;
 begin
@@ -1220,7 +1224,7 @@ begin
 
 end;
 
-procedure TFhirIndexManageR5.processUnCompartmentTags(key: integer; id: String; tags: TFHIRTagList);
+procedure TFhirIndexManager4B.processUnCompartmentTags(key: integer; id: String; tags: TFHIRTagList);
 var
   i : integer;
 begin
@@ -1230,7 +1234,7 @@ begin
 
 end;
 
-procedure TFhirIndexManageR5.recordSpace(space: string; key: integer);
+procedure TFhirIndexManager4B.recordSpace(space: string; key: integer);
 begin
   FConnection.SQL := 'insert into Spaces (SpaceKey, Space) values ('+inttostr(key)+', :s)';
   FConnection.prepare;
@@ -1239,7 +1243,7 @@ begin
   FConnection.terminate;
 end;
 
-function TFhirIndexManageR5.index(aType: String; key, parent: integer; name: String): Integer;
+function TFhirIndexManager4B.index(aType: String; key, parent: integer; name: String): Integer;
 var
   ndx : TFhirComposite;
 begin
@@ -1251,7 +1255,13 @@ begin
   result := FEntries.add(FConnection, key, parent, ndx);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirMoney; name, units: string);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirCodeableReference; name: String);
+begin
+//  if value.concept <> nil then
+//    index(aType, key, parent, value.concept, name);
+end;
+
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirMoney; name, units: string);
 var
   ndx : TFhirIndex;
   v1, v2 : String;
@@ -1276,12 +1286,12 @@ begin
       raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-  if not FSpaces.ResolveSpace('urn:iso:std:iso:4217#'+value.currency, ref) then
-    recordSpace('urn:iso:std:iso:4217#'+value.currency, ref);
+  if not FSpaces.ResolveSpace('urn:iso:std:iso:4B217#'+value.currency, ref) then
+    recordSpace('urn:iso:std:iso:4B217#'+value.currency, ref);
   FEntries.add(FConnection, key, parent, ndx, ref, v1, v2, 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
 var
   c : TFHIRCoding;
 begin
@@ -1297,7 +1307,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManageR5.index(aType: String; key, parent: integer; value: TFhirDecimal; name: String);
+procedure TFhirIndexManager4B.index(aType: String; key, parent: integer; value: TFhirDecimal; name: String);
 var
   ndx : TFhirIndex;
   v1,v2 : String;
@@ -1315,7 +1325,7 @@ begin
   FEntries.add(FConnection, key, parent, ndx, 0, v1, v2, 0, '', ndx.SearchType);
 end;
 
-procedure TFhirIndexManageR5.index(appInfo : TFslObject; context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
+procedure TFhirIndexManager4B.index(appInfo : TFslObject; context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
 var
   i : integer;
 begin
@@ -1324,15 +1334,14 @@ begin
       index(appInfo, context, atype, key, parent, value[i], name, specificType);
 end;
 
-procedure TFhirIndexManageR5.checkTags(resource: TFhirResource; tags: TFHIRTagList);
+procedure TFhirIndexManager4B.checkTags(resource: TFhirResource; tags: TFHIRTagList);
 var
-  c, ct : integer;
+  c : integer;
 begin
   c := 0;
-  ct := tags.Count;
   if (resource.meta <> nil) then
     c := resource.meta.tagList.Count + resource.meta.securityList.Count + resource.meta.profileList.Count;
-  if (c = 0) <> (ct = 0) then
+  if c <> tags.Count then
     raise EFHIRException.create('Tags out of sync');
 end;
 

@@ -1273,7 +1273,7 @@ begin
       err.severity := level;
       err.details :=  TFhirCodeableConcept.Create;
       err.details.text := message+Stringformat(' at line %d col %d', [loc.lineForHuman, loc.colForHuman]);
-      Ferrors.add(TFhirOperationOutcomeIssue4.Create(err.Link));
+      Ferrors.add(TFhirOperationOutcomeIssue4B.Create(err.Link));
     finally
       err.Free;
     end;

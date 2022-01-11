@@ -563,7 +563,7 @@ type
                     SignatureTypeModification, SignatureTypeAdministrative, SignatureTypeTimestamp);
 
 const
-  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion400);
+  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion430Snapshot1, FHIRVersion430Cibuild);
   CODES_TSignatureType : array [TSignatureType] of String = ('1.2.840.10065.1.12.1.1', '1.2.840.10065.1.12.1.2', '1.2.840.10065.1.12.1.3', '1.2.840.10065.1.12.1.4', '1.2.840.10065.1.12.1.5',
                 '1.2.840.10065.1.12.1.6', '1.2.840.10065.1.12.1.7', '1.2.840.10065.1.12.1.8', '1.2.840.10065.1.12.1.9', '1.2.840.10065.1.12.1.10',
                 '1.2.840.10065.1.12.1.11', '1.2.840.10065.1.12.1.12', '1.2.840.10065.1.12.1.13', '1.2.840.10065.1.12.1.14', '1.2.840.10065.1.12.1.15',
@@ -863,9 +863,9 @@ type
     function summary : String;
   end;
 
-  { TFHIRHealthcareCardR4 }
+  { TFHIRHealthcareCardR4B }
 
-  TFHIRHealthcareCardR4 = class (THealthcareCard)
+  TFHIRHealthcareCardR4B = class (THealthcareCard)
   private
     function summarisePatient(pat : TFHIRPatient) : String;
     function summariseImmunization(imm : TFHIRImmunization) : String;
@@ -976,13 +976,13 @@ end;
 function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 begin
   if mimeType.Contains('application/json') or mimeType.Contains('application/fhir+json') Then
-    result := TFHIRParsers4.parser(oWorker.Link, ffJson, lang)
+    result := TFHIRParsers4B.parser(oWorker.Link, ffJson, lang)
   else if mimeType.Contains('text/plain') then
-    result := TFHIRParsers4.parser(oWorker.Link, ffText, lang)
+    result := TFHIRParsers4B.parser(oWorker.Link, ffText, lang)
   else if mimeType.Contains('application/xml') or mimeType.Contains('application/fhir+xml') or mimeType.Contains('text/xml')  then
-    result := TFHIRParsers4.parser(oWorker.Link, ffXml, lang)
+    result := TFHIRParsers4B.parser(oWorker.Link, ffXml, lang)
   else
-    result := TFHIRParsers4.parser(oWorker.Link, DetectFormat(content), lang);
+    result := TFHIRParsers4B.parser(oWorker.Link, DetectFormat(content), lang);
   try
     result.ParserPolicy := policy;
     result.Link;
@@ -993,9 +993,9 @@ end;
 function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat in [ffUnspecified, ffXhtml] then
-    result := TFHIRParsers4.parser(oWorker.Link, DetectFormat(oContent), lang)
+    result := TFHIRParsers4B.parser(oWorker.Link, DetectFormat(oContent), lang)
   else
-    result := TFHIRParsers4.parser(oWorker.Link, aFormat, lang);
+    result := TFHIRParsers4B.parser(oWorker.Link, aFormat, lang);
   try
     result.source := oContent;
     result.ParserPolicy := policy;
@@ -1009,9 +1009,9 @@ end;
 function MakeComposer(Style : TFHIROutputStyle; const lang : THTTPLanguages; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRParsers4.composer(worker.link, ffXml, lang, Style)
+    result := TFHIRParsers4B.composer(worker.link, ffXml, lang, Style)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
-    result := TFHIRParsers4.composer(worker.link, ffJson, lang, Style)
+    result := TFHIRParsers4B.composer(worker.link, ffJson, lang, Style)
 //  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
 //    result := TFHIRXhtmlComposer.Create(worker.link, Style, lang)
   else
@@ -1886,13 +1886,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRParsers4.parser(worker.link, ffJson, lang)
+        parser := TFHIRParsers4B.parser(worker.link, ffJson, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRParsers4.parser(worker.link, ffXml, lang);
+        parser := TFHIRParsers4B.parser(worker.link, ffXml, lang);
     end;
     if parser = nil then
-      parser := TFHIRParsers4.parser(worker.link, DetectFormat(part.content), lang);
+      parser := TFHIRParsers4B.parser(worker.link, DetectFormat(part.content), lang);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1917,7 +1917,7 @@ var
   parser : TFHIRParser;
   mem : TStringStream;
 begin
-  parser := TFHIRParsers4.parser(worker.link, ffJson, lang);
+  parser := TFHIRParsers4B.parser(worker.link, ffJson, lang);
   try
     // first, figure out the format
     mem := TStringStream.Create(value, TEncoding.UTF8);
@@ -1946,13 +1946,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRParsers4.parser(worker.link, ffJson, lang)
+        parser := TFHIRParsers4B.parser(worker.link, ffJson, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRParsers4.parser(worker.link, ffXml, lang);
+        parser := TFHIRParsers4B.parser(worker.link, ffXml, lang);
     end;
     if parser = nil then
-      parser := TFHIRParsers4.parser(worker.link, DetectFormat(part.content), Lang);
+      parser := TFHIRParsers4B.parser(worker.link, DetectFormat(part.content), Lang);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -4904,7 +4904,7 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRComposer;
 begin
-  comp := TFHIRParsers4.composer(worker.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
+  comp := TFHIRParsers4B.composer(worker.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
   try
     result := comp.Compose(r);
   finally
@@ -6006,7 +6006,7 @@ var
 begin
   if format = ffUnspecified then
     format := DetectFormat(stream);
-  p := TFHIRParsers4.parser(nil, format, THTTPLanguages.create('en'));
+  p := TFHIRParsers4B.parser(nil, format, THTTPLanguages.create('en'));
   try
     p.source := stream;
     p.Parse;
@@ -6061,7 +6061,7 @@ var
 begin
   if format = ffXhtml then
     format := ffXml;
-  c := TFHIRParsers4.composer(nil, format, THTTPLanguages.create('en'), style);
+  c := TFHIRParsers4B.composer(nil, format, THTTPLanguages.create('en'), style);
   try
     c.Compose(stream, res);
   finally
@@ -6748,24 +6748,24 @@ begin
     result := result + gen(useContextList[i]);
 end;
 
-{ TFHIRHealthcareCardR4 }
+{ TFHIRHealthcareCardR4B }
 
-function TFHIRHealthcareCardR4.summarisePatient(pat: TFHIRPatient): String;
+function TFHIRHealthcareCardR4B.summarisePatient(pat: TFHIRPatient): String;
 begin
   result := HumanNamesAsText(pat.nameList) +' ('+pat.birthDate.toString+')';
 end;
 
-function TFHIRHealthcareCardR4.summariseImmunization(imm: TFHIRImmunization): String;
+function TFHIRHealthcareCardR4B.summariseImmunization(imm: TFHIRImmunization): String;
 begin
   result := gen(imm.vaccineCode)+' ('+gen(imm.occurrence as TFhirDateTime)+')';
 end;
 
-function TFHIRHealthcareCardR4.summariseObservation(obs: TFHIRObservation): String;
+function TFHIRHealthcareCardR4B.summariseObservation(obs: TFHIRObservation): String;
 begin
   result := gen(obs.code)+' = '+gen(obs.value)+' ('+gen(obs.effective)+')';
 end;
 
-procedure TFHIRHealthcareCardR4.htmlPatient(b : TFslHtmlBuilder; pat: TFHIRPatient);
+procedure TFHIRHealthcareCardR4B.htmlPatient(b : TFslHtmlBuilder; pat: TFHIRPatient);
 var
   i : integer;
 begin
@@ -6796,7 +6796,7 @@ begin
   b.append('</table>');
 end;
 
-procedure TFHIRHealthcareCardR4.htmlImmunization(b : TFslHtmlBuilder; imm: TFHIRImmunization; tx : TFHIRTerminologyService);
+procedure TFHIRHealthcareCardR4B.htmlImmunization(b : TFslHtmlBuilder; imm: TFHIRImmunization; tx : TFHIRTerminologyService);
 var
   i : integer;
 begin
@@ -6835,7 +6835,7 @@ begin
   b.append('</table>');
 end;
 
-procedure TFHIRHealthcareCardR4.htmlObservation(b : TFslHtmlBuilder; obs: TFHIRObservation; tx : TFHIRTerminologyService);
+procedure TFHIRHealthcareCardR4B.htmlObservation(b : TFslHtmlBuilder; obs: TFHIRObservation; tx : TFHIRTerminologyService);
 var
   i : integer;
   vc : TFHIRCodeableConcept;
@@ -6910,7 +6910,7 @@ begin
   b.append('</table>');
 end;
 
-procedure TFHIRHealthcareCardR4.makeSummary;
+procedure TFHIRHealthcareCardR4B.makeSummary;
 var
   b : TFhirBundle;
   i : integer;
@@ -6937,7 +6937,7 @@ begin
   end;
 end;
 
-function TFHIRHealthcareCardR4.htmlReport(tx : TFHIRTerminologyService): String;
+function TFHIRHealthcareCardR4B.htmlReport(tx : TFHIRTerminologyService): String;
 var
   b : TFhirBundle;
   i : integer;

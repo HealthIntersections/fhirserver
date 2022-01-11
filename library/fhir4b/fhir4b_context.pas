@@ -125,7 +125,7 @@ type
     procedure loadFromCache(cache : TResourceMemoryCache); overload;
     property OverrideVersionNs : String read FOverrideVersionNs write FOverrideVersionNs;
   end;
-  TFHIRWorkerContext4 = TFHIRWorkerContext;
+  TFHIRWorkerContext4B = TFHIRWorkerContext;
 
   TResourceMemoryCache = class (TFslObject)
   private

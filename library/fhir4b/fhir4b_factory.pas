@@ -43,9 +43,9 @@ uses
   fhir_client, fhir_client_threaded, fhir_uris;
 
 type
-  TFHIRFactoryR4 = class (TFHIRFactory)
+  TFHIRFactoryR4B = class (TFHIRFactory)
   public
-    function link : TFHIRFactoryR4; overload;
+    function link : TFHIRFactoryR4B; overload;
     function version : TFHIRVersion; override;
     function versionString : String; override;
     function versionName : String; override;
@@ -137,7 +137,7 @@ type
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
     function wrapImmunization(o : TFHIRResourceV) : TFhirImmunizationW; override;
   end;
-  TFHIRFactoryX = TFHIRFactoryR4;
+  TFHIRFactoryX = TFHIRFactoryR4B;
 
 implementation
 
@@ -147,19 +147,19 @@ uses
   fhir4b_narrative, fhir4b_pathengine, fhir4b_constants, fhir4b_client, fhir4b_common, fhir4b_utilities, fhir4b_authmap,
   fhir4b_elementmodel, fhir4b_resources_base;
 
-{ TFHIRFactoryR4 }
+{ TFHIRFactoryR4B }
 
-function TFHIRFactoryR4.buildOperationOutcome(const lang : THTTPLanguages; message: String; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryR4B.buildOperationOutcome(const lang : THTTPLanguages; message: String; issueCode: TFhirIssueType): TFhirResourceV;
 begin
   result := fhir4b_utilities.BuildOperationOutcome(lang, message, ExceptionTypeTranslations[issueCode]);
 end;
 
-function TFHIRFactoryR4.buildOperationOutcome(const lang : THTTPLanguages; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryR4B.buildOperationOutcome(const lang : THTTPLanguages; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;
 begin
   result := fhir4b_utilities.BuildOperationOutcome(lang, e, ExceptionTypeTranslations[issueCode]);
 end;
 
-function TFHIRFactoryR4.canonicalResources: TArray<String>;
+function TFHIRFactoryR4B.CanonicalResources: TArray<String>;
 var
   i : integer;
   a : TFhirResourceType;
@@ -178,7 +178,7 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR4.checkNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
+procedure TFHIRFactoryR4B.CheckNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)
@@ -186,12 +186,12 @@ begin
     TFHIRBackboneElement(res).checkNoModifiers(method, param)
 end;
 
-function TFHIRFactoryR4.corePackage: String;
+function TFHIRFactoryR4B.CorePackage: String;
 begin
-  result := 'hl7.fhir.r4.core';
+  result := 'hl7.fhir.r4b.core';
 end;
 
-function TFHIRFactoryR4.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
+function TFHIRFactoryR4B.CreateFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
 var
   pu : TProfileUtilities;
 begin
@@ -203,17 +203,17 @@ begin
   end;
 end;
 
-function TFHIRFactoryR4.describe(r: TFHIRResourceV): String;
+function TFHIRFactoryR4B.describe(r: TFHIRResourceV): String;
 begin
   result := describeResource(r as TFHIRResource);
 end;
 
-function TFHIRFactoryR4.description: String;
+function TFHIRFactoryR4B.description: String;
 begin
   result := 'R4 ('+FHIR_GENERATED_VERSION+')';
 end;
 
-function TFHIRFactoryR4.getContained(r: TFHIRResourceV): TFslList<TFHIRResourceV>;
+function TFHIRFactoryR4B.getContained(r: TFHIRResourceV): TFslList<TFHIRResourceV>;
 var
   res : TFHIRResource;
 begin
@@ -225,7 +225,7 @@ begin
   end;
 end;
 
-function TFHIRFactoryR4.getXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
+function TFHIRFactoryR4B.getXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
 var
   r : TFHIRDomainResource;
 begin
@@ -240,12 +240,12 @@ begin
     result := r.text.div_;
 end;
 
-function TFHIRFactoryR4.link: TFHIRFactoryR4;
+function TFHIRFactoryR4B.link: TFHIRFactoryR4B;
 begin
-  result := TFHIRFactoryR4(inherited link);
+  result := TFHIRFactoryR4B(inherited link);
 end;
 
-function TFHIRFactoryR4.makeClient(worker: TFHIRWorkerContextV; url: String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
+function TFHIRFactoryR4B.makeClient(worker: TFHIRWorkerContextV; url: String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
 var
   http : TFHIRHTTPCommunicator;
 begin
@@ -255,7 +255,7 @@ begin
       http.UseIndy := true;
     http.timeout := timeout;
     http.proxy := proxy;
-    result := TFhirClient4.create(worker, THTTPLanguages.create('en'), http.link);
+    result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), http.link);
     try
       result.format := fmt;
       result.link;
@@ -267,18 +267,18 @@ begin
   end;
 end;
 
-function TFHIRFactoryR4.makeClientInt(worker: TFHIRWorkerContextV; const lang : THTTPLanguages; comm: TFHIRClientCommunicator): TFhirClientV;
+function TFHIRFactoryR4B.makeClientInt(worker: TFHIRWorkerContextV; const lang : THTTPLanguages; comm: TFHIRClientCommunicator): TFhirClientV;
 begin
-  result := TFhirClient4.create(worker, THTTPLanguages.create('en'), comm);
+  result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), comm);
 end;
 
-function TFHIRFactoryR4.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
+function TFHIRFactoryR4B.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
 var
   c : TFhirThreadedCommunicator;
 begin
   c := TFhirThreadedCommunicator.Create(internal, event);
   try
-    result := TFhirClient4.create(worker, THTTPLanguages.create('en'), c.link);
+    result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), c.link);
     try
       result.format := internal.format;
       result.link;
@@ -290,12 +290,12 @@ begin
   end;
 end;
 
-function TFHIRFactoryR4.makeCode(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeCode(s: string): TFHIRObject;
 begin
   result := TFhirCode.Create(s);
 end;
 
-function TFHIRFactoryR4.makeCoding(system, version, code, display: String): TFHIRObject;
+function TFHIRFactoryR4B.makeCoding(system, version, code, display: String): TFHIRObject;
 begin
   result := TFHIRCoding.create(system, code);
   if version <> '' then
@@ -304,22 +304,22 @@ begin
     TFHIRCoding(result).version := display;
 end;
 
-function TFHIRFactoryR4.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
+function TFHIRFactoryR4B.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
 begin
-  result := TFHIRParsers4.composer(worker as TFHIRWorkerContext, format, lang, style);
+  result := TFHIRParsers4B.Composer(worker as TFHIRWorkerContext, format, lang, style);
 end;
 
-function TFHIRFactoryR4.makeDateTime(value: TFslDateTime): TFHIRObject;
+function TFHIRFactoryR4B.makeDateTime(value: TFslDateTime): TFHIRObject;
 begin
   result := TFhirDateTime.Create(value);
 end;
 
-function TFHIRFactoryR4.makeDecimal(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeDecimal(s: string): TFHIRObject;
 begin
   result := TFhirDecimal.Create(s);
 end;
 
-function TFHIRFactoryR4.makeDtFromForm(part: TMimePart; const lang : THTTPLanguages; name: String; type_: string): TFHIRXVersionElementWrapper;
+function TFHIRFactoryR4B.makeDtFromForm(part: TMimePart; const lang : THTTPLanguages; name: String; type_: string): TFHIRXVersionElementWrapper;
 begin
   if type_ = 'Coding' then
     result := wrapCoding(LoadDTFromFormParam(nil, part, lang, name, TFhirCoding))
@@ -329,32 +329,32 @@ begin
     raise EFHIRException.create('Unknown Supported Data Type '+type_);
 end;
 
-function TFHIRFactoryR4.makeDuration(dt: TDateTime): TFHIRObject;
+function TFHIRFactoryR4B.makeDuration(dt: TDateTime): TFHIRObject;
 begin
   result := TFhirQuantity.fromDuration(dt);
 end;
 
-function TFHIRFactoryR4.makeElementModelManager: TFHIRBaseMMManager;
+function TFHIRFactoryR4B.makeElementModelManager: TFHIRBaseMMManager;
 begin
   result := TFHIRMMManager.Create;
 end;
 
-function TFHIRFactoryR4.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
+function TFHIRFactoryR4B.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
 begin
   result := TFHIRNarrativeGenerator.create(worker);
 end;
 
-function TFHIRFactoryR4.makeHealthcareCard: THealthcareCard;
+function TFHIRFactoryR4B.makeHealthcareCard: THealthcareCard;
 begin
-  result := TFHIRHealthcareCardR4.create;
+  result := TFHIRHealthcareCardR4B.Create;
 end;
 
-function TFHIRFactoryR4.makeInteger(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeInteger(s: string): TFHIRObject;
 begin
   result := TFhirInteger.Create(s);
 end;
 
-function TFHIRFactoryR4.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;
+function TFHIRFactoryR4B.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;
 var
   iss : TFhirOperationOutcomeIssue;
 begin
@@ -365,78 +365,78 @@ begin
     iss.details := TFhirCodeableConcept.Create;
     iss.details.text := message;
     iss.locationList.add(location);
-    result := TFhirOperationOutcomeIssue4.create(iss.Link);
+    result := TFhirOperationOutcomeIssue4B.create(iss.Link);
   finally
     iss.Free;
   end;
 end;
 
-function TFHIRFactoryR4.makeOpReqLookup: TFHIRLookupOpRequestW;
+function TFHIRFactoryR4B.makeOpReqLookup: TFHIRLookupOpRequestW;
 begin
-  result := TFHIRLookupOpRequest4.create(TFHIRLookupOpRequest.create);
+  result := TFHIRLookupOpRequest4B.create(TFHIRLookupOpRequest.create);
 end;
 
-function TFHIRFactoryR4.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
+function TFHIRFactoryR4B.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
 begin
-  result := TFHIRSubsumesOpRequest4.Create(TFHIRSubsumesOpRequest.create);
+  result := TFHIRSubsumesOpRequest4B.Create(TFHIRSubsumesOpRequest.create);
 end;
 
-function TFHIRFactoryR4.makeOpRespLookup: TFHIRLookupOpResponseW;
+function TFHIRFactoryR4B.makeOpRespLookup: TFHIRLookupOpResponseW;
 begin
-  result := TFHIRLookupOpResponse4.create(TFHIRLookupOpResponse.create);
+  result := TFHIRLookupOpResponse4B.create(TFHIRLookupOpResponse.create);
 end;
 
-function TFHIRFactoryR4.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
+function TFHIRFactoryR4B.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
 begin
-  result := TFHIRSubsumesOpResponse4.Create(TFHIRSubsumesOpResponse.create);
+  result := TFHIRSubsumesOpResponse4B.Create(TFHIRSubsumesOpResponse.create);
 end;
 
-function TFHIRFactoryR4.makeParameters: TFHIRParametersW;
+function TFHIRFactoryR4B.makeParameters: TFHIRParametersW;
 begin
-  result := TFHIRParameters4.Create(TFHIRParameters.Create);
+  result := TFHIRParameters4B.Create(TFHIRParameters.Create);
 end;
 
-function TFHIRFactoryR4.makeParamsFromForm(s: TStream): TFHIRResourceV;
+function TFHIRFactoryR4B.makeParamsFromForm(s: TStream): TFHIRResourceV;
 begin
   result := parseParamsFromForm(s);
 end;
 
-function TFHIRFactoryR4.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
+function TFHIRFactoryR4B.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
 begin
-  result := TFHIRParsers4.parser(worker as TFHIRWorkerContext, format, lang);
+  result := TFHIRParsers4B.parser(worker as TFHIRWorkerContext, format, lang);
 end;
 
-function TFHIRFactoryR4.makePathEngine(worker: TFHIRWorkerContextV; ucum : TUcumServiceInterface): TFHIRPathEngineV;
+function TFHIRFactoryR4B.makePathEngine(worker: TFHIRWorkerContextV; ucum : TUcumServiceInterface): TFHIRPathEngineV;
 begin
   result := TFHIRPathEngine.Create(worker as TFHIRWorkerContext, ucum);
 end;
 
-function TFHIRFactoryR4.makeString(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeString(s: string): TFHIRObject;
 begin
   result := TFhirString.Create(s);
 end;
 
-function TFHIRFactoryR4.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
+function TFHIRFactoryR4B.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  result := TFhirTerminologyCapabilities4.create(TFhirTerminologyCapabilities.create);
+  result := TFhirTerminologyCapabilities4B.create(TFhirTerminologyCapabilities.create);
 end;
 
-function TFHIRFactoryR4.makeUri(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeUri(s: string): TFHIRObject;
 begin
   result := TFhirUri.Create(s);
 end;
 
-function TFHIRFactoryR4.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
+function TFHIRFactoryR4B.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
 begin
-  result := TFHIRValidator4.Create(worker as TFHIRWorkerContext);
+  result := TFHIRValidator4B.Create(worker as TFHIRWorkerContext);
 end;
 
-function TFHIRFactoryR4.makeValueSetContains: TFhirValueSetExpansionContainsW;
+function TFHIRFactoryR4B.makeValueSetContains: TFhirValueSetExpansionContainsW;
 begin
-  result := TFhirValueSetExpansionContains4.Create(TFhirValueSetExpansionContains.create);
+  result := TFhirValueSetExpansionContains4B.Create(TFhirValueSetExpansionContains.create);
 end;
 
-procedure TFHIRFactoryR4.markWithTag(r: TFHIRResourceV; systemUri, code, display: String);
+procedure TFHIRFactoryR4B.markWithTag(r: TFHIRResourceV; systemUri, code, display: String);
 var
   res : TFHIRResource;
   tag : TFHIRCoding;
@@ -459,7 +459,7 @@ begin
   tag.display := display;
 end;
 
-function TFHIRFactoryR4.resCategory(name: String): TTokenCategory;
+function TFHIRFactoryR4B.resCategory(name: String): TTokenCategory;
 var
   a : TFhirResourceType;
 begin
@@ -469,7 +469,7 @@ begin
   result := tcOther;
 end;
 
-function TFHIRFactoryR4.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
+function TFHIRFactoryR4B.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
 var
   r : TFHIRDomainResource;
 begin
@@ -484,7 +484,7 @@ begin
   result := r.text.div_;
 end;
 
-function TFHIRFactoryR4.resourceNames: TArray<String>;
+function TFHIRFactoryR4B.resourceNames: TArray<String>;
 var
   a : TFhirResourceType;
 begin
@@ -494,7 +494,7 @@ begin
       result[ord(a)-1] := CODES_TFhirResourceType[a];
 end;
 
-procedure TFHIRFactoryR4.setXhtml(res: TFHIRResourceV; x: TFHIRXhtmlNode);
+procedure TFHIRFactoryR4B.setXhtml(res: TFHIRResourceV; x: TFHIRXhtmlNode);
 var
   r : TFHIRDomainResource;
 begin
@@ -517,303 +517,303 @@ begin
   r.text.div_ := x;
 end;
 
-function TFHIRFactoryR4.specUrl: String;
+function TFHIRFactoryR4B.specUrl: String;
 begin
   result := 'http://hl7.org/fhir/R4';
 end;
 
-function TFHIRFactoryR4.URLs: TCommonURLs;
+function TFHIRFactoryR4B.URLs: TCommonURLs;
 begin
   result.SecuritySourceType := URI_FHIR_SECURITY_SOURCE_TYPE_R4;
 end;
 
-function TFHIRFactoryR4.version: TFHIRVersion;
+function TFHIRFactoryR4B.version: TFHIRVersion;
 begin
   result := fhirVersionRelease4;
 end;
 
-function TFHIRFactoryR4.versionName: String;
+function TFHIRFactoryR4B.versionName: String;
 begin
   result := 'R4';
 end;
 
-function TFHIRFactoryR4.versionString: String;
+function TFHIRFactoryR4B.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
 end;
 
-function TFHIRFactoryR4.wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW;
+function TFHIRFactoryR4B.wrapAttachment(r : TFHIRObject) : TFHIRAttachmentW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirAttachment4.Create(r);
+    result := TFhirAttachment4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapAuditEvent(r: TFHIRResourceV): TFhirAuditEventW;
+function TFHIRFactoryR4B.wrapAuditEvent(r: TFHIRResourceV): TFhirAuditEventW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirAuditEvent4.Create(r);
+    result := TFhirAuditEvent4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapBinary(r: TFHIRResourceV): TFhirBinaryW;
+function TFHIRFactoryR4B.wrapBinary(r: TFHIRResourceV): TFhirBinaryW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirBinary4.Create(r);
+    result := TFhirBinary4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapBundle(r: TFHIRResourceV): TFhirBundleW;
+function TFHIRFactoryR4B.wrapBundle(r: TFHIRResourceV): TFhirBundleW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirBundle4.Create(r);
+    result := TFhirBundle4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapBundleEntry(o: TFHIRObject): TFhirBundleEntryW;
+function TFHIRFactoryR4B.wrapBundleEntry(o: TFHIRObject): TFhirBundleEntryW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIRBundleEntry4.Create(o);
+    result := TFHIRBundleEntry4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
+function TFHIRFactoryR4B.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFHIRCapabilityStatement4.create(r);
+    result := TFHIRCapabilityStatement4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapCapabilityStatement2(r: TFHIRResourceV): TFHIRCapabilityStatementW;
+function TFHIRFactoryR4B.wrapCapabilityStatement2(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
   raise EFHIRException.Create('CapabilityStatement2 is not supported in FHIR R4');
 end;
 
-function TFHIRFactoryR4.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;
+function TFHIRFactoryR4B.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.create(o);
+    result := TFhirCodeableConcept4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapCodeSystem(r: TFHIRResourceV): TFhirCodeSystemW;
+function TFHIRFactoryR4B.wrapCodeSystem(r: TFHIRResourceV): TFhirCodeSystemW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFHIRCodeSystem4.create(r);
+    result := TFHIRCodeSystem4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapCoding(o: TFHIRObject): TFhirCodingW;
+function TFHIRFactoryR4B.wrapCoding(o: TFHIRObject): TFhirCodingW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFhirCoding4.create(o);
+    result := TFhirCoding4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapConceptMap(r: TFHIRResourceV): TFhirConceptMapW;
+function TFHIRFactoryR4B.wrapConceptMap(r: TFHIRResourceV): TFhirConceptMapW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirConceptMap4.Create(r);
+    result := TFhirConceptMap4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
+function TFHIRFactoryR4B.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIRConsent4.Create(o);
+    result := TFHIRConsent4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapEncounter(r: TFHIRResourceV): TFhirEncounterW;
+function TFHIRFactoryR4B.wrapEncounter(r: TFHIRResourceV): TFhirEncounterW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirEncounter4.Create(r);
+    result := TFhirEncounter4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
+function TFHIRFactoryR4B.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIREventDefinition4.Create(o);
+    result := TFHIREventDefinition4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapExtension(o: TFHIRObject): TFhirExtensionW;
+function TFHIRFactoryR4B.wrapExtension(o: TFHIRObject): TFhirExtensionW;
 begin
-  result := TFhirExtension4.create(o);
+  result := TFhirExtension4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapGroup(r: TFHIRResourceV): TFhirGroupW;
+function TFHIRFactoryR4B.wrapGroup(r: TFHIRResourceV): TFhirGroupW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirGroup4.Create(r);
+    result := TFhirGroup4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapIdentifier(o: TFHIRObject): TFhirIdentifierW;
+function TFHIRFactoryR4B.wrapIdentifier(o: TFHIRObject): TFhirIdentifierW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFhirIdentifier4.create(o);
+    result := TFhirIdentifier4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapImmunization(o: TFHIRResourceV): TFhirImmunizationW;
+function TFHIRFactoryR4B.wrapImmunization(o: TFHIRResourceV): TFhirImmunizationW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFhirImmunization4.Create(o);
+    result := TFhirImmunization4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapMeta(r: TFHIRObject): TFhirMetaW;
+function TFHIRFactoryR4B.wrapMeta(r: TFHIRObject): TFhirMetaW;
 begin
   if r = nil then
     result := nil
   else if r.isResource then
   begin
-    result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
-    TFHIRMeta4(result).resource := (r as TFHIRResource).link;
+    result := TFHIRMeta4B.Create((r as TFHIRResource).meta.link);
+    TFHIRMeta4B(result).resource := (r as TFHIRResource).link;
   end
   else
-    result := TFHIRMeta4.create((r as TFhirMeta))
+    result := TFHIRMeta4B.Create((r as TFhirMeta))
 end;
 
-function TFHIRFactoryR4.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;
+function TFHIRFactoryR4B.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIRNamingSystem4.Create(o);
+    result := TFHIRNamingSystem4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
+function TFHIRFactoryR4B.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
 begin
-  result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
-  TFHIRMeta4(result).resource := (r as TFHIRResource).link;
+  result := TFHIRMeta4B.Create((r as TFHIRResource).meta.link);
+  TFHIRMeta4B(result).resource := (r as TFHIRResource).link;
 end;
 
-function TFHIRFactoryR4.wrapObservation(r: TFHIRResourceV): TFhirObservationW;
-begin
-  if r = nil then
-    result := nil
-  else
-    result := TFhirObservation4.Create(r);
-end;
-
-function TFHIRFactoryR4.wrapOperationOutcome(r: TFHIRResourceV): TFhirOperationOutcomeW;
+function TFHIRFactoryR4B.wrapObservation(r: TFHIRResourceV): TFhirObservationW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirOperationOutcome4.Create(r);
+    result := TFhirObservation4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapParams(r: TFHIRResourceV): TFHIRParametersW;
+function TFHIRFactoryR4B.wrapOperationOutcome(r: TFHIRResourceV): TFhirOperationOutcomeW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirParameters4.Create(r);
+    result := TFhirOperationOutcome4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapPatient(r: TFHIRResourceV): TFhirPatientW;
+function TFHIRFactoryR4B.wrapParams(r: TFHIRResourceV): TFHIRParametersW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirPatient4.Create(r);
+    result := TFhirParameters4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapPeriod(r: TFHIRObject): TFhirPeriodW;
+function TFHIRFactoryR4B.wrapPatient(r: TFHIRResourceV): TFhirPatientW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirPeriod4.Create(r);
+    result := TFhirPatient4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapProvenance(o: TFHIRResourceV): TFHIRProvenanceW;
+function TFHIRFactoryR4B.wrapPeriod(r: TFHIRObject): TFhirPeriodW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirPeriod4B.Create(r);
+end;
+
+function TFHIRFactoryR4B.wrapProvenance(o: TFHIRResourceV): TFHIRProvenanceW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIRProvenance4.Create(o);
+    result := TFHIRProvenance4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapQuantity(r: TFHIRObject): TFhirQuantityW;
+function TFHIRFactoryR4B.wrapQuantity(r: TFHIRObject): TFhirQuantityW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirQuantity4.Create(r);
+    result := TFhirQuantity4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
+function TFHIRFactoryR4B.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFHIRStructureDefinition4.create(r);
+    result := TFHIRStructureDefinition4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapStructureMap(o: TFHIRResourceV): TFHIRStructureMapW;
+function TFHIRFactoryR4B.wrapStructureMap(o: TFHIRResourceV): TFHIRStructureMapW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFHIRStructureMap4.Create(o);
+    result := TFHIRStructureMap4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapSubscription(r: TFHIRResourceV): TFhirSubscriptionW;
+function TFHIRFactoryR4B.wrapSubscription(r: TFHIRResourceV): TFhirSubscriptionW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFhirSubscription4.Create(r);
+    result := TFhirSubscription4B.Create(r);
 end;
 
-function TFHIRFactoryR4.wrapSubscriptionTopic(r: TFHIRResourceV): TFhirSubscriptionTopicW;
+function TFHIRFactoryR4B.wrapSubscriptionTopic(r: TFHIRResourceV): TFhirSubscriptionTopicW;
 begin
   result := nil;
 end;
 
-function TFHIRFactoryR4.wrapTestScript(o: TFHIRResourceV): TFHIRTestScriptW;
+function TFHIRFactoryR4B.wrapTestScript(o: TFHIRResourceV): TFHIRTestScriptW;
 begin
   if o = nil then
     result := nil
   else
-    result := TFhirTestScript4.Create(o);
+    result := TFhirTestScript4B.Create(o);
 end;
 
-function TFHIRFactoryR4.wrapValueSet(r: TFHIRResourceV): TFhirValueSetW;
+function TFHIRFactoryR4B.wrapValueSet(r: TFHIRResourceV): TFhirValueSetW;
 begin
   if r = nil then
     result := nil
   else
-    result := TFHIRValueSet4.create(r);
+    result := TFHIRValueSet4B.Create(r);
 end;
 
-function TFHIRFactoryR4.makeBase64Binary(s: string): TFHIRObject;
+function TFHIRFactoryR4B.makeBase64Binary(s: string): TFHIRObject;
 begin
   result := TFhirBase64Binary.Create(decodeBase64(AnsiString(s)));
 end;
 
-function TFHIRFactoryR4.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;
+function TFHIRFactoryR4B.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;
 begin
   result := TFhirBinary.Create;
   try
@@ -825,12 +825,12 @@ begin
   end;
 end;
 
-function TFHIRFactoryR4.makeBoolean(b: boolean): TFHIRObject;
+function TFHIRFactoryR4B.makeBoolean(b: boolean): TFHIRObject;
 begin
   result := TFhirBoolean.Create(b);
 end;
 
-function TFHIRFactoryR4.makeBundle(list: TFslList<TFHIRResourceV>): TFHIRBundleW;
+function TFHIRFactoryR4B.makeBundle(list: TFslList<TFHIRResourceV>): TFHIRBundleW;
 var
   bnd : TFHIRBundle;
   r : TFhirResourceV;
@@ -844,13 +844,13 @@ begin
         bnd.entryList.Append.resource := r.link as TFhirResource;
       end;
     end;
-    result := TFHIRBundle4.Create(bnd.link);
+    result := TFHIRBundle4B.Create(bnd.link);
   finally
     bnd.Free;
   end;
 end;
 
-function TFHIRFactoryR4.makeByName(const name : String) : TFHIRObject;
+function TFHIRFactoryR4B.makeByName(const name : String) : TFHIRObject;
 begin
   if name = 'enum' then
     result := TFhirEnum.create()

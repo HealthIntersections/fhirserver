@@ -1100,7 +1100,7 @@ var
   base : TFHIRObject;
   x : TFHIRXmlComposerBase;
 begin
-  x := TFHIRParsers4.composer(nil, ffXml, FLang, FStyle) as TFHIRXmlComposerBase;
+  x := TFHIRParsers4B.composer(nil, ffXml, FLang, FStyle) as TFHIRXmlComposerBase;
   try
     xml := TFslXmlBuilder.Create;
     try
@@ -1212,7 +1212,7 @@ var
   base : TFHIRObject;
   j : TFHIRJsonComposerBase;
 begin
-  j := TFHIRParsers4.composer(nil, ffJson, FLang, FStyle) as TFHIRJsonComposerBase;
+  j := TFHIRParsers4B.composer(nil, ffJson, FLang, FStyle) as TFHIRJsonComposerBase;
   try
     json := TJsonWriterDirect.create;
     try

@@ -39,13 +39,13 @@ uses
   fhir4b_parser, fhir4b_resources, fhir4b_constants, fhir4b_utilities, fhir4b_context, fhir4b_common;
 
 Type
-  TFhirClient4 = class (TFhirClientV)
+  TFhirClient4B = class (TFhirClientV)
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
     function getResourceVersionId(res : TFHIRResourceV) : string; override;
     function getBundleClass : TFHIRBundleWClass; override;
   public
-    function link : TFhirClient4; overload;
+    function link : TFhirClient4B; overload;
     function version : TFHIRVersion; override;
     function makeParser(fmt : TFHIRFormat) : TFHIRParser; override;
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; override;
@@ -74,77 +74,77 @@ Type
 
 implementation
 
-function TFhirClient4.makeParser(fmt : TFHIRFormat) : TFHIRParser;
+function TFhirClient4B.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
-  result := TFHIRParsers4.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
+  result := TFHIRParsers4B.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
 end;
 
-function TFhirClient4.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
+function TFhirClient4B.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
 begin
-  result := TFHIRParsers4.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
+  result := TFHIRParsers4B.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
 end;
 
-function TFhirClient4.opWrapper : TFhirOperationOutcomeWClass;
+function TFhirClient4B.opWrapper : TFhirOperationOutcomeWClass;
 begin
-  result := TFhirOperationOutcome4;
+  result := TFhirOperationOutcome4B;
 end;
 
-function TFhirClient4.patchResource(atype: TFhirResourceType; id: String; patch: TJsonArray): TFHIRResource;
+function TFhirClient4B.patchResource(atype: TFhirResourceType; id: String; patch: TJsonArray): TFHIRResource;
 begin
   result := patchResourceV(CODES_TFHIRResourceType[atype], id, patch) as TFhirResource;
 end;
 
-function TFhirClient4.patchResource(atype: TFhirResourceType; id: String; params: TFHIRParameters): TFHIRResource;
+function TFhirClient4B.patchResource(atype: TFhirResourceType; id: String; params: TFHIRParameters): TFHIRResource;
 begin
   result := patchResourceV(CODES_TFHIRResourceType[atype], id, params) as TFhirResource;
 end;
 
-function TFhirClient4.version : TFHIRVersion;
+function TFhirClient4B.version : TFHIRVersion;
 begin
   result := fhirVersionRelease4;
 end;
 
-function TFhirClient4.conformance(summary : boolean) : TFhirCapabilityStatement;
+function TFhirClient4B.conformance(summary : boolean) : TFhirCapabilityStatement;
 begin
   result := conformanceV(summary) as TFhirCapabilityStatement;
 end;
 
-function TFhirClient4.transaction(bundle : TFHIRBundle) : TFHIRBundle;
+function TFhirClient4B.transaction(bundle : TFHIRBundle) : TFHIRBundle;
 begin
   result := transactionV(bundle) as TFhirBundle;
 end;
 
-function TFhirClient4.createResource(resource : TFhirResource; var id : String) : TFHIRResource;
+function TFhirClient4B.createResource(resource : TFhirResource; var id : String) : TFHIRResource;
 begin
   result := createResourceV(resource, id) as TFhirResource;
 end;
 
-function TFhirClient4.readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
+function TFhirClient4B.readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
 begin
   result := readResourceV(CODES_TFHIRResourceType[aType], id) as TFhirResource;
 end;
 
-function TFhirClient4.vreadResource(atype : TFhirResourceType; id, vid : String) : TFHIRResource;
+function TFhirClient4B.vreadResource(atype : TFhirResourceType; id, vid : String) : TFHIRResource;
 begin
   result := vreadResourceV(CODES_TFHIRResourceType[aType], id, vid) as TFhirResource;
 end;
 
-function TFhirClient4.updateResource(resource : TFhirResource) : TFHIRResource;
+function TFhirClient4B.updateResource(resource : TFhirResource) : TFHIRResource;
 begin
   result := updateResourceV(resource) as TFhirResource;
 end;
 
-procedure TFhirClient4.deleteResource(atype : TFhirResourceType; id : String);
+procedure TFhirClient4B.deleteResource(atype : TFhirResourceType; id : String);
 begin
   deleteResourceV(CODES_TFHIRResourceType[aType], id);
 end;
 
-function TFhirClient4.getBundleClass: TFHIRBundleWClass;
+function TFhirClient4B.getBundleClass: TFHIRBundleWClass;
 begin
-  result := TFHIRBundle4;
+  result := TFHIRBundle4B;
 end;
 
-function TFhirClient4.getResourceVersionId(res: TFHIRResourceV): string;
+function TFhirClient4B.getResourceVersionId(res: TFHIRResourceV): string;
 var
   resource : TFhirResource;
 begin
@@ -155,60 +155,60 @@ begin
     result := '';
 end;
 
-function TFhirClient4.search(allRecords : boolean; params : TStringList) : TFHIRBundle;
+function TFhirClient4B.search(allRecords : boolean; params : TStringList) : TFHIRBundle;
 begin
   result := searchV(allRecords, params) as TFhirBundle;
 end;
 
-function TFhirClient4.search(allRecords : boolean; params : string) : TFHIRBundle;
+function TFhirClient4B.search(allRecords : boolean; params : string) : TFHIRBundle;
 begin
   result := searchV(allRecords, params) as TFHIRBundle;
 end;
 
-function TFhirClient4.search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
+function TFhirClient4B.search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
 begin
   result := searchV(CODES_TFHIRResourceType[aType], allRecords, params) as TFhirBundle;
 end;
 
-function TFhirClient4.search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle;
+function TFhirClient4B.search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle;
 begin
   result := searchV(CODES_TFHIRResourceType[aType], allRecords, params) as TFhirBundle;
 end;
 
-function TFhirClient4.searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle;
+function TFhirClient4B.searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle;
 begin
   result := searchPostV(CODES_TFHIRResourceType[aType], allRecords, params, resource) as TFhirBundle;
 end;
 
-function TFhirClient4.searchAgain(link : String) : TFHIRBundle;
+function TFhirClient4B.searchAgain(link : String) : TFHIRBundle;
 begin
   result := searchAgainV(link) as TFhirBundle;
 end;
 
-function TFhirClient4.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
+function TFhirClient4B.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
 begin
   result := operationV(CODES_TFHIRResourceType[aType], opName, params) as TFhirResource;
 end;
 
-function TFhirClient4.operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource;
+function TFhirClient4B.operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource;
 begin
   result := operationV(CODES_TFHIRResourceType[aType], id, opName, params) as TFhirResource;
 end;
 
-function TFhirClient4.historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
+function TFhirClient4B.historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
 begin
   result := historyTypeV(CODES_TFHIRResourceType[aType], allRecords, params) as TFhirBundle;
 end;
 
-function TFhirClient4.historyInstance(atype : TFhirResourceType; id : String; allRecords : boolean; params : TStringList) : TFHIRBundle;
+function TFhirClient4B.historyInstance(atype : TFhirResourceType; id : String; allRecords : boolean; params : TStringList) : TFHIRBundle;
 begin
   result := historyInstanceV(CODES_TFHIRResourceType[aType], id, allRecords, params) as TFhirBundle;
 end;
 
 
-function TFhirClient4.link: TFhirClient4;
+function TFhirClient4B.link: TFhirClient4B;
 begin
-  result := TFhirClient4(inherited link);
+  result := TFhirClient4B(inherited link);
 end;
 
 end.

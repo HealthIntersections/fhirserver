@@ -44,10 +44,10 @@ uses
   fhir_objects, fhir4b_types, fhir4b_resources, fhir4b_resources_base;
 
 const
-  currentFHIRVersionRelease = fhirVersionRelease5;
+  currentFHIRVersionRelease = fhirVersionRelease4b;
   FHIR_GENERATED_VERSION = '4.3.0';
   FHIR_GENERATED_VERSION_BASE = '4.3';
-  FHIR_GENERATED_PUBLICATION = '5';
+  FHIR_GENERATED_PUBLICATION = '4';
   FHIR_GENERATED_DATE = 'Mon, Dec 27, 2021 21:46+1100';
 
 const

@@ -196,7 +196,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -testinsight -version *</Debugger_RunParams>
+        <Debugger_RunParams>-cmd installdb -installer -cfg C:\work\fhirserver\exec\fhir.dev.local.cfg -endpoint EP9 -username gg -password gg -security open -packages hl7.fhir.r4b.examples#4.3.0-snapshot1 -default-rights User/*.*</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
@@ -207,10 +207,9 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_RangeChecking>true</DCC_RangeChecking>
         <Icon_MainIcon>..\exec\icons\fhir-server.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_MinorVer>0</VerInfo_MinorVer>
-        <VerInfo_Release>11</VerInfo_Release>
-        <VerInfo_Debug>false</VerInfo_Debug>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_Release>3</VerInfo_Release>
+        <DCC_Optimize>false</DCC_Optimize>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -758,8 +757,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

@@ -126,7 +126,7 @@ type
     function parse(lexer : TFHIRPathLexer) : TFHIRPathExpressionNode; overload;
   end;
 
-  TFHIRPathLexer4 = class (TFHIRPathLexer)
+  TFHIRPathLexer4B = class (TFHIRPathLexer)
   protected
     function opCodes : TArray<String>; override;
   public
@@ -362,7 +362,7 @@ type
     property context : TFHIRWorkerContext read worker;
     function parseQuantityString(s: String): TFHIRQuantity;
   end;
-  TFHIRPathEngine4 = TFHIRPathEngine;
+  TFHIRPathEngine4B = TFHIRPathEngine;
 
 
 implementation
@@ -554,7 +554,7 @@ var
   lexer : TFHIRPathLexer;
   msg : String;
 begin
-  lexer := TFHIRPathLexer4.Create(fpV2, path);
+  lexer := TFHIRPathLexer4B.Create(fpV2, path);
   try
     if lexer.done then
       raise lexer.error('Path cannot be empty');
@@ -694,7 +694,7 @@ var
   lexer : TFHIRPathLexer;
   msg : String;
 begin
-  lexer := TFHIRPathLexer4.Create(fpV2, path, i);
+  lexer := TFHIRPathLexer4B.Create(fpV2, path, i);
   try
     if lexer.done then
       raise lexer.error('Path cannot be empty');
@@ -6712,10 +6712,10 @@ begin
   inc(result, FContext.sizeInBytes(magic));
 end;
 
-{ TFHIRPathLexer4 }
+{ TFHIRPathLexer4B }
 
 
-function TFHIRPathLexer4.opCodes: TArray<String>;
+function TFHIRPathLexer4B.opCodes: TArray<String>;
 var
   i : integer;
   s : string;
@@ -6729,7 +6729,7 @@ begin
   end;
 end;
 
-function TFHIRPathLexer4.processConstant : TFHIRObject;
+function TFHIRPathLexer4B.processConstant : TFHIRObject;
 begin
   if (isStringConstant()) then
     result := TFHIRString.create(TFHIRPathLexer.processConstant(take())).noExtensions()

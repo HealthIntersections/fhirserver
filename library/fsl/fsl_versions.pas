@@ -45,6 +45,7 @@ type
 
   TSemanticVersion = class (TFslObject)
   private
+    FRaw : String;
     FBuildLabel: String;
     FMajor: integer;
     FMinor: integer;
@@ -54,6 +55,8 @@ type
     procedure applyToDelphiProject(project : String; debug : boolean);
     procedure applyToLazarusProject(project : String; debug : boolean);
   public
+    constructor Create; override;
+
     property Major : integer read FMajor write FMajor;
     property Minor : integer read FMinor write FMinor;
     property Patch : integer read FPatch write FPatch;
@@ -61,11 +64,13 @@ type
 
     class function isValid(ver : String) : boolean;
 
-    class function fromString(ver : String) : TSemanticVersion;
+    class function fromString(ver : String) : TSemanticVersion; overload;
+    class function fromString(ver : String; strict : boolean) : TSemanticVersion; overload;
     function ToString : String; overload; override;
     function ToString(level : TSemanticVersionLevel) : String; overload;
 
     class function getMajMin(v : string) : String; overload;
+    class function getMajMin(v : string; strict : boolean) : String; overload;
 
     procedure incVer(step : TSemanticVersionLevel);
 
@@ -105,6 +110,11 @@ begin
 end;
 
 class function TSemanticVersion.fromString(ver: String): TSemanticVersion;
+begin
+  result := fromString(ver, true);
+end;
+
+class function TSemanticVersion.fromString(ver: String; strict : boolean): TSemanticVersion;
 var
   c : integer;
   parts : TArray<string>;
@@ -127,31 +137,42 @@ begin
   else
   begin
     c := ver.CountChar('.');
-    if (c < 1) or (c > 2) then
+    if strict and ((c < 1) or (c > 2)) then
       raise ESemVerException.create('Error reading SemVer: Structure "'+ver+'" is not correct');
 
     result := TSemanticVersion.create;
     try
+      result.FRaw := ver;
       parts := ver.Split(['.']);
-      if (length(parts) = 3) and (parts[2].contains('-')) then
+      if (length(parts) > 3) then
+      begin
+        result.FBuildLabel := parts[3];
+      end
+      else if (length(parts) = 3) and (parts[2].contains('-')) then
       begin
         StringSplit(parts[2], '-', l, r);
         result.FBuildLabel := r;
         parts[2] := l;
       end;
-      if StrToIntDef(parts[0], -1) = -1 then
-        raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
-      else
-        result.FMajor := StrToInt(parts[0]);
-      if StrToIntDef(parts[1], -1) = -1 then
-        raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
-      else
-        result.FMinor := StrToInt(parts[1]);
-      if (length(parts) = 3) then
-        if StrToIntDef(parts[2], -1) = -1 then
-          raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
-        else
-          result.FPatch := StrToInt(parts[2]);
+
+      if (length(parts) > 0) then
+        if StrToIntDef(parts[0], -1) > -1 then
+          result.FMajor := StrToInt(parts[0])
+        else if strict then
+          raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer');
+
+      if (length(parts) > 1) then
+        if StrToIntDef(parts[1], -1) > -1 then
+          result.FMinor := StrToInt(parts[1])
+        else if strict then
+          raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer');
+
+      if (length(parts) > 2) then
+        if StrToIntDef(parts[2], -1) > -1 then
+          result.FPatch := StrToInt(parts[2])
+        else if strict then
+          raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer');
+
       result.Link;
     finally
       result.free;
@@ -161,25 +182,40 @@ end;
 
 function TSemanticVersion.ToString: String;
 begin
-  result := inttostr(FMajor)+'.'+inttostr(FMinor);
-  if FPatch > -1 then
-    result := result +'.'+inttostr(FPatch);
-  if FBuildLabel > '' then
-    result := result +'-'+FBuildLabel;
+  if FMajor = -1 then
+    result := FRaw
+  else
+  begin
+    result := inttostr(FMajor)+'.'+inttostr(FMinor);
+    if FPatch > -1 then
+      result := result +'.'+inttostr(FPatch);
+    if FBuildLabel > '' then
+      result := result +'-'+FBuildLabel;
+  end;
 end;
 
 function TSemanticVersion.ToString(level: TSemanticVersionLevel): String;
 begin
-  result := inttostr(FMajor);
-  if level in [semverMinor, semverPatch, semverLabel] then
-    result := result + '.' + inttostr(FMinor);
-  if (level in [semverPatch, semverLabel]) and (FPatch > -1) then
-    result := result + '.' + inttostr(FPatch);
-  if (level in [semverLabel]) and (FBuildLabel <> '') then
-    result := result + '-' + FBuildLabel;
+  if FMajor = -1 then
+    result := ''
+  else
+  begin
+    result := inttostr(FMajor);
+    if level in [semverMinor, semverPatch, semverLabel] then
+      result := result + '.' + inttostr(FMinor);
+    if (level in [semverPatch, semverLabel]) and (FPatch > -1) then
+      result := result + '.' + inttostr(FPatch);
+    if (level in [semverLabel]) and (FBuildLabel <> '') then
+      result := result + '-' + FBuildLabel;
+  end;
 end;
 
 class function TSemanticVersion.getMajMin(v: string): String;
+begin
+  result := getMajMin(v, true);
+end;
+
+class function TSemanticVersion.getMajMin(v: string; strict : boolean): String;
 var
   this : TSemanticVersion;
 begin
@@ -187,7 +223,7 @@ begin
     exit('');
 
   try
-    this := fromString(v);
+    this := fromString(v, strict);
     try
       result := this.ToString(semverMinor);
     finally
@@ -361,6 +397,14 @@ begin
   s := ChangeFileExt(project, '.lpi');
   if (FileExists(s)) then
     applyToLazarusProject(s, debug);
+end;
+
+constructor TSemanticVersion.Create;
+begin
+  inherited;
+  FMajor := -1;
+  FMinor := -1;
+  FPatch := -1;
 end;
 
 procedure TSemanticVersion.SetBuildLabel(const value: String);

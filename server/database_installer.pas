@@ -1174,9 +1174,11 @@ begin
     CreatePackagesTables;
     if assigned(CallBack) then Callback(77, 'Create Package Permissions Table');
     CreatePackagePermissionsTable;
-    if assigned(CallBack) then Callback(79, 'Commit');
+    if assigned(CallBack) then Callback(79, 'Loaded Packages');
     CreateLoadedPackagesTable;
-    if assigned(CallBack) then Callback(80, 'Commit');
+    if assigned(CallBack) then Callback(80, 'SmartHealthCards');
+    CreateSmartHealthCardsTable;
+    if assigned(CallBack) then Callback(81, 'Commit');
 
     FConn.Commit;
   except
@@ -1262,6 +1264,7 @@ begin
 
       drop('PackageFHIRVersions');
       drop('PackageDependencies');
+      drop('PackageURLs');
       drop('PackageVersions');
       drop('Packages');
       drop('PackagePermissions');

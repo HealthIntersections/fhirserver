@@ -2778,25 +2778,25 @@ begin
           prsrFmt := ffUnspecified;
 
         conn.SQL := 
-          'Select '+#14#10+
-          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#14#10+
-          'from ( '+#14#10+
-          'Select '+#14#10+
-          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, '+field+', '+#14#10+
-          '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#14#10+
-          '                              ORDER BY StatedDate DESC '+#14#10+
-          '                             ) '+#14#10+
-          '             AS rn '+#14#10+
-          'from '+#14#10+
-          '  Versions, Ids, Types, Observations '+#14#10+
-          'where '+#14#10+
-          '  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#14#10+
-          '  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#14#10+
-          '    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#14#10+
-          '   ) '+#14#10+
-          ') tmp '+#14#10+
-          'WHERE rn <= 4 '+#14#10+
-          'ORDER BY CodeList, StatedDate Desc, rn'+#14#10;
+          'Select '+#13#10+
+          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#13#10+
+          'from ( '+#13#10+
+          'Select '+#13#10+
+          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, '+field+', '+#13#10+
+          '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
+          '                              ORDER BY StatedDate DESC '+#13#10+
+          '                             ) '+#13#10+
+          '             AS rn '+#13#10+
+          'from '+#13#10+
+          '  Versions, Ids, Types, Observations '+#13#10+
+          'where '+#13#10+
+          '  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#13#10+
+          '  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#13#10+
+          '    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#13#10+
+          '   ) '+#13#10+
+          ') tmp '+#13#10+
+          'WHERE rn <= 4 '+#13#10+
+          'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
         bundle.tag('sql', conn.SQL);
         conn.Prepare;
         try

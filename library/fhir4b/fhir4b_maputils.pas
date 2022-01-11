@@ -165,7 +165,7 @@ type
     fpe : TFHIRPathEngine;
     FLib : TFslMap<TFHIRStructureMap>;
     FServices : TTransformerServices;
-    FFactory : TFHIRFactoryR4;
+    FFactory : TFHIRFactoryR4B;
     FOnDebug: TFHIRStructureMapDebugEvent;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
@@ -223,7 +223,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices; factory : TFHIRFactoryR4);
+    constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices; factory : TFHIRFactoryR4B);
     destructor Destroy; override;
 
     property Lib : TFslMap<TFHIRStructureMap> read FLib;
@@ -242,7 +242,7 @@ implementation
 
 { TFHIRStructureMapUtilities }
 
-constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext; lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices; factory : TFHIRFactoryR4);
+constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext; lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices; factory : TFHIRFactoryR4B);
 begin
   inherited Create;
   FWorker := context;
@@ -987,7 +987,7 @@ function TFHIRStructureMapUtilities.parse(text, sourceName : String) : TFHIRStru
 var
   lexer : TFHIRPathLexer;
 begin
-  lexer := TFHIRPathLexer4.Create(fpV2, text);
+  lexer := TFHIRPathLexer4B.Create(fpV2, text);
   try
     lexer.SourceName := sourceName;
     if (lexer.done()) then

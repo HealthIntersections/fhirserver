@@ -42,7 +42,7 @@ uses
   fhir4b_resources, fhir4b_enums, fhir4b_types, fhir4b_pathengine, fhir4b_pathnode, fhir4b_context, fhir4b_utilities;
 
 type
-  TFHIRGraphDefinitionParser4 = class (TFHIRGraphDefinitionParser)
+  TFHIRGraphDefinitionParser4B = class (TFHIRGraphDefinitionParser)
   private
     FLexer : TFHIRPathLexer;
 
@@ -71,7 +71,7 @@ type
     function asString(definition : TFhirResourceV; header : boolean) : String; override;
   end;
 
-  TFHIRGraphDefinitionEngine4 = class (TFHIRGraphDefinitionEngine)
+  TFHIRGraphDefinitionEngine4B = class (TFHIRGraphDefinitionEngine)
   private
     FContext : TFHIRWorkerContextWithFactory;
     FPathEngine : TFHIRPathEngine;
@@ -126,19 +126,19 @@ implementation
 
 { TFHIRGraphDefinitionParser }
 
-destructor TFHIRGraphDefinitionParser4.Destroy;
+destructor TFHIRGraphDefinitionParser4B.Destroy;
 begin
   FLexer.Free;
   inherited;
 end;
 
-function TFHIRGraphDefinitionParser4.parseV(source: String): TFhirResourceV;
+function TFHIRGraphDefinitionParser4B.parseV(source: String): TFhirResourceV;
 begin
-  FLexer := TFHIRPathLexer4.Create(fpV2, source);
+  FLexer := TFHIRPathLexer4B.Create(fpV2, source);
   result := readDefinition;
 end;
 
-function TFHIRGraphDefinitionParser4.readCompartmentRule(use: TFhirGraphCompartmentUseEnum): TFhirGraphDefinitionLinkTargetCompartment;
+function TFHIRGraphDefinitionParser4B.readCompartmentRule(use: TFhirGraphCompartmentUseEnum): TFhirGraphDefinitionLinkTargetCompartment;
 var
   i : integer;
   expr: TFHIRPathExpressionNode;
@@ -177,7 +177,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionParser4.readDefinition: TFhirGraphDefinition;
+function TFHIRGraphDefinitionParser4B.readDefinition: TFhirGraphDefinition;
 begin
   result := TFhirGraphDefinition.Create;
   try
@@ -195,12 +195,12 @@ begin
 
 end;
 
-procedure TFHIRGraphDefinitionParser4.readHeader(gd: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionParser4B.readHeader(gd: TFhirGraphDefinition);
 begin
-  raise EFHIRTodo.create('TFHIRGraphDefinitionParser4.readHeader');
+  raise EFHIRTodo.create('TFHIRGraphDefinitionParser4B.readHeader');
 end;
 
-procedure TFHIRGraphDefinitionParser4.readLinkList(list: TFhirGraphDefinitionLinkList);
+procedure TFHIRGraphDefinitionParser4B.readLinkList(list: TFhirGraphDefinitionLinkList);
 var
   first : boolean;
 begin
@@ -219,7 +219,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionParser4.readPathLink: TFhirGraphDefinitionLink;
+function TFHIRGraphDefinitionParser4B.readPathLink: TFhirGraphDefinitionLink;
 var
   fpp : TFHIRPathParser;
   first : boolean;
@@ -270,7 +270,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionParser4.readProfile: String;
+function TFHIRGraphDefinitionParser4B.readProfile: String;
 begin
   if FLexer.takeToken('(') then
     result := FLexer.readTo(')', false)
@@ -278,7 +278,7 @@ begin
     result := '';
 end;
 
-function TFHIRGraphDefinitionParser4.readResourceType: TFhirResourceTypesEnum;
+function TFHIRGraphDefinitionParser4B.readResourceType: TFhirResourceTypesEnum;
 var
   i : integer;
 begin
@@ -289,7 +289,7 @@ begin
   result := TFhirResourceTypesEnum(i);
 end;
 
-function TFHIRGraphDefinitionParser4.readSearchLink: TFhirGraphDefinitionLink;
+function TFHIRGraphDefinitionParser4B.readSearchLink: TFhirGraphDefinitionLink;
 var
   tgt : TFhirGraphDefinitionLinkTarget;
 begin
@@ -319,7 +319,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionParser4.asString(definition: TFhirResourceV; header: boolean): String;
+function TFHIRGraphDefinitionParser4B.asString(definition: TFhirResourceV; header: boolean): String;
 var
   t : TFhirGraphDefinition;
   b : TStringBuilder;
@@ -336,7 +336,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4.writeCompartment(b: TStringBuilder; cr: TFhirGraphDefinitionLinkTargetCompartment);
+procedure TFHIRGraphDefinitionParser4B.writeCompartment(b: TStringBuilder; cr: TFhirGraphDefinitionLinkTargetCompartment);
 begin
   if cr.use = GraphCompartmentUseCondition then
     b.Append('where ')
@@ -352,7 +352,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4.writeDefinition(b: TStringBuilder; definition: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionParser4B.writeDefinition(b: TStringBuilder; definition: TFhirGraphDefinition);
 begin
   b.Append(CODES_TFhirResourceTypesEnum[definition.start]);
   if definition.profile <> '' then
@@ -364,12 +364,12 @@ begin
   writeLinklist(b, definition.link_List, 2);
 end;
 
-procedure TFHIRGraphDefinitionParser4.writeHeader(b: TStringBuilder; definition: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionParser4B.writeHeader(b: TStringBuilder; definition: TFhirGraphDefinition);
 begin
 
 end;
 
-procedure TFHIRGraphDefinitionParser4.writeLinklist(b: TStringBuilder; list: TFhirGraphDefinitionLinkList; indent : integer);
+procedure TFHIRGraphDefinitionParser4B.writeLinklist(b: TStringBuilder; list: TFhirGraphDefinitionLinkList; indent : integer);
 var
   i : integer;
 begin
@@ -393,7 +393,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4.writePathItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
+procedure TFHIRGraphDefinitionParser4B.writePathItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
 var
   i : integer;
   cr : TFhirGraphDefinitionLinkTargetCompartment;
@@ -450,7 +450,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4.writeSearchItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
+procedure TFHIRGraphDefinitionParser4B.writeSearchItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
 begin
   b.Append('search ');
   b.Append(CODES_TFhirResourceTypesEnum[item.targetList[0].type_]);
@@ -479,7 +479,7 @@ begin
 end;
 
 
-function TFHIRGraphDefinitionParser4.sizeInBytesV(magic : integer) : cardinal;
+function TFHIRGraphDefinitionParser4B.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FLexer.sizeInBytes(magic));
@@ -487,14 +487,14 @@ end;
 
 { TFHIRGraphDefinitionEngine4 }
 
-constructor TFHIRGraphDefinitionEngine4.Create(context : TFHIRWorkerContextWithFactory);
+constructor TFHIRGraphDefinitionEngine4B.Create(context : TFHIRWorkerContextWithFactory);
 begin
   inherited Create;
   FContext := context;
   FPathEngine := TFHIRPathEngine.Create((context as TFHIRWorkerContext).link, nil);
 end;
 
-destructor TFHIRGraphDefinitionEngine4.Destroy;
+destructor TFHIRGraphDefinitionEngine4B.Destroy;
 begin
   FAppinfo.Free;
   FBundle.Free;
@@ -505,31 +505,31 @@ begin
   inherited;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.SetAppInfo(const Value: TFslObject);
+procedure TFHIRGraphDefinitionEngine4B.SetAppInfo(const Value: TFslObject);
 begin
   FAppinfo.Free;
   FAppinfo := Value;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.SetBundle(const Value: TFHIRBundle);
+procedure TFHIRGraphDefinitionEngine4B.SetBundle(const Value: TFHIRBundle);
 begin
   FBundle.Free;
   FBundle := Value;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.SetDefinition(const Value: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionEngine4B.SetDefinition(const Value: TFhirGraphDefinition);
 begin
   FDefinition.Free;
   FDefinition := Value;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.SetStart(const Value: TFHIRResource);
+procedure TFHIRGraphDefinitionEngine4B.SetStart(const Value: TFHIRResource);
 begin
   FStart.Free;
   FStart := Value;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.execute;
+procedure TFHIRGraphDefinitionEngine4B.execute;
 var
   l : TFhirGraphDefinitionLink;
 begin
@@ -549,7 +549,7 @@ begin
     processLink(Start.fhirType, FStart, l, 1);
 end;
 
-function TFHIRGraphDefinitionEngine4.isInBundle(resource: TFHIRResource): boolean;
+function TFHIRGraphDefinitionEngine4B.isInBundle(resource: TFHIRResource): boolean;
 var
   be : TFhirBundleEntry;
 begin
@@ -559,7 +559,7 @@ begin
       exit(true);
 end;
 
-procedure TFHIRGraphDefinitionEngine4.addToBundle(resource: TFHIRResource);
+procedure TFHIRGraphDefinitionEngine4B.addToBundle(resource: TFHIRResource);
 var
   be : TFhirBundleEntry;
 begin
@@ -568,14 +568,14 @@ begin
   be.resource := resource.Link;
 end;
 
-function TFHIRGraphDefinitionEngine4.check(test: boolean; msg: String): boolean;
+function TFHIRGraphDefinitionEngine4B.check(test: boolean; msg: String): boolean;
 begin
   if not test then
     raise EFHIRException.Create(msg);
   result := test;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.parseParams(params: TFslList<TGraphQLArgument>; value: String; res: TFHIRResource);
+procedure TFHIRGraphDefinitionEngine4B.parseParams(params: TFslList<TGraphQLArgument>; value: String; res: TFHIRResource);
 var
   p : THTTPParameters;
   i, j : integer;
@@ -605,7 +605,7 @@ begin
   check(refed, 'no use of {ref} found');
 end;
 
-procedure TFHIRGraphDefinitionEngine4.processLink(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
+procedure TFHIRGraphDefinitionEngine4B.processLink(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
 begin
   if link.path <> '' then
     processLinkPath(focusPath, focus, link, depth)
@@ -613,7 +613,7 @@ begin
     processLinkTarget(focusPath, focus, link, depth);
 end;
 
-procedure TFHIRGraphDefinitionEngine4.processLinkPath(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
+procedure TFHIRGraphDefinitionEngine4B.processLinkPath(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
 var
   path : String;
   node : TFHIRPathExpressionNode;
@@ -671,7 +671,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionEngine4.processLinkTarget(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
+procedure TFHIRGraphDefinitionEngine4B.processLinkTarget(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
 var
   path : String;
   list : TFslList<TFHIRResourceV>;
@@ -709,7 +709,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionEngine4.sizeInBytesV(magic : integer) : cardinal;
+function TFHIRGraphDefinitionEngine4B.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FContext.sizeInBytes(magic));

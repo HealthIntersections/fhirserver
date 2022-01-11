@@ -272,6 +272,8 @@ begin
     result := fhirVersionRelease3
   else if (v = 'r4') then
     result := fhirVersionRelease4
+  else if (v = 'r5b') then
+    result := fhirVersionRelease4B
   else if (v = 'r5') then
     result := fhirVersionRelease5
   else

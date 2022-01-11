@@ -40,7 +40,7 @@ uses
   fhir4b_types, fhir4b_resources, fhir4b_xml,fhir4b_json, fhir4b_turtle, fhir4b_context;
 
 type
-  TFHIRParsers4 = class
+  TFHIRParsers4B = class
   public
     class function parser(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser;
     class function composer(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer;
@@ -50,9 +50,9 @@ type
 
 implementation
 
-{ TFHIRParsers4 }
+{ TFHIRParsers4B }
 
-class function TFHIRParsers4.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
+class function TFHIRParsers4B.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
 begin
   case format of
     ffXml : result := fhir4b_xml.TFHIRXmlComposer.Create(worker, style, lang);
@@ -64,7 +64,7 @@ begin
   end;
 end;
 
-class function TFHIRParsers4.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
+class function TFHIRParsers4B.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
 begin
   case format of
     ffXml: result := fhir4b_xml.TFHIRXmlParser.Create(worker, lang);
@@ -75,7 +75,7 @@ begin
   end;
 end;
 
-class procedure TFHIRParsers4.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; const lang : THTTPLanguages; filename: String; style: TFHIROutputStyle);
+class procedure TFHIRParsers4B.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; const lang : THTTPLanguages; filename: String; style: TFHIROutputStyle);
 var
   c : TFHIRComposer;
   f : TFileStream;
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-class function TFHIRParsers4.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; filename: String): TFHIRResource;
+class function TFHIRParsers4B.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; filename: String): TFHIRResource;
 var
   p : TFHIRParser;
 begin

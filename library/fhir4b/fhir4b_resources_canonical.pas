@@ -38623,33 +38623,9 @@ end;
 
 destructor TFhirEventDefinition.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
   FSubtitle.free;
-  FStatus.free;
-  FExperimental.free;
   FSubject.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FUsage.free;
-  FCopyright.free;
-  FApprovalDate.free;
-  FLastReviewDate.free;
-  FEffectivePeriod.free;
-  FTopicList.Free;
-  FAuthorList.Free;
-  FEditorList.Free;
-  FReviewerList.Free;
-  FEndorserList.Free;
-  FRelatedArtifactList.Free;
   FTriggerList.Free;
   inherited;
 end;
@@ -43252,19 +43228,6 @@ end;
 
 destructor TFhirExampleScenario.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FCopyright.free;
-  FPurpose.free;
   FActorList.Free;
   FInstanceList.Free;
   FProcessList.Free;
@@ -45536,18 +45499,6 @@ end;
 
 destructor TFhirGraphDefinition.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FStart.free;
   FProfile.free;
   FLink_List.Free;
@@ -50415,19 +50366,6 @@ end;
 
 destructor TFhirImplementationGuide.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FCopyright.free;
   FPackageId.free;
   FLicense.free;
   FFhirVersion.Free;
@@ -51421,34 +51359,10 @@ end;
 
 destructor TFhirLibrary.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
   FSubtitle.free;
-  FStatus.free;
-  FExperimental.free;
   FType_.free;
   FSubject.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FUsage.free;
-  FCopyright.free;
-  FApprovalDate.free;
-  FLastReviewDate.free;
-  FEffectivePeriod.free;
-  FTopicList.Free;
-  FAuthorList.Free;
-  FEditorList.Free;
-  FReviewerList.Free;
-  FEndorserList.Free;
-  FRelatedArtifactList.Free;
   FParameterList.Free;
   FDataRequirementList.Free;
   FContentList.Free;
@@ -54602,33 +54516,9 @@ end;
 
 destructor TFhirMeasure.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
   FSubtitle.free;
-  FStatus.free;
-  FExperimental.free;
   FSubject.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FUsage.free;
-  FCopyright.free;
-  FApprovalDate.free;
-  FLastReviewDate.free;
-  FEffectivePeriod.free;
-  FTopicList.Free;
-  FAuthorList.Free;
-  FEditorList.Free;
-  FReviewerList.Free;
-  FEndorserList.Free;
-  FRelatedArtifactList.Free;
   FLibrary_List.Free;
   FDisclaimer.free;
   FScoring.free;
@@ -57127,22 +57017,7 @@ end;
 
 destructor TFhirMessageDefinition.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
   FReplacesList.Free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FBase.free;
   FParentList.Free;
   FEvent.free;
@@ -58732,16 +58607,9 @@ end;
 destructor TFhirNamingSystem.Destroy;
 begin
   FName.free;
-  FStatus.free;
   FKind.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
   FResponsible.free;
   FType_.free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
   FUsage.free;
   FUniqueIdList.Free;
   inherited;
@@ -62590,20 +62458,7 @@ end;
 
 destructor TFhirOperationDefinition.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
   FKind.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FAffectsState.free;
   FCode.free;
   FComment.free;
@@ -65627,26 +65482,8 @@ end;
 
 destructor TFhirQuestionnaire.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
   FDerivedFromList.Free;
-  FStatus.free;
-  FExperimental.free;
   FSubjectType.Free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
-  FApprovalDate.free;
-  FLastReviewDate.free;
-  FEffectivePeriod.free;
   FCodeList.Free;
   FItemList.Free;
   inherited;
@@ -67047,19 +66884,7 @@ end;
 
 destructor TFhirSearchParameter.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
   FDerivedFrom.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
   FCode.free;
   FBase.Free;
   FType_.free;
@@ -71651,21 +71476,6 @@ end;
 
 destructor TFhirStructureDefinition.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FKeywordList.Free;
   FFhirVersion.free;
   FMappingList.Free;
@@ -76520,21 +76330,6 @@ end;
 
 destructor TFhirStructureMap.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FStructureList.Free;
   FImportList.Free;
   FGroupList.Free;
@@ -80843,20 +80638,6 @@ end;
 
 destructor TFhirTerminologyCapabilities.Destroy;
 begin
-  FUrl.free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
-  FPurpose.free;
-  FCopyright.free;
   FKind.free;
   FSoftware.free;
   FImplementation_.free;
@@ -89106,7 +88887,7 @@ begin
   begin
     o := TFhirTestScript(other);
     result := compareDeep(originList, o.originList, true) and 
-      compareDeep(destinationList, o.destinationList, true) and compareDeep(metadataElement, o.metadataElement, true) and 
+      compareDeep(destinationList, o.destinationList, true) and compareDeep(metadataElement, o.metadataElement, true) and
       compareDeep(fixtureList, o.fixtureList, true) and compareDeep(profileList, o.profileList, true) and 
       compareDeep(variableList, o.variableList, true) and compareDeep(setupElement, o.setupElement, true) and 
       compareDeep(testList, o.testList, true) and compareDeep(teardownElement, o.teardownElement, true);
@@ -92956,22 +92737,7 @@ end;
 
 destructor TFhirValueSet.Destroy;
 begin
-  FUrl.free;
-  FIdentifierList.Free;
-  FVersion.free;
-  FName.free;
-  FTitle.free;
-  FStatus.free;
-  FExperimental.free;
-  FDate.free;
-  FPublisher.free;
-  FContactList.Free;
-  FDescription.free;
-  FUseContextList.Free;
-  FJurisdictionList.Free;
   FImmutable.free;
-  FPurpose.free;
-  FCopyright.free;
   FCompose.free;
   FExpansion.free;
   inherited;

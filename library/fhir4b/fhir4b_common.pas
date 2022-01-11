@@ -79,14 +79,14 @@ const
 
 
 type
-  TFHIRExtension4 = class (TFHIRExtensionW)
+  TFHIRExtension4B = class (TFHIRExtensionW)
   public
     function url : String; override;
     function value : TFHIRObject; override;
     function renderText : String; override;
   end;
 
-  TFHIRCoding4 = class (TFHIRCodingW)
+  TFHIRCoding4B = class (TFHIRCodingW)
   public
     function getSystem : String; override;
     function getCode : String; override;
@@ -99,7 +99,7 @@ type
     function renderText : String; override;
   end;
 
-  TFhirCodeableConcept4 = class (TFhirCodeableConceptW)
+  TFhirCodeableConcept4B = class (TFhirCodeableConceptW)
   protected
     function GetText: String; override;
     procedure SetText(const Value: String); override;
@@ -114,7 +114,7 @@ type
     function renderText : String; override;
   end;
 
-  TFhirIdentifier4 = class (TFhirIdentifierW)
+  TFhirIdentifier4B = class (TFhirIdentifierW)
   private
     function id : TFHIRIdentifier;
   protected
@@ -129,7 +129,7 @@ type
     function renderText : String; override;
   end;
 
-  TFhirOperationOutcome4 = class (TFhirOperationOutcomeW)
+  TFhirOperationOutcome4B = class (TFhirOperationOutcomeW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -145,7 +145,7 @@ type
     function hasErrors : boolean; override;
   end;
 
-  TFHIRBundleEntry4 = class (TFHIRBundleEntryW)
+  TFHIRBundleEntry4B = class (TFHIRBundleEntryW)
   private
     function entry : TFhirBundleEntry;
   protected
@@ -184,7 +184,7 @@ type
     procedure setLink(rel: String; const Value: String); override;
   end;
 
-  TFhirBinary4 = class (TFhirBinaryW)
+  TFhirBinary4B = class (TFhirBinaryW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -193,7 +193,7 @@ type
   end;
 
 
-  TFHIRBundle4 = class (TFHIRBundleW)
+  TFHIRBundle4B = class (TFHIRBundleW)
   private
     function bundle : TFhirBundle;
   public
@@ -222,7 +222,7 @@ type
     procedure setTimestamp(Value: TFslDateTime); override;
   end;
 
-  TFHIROperationOutcomeIssue4 = class (TFHIROperationOutcomeIssueW)
+  TFHIROperationOutcomeIssue4B = class (TFHIROperationOutcomeIssueW)
   private
     function issue : TFHIROperationOutcomeIssue;
   public
@@ -232,7 +232,7 @@ type
     procedure setDiagnostics(Value: String); override;
   end;
 
-  TFHIRSearchParamDefinition4 = class (TFHIRSearchParamDefinitionW)
+  TFHIRSearchParamDefinition4B = class (TFHIRSearchParamDefinitionW)
   private
     function param : TFhirCapabilityStatementRestResourceSearchParam;
   public
@@ -241,7 +241,7 @@ type
     function type_ : TFHIRSearchParamType; override;
   end;
 
-  TFhirCapabilityStatementRestResource4 = class (TFhirCapabilityStatementRestResourceW)
+  TFhirCapabilityStatementRestResource4B = class (TFhirCapabilityStatementRestResourceW)
   public
     function getCode: String; override;
     procedure setCode(Value: String); override;
@@ -254,7 +254,7 @@ type
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
   end;
 
-  TFHIRCapabilityStatement4 = class (TFHIRCapabilityStatementW)
+  TFHIRCapabilityStatement4B = class (TFHIRCapabilityStatementW)
   private
     function statement : TFhirCapabilityStatement;
   public
@@ -301,7 +301,7 @@ type
     procedure addInstantiates(url : String); override;
   end;
 
-  TFhirElementDefinition4 = class (TFhirElementDefinitionW)
+  TFhirElementDefinition4B = class (TFhirElementDefinitionW)
   private
     function edefn : TFhirElementDefinition;
   public
@@ -317,7 +317,7 @@ type
     function valueSet : String; override;
   end;
 
-  TFHIRStructureDefinition4 = class (TFhirStructureDefinitionW)
+  TFHIRStructureDefinition4B = class (TFhirStructureDefinitionW)
   private
     function sd : TFhirStructureDefinition;
   public
@@ -331,7 +331,7 @@ type
     function getDefinition(id : String; source : TElementDefinitionSourceOption) : TFHIRElementDefinitionW; override;
   end;
 
-  TFhirParametersParameter4 = class (TFhirParametersParameterW)
+  TFhirParametersParameter4B = class (TFhirParametersParameterW)
   private
     function parameter : TFhirParametersParameter;
   protected
@@ -356,7 +356,7 @@ type
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
 
-  TFHIRParameters4 = class (TFHIRParametersW)
+  TFHIRParameters4B = class (TFHIRParametersW)
   private
     function parameter : TFhirParameters;
   protected
@@ -376,7 +376,7 @@ type
     function getParameter(name: String): TFhirParametersParameterW;  override;
   end;
 
-  TFhirValueSetExpansionContains4 = class (TFhirValueSetExpansionContainsW)
+  TFhirValueSetExpansionContains4B = class (TFhirValueSetExpansionContainsW)
   public
     function getSystem : String; override;
     function getCode : String; override;
@@ -388,7 +388,7 @@ type
     procedure addDesignation(lang, use, value : String); override;
   end;
 
-  TFhirValueSetExpansion4 = class (TFhirValueSetExpansionW)
+  TFhirValueSetExpansion4B = class (TFhirValueSetExpansionW)
   private
     function exp : TFhirValueSetExpansion;
   public
@@ -404,7 +404,7 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
-  TFhirValueSetComposeIncludeFilter4 = class (TFhirValueSetComposeIncludeFilterW)
+  TFhirValueSetComposeIncludeFilter4B = class (TFhirValueSetComposeIncludeFilterW)
   public
     function getProp : String; override;
     function getOp : TFilterOperator; override;
@@ -414,13 +414,13 @@ type
     procedure setValue(Value: String); override;
   end;
 
-  TFhirValueSetComposeIncludeConceptDesignation4 = class (TFhirValueSetComposeIncludeConceptDesignationW)
+  TFhirValueSetComposeIncludeConceptDesignation4B = class (TFhirValueSetComposeIncludeConceptDesignationW)
   public
     function language : String; override;
     function value : String; override;
   end;
 
-  TFhirValueSetComposeIncludeConcept4 = class (TFhirValueSetComposeIncludeConceptW)
+  TFhirValueSetComposeIncludeConcept4B = class (TFhirValueSetComposeIncludeConceptW)
   public
     function getCode : String; override;
     function getDisplay : String; override;
@@ -429,7 +429,7 @@ type
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 
-  TFhirValueSetComposeInclude4 = class (TFhirValueSetComposeIncludeW)
+  TFhirValueSetComposeInclude4B = class (TFhirValueSetComposeIncludeW)
   public
     function getSystem : String; override;
     procedure setSystem(Value: String); override;
@@ -447,7 +447,7 @@ type
     function addFilter : TFhirValueSetComposeIncludeFilterW; override;
   end;
 
-  TFHIRValueSet4 = class (TFHIRValueSetW)
+  TFHIRValueSet4B = class (TFHIRValueSetW)
   private
     FExp : TFhirValueSetExpansionW;
     function vs : TFhirValueSet;
@@ -485,7 +485,7 @@ type
     function source : String; override;
   end;
 
-  TFHIRLookupOpRequest4 = class (TFHIRLookupOpRequestW)
+  TFHIRLookupOpRequest4B = class (TFHIRLookupOpRequestW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
     procedure load(params : THTTPParameters); overload; override;
@@ -496,7 +496,7 @@ type
     function displayLanguage : String; override;
   end;
 
-  TFHIRLookupOpRespProperty4 = class (TFHIRLookupOpRespPropertyW)
+  TFHIRLookupOpRespProperty4B = class (TFHIRLookupOpRespPropertyW)
   public
     function getDescription: string; override;
     procedure setDescription(Value: string); override;
@@ -504,13 +504,13 @@ type
     procedure setValue(Value: TFHIRObject); override;
   end;
 
-  TFHIRLookupOpRespDesignation4 = class (TFHIRLookupOpRespDesignationW)
+  TFHIRLookupOpRespDesignation4B = class (TFHIRLookupOpRespDesignationW)
   public
     function getUse: TFHIRObject; override;
     procedure setUse(Value: TFHIRObject); override;
   end;
 
-  TFHIRLookupOpResponse4 = class (TFHIRLookupOpResponseW)
+  TFHIRLookupOpResponse4B = class (TFHIRLookupOpResponseW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
     procedure load(params : THTTPParameters); overload; override;
@@ -528,13 +528,13 @@ type
     procedure setDisplay(Value: String); override;
   end;
 
-  TFhirCodeSystemConceptProperty4 = class (TFhirCodeSystemConceptPropertyW)
+  TFhirCodeSystemConceptProperty4B = class (TFhirCodeSystemConceptPropertyW)
   public
     function code : String; override;
     function value : TFHIRObject; override;
   end;
 
-  TFhirCodeSystemConceptDesignation4 = class (TFhirCodeSystemConceptDesignationW)
+  TFhirCodeSystemConceptDesignation4B = class (TFhirCodeSystemConceptDesignationW)
   public
     function language : String; override;
     function useGen : String; override;
@@ -542,7 +542,7 @@ type
     function value : String; override;
   end;
 
-  TFhirCodeSystemConcept4 = class (TFhirCodeSystemConceptW)
+  TFhirCodeSystemConcept4B = class (TFhirCodeSystemConceptW)
   private
     function c : TFhirCodeSystemConcept;
   public
@@ -562,14 +562,14 @@ type
   end;
 
 
-  TFhirCodeSystemProperty4 = class (TFhirCodeSystemPropertyW)
+  TFhirCodeSystemProperty4B = class (TFhirCodeSystemPropertyW)
   public
     function code : String; override;
     function uri : String; override;
     function type_ : TFhirCodeSystemPropertyType; override;
   end;
 
-  TFhirCodeSystem4 = class (TFhirCodeSystemW)
+  TFhirCodeSystem4B = class (TFhirCodeSystemW)
   private
     function cs : TFhirCodeSystem;
   public
@@ -615,7 +615,7 @@ type
     procedure setPublisher(Value: String); override;
   end;
 
-  TFhirConceptMapGroupElementDependsOn4 = class (TFhirConceptMapGroupElementDependsOnW)
+  TFhirConceptMapGroupElementDependsOn4B = class (TFhirConceptMapGroupElementDependsOnW)
   public
     function property_ : String; override;
     function system_ : String; override;
@@ -623,7 +623,7 @@ type
     function display : String; override;
   end;
 
-  TFhirConceptMapGroupElementTarget4 = class (TFhirConceptMapGroupElementTargetW)
+  TFhirConceptMapGroupElementTarget4B = class (TFhirConceptMapGroupElementTargetW)
   public
     function code: String; override;
     function equivalence : TFHIRConceptEquivalence; override;
@@ -631,7 +631,7 @@ type
     function products : TFslList<TFhirConceptMapGroupElementDependsOnW>; override;
   end;
 
-  TFhirConceptMapGroupElement4 = class (TFhirConceptMapGroupElementW)
+  TFhirConceptMapGroupElement4B = class (TFhirConceptMapGroupElementW)
   public
     function code: String; override;
     function targets : TFslList<TFhirConceptMapGroupElementTargetW>; override;
@@ -639,7 +639,7 @@ type
     function addTarget(code : String; eq : TFHIRConceptEquivalence) : TFhirConceptMapGroupElementTargetW; override;
   end;
 
-  TFhirConceptMapGroup4 = class (TFhirConceptMapGroupW)
+  TFhirConceptMapGroup4B = class (TFhirConceptMapGroupW)
   public
     function elements : TFslList<TFhirConceptMapGroupElementW>; override;
     function addElement(code : String) : TFhirConceptMapGroupElementW; override;
@@ -647,7 +647,7 @@ type
     function target : String; override;
   end;
 
-  TFhirConceptMap4 = class (TFhirConceptMapW)
+  TFhirConceptMap4B = class (TFhirConceptMapW)
   private
     function cm : TFhirConceptMap;
   protected
@@ -677,7 +677,7 @@ type
     function targetDesc : String; override;
   end;
 
-  TFHIRMeta4 = class (TFHIRMetaW)
+  TFHIRMeta4B = class (TFHIRMetaW)
   private
     FResource : TFHIRResource;
     procedure force;
@@ -709,7 +709,7 @@ type
     procedure removeProfile(uri : String); override;
   end;
 
-  TFHIRAuditEvent4 = class (TFhirAuditEventW)
+  TFHIRAuditEvent4B = class (TFhirAuditEventW)
   private
     function ae : TFHIRAuditEvent;
   public
@@ -725,7 +725,7 @@ type
     function dateTime : TFslDateTime; override;
   end;
 
-  TFHIRSubscription4 = class (TFHIRSubscriptionW)
+  TFHIRSubscription4B = class (TFHIRSubscriptionW)
   private
     function sub : TFhirSubscription;
   protected
@@ -751,7 +751,7 @@ type
     procedure setStatus(Value: TSubscriptionStatus); override;
   end;
 
-  TFhirObservationComponent4 = class (TFhirObservationComponentW)
+  TFhirObservationComponent4B = class (TFhirObservationComponentW)
   private
     function comp : TFhirObservationComponent;
   public
@@ -763,7 +763,7 @@ type
     function dataAbsentReason : TFhirCodeableConceptW; override;
   end;
 
-  TFhirObservation4 = class (TFhirObservationW)
+  TFhirObservation4B = class (TFhirObservationW)
   private
     function obs : TFHIRObservation;
   protected
@@ -816,7 +816,7 @@ type
     function hasEffective : boolean; override;
   end;
 
-  TFHIRQuantity4 = class (TFHIRQuantityW)
+  TFHIRQuantity4B = class (TFHIRQuantityW)
   private
     function qty : TFHIRQuantity;
   protected
@@ -833,7 +833,7 @@ type
     function renderText : String; override;
   end;
 
-  TFHIRPeriod4 = class (TFHIRPeriodW)
+  TFHIRPeriod4B = class (TFHIRPeriodW)
   private
     function period : TFHIRPeriod;
   protected
@@ -845,7 +845,7 @@ type
     function renderText : String; override;
   end;
 
-  TFHIRAttachment4 = class (TFHIRAttachmentW)
+  TFHIRAttachment4B = class (TFHIRAttachmentW)
   private
     function att : TFhirAttachment;
   protected
@@ -856,7 +856,7 @@ type
   end;
 
 
-  TFHIRSubsumesOpRequest4 = class (TFHIRSubsumesOpRequestW)
+  TFHIRSubsumesOpRequest4B = class (TFHIRSubsumesOpRequestW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
     procedure load(params : THTTPParameters); overload; override;
@@ -871,7 +871,7 @@ type
     function codingB : TFHIRCodingW; override;
   end;
 
-  TFHIRSubsumesOpResponse4 = class (TFHIRSubsumesOpResponseW)
+  TFHIRSubsumesOpResponse4B = class (TFHIRSubsumesOpResponseW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
     procedure load(params : THTTPParameters); overload; override;
@@ -880,13 +880,13 @@ type
     procedure setOutcome(Value: String); override;
   end;
 
-  TFHIRGroupCharacteristic4 = class (TFHIRGroupCharacteristicW)
+  TFHIRGroupCharacteristic4B = class (TFHIRGroupCharacteristicW)
   public
     function code : TFhirCodeableConceptW; override;
     function value : TFhirCodeableConceptW; override;
   end;
 
-  TFHIRGroup4 = class (TFHIRGroupW)
+  TFHIRGroup4B = class (TFHIRGroupW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -896,9 +896,9 @@ type
     function characteristics : TFslList<TFHIRGroupCharacteristicW>; override;
   end;
 
-  { TFhirPatient4 }
+  { TFhirPatient4B }
 
-  TFhirPatient4 = class (TFhirPatientW)
+  TFhirPatient4B = class (TFhirPatientW)
   protected
     function pat : TFHIRPatient;
     function GetActive: boolean; override;
@@ -920,7 +920,7 @@ type
     function contactSummary : String; override;
   end;
 
-  TFhirEncounter4 = class (TFhirEncounterW)
+  TFhirEncounter4B = class (TFhirEncounterW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -928,7 +928,7 @@ type
     function summary : String; override;
   end;
 
-  TFHIRStatsOpResponse4 = class (TFHIRStatsOpResponseW)
+  TFHIRStatsOpResponse4B = class (TFHIRStatsOpResponseW)
   public
     procedure addObs(obs : TFHIRResourceV); override;
     procedure load(params : TFHIRResourceV); overload; override;
@@ -936,7 +936,7 @@ type
     function asParams : TFHIRResourceV; override;
   end;
 
-  TFHIRNamingSystem4 = class (TFHIRNamingSystemW)
+  TFHIRNamingSystem4B = class (TFHIRNamingSystemW)
   private
     function nm : TFHIRNamingSystem;
   protected
@@ -962,14 +962,14 @@ type
     function hasOid(oid : String) : boolean; override;
   end;
 
-  TFHIRStructureMap4 = class (TFHIRStructureMapW)
+  TFHIRStructureMap4B = class (TFHIRStructureMapW)
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function url : String; override;
   end;
 
-  TFHIRConsent4 = class (TFHIRConsentW)
+  TFHIRConsent4B = class (TFHIRConsentW)
   private
     function consent : TFHIRConsent;
   protected
@@ -982,7 +982,7 @@ type
     function listProvisions : TFslList<TFhirConsentProvisionW>; override;
   end;
 
-  TFHIREventDefinition4 = class (TFHIREventDefinitionW)
+  TFHIREventDefinition4B = class (TFHIREventDefinitionW)
   private
     function ed : TFHIREventDefinition;
   public
@@ -995,7 +995,7 @@ type
     function dataType : String; override;
   end;
 
-  TFhirTerminologyCapabilities4 = class (TFhirTerminologyCapabilitiesW)
+  TFhirTerminologyCapabilities4B = class (TFhirTerminologyCapabilitiesW)
   private
     function tc : TFhirTerminologyCapabilities;
   protected
@@ -1023,7 +1023,7 @@ type
     procedure addExpansionParameter(code, doco : String); override;
   end;
 
-  TFHIRTestScript4 = class (TFHIRTestScriptW)
+  TFHIRTestScript4B = class (TFHIRTestScriptW)
   private
     function ts : TFHIRTestScript;
   protected
@@ -1046,7 +1046,7 @@ type
     function getContext: String; override;
   end;
 
-  TFhirProvenance4 = class (TFhirProvenanceW)
+  TFhirProvenance4B = class (TFhirProvenanceW)
   private
     function p : TFhirProvenance;
   public
@@ -1057,7 +1057,7 @@ type
     procedure addTarget(url : String); override;
   end;
 
-  TFhirImmunization4 = class (TFhirImmunizationW)
+  TFhirImmunization4B = class (TFhirImmunizationW)
   private
     function imm : TFhirImmunization;
   protected
@@ -1089,16 +1089,16 @@ implementation
 uses
   fhir4b_utilities;
 
-{ TFhirOperationOutcome4 }
+{ TFhirOperationOutcome4B }
 
-procedure TFhirOperationOutcome4.addIssue(issue: TFhirOperationOutcomeIssueW; free : boolean);
+procedure TFhirOperationOutcome4B.addIssue(issue: TFhirOperationOutcomeIssueW; free : boolean);
 begin
   (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
   if free then
     issue.Free;
 end;
 
-function TFhirOperationOutcome4.code: TFhirIssueType;
+function TFhirOperationOutcome4B.code: TFhirIssueType;
 var
   a : TFhirIssueType;
   op : TFhirOperationOutcome;
@@ -1111,17 +1111,17 @@ begin
        exit(a);
 end;
 
-function TFhirOperationOutcome4.GetLanguage: String;
+function TFhirOperationOutcome4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirOperationOutcome4.hasErrors: boolean;
+function TFhirOperationOutcome4B.hasErrors: boolean;
 begin
   result := (Fres as TFhirOperationOutcome).hasErrors;
 end;
 
-function TFhirOperationOutcome4.hasIssues: boolean;
+function TFhirOperationOutcome4B.hasIssues: boolean;
 var
   op : TFhirOperationOutcome;
 begin
@@ -1129,7 +1129,7 @@ begin
   result := not op.issueList.IsEmpty;
 end;
 
-function TFhirOperationOutcome4.hasText: boolean;
+function TFhirOperationOutcome4B.hasText: boolean;
 var
   op : TFhirOperationOutcome;
 begin
@@ -1142,31 +1142,31 @@ begin
     result := false;
 end;
 
-function TFhirOperationOutcome4.issueCount: integer;
+function TFhirOperationOutcome4B.issueCount: integer;
 begin
   result := (resource as TFhirOperationOutcome).issueList.Count;
 end;
 
-function TFhirOperationOutcome4.issues: TFslList<TFhirOperationOutcomeIssueW>;
+function TFhirOperationOutcome4B.issues: TFslList<TFhirOperationOutcomeIssueW>;
 var
   iss : TFhirOperationOutcomeIssue;
 begin
   result := TFslList<TFhirOperationOutcomeIssueW>.create;
   for iss in (resource as TFhirOperationOutcome).issueList do
-    result.Add(TFHIROperationOutcomeIssue4.Create(iss.Link));
+    result.Add(TFHIROperationOutcomeIssue4B.Create(iss.Link));
 end;
 
-function TFhirOperationOutcome4.rule(level: TIssueSeverity; source: String; typeCode: TFhirIssueType; path: string; test: boolean; msg: string): boolean;
+function TFhirOperationOutcome4B.rule(level: TIssueSeverity; source: String; typeCode: TFhirIssueType; path: string; test: boolean; msg: string): boolean;
 begin
   result := (resource as TFhirOperationOutcome).rule(ISSUE_SEVERITY_MAP2[level], source, ExceptionTypeTranslations[typeCode], path, test, msg);
 end;
 
-procedure TFhirOperationOutcome4.SetLanguage(const Value: String);
+procedure TFhirOperationOutcome4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFhirOperationOutcome4.severity: TIssueSeverity;
+function TFhirOperationOutcome4B.severity: TIssueSeverity;
 begin
   if (resource as TFhirOperationOutcome).issueList.Count > 0 then
     result := ISSUE_SEVERITY_MAP[(resource as TFhirOperationOutcome).issueList[0].severity]
@@ -1174,7 +1174,7 @@ begin
     result := isFatal;
 end;
 
-function TFhirOperationOutcome4.text: String;
+function TFhirOperationOutcome4B.text: String;
 var
   op : TFhirOperationOutcome;
 begin
@@ -1187,9 +1187,9 @@ begin
     result := '';
 end;
 
-{ TFHIRBundle4 }
+{ TFHIRBundle4B }
 
-procedure TFHIRBundle4.addEntries(bnd: TFHIRResourceV);
+procedure TFHIRBundle4B.addEntries(bnd: TFHIRResourceV);
 var
   b : TFHIRBundle;
 begin
@@ -1197,7 +1197,7 @@ begin
   bundle.entryList.AddAll(b.entryList);
 end;
 
-procedure TFHIRBundle4.addEntry(bnd: TFhirBundleEntryW; first: boolean);
+procedure TFHIRBundle4B.addEntry(bnd: TFhirBundleEntryW; first: boolean);
 begin
   if first then
     bundle.entryList.InsertItem(0, bnd.element.link as TFHIRBundleEntry)
@@ -1205,7 +1205,7 @@ begin
     bundle.entryList.AddItem(bnd.element.link as TFHIRBundleEntry);
 end;
 
-procedure TFHIRBundle4.addEntry(url: String; bnd: TFhirResourceV);
+procedure TFHIRBundle4B.addEntry(url: String; bnd: TFhirResourceV);
 var
   e : TFHIRBundleEntry;
 begin
@@ -1214,22 +1214,22 @@ begin
   e.resource := bnd as TFhirResource;
 end;
 
-function TFHIRBundle4.addEntry: TFhirBundleEntryW;
+function TFHIRBundle4B.addEntry: TFhirBundleEntryW;
 begin
-  result := TFhirBundleEntry4.create(bundle.entryList.append.link);
+  result := TFhirBundleEntry4B.create(bundle.entryList.append.link);
 end;
 
-function TFHIRBundle4.bundle: TFhirBundle;
+function TFHIRBundle4B.bundle: TFhirBundle;
 begin
   result := resource as TFHIRBundle;
 end;
 
-procedure TFHIRBundle4.clearLinks;
+procedure TFHIRBundle4B.clearLinks;
 begin
   bundle.link_List.Clear;
 end;
 
-function TFHIRBundle4.count(rtype: String): Integer;
+function TFHIRBundle4B.count(rtype: String): Integer;
 var
   be : TFhirBundleEntry;
 begin
@@ -1239,26 +1239,26 @@ begin
       inc(result);
 end;
 
-function TFHIRBundle4.entries: TFslList<TFhirBundleEntryW>;
+function TFHIRBundle4B.entries: TFslList<TFhirBundleEntryW>;
 var
   be : TFHIRBundleEntry;
 begin
   result := TFslList<TFhirBundleEntryW>.create;
   try
     for be in bundle.entryList do
-      result.Add(TFhirBundleEntry4.create(be.Link));
+      result.Add(TFhirBundleEntry4B.create(be.Link));
     result.Link;
   finally
     result.Free;
   end;
 end;
 
-function TFHIRBundle4.GetLanguage: String;
+function TFHIRBundle4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRBundle4.GetLastUpdated: TFslDateTime;
+function TFHIRBundle4B.GetLastUpdated: TFslDateTime;
 begin
   if bundle.meta <> nil then
     result := TFslDateTime.makeNull
@@ -1266,12 +1266,12 @@ begin
     result := bundle.meta.lastUpdated;
 end;
 
-function TFHIRBundle4.GetLink(rel: String): String;
+function TFHIRBundle4B.GetLink(rel: String): String;
 begin
   result := bundle.Links[rel];
 end;
 
-procedure TFHIRBundle4.listLinks(links: TFslStringDictionary);
+procedure TFHIRBundle4B.listLinks(links: TFslStringDictionary);
 var
   bl : TFhirBundleLink;
 begin
@@ -1280,7 +1280,7 @@ begin
     links.AddOrSetValue(bl.relation, bl.url);
 end;
 
-function TFHIRBundle4.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
+function TFHIRBundle4B.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
 var
   fu : String;
   i : integer;
@@ -1293,10 +1293,10 @@ begin
     end;
   bundle.entryList.Insert(0).resource := res.Link as TFHIRResource;
   bundle.entryList[0].fullurl := fu;
-  result := TFHIRBundleEntry4.Create(bundle.entryList[0].Link);
+  result := TFHIRBundleEntry4B.Create(bundle.entryList[0].Link);
 end;
 
-function TFHIRBundle4.next(bnd: TFHIRResourceV): String;
+function TFHIRBundle4B.next(bnd: TFHIRResourceV): String;
 var
   b : TFHIRBundle;
 begin
@@ -1304,44 +1304,44 @@ begin
   result := b.Links['next'];
 end;
 
-procedure TFHIRBundle4.SetLanguage(const Value: String);
+procedure TFHIRBundle4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFHIRBundle4.SetLastUpdated(Value: TFslDateTime);
+procedure TFHIRBundle4B.SetLastUpdated(Value: TFslDateTime);
 begin
   if bundle.meta = nil then
     bundle.meta := TFHIRMeta.Create;
   bundle.meta.lastUpdated := value;
 end;
 
-procedure TFHIRBundle4.SetLink(rel: String; const Value: String);
+procedure TFHIRBundle4B.SetLink(rel: String; const Value: String);
 begin
   bundle.Links[rel] := value;
 end;
 
-procedure TFHIRBundle4.SetTimestamp(Value: TFslDateTime);
+procedure TFHIRBundle4B.SetTimestamp(Value: TFslDateTime);
 begin
   bundle.timestamp := value;
 end;
 
-procedure TFHIRBundle4.SetTotal(Value: integer);
+procedure TFHIRBundle4B.SetTotal(Value: integer);
 begin
   bundle.total := inttostr(value);
 end;
 
-procedure TFHIRBundle4.settype(value: TBundleType);
+procedure TFHIRBundle4B.settype(value: TBundleType);
 begin
   bundle.type_ := MAP_TFHIRBundleType[value];
 end;
 
-function TFHIRBundle4.title: String;
+function TFHIRBundle4B.title: String;
 begin
   result := BUNDLE_TYPE_TITLE[bundle.type_];
 end;
 
-function TFHIRBundle4.GetTimestamp: TFslDateTime;
+function TFHIRBundle4B.GetTimestamp: TFslDateTime;
 begin
   if bundle.timestampElement <> nil then
     result := bundle.timestamp
@@ -1351,19 +1351,19 @@ begin
     result := TFslDateTime.makeNull;
 end;
 
-function TFHIRBundle4.gettotal: integer;
+function TFHIRBundle4B.gettotal: integer;
 begin
   result := StrToIntDef(bundle.total, -1);
 end;
 
-function TFHIRBundle4.gettype: TBundleType;
+function TFHIRBundle4B.gettype: TBundleType;
 begin
   result := MAP_TFHIRBundleTypeR[bundle.type_];
 end;
 
-{ TFHIROperationOutcomeIssue4 }
+{ TFHIROperationOutcomeIssue4B }
 
-function TFHIROperationOutcomeIssue4.display: String;
+function TFHIROperationOutcomeIssue4B.display: String;
 var
   i : TFHIROperationOutcomeIssue;
 begin
@@ -1373,35 +1373,35 @@ begin
     result := i.details.text;
 end;
 
-function TFHIROperationOutcomeIssue4.issue: TFHIROperationOutcomeIssue;
+function TFHIROperationOutcomeIssue4B.issue: TFHIROperationOutcomeIssue;
 begin
   result := Element as TFHIROperationOutcomeIssue;
 end;
 
-function TFHIROperationOutcomeIssue4.severity: TIssueSeverity;
+function TFHIROperationOutcomeIssue4B.severity: TIssueSeverity;
 begin
   result := ISSUE_SEVERITY_MAP[issue.severity];
 end;
 
-function TFHIROperationOutcomeIssue4.GetDiagnostics: String;
+function TFHIROperationOutcomeIssue4B.GetDiagnostics: String;
 begin
   result := issue.diagnostics;
 end;
 
-procedure TFHIROperationOutcomeIssue4.SetDiagnostics(Value: String);
+procedure TFHIROperationOutcomeIssue4B.SetDiagnostics(Value: String);
 begin
   issue.diagnostics := value;
 end;
 
 
-{ TFHIRCapabilityStatement4 }
+{ TFHIRCapabilityStatement4B }
 
-procedure TFHIRCapabilityStatement4.addInstantiates(url: String);
+procedure TFHIRCapabilityStatement4B.addInstantiates(url: String);
 begin
   statement.instantiatesList.Append.value := url;
 end;
 
-procedure TFHIRCapabilityStatement4.addOperation(name, url: String);
+procedure TFHIRCapabilityStatement4B.addOperation(name, url: String);
 var
   t : TFhirCapabilityStatementRestResourceOperation;
 begin
@@ -1410,13 +1410,13 @@ begin
   t.definition := url;
 end;
 
-function TFHIRCapabilityStatement4.addResource(code: String): TFhirCapabilityStatementRestResourceW;
+function TFHIRCapabilityStatement4B.addResource(code: String): TFhirCapabilityStatementRestResourceW;
 begin
-  result := TFhirCapabilityStatementRestResource4.create(statement.restList[0].resourceList.append.link);
+  result := TFhirCapabilityStatementRestResource4B.create(statement.restList[0].resourceList.append.link);
   result.code := code;
 end;
 
-procedure TFHIRCapabilityStatement4.addSmartExtensions(authorize, token, register, manage: String; caps : Array of String);
+procedure TFHIRCapabilityStatement4B.addSmartExtensions(authorize, token, register, manage: String; caps : Array of String);
 var
   c: TFHIRCoding;
   ext: TFhirExtension;
@@ -1448,7 +1448,7 @@ begin
   end;
 end;
 
-procedure TFHIRCapabilityStatement4.contact(kind: TContactType; value: String);
+procedure TFHIRCapabilityStatement4B.contact(kind: TContactType; value: String);
 var
   c : TFhirContactPoint;
   ct : TFhirConformanceContact;
@@ -1459,26 +1459,26 @@ begin
   c.value := 'http://healthintersections.com.au/';
 end;
 
-procedure TFHIRCapabilityStatement4.defineFeatures(features: TFslList<TFHIRFeature>);
+procedure TFHIRCapabilityStatement4B.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
 end;
 
-function TFHIRCapabilityStatement4.getURL: String;
+function TFHIRCapabilityStatement4B.getURL: String;
 begin
   result := statement.url;
 end;
 
-function TFHIRCapabilityStatement4.hasFormat(fmt: String): boolean;
+function TFHIRCapabilityStatement4B.hasFormat(fmt: String): boolean;
 begin
   result := statement.formatList.hasCode(fmt);
 end;
 
-function TFHIRCapabilityStatement4.hasRest: boolean;
+function TFHIRCapabilityStatement4B.hasRest: boolean;
 begin
   result := statement.restList.Count > 0;
 end;
 
-function TFHIRCapabilityStatement4.hasSecurity(system, code: String): boolean;
+function TFHIRCapabilityStatement4B.hasSecurity(system, code: String): boolean;
 var
   cs : TFHIRCapabilityStatement;
   cc : TFhirCodeableConcept;
@@ -1491,7 +1491,7 @@ begin
         exit(true);
 end;
 
-procedure TFHIRCapabilityStatement4.impl(url, desc: String);
+procedure TFHIRCapabilityStatement4B.impl(url, desc: String);
 begin
   if statement.implementation_ = nil then
     statement.implementation_ := TFhirCapabilityStatementImplementation.Create;
@@ -1499,7 +1499,7 @@ begin
   statement.implementation_.url := url;
 end;
 
-procedure TFHIRCapabilityStatement4.listSearchParams(name: String; list: TFslList<TFHIRSearchParamDefinitionW>);
+procedure TFHIRCapabilityStatement4B.listSearchParams(name: String; list: TFslList<TFHIRSearchParamDefinitionW>);
 var
   r : TFhirCapabilityStatementRest;
   rr : TFhirCapabilityStatementRestResource;
@@ -1511,21 +1511,21 @@ begin
     begin
       if name = 'All Types' then
         for sp in r.searchParamList do
-          list.Add(TFHIRSearchParamDefinition4.create(sp.Link))
+          list.Add(TFHIRSearchParamDefinition4B.create(sp.Link))
       else
       begin
         for rr in r.resourceList do
         begin
           if CODES_TFHIRResourceTypesEnum[rr.type_] = name then
             for sp in rr.searchParamList do
-              list.Add(TFHIRSearchParamDefinition4.create(sp.Link))
+              list.Add(TFHIRSearchParamDefinition4B.create(sp.Link))
         end;
       end;
     end;
   end;
 end;
 
-procedure TFHIRCapabilityStatement4.listTypes(interactions: TFHIRInteractions; names: TStrings);
+procedure TFHIRCapabilityStatement4B.listTypes(interactions: TFHIRInteractions; names: TStrings);
 var
   r : TFhirCapabilityStatementRest;
   it : TFhirCapabilityStatementRestInteraction;
@@ -1559,7 +1559,7 @@ begin
   end;
 end;
 
-procedure TFHIRCapabilityStatement4.readSmartExtension(var authorize, token, register: String);
+procedure TFHIRCapabilityStatement4B.readSmartExtension(var authorize, token, register: String);
 var
   ex1, ex2 : TFhirExtension;
 begin
@@ -1574,32 +1574,32 @@ begin
           register := TFHIRUri(ex2.value).value;
 end;
 
-procedure TFHIRCapabilityStatement4.SetUrl(Value: String);
+procedure TFHIRCapabilityStatement4B.SetUrl(Value: String);
 begin
   statement.url := value;
 end;
 
-function TFHIRCapabilityStatement4.getName : String;
+function TFHIRCapabilityStatement4B.getName : String;
 begin
   result := statement.Name;
 end;
 
-procedure TFHIRCapabilityStatement4.setName(value : String);
+procedure TFHIRCapabilityStatement4B.setName(value : String);
 begin
   statement.Name := value;
 end;
 
-function TFHIRCapabilityStatement4.getVersion : String;
+function TFHIRCapabilityStatement4B.getVersion : String;
 begin
   result := statement.Version;
 end;
 
-procedure TFHIRCapabilityStatement4.setVersion(value : String);
+procedure TFHIRCapabilityStatement4B.setVersion(value : String);
 begin
   statement.Version := value;
 end;
 
-procedure TFHIRCapabilityStatement4.software(name, version, release: String);
+procedure TFHIRCapabilityStatement4B.software(name, version, release: String);
 begin
   if statement.software = nil then
     statement.software := TFhirCapabilityStatementSoftware.Create;
@@ -1608,53 +1608,53 @@ begin
   statement.software.releaseDate := TFslDateTime.fromHL7(release);
 end;
 
-function TFHIRCapabilityStatement4.getDescription : String;
+function TFHIRCapabilityStatement4B.getDescription : String;
 begin
   result := statement.Description;
 end;
 
-function TFHIRCapabilityStatement4.GetFhirVersion: string;
+function TFHIRCapabilityStatement4B.GetFhirVersion: string;
 begin
   result := CODES_TFhirFHIRVersionEnum[statement.fhirVersion];
 end;
 
-procedure TFHIRCapabilityStatement4.setDescription(value : String);
+procedure TFHIRCapabilityStatement4B.setDescription(value : String);
 begin
   statement.Description := value;
 end;
 
-procedure TFHIRCapabilityStatement4.SetFhirVersion(Value: string);
+procedure TFHIRCapabilityStatement4B.SetFhirVersion(Value: string);
 begin
   statement.fhirVersion := TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, value));
 end;
 
-function TFHIRCapabilityStatement4.GetStatus: TPublicationStatus;
+function TFHIRCapabilityStatement4B.GetStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[statement.Status];
 end;
 
-procedure TFHIRCapabilityStatement4.SetStatus(Value: TPublicationStatus);
+procedure TFHIRCapabilityStatement4B.SetStatus(Value: TPublicationStatus);
 begin
   statement.Status := MAP_TPublicationStatus[value];
 end;
 
-procedure TFHIRCapabilityStatement4.fmt(mt: String);
+procedure TFHIRCapabilityStatement4B.fmt(mt: String);
 begin
   statement.formatList.Append.value := mt;
 end;
 
-function TFHIRCapabilityStatement4.GetDate: TFslDateTime;
+function TFHIRCapabilityStatement4B.GetDate: TFslDateTime;
 begin
   result := statement.Date;
 end;
 
-procedure TFHIRCapabilityStatement4.SetDate(Value: TFslDateTime);
+procedure TFHIRCapabilityStatement4B.SetDate(Value: TFslDateTime);
 begin
   statement.Date := value;
 end;
 
 
-procedure TFHIRCapabilityStatement4.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
+procedure TFHIRCapabilityStatement4B.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
 //var
 //  ext : TFhirExtension;
 begin
@@ -1685,12 +1685,12 @@ begin
 //  ext.addExtension('activity', iv);
 end;
 
-function TFHIRCapabilityStatement4.statement: TFhirCapabilityStatement;
+function TFHIRCapabilityStatement4B.statement: TFhirCapabilityStatement;
 begin
   result := FRes as TFHIRCapabilityStatement;
 end;
 
-function TFHIRCapabilityStatement4.supportsType(name: String; interaction: TFHIRInteraction): boolean;
+function TFHIRCapabilityStatement4B.supportsType(name: String; interaction: TFHIRInteraction): boolean;
 var
   r : TFhirCapabilityStatementRest;
   it : TFhirCapabilityStatementRestInteraction;
@@ -1733,7 +1733,7 @@ begin
   end;
 end;
 
-function TFHIRCapabilityStatement4.getKind: TCapabilityStatementKind;
+function TFHIRCapabilityStatement4B.getKind: TCapabilityStatementKind;
 begin
   case statement.kind of
     CapabilityStatementKindInstance : result := cskInstance;
@@ -1744,12 +1744,12 @@ begin
   end;
 end;
 
-function TFHIRCapabilityStatement4.GetLanguage: String;
+function TFHIRCapabilityStatement4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-procedure TFHIRCapabilityStatement4.setKind(Value: TCapabilityStatementKind);
+procedure TFHIRCapabilityStatement4B.setKind(Value: TCapabilityStatementKind);
 begin
   case value of
     cskInstance : statement.kind := CapabilityStatementKindInstance;
@@ -1760,51 +1760,51 @@ begin
   end;
 end;
 
-procedure TFHIRCapabilityStatement4.SetLanguage(const Value: String);
+procedure TFHIRCapabilityStatement4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFHIRCapabilityStatement4.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
+function TFHIRCapabilityStatement4B.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
 begin
   result := csauNull;
 end;
 
-procedure TFHIRCapabilityStatement4.setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown);
+procedure TFHIRCapabilityStatement4B.setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown);
 begin
 end;
 
 
-{ TFhirParametersParameter4 }
+{ TFhirParametersParameter4B }
 
-function TFhirParametersParameter4.addParam(name: String): TFhirParametersParameterW;
+function TFhirParametersParameter4B.addParam(name: String): TFhirParametersParameterW;
 begin
-  result := TFhirParametersParameter4.Create(parameter.partList.Append.link);
-  TFhirParametersParameter4(result).parameter.name := name;
+  result := TFhirParametersParameter4B.Create(parameter.partList.Append.link);
+  TFhirParametersParameter4B(result).parameter.name := name;
   PartList.Add(result);
 end;
 
-procedure TFhirParametersParameter4.addParam(name: String; value: TFHIRObject);
+procedure TFhirParametersParameter4B.addParam(name: String; value: TFHIRObject);
 begin
   parameter.AddParameter(name).value := value as TFHIRDataType;
 end;
 
-procedure TFhirParametersParameter4.addParamBool(name: String; value: boolean);
+procedure TFhirParametersParameter4B.addParamBool(name: String; value: boolean);
 begin
   parameter.AddParameter(name).value := TFHIRBoolean.Create(value);
 end;
 
-procedure TFhirParametersParameter4.addParamCode(name, value: string);
+procedure TFhirParametersParameter4B.addParamCode(name, value: string);
 begin
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
 end;
 
-procedure TFhirParametersParameter4.addParamStr(name, value: string);
+procedure TFhirParametersParameter4B.addParamStr(name, value: string);
 begin
   parameter.AddParameter(name).value := TFHIRString.Create(value);
 end;
 
-function TFhirParametersParameter4.GetParameterParameter(name: String): TFhirParametersParameterW;
+function TFhirParametersParameter4B.GetParameterParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
   s : String;
@@ -1821,12 +1821,12 @@ begin
   s := result.asJson;
 end;
 
-function TFhirParametersParameter4.GetResource: TFHIRResourceV;
+function TFhirParametersParameter4B.GetResource: TFHIRResourceV;
 begin
   result := parameter.resource;
 end;
 
-function TFhirParametersParameter4.GetResourceParameter(name: String): TFHIRResourceV;
+function TFhirParametersParameter4B.GetResourceParameter(name: String): TFHIRResourceV;
 var
   t : TFhirParametersParameterW;
 begin
@@ -1835,10 +1835,10 @@ begin
   result := nil;
   for t in FList do
     if t.name = name then
-      exit(TFhirParametersParameter4(t).parameter.resource);
+      exit(TFhirParametersParameter4B(t).parameter.resource);
 end;
 
-function TFhirParametersParameter4.GetStringParameter(name: String): String;
+function TFhirParametersParameter4B.GetStringParameter(name: String): String;
 var
   t : TFhirParametersParameterW;
 begin
@@ -1847,54 +1847,54 @@ begin
   result := '';
   for t in FList do
     if t.name = name then
-      exit(TFhirParametersParameter4(t).parameter.value.primitiveValue);
+      exit(TFhirParametersParameter4B(t).parameter.value.primitiveValue);
 end;
 
-function TFhirParametersParameter4.GetValue: TFHIRObject;
+function TFhirParametersParameter4B.GetValue: TFHIRObject;
 begin
   result := parameter.value;
 end;
 
-function TFhirParametersParameter4.hasResource: boolean;
+function TFhirParametersParameter4B.hasResource: boolean;
 begin
   result := parameter.resource <> nil;
 end;
 
-function TFhirParametersParameter4.hasValue: boolean;
+function TFhirParametersParameter4B.hasValue: boolean;
 begin
   result := parameter.value <> nil;
 end;
 
-function TFhirParametersParameter4.name: String;
+function TFhirParametersParameter4B.name: String;
 begin
   result := parameter.name;
 end;
 
-function TFhirParametersParameter4.parameter: TFhirParametersParameter;
+function TFhirParametersParameter4B.parameter: TFhirParametersParameter;
 begin
   result := Element as TFhirParametersParameter;
 end;
 
-procedure TFhirParametersParameter4.populateList;
+procedure TFhirParametersParameter4B.populateList;
 var
   t : TFhirParametersParameter;
 begin
   inherited;
   for t in parameter.partList do
-    FList.Add(TFhirParametersParameter4.Create(t.Link));
+    FList.Add(TFhirParametersParameter4B.Create(t.Link));
 end;
 
-procedure TFhirParametersParameter4.SetResource(Value: TFHIRResourceV);
+procedure TFhirParametersParameter4B.SetResource(Value: TFHIRResourceV);
 begin
   parameter.resource := value as TFhirResource;
 end;
 
-procedure TFhirParametersParameter4.SetValue(Value: TFHIRObject);
+procedure TFhirParametersParameter4B.SetValue(Value: TFHIRObject);
 begin
   parameter.value := value as TFHIRDataType;
 end;
 
-function TFhirParametersParameter4.valueString: String;
+function TFhirParametersParameter4B.valueString: String;
 begin
   if parameter.value = nil then
     result := ''
@@ -1902,46 +1902,46 @@ begin
     result := parameter.value.primitiveValue;
 end;
 
-{ TFHIRParameters4 }
+{ TFHIRParameters4B }
 
-function TFhirParameters4.addParam(name: String): TFhirParametersParameterW;
+function TFhirParameters4B.addParam(name: String): TFhirParametersParameterW;
 begin
-  result := TFhirParametersParameter4.Create(parameter.parameterList.Append.link);
-  TFhirParametersParameter4(result).parameter.name := name;
+  result := TFhirParametersParameter4B.Create(parameter.parameterList.Append.link);
+  TFhirParametersParameter4B(result).parameter.name := name;
   ParameterList.Add(result);
 end;
 
-procedure TFhirParameters4.addParam(name: String; value: TFHIRObject);
+procedure TFhirParameters4B.addParam(name: String; value: TFHIRObject);
 begin
   parameter.AddParameter(name).value := value as TFHIRDataType;
 end;
 
-procedure TFhirParameters4.addParamBool(name: String; value: boolean);
+procedure TFhirParameters4B.addParamBool(name: String; value: boolean);
 begin
   parameter.AddParameter(name).value := TFHIRBoolean.Create(value);
 end;
 
-procedure TFhirParameters4.addParamCode(name, value: string);
+procedure TFhirParameters4B.addParamCode(name, value: string);
 begin
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
 end;
 
-procedure TFhirParameters4.addParamStr(name, value: string);
+procedure TFhirParameters4B.addParamStr(name, value: string);
 begin
   parameter.AddParameter(name).value := TFHIRString.Create(value);
 end;
 
-function TFHIRParameters4.bool(name: String): boolean;
+function TFHIRParameters4B.bool(name: String): boolean;
 begin
   result := parameter.bool[name];
 end;
 
-function TFHIRParameters4.GetLanguage: String;
+function TFHIRParameters4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRParameters4.GetParameter(name: String): TFhirParametersParameterW;
+function TFHIRParameters4B.GetParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
 begin
@@ -1953,12 +1953,12 @@ begin
       exit(t);
 end;
 
-function TFHIRParameters4.has(name: String): boolean;
+function TFHIRParameters4B.has(name: String): boolean;
 begin
   result := parameter.hasParameter(name);
 end;
 
-function TFHIRParameters4.obj(name: String): TFHIRObject;
+function TFHIRParameters4B.obj(name: String): TFHIRObject;
 var
   p : TFhirParametersParameter;
 begin
@@ -1974,47 +1974,47 @@ begin
     result := nil;
 end;
 
-function TFHIRParameters4.parameter: TFhirParameters;
+function TFHIRParameters4B.parameter: TFhirParameters;
 begin
   result := Resource as TFhirParameters;
 end;
 
-procedure TFHIRParameters4.populateList;
+procedure TFHIRParameters4B.populateList;
 var
   t : TFhirParametersParameter;
 begin
   inherited;
   for t in parameter.parameterList do
-    FList.Add(TFhirParametersParameter4.Create(t.Link));
+    FList.Add(TFhirParametersParameter4B.Create(t.Link));
 end;
 
-procedure TFHIRParameters4.SetLanguage(const Value: String);
+procedure TFHIRParameters4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFHIRParameters4.str(name: String): String;
+function TFHIRParameters4B.str(name: String): String;
 begin
   result := parameter.str[name];
 end;
 
-{ TFHIRStructureDefinition4 }
+{ TFHIRStructureDefinition4B }
 
-function TFHIRStructureDefinition4.elements: TFslList<TFHIRElementDefinitionW>;
+function TFHIRStructureDefinition4B.elements: TFslList<TFHIRElementDefinitionW>;
 var
   ed : TFhirElementDefinition;
 begin
   result := TFslList<TFHIRElementDefinitionW>.create;
   try
     for ed in sd.snapshot.elementList do
-      result.Add(TFhirElementDefinition4.create(ed.Link));
+      result.Add(TFhirElementDefinition4B.create(ed.Link));
     result.link;
   finally
     result.Free;
   end;
 end;
 
-function TFHIRStructureDefinition4.getDefinition(id: String; source: TElementDefinitionSourceOption): TFHIRElementDefinitionW;
+function TFHIRStructureDefinition4B.getDefinition(id: String; source: TElementDefinitionSourceOption): TFHIRElementDefinitionW;
 var
   ed : TFhirElementDefinition;
 begin
@@ -2022,20 +2022,20 @@ begin
   if (source in [edsSNAPSHOT, edsEITHER]) and (sd.snapshot <> nil) then
     for ed in sd.snapshot.elementList do
       if ed.id = id then
-        exit(TFHIRElementDefinition4.Create(ed.Link));
+        exit(TFHIRElementDefinition4B.Create(ed.Link));
 
   if (source in [edsDIFF, edsEITHER]) and (sd.differential <> nil) then
     for ed in sd.differential.elementList do
       if ed.id = id then
-        exit(TFHIRElementDefinition4.Create(ed.Link));
+        exit(TFHIRElementDefinition4B.Create(ed.Link));
 end;
 
-function TFHIRStructureDefinition4.GetLanguage: String;
+function TFHIRStructureDefinition4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRStructureDefinition4.kind: TStructureDefinitionKind;
+function TFHIRStructureDefinition4B.kind: TStructureDefinitionKind;
 begin
   case sd.kind of
     StructureDefinitionKindPrimitiveType : result := sdkPrimitive;
@@ -2051,56 +2051,56 @@ begin
   end;
 end;
 
-function TFHIRStructureDefinition4.name: String;
+function TFHIRStructureDefinition4B.name: String;
 begin
   result := sd.name;
 end;
 
-function TFHIRStructureDefinition4.sd: TFhirStructureDefinition;
+function TFHIRStructureDefinition4B.sd: TFhirStructureDefinition;
 begin
   result := resource as TFhirStructureDefinition;
 end;
 
-procedure TFHIRStructureDefinition4.SetLanguage(const Value: String);
+procedure TFHIRStructureDefinition4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFHIRStructureDefinition4.type_: String;
+function TFHIRStructureDefinition4B.type_: String;
 begin
   result := sd.type_;
 end;
 
-function TFHIRStructureDefinition4.url: String;
+function TFHIRStructureDefinition4B.url: String;
 begin
   result := sd.url;
 end;
 
-{ TFHIRSearchParamDefinition4 }
+{ TFHIRSearchParamDefinition4B }
 
-function TFHIRSearchParamDefinition4.documentation: String;
+function TFHIRSearchParamDefinition4B.documentation: String;
 begin
   result := param.documentation;
 end;
 
-function TFHIRSearchParamDefinition4.name: String;
+function TFHIRSearchParamDefinition4B.name: String;
 begin
   result := param.name;
 end;
 
-function TFHIRSearchParamDefinition4.param: TFhirCapabilityStatementRestResourceSearchParam;
+function TFHIRSearchParamDefinition4B.param: TFhirCapabilityStatementRestResourceSearchParam;
 begin
   result := FElement as TFhirCapabilityStatementRestResourceSearchParam;
 end;
 
-function TFHIRSearchParamDefinition4.type_: TFHIRSearchParamType;
+function TFHIRSearchParamDefinition4B.type_: TFHIRSearchParamType;
 begin
   result := MAP_SearchParamType[param.type_];
 end;
 
-{ TFhirElementDefinition4 }
+{ TFhirElementDefinition4B }
 
-function TFhirElementDefinition4.binding: TElementDefinitionBinding;
+function TFhirElementDefinition4B.binding: TElementDefinitionBinding;
 var
   b : TFhirElementDefinitionBinding;
 begin
@@ -2111,27 +2111,27 @@ begin
     result := MAP_ELEMENT_DEFINITION_BINDING[b.strength];
 end;
 
-function TFhirElementDefinition4.defn: String;
+function TFhirElementDefinition4B.defn: String;
 begin
   result := edefn.definition;
 end;
 
-function TFhirElementDefinition4.edefn: TFhirElementDefinition;
+function TFhirElementDefinition4B.edefn: TFhirElementDefinition;
 begin
   result := element as TFhirElementDefinition;
 end;
 
-function TFhirElementDefinition4.explicitTypeName: String;
+function TFhirElementDefinition4B.explicitTypeName: String;
 begin
   result := edefn.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name');
 end;
 
-function TFhirElementDefinition4.isSummary: boolean;
+function TFhirElementDefinition4B.isSummary: boolean;
 begin
   result := edefn.isSummary;
 end;
 
-function TFhirElementDefinition4.max: integer;
+function TFhirElementDefinition4B.max: integer;
 begin
   if edefn.max = '*' then
     result := MaxInt
@@ -2139,17 +2139,17 @@ begin
     result := StrToInt(edefn.max);
 end;
 
-function TFhirElementDefinition4.min: integer;
+function TFhirElementDefinition4B.min: integer;
 begin
   result := StrToInt(edefn.min);
 end;
 
-function TFhirElementDefinition4.path: String;
+function TFhirElementDefinition4B.path: String;
 begin
   result := edefn.path;
 end;
 
-function TFhirElementDefinition4.typeList: TArray<String>;
+function TFhirElementDefinition4B.typeList: TArray<String>;
 var
   ed : TFhirElementDefinition;
   i : integer;
@@ -2160,7 +2160,7 @@ begin
     result[i] := ed.type_List[i].code;
 end;
 
-function TFhirElementDefinition4.types: String;
+function TFhirElementDefinition4B.types: String;
 var
   t : TFhirElementDefinitionType;
 begin
@@ -2173,7 +2173,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinition4.valueSet: String;
+function TFhirElementDefinition4B.valueSet: String;
 var
   b : TFhirElementDefinitionBinding;
 begin
@@ -2184,14 +2184,14 @@ begin
     result := '';
 end;
 
-{ TFHIRBundleEntry4 }
+{ TFHIRBundleEntry4B }
 
-function TFHIRBundleEntry4.entry: TFhirBundleEntry;
+function TFHIRBundleEntry4B.entry: TFhirBundleEntry;
 begin
   result := element as TFhirBundleEntry;
 end;
 
-function TFHIRBundleEntry4.getRequestMethod: String;
+function TFHIRBundleEntry4B.getRequestMethod: String;
 begin
   if entry.request = nil then
     result := ''
@@ -2199,7 +2199,7 @@ begin
     result := CODES_TFhirHttpVerbEnum[entry.request.method];
 end;
 
-function TFHIRBundleEntry4.getRequestUrl: String;
+function TFHIRBundleEntry4B.getRequestUrl: String;
 begin
   if entry.request = nil then
     result := ''
@@ -2207,12 +2207,12 @@ begin
     result :=  entry.request.url;
 end;
 
-function TFHIRBundleEntry4.getResource: TFHIRResourceV;
+function TFHIRBundleEntry4B.getResource: TFHIRResourceV;
 begin
   result := entry.resource;
 end;
 
-function TFHIRBundleEntry4.GetResponseDate: TFslDateTime;
+function TFHIRBundleEntry4B.GetResponseDate: TFslDateTime;
 begin
   if entry.response = nil then
     result := TFslDateTime.makeNull
@@ -2220,7 +2220,7 @@ begin
     result := entry.response.lastModified;
 end;
 
-function TFHIRBundleEntry4.GetResponseStatus: String;
+function TFHIRBundleEntry4B.GetResponseStatus: String;
 begin
   if entry.response = nil then
     result := ''
@@ -2228,7 +2228,7 @@ begin
     result := entry.response.status;
 end;
 
-function TFHIRBundleEntry4.getSearchMode: TFHIRBundleEntrySearchMode;
+function TFHIRBundleEntry4B.getSearchMode: TFHIRBundleEntrySearchMode;
 begin
   if entry.search = nil then
     result := smUnknown
@@ -2236,7 +2236,7 @@ begin
     result := MAP_SEARCH_MODE[entry.search.mode];
 end;
 
-function TFHIRBundleEntry4.getSearchMpiMatch: String;
+function TFHIRBundleEntry4B.getSearchMpiMatch: String;
 begin
   if entry.search = nil then
     result := ''
@@ -2244,7 +2244,7 @@ begin
     result := entry.search.getExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match')
 end;
 
-function TFHIRBundleEntry4.getSearchScore: String;
+function TFHIRBundleEntry4B.getSearchScore: String;
 begin
   if entry.search = nil then
     result := ''
@@ -2252,81 +2252,81 @@ begin
     result := entry.search.score;
 end;
 
-function TFHIRBundleEntry4.getURL: String;
+function TFHIRBundleEntry4B.getURL: String;
 begin
   result := entry.fullUrl;
 end;
 
-procedure TFHIRBundleEntry4.SetRequestMethod(Value: String);
+procedure TFHIRBundleEntry4B.SetRequestMethod(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFHIRBundleEntryRequest.create;
   entry.request.method := TFhirHttpVerbEnum(ord(StringArrayIndexOfSensitive(CODES_TFhirHttpVerbEnum, value)));
 end;
 
-procedure TFHIRBundleEntry4.SetRequestUrl(Value: String);
+procedure TFHIRBundleEntry4B.SetRequestUrl(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFHIRBundleEntryRequest.create;
   entry.request.url := value;
 end;
 
-procedure TFHIRBundleEntry4.SetResource(Value: TFHIRResourceV);
+procedure TFHIRBundleEntry4B.SetResource(Value: TFHIRResourceV);
 begin
   entry.resource := value as TFHIRResource;
 end;
 
-procedure TFHIRBundleEntry4.SetResponseDate(Value: TFslDateTime);
+procedure TFHIRBundleEntry4B.SetResponseDate(Value: TFslDateTime);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.lastModified := value;
 end;
 
-procedure TFHIRBundleEntry4.SetResponseStatus(Value: String);
+procedure TFHIRBundleEntry4B.SetResponseStatus(Value: String);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.status := value;
 end;
 
-procedure TFHIRBundleEntry4.SetSearchMode(Value: TFHIRBundleEntrySearchMode);
+procedure TFHIRBundleEntry4B.SetSearchMode(Value: TFHIRBundleEntrySearchMode);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
   entry.search.mode := MAP_SEARCH_MODE2[value];
 end;
 
-procedure TFHIRBundleEntry4.SetSearchMpiMatch(Value: String);
+procedure TFHIRBundleEntry4B.SetSearchMpiMatch(Value: String);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
   entry.search.setExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match', value)
 end;
 
-procedure TFHIRBundleEntry4.SetSearchScore(Value: String);
+procedure TFHIRBundleEntry4B.SetSearchScore(Value: String);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
   entry.search.score := value;
 end;
 
-procedure TFHIRBundleEntry4.SetUrl(Value: String);
+procedure TFHIRBundleEntry4B.SetUrl(Value: String);
 begin
   entry.fullUrl := value;
 end;
 
-function TFHIRBundleEntry4.GetLink(rel: String): String;
+function TFHIRBundleEntry4B.GetLink(rel: String): String;
 begin
   result := entry.Links[rel];
 end;
 
-procedure TFHIRBundleEntry4.SetLink(rel: String; const Value: String);
+procedure TFHIRBundleEntry4B.SetLink(rel: String; const Value: String);
 begin
   entry.Links[rel] := value;
 end;
 
-function TFHIRBundleEntry4.GetrequestIfNoneExist: String;
+function TFHIRBundleEntry4B.GetrequestIfNoneExist: String;
 begin
   if entry.request = nil then
     result := ''
@@ -2334,14 +2334,14 @@ begin
     result := entry.request.ifNoneExist;
 end;
 
-procedure TFHIRBundleEntry4.SetrequestIfNoneExist(Value: String);
+procedure TFHIRBundleEntry4B.SetrequestIfNoneExist(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
   entry.request.ifNoneExist := value;
 end;
 
-function TFHIRBundleEntry4.GetrequestIfMatch: String;
+function TFHIRBundleEntry4B.GetrequestIfMatch: String;
 begin
   if entry.request = nil then
     result := ''
@@ -2349,7 +2349,7 @@ begin
     result := entry.request.IfMatch;
 end;
 
-function TFHIRBundleEntry4.GetrequestIfModifiedSince: TFslDateTime;
+function TFHIRBundleEntry4B.GetrequestIfModifiedSince: TFslDateTime;
 begin
   if entry.request = nil then
     result := TFslDateTime.makeNull
@@ -2357,21 +2357,21 @@ begin
     result := entry.request.ifModifiedSince;
 end;
 
-procedure TFHIRBundleEntry4.SetrequestIfMatch(Value: String);
+procedure TFHIRBundleEntry4B.SetrequestIfMatch(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
   entry.request.IfMatch := value;
 end;
 
-procedure TFHIRBundleEntry4.SetrequestIfModifiedSince(Value: TFslDateTime);
+procedure TFHIRBundleEntry4B.SetrequestIfModifiedSince(Value: TFslDateTime);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
   entry.request.ifModifiedSince := value;
 end;
 
-function TFHIRBundleEntry4.GetrequestIfNoneMatch: String;
+function TFHIRBundleEntry4B.GetrequestIfNoneMatch: String;
 begin
   if entry.request = nil then
     result := ''
@@ -2379,14 +2379,14 @@ begin
     result := entry.request.IfNoneMatch;
 end;
 
-procedure TFHIRBundleEntry4.SetrequestIfNoneMatch(Value: String);
+procedure TFHIRBundleEntry4B.SetrequestIfNoneMatch(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
   entry.request.IfNoneMatch := value;
 end;
 
-function TFHIRBundleEntry4.GetResponseETag: string;
+function TFHIRBundleEntry4B.GetResponseETag: string;
 begin
   if entry.response = nil then
     result := ''
@@ -2394,14 +2394,14 @@ begin
     result := entry.response.etag;
 end;
 
-procedure TFHIRBundleEntry4.SetResponseETag(Value: string);
+procedure TFHIRBundleEntry4B.SetResponseETag(Value: string);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.ETag := value;
 end;
 
-function TFHIRBundleEntry4.GetResponseLocation: string;
+function TFHIRBundleEntry4B.GetResponseLocation: string;
 begin
   if entry.response = nil then
     result := ''
@@ -2409,30 +2409,30 @@ begin
     result := entry.response.Location;
 end;
 
-procedure TFHIRBundleEntry4.SetResponseLocation(Value: string);
+procedure TFHIRBundleEntry4B.SetResponseLocation(Value: string);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.Location := value;
 end;
 
-{ TFHIRValueSet4 }
+{ TFHIRValueSet4B }
 
-function TFHIRValueSet4.addInclude: TFhirValueSetComposeIncludeW;
+function TFHIRValueSet4B.addInclude: TFhirValueSetComposeIncludeW;
 begin
   if vs.compose = nil then
     vs.compose := TFhirValueSetCompose.Create;
-  result := TFhirValueSetComposeInclude4.Create(vs.compose.includeList.Append.Link);
+  result := TFhirValueSetComposeInclude4B.Create(vs.compose.includeList.Append.Link);
 end;
 
-function TFHIRValueSet4.checkCompose(place, role: String): boolean;
+function TFHIRValueSet4B.checkCompose(place, role: String): boolean;
 begin
   result := vs.compose <> nil;
   if result then
     vs.compose.checkNoModifiers(place, role, []);
 end;
 
-procedure TFHIRValueSet4.clearDefinition;
+procedure TFHIRValueSet4B.clearDefinition;
 begin
   vs.purpose := '';
   vs.compose := nil;
@@ -2444,13 +2444,13 @@ begin
   vs.text := nil;
 end;
 
-destructor TFHIRValueSet4.Destroy;
+destructor TFHIRValueSet4B.Destroy;
 begin
   FExp.Free;
   inherited;
 end;
 
-function TFHIRValueSet4.excludes: TFslList<TFhirValueSetComposeIncludeW>;
+function TFHIRValueSet4B.excludes: TFslList<TFhirValueSetComposeIncludeW>;
 var
   c : TFhirValueSetComposeInclude;
 begin
@@ -2460,18 +2460,18 @@ begin
   begin
     result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.excludeList.Count);
     for c in vs.compose.excludeList do
-      result.Add(TFhirValueSetComposeInclude4.Create(c.Link));
+      result.Add(TFhirValueSetComposeInclude4B.Create(c.Link));
   end;
 end;
 
-function TFHIRValueSet4.expansion: TFhirValueSetExpansionW;
+function TFHIRValueSet4B.expansion: TFhirValueSetExpansionW;
 begin
   if (FExp = nil) and (vs.expansion <> nil) then
-    FExp := TFhirValueSetExpansion4.create(vs.expansion.Link);
+    FExp := TFhirValueSetExpansion4B.create(vs.expansion.Link);
   result := FExp;
 end;
 
-function TFHIRValueSet4.forceExpansion: TFhirValueSetExpansionW;
+function TFHIRValueSet4B.forceExpansion: TFhirValueSetExpansionW;
 begin
   if (vs.expansion = nil) then
     vs.expansion := TFhirValueSetExpansion.create;
@@ -2482,32 +2482,32 @@ begin
   result := expansion;
 end;
 
-function TFHIRValueSet4.getContext: String;
+function TFHIRValueSet4B.getContext: String;
 begin
   result := vs.context;
 end;
 
-function TFHIRValueSet4.GetDate: TFslDateTime;
+function TFHIRValueSet4B.GetDate: TFslDateTime;
 begin
   result := vs.date;
 end;
 
-function TFHIRValueSet4.hasExpansion: boolean;
+function TFHIRValueSet4B.hasExpansion: boolean;
 begin
   result := vs.expansion <> nil;
 end;
 
-function TFHIRValueSet4.hasInlineCS: boolean;
+function TFHIRValueSet4B.hasInlineCS: boolean;
 begin
   result := false;
 end;
 
-function TFHIRValueSet4.imports: TArray<String>;
+function TFHIRValueSet4B.imports: TArray<String>;
 begin
   SetLength(result, 0);
 end;
 
-function TFHIRValueSet4.includes: TFslList<TFhirValueSetComposeIncludeW>;
+function TFHIRValueSet4B.includes: TFslList<TFhirValueSetComposeIncludeW>;
 var
   c : TFhirValueSetComposeInclude;
 begin
@@ -2517,167 +2517,167 @@ begin
   begin
     result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.includeList.Count);
     for c in vs.compose.includeList do
-      result.Add(TFhirValueSetComposeInclude4.Create(c.Link));
+      result.Add(TFhirValueSetComposeInclude4B.Create(c.Link));
   end;
 end;
 
-function TFHIRValueSet4.inlineCS: TFHIRValueSetCodeSystemW;
+function TFHIRValueSet4B.inlineCS: TFHIRValueSetCodeSystemW;
 begin
   result := nil;
 end;
 
-procedure TFHIRValueSet4.SetDate(Value: TFslDateTime);
+procedure TFHIRValueSet4B.SetDate(Value: TFslDateTime);
 begin
   vs.date := value;
 end;
 
-procedure TFHIRValueSet4.setUrl(value: String);
+procedure TFHIRValueSet4B.setUrl(value: String);
 begin
   vs.url := value;
 end;
 
-function TFHIRValueSet4.getURL: String;
+function TFHIRValueSet4B.getURL: String;
 begin
   result := vs.url;
 end;
 
-procedure TFHIRValueSet4.setName(value: String);
+procedure TFHIRValueSet4B.setName(value: String);
 begin
   vs.Name := value;
 end;
 
-procedure TFHIRValueSet4.SetPublisher(Value: String);
+procedure TFHIRValueSet4B.SetPublisher(Value: String);
 begin
   vs.publisher := value;
 end;
 
-procedure TFHIRValueSet4.SetStatus(Value: TPublicationStatus);
+procedure TFHIRValueSet4B.SetStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[value];
 end;
 
-function TFHIRValueSet4.getName: String;
+function TFHIRValueSet4B.getName: String;
 begin
   result := vs.Name;
 end;
 
-function TFHIRValueSet4.GetPublisher: String;
+function TFHIRValueSet4B.GetPublisher: String;
 begin
   result := vs.publisher;
 end;
 
-function TFHIRValueSet4.GetStatus: TPublicationStatus;
+function TFHIRValueSet4B.GetStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[vs.status];
 end;
 
-procedure TFHIRValueSet4.setDescription(value: String);
+procedure TFHIRValueSet4B.setDescription(value: String);
 begin
   vs.Description := value;
 end;
 
-procedure TFHIRValueSet4.SetLanguage(const Value: String);
+procedure TFHIRValueSet4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFHIRValueSet4.getDescription: String;
+function TFHIRValueSet4B.getDescription: String;
 begin
   result := vs.Description;
 end;
 
-function TFHIRValueSet4.GetLanguage: String;
+function TFHIRValueSet4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-procedure TFHIRValueSet4.setVersion(value: String);
+procedure TFHIRValueSet4B.setVersion(value: String);
 begin
   vs.Version := value;
 end;
 
-function TFHIRValueSet4.source: String;
+function TFHIRValueSet4B.source: String;
 begin
   result := vs.source;
 end;
 
-function TFHIRValueSet4.getVersion: String;
+function TFHIRValueSet4B.getVersion: String;
 begin
   result := vs.Version;
 end;
 
-function TFHIRValueSet4.vs: TFhirValueSet;
+function TFHIRValueSet4B.vs: TFhirValueSet;
 begin
   result := Resource as TFHIRValueSet;
 end;
 
 
-{ TFhirValueSetComposeInclude4 }
+{ TFhirValueSetComposeInclude4B }
 
-function TFhirValueSetComposeInclude4.addConcept: TFhirValueSetComposeIncludeConceptW;
+function TFhirValueSetComposeInclude4B.addConcept: TFhirValueSetComposeIncludeConceptW;
 begin
-  result := TFhirValueSetComposeIncludeConcept4.Create((Element as TFhirValueSetComposeInclude).ConceptList.Append.Link);
+  result := TFhirValueSetComposeIncludeConcept4B.Create((Element as TFhirValueSetComposeInclude).ConceptList.Append.Link);
 end;
 
-function TFhirValueSetComposeInclude4.addFilter: TFhirValueSetComposeIncludeFilterW;
+function TFhirValueSetComposeInclude4B.addFilter: TFhirValueSetComposeIncludeFilterW;
 begin
-  result := TFhirValueSetComposeIncludeFilter4.Create((Element as TFhirValueSetComposeInclude).FilterList.Append.Link);
+  result := TFhirValueSetComposeIncludeFilter4B.Create((Element as TFhirValueSetComposeInclude).FilterList.Append.Link);
 end;
 
-function TFhirValueSetComposeInclude4.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
+function TFhirValueSetComposeInclude4B.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
 var
   i : TFhirValueSetComposeIncludeConcept;
 begin
   result := TFslList<TFhirValueSetComposeIncludeConceptW>.create((Element as TFhirValueSetComposeInclude).ConceptList.Count);
   for i in (Element as TFhirValueSetComposeInclude).ConceptList do
-    result.Add(TFhirValueSetComposeIncludeConcept4.Create(i.Link));
+    result.Add(TFhirValueSetComposeIncludeConcept4B.Create(i.Link));
 end;
 
-function TFhirValueSetComposeInclude4.filterCount: integer;
+function TFhirValueSetComposeInclude4B.filterCount: integer;
 begin
   result := (Element as TFhirValueSetComposeInclude).filterList.Count;
 end;
 
-function TFhirValueSetComposeInclude4.filters: TFslList<TFhirValueSetComposeIncludeFilterW>;
+function TFhirValueSetComposeInclude4B.filters: TFslList<TFhirValueSetComposeIncludeFilterW>;
 var
   i : TFhirValueSetComposeIncludeFilter;
 begin
   result := TFslList<TFhirValueSetComposeIncludeFilterW>.create((Element as TFhirValueSetComposeInclude).filterList.Count);
   for i in (Element as TFhirValueSetComposeInclude).filterList do
-    result.Add(TFhirValueSetComposeIncludeFilter4.Create(i.Link));
+    result.Add(TFhirValueSetComposeIncludeFilter4B.Create(i.Link));
 end;
 
-function TFhirValueSetComposeInclude4.hasConcepts: boolean;
+function TFhirValueSetComposeInclude4B.hasConcepts: boolean;
 begin
   result := (Element as TFhirValueSetComposeInclude).conceptList.Count > 0;
 end;
 
-function TFhirValueSetComposeInclude4.hasFilters: boolean;
+function TFhirValueSetComposeInclude4B.hasFilters: boolean;
 begin
   result := (Element as TFhirValueSetComposeInclude).filterList.Count > 0;
 end;
 
-function TFhirValueSetComposeInclude4.hasValueSets: boolean;
+function TFhirValueSetComposeInclude4B.hasValueSets: boolean;
 begin
   result := (Element as TFhirValueSetComposeInclude).valueSetList.Count > 0;
 end;
 
-procedure TFhirValueSetComposeInclude4.SetSystem(Value: String);
+procedure TFhirValueSetComposeInclude4B.SetSystem(Value: String);
 begin
   (Element as TFhirValueSetComposeInclude).system := value;
 end;
 
-procedure TFhirValueSetComposeInclude4.SetVersion(Value: String);
+procedure TFhirValueSetComposeInclude4B.SetVersion(Value: String);
 begin
   (Element as TFhirValueSetComposeInclude).version := value;
 end;
 
-function TFhirValueSetComposeInclude4.getSystem: String;
+function TFhirValueSetComposeInclude4B.getSystem: String;
 begin
   result := (Element as TFhirValueSetComposeInclude).system;
 end;
 
-function TFhirValueSetComposeInclude4.valueSets: TArray<String>;
+function TFhirValueSetComposeInclude4B.valueSets: TArray<String>;
 var
   i : integer;
 begin
@@ -2686,78 +2686,78 @@ begin
     result[i] :=  TFhirValueSetComposeInclude(element).valueSetList[i].value;
 end;
 
-function TFhirValueSetComposeInclude4.getVersion: String;
+function TFhirValueSetComposeInclude4B.getVersion: String;
 begin
   result := (Element as TFhirValueSetComposeInclude).version;
 end;
 
-{ TFhirValueSetComposeIncludeFilter4 }
+{ TFhirValueSetComposeIncludeFilter4B }
 
-function TFhirValueSetComposeIncludeFilter4.getop: TFilterOperator;
+function TFhirValueSetComposeIncludeFilter4B.getop: TFilterOperator;
 begin
   result := MAP_TFilterOperator[(Element as TFhirValueSetComposeIncludeFilter).op];
 end;
 
-function TFhirValueSetComposeIncludeFilter4.getprop: String;
+function TFhirValueSetComposeIncludeFilter4B.getprop: String;
 begin
   result := (Element as TFhirValueSetComposeIncludeFilter).property_;
 end;
 
-function TFhirValueSetComposeIncludeFilter4.getvalue: String;
+function TFhirValueSetComposeIncludeFilter4B.getvalue: String;
 begin
   result := (Element as TFhirValueSetComposeIncludeFilter).value;
 end;
 
-procedure TFhirValueSetComposeIncludeFilter4.SetOp(Value: TFilterOperator);
+procedure TFhirValueSetComposeIncludeFilter4B.SetOp(Value: TFilterOperator);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).op := MAP_TFilterOperatorR[Value];
 
 end;
 
-procedure TFhirValueSetComposeIncludeFilter4.SetProp(Value: String);
+procedure TFhirValueSetComposeIncludeFilter4B.SetProp(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).property_ := value;
 end;
 
-procedure TFhirValueSetComposeIncludeFilter4.SetValue(Value: String);
+procedure TFhirValueSetComposeIncludeFilter4B.SetValue(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).value := value;
 end;
 
-{ TFhirValueSetComposeIncludeConcept4 }
+{ TFhirValueSetComposeIncludeConcept4B }
 
-function TFhirValueSetComposeIncludeConcept4.getCode: String;
+function TFhirValueSetComposeIncludeConcept4B.getCode: String;
 begin
   result := (Element as TFhirValueSetComposeIncludeConcept).code;
 end;
 
-function TFhirValueSetComposeIncludeConcept4.designations: TFslList<TFhirValueSetComposeIncludeConceptDesignationW>;
+function TFhirValueSetComposeIncludeConcept4B.designations: TFslList<TFhirValueSetComposeIncludeConceptDesignationW>;
 var
   item : TFhirValueSetComposeIncludeConceptDesignation;
 begin
   result := TFslList<TFhirValueSetComposeIncludeConceptDesignationW>.create;
   for item in (Element as TFhirValueSetComposeIncludeConcept).designationList do
-    result.Add(TFhirValueSetComposeIncludeConceptDesignation4.create(item.Link));
+    result.Add(TFhirValueSetComposeIncludeConceptDesignation4B.create(item.Link));
 end;
 
-function TFhirValueSetComposeIncludeConcept4.getDisplay: String;
+function TFhirValueSetComposeIncludeConcept4B.getDisplay: String;
 begin
   result := (Element as TFhirValueSetComposeIncludeConcept).display;
 end;
 
-procedure TFhirValueSetComposeIncludeConcept4.SetCode(Value: String);
+procedure TFhirValueSetComposeIncludeConcept4B.SetCode(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeConcept).code := Value;
 end;
 
-procedure TFhirValueSetComposeIncludeConcept4.SetDisplay(Value: String);
+procedure TFhirValueSetComposeIncludeConcept4B.SetDisplay(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeConcept).display := Value;
 end;
 
-{ TFHIRLookupOpResponse4 }
+{ TFHIRLookupOpResponse4B }
 
-function TFHIRLookupOpResponse4.addDesignation(lang, system, code, display, value: string): TFHIRLookupOpRespDesignationW;
+function TFHIRLookupOpResponse4B.addDesignation(lang, system, code, display, value: string): TFHIRLookupOpRespDesignationW;
 var
   p : TFHIRLookupOpRespDesignation;
 begin
@@ -2770,13 +2770,13 @@ begin
     p.language := lang;
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
-    result := TFHIRLookupOpRespDesignation4.create(p.Link);
+    result := TFHIRLookupOpRespDesignation4B.create(p.Link);
   finally
     p.free;
   end;
 end;
 
-function TFHIRLookupOpResponse4.addDesignation(lang, value: string): TFHIRLookupOpRespDesignationW;
+function TFHIRLookupOpResponse4B.addDesignation(lang, value: string): TFHIRLookupOpRespDesignationW;
 var
   p : TFHIRLookupOpRespDesignation;
 begin
@@ -2785,23 +2785,23 @@ begin
     p.language := lang;
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
-    result := TFHIRLookupOpRespDesignation4.create(p.Link);
+    result := TFHIRLookupOpRespDesignation4B.create(p.Link);
   finally
     p.free;
   end;
 end;
 
-procedure TFHIRLookupOpResponse4.addExtension(name: String; value: boolean);
+procedure TFHIRLookupOpResponse4B.addExtension(name: String; value: boolean);
 begin
   (op as TFHIRLookupOpResponse).addExtension(name, value);
 end;
 
-procedure TFHIRLookupOpResponse4.addExtension(name, value: String);
+procedure TFHIRLookupOpResponse4B.addExtension(name, value: String);
 begin
   (op as TFHIRLookupOpResponse).addExtension(name, value);
 end;
 
-function TFHIRLookupOpResponse4.addProp(name: string): TFHIRLookupOpRespPropertyW;
+function TFHIRLookupOpResponse4B.addProp(name: string): TFHIRLookupOpRespPropertyW;
 var
   p : TFHIRLookupOpRespProperty_;
 begin
@@ -2809,229 +2809,229 @@ begin
   try
     p.code := name;
     (op as TFHIRLookupOpResponse).property_List.Add(p.link as TFHIRLookupOpRespProperty_);
-    result := TFHIRLookupOpRespProperty4.create(p.Link);
+    result := TFHIRLookupOpRespProperty4B.create(p.Link);
   finally
     p.Free;
   end;
 end;
 
-function TFHIRLookupOpResponse4.asParams: TFHIRResourceV;
+function TFHIRLookupOpResponse4B.asParams: TFHIRResourceV;
 begin
   result := (op as TFHIROperationResponse).asParams;
 end;
 
-function TFHIRLookupOpResponse4.GetDisplay: String;
+function TFHIRLookupOpResponse4B.GetDisplay: String;
 begin
   result := (op as TFHIRLookupOpResponse).display;
 end;
 
-function TFHIRLookupOpResponse4.GetName: String;
+function TFHIRLookupOpResponse4B.GetName: String;
 begin
   result := (op as TFHIRLookupOpResponse).name;
 end;
 
-function TFHIRLookupOpResponse4.GetVersion: String;
+function TFHIRLookupOpResponse4B.GetVersion: String;
 begin
   result := (op as TFHIRLookupOpResponse).version;
 end;
 
-procedure TFHIRLookupOpResponse4.load(params: THTTPParameters);
+procedure TFHIRLookupOpResponse4B.load(params: THTTPParameters);
 begin
   (op as TFHIRLookupOpResponse).load(params);
 end;
 
-procedure TFHIRLookupOpResponse4.load(params: TFHIRResourceV);
+procedure TFHIRLookupOpResponse4B.load(params: TFHIRResourceV);
 begin
   (op as TFHIRLookupOpResponse).load(params as TFhirParameters);
 end;
 
-procedure TFHIRLookupOpResponse4.SetDisplay(Value: String);
+procedure TFHIRLookupOpResponse4B.SetDisplay(Value: String);
 begin
   (op as TFHIRLookupOpResponse).display := value;
 end;
 
-procedure TFHIRLookupOpResponse4.SetName(Value: String);
+procedure TFHIRLookupOpResponse4B.SetName(Value: String);
 begin
   (op as TFHIRLookupOpResponse).name := value;
 end;
 
-procedure TFHIRLookupOpResponse4.SetVersion(Value: String);
+procedure TFHIRLookupOpResponse4B.SetVersion(Value: String);
 begin
   (op as TFHIRLookupOpResponse).version := value;
 end;
 
-{ TFHIRLookupOpRespDesignation4 }
+{ TFHIRLookupOpRespDesignation4B }
 
-function TFHIRLookupOpRespDesignation4.GetUse: TFHIRObject;
+function TFHIRLookupOpRespDesignation4B.GetUse: TFHIRObject;
 begin
   result := (obj as TFHIRLookupOpRespDesignation).use;
 end;
 
-procedure TFHIRLookupOpRespDesignation4.SetUse(Value: TFHIRObject);
+procedure TFHIRLookupOpRespDesignation4B.SetUse(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespDesignation).use := value as TFhirCoding;
 end;
 
-{ TFHIRLookupOpRespProperty4 }
+{ TFHIRLookupOpRespProperty4B }
 
-function TFHIRLookupOpRespProperty4.GetDescription: string;
+function TFHIRLookupOpRespProperty4B.GetDescription: string;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).description;
 end;
 
-function TFHIRLookupOpRespProperty4.GetValue: TFHIRObject;
+function TFHIRLookupOpRespProperty4B.GetValue: TFHIRObject;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).value;
 end;
 
-procedure TFHIRLookupOpRespProperty4.SetDescription(Value: string);
+procedure TFHIRLookupOpRespProperty4B.SetDescription(Value: string);
 begin
   (obj as TFHIRLookupOpRespProperty_).description := value;
 end;
 
-procedure TFHIRLookupOpRespProperty4.SetValue(Value: TFHIRObject);
+procedure TFHIRLookupOpRespProperty4B.SetValue(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespProperty_).value := value as TFHIRDataType;
 end;
 
-{ TFHIRExtension4 }
+{ TFHIRExtension4B }
 
-function TFHIRExtension4.renderText: String;
+function TFHIRExtension4B.renderText: String;
 begin
   result := gen(element as TFhirExtension);
 end;
 
-function TFHIRExtension4.url: String;
+function TFHIRExtension4B.url: String;
 begin
   result := (Element as TFHIRExtension).url;
 end;
 
-function TFHIRExtension4.value: TFHIRObject;
+function TFHIRExtension4B.value: TFHIRObject;
 begin
   result := (Element as TFHIRExtension).value;
 end;
 
-{ TFHIRCoding4 }
+{ TFHIRCoding4B }
 
-function TFHIRCoding4.GetCode: String;
+function TFHIRCoding4B.GetCode: String;
 begin
   result := (element as TFHIRCoding).code;
 end;
 
-function TFHIRCoding4.GetDisplay: String;
+function TFHIRCoding4B.GetDisplay: String;
 begin
   result := (element as TFHIRCoding).display;
 end;
 
-function TFHIRCoding4.GetSystem: String;
+function TFHIRCoding4B.GetSystem: String;
 begin
   result := (element as TFHIRCoding).system;
 end;
 
-function TFHIRCoding4.GetVersion: String;
+function TFHIRCoding4B.GetVersion: String;
 begin
   result := (element as TFHIRCoding).version;
 end;
 
-function TFHIRCoding4.renderText: String;
+function TFHIRCoding4B.renderText: String;
 begin
   result := gen(element as TFhirCoding);
 end;
 
-procedure TFHIRCoding4.SetCode(Value: String);
+procedure TFHIRCoding4B.SetCode(Value: String);
 begin
   (element as TFHIRCoding).code := value;
 end;
 
-procedure TFHIRCoding4.SetDisplay(Value: String);
+procedure TFHIRCoding4B.SetDisplay(Value: String);
 begin
   (element as TFHIRCoding).display := value;
 end;
 
-procedure TFHIRCoding4.SetSystem(Value: String);
+procedure TFHIRCoding4B.SetSystem(Value: String);
 begin
     (element as TFHIRCoding).system := value;
 end;
 
-procedure TFHIRCoding4.SetVersion(Value: String);
+procedure TFHIRCoding4B.SetVersion(Value: String);
 begin
   (element as TFHIRCoding).version := value;
 end;
 
-{ TFhirCodeSystemProperty4 }
+{ TFhirCodeSystemProperty4B }
 
-function TFhirCodeSystemProperty4.code: String;
+function TFhirCodeSystemProperty4B.code: String;
 begin
   result := (Element as TFhirCodeSystemProperty).code;
 end;
 
-function TFhirCodeSystemProperty4.type_: TFhirCodeSystemPropertyType;
+function TFhirCodeSystemProperty4B.type_: TFhirCodeSystemPropertyType;
 begin
   result := MAP_TFhirConceptPropertyTypeEnum[(Element as TFhirCodeSystemProperty).type_];
 end;
 
-function TFhirCodeSystemProperty4.uri: String;
+function TFhirCodeSystemProperty4B.uri: String;
 begin
   result := (Element as TFhirCodeSystemProperty).uri;
 end;
 
-{ TFhirCodeSystemConceptProperty4 }
+{ TFhirCodeSystemConceptProperty4B }
 
-function TFhirCodeSystemConceptProperty4.code: String;
+function TFhirCodeSystemConceptProperty4B.code: String;
 begin
   result := (Element as TFhirCodeSystemConceptProperty).code;
 end;
 
-function TFhirCodeSystemConceptProperty4.value: TFHIRObject;
+function TFhirCodeSystemConceptProperty4B.value: TFHIRObject;
 begin
   result := (Element as TFhirCodeSystemConceptProperty).value;
 end;
 
-{ TFhirCodeSystemConceptDesignation4 }
+{ TFhirCodeSystemConceptDesignation4B }
 
-function TFhirCodeSystemConceptDesignation4.language: String;
+function TFhirCodeSystemConceptDesignation4B.language: String;
 begin
   result := (Element as TFhirCodeSystemConceptDesignation).language;
 end;
 
-function TFhirCodeSystemConceptDesignation4.use: TFHIRObject;
+function TFhirCodeSystemConceptDesignation4B.use: TFHIRObject;
 begin
   result := (Element as TFhirCodeSystemConceptDesignation).use;
 end;
 
-function TFhirCodeSystemConceptDesignation4.useGen: String;
+function TFhirCodeSystemConceptDesignation4B.useGen: String;
 begin
   result := gen((Element as TFhirCodeSystemConceptDesignation).use)
 end;
 
-function TFhirCodeSystemConceptDesignation4.value: String;
+function TFhirCodeSystemConceptDesignation4B.value: String;
 begin
   result := (Element as TFhirCodeSystemConceptDesignation).value;
 end;
 
-{ TFhirCodeSystemConcept4 }
+{ TFhirCodeSystemConcept4B }
 
-function TFhirCodeSystemConcept4.c: TFhirCodeSystemConcept;
+function TFhirCodeSystemConcept4B.c: TFhirCodeSystemConcept;
 begin
   result := Element as TFhirCodeSystemConcept;
 end;
 
-function TFhirCodeSystemConcept4.code: String;
+function TFhirCodeSystemConcept4B.code: String;
 begin
   result := c.code;
 end;
 
-function TFhirCodeSystemConcept4.concept(ndx: integer): TFhirCodeSystemConceptW;
+function TFhirCodeSystemConcept4B.concept(ndx: integer): TFhirCodeSystemConceptW;
 begin
-  result := TFhirCodeSystemConcept4.create((element as TFhirCodeSystemConcept).conceptList[ndx].Link);
+  result := TFhirCodeSystemConcept4B.create((element as TFhirCodeSystemConcept).conceptList[ndx].Link);
 end;
 
-function TFhirCodeSystemConcept4.conceptCount: integer;
+function TFhirCodeSystemConcept4B.conceptCount: integer;
 begin
   result := c.conceptList.Count;
 end;
 
-function TFhirCodeSystemConcept4.conceptList: TFhirCodeSystemConceptListW;
+function TFhirCodeSystemConcept4B.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRCodeSystemConcept;
 begin
@@ -3039,36 +3039,36 @@ begin
   begin
     FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (element as TFhirCodeSystemConcept).conceptList do
-      FConceptList.Add(TFhirCodeSystemConcept4.create(i.Link));
+      FConceptList.Add(TFhirCodeSystemConcept4B.create(i.Link));
   end;
   result := FConceptList;
 end;
 
-function TFhirCodeSystemConcept4.definition: String;
+function TFhirCodeSystemConcept4B.definition: String;
 begin
   result := c.definition;
 end;
 
-function TFhirCodeSystemConcept4.designationCount: integer;
+function TFhirCodeSystemConcept4B.designationCount: integer;
 begin
   result := c.designationList.Count;
 end;
 
-function TFhirCodeSystemConcept4.designations: TFslList<TFhirCodeSystemConceptDesignationW>;
+function TFhirCodeSystemConcept4B.designations: TFslList<TFhirCodeSystemConceptDesignationW>;
 var
   i : TFhirCodeSystemConceptDesignation;
 begin
   result := TFslList<TFhirCodeSystemConceptDesignationW>.create;
   for i in c.designationList do
-    result.Add(TFhirCodeSystemConceptDesignation4.Create(i.Link));
+    result.Add(TFhirCodeSystemConceptDesignation4B.Create(i.Link));
 end;
 
-function TFhirCodeSystemConcept4.display: String;
+function TFhirCodeSystemConcept4B.display: String;
 begin
   result := c.display;
 end;
 
-function TFhirCodeSystemConcept4.displayTag(tag: String): String;
+function TFhirCodeSystemConcept4B.displayTag(tag: String): String;
 begin
   result := c.displayElement.Tags[tag];
 end;
@@ -3081,7 +3081,7 @@ begin
   for cc in list do
   begin
     if cc.code = code then
-      result := TFhirCodeSystemConcept4.Create(cc.Link);
+      result := TFhirCodeSystemConcept4B.Create(cc.Link);
     if cc.hasConceptList then
     begin
       result := getCodeWrapper(cc.conceptList, code);
@@ -3091,7 +3091,7 @@ begin
   end;
 end;
 
-function TFhirCodeSystemConcept4.getCode(code: String): TFhirCodeSystemConceptW;
+function TFhirCodeSystemConcept4B.getCode(code: String): TFhirCodeSystemConceptW;
 begin
   if (code = c.Code) then
     result := self.link
@@ -3099,7 +3099,7 @@ begin
     result := getCodeWrapper(c.conceptList, code);
 end;
 
-function TFhirCodeSystemConcept4.hasConcept(c: TFhirCodeSystemConceptW): boolean;
+function TFhirCodeSystemConcept4B.hasConcept(c: TFhirCodeSystemConceptW): boolean;
 var
   i : TFHIRCodeSystemConcept;
 begin
@@ -3109,38 +3109,38 @@ begin
         exit(true);
 end;
 
-function TFhirCodeSystemConcept4.properties: TFslList<TFhirCodeSystemConceptPropertyW>;
+function TFhirCodeSystemConcept4B.properties: TFslList<TFhirCodeSystemConceptPropertyW>;
 var
   i : TFhirCodeSystemConceptProperty;
 begin
   result := TFslList<TFhirCodeSystemConceptPropertyW>.create;
   for i in c.property_List do
-    result.Add(TFhirCodeSystemConceptProperty4.Create(i.Link));
+    result.Add(TFhirCodeSystemConceptProperty4B.Create(i.Link));
 end;
 
-procedure TFhirCodeSystemConcept4.setDisplayTag(tag, value: String);
+procedure TFhirCodeSystemConcept4B.setDisplayTag(tag, value: String);
 begin
   c.displayElement.Tags[tag] := value;
 end;
 
-{ TFhirCodeSystem4 }
+{ TFhirCodeSystem4B }
 
-function TFhirCodeSystem4.buildImplicitValueSet: TFHIRValueSetW;
+function TFhirCodeSystem4B.buildImplicitValueSet: TFHIRValueSetW;
 begin
-  result := TFHIRValueSet4.Create(cs.buildImplicitValueSet);
+  result := TFHIRValueSet4B.Create(cs.buildImplicitValueSet);
 end;
 
-function TFhirCodeSystem4.concept(ndx: integer): TFhirCodeSystemConceptW;
+function TFhirCodeSystem4B.concept(ndx: integer): TFhirCodeSystemConceptW;
 begin
-  result := TFhirCodeSystemConcept4.create(cs.conceptList[ndx].Link);
+  result := TFhirCodeSystemConcept4B.create(cs.conceptList[ndx].Link);
 end;
 
-function TFhirCodeSystem4.conceptCount: integer;
+function TFhirCodeSystem4B.conceptCount: integer;
 begin
   result := cs.conceptList.Count;
 end;
 
-function TFhirCodeSystem4.conceptList: TFhirCodeSystemConceptListW;
+function TFhirCodeSystem4B.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRCodeSystemConcept;
 begin
@@ -3148,42 +3148,42 @@ begin
   begin
     FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (resource as TFhirCodeSystem).conceptList do
-      FConceptList.Add(TFhirCodeSystemConcept4.create(i.Link));
+      FConceptList.Add(TFhirCodeSystemConcept4B.create(i.Link));
   end;
   result := FConceptList;
 end;
 
-function TFhirCodeSystem4.copyright: String;
+function TFhirCodeSystem4B.copyright: String;
 begin
   result := cs.copyright;
 end;
 
-function TFhirCodeSystem4.cs: TFhirCodeSystem;
+function TFhirCodeSystem4B.cs: TFhirCodeSystem;
 begin
   result := Resource as TFhirCodeSystem;
 end;
 
-function TFhirCodeSystem4.GetCount: integer;
+function TFhirCodeSystem4B.GetCount: integer;
 begin
   result := StrToInt(cs.count);
 end;
 
-function TFhirCodeSystem4.GetDate: TFslDateTime;
+function TFhirCodeSystem4B.GetDate: TFslDateTime;
 begin
   result := cs.date;
 end;
 
-function TFhirCodeSystem4.GetDescription: String;
+function TFhirCodeSystem4B.GetDescription: String;
 begin
   result := cs.description;
 end;
 
-function TFhirCodeSystem4.GetLanguage: String;
+function TFhirCodeSystem4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirCodeSystem4.getChildren(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
+function TFhirCodeSystem4B.getChildren(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
 var
   list : TFhirCodeSystemConceptList;
   i :  TFhirCodeSystemConcept;
@@ -3193,7 +3193,7 @@ begin
     result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
-        result.Add(TFhirCodeSystemConcept4.Create(i.Link));
+        result.Add(TFhirCodeSystemConcept4B.Create(i.Link));
       result.link;
     finally
       result.Free;
@@ -3203,23 +3203,23 @@ begin
   end;
 end;
 
-function TFhirCodeSystem4.getCode(code: String): TFhirCodeSystemConceptW;
+function TFhirCodeSystem4B.getCode(code: String): TFhirCodeSystemConceptW;
 begin
   result := getCodeWrapper(cs.conceptList, code);
 end;
 
-function TFhirCodeSystem4.getContent: TFhirCodeSystemContentMode;
+function TFhirCodeSystem4B.getContent: TFhirCodeSystemContentMode;
 begin
   result := MAP_TFhirCodeSystemContentModeR[cs.content];
 end;
 
 
-function TFhirCodeSystem4.getContext: String;
+function TFhirCodeSystem4B.getContext: String;
 begin
   result := cs.context;
 end;
 
-function TFhirCodeSystem4.getParents(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
+function TFhirCodeSystem4B.getParents(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
 var
   list : TFhirCodeSystemConceptList;
   i :  TFhirCodeSystemConcept;
@@ -3229,7 +3229,7 @@ begin
     result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
-        result.Add(TFhirCodeSystemConcept4.Create(i.Link));
+        result.Add(TFhirCodeSystemConcept4B.Create(i.Link));
       result.link;
     finally
       result.Free;
@@ -3239,7 +3239,7 @@ begin
   end;
 end;
 
-function TFhirCodeSystem4.hasConcept(c: TFhirCodeSystemConceptW): boolean;
+function TFhirCodeSystem4B.hasConcept(c: TFhirCodeSystemConceptW): boolean;
 var
   i : TFHIRCodeSystemConcept;
 begin
@@ -3249,147 +3249,147 @@ begin
         exit(true);
 end;
 
-function TFhirCodeSystem4.isAbstract(c: TFhirCodeSystemConceptW): boolean;
+function TFhirCodeSystem4B.isAbstract(c: TFhirCodeSystemConceptW): boolean;
 begin
   result := cs.isAbstract(c.Element as TFhirCodeSystemConcept);
 end;
 
-function TFhirCodeSystem4.language: String;
+function TFhirCodeSystem4B.language: String;
 begin
   result := cs.language;
 end;
 
-function TFhirCodeSystem4.GetName: String;
+function TFhirCodeSystem4B.GetName: String;
 begin
   result := cs.name;
 end;
 
-function TFhirCodeSystem4.properties: TFslList<TFhirCodeSystemPropertyW>;
+function TFhirCodeSystem4B.properties: TFslList<TFhirCodeSystemPropertyW>;
 var
   i : TFhirCodeSystemProperty;
 begin
   result := TFslList<TFhirCodeSystemPropertyW>.create;
   for i in cs.property_List do
-    result.Add(TFhirCodeSystemProperty4.Create(i.Link));
+    result.Add(TFhirCodeSystemProperty4B.Create(i.Link));
 end;
 
-procedure TFhirCodeSystem4.SetContent(Value: TFhirCodeSystemContentMode);
+procedure TFhirCodeSystem4B.SetContent(Value: TFhirCodeSystemContentMode);
 begin
   cs.content := MAP_TFhirCodeSystemContentMode[value];
 end;
 
-procedure TFhirCodeSystem4.SetCount(Value: integer);
+procedure TFhirCodeSystem4B.SetCount(Value: integer);
 begin
   cs.count := inttostr(value);
 end;
 
-procedure TFhirCodeSystem4.SetDate(Value: TFslDateTime);
+procedure TFhirCodeSystem4B.SetDate(Value: TFslDateTime);
 begin
   cs.date := value;
 end;
 
-procedure TFhirCodeSystem4.SetDescription(Value: String);
+procedure TFhirCodeSystem4B.SetDescription(Value: String);
 begin
   cs.description := value;
 end;
 
-procedure TFhirCodeSystem4.SetLanguage(const Value: String);
+procedure TFhirCodeSystem4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirCodeSystem4.SetName(Value: String);
+procedure TFhirCodeSystem4B.SetName(Value: String);
 begin
   cs.name := value;
 end;
 
-procedure TFhirCodeSystem4.SetPublisher(Value: String);
+procedure TFhirCodeSystem4B.SetPublisher(Value: String);
 begin
   cs.publisher := value;
 end;
 
-procedure TFhirCodeSystem4.SetStatus(Value: TPublicationStatus);
+procedure TFhirCodeSystem4B.SetStatus(Value: TPublicationStatus);
 begin
   cs.status := MAP_TPublicationStatus[value];
 end;
 
-procedure TFhirCodeSystem4.SetUrl(Value: String);
+procedure TFhirCodeSystem4B.SetUrl(Value: String);
 begin
   cs.url := value;
 end;
 
-procedure TFhirCodeSystem4.SetVersion(Value: String);
+procedure TFhirCodeSystem4B.SetVersion(Value: String);
 begin
   cs.version := value;
 end;
 
-function TFhirCodeSystem4.supplements: String;
+function TFhirCodeSystem4B.supplements: String;
 begin
   result := cs.supplements;
 end;
 
-function TFhirCodeSystem4.valueSet: String;
+function TFhirCodeSystem4B.valueSet: String;
 begin
   result := cs.valueset;
 end;
 
-function TFhirCodeSystem4.GetPublisher: String;
+function TFhirCodeSystem4B.GetPublisher: String;
 begin
   result := cs.publisher;
 end;
 
-function TFhirCodeSystem4.GetStatus: TPublicationStatus;
+function TFhirCodeSystem4B.GetStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[cs.status];
 end;
 
-function TFhirCodeSystem4.getURL: String;
+function TFhirCodeSystem4B.getURL: String;
 begin
   result := cs.url;
 end;
 
-function TFhirCodeSystem4.GetVersion: String;
+function TFhirCodeSystem4B.GetVersion: String;
 begin
   result := cs.version;
 end;
 
-{ TFhirValueSetExpansion4 }
+{ TFhirValueSetExpansion4B }
 
-procedure TFhirValueSetExpansion4.addContains(item: TFhirValueSetExpansionContainsW);
+procedure TFhirValueSetExpansion4B.addContains(item: TFhirValueSetExpansionContainsW);
 begin
   exp.containsList.Add((item.Element as TFhirValueSetExpansionContains).link);
 end;
 
-function TFhirValueSetExpansion4.addContains: TFhirValueSetExpansionContainsW;
+function TFhirValueSetExpansion4B.addContains: TFhirValueSetExpansionContainsW;
 begin
-  result := TFhirValueSetExpansionContains4.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
+  result := TFhirValueSetExpansionContains4B.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
 end;
 
-procedure TFhirValueSetExpansion4.addParamBool(name: String; value: boolean);
+procedure TFhirValueSetExpansion4B.addParamBool(name: String; value: boolean);
 begin
   exp.addParamBool(name, value);
 end;
 
-procedure TFhirValueSetExpansion4.addParamStr(name, value: String);
+procedure TFhirValueSetExpansion4B.addParamStr(name, value: String);
 begin
   exp.addParamStr(name, value);
 end;
 
-procedure TFhirValueSetExpansion4.addParamUri(name, value: String);
+procedure TFhirValueSetExpansion4B.addParamUri(name, value: String);
 begin
   exp.addParamUri(name, value);
 end;
 
-function TFhirValueSetExpansion4.contains: TFslList<TFhirValueSetExpansionContainsW>;
+function TFhirValueSetExpansion4B.contains: TFslList<TFhirValueSetExpansionContainsW>;
 var
   item : TFhirValueSetExpansionContains;
 begin
   result := TFslList<TFhirValueSetExpansionContainsW>.create;
   for item in (Element as TFhirValueSetExpansion).containsList do
-    result.Add(TFhirValueSetExpansionContains4.Create(item.Link));
+    result.Add(TFhirValueSetExpansionContains4B.Create(item.Link));
 end;
 
-procedure TFhirValueSetExpansion4.copyParams(source: TFhirValueSetExpansionW);
+procedure TFhirValueSetExpansion4B.copyParams(source: TFhirValueSetExpansionW);
 var
   param : TFhirValueSetExpansionParameter;
 begin
@@ -3397,12 +3397,12 @@ begin
     (Element as TFhirValueSetExpansion).parameterList.Add(param.Link);
 end;
 
-function TFhirValueSetExpansion4.exp: TFhirValueSetExpansion;
+function TFhirValueSetExpansion4B.exp: TFhirValueSetExpansion;
 begin
   result := element as TFhirValueSetExpansion;
 end;
 
-function TFhirValueSetExpansion4.hasParam(name, value: string): boolean;
+function TFhirValueSetExpansion4B.hasParam(name, value: string): boolean;
 var
   param : TFhirValueSetExpansionParameter;
 begin
@@ -3412,12 +3412,12 @@ begin
       exit(true);
 end;
 
-function TFhirValueSetExpansion4.makeContains: TFhirValueSetExpansionContainsW;
+function TFhirValueSetExpansion4B.makeContains: TFhirValueSetExpansionContainsW;
 begin
-  result := TFhirValueSetExpansionContains4.Create(TFhirValueSetExpansionContains.create);
+  result := TFhirValueSetExpansionContains4B.Create(TFhirValueSetExpansionContains.create);
 end;
 
-function TFhirValueSetExpansion4.hasParam(name: string): boolean;
+function TFhirValueSetExpansion4B.hasParam(name: string): boolean;
 var
   param : TFhirValueSetExpansionParameter;
 begin
@@ -3427,14 +3427,14 @@ begin
       exit(true);
 end;
 
-{ TFhirValueSetExpansionContains4 }
+{ TFhirValueSetExpansionContains4B }
 
-function TFhirValueSetExpansionContains4.getcode: String;
+function TFhirValueSetExpansionContains4B.getcode: String;
 begin
   result := (Element as TFhirValueSetExpansionContains).code;
 end;
 
-procedure TFhirValueSetExpansionContains4.addDesignation(lang, use, value: String);
+procedure TFhirValueSetExpansionContains4B.addDesignation(lang, use, value: String);
 var
   d : TFhirValueSetComposeIncludeConceptDesignation;
   l,r : String;
@@ -3449,89 +3449,89 @@ begin
   end;
 end;
 
-function TFhirValueSetExpansionContains4.contains: TFslList<TFhirValueSetExpansionContainsW>;
+function TFhirValueSetExpansionContains4B.contains: TFslList<TFhirValueSetExpansionContainsW>;
 var
   item : TFhirValueSetExpansionContains;
 begin
   result := TFslList<TFhirValueSetExpansionContainsW>.create;
   for item in (Element as TFhirValueSetExpansionContains).containsList do
-    result.Add(TFhirValueSetExpansionContains4.Create(item.Link));
+    result.Add(TFhirValueSetExpansionContains4B.Create(item.Link));
 end;
 
-function TFhirValueSetExpansionContains4.getdisplay: String;
+function TFhirValueSetExpansionContains4B.getdisplay: String;
 begin
   result := (Element as TFhirValueSetExpansionContains).display;
 end;
 
-function TFhirValueSetExpansionContains4.getsystem: String;
+function TFhirValueSetExpansionContains4B.getsystem: String;
 begin
   result := (Element as TFhirValueSetExpansionContains).system;
 end;
 
-procedure TFhirValueSetExpansionContains4.SetCode(Value: String);
+procedure TFhirValueSetExpansionContains4B.SetCode(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).code := value;
 end;
 
-procedure TFhirValueSetExpansionContains4.SetDisplay(Value: String);
+procedure TFhirValueSetExpansionContains4B.SetDisplay(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).display := value;
 end;
 
-procedure TFhirValueSetExpansionContains4.SetSystem(Value: String);
+procedure TFhirValueSetExpansionContains4B.SetSystem(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).system := value;
 end;
 
-{ TFhirValueSetComposeIncludeConceptDesignation4 }
+{ TFhirValueSetComposeIncludeConceptDesignation4B }
 
-function TFhirValueSetComposeIncludeConceptDesignation4.language: String;
+function TFhirValueSetComposeIncludeConceptDesignation4B.language: String;
 begin
   result := (element as TFhirValueSetComposeIncludeConceptDesignation).language;
 end;
 
-function TFhirValueSetComposeIncludeConceptDesignation4.value: String;
+function TFhirValueSetComposeIncludeConceptDesignation4B.value: String;
 begin
   result := (element as TFhirValueSetComposeIncludeConceptDesignation).value;
 end;
 
-{ TFhirConceptMap4 }
+{ TFhirConceptMap4B }
 
-function TFhirConceptMap4.addGroup(source, target: String): TFhirConceptMapGroupW;
+function TFhirConceptMap4B.addGroup(source, target: String): TFhirConceptMapGroupW;
 var
   g : TFhirConceptMapGroup;
 begin
   g := cm.groupList.Append;
   g.source := source;
   g.target := target;
-  result := TFhirConceptMapGroup4.create(g.Link);
+  result := TFhirConceptMapGroup4B.create(g.Link);
 end;
 
-function TFhirConceptMap4.cm: TFhirConceptMap;
+function TFhirConceptMap4B.cm: TFhirConceptMap;
 begin
   result := Resource as TFhirConceptMap;
 end;
 
-function TFhirConceptMap4.GetVersion: String;
+function TFhirConceptMap4B.GetVersion: String;
 begin
   result := cm.version;
 end;
 
-function TFhirConceptMap4.groups: TFslList<TFhirConceptMapGroupW>;
+function TFhirConceptMap4B.groups: TFslList<TFhirConceptMapGroupW>;
 var
   g : TFhirConceptMapGroup;
 begin
   result := TFslList<TFhirConceptMapGroupW>.create;
   for g in cm.groupList do
-    result.Add(TFhirConceptMapGroup4.create(g.Link))
+    result.Add(TFhirConceptMapGroup4B.create(g.Link))
 end;
 
-procedure TFhirConceptMap4.SetVersion(Value: String);
+procedure TFhirConceptMap4B.SetVersion(Value: String);
 begin
   cm.version := value;
 end;
 
-function TFhirConceptMap4.source: String;
+function TFhirConceptMap4B.source: String;
 begin
   if (cm.source is TFhirReference) then
     result := (cm.source as TFhirReference).reference
@@ -3539,12 +3539,12 @@ begin
     result := cm.source.primitiveValue;
 end;
 
-function TFhirConceptMap4.sourceDesc: String;
+function TFhirConceptMap4B.sourceDesc: String;
 begin
   result := cm.sourceDesc;
 end;
 
-function TFhirConceptMap4.target: String;
+function TFhirConceptMap4B.target: String;
 begin
   if (cm.target is TFhirReference) then
     result := (cm.target as TFhirReference).reference
@@ -3552,178 +3552,178 @@ begin
     result := cm.target.primitiveValue;
 end;
 
-function TFhirConceptMap4.targetDesc: String;
+function TFhirConceptMap4B.targetDesc: String;
 begin
   result := cm.targetDesc;
 end;
 
-function TFhirConceptMap4.getURL: String;
+function TFhirConceptMap4B.getURL: String;
 begin
   result := cm.url;
 end;
 
-function TFhirConceptMap4.GetDate: TFslDateTime;
+function TFhirConceptMap4B.GetDate: TFslDateTime;
 begin
   result := cm.Date;
 end;
 
-function TFhirConceptMap4.GetDescription: String;
+function TFhirConceptMap4B.GetDescription: String;
 begin
   result := cm.Description;
 end;
 
-function TFhirConceptMap4.GetLanguage: String;
+function TFhirConceptMap4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirConceptMap4.GetName: String;
+function TFhirConceptMap4B.GetName: String;
 begin
   result := cm.Name;
 end;
 
-function TFhirConceptMap4.GetStatus: TPublicationStatus;
+function TFhirConceptMap4B.GetStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[cm.Status];
 end;
 
-procedure TFhirConceptMap4.SetDate(Value: TFslDateTime);
+procedure TFhirConceptMap4B.SetDate(Value: TFslDateTime);
 begin
   cm.Date := value;
 end;
 
-procedure TFhirConceptMap4.SetDescription(Value: String);
+procedure TFhirConceptMap4B.SetDescription(Value: String);
 begin
   cm.Description := value;
 end;
 
-procedure TFhirConceptMap4.SetLanguage(const Value: String);
+procedure TFhirConceptMap4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirConceptMap4.SetName(Value: String);
+procedure TFhirConceptMap4B.SetName(Value: String);
 begin
   cm.Name := value;
 end;
 
-procedure TFhirConceptMap4.SetStatus(Value: TPublicationStatus);
+procedure TFhirConceptMap4B.SetStatus(Value: TPublicationStatus);
 begin
   cm.Status := MAP_TPublicationStatus[value];
 end;
 
-procedure TFhirConceptMap4.SetUrl(Value: String);
+procedure TFhirConceptMap4B.SetUrl(Value: String);
 begin
   cm.Url := value;
 end;
 
-procedure TFhirConceptMap4.SetPublisher(Value: String);
+procedure TFhirConceptMap4B.SetPublisher(Value: String);
 begin
   cm.publisher := value;
 end;
 
-function TFhirConceptMap4.getContext: String;
+function TFhirConceptMap4B.getContext: String;
 begin
   result := cm.context;
 end;
 
-function TFhirConceptMap4.GetPublisher: String;
+function TFhirConceptMap4B.GetPublisher: String;
 begin
   result := cm.publisher;
 end;
 
-{ TFhirConceptMapGroupElementTarget4 }
+{ TFhirConceptMapGroupElementTarget4B }
 
-function TFhirConceptMapGroupElementTarget4.code: String;
+function TFhirConceptMapGroupElementTarget4B.code: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTarget).code;
 end;
 
-function TFhirConceptMapGroupElementTarget4.comments: String;
+function TFhirConceptMapGroupElementTarget4B.comments: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTarget).comment;
 end;
 
-function TFhirConceptMapGroupElementTarget4.equivalence: TFHIRConceptEquivalence;
+function TFhirConceptMapGroupElementTarget4B.equivalence: TFHIRConceptEquivalence;
 begin
   result := MAP_TFHIRConceptEquivalence[(Element as TFhirConceptMapGroupElementTarget).equivalence];
 end;
 
-function TFhirConceptMapGroupElementTarget4.products: TFslList<TFhirConceptMapGroupElementDependsOnW>;
+function TFhirConceptMapGroupElementTarget4B.products: TFslList<TFhirConceptMapGroupElementDependsOnW>;
 var
   i : TFhirConceptMapGroupElementTargetDependsOn;
 begin
   result := TFslList<TFhirConceptMapGroupElementDependsOnW>.create;
   for i in (Element as TFhirConceptMapGroupElementTarget).productList do
-    result.Add(TFhirConceptMapGroupElementDependsOn4.Create(i.link));
+    result.Add(TFhirConceptMapGroupElementDependsOn4B.Create(i.link));
 end;
 
-{ TFhirConceptMapGroupElement4 }
+{ TFhirConceptMapGroupElement4B }
 
-function TFhirConceptMapGroupElement4.addTarget(code: String; eq: TFHIRConceptEquivalence): TFhirConceptMapGroupElementTargetW;
+function TFhirConceptMapGroupElement4B.addTarget(code: String; eq: TFHIRConceptEquivalence): TFhirConceptMapGroupElementTargetW;
 var
   t : TFhirConceptMapGroupElementTarget;
 begin
   t := (Element as TFhirConceptMapGroupElement).targetList.Append;
   t.code := code;
   t.equivalence := MAP_TFHIRConceptEquivalenceR[eq];
-  result := TFhirConceptMapGroupElementTarget4.Create(t.link);
+  result := TFhirConceptMapGroupElementTarget4B.Create(t.link);
 end;
 
-function TFhirConceptMapGroupElement4.code: String;
+function TFhirConceptMapGroupElement4B.code: String;
 begin
   result := (Element as TFhirConceptMapGroupElement).code;
 end;
 
-function TFhirConceptMapGroupElement4.targetCount: integer;
+function TFhirConceptMapGroupElement4B.targetCount: integer;
 begin
   result := (Element as TFhirConceptMapGroupElement).targetList.Count;
 end;
 
-function TFhirConceptMapGroupElement4.targets: TFslList<TFhirConceptMapGroupElementTargetW>;
+function TFhirConceptMapGroupElement4B.targets: TFslList<TFhirConceptMapGroupElementTargetW>;
 var
   i : TFhirConceptMapGroupElementTarget;
 begin
   result := TFslList<TFhirConceptMapGroupElementTargetW>.create;
   for i in (Element as TFhirConceptMapGroupElement).targetList do
-    result.Add(TFhirConceptMapGroupElementTarget4.Create(i.link));
+    result.Add(TFhirConceptMapGroupElementTarget4B.Create(i.link));
 end;
 
 
-{ TFhirConceptMapGroup4 }
+{ TFhirConceptMapGroup4B }
 
-function TFhirConceptMapGroup4.addElement(code: String): TFhirConceptMapGroupElementW;
+function TFhirConceptMapGroup4B.addElement(code: String): TFhirConceptMapGroupElementW;
 var
   t : TFhirConceptMapGroupElement;
 begin
   t := (Element as TFhirConceptMapGroup).elementList.Append;
   t.code := code;
-  result := TFhirConceptMapGroupElement4.Create(t.link);
+  result := TFhirConceptMapGroupElement4B.Create(t.link);
 end;
 
-function TFhirConceptMapGroup4.elements: TFslList<TFhirConceptMapGroupElementW>;
+function TFhirConceptMapGroup4B.elements: TFslList<TFhirConceptMapGroupElementW>;
 var
   t : TFhirConceptMapGroupElement;
 begin
   result := TFslList<TFhirConceptMapGroupElementW>.create;
   for t in (Element as TFhirConceptMapGroup).elementList do
-    result.Add(TFhirConceptMapGroupElement4.Create(t.link))
+    result.Add(TFhirConceptMapGroupElement4B.Create(t.link))
 end;
 
-function TFhirConceptMapGroup4.source: String;
+function TFhirConceptMapGroup4B.source: String;
 begin
   result := (Element as TFhirConceptMapGroup).source;
 end;
 
-function TFhirConceptMapGroup4.target: String;
+function TFhirConceptMapGroup4B.target: String;
 begin
   result := (Element as TFhirConceptMapGroup).target;
 end;
 
-{ TFHIRMeta4 }
+{ TFHIRMeta4B }
 
 
-procedure TFHIRMeta4.addLabel(system, code, display: String);
+procedure TFHIRMeta4B.addLabel(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
@@ -3739,13 +3739,13 @@ begin
   end;
 end;
 
-procedure TFHIRMeta4.addProfile(uri: String);
+procedure TFHIRMeta4B.addProfile(uri: String);
 begin
   force;
   m.profileList.Add(TFhirCanonical.Create(uri));
 end;
 
-procedure TFHIRMeta4.addTag(system, code, display: String);
+procedure TFHIRMeta4B.addTag(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
@@ -3761,31 +3761,31 @@ begin
   end;
 end;
 
-procedure TFHIRMeta4.clearLabels;
+procedure TFHIRMeta4B.clearLabels;
 begin
   if Element <> nil then
     m.securityList.Clear;
 end;
 
-procedure TFHIRMeta4.clearProfiles;
+procedure TFHIRMeta4B.clearProfiles;
 begin
   if Element <> nil then
     m.profileList.Clear;
 end;
 
-procedure TFHIRMeta4.clearTags;
+procedure TFHIRMeta4B.clearTags;
 begin
   if Element <> nil then
     m.tagList.Clear;
 end;
 
-destructor TFHIRMeta4.destroy;
+destructor TFHIRMeta4B.destroy;
 begin
   FResource.Free;
   inherited;
 end;
 
-procedure TFHIRMeta4.force;
+procedure TFHIRMeta4B.force;
 begin
   if Element = nil then
   begin
@@ -3794,7 +3794,7 @@ begin
   end;
 end;
 
-function TFHIRMeta4.GetLastUpdated: TFslDateTime;
+function TFHIRMeta4B.GetLastUpdated: TFslDateTime;
 begin
   if Element = nil then
     result := TFslDateTime.makeNull
@@ -3802,7 +3802,7 @@ begin
     result := m.lastUpdated;
 end;
 
-function TFHIRMeta4.GetVersionId: String;
+function TFHIRMeta4B.GetVersionId: String;
 begin
   if Element = nil then
     result := ''
@@ -3810,7 +3810,7 @@ begin
     result := m.versionId;
 end;
 
-function TFHIRMeta4.hasLabel(system, code: String): boolean;
+function TFHIRMeta4B.hasLabel(system, code: String): boolean;
 var
   c : TFhirCoding;
 begin
@@ -3821,7 +3821,7 @@ begin
         exit(true);
 end;
 
-function TFHIRMeta4.hasTag(system, code: String): boolean;
+function TFHIRMeta4B.hasTag(system, code: String): boolean;
 var
   c : TFhirCoding;
 begin
@@ -3832,27 +3832,27 @@ begin
         exit(true);
 end;
 
-function TFHIRMeta4.labels: TFslList<TFHIRCodingW>;
+function TFHIRMeta4B.labels: TFslList<TFHIRCodingW>;
 var
   i : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
   if Element <> nil then
     for i in m.securityList do
-      result.Add(TFHIRCoding4.create(i.Link));
+      result.Add(TFHIRCoding4B.create(i.Link));
 end;
 
-function TFHIRMeta4.m: TFhirMeta;
+function TFHIRMeta4B.m: TFhirMeta;
 begin
   result := Element as TFHIRMeta;
 end;
 
-function TFHIRMeta4.NoElementOk: boolean;
+function TFHIRMeta4B.NoElementOk: boolean;
 begin
   result := true;
 end;
 
-function TFHIRMeta4.profiles: TArray<String>;
+function TFHIRMeta4B.profiles: TArray<String>;
 var
   i : integer;
 begin
@@ -3866,72 +3866,72 @@ begin
     SetLength(result, 0);
 end;
 
-procedure TFHIRMeta4.removeLabel(system, code: String);
+procedure TFHIRMeta4B.removeLabel(system, code: String);
 begin
   if Element <> nil then
     m.removeLabel(system, code);
 end;
 
-procedure TFHIRMeta4.removeProfile(uri: String);
+procedure TFHIRMeta4B.removeProfile(uri: String);
 begin
   if Element <> nil then
     m.profileList.removeUri(uri);
 end;
 
-procedure TFHIRMeta4.removeTag(system, code: String);
+procedure TFHIRMeta4B.removeTag(system, code: String);
 begin
   if Element <> nil then
     m.removeTag(system, code);
 end;
 
-procedure TFHIRMeta4.SetLastUpdated(Value: TFslDateTime);
+procedure TFHIRMeta4B.SetLastUpdated(Value: TFslDateTime);
 begin
   force;
   m.lastUpdated := value;
 end;
 
-procedure TFHIRMeta4.setResource(value: TFHIRResource);
+procedure TFHIRMeta4B.setResource(value: TFHIRResource);
 begin
   FResource.Free;
   FResource := value;
 end;
 
-procedure TFHIRMeta4.SetVersionId(Value: String);
+procedure TFHIRMeta4B.SetVersionId(Value: String);
 begin
   force;
   m.versionId := value;
 end;
 
-function TFHIRMeta4.tags: TFslList<TFHIRCodingW>;
+function TFHIRMeta4B.tags: TFslList<TFHIRCodingW>;
 var
   i : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
   if Element <> nil then
     for i in m.tagList do
-      result.Add(TFHIRCoding4.create(i.Link));
+      result.Add(TFHIRCoding4B.create(i.Link));
 end;
 
 
-function TFHIRMeta4.sizeInBytesV(magic : integer) : cardinal;
+function TFHIRMeta4B.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FResource.sizeInBytes(magic));
 end;
 
-{ TFHIRAuditEvent4 }
+{ TFHIRAuditEvent4B }
 
-function TFHIRAuditEvent4.ae: TFHIRAuditEvent;
+function TFHIRAuditEvent4B.ae: TFHIRAuditEvent;
 begin
   result := Resource as TFhirAuditEvent;
 end;
 
-function TFHIRAuditEvent4.dateTime: TFslDateTime;
+function TFHIRAuditEvent4B.dateTime: TFslDateTime;
 begin
   result := ae.event.dateTime;
 end;
 
-procedure TFHIRAuditEvent4.eventSubType(system, code, display: String);
+procedure TFHIRAuditEvent4B.eventSubType(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
@@ -3943,7 +3943,7 @@ begin
   c.Display := display;
 end;
 
-procedure TFHIRAuditEvent4.eventType(system, code, display: String);
+procedure TFHIRAuditEvent4B.eventType(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
@@ -3956,12 +3956,12 @@ begin
   c.Display := display;
 end;
 
-function TFHIRAuditEvent4.GetLanguage: String;
+function TFHIRAuditEvent4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-procedure TFHIRAuditEvent4.participantId(system, value, alt, name: String);
+procedure TFHIRAuditEvent4B.participantId(system, value, alt, name: String);
 var
   p: TFhirAuditEventParticipant;
 begin
@@ -3974,7 +3974,7 @@ begin
   p.name := name;
 end;
 
-procedure TFHIRAuditEvent4.participantIp(ip: String);
+procedure TFHIRAuditEvent4B.participantIp(ip: String);
 var
   p: TFhirAuditEventParticipant;
 begin
@@ -3984,12 +3984,12 @@ begin
   p.network.type_ := AuditEventAgentNetworkType2;
 end;
 
-procedure TFHIRAuditEvent4.SetLanguage(const Value: String);
+procedure TFHIRAuditEvent4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFHIRAuditEvent4.source(name, system, value: String);
+procedure TFHIRAuditEvent4B.source(name, system, value: String);
 begin
   if ae.source = nil then
     ae.source := TFhirAuditEventSource.Create;
@@ -4000,7 +4000,7 @@ begin
   ae.source.observer.identifier.value := value;
 end;
 
-procedure TFHIRAuditEvent4.sourceType(system, code, display: String);
+procedure TFHIRAuditEvent4B.sourceType(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
@@ -4012,7 +4012,7 @@ begin
   c.Display := display;
 end;
 
-procedure TFHIRAuditEvent4.success;
+procedure TFHIRAuditEvent4B.success;
 begin
   if ae.event = nil then
     ae.event := TFhirAuditEventEvent.Create;
@@ -4021,9 +4021,9 @@ begin
   ae.event.dateTime := TFslDateTime.makeUTC;
 end;
 
-{ TFhirCapabilityStatementRestResource4 }
+{ TFhirCapabilityStatementRestResource4B }
 
-procedure TFhirCapabilityStatementRestResource4.addParam(html, n, url, d: String; t: TFHIRSearchParamType; tgts: array of String);
+procedure TFhirCapabilityStatementRestResource4B.addParam(html, n, url, d: String; t: TFHIRSearchParamType; tgts: array of String);
 var
   param : TFhirCapabilityStatementRestResourceSearchParam;
 begin
@@ -4040,71 +4040,71 @@ begin
 //  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
 end;
 
-function TFhirCapabilityStatementRestResource4.GetCode: String;
+function TFhirCapabilityStatementRestResource4B.GetCode: String;
 begin
   result := CODES_TFhirResourceTypesEnum[(Element as TFhirCapabilityStatementRestResource).type_];
 end;
 
-procedure TFhirCapabilityStatementRestResource4.SetCode(Value: String);
+procedure TFhirCapabilityStatementRestResource4B.SetCode(Value: String);
 begin
   (Element as TFhirCapabilityStatementRestResource).type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', value);
 end;
 
-function TFhirCapabilityStatementRestResource4.GetProfile: String;
+function TFhirCapabilityStatementRestResource4B.GetProfile: String;
 begin
   result := (Element as TFhirCapabilityStatementRestResource).profile;
 end;
 
-procedure TFhirCapabilityStatementRestResource4.SetProfile(Value: String);
+procedure TFhirCapabilityStatementRestResource4B.SetProfile(Value: String);
 begin
   (Element as TFhirCapabilityStatementRestResource).profile := value;
 end;
 
-procedure TFhirCapabilityStatementRestResource4.addInteraction(code: String);
+procedure TFhirCapabilityStatementRestResource4B.addInteraction(code: String);
 begin
   (Element as TFhirCapabilityStatementRestResource).interactionList.Append.codeElement := TFhirEnum.create('http://hl7.org/fhir/ValueSet/type-restful-interaction', code);
 end;
 
-function TFhirCapabilityStatementRestResource4.GetReadHistory: boolean;
+function TFhirCapabilityStatementRestResource4B.GetReadHistory: boolean;
 begin
   result := (Element as TFhirCapabilityStatementRestResource).readHistory;
 end;
 
-function TFhirCapabilityStatementRestResource4.hasInteraction: boolean;
+function TFhirCapabilityStatementRestResource4B.hasInteraction: boolean;
 begin
   result := (Element as TFhirCapabilityStatementRestResource).interactionList.Count > 0;
 end;
 
-procedure TFhirCapabilityStatementRestResource4.SetReadHistory(Value: boolean);
+procedure TFhirCapabilityStatementRestResource4B.SetReadHistory(Value: boolean);
 begin
   (Element as TFhirCapabilityStatementRestResource).readHistory := Value;
 end;
 
 
-{ TFHIRSubscription4 }
+{ TFHIRSubscription4B }
 
-function TFHIRSubscription4.GetCriteria: String;
+function TFHIRSubscription4B.GetCriteria: String;
 begin
   result := sub.criteria;
 end;
 
-function TFHIRSubscription4.GetDirect: boolean;
+function TFHIRSubscription4B.GetDirect: boolean;
 begin
   result := sub.channel.endpointElement.hasExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct')
     and (sub.channel.endpointElement.getExtensionString('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') = 'true');
 end;
 
-function TFHIRSubscription4.GetEndpoint: String;
+function TFHIRSubscription4B.GetEndpoint: String;
 begin
   result := sub.channel.endpoint;
 end;
 
-function TFHIRSubscription4.GetError: String;
+function TFHIRSubscription4B.GetError: String;
 begin
   result := sub.error;
 end;
 
-function TFHIRSubscription4.GetHeaders: TArray<String>;
+function TFHIRSubscription4B.GetHeaders: TArray<String>;
 var
   i : integer;
 begin
@@ -4113,27 +4113,27 @@ begin
     result[i] := sub.channel.headerList[i].value;
 end;
 
-function TFHIRSubscription4.GetLanguage: String;
+function TFHIRSubscription4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRSubscription4.GetMethod: TSubscriptionMethod;
+function TFHIRSubscription4B.GetMethod: TSubscriptionMethod;
 begin
   result := MAP_TSubscriptionMethod[sub.channel.type_];
 end;
 
-function TFHIRSubscription4.GetPayload: String;
+function TFHIRSubscription4B.GetPayload: String;
 begin
   result := sub.channel.payload;
 end;
 
-function TFHIRSubscription4.GetStatus: TSubscriptionStatus;
+function TFHIRSubscription4B.GetStatus: TSubscriptionStatus;
 begin
   result := MAP_TSubscriptionStatus[sub.status];
 end;
 
-function TFHIRSubscription4.GetSummary: String;
+function TFHIRSubscription4B.GetSummary: String;
 var
   s : TFhirString;
 begin
@@ -4143,17 +4143,17 @@ begin
 //  result := result+#0+subst.channel.header;
 end;
 
-function TFHIRSubscription4.getTopic: string;
+function TFHIRSubscription4B.getTopic: string;
 begin
   result := sub.getExtensionString('http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-topic-canonical');
 end;
 
-procedure TFHIRSubscription4.SetCriteria(Value: String);
+procedure TFHIRSubscription4B.SetCriteria(Value: String);
 begin
   sub.criteria := value;
 end;
 
-procedure TFHIRSubscription4.SetDirect(Value: boolean);
+procedure TFHIRSubscription4B.SetDirect(Value: boolean);
 begin
   if value then
     sub.channel.endpointElement.setExtensionBoolean('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct', 'true')
@@ -4161,17 +4161,17 @@ begin
     sub.channel.endpointElement.removeExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct');
 end;
 
-procedure TFHIRSubscription4.SetEndpoint(Value: String);
+procedure TFHIRSubscription4B.SetEndpoint(Value: String);
 begin
   sub.channel.endpoint := value;
 end;
 
-procedure TFHIRSubscription4.SetError(Value: String);
+procedure TFHIRSubscription4B.SetError(Value: String);
 begin
   sub.error := value;
 end;
 
-procedure TFHIRSubscription4.Setheaders(Value: TArray<String>);
+procedure TFHIRSubscription4B.Setheaders(Value: TArray<String>);
 var
   s : String;
 begin
@@ -4180,89 +4180,89 @@ begin
     sub.channel.headerList.Append.value := s;
 end;
 
-procedure TFHIRSubscription4.SetLanguage(const Value: String);
+procedure TFHIRSubscription4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFHIRSubscription4.SetMethod(Value: TSubscriptionMethod);
+procedure TFHIRSubscription4B.SetMethod(Value: TSubscriptionMethod);
 begin
   sub.channel.type_ := MAP_TSubscriptionMethod2[value];
 end;
 
-procedure TFHIRSubscription4.SetPayload(Value: String);
+procedure TFHIRSubscription4B.SetPayload(Value: String);
 begin
   sub.channel.payload := value;
 end;
 
-procedure TFHIRSubscription4.SetStatus(Value: TSubscriptionStatus);
+procedure TFHIRSubscription4B.SetStatus(Value: TSubscriptionStatus);
 begin
   sub.status := MAP_TSubscriptionStatus2[value];
 end;
 
-function TFHIRSubscription4.sub: TFhirSubscription;
+function TFHIRSubscription4B.sub: TFhirSubscription;
 begin
   result := resource as TFhirSubscription;
 end;
 
-{ TFhirBinary4 }
+{ TFhirBinary4B }
 
-function TFhirBinary4.content: TBytes;
+function TFhirBinary4B.content: TBytes;
 begin
   result := (resource as TFHIRBinary).data;
 end;
 
-function TFhirBinary4.ContentType: String;
+function TFhirBinary4B.ContentType: String;
 begin
   result := (resource as TFHIRBinary).contentType;
 end;
 
-function TFhirBinary4.GetLanguage: String;
+function TFhirBinary4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-procedure TFhirBinary4.SetLanguage(const Value: String);
+procedure TFhirBinary4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-{ TFhirObservationComponent4 }
+{ TFhirObservationComponent4B }
 
-function TFhirObservationComponent4.codings: TFslList<TFHIRCodingW>;
+function TFhirObservationComponent4B.codings: TFslList<TFHIRCodingW>;
 var
   c : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
   if comp.code <> nil then
     for c in comp.code.codingList do
-      result.Add(TFHIRCoding4.Create(c.Link));
+      result.Add(TFHIRCoding4B.Create(c.Link));
 end;
 
-function TFhirObservationComponent4.comp: TFhirObservationComponent;
+function TFhirObservationComponent4B.comp: TFhirObservationComponent;
 begin
   result := (Element as TFhirObservationComponent);
 end;
 
-function TFhirObservationComponent4.dataAbsentReason: TFhirCodeableConceptW;
+function TFhirObservationComponent4B.dataAbsentReason: TFhirCodeableConceptW;
 begin
   if comp.dataAbsentReason = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(comp.dataAbsentReason.link);
+    result := TFhirCodeableConcept4B.Create(comp.dataAbsentReason.link);
 end;
 
-function TFhirObservationComponent4.GetValue: TFHIRObject;
+function TFhirObservationComponent4B.GetValue: TFHIRObject;
 begin
   result := comp.value;
 end;
 
-procedure TFhirObservationComponent4.SetValue(Value: TFHIRObject);
+procedure TFhirObservationComponent4B.SetValue(Value: TFHIRObject);
 begin
   comp.value := value as TFHIRDataType;
 end;
 
-function TFhirObservationComponent4.valueString: String;
+function TFhirObservationComponent4B.valueString: String;
 begin
   if (comp.value <> nil) and (comp.value.isPrimitive) then
     result := comp.value.primitiveValue
@@ -4270,85 +4270,85 @@ begin
     result := '';
 end;
 
-function TFhirObservationComponent4.valueW: TFHIRXVersionElementWrapper;
+function TFhirObservationComponent4B.valueW: TFHIRXVersionElementWrapper;
 begin
   if comp.value is TFhirCodeableConcept then
-    result := TFhirCodeableConcept4.Create(comp.value.Link)
+    result := TFhirCodeableConcept4B.Create(comp.value.Link)
   else if comp.value is TFHIRQuantity then
-    result := TFHIRQuantity4.Create(comp.value.Link)
+    result := TFHIRQuantity4B.Create(comp.value.Link)
   else
     result := nil;
 end;
 
-{ TFhirObservation4 }
+{ TFhirObservation4B }
 
-procedure TFhirObservation4.SetCode(c: TFHIRCodingW);
+procedure TFhirObservation4B.SetCode(c: TFHIRCodingW);
 begin
   if obs.code = nil then
     obs.code := TFhirCodeableConcept.Create;
   obs.code.codingList.add((c.Element as TFHIRCoding).Link);
 end;
 
-function TFhirObservation4.addComp(system, code: String): TFhirObservationComponentW;
+function TFhirObservation4B.addComp(system, code: String): TFhirObservationComponentW;
 var
   c : TFhirObservationComponent;
 begin
   c := TFhirObservationComponent.Create;
   c.code := TFhirCodeableConcept.Create;
   c.code.codingList.add(TFhirCoding.Create(system, code));
-  result := TFhirObservationComponent4.Create(c.link);
+  result := TFhirObservationComponent4B.Create(c.link);
 end;
 
-function TFhirObservation4.GetStatus: TObservationStatus;
+function TFhirObservation4B.GetStatus: TObservationStatus;
 begin
   result := MAP_TObservationStatus2[obs.status];
 end;
 
-function TFhirObservation4.obs: TFHIRObservation;
+function TFhirObservation4B.obs: TFHIRObservation;
 begin
   result := resource as TFhirObservation;
 end;
 
-procedure TFhirObservation4.setPeriod(start, finish: TDateTime);
+procedure TFhirObservation4B.setPeriod(start, finish: TDateTime);
 begin
   obs.effective := TFhirPeriod.Create;
   TFhirPeriod(obs.effective).start := TFslDateTime.makeUTC(start);
   TFhirPeriod(obs.effective).end_ := TFslDateTime.makeUTC(finish);
 end;
 
-procedure TFhirObservation4.SetStatus(Value: TObservationStatus);
+procedure TFhirObservation4B.SetStatus(Value: TObservationStatus);
 begin
   obs.status := MAP_TObservationStatus[value];
 end;
 
-function TFhirObservation4.codings: TFslList<TFHIRCodingW>;
+function TFhirObservation4B.codings: TFslList<TFHIRCodingW>;
 var
   c : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
   if obs.code <> nil then
     for c in obs.code.codingList do
-      result.Add(TFHIRCoding4.Create(c.Link));
+      result.Add(TFHIRCoding4B.Create(c.Link));
 end;
 
-function TFhirObservation4.components: TFslList<TFhirObservationComponentW>;
+function TFhirObservation4B.components: TFslList<TFhirObservationComponentW>;
 var
   c : TFhirObservationComponent;
 begin
   result := TFslList<TFhirObservationComponentW>.create;
   for c in obs.componentList do
-    result.Add(TFhirObservationComponent4.Create(c.Link));
+    result.Add(TFhirObservationComponent4B.Create(c.Link));
 end;
 
-function TFhirObservation4.dataAbsentReason: TFhirCodeableConceptW;
+function TFhirObservation4B.dataAbsentReason: TFhirCodeableConceptW;
 begin
   if obs.dataAbsentReason = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(obs.dataAbsentReason.link);
+    result := TFhirCodeableConcept4B.Create(obs.dataAbsentReason.link);
 end;
 
-procedure TFhirObservation4.getDates(var dt, dtMin, dtMax: TDateTime);
+procedure TFhirObservation4B.getDates(var dt, dtMin, dtMax: TDateTime);
 begin
   if obs.effective is TFHIRDateTime then
   begin
@@ -4370,32 +4370,32 @@ begin
   end;
 end;
 
-function TFhirObservation4.GetValue: TFHIRObject;
+function TFhirObservation4B.GetValue: TFHIRObject;
 begin
   result := obs.value;
 end;
 
-procedure TFhirObservation4.SetValue(Value: TFHIRObject);
+procedure TFhirObservation4B.SetValue(Value: TFHIRObject);
 begin
   obs.value := value as TFHIRDataType;
 end;
 
-function TFhirObservation4.valueW: TFHIRXVersionElementWrapper;
+function TFhirObservation4B.valueW: TFHIRXVersionElementWrapper;
 begin
   if obs.value is TFhirCodeableConcept then
-    result := TFhirCodeableConcept4.Create(obs.value.Link)
+    result := TFhirCodeableConcept4B.Create(obs.value.Link)
   else if obs.value is TFHIRQuantity then
-    result := TFHIRQuantity4.Create(obs.value.Link)
+    result := TFHIRQuantity4B.Create(obs.value.Link)
   else
     result := nil;
 end;
 
-function TFhirObservation4.hasTime: boolean;
+function TFhirObservation4B.hasTime: boolean;
 begin
   result := obs.effective <> nil;
 end;
 
-function TFhirObservation4.categories: TFslList<TFHIRCodingW>;
+function TFhirObservation4B.categories: TFslList<TFHIRCodingW>;
 var
   cc : TFHIRCodeableConcept;
   c : TFHIRCoding;
@@ -4403,17 +4403,17 @@ begin
   result := TFslList<TFHIRCodingW>.create;
   for cc in obs.categoryList do
     for c in cc.codingList do
-      result.Add(TFHIRCoding4.Create(c.Link));
+      result.Add(TFHIRCoding4B.Create(c.Link));
 end;
 
-procedure TFhirObservation4.setCode(system, code, display: String);
+procedure TFhirObservation4B.setCode(system, code, display: String);
 begin
   if obs.code = nil then
     obs.code := TFhirCodeableConcept.Create;
   obs.code.codingList.add(TFHIRCoding.Create(system, code, display));
 end;
 
-procedure TFhirObservation4.SetCodeText(const Value: String);
+procedure TFhirObservation4B.SetCodeText(const Value: String);
 begin
   if value <> '' then
   begin
@@ -4425,12 +4425,12 @@ begin
     obs.code := nil;
 end;
 
-procedure TFhirObservation4.SetComment(const Value: String);
+procedure TFhirObservation4B.SetComment(const Value: String);
 begin
   obs.noteList.Append.text := value;
 end;
 
-procedure TFhirObservation4.SetDevice(const Value: String);
+procedure TFhirObservation4B.SetDevice(const Value: String);
 begin
   if (value = '') then
   begin
@@ -4447,7 +4447,7 @@ begin
   end;
 end;
 
-procedure TFhirObservation4.SetDeviceName(const Value: String);
+procedure TFhirObservation4B.SetDeviceName(const Value: String);
 begin
   if (value = '') then
   begin
@@ -4464,32 +4464,32 @@ begin
   end;
 end;
 
-procedure TFhirObservation4.SetEffective(const Value: TFHIRObject);
+procedure TFhirObservation4B.SetEffective(const Value: TFHIRObject);
 begin
   obs.effective := Value as TFHIRDataType;
 end;
 
-procedure TFhirObservation4.SetEffectiveDateTime(const Value: TFslDateTime);
+procedure TFhirObservation4B.SetEffectiveDateTime(const Value: TFslDateTime);
 begin
   SetEffective(TFhirDateTime.Create(value));
 end;
 
-procedure TFhirObservation4.SetEffectivePeriod(const Value: TFHIRPeriodW);
+procedure TFhirObservation4B.SetEffectivePeriod(const Value: TFHIRPeriodW);
 begin
   obs.effective := (value.Element as TFHIRDataType).Link;
 end;
 
-procedure TFhirObservation4.SetIssued(const Value: TFslDateTime);
+procedure TFhirObservation4B.SetIssued(const Value: TFslDateTime);
 begin
   obs.issued := Value;
 end;
 
-procedure TFhirObservation4.SetLanguage(const Value: String);
+procedure TFhirObservation4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirObservation4.SetSubject(const Value: String);
+procedure TFhirObservation4B.SetSubject(const Value: String);
 begin
   if value = '' then
     obs.subject := nil
@@ -4501,7 +4501,7 @@ begin
   end;
 end;
 
-function TFhirObservation4.GetCodeText: String;
+function TFhirObservation4B.GetCodeText: String;
 begin
   if obs.code = nil then
     result := ''
@@ -4509,7 +4509,7 @@ begin
     result := obs.code.text;
 end;
 
-function TFhirObservation4.GetComment: String;
+function TFhirObservation4B.GetComment: String;
 begin
   if obs.noteList.Count = 0 then
     result := ''
@@ -4517,27 +4517,27 @@ begin
     result := obs.noteList[0].text;
 end;
 
-function TFhirObservation4.getComponent(system, code: String; var comp: TFhirObservationComponentW): boolean;
+function TFhirObservation4B.getComponent(system, code: String; var comp: TFhirObservationComponentW): boolean;
 var
   c : TFHIRObservationComponent;
 begin
   comp := nil;
   result := obs.getComponent(system, code, c);
   if result then
-    comp := TFHIRObservationComponent4.create(c.link);
+    comp := TFHIRObservationComponent4B.create(c.link);
 end;
 
-function TFhirObservation4.getComponent(system: String; var comp: TFhirObservationComponentW): boolean;
+function TFhirObservation4B.getComponent(system: String; var comp: TFhirObservationComponentW): boolean;
 var
   c : TFHIRObservationComponent;
 begin
   comp := nil;
   result := obs.getComponent(system, c);
   if result then
-    comp := TFHIRObservationComponent4.create(c.link);
+    comp := TFHIRObservationComponent4B.create(c.link);
 end;
 
-function TFhirObservation4.GetDevice: String;
+function TFhirObservation4B.GetDevice: String;
 begin
   if obs.device <> nil then
     result := obs.device.reference
@@ -4545,7 +4545,7 @@ begin
     result := '';
 end;
 
-function TFhirObservation4.GetDeviceName: String;
+function TFhirObservation4B.GetDeviceName: String;
 begin
   if obs.device <> nil then
     result := obs.device.display
@@ -4553,12 +4553,12 @@ begin
     result := '';
 end;
 
-function TFhirObservation4.GetEffective: TFHIRObject;
+function TFhirObservation4B.GetEffective: TFHIRObject;
 begin
   result := obs.effective;
 end;
 
-function TFhirObservation4.GetEffectiveDateTime: TFslDateTime;
+function TFhirObservation4B.GetEffectiveDateTime: TFslDateTime;
 begin
   if obs.effective is TFhirDateTime then
     result := (obs.effective as TFhirDateTime).value
@@ -4566,50 +4566,50 @@ begin
     result := TFslDateTime.makeNull;
 end;
 
-function TFhirObservation4.GetEffectivePeriod: TFHIRPeriodW;
+function TFhirObservation4B.GetEffectivePeriod: TFHIRPeriodW;
 begin
   if obs.effective is TFhirPeriod then
-    result := TFHIRPeriod4.create(obs.effective.Link)
+    result := TFHIRPeriod4B.create(obs.effective.Link)
   else
     result := nil;
 end;
 
-function TFhirObservation4.GetIssued: TFslDateTime;
+function TFhirObservation4B.GetIssued: TFslDateTime;
 begin
   result := obs.issued;
 end;
 
-function TFhirObservation4.GetLanguage: String;
+function TFhirObservation4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirObservation4.hasDevice: boolean;
+function TFhirObservation4B.hasDevice: boolean;
 begin
   result := obs.Device <> nil;
 end;
 
-function TFhirObservation4.hasEffective: boolean;
+function TFhirObservation4B.hasEffective: boolean;
 begin
   result := obs.Effective <> nil;
 end;
 
-function TFhirObservation4.hasIssued: boolean;
+function TFhirObservation4B.hasIssued: boolean;
 begin
   result := obs.IssuedElement <> nil;
 end;
 
-function TFhirObservation4.hasMethod: boolean;
+function TFhirObservation4B.hasMethod: boolean;
 begin
   result := obs.Method <> nil;
 end;
 
-function TFhirObservation4.hasSubject: boolean;
+function TFhirObservation4B.hasSubject: boolean;
 begin
   result := obs.Subject <> nil;
 end;
 
-function TFhirObservation4.method(force : boolean) : TFhirCodeableConceptW;
+function TFhirObservation4B.method(force : boolean) : TFhirCodeableConceptW;
 begin
   if (obs.method = nil) and force then
     obs.method := TFhirCodeableConcept.Create;
@@ -4617,10 +4617,10 @@ begin
   if obs.method = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(obs.method.link);
+    result := TFhirCodeableConcept4B.Create(obs.method.link);
 end;
 
-function TFhirObservation4.GetSubject: String;
+function TFhirObservation4B.GetSubject: String;
 begin
   if obs.subject <> nil then
     result := obs.subject.reference
@@ -4628,103 +4628,103 @@ begin
     result := '';
 end;
 
-procedure TFhirObservation4.addCategory(c: TFHIRCodingW);
+procedure TFhirObservation4B.addCategory(c: TFHIRCodingW);
 begin
   obs.categoryList.Append.codingList.add((c.Element as TFHIRCoding).Link);
 end;
 
-procedure TFhirObservation4.addCategory(system, code, display: String);
+procedure TFhirObservation4B.addCategory(system, code, display: String);
 begin
   obs.categoryList.Append.codingList.add(TFHIRCoding.Create(system, code, display));
 end;
 
-procedure TFhirObservation4.setCode(text: String);
+procedure TFhirObservation4B.setCode(text: String);
 begin
   if obs.code = nil then
     obs.code := TFhirCodeableConcept.Create;
   obs.code.text := text;
 end;
 
-{ TFHIRQuantity4 }
+{ TFHIRQuantity4B }
 
-function TFHIRQuantity4.asDuration: TDateTime;
+function TFHIRQuantity4B.asDuration: TDateTime;
 begin
   result := qty.asDuration;
 end;
 
-function TFHIRQuantity4.GetCode: String;
+function TFHIRQuantity4B.GetCode: String;
 begin
   result := qty.code;
 end;
 
-function TFHIRQuantity4.GetSystem: String;
+function TFHIRQuantity4B.GetSystem: String;
 begin
   result := qty.system;
 end;
 
-function TFHIRQuantity4.GetUnit: String;
+function TFHIRQuantity4B.GetUnit: String;
 begin
   result := qty.unit_;
 end;
 
-function TFHIRQuantity4.GetValue: String;
+function TFHIRQuantity4B.GetValue: String;
 begin
   result := qty.value;
 end;
 
-function TFHIRQuantity4.qty: TFHIRQuantity;
+function TFHIRQuantity4B.qty: TFHIRQuantity;
 begin
   result := Element as TFHIRQuantity;
 end;
 
-function TFHIRQuantity4.renderText: String;
+function TFHIRQuantity4B.renderText: String;
 begin
   result := gen(element as TFhirQuantity);
 end;
 
-procedure TFHIRQuantity4.SetCode(Value: String);
+procedure TFHIRQuantity4B.SetCode(Value: String);
 begin
   qty.code := Value;
 end;
 
-procedure TFHIRQuantity4.SetSystem(Value: String);
+procedure TFHIRQuantity4B.SetSystem(Value: String);
 begin
   qty.system := Value;
 end;
 
-procedure TFHIRQuantity4.SetUnit(Value: String);
+procedure TFHIRQuantity4B.SetUnit(Value: String);
 begin
   qty.unit_ := Value;
 end;
 
-procedure TFHIRQuantity4.SetValue(Value: String);
+procedure TFHIRQuantity4B.SetValue(Value: String);
 begin
   qty.value := Value;
 end;
 
-{ TFHIRLookupOpRequest4 }
+{ TFHIRLookupOpRequest4B }
 
-function TFHIRLookupOpRequest4.asParams: TFHIRResourceV;
+function TFHIRLookupOpRequest4B.asParams: TFHIRResourceV;
 begin
   result := (op as TFHIROperationRequest).asParams;
 end;
 
-function TFHIRLookupOpRequest4.coding: TFHIRCodingW;
+function TFHIRLookupOpRequest4B.coding: TFHIRCodingW;
 begin
-  result := TFHIRCoding4.Create((op as TFHIRLookupOpRequest).coding.Link);
+  result := TFHIRCoding4B.Create((op as TFHIRLookupOpRequest).coding.Link);
 end;
 
-function TFHIRLookupOpRequest4.displayLanguage: String;
+function TFHIRLookupOpRequest4B.displayLanguage: String;
 begin
   result := (op as TFHIRLookupOpRequest).displayLanguage;
 end;
 
-procedure TFHIRLookupOpRequest4.load(params: THTTPParameters);
+procedure TFHIRLookupOpRequest4B.load(params: THTTPParameters);
 begin
   (op as TFHIRLookupOpRequest).load(params);
 end;
 
-procedure TFHIRLookupOpRequest4.loadCoding;
+procedure TFHIRLookupOpRequest4B.loadCoding;
 var
   req : TFHIRLookupOpRequest;
 begin
@@ -4740,7 +4740,7 @@ begin
     raise ETerminologyError.create('Unable to find a code to lookup (need coding or system/code)');
 end;
 
-function TFHIRLookupOpRequest4.propList: TArray<String>;
+function TFHIRLookupOpRequest4B.propList: TArray<String>;
 var
   i : integer;
 begin
@@ -4749,98 +4749,98 @@ begin
     result[i] := (op as TFHIRLookupOpRequest).property_List[i];
 end;
 
-procedure TFHIRLookupOpRequest4.load(params: TFHIRResourceV);
+procedure TFHIRLookupOpRequest4B.load(params: TFHIRResourceV);
 begin
   (op as TFHIRLookupOpRequest).load(params as TFhirParameters);
 end;
 
-{ TFHIRSubsumesOpRequest4 }
+{ TFHIRSubsumesOpRequest4B }
 
-function TFHIRSubsumesOpRequest4.asParams: TFHIRResourceV;
+function TFHIRSubsumesOpRequest4B.asParams: TFHIRResourceV;
 begin
   result := (op as TFHIRSubsumesOpRequest).asParams;
 end;
 
-procedure TFHIRSubsumesOpRequest4.load(params: TFHIRResourceV);
+procedure TFHIRSubsumesOpRequest4B.load(params: TFHIRResourceV);
 begin
   (op as TFHIRSubsumesOpRequest).load(params as TFHIRParameters);
 end;
 
-function TFHIRSubsumesOpRequest4.codeA: String;
+function TFHIRSubsumesOpRequest4B.codeA: String;
 begin
   result := (op as TFHIRSubsumesOpRequest).codeA;
 end;
 
-function TFHIRSubsumesOpRequest4.codeB: String;
+function TFHIRSubsumesOpRequest4B.codeB: String;
 begin
   result := (op as TFHIRSubsumesOpRequest).codeB;
 end;
 
-function TFHIRSubsumesOpRequest4.codingA: TFHIRCodingW;
+function TFHIRSubsumesOpRequest4B.codingA: TFHIRCodingW;
 begin
-  result := TFHIRCoding4.Create((op as TFHIRSubsumesOpRequest).codingA);
+  result := TFHIRCoding4B.Create((op as TFHIRSubsumesOpRequest).codingA);
 end;
 
-function TFHIRSubsumesOpRequest4.codingB: TFHIRCodingW;
+function TFHIRSubsumesOpRequest4B.codingB: TFHIRCodingW;
 begin
-  result := TFHIRCoding4.Create((op as TFHIRSubsumesOpRequest).codingB);
+  result := TFHIRCoding4B.Create((op as TFHIRSubsumesOpRequest).codingB);
 end;
 
-function TFHIRSubsumesOpRequest4.hasCodingA: boolean;
+function TFHIRSubsumesOpRequest4B.hasCodingA: boolean;
 begin
   result := (op as TFHIRSubsumesOpRequest).codingA <> nil;
 end;
 
-function TFHIRSubsumesOpRequest4.hasCodingB: boolean;
+function TFHIRSubsumesOpRequest4B.hasCodingB: boolean;
 begin
   result := (op as TFHIRSubsumesOpRequest).codingB <> nil;
 end;
 
-function TFHIRSubsumesOpRequest4.version: String;
+function TFHIRSubsumesOpRequest4B.version: String;
 begin
   result := (op as TFHIRSubsumesOpRequest).version;
 end;
 
-procedure TFHIRSubsumesOpRequest4.load(params: THTTPParameters);
+procedure TFHIRSubsumesOpRequest4B.load(params: THTTPParameters);
 begin
   (op as TFHIRSubsumesOpRequest).load(params);
 end;
 
-function TFHIRSubsumesOpRequest4.systemUri: String;
+function TFHIRSubsumesOpRequest4B.systemUri: String;
 begin
   result := (op as TFHIRSubsumesOpRequest).system;
 end;
 
-{ TFHIRSubsumesOpResponse4 }
+{ TFHIRSubsumesOpResponse4B }
 
-function TFHIRSubsumesOpResponse4.asParams: TFHIRResourceV;
+function TFHIRSubsumesOpResponse4B.asParams: TFHIRResourceV;
 begin
   result := (op as TFHIRSubsumesOpResponse).asParams;
 end;
 
-procedure TFHIRSubsumesOpResponse4.load(params: TFHIRResourceV);
+procedure TFHIRSubsumesOpResponse4B.load(params: TFHIRResourceV);
 begin
   (op as TFHIRSubsumesOpResponse).load(params as TFHIRParameters);
 end;
 
-function TFHIRSubsumesOpResponse4.GetOutcome: String;
+function TFHIRSubsumesOpResponse4B.GetOutcome: String;
 begin
   result := (op as TFHIRSubsumesOpResponse).outcome;
 end;
 
-procedure TFHIRSubsumesOpResponse4.load(params: THTTPParameters);
+procedure TFHIRSubsumesOpResponse4B.load(params: THTTPParameters);
 begin
   (op as TFHIRSubsumesOpResponse).load(params);
 end;
 
-procedure TFHIRSubsumesOpResponse4.SetOutcome(Value: String);
+procedure TFHIRSubsumesOpResponse4B.SetOutcome(Value: String);
 begin
   (op as TFHIRSubsumesOpResponse).outcome := value;
 end;
 
-{ TFhirCodeableConcept4 }
+{ TFhirCodeableConcept4B }
 
-procedure TFhirCodeableConcept4.addCoding(coding: TFHIRCodingW);
+procedure TFhirCodeableConcept4B.addCoding(coding: TFHIRCodingW);
 var
   list : TFHIRCodingList;
   c : TFHIRCoding;
@@ -4850,248 +4850,248 @@ begin
   list.Add(c);
 end;
 
-function TFhirCodeableConcept4.addCoding: TFHIRCodingW;
+function TFhirCodeableConcept4B.addCoding: TFHIRCodingW;
 begin
-  result := TFHIRCoding4.create((Element as TFhirCodeableConcept).codingList.Append.link);
+  result := TFHIRCoding4B.create((Element as TFhirCodeableConcept).codingList.Append.link);
 end;
 
-function TFhirCodeableConcept4.codingCount: integer;
+function TFhirCodeableConcept4B.codingCount: integer;
 begin
   result := (Element as TFhirCodeableConcept).codingList.Count;
 end;
 
-function TFhirCodeableConcept4.codings: TFslList<TFhirCodingW>;
+function TFhirCodeableConcept4B.codings: TFslList<TFhirCodingW>;
 var
   c : TFHIRCoding;
 begin
   result := TFslList<TFhirCodingW>.create;
   for c in (Element as TFhirCodeableConcept).codingList do
-    result.Add(TFHIRCoding4.Create(c.Link));
+    result.Add(TFHIRCoding4B.Create(c.Link));
 end;
 
-function TFhirCodeableConcept4.fromSystem(Systems: TArray<String>; required: boolean): String;
+function TFhirCodeableConcept4B.fromSystem(Systems: TArray<String>; required: boolean): String;
 begin
   result := (Element as TFhirCodeableConcept).fromSystem(Systems, required);
 end;
 
-function TFhirCodeableConcept4.GetText: String;
+function TFhirCodeableConcept4B.GetText: String;
 begin
   result := (Element as TFhirCodeableConcept).text;
 end;
 
-function TFhirCodeableConcept4.renderText: String;
+function TFhirCodeableConcept4B.renderText: String;
 begin
   result := gen(element as TFhirCodeableConcept);
 end;
 
-procedure TFhirCodeableConcept4.SetText(const Value: String);
+procedure TFhirCodeableConcept4B.SetText(const Value: String);
 begin
   (Element as TFhirCodeableConcept).text := value;
 end;
 
-function TFhirCodeableConcept4.fromSystem(System: String; required: boolean): String;
+function TFhirCodeableConcept4B.fromSystem(System: String; required: boolean): String;
 begin
   result := (Element as TFhirCodeableConcept).fromSystem(System, required);
 end;
 
-function TFhirCodeableConcept4.summary: String;
+function TFhirCodeableConcept4B.summary: String;
 begin
   result := summarise(Element as TFhirCodeableConcept);
 end;
 
-{ TFHIRGroup4 }
+{ TFHIRGroup4B }
 
-function TFHIRGroup4.characteristics: TFslList<TFHIRGroupCharacteristicW>;
+function TFHIRGroup4B.characteristics: TFslList<TFHIRGroupCharacteristicW>;
 var
   gc : TFHIRGroupCharacteristic;
 begin
   result := TFslList<TFHIRGroupCharacteristicW>.create;
   for gc in (Resource as TFHIRGroup).characteristicList do
-    result.add(TFHIRGroupCharacteristic4.create(gc.link));
+    result.add(TFHIRGroupCharacteristic4B.create(gc.link));
 end;
 
-function TFHIRGroup4.GetLanguage: String;
+function TFHIRGroup4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRGroup4.hasCharacteristics: boolean;
+function TFHIRGroup4B.hasCharacteristics: boolean;
 begin
   result := (Resource as TFHIRGroup).characteristicList.count > 0;
 end;
 
-function TFHIRGroup4.hasMembers: boolean;
+function TFHIRGroup4B.hasMembers: boolean;
 begin
   result := (Resource as TFHIRGroup).memberList.count > 0;
 end;
 
-function TFHIRGroup4.name: String;
+function TFHIRGroup4B.name: String;
 begin
   result := (Resource as TFHIRGroup).name;
 end;
 
-procedure TFHIRGroup4.SetLanguage(const Value: String);
+procedure TFHIRGroup4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-{ TFHIRGroupCharacteristic4 }
+{ TFHIRGroupCharacteristic4B }
 
-function TFHIRGroupCharacteristic4.code: TFhirCodeableConceptW;
+function TFHIRGroupCharacteristic4B.code: TFhirCodeableConceptW;
 begin
-  result := TFhirCodeableConcept4.Create((element as TFHIRGroupCharacteristic).code);
+  result := TFhirCodeableConcept4B.Create((element as TFHIRGroupCharacteristic).code);
 end;
 
-function TFHIRGroupCharacteristic4.value: TFhirCodeableConceptW;
+function TFHIRGroupCharacteristic4B.value: TFhirCodeableConceptW;
 begin
-  result := TFhirCodeableConcept4.Create((element as TFHIRGroupCharacteristic).value);
+  result := TFhirCodeableConcept4B.Create((element as TFHIRGroupCharacteristic).value);
 end;
 
-{ TFHIRStatsOpResponse4 }
+{ TFHIRStatsOpResponse4B }
 
-procedure TFHIRStatsOpResponse4.addObs(obs: TFHIRResourceV);
+procedure TFHIRStatsOpResponse4B.addObs(obs: TFHIRResourceV);
 begin
   (Op as TFHIRStatsOpResponse).sourceList.Add(obs as TFhirObservation);
 end;
 
-function TFHIRStatsOpResponse4.asParams: TFHIRResourceV;
+function TFHIRStatsOpResponse4B.asParams: TFHIRResourceV;
 begin
   result := (op as TFHIRLookupOpResponse).asParams;
 end;
 
-procedure TFHIRStatsOpResponse4.load(params: THTTPParameters);
+procedure TFHIRStatsOpResponse4B.load(params: THTTPParameters);
 begin
   (op as TFHIRLookupOpResponse).load(params);
 end;
 
-procedure TFHIRStatsOpResponse4.load(params: TFHIRResourceV);
+procedure TFHIRStatsOpResponse4B.load(params: TFHIRResourceV);
 begin
   (op as TFHIRLookupOpResponse).load(params as TFHIRParameters);
 end;
 
-{ TFHIRNamingSystem4 }
+{ TFHIRNamingSystem4B }
 
-function TFHIRNamingSystem4.getContext: String;
+function TFHIRNamingSystem4B.getContext: String;
 begin
   result := '';
 end;
 
-function TFHIRNamingSystem4.getDate: TFslDateTime;
+function TFHIRNamingSystem4B.getDate: TFslDateTime;
 begin
   result := nm.date;
 end;
 
-function TFHIRNamingSystem4.getDescription: String;
+function TFHIRNamingSystem4B.getDescription: String;
 begin
   result := nm.description;
 end;
 
-function TFHIRNamingSystem4.GetLanguage: String;
+function TFHIRNamingSystem4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRNamingSystem4.getName: String;
+function TFHIRNamingSystem4B.getName: String;
 begin
   result := nm.name;
 end;
 
-function TFHIRNamingSystem4.getPublisher: String;
+function TFHIRNamingSystem4B.getPublisher: String;
 begin
   result := nm.publisher;
 end;
 
-function TFHIRNamingSystem4.getStatus: TPublicationStatus;
+function TFHIRNamingSystem4B.getStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[nm.status];
 end;
 
-function TFHIRNamingSystem4.getUri: String;
+function TFHIRNamingSystem4B.getUri: String;
 begin
   result := nm.getUri;
 end;
 
-function TFHIRNamingSystem4.getURL: String;
+function TFHIRNamingSystem4B.getURL: String;
 begin
   result := '';
 end;
 
-function TFHIRNamingSystem4.getVersion: String;
+function TFHIRNamingSystem4B.getVersion: String;
 begin
   result := '';
 end;
 
-function TFHIRNamingSystem4.hasOid(oid: String): boolean;
+function TFHIRNamingSystem4B.hasOid(oid: String): boolean;
 begin
   result := nm.hasOid(oid);
 end;
 
-function TFHIRNamingSystem4.nm: TFHIRNamingSystem;
+function TFHIRNamingSystem4B.nm: TFHIRNamingSystem;
 begin
   result := (resource as TFHIRNamingSystem);
 end;
 
-procedure TFHIRNamingSystem4.setDate(Value: TFslDateTime);
+procedure TFHIRNamingSystem4B.setDate(Value: TFslDateTime);
 begin
   nm.date := value;
 end;
 
-procedure TFHIRNamingSystem4.setDescription(Value: String);
+procedure TFHIRNamingSystem4B.setDescription(Value: String);
 begin
   nm.description := value;
 end;
 
-procedure TFHIRNamingSystem4.SetLanguage(const Value: String);
+procedure TFHIRNamingSystem4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFHIRNamingSystem4.setName(Value: String);
+procedure TFHIRNamingSystem4B.setName(Value: String);
 begin
   nm.name := value;
 end;
 
-procedure TFHIRNamingSystem4.setPublisher(Value: String);
+procedure TFHIRNamingSystem4B.setPublisher(Value: String);
 begin
   nm.publisher := value;
 end;
 
-procedure TFHIRNamingSystem4.setStatus(Value: TPublicationStatus);
+procedure TFHIRNamingSystem4B.setStatus(Value: TPublicationStatus);
 begin
   nm.status := MAP_TPublicationStatus[value];
 end;
 
-procedure TFHIRNamingSystem4.setUrl(Value: String);
+procedure TFHIRNamingSystem4B.setUrl(Value: String);
 begin
   // nothing
 end;
 
-procedure TFHIRNamingSystem4.setVersion(Value: String);
+procedure TFHIRNamingSystem4B.setVersion(Value: String);
 begin
   // nothing
 end;
 
 
-{ TFHIRStructureMap4 }
+{ TFHIRStructureMap4B }
 
-function TFHIRStructureMap4.GetLanguage: String;
+function TFHIRStructureMap4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-procedure TFHIRStructureMap4.SetLanguage(const Value: String);
+procedure TFHIRStructureMap4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFHIRStructureMap4.url: String;
+function TFHIRStructureMap4B.url: String;
 begin
   result := (Resource as TFHIRStructureMap).url;
 end;
 
-{ TFHIREventDefinition4 }
+{ TFHIREventDefinition4B }
 
-function TFHIREventDefinition4.dataType: String;
+function TFHIREventDefinition4B.dataType: String;
 begin
   if ed.triggerList.Count = 0 then
     result := ''
@@ -5101,12 +5101,12 @@ begin
     result := CODES_TFhirAllTypesEnum[ed.triggerList[0].dataList[0].type_];
 end;
 
-function TFHIREventDefinition4.ed: TFHIREventDefinition;
+function TFHIREventDefinition4B.ed: TFHIREventDefinition;
 begin
   result := resource as TFHIREventDefinition;
 end;
 
-function TFHIREventDefinition4.expression: String;
+function TFHIREventDefinition4B.expression: String;
 begin
   if ed.triggerList.Count = 0 then
     result := ''
@@ -5116,12 +5116,12 @@ begin
     result := ed.triggerList[0].condition.expression;
 end;
 
-function TFHIREventDefinition4.GetLanguage: String;
+function TFHIREventDefinition4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIREventDefinition4.language: String;
+function TFHIREventDefinition4B.language: String;
 begin
   if ed.triggerList.Count = 0 then
     result := ''
@@ -5131,7 +5131,7 @@ begin
     result := ed.triggerList[0].condition.language;
 end;
 
-procedure TFHIREventDefinition4.SetLanguage(const Value: String);
+procedure TFHIREventDefinition4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
@@ -5139,35 +5139,35 @@ end;
 //const
 //  MAP_TTriggerType : array [TFhirTriggerTypeEnum] of TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
 
-function TFHIREventDefinition4.triggerType: TTriggerType;
+function TFHIREventDefinition4B.triggerType: TTriggerType;
 begin
 //  result := MAP_TTriggerType[ed.trigger.type_];
   result := ttNull;
 end;
 
-function TFHIREventDefinition4.url: String;
+function TFHIREventDefinition4B.url: String;
 begin
   result := ed.url;
 end;
 
-{ TFhirPatient4 }
+{ TFhirPatient4B }
 
-function TFhirPatient4.pat : TFhirPatient;
+function TFhirPatient4B.pat : TFhirPatient;
 begin
   result := resource as TFhirPatient;
 end;
 
-function TFhirPatient4.GetLanguage: String;
+function TFhirPatient4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirPatient4.nameSummary: String;
+function TFhirPatient4B.nameSummary: String;
 begin
   result := HumanNamesAsText(pat.nameList);
 end;
 
-function TFhirPatient4.activeStr: String;
+function TFhirPatient4B.activeStr: String;
 begin
   if pat.activeElement = nil then
     result := ''
@@ -5177,22 +5177,22 @@ begin
     result := 'false';
 end;
 
-function TFhirPatient4.getActive: boolean;
+function TFhirPatient4B.getActive: boolean;
 begin
   result := pat.active;
 end;
 
-procedure TFhirPatient4.setActive(const value : boolean);
+procedure TFhirPatient4B.setActive(const value : boolean);
 begin
   pat.active := value;
 end;
 
-function TFhirPatient4.gender: String;
+function TFhirPatient4B.gender: String;
 begin
   result := CODES_TFhirAdministrativeGenderEnum[pat.gender];
 end;
 
-function TFhirPatient4.GetFamily: String;
+function TFhirPatient4B.GetFamily: String;
 var
   n : TFhirHumanName;
 begin
@@ -5211,7 +5211,7 @@ begin
       exit(n.family);
 end;
 
-procedure TFhirPatient4.SetFamily(const Value: String);
+procedure TFhirPatient4B.SetFamily(const Value: String);
 var
   n : TFhirHumanName;
 begin
@@ -5235,17 +5235,17 @@ begin
     end;
   pat.nameList.append.family := value;
 end;
-function TFhirPatient4.getdob: String;
+function TFhirPatient4B.getdob: String;
 begin
   result := pat.birthDate.toXML;
 end;
 
-procedure TFhirPatient4.setdob(const value : String);
+procedure TFhirPatient4B.setdob(const value : String);
 begin
   pat.birthDate := TFslDateTime.fromXML(value);
 end;
 
-function TFhirPatient4.GetIdentifier(systemUri: String): String;
+function TFhirPatient4B.GetIdentifier(systemUri: String): String;
 var
   id : TFhirIdentifier;
 begin
@@ -5255,7 +5255,7 @@ begin
       exit(id.value);
 end;
 
-procedure TFhirPatient4.SetIdentifier(systemUri: String; const Value: String);
+procedure TFhirPatient4B.SetIdentifier(systemUri: String; const Value: String);
 var
   id : TFhirIdentifier;
 begin
@@ -5270,12 +5270,12 @@ begin
   id.value := Value;
 end;
 
-function TFhirPatient4.identifierSummary: String;
+function TFhirPatient4B.identifierSummary: String;
 begin
   result := IdentifiersAsText(pat.identifierList);
 end;
 
-procedure TFhirPatient4.addGiven(name: String);
+procedure TFhirPatient4B.addGiven(name: String);
 var
   n : TFhirHumanName;
 begin
@@ -5301,19 +5301,19 @@ begin
   n.givenList.add(name);
 end;
 
-function TFhirPatient4.contactSummary: String;
+function TFhirPatient4B.contactSummary: String;
 begin
   result := ContactsAsText(pat.telecomList);
 end;
 
-procedure TFhirPatient4.SetLanguage(const Value: String);
+procedure TFhirPatient4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-{ TFhirTerminologyCapabilities4 }
+{ TFhirTerminologyCapabilities4B }
 
-procedure TFhirTerminologyCapabilities4.addExpansionParameter(code, doco: String);
+procedure TFhirTerminologyCapabilities4B.addExpansionParameter(code, doco: String);
 begin
   if (tc.expansion = nil) then
     tc.expansion := TFhirTerminologyCapabilitiesExpansion.Create;
@@ -5324,7 +5324,7 @@ begin
   end;
 end;
 
-procedure TFhirTerminologyCapabilities4.contact(kind: TContactType; value: String);
+procedure TFhirTerminologyCapabilities4B.contact(kind: TContactType; value: String);
 var
   c : TFhirContactPoint;
   ct : TFhirConformanceContact;
@@ -5335,172 +5335,172 @@ begin
   c.value := 'http://healthintersections.com.au/';
 end;
 
-function TFhirTerminologyCapabilities4.getContext: String;
+function TFhirTerminologyCapabilities4B.getContext: String;
 begin
   result := tc.context;
 end;
 
-function TFhirTerminologyCapabilities4.getDate: TFslDateTime;
+function TFhirTerminologyCapabilities4B.getDate: TFslDateTime;
 begin
   result := tc.date;
 end;
 
-function TFhirTerminologyCapabilities4.getDescription: String;
+function TFhirTerminologyCapabilities4B.getDescription: String;
 begin
   result := tc.description;
 end;
 
-function TFhirTerminologyCapabilities4.GetLanguage: String;
+function TFhirTerminologyCapabilities4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirTerminologyCapabilities4.getName: String;
+function TFhirTerminologyCapabilities4B.getName: String;
 begin
   result := tc.name;
 end;
 
-function TFhirTerminologyCapabilities4.getPublisher: String;
+function TFhirTerminologyCapabilities4B.getPublisher: String;
 begin
   result := tc.publisher;
 end;
 
-function TFhirTerminologyCapabilities4.getStatus: TPublicationStatus;
+function TFhirTerminologyCapabilities4B.getStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[tc.Status];
 end;
 
-function TFhirTerminologyCapabilities4.getURL: String;
+function TFhirTerminologyCapabilities4B.getURL: String;
 begin
   result := tc.url;
 end;
 
-function TFhirTerminologyCapabilities4.getVersion: String;
+function TFhirTerminologyCapabilities4B.getVersion: String;
 begin
   result := tc.version;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setContext(Value: String);
+procedure TFhirTerminologyCapabilities4B.setContext(Value: String);
 begin
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setDate(Value: TFslDateTime);
+procedure TFhirTerminologyCapabilities4B.setDate(Value: TFslDateTime);
 begin
   tc.date := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setDescription(Value: String);
+procedure TFhirTerminologyCapabilities4B.setDescription(Value: String);
 begin
   tc.description := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.SetLanguage(const Value: String);
+procedure TFhirTerminologyCapabilities4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirTerminologyCapabilities4.setName(Value: String);
+procedure TFhirTerminologyCapabilities4B.setName(Value: String);
 begin
   tc.name := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setPublisher(Value: String);
+procedure TFhirTerminologyCapabilities4B.setPublisher(Value: String);
 begin
   tc.publisher := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setStatus(Value: TPublicationStatus);
+procedure TFhirTerminologyCapabilities4B.setStatus(Value: TPublicationStatus);
 begin
   tc.Status := MAP_TPublicationStatus[Value];
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setUrl(Value: String);
+procedure TFhirTerminologyCapabilities4B.setUrl(Value: String);
 begin
   tc.url := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.setVersion(Value: String);
+procedure TFhirTerminologyCapabilities4B.setVersion(Value: String);
 begin
   tc.version := value;
 end;
 
 
-procedure TFhirTerminologyCapabilities4.systemUri(url: String);
+procedure TFhirTerminologyCapabilities4B.systemUri(url: String);
 begin
   tc.codeSystemList.Append.uri := url;
 end;
 
-function TFhirTerminologyCapabilities4.tc: TFhirTerminologyCapabilities;
+function TFhirTerminologyCapabilities4B.tc: TFhirTerminologyCapabilities;
 begin
   result := (Fres as TFhirTerminologyCapabilities);
 end;
 
 
-{ TFHIRPeriod4 }
+{ TFHIRPeriod4B }
 
-function TFHIRPeriod4.GetEnd: TFslDateTime;
+function TFHIRPeriod4B.GetEnd: TFslDateTime;
 begin
   result := period.end_;
 end;
 
-function TFHIRPeriod4.GetStart: TFslDateTime;
+function TFHIRPeriod4B.GetStart: TFslDateTime;
 begin
   result := period.start;
 end;
 
-function TFHIRPeriod4.period: TFHIRPeriod;
+function TFHIRPeriod4B.period: TFHIRPeriod;
 begin
   result := Element as TFHIRPeriod;
 end;
 
-function TFHIRPeriod4.renderText: String;
+function TFHIRPeriod4B.renderText: String;
 begin
   result := gen(element as TFhirPeriod);
 end;
 
-procedure TFHIRPeriod4.SetEnd(const Value: TFslDateTime);
+procedure TFHIRPeriod4B.SetEnd(const Value: TFslDateTime);
 
 begin
   period.end_ := value;
 end;
 
-procedure TFHIRPeriod4.SetStart(const Value: TFslDateTime);
+procedure TFHIRPeriod4B.SetStart(const Value: TFslDateTime);
 
 begin
   period.start := value;
 end;
 
-{ TFHIRConsent4 }
+{ TFHIRConsent4B }
 
-function TFHIRConsent4.consent: TFHIRConsent;
+function TFHIRConsent4B.consent: TFHIRConsent;
 begin
   result := resource as TFHIRConsent;
 end;
 
-function TFHIRConsent4.GetActive: boolean;
+function TFHIRConsent4B.GetActive: boolean;
 begin
   result := consent.status = ConsentStateActive;
 end;
 
-function TFHIRConsent4.GetDateTime: TFslDateTime;
+function TFHIRConsent4B.GetDateTime: TFslDateTime;
 begin
   result := consent.dateTime;
 end;
 
-function TFHIRConsent4.GetLanguage: String;
+function TFHIRConsent4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFHIRConsent4.GetPatient: String;
+function TFHIRConsent4B.GetPatient: String;
 begin
   if consent.patient <> nil then
     result := consent.patient.reference
@@ -5508,216 +5508,216 @@ begin
     result := '';
 end;
 
-function TFHIRConsent4.listProvisions: TFslList<TFhirConsentProvisionW>;
+function TFHIRConsent4B.listProvisions: TFslList<TFhirConsentProvisionW>;
 begin
   result := nil; // for now
 end;
 
-procedure TFHIRConsent4.SetLanguage(const Value: String);
+procedure TFHIRConsent4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-{ TFhirEncounter4 }
+{ TFhirEncounter4B }
 
-function TFhirEncounter4.GetLanguage: String;
+function TFhirEncounter4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirEncounter4.patientId: String;
+function TFhirEncounter4B.patientId: String;
 begin
   result := (FRes as TFHIREncounter).subject.getId;
 end;
 
-procedure TFhirEncounter4.SetLanguage(const Value: String);
+procedure TFhirEncounter4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-function TFhirEncounter4.summary: String;
+function TFhirEncounter4B.summary: String;
 begin
   result := CODES_TFhirEncounterStatusEnum[(FRes as TFHIREncounter).status];
 end;
 
-{ TFhirTestScript4 }
+{ TFhirTestScript4B }
 
-function TFHIRTestScript4.getContext: String;
+function TFHIRTestScript4B.getContext: String;
 begin
   result := '';
 end;
 
-function TFhirTestScript4.getDate: TFslDateTime;
+function TFhirTestScript4B.getDate: TFslDateTime;
 begin
   result := ts.date;
 end;
 
-function TFhirTestScript4.getDescription: String;
+function TFhirTestScript4B.getDescription: String;
 begin
   result := ts.description;
 end;
 
-function TFHIRTestScript4.GetLanguage: String;
+function TFHIRTestScript4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirTestScript4.getName: String;
+function TFhirTestScript4B.getName: String;
 begin
   result := ts.name;
 end;
 
-function TFhirTestScript4.getPublisher: String;
+function TFhirTestScript4B.getPublisher: String;
 begin
   result := ts.publisher;
 end;
 
-function TFhirTestScript4.getStatus: TPublicationStatus;
+function TFhirTestScript4B.getStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[ts.Status];
 end;
 
-function TFhirTestScript4.getURL: String;
+function TFhirTestScript4B.getURL: String;
 begin
   result := ts.url;
 end;
 
-function TFhirTestScript4.getVersion: String;
+function TFhirTestScript4B.getVersion: String;
 begin
   result := ts.version;
 end;
 
-procedure TFhirTestScript4.setDate(Value: TFslDateTime);
+procedure TFhirTestScript4B.setDate(Value: TFslDateTime);
 begin
   ts.date := value;
 end;
 
 
-procedure TFhirTestScript4.setDescription(Value: String);
+procedure TFhirTestScript4B.setDescription(Value: String);
 begin
   ts.description := value;
 end;
 
 
-procedure TFHIRTestScript4.SetLanguage(const Value: String);
+procedure TFHIRTestScript4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirTestScript4.setName(Value: String);
+procedure TFhirTestScript4B.setName(Value: String);
 begin
   ts.name := value;
 end;
 
 
-procedure TFhirTestScript4.setPublisher(Value: String);
+procedure TFhirTestScript4B.setPublisher(Value: String);
 begin
   ts.publisher := value;
 end;
 
 
-procedure TFhirTestScript4.setStatus(Value: TPublicationStatus);
+procedure TFhirTestScript4B.setStatus(Value: TPublicationStatus);
 begin
   ts.Status := MAP_TPublicationStatus[Value];
 end;
 
 
-procedure TFhirTestScript4.setUrl(Value: String);
+procedure TFhirTestScript4B.setUrl(Value: String);
 begin
   ts.url := value;
 end;
 
-procedure TFhirTestScript4.setVersion(Value: String);
+procedure TFhirTestScript4B.setVersion(Value: String);
 begin
   ts.version := value;
 end;
 
-function TFhirTestScript4.ts : TFhirTestScript;
+function TFhirTestScript4B.ts : TFhirTestScript;
 begin
   result := (Fres as TFhirTestScript);
 end;
 
 
-{ TFhirProvenance4 }
+{ TFhirProvenance4B }
 
-procedure TFhirProvenance4.addTarget(url: String);
+procedure TFhirProvenance4B.addTarget(url: String);
 begin
   p.targetList.Append.reference := url;
 end;
 
-procedure TFhirProvenance4.clearSignatures;
+procedure TFhirProvenance4B.clearSignatures;
 begin
   p.signatureList.Clear;
 end;
 
-procedure TFhirProvenance4.clearTargets;
+procedure TFhirProvenance4B.clearTargets;
 begin
   p.targetList.Clear;
 end;
 
-function TFhirProvenance4.GetLanguage: String;
+function TFhirProvenance4B.GetLanguage: String;
 begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirProvenance4.p: TFhirProvenance;
+function TFhirProvenance4B.p: TFhirProvenance;
 begin
   result := (Fres as TFhirProvenance);
 end;
 
-procedure TFhirProvenance4.SetLanguage(const Value: String);
+procedure TFhirProvenance4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
 end;
 
-{ TFhirConceptMapGroupElementDependsOn4 }
+{ TFhirConceptMapGroupElementDependsOn4B }
 
-function TFhirConceptMapGroupElementDependsOn4.display: String;
+function TFhirConceptMapGroupElementDependsOn4B.display: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).display;
 end;
 
-function TFhirConceptMapGroupElementDependsOn4.property_: String;
+function TFhirConceptMapGroupElementDependsOn4B.property_: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).property_;
 end;
 
-function TFhirConceptMapGroupElementDependsOn4.system_: String;
+function TFhirConceptMapGroupElementDependsOn4B.system_: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).system;
 end;
 
-function TFhirConceptMapGroupElementDependsOn4.value: String;
+function TFhirConceptMapGroupElementDependsOn4B.value: String;
 begin
   result := (Element as TFhirConceptMapGroupElementTargetDependsOn).code;
 end;
 
 
-{ TFHIRAttachment4 }
+{ TFHIRAttachment4B }
 
-function TFHIRAttachment4.att: TFhirAttachment;
+function TFHIRAttachment4B.att: TFhirAttachment;
 begin
   result := Element as TFhirAttachment;
 end;
 
-function TFHIRAttachment4.GetContentType: String;
+function TFHIRAttachment4B.GetContentType: String;
 begin
   result := att.contentType;
 end;
 
-function TFHIRAttachment4.GetData: TBytes;
+function TFHIRAttachment4B.GetData: TBytes;
 begin
   result := att.data;
 end;
 
-function TFHIRAttachment4.renderText: String;
+function TFHIRAttachment4B.renderText: String;
 begin
   result := '??';
 end;
 
-{ TFhirImmunization4 }
+{ TFhirImmunization4B }
 
-function TFhirImmunization4.code(systemUri: String): String;
+function TFhirImmunization4B.code(systemUri: String): String;
 var
   c : TFHIRCoding;
 begin
@@ -5728,7 +5728,7 @@ begin
         exit(c.code);
 end;
 
-function TFhirImmunization4.GetDate: TFslDateTime;
+function TFhirImmunization4B.GetDate: TFslDateTime;
 begin
   if imm.occurrence is TFhirDateTime then
     result := (imm.occurrence as TFhirDateTime).value
@@ -5736,17 +5736,17 @@ begin
     result := TFslDateTime.makeNull;
 end;
 
-function TFhirImmunization4.GetLanguage: String;
+function TFhirImmunization4B.GetLanguage: String;
 begin
   result := imm.language;
 end;
 
-function TFhirImmunization4.GetLotNumber: String;
+function TFhirImmunization4B.GetLotNumber: String;
 begin
   result := imm.lotNumber;
 end;
 
-function TFhirImmunization4.GetManufacturerIdSystem: String;
+function TFhirImmunization4B.GetManufacturerIdSystem: String;
 begin
   if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
     result := imm.manufacturer.identifier.system
@@ -5754,7 +5754,7 @@ begin
     result := '';
 end;
 
-function TFhirImmunization4.GetManufacturerIdValue: String;
+function TFhirImmunization4B.GetManufacturerIdValue: String;
 begin
   if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
     result := imm.manufacturer.identifier.value
@@ -5762,7 +5762,7 @@ begin
     result := '';
 end;
 
-function TFhirImmunization4.GetPatient: String;
+function TFhirImmunization4B.GetPatient: String;
 begin
   if imm.patient = nil then
     result := ''
@@ -5770,19 +5770,19 @@ begin
     result := imm.patient.reference;
 end;
 
-function TFhirImmunization4.GetPerformerDisplay: String;
+function TFhirImmunization4B.GetPerformerDisplay: String;
 begin
   result := '';
   if (imm.performerList.Count > 0) and (imm.performerList[0].actor <> nil) then
     result := imm.performerList[0].actor.display;
 end;
 
-function TFhirImmunization4.GetStatus: string;
+function TFhirImmunization4B.GetStatus: string;
 begin
   result := imm.statusElement.value;
 end;
 
-function TFhirImmunization4.hasCode(systemUri, code: String): boolean;
+function TFhirImmunization4B.hasCode(systemUri, code: String): boolean;
 var
   c : TFHIRCoding;
 begin
@@ -5793,12 +5793,12 @@ begin
         exit(true);
 end;
 
-function TFhirImmunization4.imm: TFhirImmunization;
+function TFhirImmunization4B.imm: TFhirImmunization;
 begin
   result := resource as TFhirImmunization;
 end;
 
-procedure TFhirImmunization4.setCodeBySystem(systemUri, code: String);
+procedure TFhirImmunization4B.setCodeBySystem(systemUri, code: String);
 var
   c : TFHIRCoding;
 begin
@@ -5815,22 +5815,22 @@ begin
   c.code := code;
 end;
 
-procedure TFhirImmunization4.SetDate(const Value: TFslDateTime);
+procedure TFhirImmunization4B.SetDate(const Value: TFslDateTime);
 begin
   imm.occurrence := TFHIRDateTime.create(value);
 end;
 
-procedure TFhirImmunization4.SetLanguage(const Value: String);
+procedure TFhirImmunization4B.SetLanguage(const Value: String);
 begin
   imm.language := value;
 end;
 
-procedure TFhirImmunization4.SetLotNumber(const Value: String);
+procedure TFhirImmunization4B.SetLotNumber(const Value: String);
 begin
   imm.lotNumber := value;
 end;
 
-procedure TFhirImmunization4.SetManufacturerIdSystem(const Value: String);
+procedure TFhirImmunization4B.SetManufacturerIdSystem(const Value: String);
 begin
   if imm.manufacturer = nil then
     imm.manufacturer := TFhirReference.Create;
@@ -5839,7 +5839,7 @@ begin
   imm.manufacturer.identifier.system := value;
 end;
 
-procedure TFhirImmunization4.SetManufacturerIdValue(const Value: String);
+procedure TFhirImmunization4B.SetManufacturerIdValue(const Value: String);
 begin
   if imm.manufacturer = nil then
     imm.manufacturer := TFhirReference.Create;
@@ -5848,14 +5848,14 @@ begin
   imm.manufacturer.identifier.value := value;
 end;
 
-procedure TFhirImmunization4.SetPatient(const Value: String);
+procedure TFhirImmunization4B.SetPatient(const Value: String);
 begin
   if (imm.patient = nil) then
     imm.patient := TFhirReference.Create;
   imm.patient.reference := value;
 end;
 
-procedure TFhirImmunization4.SetPerformerDisplay(const Value: String);
+procedure TFhirImmunization4B.SetPerformerDisplay(const Value: String);
 var
   p : TFhirImmunizationPerformer;
 begin
@@ -5868,41 +5868,41 @@ begin
   p.actor.display := value;
 end;
 
-procedure TFhirImmunization4.SetStatus(const Value: string);
+procedure TFhirImmunization4B.SetStatus(const Value: string);
 begin
   if imm.statusElement = nil then
     imm.status := ImmunizationStatusCodesCompleted; // force it to exist
   imm.statusElement.value := value;
 end;
 
-{ TFhirIdentifier4 }
+{ TFhirIdentifier4B }
 
-function TFhirIdentifier4.id: TFHIRIdentifier;
+function TFhirIdentifier4B.id: TFHIRIdentifier;
 begin
   result := FElement as TFHIRIdentifier;
 end;
 
-function TFhirIdentifier4.renderText: String;
+function TFhirIdentifier4B.renderText: String;
 begin
   result := gen(element as TFhirIdentifier);
 end;
 
-function TFhirIdentifier4.GetSystem: String;
+function TFhirIdentifier4B.GetSystem: String;
 begin
   result := id.system;
 end;
 
-function TFhirIdentifier4.GetValue: String;
+function TFhirIdentifier4B.GetValue: String;
 begin
   result := id.value;
 end;
 
-procedure TFhirIdentifier4.SetSystem(const Value: String);
+procedure TFhirIdentifier4B.SetSystem(const Value: String);
 begin
   id.system := value;
 end;
 
-procedure TFhirIdentifier4.SetValue(const Value: String);
+procedure TFhirIdentifier4B.SetValue(const Value: String);
 begin
   id.value := value;
 end;
@@ -5911,30 +5911,30 @@ const
   identifier_use_version_to_general : array [TFhirIdentifierUseEnum] of TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
   identifier_use_general_to_version : array [TIdentifierUse] of TFhirIdentifierUseEnum = (IdentifierUseNull, IdentifierUseUsual, IdentifierUseOfficial, IdentifierUseTemp, IdentifierUseSecondary, IdentifierUseOld);
 
-function TFhirIdentifier4.GetUse: TIdentifierUse;
+function TFhirIdentifier4B.GetUse: TIdentifierUse;
 begin
   result := identifier_use_version_to_general[id.use];
 end;
 
-procedure TFhirIdentifier4.SetUse(const Value: TIdentifierUse);
+procedure TFhirIdentifier4B.SetUse(const Value: TIdentifierUse);
 begin
   id.use := identifier_use_general_to_version[value];
 end;
 
-function TFhirIdentifier4.GetTypeV: TFhirCodeableConceptW;
+function TFhirIdentifier4B.GetTypeV: TFhirCodeableConceptW;
 begin
   if id.type_ = nil then
     result := nil
   else
-    result := TFhirCodeableConcept4.Create(id.type_.Link);
+    result := TFhirCodeableConcept4B.Create(id.type_.Link);
 end;
 
-procedure TFhirIdentifier4.SetTypeV(const Value: TFhirCodeableConceptW);
+procedure TFhirIdentifier4B.SetTypeV(const Value: TFhirCodeableConceptW);
 begin
   if value = nil then
     id.type_ := nil
   else
-    id.type_ := ((Value as TFhirCodeableConcept4).FElement as TFhirCodeableConcept).link;
+    id.type_ := ((Value as TFhirCodeableConcept4B).FElement as TFhirCodeableConcept).link;
 end;
 
 end.

@@ -41,12 +41,12 @@ uses
 
   ftx_service, ftx_sct_services,
 
-  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
-  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
-  fhir2_context, fhir3_context, fhir4_context, fhir5_context,
-  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
-  fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
-  validator_r2, validator_r3, validator_r4, validator_r5,
+  fhir2_factory, fhir3_factory, fhir4_factory, fhir4b_factory, fhir5_factory,
+  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir4b_indexinfo, fhir5_indexinfo,
+  fhir2_context, fhir3_context, fhir4_context, fhir4b_context, fhir5_context,
+  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir4b_pathengine, fhir5_pathengine,
+  fhir2_validator, fhir3_validator, fhir4_validator, fhir4b_validator, fhir5_validator,
+  validator_r2, validator_r3, validator_r4, validator_r4b, validator_r5,
 
   fhir_indexing, search_base, database_installer,
   tx_manager, tx_server, tx_operations, operations,
@@ -268,6 +268,7 @@ begin
     fhirVersionRelease2 : result := TFHIRIndexBuilderR2.create;
     fhirVersionRelease3 : result := TFHIRIndexBuilderR3.create;
     fhirVersionRelease4 : result := TFHIRIndexBuilderR4.create;
+    fhirVersionRelease4B : result := TFHIRIndexBuilderR4B.create;
     fhirVersionRelease5 : result := TFHIRIndexBuilderR5.create;
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating index information');
@@ -280,6 +281,7 @@ begin
     fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create, pc.link));
     fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pc.link));
     fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pc.link));
+    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(TFHIRFactoryR4B.create, pc.link));
     fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pc.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
@@ -308,6 +310,7 @@ begin
     fhirVersionRelease2 : result := TFHIRPathEngine2.Create(validatorContext as TFHIRWorkerContext2, ucum);
     fhirVersionRelease3 : result := TFHIRPathEngine3.Create(validatorContext as TFHIRWorkerContext3, ucum);
     fhirVersionRelease4 : result := TFHIRPathEngine4.Create(validatorContext as TFHIRWorkerContext4, ucum);
+    fhirVersionRelease4B : result := TFHIRPathEngine4B.Create(validatorContext as TFHIRWorkerContext4B, ucum);
     fhirVersionRelease5 : result := TFHIRPathEngine5.Create(validatorContext as TFHIRWorkerContext5, ucum);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating FHIRPathEngine');
@@ -320,6 +323,7 @@ begin
     fhirVersionRelease2 : TFHIRServerWorkerContextR2(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease3 : TFHIRServerWorkerContextR3(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
+    fhirVersionRelease4B : TFHIRServerWorkerContextR4B(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease5 : TFHIRServerWorkerContextR5(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Setting Terminology Server');
@@ -1438,6 +1442,7 @@ begin
     fhirVersionRelease2 : result := TFHIRFactoryR2.create;
     fhirVersionRelease3 : result := TFHIRFactoryR3.create;
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+    fhirVersionRelease4B : result := TFHIRFactoryR4B.create;
     fhirVersionRelease5 : result := TFHIRFactoryR5.create;
   else
     raise EFslException.Create('Unsupported Version');
@@ -1576,6 +1581,8 @@ begin
     result := fhirVersionRelease3
   else if (v = 'r4') then
     result := fhirVersionRelease4
+  else if (v = 'r4b') then
+    result := fhirVersionRelease4B
   else if (v = 'r5') then
     result := fhirVersionRelease5
   else

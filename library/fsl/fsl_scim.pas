@@ -540,6 +540,9 @@ end;
 destructor TSCIMUser.Destroy;
 begin
   FEmails.free;
+  FPhoneNums.free;
+  FIMs.free;
+  FAddresses.free;
   inherited;
 end;
 

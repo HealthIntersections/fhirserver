@@ -87,12 +87,13 @@ type
     procedure loadPackages;
     function passesFilter(id : String) : boolean;
     function command : String;
+    procedure SetVersion(AValue: String);
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages write SetPackages;
     property Connection : TFDBConnection read FConnection write SetConnection;
     property Filename : String read FFilename write FFilename;
     property endpoint : String read FEndPoint write FEndPoint;
-    property version : String read FVersion write FVersion;
+    property version : String read FVersion write SetVersion;
     property type_ : String read FType write FType;
   end;
 
@@ -197,7 +198,7 @@ begin
   else if version = 'r4b' then
     result := SameText(pi, 'R4B') or pi.StartsWith('4.3') or piv.StartsWith('4.3')
   else if version = 'r5' then
-    result := SameText(pi, 'R5') or pi.StartsWith('4.6') or piv.StartsWith('4.6')
+    result := SameText(pi, 'R5') or pi.StartsWith('5.0') or piv.StartsWith('5.0')
   else
     result := false;
 end;
@@ -325,6 +326,11 @@ begin
     result := result + ' -packages '+s;
   if edtAnonymousRights.text <> '' then
     result := result + ' -default-rights '+edtAnonymousRights.text;
+end;
+
+procedure TEndpointInstallForm.SetVersion(AValue: String);
+begin
+  FVersion := AValue.toLower;
 end;
 
 procedure TEndpointInstallForm.SetConnection(AValue: TFDBConnection);
