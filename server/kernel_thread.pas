@@ -67,7 +67,7 @@ type
     FState : String;
     FLastError : string;
     FEvent: TFhirServerMaintenanceThreadTaskEvent;
-    FLastStarted: integer;
+    FLastStarted: UInt64;
     FFrequency: integer;
     FRunTime : UInt64;
 
@@ -82,7 +82,7 @@ type
     property event : TFhirServerMaintenanceThreadTaskEvent read FEvent write FEvent;
     property frequency : integer read FFrequency write FFrequency; // seconds
     property count : integer read FCount;
-    property lastStarted : integer read FLastStarted;
+    property lastStarted : UInt64 read FLastStarted;
     property status : TFhirServerMaintenanceThreadTaskStatus read FStatus;
     property State : String read FState;
 

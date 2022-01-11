@@ -23,6 +23,7 @@ object EditEPForm: TEditEPForm
       'r2'
       'r3'
       'r4'
+      'r4B'
       'r5'
     )
     ParentFont = False

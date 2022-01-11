@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -15,6 +16,10 @@
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
+    <VersionInfo>
+      <MajorVersionNr Value="2"/>
+      <RevisionNr Value="11"/>
+    </VersionInfo>
     <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win32">
@@ -360,12 +365,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit13>
     </Units>
-    <VersionInfo>
-      <MajorVersionNr Value="2"/>
-      <MinorVersionNr Value="0"/>
-      <RevisionNr Value="10"/>
-      <Attributes pvaDebug="False"/>
-    </VersionInfo>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>

@@ -41,28 +41,28 @@ public class ResourcesGenerator extends ClassGenerator {
     finish();
     for (String n : parts.keySet()) {
       String template;
-      if (config.hasTemplate("fhir5_resources_"+n)) {
-        template = config.getTemplate("fhir5_resources_"+n);
+      if (config.hasTemplate("fhir{N}_resources_"+n)) {
+        template = config.getTemplate("fhir{N}_resources_"+n);
       } else {
-        template = config.getTemplate("fhir5_resources_X");        
+        template = config.getTemplate("fhir{N}_resources_X");        
       }
       ResourcesGeneratorData dt = getData(n);
       template = template.replace("{{mark}}", startVMarkValue());
       template = template.replace("{{$rt.enum}}", dt.rt.toString());
       template = template.replace("{{N}}", n);
-      template = template.replace("{{canonical}}", n.equals("canonical") ? "" : ", fhir5_resources_canonical");
+      template = template.replace("{{canonical}}", n.equals("canonical") ? "" : ", fhir"+N()+"_resources_canonical");
       template = template.replace("{{reslist-fwds}}", dt.rf.toString());
       template = template.replace("{{res.abstract.intf}}", dt.ra1.toString());
       template = template.replace("{{res.concrete.intf}}", dt.rc1.toString());
       template = template.replace("{{res.abstract.impl}}", dt.ra2.toString());
       template = template.replace("{{res.concrete.impl}}", dt.rc2.toString());
 
-      OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(Utilities.path(Utilities.getDirectoryForFile(filename), "fhir5_resources_"+n+".pas")));
+      OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(Utilities.path(Utilities.getDirectoryForFile(filename), "fhir"+N()+"_resources_"+n+".pas")));
       w.write(template);
       w.flush();
       w.close();      
     }
-    String template = config.getTemplate("fhir5_resources");
+    String template = config.getTemplate("fhir{N}_resources");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{$rt.enum}}", data.rt.toString());
     template = template.replace("{{redeclare}}", data.redeclare.toString());
@@ -107,8 +107,8 @@ public class ResourcesGenerator extends ClassGenerator {
       } else {
         n = generateType(analysis, ti, ClassGeneratorCategory.Component, dt.rf, dt.rc1, dt.rc2);
       }
-      data.redeclare.append("  "+n+" = fhir5_resources_"+group+"."+n+";\r\n");
-      data.redeclare.append("  "+n+"List = fhir5_resources_"+group+"."+n+"List;\r\n");
+      data.redeclare.append("  "+n+" = fhir"+N()+"_resources_"+group+"."+n+";\r\n");
+      data.redeclare.append("  "+n+"List = fhir"+N()+"_resources_"+group+"."+n+"List;\r\n");
     }
 
     if (analysis.isAbstract()) { 
@@ -116,8 +116,8 @@ public class ResourcesGenerator extends ClassGenerator {
     } else {
       line(getData("base").rt, "    {$IFDEF "+analysis.getDefineName()+"}frt"+analysis.getName()+", {$ENDIF}");
       String n = generateType(analysis, analysis.getRootType(), ClassGeneratorCategory.Resource, dt.rf, dt.rc1, dt.rc2);
-      data.redeclare.append("  "+n+" = fhir5_resources_"+group+"."+n+";\r\n");
-      data.redeclare.append("  "+n+"List = fhir5_resources_"+group+"."+n+"List;\r\n");
+      data.redeclare.append("  "+n+" = fhir"+N()+"_resources_"+group+"."+n+";\r\n");
+      data.redeclare.append("  "+n+"List = fhir"+N()+"_resources_"+group+"."+n+"List;\r\n");
     }    
     if (!analysis.isAbstract()) {
       dt.rf.append("{$ENDIF "+analysis.getDefineName()+"}\r\n");

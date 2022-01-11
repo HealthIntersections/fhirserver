@@ -22,8 +22,9 @@ public class Configuration {
   private String source;
   private String dest;
   private IniFile ini;
+  private String version;
   
-  public Configuration(String templatePath, String source, String dest) throws FileNotFoundException, IOException {
+  public Configuration(String templatePath, String source, String dest, String version) throws FileNotFoundException, IOException {
     this.source = source;
     this.dest = dest;
     System.out.println("Loading Templates");
@@ -32,9 +33,11 @@ public class Configuration {
       templates.put(jfn.getName(), TextFile.fileToString(jfn));
     }
     ini = new IniFile(Utilities.path(templatePath, "configuration.ini"));
+    this.version = version;
   }
   
   public String getTemplate(String name) {
+    name = name.replace("{N}", version);
     if (templates.containsKey(name))
       return templates.get(name);
     if (templates.containsKey(name+".pas"))

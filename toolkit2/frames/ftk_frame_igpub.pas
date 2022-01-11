@@ -44,6 +44,32 @@ type
   TIgPubPageFrame = class;
   TIGPublicationManager = class;
 
+  { TIgPublisherVersion }
+
+  TIgPublisherVersion = class (TFslObject)
+  private
+    FUrl: String;
+    FVersion: String;
+  public
+    constructor Create(version, url : String);
+    function link : TIgPublisherVersion; overload;
+    property version : String read FVersion write FVersion;
+    property url : String read FUrl write FUrl;
+  end;
+
+  { TIgTxServer }
+
+  TIgTxServer = class (TFslObject)
+  private
+    FUrl: String;
+    FName: String;
+  public
+    constructor Create(name, url : String);
+    function link : TIgTxServer; overload;
+    property name : String read FName write FName;
+    property url : String read FUrl write FUrl;
+  end;
+
   TIGPublicationFolderStatus = (fsNotRun, fsRunning, fsSuccess, fsError);
 
   { TIGPublicationFolder }
@@ -198,8 +224,8 @@ type
     procedure Timer1Timer(Sender: TObject);
   private
     FTempStore: TFHIRToolkitTemporaryStorage;
-    FIgUrls : TStringList;
-    FTxServers : TStringList;
+    FIgPublisherVersions : TFslList<TIgPublisherVersion>;
+    FTxServers : TFslList<TIgTxServer>;
     FJavaCmd : String;
     FDevParams : String;
     FCounter : integer;
@@ -252,6 +278,34 @@ begin
     cmd := l.trim;
     folder := r.trim;
   end;
+end;
+
+{ TIgTxServer }
+
+constructor TIgTxServer.Create(name, url: String);
+begin
+  inherited Create;
+  self.name := name;
+  self.url := url;
+end;
+
+function TIgTxServer.link: TIgTxServer;
+begin
+  result := TIgTxServer(inherited link);
+end;
+
+{ TIgPublisherVersion }
+
+constructor TIgPublisherVersion.Create(version, url: String);
+begin
+  inherited Create;
+  self.version := version;
+  self.url := url;
+end;
+
+function TIgPublisherVersion.link: TIgPublisherVersion;
+begin
+  result := TIgPublisherVersion(inherited link);
 end;
 
 { TDeleteTaskContext }
@@ -663,9 +717,9 @@ begin
     engine.OnEmitLine := item.emitLine;
     engine.javaCmd := FFrame.FJavaCmd;
     engine.devParams := FFrame.FDevParams;
-    engine.txSrvr := FFrame.FTxServers[FFrame.cbxTxServer.ItemIndex];
+    engine.txSrvr := (FFrame.cbxTxServer.items.objects[FFrame.cbxTxServer.ItemIndex] as TIgTxServer).url;
     engine.version := FFrame.cbxVersions.text;
-    engine.url := FFrame.FIgUrls[FFrame.cbxVersions.ItemIndex];
+    engine.url := (FFrame.cbxVersions.items.Objects[FFrame.cbxVersions.ItemIndex] as TIgPublisherVersion).FUrl;
     engine.Start;
     item.status := fsRunning;
     item.StartRun := GetTickCount64;
@@ -818,7 +872,7 @@ destructor TIgPubPageFrame.Destroy;
 begin
   FManager.Free;
   FTempStore.free;
-  FIgUrls.Free;
+  FIgPublisherVersions.Free;
   FTxServers.Free;
   inherited;
 end;
@@ -837,8 +891,8 @@ procedure TIgPubPageFrame.init(json: TJsonObject);
 var
   grp : TControlEntry;
 begin
-  FIgUrls := TStringList.create;
-  FTxServers := TStringList.create;
+  FIgPublisherVersions := TFslList<TIgPublisherVersion>.create;
+  FTxServers := TFslList<TIgTxServer>.create;
 
   FManager := TIGPublicationManager.create;
   FManager.FFrame := self;
@@ -882,6 +936,8 @@ begin
 end;
 
 procedure TIgPubPageFrame.tbConfigClick(Sender: TObject);
+var
+  igp : TIgPublisherVersion;
 begin
   IGPublisherConfigForm := TIGPublisherConfigForm.create(self);
   try
@@ -896,8 +952,13 @@ begin
         if IGPublisherConfigForm.edtDevParams.Text <> '' then
         begin
           FDevParams := IGPublisherConfigForm.edtDevParams.Text;
-          cbxVersions.items.Insert(0, 'Dev');
-          FIgUrls.Insert(0, '#dev');
+          igp := TIgPublisherVersion.create('Dev', '#dev');
+          try
+            FIgPublisherVersions.add(igp.link);
+            cbxVersions.items.InsertObject(0, 'Dev', igp);
+          finally
+            igp.free;
+          end;
         end;
       end
       else if IGPublisherConfigForm.edtDevParams.Text <> '' then
@@ -909,7 +970,7 @@ begin
       begin
         // no dev command now
         cbxVersions.items.Delete(0);
-        FIgUrls.Delete(0);
+        FIgPublisherVersions.Delete(0);
       end;
       FWorker.lastChange := GetTickCount64;
       FWorker.lastChangeChecked := false;
@@ -1094,22 +1155,28 @@ procedure TIgPubPageFrame.listVersions(json : TJsonObject);
 var
   arr : TJsonArray;
   o : TJsonObject;
+  procedure addIGP(version, url : String);
+  var
+    igp : TIgPublisherVersion;
+  begin
+    igp := TIgPublisherVersion.create(version, url);
+    try
+      FIgPublisherVersions.add(igp.link);
+      cbxVersions.items.addObject(version, igp);
+    finally
+      igp.free;
+    end;
+  end;
 begin
   cbxVersions.items.clear;
   if FDevParams <> '' then
-  begin
-    cbxVersions.items.add('Dev');
-    FIgUrls.add('#dev');
-  end;
+    AddIgp('Dev', '#dev');
 
   if (json <> nil) and json.has('ig-pub-versions') then
   begin
     arr := json.arr['ig-pub-versions'];
     for o in arr.asObjects.forEnum do
-    begin
-      cbxVersions.items.add(o.str['version']);
-      FIgUrls.add(o.str['url']);
-    end;
+      AddIgp(o.str['version'], o.str['url']);
     cbxVersions.itemIndex := json.int['ig-pub-version'];
   end
   else
@@ -1118,10 +1185,7 @@ begin
       arr := TInternetFetcher.fetchJsonArray('https://api.github.com/repos/HL7/fhir-ig-publisher/releases');
       try
         for o in arr.asObjects.forEnum do
-        begin
-          cbxVersions.items.add(o.str['tag_name']);
-          FIgUrls.add(o.forceArr['assets'].Obj[0].str['browser_download_url']);
-        end;
+          AddIgp(o.str['tag_name'], o.forceArr['assets'].Obj[0].str['browser_download_url']);
         FWorker.lastChange := GetTickCount64;
         FWorker.lastChangeChecked := false;
         FWorker.session.NeedsSaving := true;
@@ -1140,21 +1204,28 @@ procedure TIgPubPageFrame.loadServers(json: TJsonObject);
 var
   arr : TJsonArray;
   o : TJsonObject;
+  procedure addServer(name, url : String);
+  var
+    tx : TIgTxServer;
+  begin
+    tx := TIgTxServer.create(name, url);
+    try
+      FTxServers.add(tx.Link);
+      cbxTxServer.items.AddObject(name, tx);
+    finally
+      tx.free;
+    end;
+  end;
 begin
   if json.has('tx-servers') then
   begin
     for o in json.arr['tx-servers'].asObjects.forEnum do
-    begin
-      cbxTxServer.items.add(o['name']);
-      FTxServers.add(o['address']);
-    end;
+      addServer(o['name'], o['address']);
   end
   else
   begin
-    cbxTxServer.items.add('tx.fhir.org');
-    FTxServers.add('http://tx.fhir.org');
-    cbxTxServer.items.add('localhost');
-    FTxServers.add('http://local.fhir.org:960');
+    addServer('tx.fhir.org', 'http://tx.fhir.org');
+    addServer('localhost', 'http://local.fhir.org:960');
   end;
   cbxTxServer.itemIndex := json.int['tx-server'];
 end;
@@ -1207,6 +1278,8 @@ var
   i : integer;
   v : TJsonObject;
   arr : TJsonArray;
+  igp : TIgPublisherVersion;
+  tx : TIgTxServer;
 begin
   json.str['igpub-page'] := 'true';
   json.str['default-root'] := FDefaultRootFolder;
@@ -1214,26 +1287,26 @@ begin
   json.str['dev-params'] := FDevParams;
   arr := json.forceArr['ig-pub-versions'];
   arr.clear;
-  for i := 0 to cbxVersions.items.count - 1 do
+  for igp in FIgPublisherVersions do
   begin
-    if FIgUrls[i] <> '#dev' then
+    if igp.url <> '#dev' then
     begin
       v := TJsonObject.create;
       arr.add(v);
-      v.str['version'] := cbxVersions.items[i];
-      v.str['url'] := FIgUrls[i];
+      v.str['version'] := igp.version;
+      v.str['url'] := igp.url;
     end;
   end;
   json.int['ig-pub-version'] := cbxVersions.itemIndex;
 
   arr := json.forceArr['tx-servers'];
   arr.clear;
-  for i := 0 to cbxTxServer.items.count - 1 do
+  for tx in FTxServers do;
   begin
     v := TJsonObject.create;
     arr.add(v);
-    v.str['name'] := cbxTxServer.items[i];
-    v.str['address'] := FTxServers[0];
+    v.str['name'] := tx.name;
+    v.str['address'] := tx.url;
   end;
   json.int['tx-server'] := cbxTxServer.itemIndex;
 

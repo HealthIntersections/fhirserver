@@ -1,5 +1,6 @@
 package org.fhir.pascal.generator.engine;
 
+import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.context.CanonicalResourceManager;
 import org.hl7.fhir.r5.model.CapabilityStatement;
 import org.hl7.fhir.r5.model.CodeSystem;
@@ -74,6 +75,27 @@ public class Definitions {
   public StructureDefinition getType(String tn) {
     StructureDefinition sd = structures.get("http://hl7.org/fhir/StructureDefinition/"+tn);
     return sd;
+  }
+  
+  public void fix() {
+    StructureDefinition aa = structures.get("http://hl7.org/fhir/StructureDefinition/ArtifactAssessment");
+    if (aa != null) {
+      for (ElementDefinition ed : aa.getSnapshot().getElement()) {
+        fixAATypes(ed);
+      }
+      for (ElementDefinition ed : aa.getDifferential().getElement()) {
+        fixAATypes(ed);
+      }
+    }
+  }
+  
+  private void fixAATypes(ElementDefinition ed) {
+    if (ed.getPath().equals("ArtifactAssessment.approvalDate")) {
+      ed.getTypeFirstRep().setCode("date");
+    }
+    if (ed.getPath().equals("ArtifactAssessment.lastReviewDate")) {
+      ed.getTypeFirstRep().setCode("date");
+    }
   }
  
   

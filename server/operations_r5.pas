@@ -695,12 +695,12 @@ var
   o : TFhirAuditEventObject;
   procedure event(t, ts, td, s, sc : String; a : TFhirAuditEventActionEnum);
   begin
-    se.event.type_ := TFhirCoding.create;
-    c := se.event.type_;
+    se.event.code := TFhirCodeableConcept.Create;
+    c := se.event.categoryList.Append.codingList.Append;
     c.code := t;
     c.system := ts;
     c.display := td;
-    c := se.event.subtypeList.append;
+    c := se.event.code.codingList.Append;
     c.code := s;
     c.system := sc;
     c.display := s;
@@ -720,9 +720,8 @@ begin
     if extreqid <> '' then
       with se.entityList.Append do
       begin
-        type_ := TFhirCoding.Create('', 'X-Request-Id');
         what := TFhirReference.Create;
-        what.identifier := TFhirIdentifier.Create(extreqid);
+        what.identifier := TFhirIdentifier.Create('http://'+ServerContext.DatabaseId+'/X-Request-Id', extreqid); // todo... what?
       end;
 
     se.event := TFhirAuditEventEvent.create;
@@ -748,55 +747,55 @@ begin
     end;
     if op = fcmdOperation then
     begin
-      c := se.event.subtypeList.Append;
+      if se.event.code = nil then
+        se.event.code := TFhirCodeableConcept.Create;
+      c := se.event.code.codingList.Append;
       c.code := opName;
       c.system := 'http://healthintersections.com.au/fhir/operation-name';
     end;
+    se.event.outcome := TFhirAuditEventOutcome.Create;
     if httpCode < 400 then
-      se.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0')
+      se.event.outcome.code := TFhirCoding.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0')
     else if httpCode < 500 then
-      se.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '4')
+      se.event.outcome.code := TFhirCoding.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '4')
     else
-      se.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '8'); // no way we are going down...
+      se.event.outcome.code := TFhirCoding.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '8'); // no way we are going down...
     se.event.dateTime := TFslDateTime.makeUTC;
     se.Tag := TFslDateTimeWrapper.Create(se.event.dateTime);
 
     se.source := TFhirAuditEventSource.create;
-    se.source.site := ServerContext.Globals.OwnerName;
+    se.source.site := TFhirReference.create;
+    se.source.site.display := ServerContext.Globals.OwnerName;
     se.source.observer := TFhirReference.Create;
     se.source.observer.identifier := TFhirIdentifier.Create;
     se.source.observer.identifier.value := ServerContext.DatabaseId;
     se.source.observer.identifier.system := 'urn:ietf:rfc:4986';
 
-    c := se.source.type_List.Append;
+    c := se.source.type_List.Append.codingList.Append;
     c.code := '4';
     c.display := 'Application Server';
     c.system := URI_FHIR_SECURITY_SOURCE_TYPE_R4;
 
     // participant - the web browser / user proxy
     p := se.participantList.Append;
+    p.who := TFhirReference.Create;
     if session = nil then
-      p.name := 'Server'
+      p.who.display := 'Server'
     else
     begin
-      p.who := TFhirReference.Create;
       p.who.identifier := TFhirIdentifier.Create;
       p.who.identifier.value := inttostr(session.Key);
       p.who.identifier.system := ServerContext.DatabaseId;
-      p.altId := session.Id;
-      p.name := session.SessionName;
+      p.who.display := session.SessionName;
     end;
     p.requestor := true;
-    p.network := TFhirAuditEventParticipantNetwork.create;
-    p.network.address := ip;
-    p.network.type_ := AuditEventAgentNetworkType2;
+    p.network := TFHIRString.Create(ip);
 
     if (patientId <> '') then
       with se.entityList.Append do
       begin
         what := TFhirReference.Create('Patient/'+patientId);
-        type_ := TFhirCoding.Create(URI_FHIR_AUDIT_ENTITY_TYPE_R4, '1');
-        role := TFhirCoding.Create(URI_FHIR_AUDIT_OBJECT_ROLE_R4, '1');
+        role := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_OBJECT_ROLE_R4, '1');
       end;
 
     if resourceName <> '' then
@@ -807,30 +806,10 @@ begin
         o.what.reference := resourceName+'/'+id+'/_history/'+ver
       else if id <> '' then
         o.what.reference := resourceName+'/'+id;
-      o.type_ := TFhirCoding.Create;
-      o.type_.system := URI_FHIR_SECURITY_SOURCE_TYPE_R4;
-      o.type_.code := '2';
-      o.lifecycle := TFhirCoding.Create;
-      o.lifecycle.system := URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R4_DICOM;
-      case op of
-        fcmdRead:            o.lifecycle.code := '6';
-        fcmdVersionRead:     o.lifecycle.code := '6';
-        fcmdUpdate:          o.lifecycle.code := '4';
-        fcmdDelete:          o.lifecycle.code := '14';
-        fcmdHistoryInstance: o.lifecycle.code := '9';
-        fcmdCreate:          o.lifecycle.code := '1';
-        fcmdSearch:          o.lifecycle.code := '6';
-        fcmdHistoryType:     o.lifecycle.code := '9';
-        fcmdValidate:        o.lifecycle.code := '4';
-        fcmdMetadata:        o.lifecycle.code := '6';
-        fcmdTransaction:     o.lifecycle.code := '4';
-        fcmdHistorySystem:   o.lifecycle.code := '9';
-        fcmdUpload:          o.lifecycle.code := '9';
-      end;
       if op = fcmdSearch then
         o.query := StringAsBytes(name)
       else
-        o.name := name;
+        o.query := StringAsBytes(name);
     end;
     Repository.queueResource(session, se);
   finally
@@ -2764,25 +2743,25 @@ begin
           prsrFmt := ffUnspecified;
 
         conn.SQL := 
-          'Select '+#14#10+
-          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#14#10+
-          'from ( '+#14#10+
-          'Select '+#14#10+
-          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, '+field+', '+#14#10+
-          '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#14#10+
-          '                              ORDER BY StatedDate DESC '+#14#10+
-          '                             ) '+#14#10+
-          '             AS rn '+#14#10+
-          'from '+#14#10+
-          '  Versions, Ids, Types, Observations '+#14#10+
-          'where '+#14#10+
-          '  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#14#10+
-          '  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#14#10+
-          '    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#14#10+
-          '   ) '+#14#10+
-          ') tmp '+#14#10+
-          'WHERE rn <= 4 '+#14#10+
-          'ORDER BY CodeList, StatedDate Desc, rn'+#14#10;
+          'Select '+#13#10+
+          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#13#10+
+          'from ( '+#13#10+
+          'Select '+#13#10+
+          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, '+field+', '+#13#10+
+          '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
+          '                              ORDER BY StatedDate DESC '+#13#10+
+          '                             ) '+#13#10+
+          '             AS rn '+#13#10+
+          'from '+#13#10+
+          '  Versions, Ids, Types, Observations '+#13#10+
+          'where '+#13#10+
+          '  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#13#10+
+          '  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#13#10+
+          '    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#13#10+
+          '   ) '+#13#10+
+          ') tmp '+#13#10+
+          'WHERE rn <= 4 '+#13#10+
+          'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
         bundle.tag('sql', conn.SQL);
         conn.Prepare;
         try
@@ -3713,28 +3692,26 @@ begin
   se := TFhirAuditEvent.Create;
   try
     se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
+    c := se.event.categoryList.Append.codingList.Append;
     C.code := '110114';
     C.system := URI_DICOM;
     C.Display := 'User Authentication';
-    C := se.event.subtypeList.append;
+    se.event.code := TFhirCodeableConcept.create;
+    C := se.event.code.codingList.Append;
     C.code := '110144';
     C.system := URI_DICOM;
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
-    se.event.outcome := TFhirCodeableConcept.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
+    se.event.outcome := TFhirAuditEventOutcome.Create;
+    se.event.outcome.code := TFhirCoding.Create(URI_FHIR_AUDIT_EVENT_OUTCOME, '0');
     se.event.dateTime := TFslDateTime.makeUTC;
     se.source := TFhirAuditEventSource.Create;
-    se.source.site := ServerContext.Globals.OwnerName;
+    se.source.site := TFhirReference.create;
+    se.source.site.display := ServerContext.Globals.OwnerName;
     se.source.observer := TFhirReference.Create;
     se.source.observer.identifier := TFhirIdentifier.Create;
     se.source.observer.identifier.system := URI_URIs;
     se.source.observer.identifier.value := ServerContext.DatabaseId;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := URI_FHIR_SECURITY_SOURCE_TYPE_R4;
 
     // participant - the web browser / user proxy
     p := se.participantList.append;
@@ -3742,14 +3719,10 @@ begin
     p.who.identifier := TFhirIdentifier.Create;
     p.who.identifier.system := ServerContext.DatabaseId;
     p.who.identifier.value := inttostr(session.key);
-    p.altId := session.id;
-    p.name := session.SessionName;
+    p.who.display := Session.SessionName;
     if (ip <> '') then
     begin
-      p.network := TFhirAuditEventParticipantNetwork.Create;
-      p.network.address := ip;
-      p.network.type_ := AuditEventAgentNetworkType4;
-      p.requestor := true;
+      p.network := TFHIRString.Create(ip);
     end;
 
     QueueResource(session, se, se.event.dateTime);

@@ -38,8 +38,13 @@ interface
 uses
   Classes, SysUtils, EncdDecd, 
   fsl_base, fsl_utilities, fsl_crypto, fsl_stream, 
-  fhir_objects, fhir_xhtml,  
+  fhir_objects, fhir_xhtml, fhir_uris, 
   fhir5_base;
+
+
+const
+  FHIR_URI_NONE = '';
+{{uri.consts}}
 
 type
 

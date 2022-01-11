@@ -148,16 +148,16 @@ end;
 
 function TSubscriptionManagerR4.MeetsTopicMethodCriteria(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String; newRes, oldRes : TFHIRResource): boolean;
 begin
-  if topic.methodCriteria = [] then
+  if topic.supportedInteraction = [] then
     result := true
   else
   begin
     if (newRes = nil) and (oldRes <> nil) then
-      result := InteractionTriggerDelete in topic.methodCriteria
+      result := InteractionTriggerDelete in topic.supportedInteraction
     else if (newRes <> nil) and (oldRes <> nil) then
-      result := InteractionTriggerUpdate in topic.methodCriteria
+      result := InteractionTriggerUpdate in topic.supportedInteraction
     else // if (newRes <> nil) and (oldRes = nil) then
-      result := InteractionTriggerCreate in topic.methodCriteria;
+      result := InteractionTriggerCreate in topic.supportedInteraction;
   end;
 end;
 
@@ -189,15 +189,11 @@ end;
 function TSubscriptionManagerR4.MeetsTopicFhirPathCriteria(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String; newRes, oldRes : TFHIRResource): boolean;
 var
   ctxt : TFHIRPathSubscriptionContext;
-  expr : fhir5_types.TFHIRString;
 begin
   ctxt := TFHIRPathSubscriptionContext.Create(oldres.Link, newRes.Link);
   try
-    for expr in topic.fhirPathCriteriaList do
-    begin
-      if not fpe.evaluateToBoolean(ctxt, nil, nil, expr.value) then
-        exit(false);
-    end;
+    if not fpe.evaluateToBoolean(ctxt, nil, nil, topic.fhirPathCriteria) then
+      exit(false);
     result := true;
   finally
     ctxt.Free;

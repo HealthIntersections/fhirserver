@@ -9,7 +9,7 @@ object EndpointInstallForm: TEndpointInstallForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 49
@@ -123,7 +123,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 14
       Width = 85
       Caption = 'lblCurrentStatus'
-      ParentColor = False
       ParentFont = False
     end
   end
@@ -143,7 +142,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 14
       Width = 44
       Caption = 'lblMode'
-      ParentColor = False
       ParentFont = False
     end
   end
@@ -174,7 +172,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 8
       Width = 53
       Caption = 'Username'
-      ParentColor = False
       ParentFont = False
     end
     object Label2: TLabel
@@ -183,7 +180,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 36
       Width = 50
       Caption = 'Password'
-      ParentColor = False
       ParentFont = False
     end
     object edtPassword: TEdit
@@ -202,7 +198,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 94
       Width = 101
       Caption = 'Anonymous Rights'
-      ParentColor = False
       ParentFont = False
     end
     object edtAnonymousRights: TEdit
@@ -221,7 +216,6 @@ object EndpointInstallForm: TEndpointInstallForm
       Top = 66
       Width = 42
       Caption = 'Security'
-      ParentColor = False
       ParentFont = False
     end
     object cbxSecurity: TComboBox
@@ -295,7 +289,6 @@ object EndpointInstallForm: TEndpointInstallForm
           Top = 8
           Width = 29
           Caption = 'Filter:'
-          ParentColor = False
         end
         object edtFilter: TEdit
           Left = 40

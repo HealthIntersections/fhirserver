@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -489,7 +490,7 @@ var
   rt : TFHIRStructureMapGroupRuleTarget;
   rd : TFHIRStructureMapGroupRuleDependent;
   ir : TFHIRStructureMapGroupRule;
-  rdp : TFHIRString;
+  rdp : TFhirStructureMapGroupRuleTargetParameter;
   canBeAbbreviated : boolean;
 begin
   b.append(StringPadLeft('', ' ', indent));
@@ -554,7 +555,7 @@ begin
         b.append(rd.name);
         b.append('(');
         ifirst := true;
-        for rdp in rd.variableList do
+        for rdp in rd.parameterList do
         begin
           if (ifirst) then
             ifirst := false
@@ -611,11 +612,10 @@ begin
     b.append(' ');
     b.append(CODES_TFhirStructureMapSourceListModeEnum[rs.ListMode]);
   end;
-  if (rs.defaultValue <> nil) then
+  if (rs.defaultValue <> '') then
   begin
     b.append(' default ');
-    assert(rs.defaultValue is TFhirString);
-    b.append('''+jsonEscape((rs.defaultValue as TFhirString).value, true)+''');
+    b.append(''''+jsonEscape(rs.defaultValue, true)+'''');
   end;
   if not canbeAbbreviated and (rs.Variable <> '') then
   begin
@@ -1444,7 +1444,7 @@ begin
   done := false;
   while (not done) do
   begin
-    ref.variableList.add(TFhirString.Create(lexer.take()));
+    ref.parameterList.Append.value := TFhirString.Create(lexer.take());
     done := not lexer.hasToken(',');
     if (not done) then
       lexer.next();
@@ -1490,7 +1490,7 @@ begin
   if (lexer.hasToken('default')) then
   begin
     lexer.token('default');
-    source.DefaultValue := TFhirString.create(lexer.readConstant('default value'));
+    source.DefaultValue := lexer.readConstant('default value');
   end;
   if (StringArrayExistsSensitive(['first', 'last', 'not_first', 'not_last', 'only_one'], lexer.current)) then
     source.ListMode := TFhirStructureMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirStructureMapSourceListModeEnum, lexer));
@@ -1915,26 +1915,26 @@ var
   v : TVariables;
   i : integer;
   input : TFHIRStructureMapGroupInput;
-  vr : TFHIRString;
+  vr : TFhirStructureMapGroupRuleTargetParameter;
   mode : TVariableMode;
   vv : TFHIRObject;
 begin
   resolveGroupReference(map, group, dependent.nameElement, target, targetMap);
 
-  if (target.InputList.count <> dependent.variableList.count) then
-    raise EFHIRException.create('Rule ''+dependent.Name+'' has '+Integer.toString(target.InputList.count)+' but the invocation has '+Integer.toString(dependent.variableList.count)+' variables');
+  if (target.InputList.count <> dependent.parameterList.count) then
+    raise EFHIRException.create('Rule ''+dependent.Name+'' has '+Integer.toString(target.InputList.count)+' but the invocation has '+Integer.toString(dependent.parameterList.count)+' parameters');
 
   v := TVariables.create;
   try
     for i := 0 to target.InputList.count - 1 do
     begin
       input := target.InputList[i];
-      vr := dependent.variableList[i];
+      vr := dependent.parameterList[i];
       if input.mode = StructureMapInputModeSource then
         mode := vmINPUT
       else
         mode := vmOUTPUT;
-      vv := vin.get(mode, vr.Value);
+      vv := vin.get(mode, vr.Value.primitiveValue);
       if (vv = nil) then
         raise EFHIRException.create('Rule ''+dependent.Name+'' '+CODES_TVariableMode[mode]+' variable "'+input.Name+'" has no value');
       v.add(mode, input.Name, vv.Link);
@@ -2018,8 +2018,8 @@ begin
       else
       begin
         getChildrenByName(b, src.element, items);
-        if (items.Empty and (src.defaultValue <> nil)) then
-          items.Add(src.defaultValue.Link);
+        if (items.Empty and (src.defaultValue <> '')) then
+          items.Add(TFHIRString.Create(src.defaultValue));
       end;
     end;
 

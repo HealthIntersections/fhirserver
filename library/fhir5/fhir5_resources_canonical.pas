@@ -34,7 +34,7 @@ unit fhir5_resources_canonical;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -135,6 +135,20 @@ type
   TFhirConceptMap = class;
   TFhirConceptMapList = class;
 {$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONCEPTMAP2}
+  TFhirConceptMap2Group = class;
+  TFhirConceptMap2GroupList = class;
+  TFhirConceptMap2GroupElement = class;
+  TFhirConceptMap2GroupElementList = class;
+  TFhirConceptMap2GroupElementTarget = class;
+  TFhirConceptMap2GroupElementTargetList = class;
+  TFhirConceptMap2GroupElementTargetDependsOn = class;
+  TFhirConceptMap2GroupElementTargetDependsOnList = class;
+  TFhirConceptMap2GroupUnmapped = class;
+  TFhirConceptMap2GroupUnmappedList = class;
+  TFhirConceptMap2 = class;
+  TFhirConceptMap2List = class;
+{$ENDIF FHIR_CONCEPTMAP2}
 {$IFDEF FHIR_CONDITIONDEFINITION}
   TFhirConditionDefinitionObservation = class;
   TFhirConditionDefinitionObservationList = class;
@@ -746,7 +760,7 @@ type
     function Append : TFhirCapabilityStatementSoftware;
     
     // Add an already existing FhirCapabilityStatementSoftware to the end of the list.
-function AddItem(value : TFhirCapabilityStatementSoftware): TFhirCapabilityStatementSoftware; overload;
+    function AddItem(value : TFhirCapabilityStatementSoftware) : TFhirCapabilityStatementSoftware; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementSoftware) : Integer;
@@ -856,7 +870,7 @@ function AddItem(value : TFhirCapabilityStatementSoftware): TFhirCapabilityState
     function Append : TFhirCapabilityStatementImplementation;
     
     // Add an already existing FhirCapabilityStatementImplementation to the end of the list.
-function AddItem(value : TFhirCapabilityStatementImplementation): TFhirCapabilityStatementImplementation; overload;
+    function AddItem(value : TFhirCapabilityStatementImplementation) : TFhirCapabilityStatementImplementation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementImplementation) : Integer;
@@ -1000,7 +1014,7 @@ function AddItem(value : TFhirCapabilityStatementImplementation): TFhirCapabilit
     function Append : TFhirCapabilityStatementRest;
     
     // Add an already existing FhirCapabilityStatementRest to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRest): TFhirCapabilityStatementRest; overload;
+    function AddItem(value : TFhirCapabilityStatementRest) : TFhirCapabilityStatementRest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRest) : Integer;
@@ -1110,7 +1124,7 @@ function AddItem(value : TFhirCapabilityStatementRest): TFhirCapabilityStatement
     function Append : TFhirCapabilityStatementRestSecurity;
     
     // Add an already existing FhirCapabilityStatementRestSecurity to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestSecurity): TFhirCapabilityStatementRestSecurity; overload;
+    function AddItem(value : TFhirCapabilityStatementRestSecurity) : TFhirCapabilityStatementRestSecurity; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestSecurity) : Integer;
@@ -1332,7 +1346,7 @@ function AddItem(value : TFhirCapabilityStatementRestSecurity): TFhirCapabilityS
     function Append : TFhirCapabilityStatementRestResource;
     
     // Add an already existing FhirCapabilityStatementRestResource to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestResource): TFhirCapabilityStatementRestResource; overload;
+    function AddItem(value : TFhirCapabilityStatementRestResource) : TFhirCapabilityStatementRestResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestResource) : Integer;
@@ -1434,7 +1448,7 @@ function AddItem(value : TFhirCapabilityStatementRestResource): TFhirCapabilityS
     function Append : TFhirCapabilityStatementRestResourceInteraction;
     
     // Add an already existing FhirCapabilityStatementRestResourceInteraction to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestResourceInteraction): TFhirCapabilityStatementRestResourceInteraction; overload;
+    function AddItem(value : TFhirCapabilityStatementRestResourceInteraction) : TFhirCapabilityStatementRestResourceInteraction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestResourceInteraction) : Integer;
@@ -1554,7 +1568,7 @@ function AddItem(value : TFhirCapabilityStatementRestResourceInteraction): TFhir
     function Append : TFhirCapabilityStatementRestResourceSearchParam;
     
     // Add an already existing FhirCapabilityStatementRestResourceSearchParam to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestResourceSearchParam): TFhirCapabilityStatementRestResourceSearchParam; overload;
+    function AddItem(value : TFhirCapabilityStatementRestResourceSearchParam) : TFhirCapabilityStatementRestResourceSearchParam; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestResourceSearchParam) : Integer;
@@ -1666,7 +1680,7 @@ function AddItem(value : TFhirCapabilityStatementRestResourceSearchParam): TFhir
     function Append : TFhirCapabilityStatementRestResourceOperation;
     
     // Add an already existing FhirCapabilityStatementRestResourceOperation to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestResourceOperation): TFhirCapabilityStatementRestResourceOperation; overload;
+    function AddItem(value : TFhirCapabilityStatementRestResourceOperation) : TFhirCapabilityStatementRestResourceOperation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestResourceOperation) : Integer;
@@ -1768,7 +1782,7 @@ function AddItem(value : TFhirCapabilityStatementRestResourceOperation): TFhirCa
     function Append : TFhirCapabilityStatementRestInteraction;
     
     // Add an already existing FhirCapabilityStatementRestInteraction to the end of the list.
-function AddItem(value : TFhirCapabilityStatementRestInteraction): TFhirCapabilityStatementRestInteraction; overload;
+    function AddItem(value : TFhirCapabilityStatementRestInteraction) : TFhirCapabilityStatementRestInteraction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementRestInteraction) : Integer;
@@ -1885,7 +1899,7 @@ function AddItem(value : TFhirCapabilityStatementRestInteraction): TFhirCapabili
     function Append : TFhirCapabilityStatementMessaging;
     
     // Add an already existing FhirCapabilityStatementMessaging to the end of the list.
-function AddItem(value : TFhirCapabilityStatementMessaging): TFhirCapabilityStatementMessaging; overload;
+    function AddItem(value : TFhirCapabilityStatementMessaging) : TFhirCapabilityStatementMessaging; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementMessaging) : Integer;
@@ -1986,7 +2000,7 @@ function AddItem(value : TFhirCapabilityStatementMessaging): TFhirCapabilityStat
     function Append : TFhirCapabilityStatementMessagingEndpoint;
     
     // Add an already existing FhirCapabilityStatementMessagingEndpoint to the end of the list.
-function AddItem(value : TFhirCapabilityStatementMessagingEndpoint): TFhirCapabilityStatementMessagingEndpoint; overload;
+    function AddItem(value : TFhirCapabilityStatementMessagingEndpoint) : TFhirCapabilityStatementMessagingEndpoint; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementMessagingEndpoint) : Integer;
@@ -2088,7 +2102,7 @@ function AddItem(value : TFhirCapabilityStatementMessagingEndpoint): TFhirCapabi
     function Append : TFhirCapabilityStatementMessagingSupportedMessage;
     
     // Add an already existing FhirCapabilityStatementMessagingSupportedMessage to the end of the list.
-function AddItem(value : TFhirCapabilityStatementMessagingSupportedMessage): TFhirCapabilityStatementMessagingSupportedMessage; overload;
+    function AddItem(value : TFhirCapabilityStatementMessagingSupportedMessage) : TFhirCapabilityStatementMessagingSupportedMessage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementMessagingSupportedMessage) : Integer;
@@ -2199,7 +2213,7 @@ function AddItem(value : TFhirCapabilityStatementMessagingSupportedMessage): TFh
     function Append : TFhirCapabilityStatementDocument;
     
     // Add an already existing FhirCapabilityStatementDocument to the end of the list.
-function AddItem(value : TFhirCapabilityStatementDocument): TFhirCapabilityStatementDocument; overload;
+    function AddItem(value : TFhirCapabilityStatementDocument) : TFhirCapabilityStatementDocument; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatementDocument) : Integer;
@@ -2476,7 +2490,7 @@ function AddItem(value : TFhirCapabilityStatementDocument): TFhirCapabilityState
     function Append : TFhirCapabilityStatement;
     
     // Add an already existing FhirCapabilityStatement to the end of the list.
-function AddItem(value : TFhirCapabilityStatement): TFhirCapabilityStatement; overload;
+    function AddItem(value : TFhirCapabilityStatement) : TFhirCapabilityStatement; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement) : Integer;
@@ -2590,7 +2604,7 @@ function AddItem(value : TFhirCapabilityStatement): TFhirCapabilityStatement; ov
     function Append : TFhirCapabilityStatement2Software;
     
     // Add an already existing FhirCapabilityStatement2Software to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2Software): TFhirCapabilityStatement2Software; overload;
+    function AddItem(value : TFhirCapabilityStatement2Software) : TFhirCapabilityStatement2Software; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2Software) : Integer;
@@ -2700,7 +2714,7 @@ function AddItem(value : TFhirCapabilityStatement2Software): TFhirCapabilityStat
     function Append : TFhirCapabilityStatement2Implementation;
     
     // Add an already existing FhirCapabilityStatement2Implementation to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2Implementation): TFhirCapabilityStatement2Implementation; overload;
+    function AddItem(value : TFhirCapabilityStatement2Implementation) : TFhirCapabilityStatement2Implementation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2Implementation) : Integer;
@@ -2844,7 +2858,7 @@ function AddItem(value : TFhirCapabilityStatement2Implementation): TFhirCapabili
     function Append : TFhirCapabilityStatement2Rest;
     
     // Add an already existing FhirCapabilityStatement2Rest to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2Rest): TFhirCapabilityStatement2Rest; overload;
+    function AddItem(value : TFhirCapabilityStatement2Rest) : TFhirCapabilityStatement2Rest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2Rest) : Integer;
@@ -2876,14 +2890,14 @@ function AddItem(value : TFhirCapabilityStatement2Rest): TFhirCapabilityStatemen
   // A statement that affirms support for a feature.
   TFhirCapabilityStatement2RestFeature = class (TFhirBackboneElement)
   protected
-    FCode : TFhirString;
-    FValue : TFhirString;
-    procedure SetCode(value : TFhirString);
-    function GetCodeST : String;
-    procedure SetCodeST(value : String);
-    procedure SetValue(value : TFhirString);
-    function GetValueST : String;
-    procedure SetValueST(value : String);
+    FCode : TFhirEnum;
+    FValue : TFhirEnum;
+    procedure SetCode(value : TFhirEnum);
+    function GetCodeST : TFhirCapabilityFeatureEnum;
+    procedure SetCodeST(value : TFhirCapabilityFeatureEnum);
+    procedure SetValue(value : TFhirEnum);
+    function GetValueST : TFhirCapabilityFeatureValueEnum;
+    procedure SetValueST(value : TFhirCapabilityFeatureValueEnum);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -2907,12 +2921,12 @@ function AddItem(value : TFhirCapabilityStatement2Rest): TFhirCapabilityStatemen
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
     // A code that describes the feature being reported on.
-    property code : String read GetCodeST write SetCodeST;
-    property codeElement : TFhirString read FCode write SetCode;
+    property code : TFhirCapabilityFeatureEnum read GetCodeST write SetCodeST;
+    property codeElement : TFhirEnum read FCode write SetCode;
 
     // A value for the feature - maybe true, false, or one of the set of codes allowed in the definition of the feature code.
-    property value : String read GetValueST write SetValueST;
-    property valueElement : TFhirString read FValue write SetValue;
+    property value : TFhirCapabilityFeatureValueEnum read GetValueST write SetValueST;
+    property valueElement : TFhirEnum read FValue write SetValue;
 
   end;
 
@@ -2945,7 +2959,7 @@ function AddItem(value : TFhirCapabilityStatement2Rest): TFhirCapabilityStatemen
     function Append : TFhirCapabilityStatement2RestFeature;
     
     // Add an already existing FhirCapabilityStatement2RestFeature to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestFeature): TFhirCapabilityStatement2RestFeature; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestFeature) : TFhirCapabilityStatement2RestFeature; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestFeature) : Integer;
@@ -3091,7 +3105,7 @@ function AddItem(value : TFhirCapabilityStatement2RestFeature): TFhirCapabilityS
     function Append : TFhirCapabilityStatement2RestResource;
     
     // Add an already existing FhirCapabilityStatement2RestResource to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestResource): TFhirCapabilityStatement2RestResource; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestResource) : TFhirCapabilityStatement2RestResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestResource) : Integer;
@@ -3200,7 +3214,7 @@ function AddItem(value : TFhirCapabilityStatement2RestResource): TFhirCapability
     function Append : TFhirCapabilityStatement2RestResourceInteraction;
     
     // Add an already existing FhirCapabilityStatement2RestResourceInteraction to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestResourceInteraction): TFhirCapabilityStatement2RestResourceInteraction; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestResourceInteraction) : TFhirCapabilityStatement2RestResourceInteraction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestResourceInteraction) : Integer;
@@ -3327,7 +3341,7 @@ function AddItem(value : TFhirCapabilityStatement2RestResourceInteraction): TFhi
     function Append : TFhirCapabilityStatement2RestResourceSearchParam;
     
     // Add an already existing FhirCapabilityStatement2RestResourceSearchParam to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestResourceSearchParam): TFhirCapabilityStatement2RestResourceSearchParam; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestResourceSearchParam) : TFhirCapabilityStatement2RestResourceSearchParam; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestResourceSearchParam) : Integer;
@@ -3446,7 +3460,7 @@ function AddItem(value : TFhirCapabilityStatement2RestResourceSearchParam): TFhi
     function Append : TFhirCapabilityStatement2RestResourceOperation;
     
     // Add an already existing FhirCapabilityStatement2RestResourceOperation to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestResourceOperation): TFhirCapabilityStatement2RestResourceOperation; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestResourceOperation) : TFhirCapabilityStatement2RestResourceOperation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestResourceOperation) : Integer;
@@ -3555,7 +3569,7 @@ function AddItem(value : TFhirCapabilityStatement2RestResourceOperation): TFhirC
     function Append : TFhirCapabilityStatement2RestInteraction;
     
     // Add an already existing FhirCapabilityStatement2RestInteraction to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2RestInteraction): TFhirCapabilityStatement2RestInteraction; overload;
+    function AddItem(value : TFhirCapabilityStatement2RestInteraction) : TFhirCapabilityStatement2RestInteraction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2RestInteraction) : Integer;
@@ -3818,7 +3832,7 @@ function AddItem(value : TFhirCapabilityStatement2RestInteraction): TFhirCapabil
     function Append : TFhirCapabilityStatement2;
     
     // Add an already existing FhirCapabilityStatement2 to the end of the list.
-function AddItem(value : TFhirCapabilityStatement2): TFhirCapabilityStatement2; overload;
+    function AddItem(value : TFhirCapabilityStatement2) : TFhirCapabilityStatement2; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCapabilityStatement2) : Integer;
@@ -3941,7 +3955,7 @@ function AddItem(value : TFhirCapabilityStatement2): TFhirCapabilityStatement2; 
     function Append : TFhirCodeSystemFilter;
     
     // Add an already existing FhirCodeSystemFilter to the end of the list.
-function AddItem(value : TFhirCodeSystemFilter): TFhirCodeSystemFilter; overload;
+    function AddItem(value : TFhirCodeSystemFilter) : TFhirCodeSystemFilter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystemFilter) : Integer;
@@ -4061,7 +4075,7 @@ function AddItem(value : TFhirCodeSystemFilter): TFhirCodeSystemFilter; overload
     function Append : TFhirCodeSystemProperty;
     
     // Add an already existing FhirCodeSystemProperty to the end of the list.
-function AddItem(value : TFhirCodeSystemProperty): TFhirCodeSystemProperty; overload;
+    function AddItem(value : TFhirCodeSystemProperty) : TFhirCodeSystemProperty; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystemProperty) : Integer;
@@ -4194,7 +4208,7 @@ function AddItem(value : TFhirCodeSystemProperty): TFhirCodeSystemProperty; over
     function Append : TFhirCodeSystemConcept;
     
     // Add an already existing FhirCodeSystemConcept to the end of the list.
-function AddItem(value : TFhirCodeSystemConcept): TFhirCodeSystemConcept; overload;
+    function AddItem(value : TFhirCodeSystemConcept) : TFhirCodeSystemConcept; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystemConcept) : Integer;
@@ -4304,7 +4318,7 @@ function AddItem(value : TFhirCodeSystemConcept): TFhirCodeSystemConcept; overlo
     function Append : TFhirCodeSystemConceptDesignation;
     
     // Add an already existing FhirCodeSystemConceptDesignation to the end of the list.
-function AddItem(value : TFhirCodeSystemConceptDesignation): TFhirCodeSystemConceptDesignation; overload;
+    function AddItem(value : TFhirCodeSystemConceptDesignation) : TFhirCodeSystemConceptDesignation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystemConceptDesignation) : Integer;
@@ -4405,7 +4419,7 @@ function AddItem(value : TFhirCodeSystemConceptDesignation): TFhirCodeSystemConc
     function Append : TFhirCodeSystemConceptProperty;
     
     // Add an already existing FhirCodeSystemConceptProperty to the end of the list.
-function AddItem(value : TFhirCodeSystemConceptProperty): TFhirCodeSystemConceptProperty; overload;
+    function AddItem(value : TFhirCodeSystemConceptProperty) : TFhirCodeSystemConceptProperty; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystemConceptProperty) : Integer;
@@ -4693,7 +4707,7 @@ function AddItem(value : TFhirCodeSystemConceptProperty): TFhirCodeSystemConcept
     function Append : TFhirCodeSystem;
     
     // Add an already existing FhirCodeSystem to the end of the list.
-function AddItem(value : TFhirCodeSystem): TFhirCodeSystem; overload;
+    function AddItem(value : TFhirCodeSystem) : TFhirCodeSystem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCodeSystem) : Integer;
@@ -4804,7 +4818,7 @@ function AddItem(value : TFhirCodeSystem): TFhirCodeSystem; overload;
     function Append : TFhirCompartmentDefinitionResource;
     
     // Add an already existing FhirCompartmentDefinitionResource to the end of the list.
-function AddItem(value : TFhirCompartmentDefinitionResource): TFhirCompartmentDefinitionResource; overload;
+    function AddItem(value : TFhirCompartmentDefinitionResource) : TFhirCompartmentDefinitionResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCompartmentDefinitionResource) : Integer;
@@ -4997,7 +5011,7 @@ function AddItem(value : TFhirCompartmentDefinitionResource): TFhirCompartmentDe
     function Append : TFhirCompartmentDefinition;
     
     // Add an already existing FhirCompartmentDefinition to the end of the list.
-function AddItem(value : TFhirCompartmentDefinition): TFhirCompartmentDefinition; overload;
+    function AddItem(value : TFhirCompartmentDefinition) : TFhirCompartmentDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCompartmentDefinition) : Integer;
@@ -5116,7 +5130,7 @@ function AddItem(value : TFhirCompartmentDefinition): TFhirCompartmentDefinition
     function Append : TFhirConceptMapGroup;
     
     // Add an already existing FhirConceptMapGroup to the end of the list.
-function AddItem(value : TFhirConceptMapGroup): TFhirConceptMapGroup; overload;
+    function AddItem(value : TFhirConceptMapGroup) : TFhirConceptMapGroup; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMapGroup) : Integer;
@@ -5235,7 +5249,7 @@ function AddItem(value : TFhirConceptMapGroup): TFhirConceptMapGroup; overload;
     function Append : TFhirConceptMapGroupElement;
     
     // Add an already existing FhirConceptMapGroupElement to the end of the list.
-function AddItem(value : TFhirConceptMapGroupElement): TFhirConceptMapGroupElement; overload;
+    function AddItem(value : TFhirConceptMapGroupElement) : TFhirConceptMapGroupElement; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMapGroupElement) : Integer;
@@ -5369,7 +5383,7 @@ function AddItem(value : TFhirConceptMapGroupElement): TFhirConceptMapGroupEleme
     function Append : TFhirConceptMapGroupElementTarget;
     
     // Add an already existing FhirConceptMapGroupElementTarget to the end of the list.
-function AddItem(value : TFhirConceptMapGroupElementTarget): TFhirConceptMapGroupElementTarget; overload;
+    function AddItem(value : TFhirConceptMapGroupElementTarget) : TFhirConceptMapGroupElementTarget; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMapGroupElementTarget) : Integer;
@@ -5490,7 +5504,7 @@ function AddItem(value : TFhirConceptMapGroupElementTarget): TFhirConceptMapGrou
     function Append : TFhirConceptMapGroupElementTargetDependsOn;
     
     // Add an already existing FhirConceptMapGroupElementTargetDependsOn to the end of the list.
-function AddItem(value : TFhirConceptMapGroupElementTargetDependsOn): TFhirConceptMapGroupElementTargetDependsOn; overload;
+    function AddItem(value : TFhirConceptMapGroupElementTargetDependsOn) : TFhirConceptMapGroupElementTargetDependsOn; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMapGroupElementTargetDependsOn) : Integer;
@@ -5610,7 +5624,7 @@ function AddItem(value : TFhirConceptMapGroupElementTargetDependsOn): TFhirConce
     function Append : TFhirConceptMapGroupUnmapped;
     
     // Add an already existing FhirConceptMapGroupUnmapped to the end of the list.
-function AddItem(value : TFhirConceptMapGroupUnmapped): TFhirConceptMapGroupUnmapped; overload;
+    function AddItem(value : TFhirConceptMapGroupUnmapped) : TFhirConceptMapGroupUnmapped; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMapGroupUnmapped) : Integer;
@@ -5828,7 +5842,7 @@ function AddItem(value : TFhirConceptMapGroupUnmapped): TFhirConceptMapGroupUnma
     function Append : TFhirConceptMap;
     
     // Add an already existing FhirConceptMap to the end of the list.
-function AddItem(value : TFhirConceptMap): TFhirConceptMap; overload;
+    function AddItem(value : TFhirConceptMap) : TFhirConceptMap; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConceptMap) : Integer;
@@ -5858,6 +5872,844 @@ function AddItem(value : TFhirConceptMap): TFhirConceptMap; overload;
   End;
 
 {$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONCEPTMAP2}
+  // A group of mappings that all have the same source and target system.
+  TFhirConceptMap2Group = class (TFhirBackboneElement)
+  protected
+    FSource : TFhirCanonical;
+    FTarget : TFhirCanonical;
+    FelementList : TFhirConceptMap2GroupElementList;
+    FUnmapped : TFhirConceptMap2GroupUnmapped;
+    procedure SetSource(value : TFhirCanonical);
+    function GetSourceST : String;
+    procedure SetSourceST(value : String);
+    procedure SetTarget(value : TFhirCanonical);
+    function GetTargetST : String;
+    procedure SetTargetST(value : String);
+    function GetElementList : TFhirConceptMap2GroupElementList;
+    function GetHasElementList : Boolean;
+    procedure SetUnmapped(value : TFhirConceptMap2GroupUnmapped);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2Group; overload;
+    function Clone : TFhirConceptMap2Group; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to An absolute URI that identifies the source system where the concepts to be mapped are defined.
+    property source : String read GetSourceST write SetSourceST;
+    // An absolute URI that identifies the source system where the concepts to be mapped are defined.
+    property sourceElement : TFhirCanonical read FSource write SetSource;
+
+    // Typed access to An absolute URI that identifies the target system that the concepts will be mapped to.
+    property target : String read GetTargetST write SetTargetST;
+    // An absolute URI that identifies the target system that the concepts will be mapped to.
+    property targetElement : TFhirCanonical read FTarget write SetTarget;
+
+    // Mappings for an individual concept in the source to one or more concepts in the target.
+    property elementList : TFhirConceptMap2GroupElementList read GetElementList;
+    property hasElementList : boolean read GetHasElementList;
+
+    // Typed access to What to do when there is no mapping to a target concept from the source concept.  This provides the "default" to be applied when there is no target concept mapping specified.  The 'unmapped' element is ignored if a code is specified to have relationship = not-related-to. (defined for API consistency)
+    property unmapped : TFhirConceptMap2GroupUnmapped read FUnmapped write SetUnmapped;
+    // What to do when there is no mapping to a target concept from the source concept.  This provides the "default" to be applied when there is no target concept mapping specified.  The 'unmapped' element is ignored if a code is specified to have relationship = not-related-to.
+    property unmappedElement : TFhirConceptMap2GroupUnmapped read FUnmapped write SetUnmapped;
+
+  end;
+
+  TFhirConceptMap2GroupListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2GroupList;
+    function GetCurrent : TFhirConceptMap2Group;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2GroupList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2Group read GetCurrent;
+  end;
+
+  TFhirConceptMap2GroupList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2Group;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2Group);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2GroupList; overload;
+    function Clone : TFhirConceptMap2GroupList; overload;
+    function GetEnumerator : TFhirConceptMap2GroupListEnumerator;
+    
+    //  Add a FhirConceptMap2Group to the end of the list.
+    function Append : TFhirConceptMap2Group;
+    
+    // Add an already existing FhirConceptMap2Group to the end of the list.
+    function AddItem(value : TFhirConceptMap2Group) : TFhirConceptMap2Group; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2Group) : Integer;
+    
+    // Insert FhirConceptMap2Group before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2Group;
+    
+    // Insert an existing FhirConceptMap2Group before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2Group);
+    
+    // Get the iIndexth FhirConceptMap2Group. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2Group);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2Group;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2Groups[index : Integer] : TFhirConceptMap2Group read GetItemN write SetItemN; default;
+  End;
+
+  // Mappings for an individual concept in the source to one or more concepts in the target.
+  TFhirConceptMap2GroupElement = class (TFhirBackboneElement)
+  protected
+    FCode : TFhirCode;
+    FDisplay : TFhirString;
+    FValueSet : TFhirCanonical;
+    FNoMap : TFhirBoolean;
+    FtargetList : TFhirConceptMap2GroupElementTargetList;
+    procedure SetCode(value : TFhirCode);
+    function GetCodeST : String;
+    procedure SetCodeST(value : String);
+    procedure SetDisplay(value : TFhirString);
+    function GetDisplayST : String;
+    procedure SetDisplayST(value : String);
+    procedure SetValueSet(value : TFhirCanonical);
+    function GetValueSetST : String;
+    procedure SetValueSetST(value : String);
+    procedure SetNoMap(value : TFhirBoolean);
+    function GetNoMapST : Boolean;
+    procedure SetNoMapST(value : Boolean);
+    function GetTargetList : TFhirConceptMap2GroupElementTargetList;
+    function GetHasTargetList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2GroupElement; overload;
+    function Clone : TFhirConceptMap2GroupElement; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Identity (code or path) or the element/item being mapped.
+    property code : String read GetCodeST write SetCodeST;
+    // Identity (code or path) or the element/item being mapped.
+    property codeElement : TFhirCode read FCode write SetCode;
+
+    // Typed access to The display for the code. The display is only provided to help editors when editing the concept map.
+    property display : String read GetDisplayST write SetDisplayST;
+    // The display for the code. The display is only provided to help editors when editing the concept map.
+    property displayElement : TFhirString read FDisplay write SetDisplay;
+
+    // Typed access to The set of codes being mapped.
+    property valueSet : String read GetValueSetST write SetValueSetST;
+    // The set of codes being mapped.
+    property valueSetElement : TFhirCanonical read FValueSet write SetValueSet;
+
+    // Typed access to If noMap = true this indicates that no mapping to a target concept exists for this source concept.
+    property noMap : Boolean read GetNoMapST write SetNoMapST;
+    // If noMap = true this indicates that no mapping to a target concept exists for this source concept.
+    property noMapElement : TFhirBoolean read FNoMap write SetNoMap;
+
+    // A concept from the target value set that this concept maps to.
+    property targetList : TFhirConceptMap2GroupElementTargetList read GetTargetList;
+    property hasTargetList : boolean read GetHasTargetList;
+
+  end;
+
+  TFhirConceptMap2GroupElementListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2GroupElementList;
+    function GetCurrent : TFhirConceptMap2GroupElement;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2GroupElementList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2GroupElement read GetCurrent;
+  end;
+
+  TFhirConceptMap2GroupElementList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2GroupElement;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2GroupElement);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2GroupElementList; overload;
+    function Clone : TFhirConceptMap2GroupElementList; overload;
+    function GetEnumerator : TFhirConceptMap2GroupElementListEnumerator;
+    
+    //  Add a FhirConceptMap2GroupElement to the end of the list.
+    function Append : TFhirConceptMap2GroupElement;
+    
+    // Add an already existing FhirConceptMap2GroupElement to the end of the list.
+    function AddItem(value : TFhirConceptMap2GroupElement) : TFhirConceptMap2GroupElement; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2GroupElement) : Integer;
+    
+    // Insert FhirConceptMap2GroupElement before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2GroupElement;
+    
+    // Insert an existing FhirConceptMap2GroupElement before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2GroupElement);
+    
+    // Get the iIndexth FhirConceptMap2GroupElement. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2GroupElement);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2GroupElement;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2GroupElements[index : Integer] : TFhirConceptMap2GroupElement read GetItemN write SetItemN; default;
+  End;
+
+  // A concept from the target value set that this concept maps to.
+  TFhirConceptMap2GroupElementTarget = class (TFhirBackboneElement)
+  protected
+    FCode : TFhirCode;
+    FDisplay : TFhirString;
+    FValueSet : TFhirCanonical;
+    FRelationship : TFhirEnum;
+    FComment : TFhirString;
+    FdependsOnList : TFhirConceptMap2GroupElementTargetDependsOnList;
+    FproductList : TFhirConceptMap2GroupElementTargetDependsOnList;
+    procedure SetCode(value : TFhirCode);
+    function GetCodeST : String;
+    procedure SetCodeST(value : String);
+    procedure SetDisplay(value : TFhirString);
+    function GetDisplayST : String;
+    procedure SetDisplayST(value : String);
+    procedure SetValueSet(value : TFhirCanonical);
+    function GetValueSetST : String;
+    procedure SetValueSetST(value : String);
+    procedure SetRelationship(value : TFhirEnum);
+    function GetRelationshipST : TFhirConceptMapRelationshipEnum;
+    procedure SetRelationshipST(value : TFhirConceptMapRelationshipEnum);
+    procedure SetComment(value : TFhirString);
+    function GetCommentST : String;
+    procedure SetCommentST(value : String);
+    function GetDependsOnList : TFhirConceptMap2GroupElementTargetDependsOnList;
+    function GetHasDependsOnList : Boolean;
+    function GetProductList : TFhirConceptMap2GroupElementTargetDependsOnList;
+    function GetHasProductList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2GroupElementTarget; overload;
+    function Clone : TFhirConceptMap2GroupElementTarget; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Identity (code or path) or the element/item that the map refers to.
+    property code : String read GetCodeST write SetCodeST;
+    // Identity (code or path) or the element/item that the map refers to.
+    property codeElement : TFhirCode read FCode write SetCode;
+
+    // Typed access to The display for the code. The display is only provided to help editors when editing the concept map.
+    property display : String read GetDisplayST write SetDisplayST;
+    // The display for the code. The display is only provided to help editors when editing the concept map.
+    property displayElement : TFhirString read FDisplay write SetDisplay;
+
+    // Typed access to The set of codes being that the map refers to.
+    property valueSet : String read GetValueSetST write SetValueSetST;
+    // The set of codes being that the map refers to.
+    property valueSetElement : TFhirCanonical read FValueSet write SetValueSet;
+
+    // The relationship between the source and target concepts. The relationship is read from source to target (e.g. source-is-narrower-than-target).
+    property relationship : TFhirConceptMapRelationshipEnum read GetRelationshipST write SetRelationshipST;
+    property relationshipElement : TFhirEnum read FRelationship write SetRelationship;
+
+    // Typed access to A description of status/issues in mapping that conveys additional information not represented in  the structured data.
+    property comment : String read GetCommentST write SetCommentST;
+    // A description of status/issues in mapping that conveys additional information not represented in  the structured data.
+    property commentElement : TFhirString read FComment write SetComment;
+
+    // A set of additional dependencies for this mapping to hold. This mapping is only applicable if the specified element can be resolved, and it has the specified value.
+    property dependsOnList : TFhirConceptMap2GroupElementTargetDependsOnList read GetDependsOnList;
+    property hasDependsOnList : boolean read GetHasDependsOnList;
+
+    // A set of additional outcomes from this mapping to other elements. To properly execute this mapping, the specified element must be mapped to some data element or source that is in context. The mapping may still be useful without a place for the additional data elements, but the relationship (e.g., equivalent) cannot be relied on.
+    property productList : TFhirConceptMap2GroupElementTargetDependsOnList read GetProductList;
+    property hasProductList : boolean read GetHasProductList;
+
+  end;
+
+  TFhirConceptMap2GroupElementTargetListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2GroupElementTargetList;
+    function GetCurrent : TFhirConceptMap2GroupElementTarget;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2GroupElementTargetList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2GroupElementTarget read GetCurrent;
+  end;
+
+  TFhirConceptMap2GroupElementTargetList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2GroupElementTarget;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2GroupElementTarget);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2GroupElementTargetList; overload;
+    function Clone : TFhirConceptMap2GroupElementTargetList; overload;
+    function GetEnumerator : TFhirConceptMap2GroupElementTargetListEnumerator;
+    
+    //  Add a FhirConceptMap2GroupElementTarget to the end of the list.
+    function Append : TFhirConceptMap2GroupElementTarget;
+    
+    // Add an already existing FhirConceptMap2GroupElementTarget to the end of the list.
+    function AddItem(value : TFhirConceptMap2GroupElementTarget) : TFhirConceptMap2GroupElementTarget; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2GroupElementTarget) : Integer;
+    
+    // Insert FhirConceptMap2GroupElementTarget before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2GroupElementTarget;
+    
+    // Insert an existing FhirConceptMap2GroupElementTarget before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2GroupElementTarget);
+    
+    // Get the iIndexth FhirConceptMap2GroupElementTarget. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2GroupElementTarget);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2GroupElementTarget;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2GroupElementTargets[index : Integer] : TFhirConceptMap2GroupElementTarget read GetItemN write SetItemN; default;
+  End;
+
+  // A set of additional dependencies for this mapping to hold. This mapping is only applicable if the specified element can be resolved, and it has the specified value.
+  TFhirConceptMap2GroupElementTargetDependsOn = class (TFhirBackboneElement)
+  protected
+    FProperty_ : TFhirUri;
+    FValue : TFhirDataType;
+    procedure SetProperty_(value : TFhirUri);
+    function GetProperty_ST : String;
+    procedure SetProperty_ST(value : String);
+    procedure SetValue(value : TFhirDataType);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2GroupElementTargetDependsOn; overload;
+    function Clone : TFhirConceptMap2GroupElementTargetDependsOn; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to A reference to an element that holds a coded value that corresponds to a code system property. The idea is that the information model carries an element somewhere that is labeled to correspond with a code system property.
+    property property_ : String read GetProperty_ST write SetProperty_ST;
+    // A reference to an element that holds a coded value that corresponds to a code system property. The idea is that the information model carries an element somewhere that is labeled to correspond with a code system property.
+    property property_Element : TFhirUri read FProperty_ write SetProperty_;
+
+    // Typed access to Property value that the map depends on. (defined for API consistency)
+    property value : TFhirDataType read FValue write SetValue;
+    // Property value that the map depends on.
+    property valueElement : TFhirDataType read FValue write SetValue;
+
+  end;
+
+  TFhirConceptMap2GroupElementTargetDependsOnListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2GroupElementTargetDependsOnList;
+    function GetCurrent : TFhirConceptMap2GroupElementTargetDependsOn;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2GroupElementTargetDependsOnList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2GroupElementTargetDependsOn read GetCurrent;
+  end;
+
+  TFhirConceptMap2GroupElementTargetDependsOnList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2GroupElementTargetDependsOn;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2GroupElementTargetDependsOn);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2GroupElementTargetDependsOnList; overload;
+    function Clone : TFhirConceptMap2GroupElementTargetDependsOnList; overload;
+    function GetEnumerator : TFhirConceptMap2GroupElementTargetDependsOnListEnumerator;
+    
+    //  Add a FhirConceptMap2GroupElementTargetDependsOn to the end of the list.
+    function Append : TFhirConceptMap2GroupElementTargetDependsOn;
+    
+    // Add an already existing FhirConceptMap2GroupElementTargetDependsOn to the end of the list.
+    function AddItem(value : TFhirConceptMap2GroupElementTargetDependsOn) : TFhirConceptMap2GroupElementTargetDependsOn; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2GroupElementTargetDependsOn) : Integer;
+    
+    // Insert FhirConceptMap2GroupElementTargetDependsOn before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2GroupElementTargetDependsOn;
+    
+    // Insert an existing FhirConceptMap2GroupElementTargetDependsOn before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2GroupElementTargetDependsOn);
+    
+    // Get the iIndexth FhirConceptMap2GroupElementTargetDependsOn. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2GroupElementTargetDependsOn);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2GroupElementTargetDependsOn;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2GroupElementTargetDependsOns[index : Integer] : TFhirConceptMap2GroupElementTargetDependsOn read GetItemN write SetItemN; default;
+  End;
+
+  // What to do when there is no mapping to a target concept from the source concept.  This provides the "default" to be applied when there is no target concept mapping specified.  The 'unmapped' element is ignored if a code is specified to have relationship = not-related-to.
+  TFhirConceptMap2GroupUnmapped = class (TFhirBackboneElement)
+  protected
+    FMode : TFhirEnum;
+    FCode : TFhirCode;
+    FDisplay : TFhirString;
+    FValueSet : TFhirCanonical;
+    FUrl : TFhirCanonical;
+    procedure SetMode(value : TFhirEnum);
+    function GetModeST : TFhirConceptMapGroupUnmappedModeEnum;
+    procedure SetModeST(value : TFhirConceptMapGroupUnmappedModeEnum);
+    procedure SetCode(value : TFhirCode);
+    function GetCodeST : String;
+    procedure SetCodeST(value : String);
+    procedure SetDisplay(value : TFhirString);
+    function GetDisplayST : String;
+    procedure SetDisplayST(value : String);
+    procedure SetValueSet(value : TFhirCanonical);
+    function GetValueSetST : String;
+    procedure SetValueSetST(value : String);
+    procedure SetUrl(value : TFhirCanonical);
+    function GetUrlST : String;
+    procedure SetUrlST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2GroupUnmapped; overload;
+    function Clone : TFhirConceptMap2GroupUnmapped; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Defines which action to take if there is no match for the source concept in the target system designated for the group. One of 3 actions are possible: use the unmapped code (this is useful when doing a mapping between versions, and only a few codes have changed), use a fixed code (a default code), or alternatively, a reference to a different concept map can be provided (by canonical URL).
+    property mode : TFhirConceptMapGroupUnmappedModeEnum read GetModeST write SetModeST;
+    property modeElement : TFhirEnum read FMode write SetMode;
+
+    // Typed access to The fixed code to use when the mode = 'fixed'  - all unmapped codes are mapped to a single fixed code.
+    property code : String read GetCodeST write SetCodeST;
+    // The fixed code to use when the mode = 'fixed'  - all unmapped codes are mapped to a single fixed code.
+    property codeElement : TFhirCode read FCode write SetCode;
+
+    // Typed access to The display for the code. The display is only provided to help editors when editing the concept map.
+    property display : String read GetDisplayST write SetDisplayST;
+    // The display for the code. The display is only provided to help editors when editing the concept map.
+    property displayElement : TFhirString read FDisplay write SetDisplay;
+
+    // Typed access to The set of fixed codes to use when the mode = 'fixed'  - all unmapped codes are mapped to a each of the fixed codes.
+    property valueSet : String read GetValueSetST write SetValueSetST;
+    // The set of fixed codes to use when the mode = 'fixed'  - all unmapped codes are mapped to a each of the fixed codes.
+    property valueSetElement : TFhirCanonical read FValueSet write SetValueSet;
+
+    // Typed access to The canonical reference to an additional ConceptMap2 resource instance to use for mapping if this ConceptMap2 resource contains no matching mapping for the source concept.
+    property url : String read GetUrlST write SetUrlST;
+    // The canonical reference to an additional ConceptMap2 resource instance to use for mapping if this ConceptMap2 resource contains no matching mapping for the source concept.
+    property urlElement : TFhirCanonical read FUrl write SetUrl;
+
+  end;
+
+  TFhirConceptMap2GroupUnmappedListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2GroupUnmappedList;
+    function GetCurrent : TFhirConceptMap2GroupUnmapped;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2GroupUnmappedList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2GroupUnmapped read GetCurrent;
+  end;
+
+  TFhirConceptMap2GroupUnmappedList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2GroupUnmapped;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2GroupUnmapped);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2GroupUnmappedList; overload;
+    function Clone : TFhirConceptMap2GroupUnmappedList; overload;
+    function GetEnumerator : TFhirConceptMap2GroupUnmappedListEnumerator;
+    
+    //  Add a FhirConceptMap2GroupUnmapped to the end of the list.
+    function Append : TFhirConceptMap2GroupUnmapped;
+    
+    // Add an already existing FhirConceptMap2GroupUnmapped to the end of the list.
+    function AddItem(value : TFhirConceptMap2GroupUnmapped) : TFhirConceptMap2GroupUnmapped; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2GroupUnmapped) : Integer;
+    
+    // Insert FhirConceptMap2GroupUnmapped before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2GroupUnmapped;
+    
+    // Insert an existing FhirConceptMap2GroupUnmapped before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2GroupUnmapped);
+    
+    // Get the iIndexth FhirConceptMap2GroupUnmapped. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2GroupUnmapped);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2GroupUnmapped;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2GroupUnmappeds[index : Integer] : TFhirConceptMap2GroupUnmapped read GetItemN write SetItemN; default;
+  End;
+
+  // A statement of relationships from one set of concepts to one or more other concepts - either concepts in code systems, or data element/data element concepts, or classes in class models.
+  TFhirConceptMap2 = class (TFhirCanonicalResource)
+  protected
+    FSource : TFhirDataType;
+    FTarget : TFhirDataType;
+    FgroupList : TFhirConceptMap2GroupList;
+    procedure SetUrl(value : TFhirUri);
+    function GetUrlST : String;
+    procedure SetUrlST(value : String);
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
+    procedure SetVersion(value : TFhirString);
+    function GetVersionST : String;
+    procedure SetVersionST(value : String);
+    procedure SetName(value : TFhirString);
+    function GetNameST : String;
+    procedure SetNameST(value : String);
+    procedure SetTitle(value : TFhirString);
+    function GetTitleST : String;
+    procedure SetTitleST(value : String);
+    procedure SetStatus(value : TFhirEnum);
+    function GetStatusST : TFhirPublicationStatusEnum;
+    procedure SetStatusST(value : TFhirPublicationStatusEnum);
+    procedure SetExperimental(value : TFhirBoolean);
+    function GetExperimentalST : Boolean;
+    procedure SetExperimentalST(value : Boolean);
+    procedure SetDate(value : TFhirDateTime);
+    function GetDateST : TFslDateTime;
+    procedure SetDateST(value : TFslDateTime);
+    procedure SetPublisher(value : TFhirString);
+    function GetPublisherST : String;
+    procedure SetPublisherST(value : String);
+    function GetContactList : TFhirContactDetailList;
+    function GetHasContactList : Boolean;
+    procedure SetDescription(value : TFhirMarkdown);
+    function GetDescriptionST : String;
+    procedure SetDescriptionST(value : String);
+    function GetUseContextList : TFhirUsageContextList;
+    function GetHasUseContextList : Boolean;
+    function GetJurisdictionList : TFhirCodeableConceptList;
+    function GetHasJurisdictionList : Boolean;
+    procedure SetPurpose(value : TFhirMarkdown);
+    function GetPurposeST : String;
+    procedure SetPurposeST(value : String);
+    procedure SetCopyright(value : TFhirMarkdown);
+    function GetCopyrightST : String;
+    procedure SetCopyrightST(value : String);
+    procedure SetSource(value : TFhirDataType);
+    procedure SetTarget(value : TFhirDataType);
+    function GetGroupList : TFhirConceptMap2GroupList;
+    function GetHasGroupList : Boolean;
+  
+    function GetResourceType : TFhirResourceType; override;
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirConceptMap2; overload;
+    function Clone : TFhirConceptMap2; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to An absolute URI that is used to identify this concept map when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this concept map is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the concept map is stored on different servers.
+    property url : String read GetUrlST write SetUrlST;
+    // An absolute URI that is used to identify this concept map when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this concept map is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the concept map is stored on different servers.
+    property urlElement : TFhirUri read FUrl write SetUrl;
+
+    // A formal identifier that is used to identify this concept map when it is represented in other formats, or referenced in a specification, model, design or an instance.
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
+
+    // Typed access to The identifier that is used to identify this version of the concept map when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the concept map author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
+    property version : String read GetVersionST write SetVersionST;
+    // The identifier that is used to identify this version of the concept map when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the concept map author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
+    property versionElement : TFhirString read FVersion write SetVersion;
+
+    // Typed access to A natural language name identifying the concept map. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property name : String read GetNameST write SetNameST;
+    // A natural language name identifying the concept map. This name should be usable as an identifier for the module by machine processing applications such as code generation.
+    property nameElement : TFhirString read FName write SetName;
+
+    // Typed access to A short, descriptive, user-friendly title for the concept map.
+    property title : String read GetTitleST write SetTitleST;
+    // A short, descriptive, user-friendly title for the concept map.
+    property titleElement : TFhirString read FTitle write SetTitle;
+
+    // The status of this concept map. Enables tracking the life-cycle of the content.
+    property status : TFhirPublicationStatusEnum read GetStatusST write SetStatusST;
+    property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Typed access to A Boolean value to indicate that this concept map is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimental : Boolean read GetExperimentalST write SetExperimentalST;
+    // A Boolean value to indicate that this concept map is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage.
+    property experimentalElement : TFhirBoolean read FExperimental write SetExperimental;
+
+    // Typed access to The date  (and optionally time) when the concept map was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the concept map changes.
+    property date : TFslDateTime read GetDateST write SetDateST;
+    // The date  (and optionally time) when the concept map was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the concept map changes.
+    property dateElement : TFhirDateTime read FDate write SetDate;
+
+    // Typed access to The name of the organization or individual that published the concept map.
+    property publisher : String read GetPublisherST write SetPublisherST;
+    // The name of the organization or individual that published the concept map.
+    property publisherElement : TFhirString read FPublisher write SetPublisher;
+
+    // Contact details to assist a user in finding and communicating with the publisher.
+    property contactList : TFhirContactDetailList read GetContactList;
+    property hasContactList : boolean read GetHasContactList;
+
+    // Typed access to A free text natural language description of the concept map from a consumer's perspective.
+    property description : String read GetDescriptionST write SetDescriptionST;
+    // A free text natural language description of the concept map from a consumer's perspective.
+    property descriptionElement : TFhirMarkdown read FDescription write SetDescription;
+
+    // The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate concept map instances.
+    property useContextList : TFhirUsageContextList read GetUseContextList;
+    property hasUseContextList : boolean read GetHasUseContextList;
+
+    // A legal or geographic region in which the concept map is intended to be used.
+    property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
+    property hasJurisdictionList : boolean read GetHasJurisdictionList;
+
+    // Typed access to Explanation of why this concept map is needed and why it has been designed as it has.
+    property purpose : String read GetPurposeST write SetPurposeST;
+    // Explanation of why this concept map is needed and why it has been designed as it has.
+    property purposeElement : TFhirMarkdown read FPurpose write SetPurpose;
+
+    // Typed access to A copyright statement relating to the concept map and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the concept map.
+    property copyright : String read GetCopyrightST write SetCopyrightST;
+    // A copyright statement relating to the concept map and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the concept map.
+    property copyrightElement : TFhirMarkdown read FCopyright write SetCopyright;
+
+    // Typed access to Identifier for the source value set that contains the concepts that are being mapped and provides context for the mappings. (defined for API consistency)
+    property source : TFhirDataType read FSource write SetSource;
+    // Identifier for the source value set that contains the concepts that are being mapped and provides context for the mappings.
+    property sourceElement : TFhirDataType read FSource write SetSource;
+
+    // Typed access to The target value set provides context for the mappings. Note that the mapping is made between concepts, not between value sets, but the value set provides important context about how the concept mapping choices are made. (defined for API consistency)
+    property target : TFhirDataType read FTarget write SetTarget;
+    // The target value set provides context for the mappings. Note that the mapping is made between concepts, not between value sets, but the value set provides important context about how the concept mapping choices are made.
+    property targetElement : TFhirDataType read FTarget write SetTarget;
+
+    // A group of mappings that all have the same source and target system.
+    property groupList : TFhirConceptMap2GroupList read GetGroupList;
+    property hasGroupList : boolean read GetHasGroupList;
+
+  end;
+
+  TFhirConceptMap2ListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirConceptMap2List;
+    function GetCurrent : TFhirConceptMap2;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirConceptMap2List);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirConceptMap2 read GetCurrent;
+  end;
+
+  TFhirConceptMap2List = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirConceptMap2;
+    procedure SetItemN(index : Integer; value : TFhirConceptMap2);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirConceptMap2List; overload;
+    function Clone : TFhirConceptMap2List; overload;
+    function GetEnumerator : TFhirConceptMap2ListEnumerator;
+    
+    //  Add a FhirConceptMap2 to the end of the list.
+    function Append : TFhirConceptMap2;
+    
+    // Add an already existing FhirConceptMap2 to the end of the list.
+    function AddItem(value : TFhirConceptMap2) : TFhirConceptMap2; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirConceptMap2) : Integer;
+    
+    // Insert FhirConceptMap2 before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirConceptMap2;
+    
+    // Insert an existing FhirConceptMap2 before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirConceptMap2);
+    
+    // Get the iIndexth FhirConceptMap2. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirConceptMap2);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirConceptMap2;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirConceptMap2s[index : Integer] : TFhirConceptMap2 read GetItemN write SetItemN; default;
+  End;
+
+{$ENDIF FHIR_CONCEPTMAP2}
 {$IFDEF FHIR_CONDITIONDEFINITION}
   // Observations particularly relevant to this condition.
   TFhirConditionDefinitionObservation = class (TFhirBackboneElement)
@@ -5929,7 +6781,7 @@ function AddItem(value : TFhirConceptMap): TFhirConceptMap; overload;
     function Append : TFhirConditionDefinitionObservation;
     
     // Add an already existing FhirConditionDefinitionObservation to the end of the list.
-function AddItem(value : TFhirConditionDefinitionObservation): TFhirConditionDefinitionObservation; overload;
+    function AddItem(value : TFhirConditionDefinitionObservation) : TFhirConditionDefinitionObservation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinitionObservation) : Integer;
@@ -6028,7 +6880,7 @@ function AddItem(value : TFhirConditionDefinitionObservation): TFhirConditionDef
     function Append : TFhirConditionDefinitionMedication;
     
     // Add an already existing FhirConditionDefinitionMedication to the end of the list.
-function AddItem(value : TFhirConditionDefinitionMedication): TFhirConditionDefinitionMedication; overload;
+    function AddItem(value : TFhirConditionDefinitionMedication) : TFhirConditionDefinitionMedication; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinitionMedication) : Integer;
@@ -6135,7 +6987,7 @@ function AddItem(value : TFhirConditionDefinitionMedication): TFhirConditionDefi
     function Append : TFhirConditionDefinitionPrecondition;
     
     // Add an already existing FhirConditionDefinitionPrecondition to the end of the list.
-function AddItem(value : TFhirConditionDefinitionPrecondition): TFhirConditionDefinitionPrecondition; overload;
+    function AddItem(value : TFhirConditionDefinitionPrecondition) : TFhirConditionDefinitionPrecondition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinitionPrecondition) : Integer;
@@ -6235,7 +7087,7 @@ function AddItem(value : TFhirConditionDefinitionPrecondition): TFhirConditionDe
     function Append : TFhirConditionDefinitionQuestionnaire;
     
     // Add an already existing FhirConditionDefinitionQuestionnaire to the end of the list.
-function AddItem(value : TFhirConditionDefinitionQuestionnaire): TFhirConditionDefinitionQuestionnaire; overload;
+    function AddItem(value : TFhirConditionDefinitionQuestionnaire) : TFhirConditionDefinitionQuestionnaire; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinitionQuestionnaire) : Integer;
@@ -6334,7 +7186,7 @@ function AddItem(value : TFhirConditionDefinitionQuestionnaire): TFhirConditionD
     function Append : TFhirConditionDefinitionPlan;
     
     // Add an already existing FhirConditionDefinitionPlan to the end of the list.
-function AddItem(value : TFhirConditionDefinitionPlan): TFhirConditionDefinitionPlan; overload;
+    function AddItem(value : TFhirConditionDefinitionPlan) : TFhirConditionDefinitionPlan; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinitionPlan) : Integer;
@@ -6628,7 +7480,7 @@ function AddItem(value : TFhirConditionDefinitionPlan): TFhirConditionDefinition
     function Append : TFhirConditionDefinition;
     
     // Add an already existing FhirConditionDefinition to the end of the list.
-function AddItem(value : TFhirConditionDefinition): TFhirConditionDefinition; overload;
+    function AddItem(value : TFhirConditionDefinition) : TFhirConditionDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionDefinition) : Integer;
@@ -6917,7 +7769,7 @@ function AddItem(value : TFhirConditionDefinition): TFhirConditionDefinition; ov
     function Append : TFhirEventDefinition;
     
     // Add an already existing FhirEventDefinition to the end of the list.
-function AddItem(value : TFhirEventDefinition): TFhirEventDefinition; overload;
+    function AddItem(value : TFhirEventDefinition) : TFhirEventDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirEventDefinition) : Integer;
@@ -7039,7 +7891,7 @@ function AddItem(value : TFhirEventDefinition): TFhirEventDefinition; overload;
     function Append : TFhirExampleScenarioActor;
     
     // Add an already existing FhirExampleScenarioActor to the end of the list.
-function AddItem(value : TFhirExampleScenarioActor): TFhirExampleScenarioActor; overload;
+    function AddItem(value : TFhirExampleScenarioActor) : TFhirExampleScenarioActor; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioActor) : Integer;
@@ -7173,7 +8025,7 @@ function AddItem(value : TFhirExampleScenarioActor): TFhirExampleScenarioActor; 
     function Append : TFhirExampleScenarioInstance;
     
     // Add an already existing FhirExampleScenarioInstance to the end of the list.
-function AddItem(value : TFhirExampleScenarioInstance): TFhirExampleScenarioInstance; overload;
+    function AddItem(value : TFhirExampleScenarioInstance) : TFhirExampleScenarioInstance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioInstance) : Integer;
@@ -7276,7 +8128,7 @@ function AddItem(value : TFhirExampleScenarioInstance): TFhirExampleScenarioInst
     function Append : TFhirExampleScenarioInstanceVersion;
     
     // Add an already existing FhirExampleScenarioInstanceVersion to the end of the list.
-function AddItem(value : TFhirExampleScenarioInstanceVersion): TFhirExampleScenarioInstanceVersion; overload;
+    function AddItem(value : TFhirExampleScenarioInstanceVersion) : TFhirExampleScenarioInstanceVersion; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioInstanceVersion) : Integer;
@@ -7379,7 +8231,7 @@ function AddItem(value : TFhirExampleScenarioInstanceVersion): TFhirExampleScena
     function Append : TFhirExampleScenarioInstanceContainedInstance;
     
     // Add an already existing FhirExampleScenarioInstanceContainedInstance to the end of the list.
-function AddItem(value : TFhirExampleScenarioInstanceContainedInstance): TFhirExampleScenarioInstanceContainedInstance; overload;
+    function AddItem(value : TFhirExampleScenarioInstanceContainedInstance) : TFhirExampleScenarioInstanceContainedInstance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioInstanceContainedInstance) : Integer;
@@ -7507,7 +8359,7 @@ function AddItem(value : TFhirExampleScenarioInstanceContainedInstance): TFhirEx
     function Append : TFhirExampleScenarioProcess;
     
     // Add an already existing FhirExampleScenarioProcess to the end of the list.
-function AddItem(value : TFhirExampleScenarioProcess): TFhirExampleScenarioProcess; overload;
+    function AddItem(value : TFhirExampleScenarioProcess) : TFhirExampleScenarioProcess; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioProcess) : Integer;
@@ -7622,7 +8474,7 @@ function AddItem(value : TFhirExampleScenarioProcess): TFhirExampleScenarioProce
     function Append : TFhirExampleScenarioProcessStep;
     
     // Add an already existing FhirExampleScenarioProcessStep to the end of the list.
-function AddItem(value : TFhirExampleScenarioProcessStep): TFhirExampleScenarioProcessStep; overload;
+    function AddItem(value : TFhirExampleScenarioProcessStep) : TFhirExampleScenarioProcessStep; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioProcessStep) : Integer;
@@ -7793,7 +8645,7 @@ function AddItem(value : TFhirExampleScenarioProcessStep): TFhirExampleScenarioP
     function Append : TFhirExampleScenarioProcessStepOperation;
     
     // Add an already existing FhirExampleScenarioProcessStepOperation to the end of the list.
-function AddItem(value : TFhirExampleScenarioProcessStepOperation): TFhirExampleScenarioProcessStepOperation; overload;
+    function AddItem(value : TFhirExampleScenarioProcessStepOperation) : TFhirExampleScenarioProcessStepOperation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioProcessStepOperation) : Integer;
@@ -7903,7 +8755,7 @@ function AddItem(value : TFhirExampleScenarioProcessStepOperation): TFhirExample
     function Append : TFhirExampleScenarioProcessStepAlternative;
     
     // Add an already existing FhirExampleScenarioProcessStepAlternative to the end of the list.
-function AddItem(value : TFhirExampleScenarioProcessStepAlternative): TFhirExampleScenarioProcessStepAlternative; overload;
+    function AddItem(value : TFhirExampleScenarioProcessStepAlternative) : TFhirExampleScenarioProcessStepAlternative; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenarioProcessStepAlternative) : Integer;
@@ -8112,7 +8964,7 @@ function AddItem(value : TFhirExampleScenarioProcessStepAlternative): TFhirExamp
     function Append : TFhirExampleScenario;
     
     // Add an already existing FhirExampleScenario to the end of the list.
-function AddItem(value : TFhirExampleScenario): TFhirExampleScenario; overload;
+    function AddItem(value : TFhirExampleScenario) : TFhirExampleScenario; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExampleScenario) : Integer;
@@ -8251,7 +9103,7 @@ function AddItem(value : TFhirExampleScenario): TFhirExampleScenario; overload;
     function Append : TFhirGraphDefinitionLink;
     
     // Add an already existing FhirGraphDefinitionLink to the end of the list.
-function AddItem(value : TFhirGraphDefinitionLink): TFhirGraphDefinitionLink; overload;
+    function AddItem(value : TFhirGraphDefinitionLink) : TFhirGraphDefinitionLink; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGraphDefinitionLink) : Integer;
@@ -8376,7 +9228,7 @@ function AddItem(value : TFhirGraphDefinitionLink): TFhirGraphDefinitionLink; ov
     function Append : TFhirGraphDefinitionLinkTarget;
     
     // Add an already existing FhirGraphDefinitionLinkTarget to the end of the list.
-function AddItem(value : TFhirGraphDefinitionLinkTarget): TFhirGraphDefinitionLinkTarget; overload;
+    function AddItem(value : TFhirGraphDefinitionLinkTarget) : TFhirGraphDefinitionLinkTarget; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGraphDefinitionLinkTarget) : Integer;
@@ -8503,7 +9355,7 @@ function AddItem(value : TFhirGraphDefinitionLinkTarget): TFhirGraphDefinitionLi
     function Append : TFhirGraphDefinitionLinkTargetCompartment;
     
     // Add an already existing FhirGraphDefinitionLinkTargetCompartment to the end of the list.
-function AddItem(value : TFhirGraphDefinitionLinkTargetCompartment): TFhirGraphDefinitionLinkTargetCompartment; overload;
+    function AddItem(value : TFhirGraphDefinitionLinkTargetCompartment) : TFhirGraphDefinitionLinkTargetCompartment; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGraphDefinitionLinkTargetCompartment) : Integer;
@@ -8702,7 +9554,7 @@ function AddItem(value : TFhirGraphDefinitionLinkTargetCompartment): TFhirGraphD
     function Append : TFhirGraphDefinition;
     
     // Add an already existing FhirGraphDefinition to the end of the list.
-function AddItem(value : TFhirGraphDefinition): TFhirGraphDefinition; overload;
+    function AddItem(value : TFhirGraphDefinition) : TFhirGraphDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGraphDefinition) : Integer;
@@ -8816,7 +9668,7 @@ function AddItem(value : TFhirGraphDefinition): TFhirGraphDefinition; overload;
     function Append : TFhirImplementationGuideDependsOn;
     
     // Add an already existing FhirImplementationGuideDependsOn to the end of the list.
-function AddItem(value : TFhirImplementationGuideDependsOn): TFhirImplementationGuideDependsOn; overload;
+    function AddItem(value : TFhirImplementationGuideDependsOn) : TFhirImplementationGuideDependsOn; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDependsOn) : Integer;
@@ -8918,7 +9770,7 @@ function AddItem(value : TFhirImplementationGuideDependsOn): TFhirImplementation
     function Append : TFhirImplementationGuideGlobal;
     
     // Add an already existing FhirImplementationGuideGlobal to the end of the list.
-function AddItem(value : TFhirImplementationGuideGlobal): TFhirImplementationGuideGlobal; overload;
+    function AddItem(value : TFhirImplementationGuideGlobal) : TFhirImplementationGuideGlobal; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideGlobal) : Integer;
@@ -9038,7 +9890,7 @@ function AddItem(value : TFhirImplementationGuideGlobal): TFhirImplementationGui
     function Append : TFhirImplementationGuideDefinition;
     
     // Add an already existing FhirImplementationGuideDefinition to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinition): TFhirImplementationGuideDefinition; overload;
+    function AddItem(value : TFhirImplementationGuideDefinition) : TFhirImplementationGuideDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinition) : Integer;
@@ -9141,7 +9993,7 @@ function AddItem(value : TFhirImplementationGuideDefinition): TFhirImplementatio
     function Append : TFhirImplementationGuideDefinitionGrouping;
     
     // Add an already existing FhirImplementationGuideDefinitionGrouping to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinitionGrouping): TFhirImplementationGuideDefinitionGrouping; overload;
+    function AddItem(value : TFhirImplementationGuideDefinitionGrouping) : TFhirImplementationGuideDefinitionGrouping; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinitionGrouping) : Integer;
@@ -9182,8 +10034,6 @@ function AddItem(value : TFhirImplementationGuideDefinitionGrouping): TFhirImple
     procedure SetReference(value : TFhirReference);
     function GetFhirVersion : TFhirEnumList;
     function GetHasFhirVersion : Boolean;
-    function GetFhirVersionST : TFhirFHIRVersionEnumList;
-    procedure SetFhirVersionST(value : TFhirFHIRVersionEnumList);
     procedure SetName(value : TFhirString);
     function GetNameST : String;
     procedure SetNameST(value : String);
@@ -9221,8 +10071,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionGrouping): TFhirImple
     // Where this resource is found.
     property referenceElement : TFhirReference read FReference write SetReference;
 
-    // Indicates the FHIR Version(s) this artifact is intended to apply to. If no versions are specified, the resource is assumed to apply to all the versions stated in ImplementationGuide.fhirVersion.
-    property fhirVersion : TFhirFHIRVersionEnumList read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : TFhirEnumList read GetFhirVersion;
     property fhirVersionList : TFhirEnumList read GetFhirVersion;
     property hasFhirVersion : boolean read GetHasFhirVersion;
     // Typed access to A human assigned name for the resource. All resources SHOULD have a name, but the name may be extracted from the resource (e.g. ValueSet.name).
@@ -9276,7 +10125,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionGrouping): TFhirImple
     function Append : TFhirImplementationGuideDefinitionResource;
     
     // Add an already existing FhirImplementationGuideDefinitionResource to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinitionResource): TFhirImplementationGuideDefinitionResource; overload;
+    function AddItem(value : TFhirImplementationGuideDefinitionResource) : TFhirImplementationGuideDefinitionResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinitionResource) : Integer;
@@ -9392,7 +10241,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionResource): TFhirImple
     function Append : TFhirImplementationGuideDefinitionPage;
     
     // Add an already existing FhirImplementationGuideDefinitionPage to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinitionPage): TFhirImplementationGuideDefinitionPage; overload;
+    function AddItem(value : TFhirImplementationGuideDefinitionPage) : TFhirImplementationGuideDefinitionPage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinitionPage) : Integer;
@@ -9495,7 +10344,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionPage): TFhirImplement
     function Append : TFhirImplementationGuideDefinitionParameter;
     
     // Add an already existing FhirImplementationGuideDefinitionParameter to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinitionParameter): TFhirImplementationGuideDefinitionParameter; overload;
+    function AddItem(value : TFhirImplementationGuideDefinitionParameter) : TFhirImplementationGuideDefinitionParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinitionParameter) : Integer;
@@ -9607,7 +10456,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionParameter): TFhirImpl
     function Append : TFhirImplementationGuideDefinitionTemplate;
     
     // Add an already existing FhirImplementationGuideDefinitionTemplate to the end of the list.
-function AddItem(value : TFhirImplementationGuideDefinitionTemplate): TFhirImplementationGuideDefinitionTemplate; overload;
+    function AddItem(value : TFhirImplementationGuideDefinitionTemplate) : TFhirImplementationGuideDefinitionTemplate; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideDefinitionTemplate) : Integer;
@@ -9729,7 +10578,7 @@ function AddItem(value : TFhirImplementationGuideDefinitionTemplate): TFhirImple
     function Append : TFhirImplementationGuideManifest;
     
     // Add an already existing FhirImplementationGuideManifest to the end of the list.
-function AddItem(value : TFhirImplementationGuideManifest): TFhirImplementationGuideManifest; overload;
+    function AddItem(value : TFhirImplementationGuideManifest) : TFhirImplementationGuideManifest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideManifest) : Integer;
@@ -9837,7 +10686,7 @@ function AddItem(value : TFhirImplementationGuideManifest): TFhirImplementationG
     function Append : TFhirImplementationGuideManifestResource;
     
     // Add an already existing FhirImplementationGuideManifestResource to the end of the list.
-function AddItem(value : TFhirImplementationGuideManifestResource): TFhirImplementationGuideManifestResource; overload;
+    function AddItem(value : TFhirImplementationGuideManifestResource) : TFhirImplementationGuideManifestResource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideManifestResource) : Integer;
@@ -9947,7 +10796,7 @@ function AddItem(value : TFhirImplementationGuideManifestResource): TFhirImpleme
     function Append : TFhirImplementationGuideManifestPage;
     
     // Add an already existing FhirImplementationGuideManifestPage to the end of the list.
-function AddItem(value : TFhirImplementationGuideManifestPage): TFhirImplementationGuideManifestPage; overload;
+    function AddItem(value : TFhirImplementationGuideManifestPage) : TFhirImplementationGuideManifestPage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuideManifestPage) : Integer;
@@ -10030,8 +10879,6 @@ function AddItem(value : TFhirImplementationGuideManifestPage): TFhirImplementat
     procedure SetLicenseST(value : TFhirSPDXLicenseEnum);
     function GetFhirVersion : TFhirEnumList;
     function GetHasFhirVersion : Boolean;
-    function GetFhirVersionST : TFhirFHIRVersionEnumList;
-    procedure SetFhirVersionST(value : TFhirFHIRVersionEnumList);
     function GetDependsOnList : TFhirImplementationGuideDependsOnList;
     function GetHasDependsOnList : Boolean;
     function GetGlobalList : TFhirImplementationGuideGlobalList;
@@ -10131,8 +10978,7 @@ function AddItem(value : TFhirImplementationGuideManifestPage): TFhirImplementat
     property license : TFhirSPDXLicenseEnum read GetLicenseST write SetLicenseST;
     property licenseElement : TFhirEnum read FLicense write SetLicense;
 
-    // The version(s) of the FHIR specification that this ImplementationGuide targets - e.g. describes how to use. The value of this element is the formal version of the specification, without the revision number, e.g. [publication].[major].[minor], which is 4.6.0. for this version.
-    property fhirVersion : TFhirFHIRVersionEnumList read GetFhirVersionST write SetFhirVersionST;
+    property fhirVersion : TFhirEnumList read GetFhirVersion;
     property fhirVersionList : TFhirEnumList read GetFhirVersion;
     property hasFhirVersion : boolean read GetHasFhirVersion;
     // Another implementation guide that this implementation depends on. Typically, an implementation guide uses value sets, profiles etc.defined in other implementation guides.
@@ -10184,7 +11030,7 @@ function AddItem(value : TFhirImplementationGuideManifestPage): TFhirImplementat
     function Append : TFhirImplementationGuide;
     
     // Add an already existing FhirImplementationGuide to the end of the list.
-function AddItem(value : TFhirImplementationGuide): TFhirImplementationGuide; overload;
+    function AddItem(value : TFhirImplementationGuide) : TFhirImplementationGuide; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImplementationGuide) : Integer;
@@ -10494,7 +11340,7 @@ function AddItem(value : TFhirImplementationGuide): TFhirImplementationGuide; ov
     function Append : TFhirLibrary;
     
     // Add an already existing FhirLibrary to the end of the list.
-function AddItem(value : TFhirLibrary): TFhirLibrary; overload;
+    function AddItem(value : TFhirLibrary) : TFhirLibrary; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirLibrary) : Integer;
@@ -10647,7 +11493,7 @@ function AddItem(value : TFhirLibrary): TFhirLibrary; overload;
     function Append : TFhirMeasureGroup;
     
     // Add an already existing FhirMeasureGroup to the end of the list.
-function AddItem(value : TFhirMeasureGroup): TFhirMeasureGroup; overload;
+    function AddItem(value : TFhirMeasureGroup) : TFhirMeasureGroup; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasureGroup) : Integer;
@@ -10771,7 +11617,7 @@ function AddItem(value : TFhirMeasureGroup): TFhirMeasureGroup; overload;
     function Append : TFhirMeasureGroupPopulation;
     
     // Add an already existing FhirMeasureGroupPopulation to the end of the list.
-function AddItem(value : TFhirMeasureGroupPopulation): TFhirMeasureGroupPopulation; overload;
+    function AddItem(value : TFhirMeasureGroupPopulation) : TFhirMeasureGroupPopulation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasureGroupPopulation) : Integer;
@@ -10886,7 +11732,7 @@ function AddItem(value : TFhirMeasureGroupPopulation): TFhirMeasureGroupPopulati
     function Append : TFhirMeasureGroupStratifier;
     
     // Add an already existing FhirMeasureGroupStratifier to the end of the list.
-function AddItem(value : TFhirMeasureGroupStratifier): TFhirMeasureGroupStratifier; overload;
+    function AddItem(value : TFhirMeasureGroupStratifier) : TFhirMeasureGroupStratifier; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasureGroupStratifier) : Integer;
@@ -10994,7 +11840,7 @@ function AddItem(value : TFhirMeasureGroupStratifier): TFhirMeasureGroupStratifi
     function Append : TFhirMeasureGroupStratifierComponent;
     
     // Add an already existing FhirMeasureGroupStratifierComponent to the end of the list.
-function AddItem(value : TFhirMeasureGroupStratifierComponent): TFhirMeasureGroupStratifierComponent; overload;
+    function AddItem(value : TFhirMeasureGroupStratifierComponent) : TFhirMeasureGroupStratifierComponent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasureGroupStratifierComponent) : Integer;
@@ -11109,7 +11955,7 @@ function AddItem(value : TFhirMeasureGroupStratifierComponent): TFhirMeasureGrou
     function Append : TFhirMeasureSupplementalData;
     
     // Add an already existing FhirMeasureSupplementalData to the end of the list.
-function AddItem(value : TFhirMeasureSupplementalData): TFhirMeasureSupplementalData; overload;
+    function AddItem(value : TFhirMeasureSupplementalData) : TFhirMeasureSupplementalData; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasureSupplementalData) : Integer;
@@ -11514,7 +12360,7 @@ function AddItem(value : TFhirMeasureSupplementalData): TFhirMeasureSupplemental
     function Append : TFhirMeasure;
     
     // Add an already existing FhirMeasure to the end of the list.
-function AddItem(value : TFhirMeasure): TFhirMeasure; overload;
+    function AddItem(value : TFhirMeasure) : TFhirMeasure; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMeasure) : Integer;
@@ -11636,7 +12482,7 @@ function AddItem(value : TFhirMeasure): TFhirMeasure; overload;
     function Append : TFhirMessageDefinitionFocus;
     
     // Add an already existing FhirMessageDefinitionFocus to the end of the list.
-function AddItem(value : TFhirMessageDefinitionFocus): TFhirMessageDefinitionFocus; overload;
+    function AddItem(value : TFhirMessageDefinitionFocus) : TFhirMessageDefinitionFocus; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMessageDefinitionFocus) : Integer;
@@ -11739,7 +12585,7 @@ function AddItem(value : TFhirMessageDefinitionFocus): TFhirMessageDefinitionFoc
     function Append : TFhirMessageDefinitionAllowedResponse;
     
     // Add an already existing FhirMessageDefinitionAllowedResponse to the end of the list.
-function AddItem(value : TFhirMessageDefinitionAllowedResponse): TFhirMessageDefinitionAllowedResponse; overload;
+    function AddItem(value : TFhirMessageDefinitionAllowedResponse) : TFhirMessageDefinitionAllowedResponse; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMessageDefinitionAllowedResponse) : Integer;
@@ -12003,7 +12849,7 @@ function AddItem(value : TFhirMessageDefinitionAllowedResponse): TFhirMessageDef
     function Append : TFhirMessageDefinition;
     
     // Add an already existing FhirMessageDefinition to the end of the list.
-function AddItem(value : TFhirMessageDefinition): TFhirMessageDefinition; overload;
+    function AddItem(value : TFhirMessageDefinition) : TFhirMessageDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMessageDefinition) : Integer;
@@ -12141,7 +12987,7 @@ function AddItem(value : TFhirMessageDefinition): TFhirMessageDefinition; overlo
     function Append : TFhirNamingSystemUniqueId;
     
     // Add an already existing FhirNamingSystemUniqueId to the end of the list.
-function AddItem(value : TFhirNamingSystemUniqueId): TFhirNamingSystemUniqueId; overload;
+    function AddItem(value : TFhirNamingSystemUniqueId) : TFhirNamingSystemUniqueId; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNamingSystemUniqueId) : Integer;
@@ -12348,7 +13194,7 @@ function AddItem(value : TFhirNamingSystemUniqueId): TFhirNamingSystemUniqueId; 
     function Append : TFhirNamingSystem;
     
     // Add an already existing FhirNamingSystem to the end of the list.
-function AddItem(value : TFhirNamingSystem): TFhirNamingSystem; overload;
+    function AddItem(value : TFhirNamingSystem) : TFhirNamingSystem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNamingSystem) : Integer;
@@ -12467,7 +13313,7 @@ function AddItem(value : TFhirNamingSystem): TFhirNamingSystem; overload;
     function Append : TFhirObservationDefinitionQuantitativeDetails;
     
     // Add an already existing FhirObservationDefinitionQuantitativeDetails to the end of the list.
-function AddItem(value : TFhirObservationDefinitionQuantitativeDetails): TFhirObservationDefinitionQuantitativeDetails; overload;
+    function AddItem(value : TFhirObservationDefinitionQuantitativeDetails) : TFhirObservationDefinitionQuantitativeDetails; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationDefinitionQuantitativeDetails) : Integer;
@@ -12648,7 +13494,7 @@ function AddItem(value : TFhirObservationDefinitionQuantitativeDetails): TFhirOb
     function Append : TFhirObservationDefinitionQualifiedValue;
     
     // Add an already existing FhirObservationDefinitionQualifiedValue to the end of the list.
-function AddItem(value : TFhirObservationDefinitionQualifiedValue): TFhirObservationDefinitionQualifiedValue; overload;
+    function AddItem(value : TFhirObservationDefinitionQualifiedValue) : TFhirObservationDefinitionQualifiedValue; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationDefinitionQualifiedValue) : Integer;
@@ -12763,7 +13609,7 @@ function AddItem(value : TFhirObservationDefinitionQualifiedValue): TFhirObserva
     function Append : TFhirObservationDefinitionComponent;
     
     // Add an already existing FhirObservationDefinitionComponent to the end of the list.
-function AddItem(value : TFhirObservationDefinitionComponent): TFhirObservationDefinitionComponent; overload;
+    function AddItem(value : TFhirObservationDefinitionComponent) : TFhirObservationDefinitionComponent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationDefinitionComponent) : Integer;
@@ -12815,7 +13661,7 @@ function AddItem(value : TFhirObservationDefinitionComponent): TFhirObservationD
     FEffectivePeriod : TFhirPeriod;
     FderivedFromCanonicalList : TFhirCanonicalList;
     FderivedFromUriList : TFhirUriList;
-    FSubject : TFhirCodeableConcept;
+    FsubjectList : TFhirCodeableConceptList;
     FPerformerType : TFhirCodeableConcept;
     FcategoryList : TFhirCodeableConceptList;
     FCode : TFhirCodeableConcept;
@@ -12879,7 +13725,8 @@ function AddItem(value : TFhirObservationDefinitionComponent): TFhirObservationD
     function GetHasDerivedFromCanonicalList : Boolean;
     function GetDerivedFromUriList : TFhirUriList;
     function GetHasDerivedFromUriList : Boolean;
-    procedure SetSubject(value : TFhirCodeableConcept);
+    function GetSubjectList : TFhirCodeableConceptList;
+    function GetHasSubjectList : Boolean;
     procedure SetPerformerType(value : TFhirCodeableConcept);
     function GetCategoryList : TFhirCodeableConceptList;
     function GetHasCategoryList : Boolean;
@@ -13024,10 +13871,9 @@ function AddItem(value : TFhirObservationDefinitionComponent): TFhirObservationD
     property derivedFromUriList : TFhirUriList read GetDerivedFromUriList;
     property hasDerivedFromUriList : boolean read GetHasDerivedFromUriList;
 
-    // Typed access to A code that describes the intended kind of subject of Observation instances conforming to this ObservationDefinition. (defined for API consistency)
-    property subject : TFhirCodeableConcept read FSubject write SetSubject;
     // A code that describes the intended kind of subject of Observation instances conforming to this ObservationDefinition.
-    property subjectElement : TFhirCodeableConcept read FSubject write SetSubject;
+    property subjectList : TFhirCodeableConceptList read GetSubjectList;
+    property hasSubjectList : boolean read GetHasSubjectList;
 
     // Typed access to The type of individual/organization/device that is expected to act upon instances of this definition. (defined for API consistency)
     property performerType : TFhirCodeableConcept read FPerformerType write SetPerformerType;
@@ -13123,7 +13969,7 @@ function AddItem(value : TFhirObservationDefinitionComponent): TFhirObservationD
     function Append : TFhirObservationDefinition;
     
     // Add an already existing FhirObservationDefinition to the end of the list.
-function AddItem(value : TFhirObservationDefinition): TFhirObservationDefinition; overload;
+    function AddItem(value : TFhirObservationDefinition) : TFhirObservationDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationDefinition) : Integer;
@@ -13298,7 +14144,7 @@ function AddItem(value : TFhirObservationDefinition): TFhirObservationDefinition
     function Append : TFhirOperationDefinitionParameter;
     
     // Add an already existing FhirOperationDefinitionParameter to the end of the list.
-function AddItem(value : TFhirOperationDefinitionParameter): TFhirOperationDefinitionParameter; overload;
+    function AddItem(value : TFhirOperationDefinitionParameter) : TFhirOperationDefinitionParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOperationDefinitionParameter) : Integer;
@@ -13400,7 +14246,7 @@ function AddItem(value : TFhirOperationDefinitionParameter): TFhirOperationDefin
     function Append : TFhirOperationDefinitionParameterBinding;
     
     // Add an already existing FhirOperationDefinitionParameterBinding to the end of the list.
-function AddItem(value : TFhirOperationDefinitionParameterBinding): TFhirOperationDefinitionParameterBinding; overload;
+    function AddItem(value : TFhirOperationDefinitionParameterBinding) : TFhirOperationDefinitionParameterBinding; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOperationDefinitionParameterBinding) : Integer;
@@ -13503,7 +14349,7 @@ function AddItem(value : TFhirOperationDefinitionParameterBinding): TFhirOperati
     function Append : TFhirOperationDefinitionParameterReferencedFrom;
     
     // Add an already existing FhirOperationDefinitionParameterReferencedFrom to the end of the list.
-function AddItem(value : TFhirOperationDefinitionParameterReferencedFrom): TFhirOperationDefinitionParameterReferencedFrom; overload;
+    function AddItem(value : TFhirOperationDefinitionParameterReferencedFrom) : TFhirOperationDefinitionParameterReferencedFrom; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOperationDefinitionParameterReferencedFrom) : Integer;
@@ -13604,7 +14450,7 @@ function AddItem(value : TFhirOperationDefinitionParameterReferencedFrom): TFhir
     function Append : TFhirOperationDefinitionOverload;
     
     // Add an already existing FhirOperationDefinitionOverload to the end of the list.
-function AddItem(value : TFhirOperationDefinitionOverload): TFhirOperationDefinitionOverload; overload;
+    function AddItem(value : TFhirOperationDefinitionOverload) : TFhirOperationDefinitionOverload; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOperationDefinitionOverload) : Integer;
@@ -13896,7 +14742,7 @@ function AddItem(value : TFhirOperationDefinitionOverload): TFhirOperationDefini
     function Append : TFhirOperationDefinition;
     
     // Add an already existing FhirOperationDefinition to the end of the list.
-function AddItem(value : TFhirOperationDefinition): TFhirOperationDefinition; overload;
+    function AddItem(value : TFhirOperationDefinition) : TFhirOperationDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirOperationDefinition) : Integer;
@@ -14131,7 +14977,7 @@ function AddItem(value : TFhirOperationDefinition): TFhirOperationDefinition; ov
     function Append : TFhirQuestionnaireItem;
     
     // Add an already existing FhirQuestionnaireItem to the end of the list.
-function AddItem(value : TFhirQuestionnaireItem): TFhirQuestionnaireItem; overload;
+    function AddItem(value : TFhirQuestionnaireItem) : TFhirQuestionnaireItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireItem) : Integer;
@@ -14240,7 +15086,7 @@ function AddItem(value : TFhirQuestionnaireItem): TFhirQuestionnaireItem; overlo
     function Append : TFhirQuestionnaireItemEnableWhen;
     
     // Add an already existing FhirQuestionnaireItemEnableWhen to the end of the list.
-function AddItem(value : TFhirQuestionnaireItemEnableWhen): TFhirQuestionnaireItemEnableWhen; overload;
+    function AddItem(value : TFhirQuestionnaireItemEnableWhen) : TFhirQuestionnaireItemEnableWhen; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireItemEnableWhen) : Integer;
@@ -14341,7 +15187,7 @@ function AddItem(value : TFhirQuestionnaireItemEnableWhen): TFhirQuestionnaireIt
     function Append : TFhirQuestionnaireItemAnswerOption;
     
     // Add an already existing FhirQuestionnaireItemAnswerOption to the end of the list.
-function AddItem(value : TFhirQuestionnaireItemAnswerOption): TFhirQuestionnaireItemAnswerOption; overload;
+    function AddItem(value : TFhirQuestionnaireItemAnswerOption) : TFhirQuestionnaireItemAnswerOption; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireItemAnswerOption) : Integer;
@@ -14433,7 +15279,7 @@ function AddItem(value : TFhirQuestionnaireItemAnswerOption): TFhirQuestionnaire
     function Append : TFhirQuestionnaireItemInitial;
     
     // Add an already existing FhirQuestionnaireItemInitial to the end of the list.
-function AddItem(value : TFhirQuestionnaireItemInitial): TFhirQuestionnaireItemInitial; overload;
+    function AddItem(value : TFhirQuestionnaireItemInitial) : TFhirQuestionnaireItemInitial; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireItemInitial) : Integer;
@@ -14679,7 +15525,7 @@ function AddItem(value : TFhirQuestionnaireItemInitial): TFhirQuestionnaireItemI
     function Append : TFhirQuestionnaire;
     
     // Add an already existing FhirQuestionnaire to the end of the list.
-function AddItem(value : TFhirQuestionnaire): TFhirQuestionnaire; overload;
+    function AddItem(value : TFhirQuestionnaire) : TFhirQuestionnaire; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaire) : Integer;
@@ -14784,7 +15630,7 @@ function AddItem(value : TFhirQuestionnaire): TFhirQuestionnaire; overload;
     function Append : TFhirSearchParameterComponent;
     
     // Add an already existing FhirSearchParameterComponent to the end of the list.
-function AddItem(value : TFhirSearchParameterComponent): TFhirSearchParameterComponent; overload;
+    function AddItem(value : TFhirSearchParameterComponent) : TFhirSearchParameterComponent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSearchParameterComponent) : Integer;
@@ -15073,7 +15919,7 @@ function AddItem(value : TFhirSearchParameterComponent): TFhirSearchParameterCom
     function Append : TFhirSearchParameter;
     
     // Add an already existing FhirSearchParameter to the end of the list.
-function AddItem(value : TFhirSearchParameter): TFhirSearchParameter; overload;
+    function AddItem(value : TFhirSearchParameter) : TFhirSearchParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSearchParameter) : Integer;
@@ -15237,7 +16083,7 @@ function AddItem(value : TFhirSearchParameter): TFhirSearchParameter; overload;
     function Append : TFhirSpecimenDefinitionTypeTested;
     
     // Add an already existing FhirSpecimenDefinitionTypeTested to the end of the list.
-function AddItem(value : TFhirSpecimenDefinitionTypeTested): TFhirSpecimenDefinitionTypeTested; overload;
+    function AddItem(value : TFhirSpecimenDefinitionTypeTested) : TFhirSpecimenDefinitionTypeTested; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenDefinitionTypeTested) : Integer;
@@ -15382,7 +16228,7 @@ function AddItem(value : TFhirSpecimenDefinitionTypeTested): TFhirSpecimenDefini
     function Append : TFhirSpecimenDefinitionTypeTestedContainer;
     
     // Add an already existing FhirSpecimenDefinitionTypeTestedContainer to the end of the list.
-function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainer): TFhirSpecimenDefinitionTypeTestedContainer; overload;
+    function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainer) : TFhirSpecimenDefinitionTypeTestedContainer; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenDefinitionTypeTestedContainer) : Integer;
@@ -15474,7 +16320,7 @@ function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainer): TFhirSpeci
     function Append : TFhirSpecimenDefinitionTypeTestedContainerAdditive;
     
     // Add an already existing FhirSpecimenDefinitionTypeTestedContainerAdditive to the end of the list.
-function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainerAdditive): TFhirSpecimenDefinitionTypeTestedContainerAdditive; overload;
+    function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainerAdditive) : TFhirSpecimenDefinitionTypeTestedContainerAdditive; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenDefinitionTypeTestedContainerAdditive) : Integer;
@@ -15589,7 +16435,7 @@ function AddItem(value : TFhirSpecimenDefinitionTypeTestedContainerAdditive): TF
     function Append : TFhirSpecimenDefinitionTypeTestedHandling;
     
     // Add an already existing FhirSpecimenDefinitionTypeTestedHandling to the end of the list.
-function AddItem(value : TFhirSpecimenDefinitionTypeTestedHandling): TFhirSpecimenDefinitionTypeTestedHandling; overload;
+    function AddItem(value : TFhirSpecimenDefinitionTypeTestedHandling) : TFhirSpecimenDefinitionTypeTestedHandling; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenDefinitionTypeTestedHandling) : Integer;
@@ -15873,7 +16719,7 @@ function AddItem(value : TFhirSpecimenDefinitionTypeTestedHandling): TFhirSpecim
     function Append : TFhirSpecimenDefinition;
     
     // Add an already existing FhirSpecimenDefinition to the end of the list.
-function AddItem(value : TFhirSpecimenDefinition): TFhirSpecimenDefinition; overload;
+    function AddItem(value : TFhirSpecimenDefinition) : TFhirSpecimenDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenDefinition) : Integer;
@@ -15996,7 +16842,7 @@ function AddItem(value : TFhirSpecimenDefinition): TFhirSpecimenDefinition; over
     function Append : TFhirStructureDefinitionMapping;
     
     // Add an already existing FhirStructureDefinitionMapping to the end of the list.
-function AddItem(value : TFhirStructureDefinitionMapping): TFhirStructureDefinitionMapping; overload;
+    function AddItem(value : TFhirStructureDefinitionMapping) : TFhirStructureDefinitionMapping; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureDefinitionMapping) : Integer;
@@ -16098,7 +16944,7 @@ function AddItem(value : TFhirStructureDefinitionMapping): TFhirStructureDefinit
     function Append : TFhirStructureDefinitionContext;
     
     // Add an already existing FhirStructureDefinitionContext to the end of the list.
-function AddItem(value : TFhirStructureDefinitionContext): TFhirStructureDefinitionContext; overload;
+    function AddItem(value : TFhirStructureDefinitionContext) : TFhirStructureDefinitionContext; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureDefinitionContext) : Integer;
@@ -16190,7 +17036,7 @@ function AddItem(value : TFhirStructureDefinitionContext): TFhirStructureDefinit
     function Append : TFhirStructureDefinitionSnapshot;
     
     // Add an already existing FhirStructureDefinitionSnapshot to the end of the list.
-function AddItem(value : TFhirStructureDefinitionSnapshot): TFhirStructureDefinitionSnapshot; overload;
+    function AddItem(value : TFhirStructureDefinitionSnapshot) : TFhirStructureDefinitionSnapshot; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureDefinitionSnapshot) : Integer;
@@ -16282,7 +17128,7 @@ function AddItem(value : TFhirStructureDefinitionSnapshot): TFhirStructureDefini
     function Append : TFhirStructureDefinitionDifferential;
     
     // Add an already existing FhirStructureDefinitionDifferential to the end of the list.
-function AddItem(value : TFhirStructureDefinitionDifferential): TFhirStructureDefinitionDifferential; overload;
+    function AddItem(value : TFhirStructureDefinitionDifferential) : TFhirStructureDefinitionDifferential; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureDefinitionDifferential) : Integer;
@@ -16492,7 +17338,7 @@ function AddItem(value : TFhirStructureDefinitionDifferential): TFhirStructureDe
     property keywordList : TFhirCodingList read GetKeywordList;
     property hasKeywordList : boolean read GetHasKeywordList;
 
-    // The version of the FHIR specification on which this StructureDefinition is based - this is the formal version of the specification, without the revision number, e.g. [publication].[major].[minor], which is 4.6.0. for this version.
+    // The version of the FHIR specification on which this StructureDefinition is based - this is the formal version of the specification, without the revision number, e.g. [publication].[major].[minor], which is 5.0.0-snapshot1. for this version.
     property fhirVersion : TFhirFHIRVersionEnum read GetFhirVersionST write SetFhirVersionST;
     property fhirVersionElement : TFhirEnum read FFhirVersion write SetFhirVersion;
 
@@ -16572,7 +17418,7 @@ function AddItem(value : TFhirStructureDefinitionDifferential): TFhirStructureDe
     function Append : TFhirStructureDefinition;
     
     // Add an already existing FhirStructureDefinition to the end of the list.
-function AddItem(value : TFhirStructureDefinition): TFhirStructureDefinition; overload;
+    function AddItem(value : TFhirStructureDefinition) : TFhirStructureDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureDefinition) : Integer;
@@ -16694,7 +17540,7 @@ function AddItem(value : TFhirStructureDefinition): TFhirStructureDefinition; ov
     function Append : TFhirStructureMapStructure;
     
     // Add an already existing FhirStructureMapStructure to the end of the list.
-function AddItem(value : TFhirStructureMapStructure): TFhirStructureMapStructure; overload;
+    function AddItem(value : TFhirStructureMapStructure) : TFhirStructureMapStructure; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapStructure) : Integer;
@@ -16828,7 +17674,7 @@ function AddItem(value : TFhirStructureMapStructure): TFhirStructureMapStructure
     function Append : TFhirStructureMapGroup;
     
     // Add an already existing FhirStructureMapGroup to the end of the list.
-function AddItem(value : TFhirStructureMapGroup): TFhirStructureMapGroup; overload;
+    function AddItem(value : TFhirStructureMapGroup) : TFhirStructureMapGroup; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroup) : Integer;
@@ -16948,7 +17794,7 @@ function AddItem(value : TFhirStructureMapGroup): TFhirStructureMapGroup; overlo
     function Append : TFhirStructureMapGroupInput;
     
     // Add an already existing FhirStructureMapGroupInput to the end of the list.
-function AddItem(value : TFhirStructureMapGroupInput): TFhirStructureMapGroupInput; overload;
+    function AddItem(value : TFhirStructureMapGroupInput) : TFhirStructureMapGroupInput; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupInput) : Integer;
@@ -17079,7 +17925,7 @@ function AddItem(value : TFhirStructureMapGroupInput): TFhirStructureMapGroupInp
     function Append : TFhirStructureMapGroupRule;
     
     // Add an already existing FhirStructureMapGroupRule to the end of the list.
-function AddItem(value : TFhirStructureMapGroupRule): TFhirStructureMapGroupRule; overload;
+    function AddItem(value : TFhirStructureMapGroupRule) : TFhirStructureMapGroupRule; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupRule) : Integer;
@@ -17115,7 +17961,7 @@ function AddItem(value : TFhirStructureMapGroupRule): TFhirStructureMapGroupRule
     FMin : TFhirInteger;
     FMax : TFhirString;
     FType_ : TFhirString;
-    FDefaultValue : TFhirDataType;
+    FDefaultValue : TFhirString;
     FElement : TFhirString;
     FListMode : TFhirEnum;
     FVariable : TFhirId;
@@ -17134,7 +17980,9 @@ function AddItem(value : TFhirStructureMapGroupRule): TFhirStructureMapGroupRule
     procedure SetType_(value : TFhirString);
     function GetType_ST : String;
     procedure SetType_ST(value : String);
-    procedure SetDefaultValue(value : TFhirDataType);
+    procedure SetDefaultValue(value : TFhirString);
+    function GetDefaultValueST : String;
+    procedure SetDefaultValueST(value : String);
     procedure SetElement(value : TFhirString);
     function GetElementST : String;
     procedure SetElementST(value : String);
@@ -17195,10 +18043,10 @@ function AddItem(value : TFhirStructureMapGroupRule): TFhirStructureMapGroupRule
     // Specified type for the element. This works as a condition on the mapping - use for polymorphic elements.
     property type_Element : TFhirString read FType_ write SetType_;
 
-    // Typed access to A value to use if there is no existing value in the source object. (defined for API consistency)
-    property defaultValue : TFhirDataType read FDefaultValue write SetDefaultValue;
+    // Typed access to A value to use if there is no existing value in the source object.
+    property defaultValue : String read GetDefaultValueST write SetDefaultValueST;
     // A value to use if there is no existing value in the source object.
-    property defaultValueElement : TFhirDataType read FDefaultValue write SetDefaultValue;
+    property defaultValueElement : TFhirString read FDefaultValue write SetDefaultValue;
 
     // Typed access to Optional field for this source.
     property element : String read GetElementST write SetElementST;
@@ -17260,7 +18108,7 @@ function AddItem(value : TFhirStructureMapGroupRule): TFhirStructureMapGroupRule
     function Append : TFhirStructureMapGroupRuleSource;
     
     // Add an already existing FhirStructureMapGroupRuleSource to the end of the list.
-function AddItem(value : TFhirStructureMapGroupRuleSource): TFhirStructureMapGroupRuleSource; overload;
+    function AddItem(value : TFhirStructureMapGroupRuleSource) : TFhirStructureMapGroupRuleSource; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupRuleSource) : Integer;
@@ -17405,7 +18253,7 @@ function AddItem(value : TFhirStructureMapGroupRuleSource): TFhirStructureMapGro
     function Append : TFhirStructureMapGroupRuleTarget;
     
     // Add an already existing FhirStructureMapGroupRuleTarget to the end of the list.
-function AddItem(value : TFhirStructureMapGroupRuleTarget): TFhirStructureMapGroupRuleTarget; overload;
+    function AddItem(value : TFhirStructureMapGroupRuleTarget) : TFhirStructureMapGroupRuleTarget; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupRuleTarget) : Integer;
@@ -17497,7 +18345,7 @@ function AddItem(value : TFhirStructureMapGroupRuleTarget): TFhirStructureMapGro
     function Append : TFhirStructureMapGroupRuleTargetParameter;
     
     // Add an already existing FhirStructureMapGroupRuleTargetParameter to the end of the list.
-function AddItem(value : TFhirStructureMapGroupRuleTargetParameter): TFhirStructureMapGroupRuleTargetParameter; overload;
+    function AddItem(value : TFhirStructureMapGroupRuleTargetParameter) : TFhirStructureMapGroupRuleTargetParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupRuleTargetParameter) : Integer;
@@ -17530,12 +18378,12 @@ function AddItem(value : TFhirStructureMapGroupRuleTargetParameter): TFhirStruct
   TFhirStructureMapGroupRuleDependent = class (TFhirBackboneElement)
   protected
     FName : TFhirId;
-    FvariableList : TFhirStringList;
+    FparameterList : TFhirStructureMapGroupRuleTargetParameterList;
     procedure SetName(value : TFhirId);
     function GetNameST : String;
     procedure SetNameST(value : String);
-    function GetVariableList : TFhirStringList;
-    function GetHasVariableList : Boolean;
+    function GetParameterList : TFhirStructureMapGroupRuleTargetParameterList;
+    function GetHasParameterList : Boolean;
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -17563,9 +18411,9 @@ function AddItem(value : TFhirStructureMapGroupRuleTargetParameter): TFhirStruct
     // Name of a rule or group to apply.
     property nameElement : TFhirId read FName write SetName;
 
-    // Variable to pass to the rule or group.
-    property variableList : TFhirStringList read GetVariableList;
-    property hasVariableList : boolean read GetHasVariableList;
+    // Parameter to pass to the rule or group.
+    property parameterList : TFhirStructureMapGroupRuleTargetParameterList read GetParameterList;
+    property hasParameterList : boolean read GetHasParameterList;
 
   end;
 
@@ -17598,7 +18446,7 @@ function AddItem(value : TFhirStructureMapGroupRuleTargetParameter): TFhirStruct
     function Append : TFhirStructureMapGroupRuleDependent;
     
     // Add an already existing FhirStructureMapGroupRuleDependent to the end of the list.
-function AddItem(value : TFhirStructureMapGroupRuleDependent): TFhirStructureMapGroupRuleDependent; overload;
+    function AddItem(value : TFhirStructureMapGroupRuleDependent) : TFhirStructureMapGroupRuleDependent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMapGroupRuleDependent) : Integer;
@@ -17816,7 +18664,7 @@ function AddItem(value : TFhirStructureMapGroupRuleDependent): TFhirStructureMap
     function Append : TFhirStructureMap;
     
     // Add an already existing FhirStructureMap to the end of the list.
-function AddItem(value : TFhirStructureMap): TFhirStructureMap; overload;
+    function AddItem(value : TFhirStructureMap) : TFhirStructureMap; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirStructureMap) : Integer;
@@ -17921,7 +18769,7 @@ function AddItem(value : TFhirStructureMap): TFhirStructureMap; overload;
     function Append : TFhirTerminologyCapabilitiesSoftware;
     
     // Add an already existing FhirTerminologyCapabilitiesSoftware to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesSoftware): TFhirTerminologyCapabilitiesSoftware; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesSoftware) : TFhirTerminologyCapabilitiesSoftware; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesSoftware) : Integer;
@@ -18024,7 +18872,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesSoftware): TFhirTerminology
     function Append : TFhirTerminologyCapabilitiesImplementation;
     
     // Add an already existing FhirTerminologyCapabilitiesImplementation to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesImplementation): TFhirTerminologyCapabilitiesImplementation; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesImplementation) : TFhirTerminologyCapabilitiesImplementation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesImplementation) : Integer;
@@ -18134,7 +18982,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesImplementation): TFhirTermi
     function Append : TFhirTerminologyCapabilitiesCodeSystem;
     
     // Add an already existing FhirTerminologyCapabilitiesCodeSystem to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesCodeSystem): TFhirTerminologyCapabilitiesCodeSystem; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesCodeSystem) : TFhirTerminologyCapabilitiesCodeSystem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesCodeSystem) : Integer;
@@ -18267,7 +19115,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesCodeSystem): TFhirTerminolo
     function Append : TFhirTerminologyCapabilitiesCodeSystemVersion;
     
     // Add an already existing FhirTerminologyCapabilitiesCodeSystemVersion to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersion): TFhirTerminologyCapabilitiesCodeSystemVersion; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersion) : TFhirTerminologyCapabilitiesCodeSystemVersion; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesCodeSystemVersion) : Integer;
@@ -18368,7 +19216,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersion): TFhirTe
     function Append : TFhirTerminologyCapabilitiesCodeSystemVersionFilter;
     
     // Add an already existing FhirTerminologyCapabilitiesCodeSystemVersionFilter to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersionFilter): TFhirTerminologyCapabilitiesCodeSystemVersionFilter; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersionFilter) : TFhirTerminologyCapabilitiesCodeSystemVersionFilter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesCodeSystemVersionFilter) : Integer;
@@ -18496,7 +19344,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesCodeSystemVersionFilter): T
     function Append : TFhirTerminologyCapabilitiesExpansion;
     
     // Add an already existing FhirTerminologyCapabilitiesExpansion to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesExpansion): TFhirTerminologyCapabilitiesExpansion; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesExpansion) : TFhirTerminologyCapabilitiesExpansion; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesExpansion) : Integer;
@@ -18599,7 +19447,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesExpansion): TFhirTerminolog
     function Append : TFhirTerminologyCapabilitiesExpansionParameter;
     
     // Add an already existing FhirTerminologyCapabilitiesExpansionParameter to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesExpansionParameter): TFhirTerminologyCapabilitiesExpansionParameter; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesExpansionParameter) : TFhirTerminologyCapabilitiesExpansionParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesExpansionParameter) : Integer;
@@ -18693,7 +19541,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesExpansionParameter): TFhirT
     function Append : TFhirTerminologyCapabilitiesValidateCode;
     
     // Add an already existing FhirTerminologyCapabilitiesValidateCode to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesValidateCode): TFhirTerminologyCapabilitiesValidateCode; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesValidateCode) : TFhirTerminologyCapabilitiesValidateCode; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesValidateCode) : Integer;
@@ -18787,7 +19635,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesValidateCode): TFhirTermino
     function Append : TFhirTerminologyCapabilitiesTranslation;
     
     // Add an already existing FhirTerminologyCapabilitiesTranslation to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesTranslation): TFhirTerminologyCapabilitiesTranslation; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesTranslation) : TFhirTerminologyCapabilitiesTranslation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesTranslation) : Integer;
@@ -18881,7 +19729,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesTranslation): TFhirTerminol
     function Append : TFhirTerminologyCapabilitiesClosure;
     
     // Add an already existing FhirTerminologyCapabilitiesClosure to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilitiesClosure): TFhirTerminologyCapabilitiesClosure; overload;
+    function AddItem(value : TFhirTerminologyCapabilitiesClosure) : TFhirTerminologyCapabilitiesClosure; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilitiesClosure) : Integer;
@@ -19152,7 +20000,7 @@ function AddItem(value : TFhirTerminologyCapabilitiesClosure): TFhirTerminologyC
     function Append : TFhirTerminologyCapabilities;
     
     // Add an already existing FhirTerminologyCapabilities to the end of the list.
-function AddItem(value : TFhirTerminologyCapabilities): TFhirTerminologyCapabilities; overload;
+    function AddItem(value : TFhirTerminologyCapabilities) : TFhirTerminologyCapabilities; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTerminologyCapabilities) : Integer;
@@ -19255,7 +20103,7 @@ function AddItem(value : TFhirTerminologyCapabilities): TFhirTerminologyCapabili
     function Append : TFhirTestScriptOrigin;
     
     // Add an already existing FhirTestScriptOrigin to the end of the list.
-function AddItem(value : TFhirTestScriptOrigin): TFhirTestScriptOrigin; overload;
+    function AddItem(value : TFhirTestScriptOrigin) : TFhirTestScriptOrigin; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptOrigin) : Integer;
@@ -19356,7 +20204,7 @@ function AddItem(value : TFhirTestScriptOrigin): TFhirTestScriptOrigin; overload
     function Append : TFhirTestScriptDestination;
     
     // Add an already existing FhirTestScriptDestination to the end of the list.
-function AddItem(value : TFhirTestScriptDestination): TFhirTestScriptDestination; overload;
+    function AddItem(value : TFhirTestScriptDestination) : TFhirTestScriptDestination; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptDestination) : Integer;
@@ -19455,7 +20303,7 @@ function AddItem(value : TFhirTestScriptDestination): TFhirTestScriptDestination
     function Append : TFhirTestScriptMetadata;
     
     // Add an already existing FhirTestScriptMetadata to the end of the list.
-function AddItem(value : TFhirTestScriptMetadata): TFhirTestScriptMetadata; overload;
+    function AddItem(value : TFhirTestScriptMetadata) : TFhirTestScriptMetadata; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptMetadata) : Integer;
@@ -19558,7 +20406,7 @@ function AddItem(value : TFhirTestScriptMetadata): TFhirTestScriptMetadata; over
     function Append : TFhirTestScriptMetadataLink;
     
     // Add an already existing FhirTestScriptMetadataLink to the end of the list.
-function AddItem(value : TFhirTestScriptMetadataLink): TFhirTestScriptMetadataLink; overload;
+    function AddItem(value : TFhirTestScriptMetadataLink) : TFhirTestScriptMetadataLink; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptMetadataLink) : Integer;
@@ -19702,7 +20550,7 @@ function AddItem(value : TFhirTestScriptMetadataLink): TFhirTestScriptMetadataLi
     function Append : TFhirTestScriptMetadataCapability;
     
     // Add an already existing FhirTestScriptMetadataCapability to the end of the list.
-function AddItem(value : TFhirTestScriptMetadataCapability): TFhirTestScriptMetadataCapability; overload;
+    function AddItem(value : TFhirTestScriptMetadataCapability) : TFhirTestScriptMetadataCapability; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptMetadataCapability) : Integer;
@@ -19810,7 +20658,7 @@ function AddItem(value : TFhirTestScriptMetadataCapability): TFhirTestScriptMeta
     function Append : TFhirTestScriptScope;
     
     // Add an already existing FhirTestScriptScope to the end of the list.
-function AddItem(value : TFhirTestScriptScope): TFhirTestScriptScope; overload;
+    function AddItem(value : TFhirTestScriptScope) : TFhirTestScriptScope; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptScope) : Integer;
@@ -19920,7 +20768,7 @@ function AddItem(value : TFhirTestScriptScope): TFhirTestScriptScope; overload;
     function Append : TFhirTestScriptFixture;
     
     // Add an already existing FhirTestScriptFixture to the end of the list.
-function AddItem(value : TFhirTestScriptFixture): TFhirTestScriptFixture; overload;
+    function AddItem(value : TFhirTestScriptFixture) : TFhirTestScriptFixture; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptFixture) : Integer;
@@ -20077,7 +20925,7 @@ function AddItem(value : TFhirTestScriptFixture): TFhirTestScriptFixture; overlo
     function Append : TFhirTestScriptVariable;
     
     // Add an already existing FhirTestScriptVariable to the end of the list.
-function AddItem(value : TFhirTestScriptVariable): TFhirTestScriptVariable; overload;
+    function AddItem(value : TFhirTestScriptVariable) : TFhirTestScriptVariable; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptVariable) : Integer;
@@ -20169,7 +21017,7 @@ function AddItem(value : TFhirTestScriptVariable): TFhirTestScriptVariable; over
     function Append : TFhirTestScriptSetup;
     
     // Add an already existing FhirTestScriptSetup to the end of the list.
-function AddItem(value : TFhirTestScriptSetup): TFhirTestScriptSetup; overload;
+    function AddItem(value : TFhirTestScriptSetup) : TFhirTestScriptSetup; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptSetup) : Integer;
@@ -20268,7 +21116,7 @@ function AddItem(value : TFhirTestScriptSetup): TFhirTestScriptSetup; overload;
     function Append : TFhirTestScriptSetupAction;
     
     // Add an already existing FhirTestScriptSetupAction to the end of the list.
-function AddItem(value : TFhirTestScriptSetupAction): TFhirTestScriptSetupAction; overload;
+    function AddItem(value : TFhirTestScriptSetupAction) : TFhirTestScriptSetupAction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptSetupAction) : Integer;
@@ -20500,7 +21348,7 @@ function AddItem(value : TFhirTestScriptSetupAction): TFhirTestScriptSetupAction
     function Append : TFhirTestScriptSetupActionOperation;
     
     // Add an already existing FhirTestScriptSetupActionOperation to the end of the list.
-function AddItem(value : TFhirTestScriptSetupActionOperation): TFhirTestScriptSetupActionOperation; overload;
+    function AddItem(value : TFhirTestScriptSetupActionOperation) : TFhirTestScriptSetupActionOperation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptSetupActionOperation) : Integer;
@@ -20603,7 +21451,7 @@ function AddItem(value : TFhirTestScriptSetupActionOperation): TFhirTestScriptSe
     function Append : TFhirTestScriptSetupActionOperationRequestHeader;
     
     // Add an already existing FhirTestScriptSetupActionOperationRequestHeader to the end of the list.
-function AddItem(value : TFhirTestScriptSetupActionOperationRequestHeader): TFhirTestScriptSetupActionOperationRequestHeader; overload;
+    function AddItem(value : TFhirTestScriptSetupActionOperationRequestHeader) : TFhirTestScriptSetupActionOperationRequestHeader; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptSetupActionOperationRequestHeader) : Integer;
@@ -20890,7 +21738,7 @@ function AddItem(value : TFhirTestScriptSetupActionOperationRequestHeader): TFhi
     function Append : TFhirTestScriptSetupActionAssert;
     
     // Add an already existing FhirTestScriptSetupActionAssert to the end of the list.
-function AddItem(value : TFhirTestScriptSetupActionAssert): TFhirTestScriptSetupActionAssert; overload;
+    function AddItem(value : TFhirTestScriptSetupActionAssert) : TFhirTestScriptSetupActionAssert; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptSetupActionAssert) : Integer;
@@ -21000,7 +21848,7 @@ function AddItem(value : TFhirTestScriptSetupActionAssert): TFhirTestScriptSetup
     function Append : TFhirTestScriptTest;
     
     // Add an already existing FhirTestScriptTest to the end of the list.
-function AddItem(value : TFhirTestScriptTest): TFhirTestScriptTest; overload;
+    function AddItem(value : TFhirTestScriptTest) : TFhirTestScriptTest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptTest) : Integer;
@@ -21099,7 +21947,7 @@ function AddItem(value : TFhirTestScriptTest): TFhirTestScriptTest; overload;
     function Append : TFhirTestScriptTestAction;
     
     // Add an already existing FhirTestScriptTestAction to the end of the list.
-function AddItem(value : TFhirTestScriptTestAction): TFhirTestScriptTestAction; overload;
+    function AddItem(value : TFhirTestScriptTestAction) : TFhirTestScriptTestAction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptTestAction) : Integer;
@@ -21191,7 +22039,7 @@ function AddItem(value : TFhirTestScriptTestAction): TFhirTestScriptTestAction; 
     function Append : TFhirTestScriptTeardown;
     
     // Add an already existing FhirTestScriptTeardown to the end of the list.
-function AddItem(value : TFhirTestScriptTeardown): TFhirTestScriptTeardown; overload;
+    function AddItem(value : TFhirTestScriptTeardown) : TFhirTestScriptTeardown; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptTeardown) : Integer;
@@ -21283,7 +22131,7 @@ function AddItem(value : TFhirTestScriptTeardown): TFhirTestScriptTeardown; over
     function Append : TFhirTestScriptTeardownAction;
     
     // Add an already existing FhirTestScriptTeardownAction to the end of the list.
-function AddItem(value : TFhirTestScriptTeardownAction): TFhirTestScriptTeardownAction; overload;
+    function AddItem(value : TFhirTestScriptTeardownAction) : TFhirTestScriptTeardownAction; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScriptTeardownAction) : Integer;
@@ -21328,8 +22176,8 @@ function AddItem(value : TFhirTestScriptTeardownAction): TFhirTestScriptTeardown
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
     procedure SetUrlST(value : String);
-    procedure SetIdentifier(value : TFhirIdentifier);
-    function GetIdentifier : TFhirIdentifier;
+    function GetIdentifierList : TFhirIdentifierList;
+    function GetHasIdentifierList : Boolean;
     procedure SetVersion(value : TFhirString);
     function GetVersionST : String;
     procedure SetVersionST(value : String);
@@ -21411,10 +22259,9 @@ function AddItem(value : TFhirTestScriptTeardownAction): TFhirTestScriptTeardown
     // An absolute URI that is used to identify this test script when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this test script is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the test script is stored on different servers.
     property urlElement : TFhirUri read FUrl write SetUrl;
 
-    // Typed access to A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance. (defined for API consistency)
-    property identifier : TFhirIdentifier read GetIdentifier write SetIdentifier; // !! change cardinality - base has a list
     // A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance.
-    property identifierElement : TFhirIdentifier read GetIdentifier write SetIdentifier;
+    property identifierList : TFhirIdentifierList read GetIdentifierList;
+    property hasIdentifierList : boolean read GetHasIdentifierList;
 
     // Typed access to The identifier that is used to identify this version of the test script when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the test script author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.
     property version : String read GetVersionST write SetVersionST;
@@ -21551,7 +22398,7 @@ function AddItem(value : TFhirTestScriptTeardownAction): TFhirTestScriptTeardown
     function Append : TFhirTestScript;
     
     // Add an already existing FhirTestScript to the end of the list.
-function AddItem(value : TFhirTestScript): TFhirTestScript; overload;
+    function AddItem(value : TFhirTestScript) : TFhirTestScript; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirTestScript) : Integer;
@@ -21677,7 +22524,7 @@ function AddItem(value : TFhirTestScript): TFhirTestScript; overload;
     function Append : TFhirValueSetCompose;
     
     // Add an already existing FhirValueSetCompose to the end of the list.
-function AddItem(value : TFhirValueSetCompose): TFhirValueSetCompose; overload;
+    function AddItem(value : TFhirValueSetCompose) : TFhirValueSetCompose; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetCompose) : Integer;
@@ -21810,7 +22657,7 @@ function AddItem(value : TFhirValueSetCompose): TFhirValueSetCompose; overload;
     function Append : TFhirValueSetComposeInclude;
     
     // Add an already existing FhirValueSetComposeInclude to the end of the list.
-function AddItem(value : TFhirValueSetComposeInclude): TFhirValueSetComposeInclude; overload;
+    function AddItem(value : TFhirValueSetComposeInclude) : TFhirValueSetComposeInclude; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetComposeInclude) : Integer;
@@ -21920,7 +22767,7 @@ function AddItem(value : TFhirValueSetComposeInclude): TFhirValueSetComposeInclu
     function Append : TFhirValueSetComposeIncludeConcept;
     
     // Add an already existing FhirValueSetComposeIncludeConcept to the end of the list.
-function AddItem(value : TFhirValueSetComposeIncludeConcept): TFhirValueSetComposeIncludeConcept; overload;
+    function AddItem(value : TFhirValueSetComposeIncludeConcept) : TFhirValueSetComposeIncludeConcept; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetComposeIncludeConcept) : Integer;
@@ -22030,7 +22877,7 @@ function AddItem(value : TFhirValueSetComposeIncludeConcept): TFhirValueSetCompo
     function Append : TFhirValueSetComposeIncludeConceptDesignation;
     
     // Add an already existing FhirValueSetComposeIncludeConceptDesignation to the end of the list.
-function AddItem(value : TFhirValueSetComposeIncludeConceptDesignation): TFhirValueSetComposeIncludeConceptDesignation; overload;
+    function AddItem(value : TFhirValueSetComposeIncludeConceptDesignation) : TFhirValueSetComposeIncludeConceptDesignation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetComposeIncludeConceptDesignation) : Integer;
@@ -22141,7 +22988,7 @@ function AddItem(value : TFhirValueSetComposeIncludeConceptDesignation): TFhirVa
     function Append : TFhirValueSetComposeIncludeFilter;
     
     // Add an already existing FhirValueSetComposeIncludeFilter to the end of the list.
-function AddItem(value : TFhirValueSetComposeIncludeFilter): TFhirValueSetComposeIncludeFilter; overload;
+    function AddItem(value : TFhirValueSetComposeIncludeFilter) : TFhirValueSetComposeIncludeFilter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetComposeIncludeFilter) : Integer;
@@ -22283,7 +23130,7 @@ function AddItem(value : TFhirValueSetComposeIncludeFilter): TFhirValueSetCompos
     function Append : TFhirValueSetExpansion;
     
     // Add an already existing FhirValueSetExpansion to the end of the list.
-function AddItem(value : TFhirValueSetExpansion): TFhirValueSetExpansion; overload;
+    function AddItem(value : TFhirValueSetExpansion) : TFhirValueSetExpansion; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetExpansion) : Integer;
@@ -22384,7 +23231,7 @@ function AddItem(value : TFhirValueSetExpansion): TFhirValueSetExpansion; overlo
     function Append : TFhirValueSetExpansionParameter;
     
     // Add an already existing FhirValueSetExpansionParameter to the end of the list.
-function AddItem(value : TFhirValueSetExpansionParameter): TFhirValueSetExpansionParameter; overload;
+    function AddItem(value : TFhirValueSetExpansionParameter) : TFhirValueSetExpansionParameter; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetExpansionParameter) : Integer;
@@ -22487,7 +23334,7 @@ function AddItem(value : TFhirValueSetExpansionParameter): TFhirValueSetExpansio
     function Append : TFhirValueSetExpansionProperty;
     
     // Add an already existing FhirValueSetExpansionProperty to the end of the list.
-function AddItem(value : TFhirValueSetExpansionProperty): TFhirValueSetExpansionProperty; overload;
+    function AddItem(value : TFhirValueSetExpansionProperty) : TFhirValueSetExpansionProperty; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetExpansionProperty) : Integer;
@@ -22647,7 +23494,7 @@ function AddItem(value : TFhirValueSetExpansionProperty): TFhirValueSetExpansion
     function Append : TFhirValueSetExpansionContains;
     
     // Add an already existing FhirValueSetExpansionContains to the end of the list.
-function AddItem(value : TFhirValueSetExpansionContains): TFhirValueSetExpansionContains; overload;
+    function AddItem(value : TFhirValueSetExpansionContains) : TFhirValueSetExpansionContains; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetExpansionContains) : Integer;
@@ -22748,7 +23595,7 @@ function AddItem(value : TFhirValueSetExpansionContains): TFhirValueSetExpansion
     function Append : TFhirValueSetExpansionContainsProperty;
     
     // Add an already existing FhirValueSetExpansionContainsProperty to the end of the list.
-function AddItem(value : TFhirValueSetExpansionContainsProperty): TFhirValueSetExpansionContainsProperty; overload;
+    function AddItem(value : TFhirValueSetExpansionContainsProperty) : TFhirValueSetExpansionContainsProperty; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetExpansionContainsProperty) : Integer;
@@ -22860,7 +23707,7 @@ function AddItem(value : TFhirValueSetExpansionContainsProperty): TFhirValueSetE
     function Append : TFhirValueSetScope;
     
     // Add an already existing FhirValueSetScope to the end of the list.
-function AddItem(value : TFhirValueSetScope): TFhirValueSetScope; overload;
+    function AddItem(value : TFhirValueSetScope) : TFhirValueSetScope; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSetScope) : Integer;
@@ -23087,7 +23934,7 @@ function AddItem(value : TFhirValueSetScope): TFhirValueSetScope; overload;
     function Append : TFhirValueSet;
     
     // Add an already existing FhirValueSet to the end of the list.
-function AddItem(value : TFhirValueSet): TFhirValueSet; overload;
+    function AddItem(value : TFhirValueSet) : TFhirValueSet; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirValueSet) : Integer;
@@ -23477,7 +24324,7 @@ begin
 end;
 
 procedure TFhirCanonicalResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -23497,7 +24344,7 @@ begin
 end;
 
 function TFhirCanonicalResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FContactList.sizeInBytes(magic));
@@ -24124,7 +24971,7 @@ begin
 end;
 
 procedure TFhirMetadataResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('approvalDate');
   fields.add('lastReviewDate');
@@ -24138,7 +24985,7 @@ begin
 end;
 
 function TFhirMetadataResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTopicList.sizeInBytes(magic));
   inc(result, FAuthorList.sizeInBytes(magic));
@@ -24424,7 +25271,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementSoftware.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('version');
@@ -24432,7 +25279,7 @@ begin
 end;
 
 function TFhirCapabilityStatementSoftware.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -24545,6 +25392,7 @@ end;
 
 function TFhirCapabilityStatementSoftwareList.AddItem(value: TFhirCapabilityStatementSoftware): TFhirCapabilityStatementSoftware;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementSoftware', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementSoftware');
   add(value);
   result := value;
 end;
@@ -24779,7 +25627,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementImplementation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('description');
   fields.add('url');
@@ -24787,7 +25635,7 @@ begin
 end;
 
 function TFhirCapabilityStatementImplementation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -24885,6 +25733,7 @@ end;
 
 function TFhirCapabilityStatementImplementationList.AddItem(value: TFhirCapabilityStatementImplementation): TFhirCapabilityStatementImplementation;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementImplementation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementImplementation');
   add(value);
   result := value;
 end;
@@ -25252,7 +26101,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('mode');
   fields.add('documentation');
@@ -25265,7 +26114,7 @@ begin
 end;
 
 function TFhirCapabilityStatementRest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FResourceList.sizeInBytes(magic));
   inc(result, FInteractionList.sizeInBytes(magic));
@@ -25424,6 +26273,7 @@ end;
 
 function TFhirCapabilityStatementRestList.AddItem(value: TFhirCapabilityStatementRest): TFhirCapabilityStatementRest;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRest');
   add(value);
   result := value;
 end;
@@ -25671,7 +26521,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestSecurity.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('cors');
   fields.add('service');
@@ -25679,7 +26529,7 @@ begin
 end;
 
 function TFhirCapabilityStatementRestSecurity.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FServiceList.sizeInBytes(magic));
 end;
@@ -25779,6 +26629,7 @@ end;
 
 function TFhirCapabilityStatementRestSecurityList.AddItem(value: TFhirCapabilityStatementRestSecurity): TFhirCapabilityStatementRestSecurity;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestSecurity', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestSecurity');
   add(value);
   result := value;
 end;
@@ -26297,7 +27148,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('profile');
@@ -26319,7 +27170,7 @@ begin
 end;
 
 function TFhirCapabilityStatementRestResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSupportedProfileList.sizeInBytes(magic));
   inc(result, FInteractionList.sizeInBytes(magic));
@@ -26698,6 +27549,7 @@ end;
 
 function TFhirCapabilityStatementRestResourceList.AddItem(value: TFhirCapabilityStatementRestResource): TFhirCapabilityStatementRestResource;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestResource');
   add(value);
   result := value;
 end;
@@ -26917,14 +27769,14 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestResourceInteraction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('documentation');
 end;
 
 function TFhirCapabilityStatementRestResourceInteraction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -27012,6 +27864,7 @@ end;
 
 function TFhirCapabilityStatementRestResourceInteractionList.AddItem(value: TFhirCapabilityStatementRestResourceInteraction): TFhirCapabilityStatementRestResourceInteraction;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestResourceInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestResourceInteraction');
   add(value);
   result := value;
 end;
@@ -27260,7 +28113,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestResourceSearchParam.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('definition');
@@ -27269,7 +28122,7 @@ begin
 end;
 
 function TFhirCapabilityStatementRestResourceSearchParam.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -27409,6 +28262,7 @@ end;
 
 function TFhirCapabilityStatementRestResourceSearchParamList.AddItem(value: TFhirCapabilityStatementRestResourceSearchParam): TFhirCapabilityStatementRestResourceSearchParam;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestResourceSearchParam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestResourceSearchParam');
   add(value);
   result := value;
 end;
@@ -27643,7 +28497,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestResourceOperation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('definition');
@@ -27651,7 +28505,7 @@ begin
 end;
 
 function TFhirCapabilityStatementRestResourceOperation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -27769,6 +28623,7 @@ end;
 
 function TFhirCapabilityStatementRestResourceOperationList.AddItem(value: TFhirCapabilityStatementRestResourceOperation): TFhirCapabilityStatementRestResourceOperation;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestResourceOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestResourceOperation');
   add(value);
   result := value;
 end;
@@ -27988,14 +28843,14 @@ begin
 end;
 
 procedure TFhirCapabilityStatementRestInteraction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('documentation');
 end;
 
 function TFhirCapabilityStatementRestInteraction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -28083,6 +28938,7 @@ end;
 
 function TFhirCapabilityStatementRestInteractionList.AddItem(value: TFhirCapabilityStatementRestInteraction): TFhirCapabilityStatementRestInteraction;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementRestInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementRestInteraction');
   add(value);
   result := value;
 end;
@@ -28356,7 +29212,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementMessaging.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('endpoint');
   fields.add('reliableCache');
@@ -28365,7 +29221,7 @@ begin
 end;
 
 function TFhirCapabilityStatementMessaging.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FEndpointList.sizeInBytes(magic));
   inc(result, FSupportedMessageList.sizeInBytes(magic));
@@ -28483,6 +29339,7 @@ end;
 
 function TFhirCapabilityStatementMessagingList.AddItem(value: TFhirCapabilityStatementMessaging): TFhirCapabilityStatementMessaging;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementMessaging', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementMessaging');
   add(value);
   result := value;
 end;
@@ -28702,14 +29559,14 @@ begin
 end;
 
 procedure TFhirCapabilityStatementMessagingEndpoint.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('protocol');
   fields.add('address');
 end;
 
 function TFhirCapabilityStatementMessagingEndpoint.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -28781,6 +29638,7 @@ end;
 
 function TFhirCapabilityStatementMessagingEndpointList.AddItem(value: TFhirCapabilityStatementMessagingEndpoint): TFhirCapabilityStatementMessagingEndpoint;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementMessagingEndpoint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementMessagingEndpoint');
   add(value);
   result := value;
 end;
@@ -29000,14 +29858,14 @@ begin
 end;
 
 procedure TFhirCapabilityStatementMessagingSupportedMessage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('mode');
   fields.add('definition');
 end;
 
 function TFhirCapabilityStatementMessagingSupportedMessage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -29095,6 +29953,7 @@ end;
 
 function TFhirCapabilityStatementMessagingSupportedMessageList.AddItem(value: TFhirCapabilityStatementMessagingSupportedMessage): TFhirCapabilityStatementMessagingSupportedMessage;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementMessagingSupportedMessage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementMessagingSupportedMessage');
   add(value);
   result := value;
 end;
@@ -29329,7 +30188,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatementDocument.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('mode');
   fields.add('documentation');
@@ -29337,7 +30196,7 @@ begin
 end;
 
 function TFhirCapabilityStatementDocument.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -29451,6 +30310,7 @@ end;
 
 function TFhirCapabilityStatementDocumentList.AddItem(value: TFhirCapabilityStatementDocument): TFhirCapabilityStatementDocument;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatementDocument', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatementDocument');
   add(value);
   result := value;
 end;
@@ -29917,7 +30777,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -29948,7 +30808,7 @@ begin
 end;
 
 function TFhirCapabilityStatement.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FInstantiatesList.sizeInBytes(magic));
   inc(result, FImportsList.sizeInBytes(magic));
@@ -30456,6 +31316,7 @@ end;
 
 function TFhirCapabilityStatementList.AddItem(value: TFhirCapabilityStatement): TFhirCapabilityStatement;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement');
   add(value);
   result := value;
 end;
@@ -30692,7 +31553,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2Software.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('version');
@@ -30700,7 +31561,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2Software.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30813,6 +31674,7 @@ end;
 
 function TFhirCapabilityStatement2SoftwareList.AddItem(value: TFhirCapabilityStatement2Software): TFhirCapabilityStatement2Software;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Software', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Software');
   add(value);
   result := value;
 end;
@@ -31047,7 +31909,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2Implementation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('description');
   fields.add('url');
@@ -31055,7 +31917,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2Implementation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -31153,6 +32015,7 @@ end;
 
 function TFhirCapabilityStatement2ImplementationList.AddItem(value: TFhirCapabilityStatement2Implementation): TFhirCapabilityStatement2Implementation;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Implementation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Implementation');
   add(value);
   result := value;
 end;
@@ -31532,7 +32395,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2Rest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('mode');
   fields.add('documentation');
@@ -31545,7 +32408,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2Rest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFeatureList.sizeInBytes(magic));
   inc(result, FResourceList.sizeInBytes(magic));
@@ -31711,6 +32574,7 @@ end;
 
 function TFhirCapabilityStatement2RestList.AddItem(value: TFhirCapabilityStatement2Rest): TFhirCapabilityStatement2Rest;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2Rest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2Rest');
   add(value);
   result := value;
 end;
@@ -31843,12 +32707,12 @@ function TFhirCapabilityStatement2RestFeature.setProperty(propName : string; pro
 begin
   if (propName = 'code') then
   begin
-    CodeElement := asString(propValue);
+    CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, propValue);
     result := propValue;
   end
   else if (propName = 'value') then
   begin
-    ValueElement := asString(propValue);
+    ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -31883,8 +32747,8 @@ end;
 
 procedure TFhirCapabilityStatement2RestFeature.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'code') then CodeElement := asString(new)
-  else if (propName = 'value') then ValueElement := asString(new)
+  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, new)
+  else if (propName = 'value') then ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -31930,59 +32794,59 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestFeature.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('value');
 end;
 
 function TFhirCapabilityStatement2RestFeature.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetCode(value : TFhirString);
+procedure TFhirCapabilityStatement2RestFeature.SetCode(value : TFhirEnum);
 begin
   FCode.free;
   FCode := value;
 end;
 
-function TFhirCapabilityStatement2RestFeature.GetCodeST : String;
+function TFhirCapabilityStatement2RestFeature.GetCodeST : TFhirCapabilityFeatureEnum;
 begin
   if FCode = nil then
-    result := ''
+    result := TFhirCapabilityFeatureEnum(0)
   else
-    result := FCode.value;
+    result := TFhirCapabilityFeatureEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureEnum, FCode.value));
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetCodeST(value : String);
+procedure TFhirCapabilityStatement2RestFeature.SetCodeST(value : TFhirCapabilityFeatureEnum);
 begin
-  if value = '' then
+  if ord(value) = 0 then
     CodeElement := nil
   else
-    CodeElement := TFhirString.create(value);
+    CodeElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureEnum[value], CODES_TFhirCapabilityFeatureEnum[value]);
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetValue(value : TFhirString);
+procedure TFhirCapabilityStatement2RestFeature.SetValue(value : TFhirEnum);
 begin
   FValue.free;
   FValue := value;
 end;
 
-function TFhirCapabilityStatement2RestFeature.GetValueST : String;
+function TFhirCapabilityStatement2RestFeature.GetValueST : TFhirCapabilityFeatureValueEnum;
 begin
   if FValue = nil then
-    result := ''
+    result := TFhirCapabilityFeatureValueEnum(0)
   else
-    result := FValue.value;
+    result := TFhirCapabilityFeatureValueEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureValueEnum, FValue.value));
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetValueST(value : String);
+procedure TFhirCapabilityStatement2RestFeature.SetValueST(value : TFhirCapabilityFeatureValueEnum);
 begin
-  if value = '' then
+  if ord(value) = 0 then
     ValueElement := nil
   else
-    ValueElement := TFhirString.create(value);
+    ValueElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureValueEnum[value], CODES_TFhirCapabilityFeatureValueEnum[value]);
 end;
 
 { TFhirCapabilityStatement2RestFeatureListEnumerator }
@@ -32021,6 +32885,7 @@ end;
 
 function TFhirCapabilityStatement2RestFeatureList.AddItem(value: TFhirCapabilityStatement2RestFeature): TFhirCapabilityStatement2RestFeature;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestFeature', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestFeature');
   add(value);
   result := value;
 end;
@@ -32388,7 +33253,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('profile');
@@ -32401,7 +33266,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2RestResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSupportedProfileList.sizeInBytes(magic));
   inc(result, FFeatureList.sizeInBytes(magic));
@@ -32580,6 +33445,7 @@ end;
 
 function TFhirCapabilityStatement2RestResourceList.AddItem(value: TFhirCapabilityStatement2RestResource): TFhirCapabilityStatement2RestResource;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResource');
   add(value);
   result := value;
 end;
@@ -32827,7 +33693,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestResourceInteraction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('documentation');
@@ -32835,7 +33701,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2RestResourceInteraction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFeatureList.sizeInBytes(magic));
 end;
@@ -32936,6 +33802,7 @@ end;
 
 function TFhirCapabilityStatement2RestResourceInteractionList.AddItem(value: TFhirCapabilityStatement2RestResourceInteraction): TFhirCapabilityStatement2RestResourceInteraction;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceInteraction');
   add(value);
   result := value;
 end;
@@ -33212,7 +34079,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestResourceSearchParam.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('definition');
@@ -33222,7 +34089,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2RestResourceSearchParam.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFeatureList.sizeInBytes(magic));
 end;
@@ -33375,6 +34242,7 @@ end;
 
 function TFhirCapabilityStatement2RestResourceSearchParamList.AddItem(value: TFhirCapabilityStatement2RestResourceSearchParam): TFhirCapabilityStatement2RestResourceSearchParam;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceSearchParam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceSearchParam');
   add(value);
   result := value;
 end;
@@ -33636,7 +34504,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestResourceOperation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('definition');
@@ -33645,7 +34513,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2RestResourceOperation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFeatureList.sizeInBytes(magic));
 end;
@@ -33776,6 +34644,7 @@ end;
 
 function TFhirCapabilityStatement2RestResourceOperationList.AddItem(value: TFhirCapabilityStatement2RestResourceOperation): TFhirCapabilityStatement2RestResourceOperation;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestResourceOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestResourceOperation');
   add(value);
   result := value;
 end;
@@ -34023,7 +34892,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2RestInteraction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('documentation');
@@ -34031,7 +34900,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2RestInteraction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFeatureList.sizeInBytes(magic));
 end;
@@ -34132,6 +35001,7 @@ end;
 
 function TFhirCapabilityStatement2RestInteractionList.AddItem(value: TFhirCapabilityStatement2RestInteraction): TFhirCapabilityStatement2RestInteraction;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2RestInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2RestInteraction');
   add(value);
   result := value;
 end;
@@ -34545,7 +35415,7 @@ begin
 end;
 
 procedure TFhirCapabilityStatement2.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -34574,7 +35444,7 @@ begin
 end;
 
 function TFhirCapabilityStatement2.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FInstantiatesList.sizeInBytes(magic));
   inc(result, FImportsList.sizeInBytes(magic));
@@ -35056,6 +35926,7 @@ end;
 
 function TFhirCapabilityStatement2List.AddItem(value: TFhirCapabilityStatement2): TFhirCapabilityStatement2;
 begin
+  assert(value.ClassName = 'TFhirCapabilityStatement2', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCapabilityStatement2');
   add(value);
   result := value;
 end;
@@ -35315,7 +36186,7 @@ begin
 end;
 
 procedure TFhirCodeSystemFilter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('description');
@@ -35324,7 +36195,7 @@ begin
 end;
 
 function TFhirCodeSystemFilter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FOperator.sizeInBytes(magic));
 end;
@@ -35479,6 +36350,7 @@ end;
 
 function TFhirCodeSystemFilterList.AddItem(value: TFhirCodeSystemFilter): TFhirCodeSystemFilter;
 begin
+  assert(value.ClassName = 'TFhirCodeSystemFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystemFilter');
   add(value);
   result := value;
 end;
@@ -35727,7 +36599,7 @@ begin
 end;
 
 procedure TFhirCodeSystemProperty.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('uri');
@@ -35736,7 +36608,7 @@ begin
 end;
 
 function TFhirCodeSystemProperty.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -35876,6 +36748,7 @@ end;
 
 function TFhirCodeSystemPropertyList.AddItem(value: TFhirCodeSystemProperty): TFhirCodeSystemProperty;
 begin
+  assert(value.ClassName = 'TFhirCodeSystemProperty', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystemProperty');
   add(value);
   result := value;
 end;
@@ -36190,7 +37063,7 @@ begin
 end;
 
 procedure TFhirCodeSystemConcept.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('display');
@@ -36201,7 +37074,7 @@ begin
 end;
 
 function TFhirCodeSystemConcept.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDesignationList.sizeInBytes(magic));
   inc(result, FProperty_List.sizeInBytes(magic));
@@ -36358,6 +37231,7 @@ end;
 
 function TFhirCodeSystemConceptList.AddItem(value: TFhirCodeSystemConcept): TFhirCodeSystemConcept;
 begin
+  assert(value.ClassName = 'TFhirCodeSystemConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystemConcept');
   add(value);
   result := value;
 end;
@@ -36592,7 +37466,7 @@ begin
 end;
 
 procedure TFhirCodeSystemConceptDesignation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('language');
   fields.add('use');
@@ -36600,7 +37474,7 @@ begin
 end;
 
 function TFhirCodeSystemConceptDesignation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -36698,6 +37572,7 @@ end;
 
 function TFhirCodeSystemConceptDesignationList.AddItem(value: TFhirCodeSystemConceptDesignation): TFhirCodeSystemConceptDesignation;
 begin
+  assert(value.ClassName = 'TFhirCodeSystemConceptDesignation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystemConceptDesignation');
   add(value);
   result := value;
 end;
@@ -36917,14 +37792,14 @@ begin
 end;
 
 procedure TFhirCodeSystemConceptProperty.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('value[x]');
 end;
 
 function TFhirCodeSystemConceptProperty.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -36996,6 +37871,7 @@ end;
 
 function TFhirCodeSystemConceptPropertyList.AddItem(value: TFhirCodeSystemConceptProperty): TFhirCodeSystemConceptProperty;
 begin
+  assert(value.ClassName = 'TFhirCodeSystemConceptProperty', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystemConceptProperty');
   add(value);
   result := value;
 end;
@@ -37388,7 +38264,7 @@ begin
 end;
 
 procedure TFhirCodeSystem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -37419,7 +38295,7 @@ begin
 end;
 
 function TFhirCodeSystem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFilterList.sizeInBytes(magic));
   inc(result, FProperty_List.sizeInBytes(magic));
@@ -38003,6 +38879,7 @@ end;
 
 function TFhirCodeSystemList.AddItem(value: TFhirCodeSystem): TFhirCodeSystem;
 begin
+  assert(value.ClassName = 'TFhirCodeSystem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCodeSystem');
   add(value);
   result := value;
 end;
@@ -38252,7 +39129,7 @@ begin
 end;
 
 procedure TFhirCompartmentDefinitionResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('param');
@@ -38260,7 +39137,7 @@ begin
 end;
 
 function TFhirCompartmentDefinitionResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FParamList.sizeInBytes(magic));
 end;
@@ -38361,6 +39238,7 @@ end;
 
 function TFhirCompartmentDefinitionResourceList.AddItem(value: TFhirCompartmentDefinitionResource): TFhirCompartmentDefinitionResource;
 begin
+  assert(value.ClassName = 'TFhirCompartmentDefinitionResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCompartmentDefinitionResource');
   add(value);
   result := value;
 end;
@@ -38613,7 +39491,7 @@ begin
 end;
 
 procedure TFhirCompartmentDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -38632,7 +39510,7 @@ begin
 end;
 
 function TFhirCompartmentDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FResourceList.sizeInBytes(magic));
 end;
@@ -38972,6 +39850,7 @@ end;
 
 function TFhirCompartmentDefinitionList.AddItem(value: TFhirCompartmentDefinition): TFhirCompartmentDefinition;
 begin
+  assert(value.ClassName = 'TFhirCompartmentDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCompartmentDefinition');
   add(value);
   result := value;
 end;
@@ -39235,7 +40114,7 @@ begin
 end;
 
 procedure TFhirConceptMapGroup.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('source');
   fields.add('target');
@@ -39244,7 +40123,7 @@ begin
 end;
 
 function TFhirConceptMapGroup.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FElementList.sizeInBytes(magic));
 end;
@@ -39355,6 +40234,7 @@ end;
 
 function TFhirConceptMapGroupList.AddItem(value: TFhirConceptMapGroup): TFhirConceptMapGroup;
 begin
+  assert(value.ClassName = 'TFhirConceptMapGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapGroup');
   add(value);
   result := value;
 end;
@@ -39616,7 +40496,7 @@ begin
 end;
 
 procedure TFhirConceptMapGroupElement.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('display');
@@ -39625,7 +40505,7 @@ begin
 end;
 
 function TFhirConceptMapGroupElement.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTargetList.sizeInBytes(magic));
 end;
@@ -39751,6 +40631,7 @@ end;
 
 function TFhirConceptMapGroupElementList.AddItem(value: TFhirConceptMapGroupElement): TFhirConceptMapGroupElement;
 begin
+  assert(value.ClassName = 'TFhirConceptMapGroupElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapGroupElement');
   add(value);
   result := value;
 end;
@@ -40053,7 +40934,7 @@ begin
 end;
 
 procedure TFhirConceptMapGroupElementTarget.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('display');
@@ -40064,7 +40945,7 @@ begin
 end;
 
 function TFhirConceptMapGroupElementTarget.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDependsOnList.sizeInBytes(magic));
   inc(result, FProductList.sizeInBytes(magic));
@@ -40230,6 +41111,7 @@ end;
 
 function TFhirConceptMapGroupElementTargetList.AddItem(value: TFhirConceptMapGroupElementTarget): TFhirConceptMapGroupElementTarget;
 begin
+  assert(value.ClassName = 'TFhirConceptMapGroupElementTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapGroupElementTarget');
   add(value);
   result := value;
 end;
@@ -40478,7 +41360,7 @@ begin
 end;
 
 procedure TFhirConceptMapGroupElementTargetDependsOn.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('property');
   fields.add('system');
@@ -40487,7 +41369,7 @@ begin
 end;
 
 function TFhirConceptMapGroupElementTargetDependsOn.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -40631,6 +41513,7 @@ end;
 
 function TFhirConceptMapGroupElementTargetDependsOnList.AddItem(value: TFhirConceptMapGroupElementTargetDependsOn): TFhirConceptMapGroupElementTargetDependsOn;
 begin
+  assert(value.ClassName = 'TFhirConceptMapGroupElementTargetDependsOn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapGroupElementTargetDependsOn');
   add(value);
   result := value;
 end;
@@ -40879,7 +41762,7 @@ begin
 end;
 
 procedure TFhirConceptMapGroupUnmapped.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('mode');
   fields.add('code');
@@ -40888,7 +41771,7 @@ begin
 end;
 
 function TFhirConceptMapGroupUnmapped.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -41028,6 +41911,7 @@ end;
 
 function TFhirConceptMapGroupUnmappedList.AddItem(value: TFhirConceptMapGroupUnmapped): TFhirConceptMapGroupUnmapped;
 begin
+  assert(value.ClassName = 'TFhirConceptMapGroupUnmapped', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapGroupUnmapped');
   add(value);
   result := value;
 end;
@@ -41280,7 +42164,7 @@ begin
 end;
 
 procedure TFhirConceptMap.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -41303,7 +42187,7 @@ begin
 end;
 
 function TFhirConceptMap.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FGroupList.sizeInBytes(magic));
 end;
@@ -41688,6 +42572,7 @@ end;
 
 function TFhirConceptMapList.AddItem(value: TFhirConceptMap): TFhirConceptMap;
 begin
+  assert(value.ClassName = 'TFhirConceptMap', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap');
   add(value);
   result := value;
 end;
@@ -41780,6 +42665,2751 @@ begin
 end;
 
 {$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONCEPTMAP2}
+{ TFhirConceptMap2Group }
+
+constructor TFhirConceptMap2Group.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2Group.Destroy;
+begin
+  FSource.free;
+  FTarget.free;
+  FElementList.Free;
+  FUnmapped.free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2Group.Assign(oSource : TFslObject);
+begin
+  inherited;
+  sourceElement := TFhirConceptMap2Group(oSource).sourceElement.Clone;
+  targetElement := TFhirConceptMap2Group(oSource).targetElement.Clone;
+  if (TFhirConceptMap2Group(oSource).FElementList = nil) then
+  begin
+    FElementList.free;
+    FElementList := nil;
+  end
+  else
+  begin
+    if FElementList = nil then
+      FElementList := TFhirConceptMap2GroupElementList.Create;
+    FElementList.Assign(TFhirConceptMap2Group(oSource).FElementList);
+  end;
+  unmapped := TFhirConceptMap2Group(oSource).unmapped.Clone;
+end;
+
+procedure TFhirConceptMap2Group.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'source') Then
+     list.add(self.link, 'source', FSource.Link);
+  if (child_name = 'target') Then
+     list.add(self.link, 'target', FTarget.Link);
+  if (child_name = 'element') Then
+    list.addAll(self, 'element', FElementList);
+  if (child_name = 'unmapped') Then
+     list.add(self.link, 'unmapped', FUnmapped.Link);
+end;
+
+procedure TFhirConceptMap2Group.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'source', 'canonical', false, TFhirCanonical, FSource.Link));
+  oList.add(TFHIRProperty.create(self, 'target', 'canonical', false, TFhirCanonical, FTarget.Link));
+  oList.add(TFHIRProperty.create(self, 'element', 'BackboneElement', true, TFhirConceptMap2GroupElement, FElementList.Link));
+  oList.add(TFHIRProperty.create(self, 'unmapped', 'BackboneElement', false, TFhirConceptMap2GroupUnmapped, FUnmapped.Link));
+end;
+
+function TFhirConceptMap2Group.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'source') then
+  begin
+    SourceElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'target') then
+  begin
+    TargetElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'element') then
+  begin
+    ElementList.add(propValue as TFhirConceptMap2GroupElement);
+    result := propValue;
+  end
+  else if (propName = 'unmapped') then
+  begin
+    Unmapped := propValue as TFhirConceptMap2GroupUnmapped;
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2Group.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'element') then ElementList.insertItem(index, propValue as TFhirConceptMap2GroupElement)
+  else inherited;
+end;
+
+function TFhirConceptMap2Group.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'source') then result := TFhirCanonical.create()
+  else if (propName = 'target') then result := TFhirCanonical.create()
+  else if (propName = 'element') then result := ElementList.new()
+  else if (propName = 'unmapped') then result := TFhirConceptMap2GroupUnmapped.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2Group.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'source') then result := 'canonical'
+  else if (propName = 'target') then result := 'canonical'
+  else if (propName = 'element') then result := 'BackboneElement'
+  else if (propName = 'unmapped') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2Group.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'source') then SourceElement := nil
+  else if (propName = 'target') then TargetElement := nil
+  else if (propName = 'element') then deletePropertyValue('element', ElementList, value)
+  else if (propName = 'unmapped') then UnmappedElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2Group.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'source') then SourceElement := asCanonical(new)
+  else if (propName = 'target') then TargetElement := asCanonical(new)
+  else if (propName = 'element') then replacePropertyValue('element', ElementList, existing, new)
+  else if (propName = 'unmapped') then UnmappedElement := new as TFhirConceptMap2GroupUnmapped
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2Group.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'element') then ElementList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2Group.fhirType : string;
+begin
+  result := 'ConceptMap2.group';
+end;
+
+function TFhirConceptMap2Group.Link : TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group(inherited Link);
+end;
+
+function TFhirConceptMap2Group.Clone : TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group(inherited Clone);
+end;
+
+function TFhirConceptMap2Group.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2Group;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2Group)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2Group(other);
+    result := compareDeep(sourceElement, o.sourceElement, true) and compareDeep(targetElement, o.targetElement, true) and 
+      compareDeep(elementList, o.elementList, true) and compareDeep(unmappedElement, o.unmappedElement, true);
+  end;
+end;
+
+function TFhirConceptMap2Group.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSource) and isEmptyProp(FTarget) and isEmptyProp(FelementList) and isEmptyProp(FUnmapped);
+end;
+
+procedure TFhirConceptMap2Group.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('source');
+  fields.add('target');
+  fields.add('element');
+  fields.add('unmapped');
+end;
+
+function TFhirConceptMap2Group.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FElementList.sizeInBytes(magic));
+end;
+
+procedure TFhirConceptMap2Group.SetSource(value : TFhirCanonical);
+begin
+  FSource.free;
+  FSource := value;
+end;
+
+function TFhirConceptMap2Group.GetSourceST : String;
+begin
+  if FSource = nil then
+    result := ''
+  else
+    result := FSource.value;
+end;
+
+procedure TFhirConceptMap2Group.SetSourceST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FSource = nil then
+      FSource := TFhirCanonical.create;
+    FSource.value := value
+  end
+  else if FSource <> nil then
+    FSource.value := '';
+end;
+
+procedure TFhirConceptMap2Group.SetTarget(value : TFhirCanonical);
+begin
+  FTarget.free;
+  FTarget := value;
+end;
+
+function TFhirConceptMap2Group.GetTargetST : String;
+begin
+  if FTarget = nil then
+    result := ''
+  else
+    result := FTarget.value;
+end;
+
+procedure TFhirConceptMap2Group.SetTargetST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTarget = nil then
+      FTarget := TFhirCanonical.create;
+    FTarget.value := value
+  end
+  else if FTarget <> nil then
+    FTarget.value := '';
+end;
+
+function TFhirConceptMap2Group.GetElementList : TFhirConceptMap2GroupElementList;
+begin
+  if FElementList = nil then
+    FElementList := TFhirConceptMap2GroupElementList.Create;
+  result := FElementList;
+end;
+
+function TFhirConceptMap2Group.GetHasElementList : boolean;
+begin
+  result := (FElementList <> nil) and (FElementList.count > 0);
+end;
+
+procedure TFhirConceptMap2Group.SetUnmapped(value : TFhirConceptMap2GroupUnmapped);
+begin
+  FUnmapped.free;
+  FUnmapped := value;
+end;
+
+{ TFhirConceptMap2GroupListEnumerator }
+
+constructor TFhirConceptMap2GroupListEnumerator.Create(list : TFhirConceptMap2GroupList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2GroupListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2GroupListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2GroupListEnumerator.GetCurrent : TFhirConceptMap2Group;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2GroupListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2GroupList }
+
+function TFhirConceptMap2GroupList.AddItem(value: TFhirConceptMap2Group): TFhirConceptMap2Group;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2Group', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2Group');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2GroupList.Append: TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2GroupList.GetEnumerator : TFhirConceptMap2GroupListEnumerator;
+begin
+  result := TFhirConceptMap2GroupListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2GroupList.Clone: TFhirConceptMap2GroupList;
+begin
+  result := TFhirConceptMap2GroupList(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2GroupList.GetItemN(index: Integer): TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2Group;
+end;
+function TFhirConceptMap2GroupList.IndexOf(value: TFhirConceptMap2Group): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2GroupList.Insert(index: Integer): TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupList.InsertItem(index: Integer; value: TFhirConceptMap2Group);
+begin
+  assert(value is TFhirConceptMap2Group);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2GroupList.Item(index: Integer): TFhirConceptMap2Group;
+begin
+  result := TFhirConceptMap2Group(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupList.Link: TFhirConceptMap2GroupList;
+begin
+  result := TFhirConceptMap2GroupList(inherited Link);
+end;
+
+procedure TFhirConceptMap2GroupList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2GroupList.SetItemByIndex(index: Integer; value: TFhirConceptMap2Group);
+begin
+  assert(value is TFhirConceptMap2Group);
+  FhirConceptMap2Groups[index] := value;
+end;
+
+procedure TFhirConceptMap2GroupList.SetItemN(index: Integer; value: TFhirConceptMap2Group);
+begin
+  assert(value is TFhirConceptMap2Group);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirConceptMap2GroupElement }
+
+constructor TFhirConceptMap2GroupElement.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2GroupElement.Destroy;
+begin
+  FCode.free;
+  FDisplay.free;
+  FValueSet.free;
+  FNoMap.free;
+  FTargetList.Free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2GroupElement.Assign(oSource : TFslObject);
+begin
+  inherited;
+  codeElement := TFhirConceptMap2GroupElement(oSource).codeElement.Clone;
+  displayElement := TFhirConceptMap2GroupElement(oSource).displayElement.Clone;
+  valueSetElement := TFhirConceptMap2GroupElement(oSource).valueSetElement.Clone;
+  noMapElement := TFhirConceptMap2GroupElement(oSource).noMapElement.Clone;
+  if (TFhirConceptMap2GroupElement(oSource).FTargetList = nil) then
+  begin
+    FTargetList.free;
+    FTargetList := nil;
+  end
+  else
+  begin
+    if FTargetList = nil then
+      FTargetList := TFhirConceptMap2GroupElementTargetList.Create;
+    FTargetList.Assign(TFhirConceptMap2GroupElement(oSource).FTargetList);
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElement.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'display') Then
+     list.add(self.link, 'display', FDisplay.Link);
+  if (child_name = 'valueSet') Then
+     list.add(self.link, 'valueSet', FValueSet.Link);
+  if (child_name = 'noMap') Then
+     list.add(self.link, 'noMap', FNoMap.Link);
+  if (child_name = 'target') Then
+    list.addAll(self, 'target', FTargetList);
+end;
+
+procedure TFhirConceptMap2GroupElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirCode, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));
+  oList.add(TFHIRProperty.create(self, 'valueSet', 'canonical', false, TFhirCanonical, FValueSet.Link));
+  oList.add(TFHIRProperty.create(self, 'noMap', 'boolean', false, TFhirBoolean, FNoMap.Link));
+  oList.add(TFHIRProperty.create(self, 'target', 'BackboneElement', true, TFhirConceptMap2GroupElementTarget, FTargetList.Link));
+end;
+
+function TFhirConceptMap2GroupElement.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    CodeElement := asCode(propValue);
+    result := propValue;
+  end
+  else if (propName = 'display') then
+  begin
+    DisplayElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'valueSet') then
+  begin
+    ValueSetElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'noMap') then
+  begin
+    NoMapElement := asBoolean(propValue);
+    result := propValue;
+  end
+  else if (propName = 'target') then
+  begin
+    TargetList.add(propValue as TFhirConceptMap2GroupElementTarget);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2GroupElement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'target') then TargetList.insertItem(index, propValue as TFhirConceptMap2GroupElementTarget)
+  else inherited;
+end;
+
+function TFhirConceptMap2GroupElement.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirCode.create()
+  else if (propName = 'display') then result := TFhirString.create()
+  else if (propName = 'valueSet') then result := TFhirCanonical.create()
+  else if (propName = 'noMap') then result := TFhirBoolean.create()
+  else if (propName = 'target') then result := TargetList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2GroupElement.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'code'
+  else if (propName = 'display') then result := 'string'
+  else if (propName = 'valueSet') then result := 'canonical'
+  else if (propName = 'noMap') then result := 'boolean'
+  else if (propName = 'target') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2GroupElement.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else if (propName = 'valueSet') then ValueSetElement := nil
+  else if (propName = 'noMap') then NoMapElement := nil
+  else if (propName = 'target') then deletePropertyValue('target', TargetList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2GroupElement.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asCode(new)
+  else if (propName = 'display') then DisplayElement := asString(new)
+  else if (propName = 'valueSet') then ValueSetElement := asCanonical(new)
+  else if (propName = 'noMap') then NoMapElement := asBoolean(new)
+  else if (propName = 'target') then replacePropertyValue('target', TargetList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2GroupElement.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'target') then TargetList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2GroupElement.fhirType : string;
+begin
+  result := 'ConceptMap2.group.element';
+end;
+
+function TFhirConceptMap2GroupElement.Link : TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement(inherited Link);
+end;
+
+function TFhirConceptMap2GroupElement.Clone : TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElement.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2GroupElement;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2GroupElement)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2GroupElement(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(displayElement, o.displayElement, true) and 
+      compareDeep(valueSetElement, o.valueSetElement, true) and compareDeep(noMapElement, o.noMapElement, true) and 
+      compareDeep(targetList, o.targetList, true);
+  end;
+end;
+
+function TFhirConceptMap2GroupElement.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FDisplay) and isEmptyProp(FValueSet) and isEmptyProp(FNoMap) and isEmptyProp(FtargetList);
+end;
+
+procedure TFhirConceptMap2GroupElement.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('display');
+  fields.add('valueSet');
+  fields.add('noMap');
+  fields.add('target');
+end;
+
+function TFhirConceptMap2GroupElement.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTargetList.sizeInBytes(magic));
+end;
+
+procedure TFhirConceptMap2GroupElement.SetCode(value : TFhirCode);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirConceptMap2GroupElement.GetCodeST : String;
+begin
+  if FCode = nil then
+    result := ''
+  else
+    result := FCode.value;
+end;
+
+procedure TFhirConceptMap2GroupElement.SetCodeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCode = nil then
+      FCode := TFhirCode.create;
+    FCode.value := value
+  end
+  else if FCode <> nil then
+    FCode.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElement.SetDisplay(value : TFhirString);
+begin
+  FDisplay.free;
+  FDisplay := value;
+end;
+
+function TFhirConceptMap2GroupElement.GetDisplayST : String;
+begin
+  if FDisplay = nil then
+    result := ''
+  else
+    result := FDisplay.value;
+end;
+
+procedure TFhirConceptMap2GroupElement.SetDisplayST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDisplay = nil then
+      FDisplay := TFhirString.create;
+    FDisplay.value := value
+  end
+  else if FDisplay <> nil then
+    FDisplay.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElement.SetValueSet(value : TFhirCanonical);
+begin
+  FValueSet.free;
+  FValueSet := value;
+end;
+
+function TFhirConceptMap2GroupElement.GetValueSetST : String;
+begin
+  if FValueSet = nil then
+    result := ''
+  else
+    result := FValueSet.value;
+end;
+
+procedure TFhirConceptMap2GroupElement.SetValueSetST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FValueSet = nil then
+      FValueSet := TFhirCanonical.create;
+    FValueSet.value := value
+  end
+  else if FValueSet <> nil then
+    FValueSet.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElement.SetNoMap(value : TFhirBoolean);
+begin
+  FNoMap.free;
+  FNoMap := value;
+end;
+
+function TFhirConceptMap2GroupElement.GetNoMapST : Boolean;
+begin
+  if FNoMap = nil then
+    result := false
+  else
+    result := FNoMap.value;
+end;
+
+procedure TFhirConceptMap2GroupElement.SetNoMapST(value : Boolean);
+begin
+  if FNoMap = nil then
+    FNoMap := TFhirBoolean.create;
+  FNoMap.value := value
+end;
+
+function TFhirConceptMap2GroupElement.GetTargetList : TFhirConceptMap2GroupElementTargetList;
+begin
+  if FTargetList = nil then
+    FTargetList := TFhirConceptMap2GroupElementTargetList.Create;
+  result := FTargetList;
+end;
+
+function TFhirConceptMap2GroupElement.GetHasTargetList : boolean;
+begin
+  result := (FTargetList <> nil) and (FTargetList.count > 0);
+end;
+
+{ TFhirConceptMap2GroupElementListEnumerator }
+
+constructor TFhirConceptMap2GroupElementListEnumerator.Create(list : TFhirConceptMap2GroupElementList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2GroupElementListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2GroupElementListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2GroupElementListEnumerator.GetCurrent : TFhirConceptMap2GroupElement;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2GroupElementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2GroupElementList }
+
+function TFhirConceptMap2GroupElementList.AddItem(value: TFhirConceptMap2GroupElement): TFhirConceptMap2GroupElement;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2GroupElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2GroupElement');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2GroupElementList.Append: TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2GroupElementList.GetEnumerator : TFhirConceptMap2GroupElementListEnumerator;
+begin
+  result := TFhirConceptMap2GroupElementListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2GroupElementList.Clone: TFhirConceptMap2GroupElementList;
+begin
+  result := TFhirConceptMap2GroupElementList(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElementList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2GroupElementList.GetItemN(index: Integer): TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2GroupElement;
+end;
+function TFhirConceptMap2GroupElementList.IndexOf(value: TFhirConceptMap2GroupElement): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2GroupElementList.Insert(index: Integer): TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementList.InsertItem(index: Integer; value: TFhirConceptMap2GroupElement);
+begin
+  assert(value is TFhirConceptMap2GroupElement);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2GroupElementList.Item(index: Integer): TFhirConceptMap2GroupElement;
+begin
+  result := TFhirConceptMap2GroupElement(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementList.Link: TFhirConceptMap2GroupElementList;
+begin
+  result := TFhirConceptMap2GroupElementList(inherited Link);
+end;
+
+procedure TFhirConceptMap2GroupElementList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2GroupElementList.SetItemByIndex(index: Integer; value: TFhirConceptMap2GroupElement);
+begin
+  assert(value is TFhirConceptMap2GroupElement);
+  FhirConceptMap2GroupElements[index] := value;
+end;
+
+procedure TFhirConceptMap2GroupElementList.SetItemN(index: Integer; value: TFhirConceptMap2GroupElement);
+begin
+  assert(value is TFhirConceptMap2GroupElement);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirConceptMap2GroupElementTarget }
+
+constructor TFhirConceptMap2GroupElementTarget.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2GroupElementTarget.Destroy;
+begin
+  FCode.free;
+  FDisplay.free;
+  FValueSet.free;
+  FRelationship.free;
+  FComment.free;
+  FDependsOnList.Free;
+  FProductList.Free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.Assign(oSource : TFslObject);
+begin
+  inherited;
+  codeElement := TFhirConceptMap2GroupElementTarget(oSource).codeElement.Clone;
+  displayElement := TFhirConceptMap2GroupElementTarget(oSource).displayElement.Clone;
+  valueSetElement := TFhirConceptMap2GroupElementTarget(oSource).valueSetElement.Clone;
+  relationshipElement := TFhirConceptMap2GroupElementTarget(oSource).relationshipElement.Clone;
+  commentElement := TFhirConceptMap2GroupElementTarget(oSource).commentElement.Clone;
+  if (TFhirConceptMap2GroupElementTarget(oSource).FDependsOnList = nil) then
+  begin
+    FDependsOnList.free;
+    FDependsOnList := nil;
+  end
+  else
+  begin
+    if FDependsOnList = nil then
+      FDependsOnList := TFhirConceptMap2GroupElementTargetDependsOnList.Create;
+    FDependsOnList.Assign(TFhirConceptMap2GroupElementTarget(oSource).FDependsOnList);
+  end;
+  if (TFhirConceptMap2GroupElementTarget(oSource).FProductList = nil) then
+  begin
+    FProductList.free;
+    FProductList := nil;
+  end
+  else
+  begin
+    if FProductList = nil then
+      FProductList := TFhirConceptMap2GroupElementTargetDependsOnList.Create;
+    FProductList.Assign(TFhirConceptMap2GroupElementTarget(oSource).FProductList);
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'display') Then
+     list.add(self.link, 'display', FDisplay.Link);
+  if (child_name = 'valueSet') Then
+     list.add(self.link, 'valueSet', FValueSet.Link);
+  if (child_name = 'relationship') Then
+     list.add(self.link, 'relationship', FRelationship.Link);
+  if (child_name = 'comment') Then
+     list.add(self.link, 'comment', FComment.Link);
+  if (child_name = 'dependsOn') Then
+    list.addAll(self, 'dependsOn', FDependsOnList);
+  if (child_name = 'product') Then
+    list.addAll(self, 'product', FProductList);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirCode, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));
+  oList.add(TFHIRProperty.create(self, 'valueSet', 'canonical', false, TFhirCanonical, FValueSet.Link));
+  oList.add(TFHIRProperty.create(self, 'relationship', 'code', false, TFhirEnum, FRelationship.Link));
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
+  oList.add(TFHIRProperty.create(self, 'dependsOn', 'BackboneElement', true, TFhirConceptMap2GroupElementTargetDependsOn, FDependsOnList.Link));
+  oList.add(TFHIRProperty.create(self, 'product', '', true, TFhirConceptMap2GroupElementTargetDependsOn, FProductList.Link));
+end;
+
+function TFhirConceptMap2GroupElementTarget.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'code') then
+  begin
+    CodeElement := asCode(propValue);
+    result := propValue;
+  end
+  else if (propName = 'display') then
+  begin
+    DisplayElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'valueSet') then
+  begin
+    ValueSetElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'relationship') then
+  begin
+    RelationshipElement := asEnum(SYSTEMS_TFhirConceptMapRelationshipEnum, CODES_TFhirConceptMapRelationshipEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'comment') then
+  begin
+    CommentElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'dependsOn') then
+  begin
+    DependsOnList.add(propValue as TFhirConceptMap2GroupElementTargetDependsOn);
+    result := propValue;
+  end
+  else if (propName = 'product') then
+  begin
+    ProductList.add(propValue as TFhirConceptMap2GroupElementTargetDependsOn);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'dependsOn') then DependsOnList.insertItem(index, propValue as TFhirConceptMap2GroupElementTargetDependsOn)
+  else if (propName = 'product') then ProductList.insertItem(index, propValue as TFhirConceptMap2GroupElementTargetDependsOn)
+  else inherited;
+end;
+
+function TFhirConceptMap2GroupElementTarget.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirCode.create()
+  else if (propName = 'display') then result := TFhirString.create()
+  else if (propName = 'valueSet') then result := TFhirCanonical.create()
+  else if (propName = 'relationship') then result := TFhirEnum.create(SYSTEMS_TFhirConceptMapRelationshipEnum[ConceptMapRelationshipNull], CODES_TFhirConceptMapRelationshipEnum[ConceptMapRelationshipNull]) 
+  else if (propName = 'comment') then result := TFhirString.create()
+  else if (propName = 'dependsOn') then result := DependsOnList.new()
+  else if (propName = 'product') then result := ProductList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2GroupElementTarget.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'code') then result := 'code'
+  else if (propName = 'display') then result := 'string'
+  else if (propName = 'valueSet') then result := 'canonical'
+  else if (propName = 'relationship') then result := 'code'
+  else if (propName = 'comment') then result := 'string'
+  else if (propName = 'dependsOn') then result := 'BackboneElement'
+  else if (propName = 'product') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else if (propName = 'valueSet') then ValueSetElement := nil
+  else if (propName = 'relationship') then RelationshipElement := nil
+  else if (propName = 'comment') then CommentElement := nil
+  else if (propName = 'dependsOn') then deletePropertyValue('dependsOn', DependsOnList, value)
+  else if (propName = 'product') then deletePropertyValue('product', ProductList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asCode(new)
+  else if (propName = 'display') then DisplayElement := asString(new)
+  else if (propName = 'valueSet') then ValueSetElement := asCanonical(new)
+  else if (propName = 'relationship') then RelationshipElement := asEnum(SYSTEMS_TFhirConceptMapRelationshipEnum, CODES_TFhirConceptMapRelationshipEnum, new)
+  else if (propName = 'comment') then CommentElement := asString(new)
+  else if (propName = 'dependsOn') then replacePropertyValue('dependsOn', DependsOnList, existing, new)
+  else if (propName = 'product') then replacePropertyValue('product', ProductList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'dependsOn') then DependsOnList.move(source, destination)
+  else if (propName = 'product') then ProductList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2GroupElementTarget.fhirType : string;
+begin
+  result := 'ConceptMap2.group.element.target';
+end;
+
+function TFhirConceptMap2GroupElementTarget.Link : TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget(inherited Link);
+end;
+
+function TFhirConceptMap2GroupElementTarget.Clone : TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElementTarget.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2GroupElementTarget;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2GroupElementTarget)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2GroupElementTarget(other);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(displayElement, o.displayElement, true) and 
+      compareDeep(valueSetElement, o.valueSetElement, true) and compareDeep(relationshipElement, o.relationshipElement, true) and 
+      compareDeep(commentElement, o.commentElement, true) and compareDeep(dependsOnList, o.dependsOnList, true) and 
+      compareDeep(productList, o.productList, true);
+  end;
+end;
+
+function TFhirConceptMap2GroupElementTarget.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FDisplay) and isEmptyProp(FValueSet) and isEmptyProp(FRelationship) and isEmptyProp(FComment) and isEmptyProp(FdependsOnList) and isEmptyProp(FproductList);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('display');
+  fields.add('valueSet');
+  fields.add('relationship');
+  fields.add('comment');
+  fields.add('dependsOn');
+  fields.add('product');
+end;
+
+function TFhirConceptMap2GroupElementTarget.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDependsOnList.sizeInBytes(magic));
+  inc(result, FProductList.sizeInBytes(magic));
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetCode(value : TFhirCode);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetCodeST : String;
+begin
+  if FCode = nil then
+    result := ''
+  else
+    result := FCode.value;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetCodeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCode = nil then
+      FCode := TFhirCode.create;
+    FCode.value := value
+  end
+  else if FCode <> nil then
+    FCode.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetDisplay(value : TFhirString);
+begin
+  FDisplay.free;
+  FDisplay := value;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetDisplayST : String;
+begin
+  if FDisplay = nil then
+    result := ''
+  else
+    result := FDisplay.value;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetDisplayST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDisplay = nil then
+      FDisplay := TFhirString.create;
+    FDisplay.value := value
+  end
+  else if FDisplay <> nil then
+    FDisplay.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetValueSet(value : TFhirCanonical);
+begin
+  FValueSet.free;
+  FValueSet := value;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetValueSetST : String;
+begin
+  if FValueSet = nil then
+    result := ''
+  else
+    result := FValueSet.value;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetValueSetST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FValueSet = nil then
+      FValueSet := TFhirCanonical.create;
+    FValueSet.value := value
+  end
+  else if FValueSet <> nil then
+    FValueSet.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetRelationship(value : TFhirEnum);
+begin
+  FRelationship.free;
+  FRelationship := value;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetRelationshipST : TFhirConceptMapRelationshipEnum;
+begin
+  if FRelationship = nil then
+    result := TFhirConceptMapRelationshipEnum(0)
+  else
+    result := TFhirConceptMapRelationshipEnum(StringArrayIndexOfSensitive(CODES_TFhirConceptMapRelationshipEnum, FRelationship.value));
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetRelationshipST(value : TFhirConceptMapRelationshipEnum);
+begin
+  if ord(value) = 0 then
+    RelationshipElement := nil
+  else
+    RelationshipElement := TFhirEnum.create(SYSTEMS_TFhirConceptMapRelationshipEnum[value], CODES_TFhirConceptMapRelationshipEnum[value]);
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetComment(value : TFhirString);
+begin
+  FComment.free;
+  FComment := value;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetCommentST : String;
+begin
+  if FComment = nil then
+    result := ''
+  else
+    result := FComment.value;
+end;
+
+procedure TFhirConceptMap2GroupElementTarget.SetCommentST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FComment = nil then
+      FComment := TFhirString.create;
+    FComment.value := value
+  end
+  else if FComment <> nil then
+    FComment.value := '';
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetDependsOnList : TFhirConceptMap2GroupElementTargetDependsOnList;
+begin
+  if FDependsOnList = nil then
+    FDependsOnList := TFhirConceptMap2GroupElementTargetDependsOnList.Create;
+  result := FDependsOnList;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetHasDependsOnList : boolean;
+begin
+  result := (FDependsOnList <> nil) and (FDependsOnList.count > 0);
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetProductList : TFhirConceptMap2GroupElementTargetDependsOnList;
+begin
+  if FProductList = nil then
+    FProductList := TFhirConceptMap2GroupElementTargetDependsOnList.Create;
+  result := FProductList;
+end;
+
+function TFhirConceptMap2GroupElementTarget.GetHasProductList : boolean;
+begin
+  result := (FProductList <> nil) and (FProductList.count > 0);
+end;
+
+{ TFhirConceptMap2GroupElementTargetListEnumerator }
+
+constructor TFhirConceptMap2GroupElementTargetListEnumerator.Create(list : TFhirConceptMap2GroupElementTargetList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2GroupElementTargetListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2GroupElementTargetListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2GroupElementTargetListEnumerator.GetCurrent : TFhirConceptMap2GroupElementTarget;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2GroupElementTargetListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2GroupElementTargetList }
+
+function TFhirConceptMap2GroupElementTargetList.AddItem(value: TFhirConceptMap2GroupElementTarget): TFhirConceptMap2GroupElementTarget;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2GroupElementTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2GroupElementTarget');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Append: TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2GroupElementTargetList.GetEnumerator : TFhirConceptMap2GroupElementTargetListEnumerator;
+begin
+  result := TFhirConceptMap2GroupElementTargetListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Clone: TFhirConceptMap2GroupElementTargetList;
+begin
+  result := TFhirConceptMap2GroupElementTargetList(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2GroupElementTargetList.GetItemN(index: Integer): TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2GroupElementTarget;
+end;
+function TFhirConceptMap2GroupElementTargetList.IndexOf(value: TFhirConceptMap2GroupElementTarget): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Insert(index: Integer): TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetList.InsertItem(index: Integer; value: TFhirConceptMap2GroupElementTarget);
+begin
+  assert(value is TFhirConceptMap2GroupElementTarget);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Item(index: Integer): TFhirConceptMap2GroupElementTarget;
+begin
+  result := TFhirConceptMap2GroupElementTarget(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementTargetList.Link: TFhirConceptMap2GroupElementTargetList;
+begin
+  result := TFhirConceptMap2GroupElementTargetList(inherited Link);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetList.SetItemByIndex(index: Integer; value: TFhirConceptMap2GroupElementTarget);
+begin
+  assert(value is TFhirConceptMap2GroupElementTarget);
+  FhirConceptMap2GroupElementTargets[index] := value;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetList.SetItemN(index: Integer; value: TFhirConceptMap2GroupElementTarget);
+begin
+  assert(value is TFhirConceptMap2GroupElementTarget);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirConceptMap2GroupElementTargetDependsOn }
+
+constructor TFhirConceptMap2GroupElementTargetDependsOn.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2GroupElementTargetDependsOn.Destroy;
+begin
+  FProperty_.free;
+  FValue.free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.Assign(oSource : TFslObject);
+begin
+  inherited;
+  property_Element := TFhirConceptMap2GroupElementTargetDependsOn(oSource).property_Element.Clone;
+  value := TFhirConceptMap2GroupElementTargetDependsOn(oSource).value.Clone;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'property') Then
+     list.add(self.link, 'property', FProperty_.Link);
+  if (child_name = 'value[x]') or (child_name = 'value') Then
+     list.add(self.link, 'value[x]', FValue.Link);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'property', 'uri', false, TFhirUri, FProperty_.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'code|Coding|string|integer|boolean|dateTime|decimal|uri|id', false, TFhirDataType, FValue.Link));
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'property') then
+  begin
+    Property_Element := asUri(propValue);
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'value', ['Code', 'Coding', 'String', 'Integer', 'Boolean', 'DateTime', 'Decimal', 'Uri', 'Id'])) then
+  begin
+    Value := propValue as TFhirDataType;
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'property') then result := TFhirUri.create()
+  else if (isMatchingName(propName, 'value', ['Code', 'Coding', 'String', 'Integer', 'Boolean', 'DateTime', 'Decimal', 'Uri', 'Id'])) then raise EFHIRException.create('Cannot make property Value')
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'property') then result := 'uri'
+  else if (propName = 'value[x]') then result := 'code|Coding|string|integer|boolean|dateTime|decimal|uri|id'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'property') then Property_Element := nil
+  else if (isMatchingName(propName, 'value', ['Code', 'Coding', 'String', 'Integer', 'Boolean', 'DateTime', 'Decimal', 'Uri', 'Id'])) then ValueElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'property') then Property_Element := asUri(new)
+  else if (isMatchingName(propName, 'value', ['Code', 'Coding', 'String', 'Integer', 'Boolean', 'DateTime', 'Decimal', 'Uri', 'Id'])) then ValueElement := new as TFhirDataType
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.fhirType : string;
+begin
+  result := 'ConceptMap2.group.element.target.dependsOn';
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.Link : TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn(inherited Link);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.Clone : TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2GroupElementTargetDependsOn)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2GroupElementTargetDependsOn(other);
+    result := compareDeep(property_Element, o.property_Element, true) and compareDeep(valueElement, o.valueElement, true);
+  end;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FProperty_) and isEmptyProp(FValue);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('property');
+  fields.add('value[x]');
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.SetProperty_(value : TFhirUri);
+begin
+  FProperty_.free;
+  FProperty_ := value;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOn.GetProperty_ST : String;
+begin
+  if FProperty_ = nil then
+    result := ''
+  else
+    result := FProperty_.value;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.SetProperty_ST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FProperty_ = nil then
+      FProperty_ := TFhirUri.create;
+    FProperty_.value := value
+  end
+  else if FProperty_ <> nil then
+    FProperty_.value := '';
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOn.SetValue(value : TFhirDataType);
+begin
+  FValue.free;
+  FValue := value;
+end;
+
+{ TFhirConceptMap2GroupElementTargetDependsOnListEnumerator }
+
+constructor TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.Create(list : TFhirConceptMap2GroupElementTargetDependsOnList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.GetCurrent : TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2GroupElementTargetDependsOnList }
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.AddItem(value: TFhirConceptMap2GroupElementTargetDependsOn): TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2GroupElementTargetDependsOn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2GroupElementTargetDependsOn');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Append: TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOnList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.GetEnumerator : TFhirConceptMap2GroupElementTargetDependsOnListEnumerator;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOnListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Clone: TFhirConceptMap2GroupElementTargetDependsOnList;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOnList(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.GetItemN(index: Integer): TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn;
+end;
+function TFhirConceptMap2GroupElementTargetDependsOnList.IndexOf(value: TFhirConceptMap2GroupElementTargetDependsOn): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Insert(index: Integer): TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOnList.InsertItem(index: Integer; value: TFhirConceptMap2GroupElementTargetDependsOn);
+begin
+  assert(value is TFhirConceptMap2GroupElementTargetDependsOn);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Item(index: Integer): TFhirConceptMap2GroupElementTargetDependsOn;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOn(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupElementTargetDependsOnList.Link: TFhirConceptMap2GroupElementTargetDependsOnList;
+begin
+  result := TFhirConceptMap2GroupElementTargetDependsOnList(inherited Link);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOnList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOnList.SetItemByIndex(index: Integer; value: TFhirConceptMap2GroupElementTargetDependsOn);
+begin
+  assert(value is TFhirConceptMap2GroupElementTargetDependsOn);
+  FhirConceptMap2GroupElementTargetDependsOns[index] := value;
+end;
+
+procedure TFhirConceptMap2GroupElementTargetDependsOnList.SetItemN(index: Integer; value: TFhirConceptMap2GroupElementTargetDependsOn);
+begin
+  assert(value is TFhirConceptMap2GroupElementTargetDependsOn);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirConceptMap2GroupUnmapped }
+
+constructor TFhirConceptMap2GroupUnmapped.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2GroupUnmapped.Destroy;
+begin
+  FMode.free;
+  FCode.free;
+  FDisplay.free;
+  FValueSet.free;
+  FUrl.free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.Assign(oSource : TFslObject);
+begin
+  inherited;
+  modeElement := TFhirConceptMap2GroupUnmapped(oSource).modeElement.Clone;
+  codeElement := TFhirConceptMap2GroupUnmapped(oSource).codeElement.Clone;
+  displayElement := TFhirConceptMap2GroupUnmapped(oSource).displayElement.Clone;
+  valueSetElement := TFhirConceptMap2GroupUnmapped(oSource).valueSetElement.Clone;
+  urlElement := TFhirConceptMap2GroupUnmapped(oSource).urlElement.Clone;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'mode') Then
+     list.add(self.link, 'mode', FMode.Link);
+  if (child_name = 'code') Then
+     list.add(self.link, 'code', FCode.Link);
+  if (child_name = 'display') Then
+     list.add(self.link, 'display', FDisplay.Link);
+  if (child_name = 'valueSet') Then
+     list.add(self.link, 'valueSet', FValueSet.Link);
+  if (child_name = 'url') Then
+     list.add(self.link, 'url', FUrl.Link);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFhirEnum, FMode.Link));
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirCode, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));
+  oList.add(TFHIRProperty.create(self, 'valueSet', 'canonical', false, TFhirCanonical, FValueSet.Link));
+  oList.add(TFHIRProperty.create(self, 'url', 'canonical', false, TFhirCanonical, FUrl.Link));
+end;
+
+function TFhirConceptMap2GroupUnmapped.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'mode') then
+  begin
+    ModeElement := asEnum(SYSTEMS_TFhirConceptMapGroupUnmappedModeEnum, CODES_TFhirConceptMapGroupUnmappedModeEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'code') then
+  begin
+    CodeElement := asCode(propValue);
+    result := propValue;
+  end
+  else if (propName = 'display') then
+  begin
+    DisplayElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'valueSet') then
+  begin
+    ValueSetElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else if (propName = 'url') then
+  begin
+    UrlElement := asCanonical(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirConceptMap2GroupUnmapped.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'mode') then result := TFhirEnum.create(SYSTEMS_TFhirConceptMapGroupUnmappedModeEnum[ConceptMapGroupUnmappedModeNull], CODES_TFhirConceptMapGroupUnmappedModeEnum[ConceptMapGroupUnmappedModeNull]) 
+  else if (propName = 'code') then result := TFhirCode.create()
+  else if (propName = 'display') then result := TFhirString.create()
+  else if (propName = 'valueSet') then result := TFhirCanonical.create()
+  else if (propName = 'url') then result := TFhirCanonical.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2GroupUnmapped.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'mode') then result := 'code'
+  else if (propName = 'code') then result := 'code'
+  else if (propName = 'display') then result := 'string'
+  else if (propName = 'valueSet') then result := 'canonical'
+  else if (propName = 'url') then result := 'canonical'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'mode') then ModeElement := nil
+  else if (propName = 'code') then CodeElement := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else if (propName = 'valueSet') then ValueSetElement := nil
+  else if (propName = 'url') then UrlElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'mode') then ModeElement := asEnum(SYSTEMS_TFhirConceptMapGroupUnmappedModeEnum, CODES_TFhirConceptMapGroupUnmappedModeEnum, new)
+  else if (propName = 'code') then CodeElement := asCode(new)
+  else if (propName = 'display') then DisplayElement := asString(new)
+  else if (propName = 'valueSet') then ValueSetElement := asCanonical(new)
+  else if (propName = 'url') then UrlElement := asCanonical(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2GroupUnmapped.fhirType : string;
+begin
+  result := 'ConceptMap2.group.unmapped';
+end;
+
+function TFhirConceptMap2GroupUnmapped.Link : TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped(inherited Link);
+end;
+
+function TFhirConceptMap2GroupUnmapped.Clone : TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupUnmapped.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2GroupUnmapped;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2GroupUnmapped)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2GroupUnmapped(other);
+    result := compareDeep(modeElement, o.modeElement, true) and compareDeep(codeElement, o.codeElement, true) and 
+      compareDeep(displayElement, o.displayElement, true) and compareDeep(valueSetElement, o.valueSetElement, true) and 
+      compareDeep(urlElement, o.urlElement, true);
+  end;
+end;
+
+function TFhirConceptMap2GroupUnmapped.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FMode) and isEmptyProp(FCode) and isEmptyProp(FDisplay) and isEmptyProp(FValueSet) and isEmptyProp(FUrl);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('mode');
+  fields.add('code');
+  fields.add('display');
+  fields.add('valueSet');
+  fields.add('url');
+end;
+
+function TFhirConceptMap2GroupUnmapped.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetMode(value : TFhirEnum);
+begin
+  FMode.free;
+  FMode := value;
+end;
+
+function TFhirConceptMap2GroupUnmapped.GetModeST : TFhirConceptMapGroupUnmappedModeEnum;
+begin
+  if FMode = nil then
+    result := TFhirConceptMapGroupUnmappedModeEnum(0)
+  else
+    result := TFhirConceptMapGroupUnmappedModeEnum(StringArrayIndexOfSensitive(CODES_TFhirConceptMapGroupUnmappedModeEnum, FMode.value));
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetModeST(value : TFhirConceptMapGroupUnmappedModeEnum);
+begin
+  if ord(value) = 0 then
+    ModeElement := nil
+  else
+    ModeElement := TFhirEnum.create(SYSTEMS_TFhirConceptMapGroupUnmappedModeEnum[value], CODES_TFhirConceptMapGroupUnmappedModeEnum[value]);
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetCode(value : TFhirCode);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+function TFhirConceptMap2GroupUnmapped.GetCodeST : String;
+begin
+  if FCode = nil then
+    result := ''
+  else
+    result := FCode.value;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetCodeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCode = nil then
+      FCode := TFhirCode.create;
+    FCode.value := value
+  end
+  else if FCode <> nil then
+    FCode.value := '';
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetDisplay(value : TFhirString);
+begin
+  FDisplay.free;
+  FDisplay := value;
+end;
+
+function TFhirConceptMap2GroupUnmapped.GetDisplayST : String;
+begin
+  if FDisplay = nil then
+    result := ''
+  else
+    result := FDisplay.value;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetDisplayST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDisplay = nil then
+      FDisplay := TFhirString.create;
+    FDisplay.value := value
+  end
+  else if FDisplay <> nil then
+    FDisplay.value := '';
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetValueSet(value : TFhirCanonical);
+begin
+  FValueSet.free;
+  FValueSet := value;
+end;
+
+function TFhirConceptMap2GroupUnmapped.GetValueSetST : String;
+begin
+  if FValueSet = nil then
+    result := ''
+  else
+    result := FValueSet.value;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetValueSetST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FValueSet = nil then
+      FValueSet := TFhirCanonical.create;
+    FValueSet.value := value
+  end
+  else if FValueSet <> nil then
+    FValueSet.value := '';
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetUrl(value : TFhirCanonical);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+function TFhirConceptMap2GroupUnmapped.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirConceptMap2GroupUnmapped.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirCanonical.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+{ TFhirConceptMap2GroupUnmappedListEnumerator }
+
+constructor TFhirConceptMap2GroupUnmappedListEnumerator.Create(list : TFhirConceptMap2GroupUnmappedList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2GroupUnmappedListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2GroupUnmappedListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2GroupUnmappedListEnumerator.GetCurrent : TFhirConceptMap2GroupUnmapped;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2GroupUnmappedListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2GroupUnmappedList }
+
+function TFhirConceptMap2GroupUnmappedList.AddItem(value: TFhirConceptMap2GroupUnmapped): TFhirConceptMap2GroupUnmapped;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2GroupUnmapped', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2GroupUnmapped');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Append: TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupUnmappedList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2GroupUnmappedList.GetEnumerator : TFhirConceptMap2GroupUnmappedListEnumerator;
+begin
+  result := TFhirConceptMap2GroupUnmappedListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Clone: TFhirConceptMap2GroupUnmappedList;
+begin
+  result := TFhirConceptMap2GroupUnmappedList(inherited Clone);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2GroupUnmappedList.GetItemN(index: Integer): TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2GroupUnmapped;
+end;
+function TFhirConceptMap2GroupUnmappedList.IndexOf(value: TFhirConceptMap2GroupUnmapped): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Insert(index: Integer): TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2GroupUnmappedList.InsertItem(index: Integer; value: TFhirConceptMap2GroupUnmapped);
+begin
+  assert(value is TFhirConceptMap2GroupUnmapped);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Item(index: Integer): TFhirConceptMap2GroupUnmapped;
+begin
+  result := TFhirConceptMap2GroupUnmapped(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2GroupUnmappedList.Link: TFhirConceptMap2GroupUnmappedList;
+begin
+  result := TFhirConceptMap2GroupUnmappedList(inherited Link);
+end;
+
+procedure TFhirConceptMap2GroupUnmappedList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2GroupUnmappedList.SetItemByIndex(index: Integer; value: TFhirConceptMap2GroupUnmapped);
+begin
+  assert(value is TFhirConceptMap2GroupUnmapped);
+  FhirConceptMap2GroupUnmappeds[index] := value;
+end;
+
+procedure TFhirConceptMap2GroupUnmappedList.SetItemN(index: Integer; value: TFhirConceptMap2GroupUnmapped);
+begin
+  assert(value is TFhirConceptMap2GroupUnmapped);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirConceptMap2 }
+
+constructor TFhirConceptMap2.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirConceptMap2.Destroy;
+begin
+  FSource.free;
+  FTarget.free;
+  FGroupList.Free;
+  inherited;
+end;
+
+procedure TFhirConceptMap2.Assign(oSource : TFslObject);
+begin
+  inherited;
+  source := TFhirConceptMap2(oSource).source.Clone;
+  target := TFhirConceptMap2(oSource).target.Clone;
+  if (TFhirConceptMap2(oSource).FGroupList = nil) then
+  begin
+    FGroupList.free;
+    FGroupList := nil;
+  end
+  else
+  begin
+    if FGroupList = nil then
+      FGroupList := TFhirConceptMap2GroupList.Create;
+    FGroupList.Assign(TFhirConceptMap2(oSource).FGroupList);
+  end;
+end;
+
+function TFhirConceptMap2.GetResourceType : TFhirResourceType;
+begin
+  result := frtConceptMap2;
+end;
+
+procedure TFhirConceptMap2.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'source[x]') or (child_name = 'source') Then
+     list.add(self.link, 'source[x]', FSource.Link);
+  if (child_name = 'target[x]') or (child_name = 'target') Then
+     list.add(self.link, 'target[x]', FTarget.Link);
+  if (child_name = 'group') Then
+    list.addAll(self, 'group', FGroupList);
+end;
+
+procedure TFhirConceptMap2.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'source[x]', 'uri|canonical', false, TFhirDataType, FSource.Link));
+  oList.add(TFHIRProperty.create(self, 'target[x]', 'uri|canonical', false, TFhirDataType, FTarget.Link));
+  oList.add(TFHIRProperty.create(self, 'group', 'BackboneElement', true, TFhirConceptMap2Group, FGroupList.Link));
+end;
+
+function TFhirConceptMap2.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then
+  begin
+    Source := propValue as TFhirDataType;
+    result := propValue;
+  end
+  else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then
+  begin
+    Target := propValue as TFhirDataType;
+    result := propValue;
+  end
+  else if (propName = 'group') then
+  begin
+    GroupList.add(propValue as TFhirConceptMap2Group);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirConceptMap2.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'group') then GroupList.insertItem(index, propValue as TFhirConceptMap2Group)
+  else inherited;
+end;
+
+function TFhirConceptMap2.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then raise EFHIRException.create('Cannot make property Source')
+  else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then raise EFHIRException.create('Cannot make property Target')
+  else if (propName = 'group') then result := GroupList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirConceptMap2.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'source[x]') then result := 'uri|canonical'
+  else if (propName = 'target[x]') then result := 'uri|canonical'
+  else if (propName = 'group') then result := 'BackboneElement'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirConceptMap2.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := nil
+  else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then TargetElement := nil
+  else if (propName = 'group') then deletePropertyValue('group', GroupList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirConceptMap2.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (isMatchingName(propName, 'source', ['Uri', 'Canonical'])) then SourceElement := new as TFhirDataType
+  else if (isMatchingName(propName, 'target', ['Uri', 'Canonical'])) then TargetElement := new as TFhirDataType
+  else if (propName = 'group') then replacePropertyValue('group', GroupList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirConceptMap2.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'group') then GroupList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirConceptMap2.fhirType : string;
+begin
+  result := 'ConceptMap2';
+end;
+
+function TFhirConceptMap2.Link : TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2(inherited Link);
+end;
+
+function TFhirConceptMap2.Clone : TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2(inherited Clone);
+end;
+
+function TFhirConceptMap2.equals(other : TObject) : boolean; 
+var
+  o : TFhirConceptMap2;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirConceptMap2)) then
+    result := false
+  else
+  begin
+    o := TFhirConceptMap2(other);
+    result := compareDeep(sourceElement, o.sourceElement, true) and compareDeep(targetElement, o.targetElement, true) and 
+      compareDeep(groupList, o.groupList, true);
+  end;
+end;
+
+function TFhirConceptMap2.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSource) and isEmptyProp(FTarget) and isEmptyProp(FgroupList);
+end;
+
+procedure TFhirConceptMap2.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('url');
+  fields.add('identifier');
+  fields.add('version');
+  fields.add('name');
+  fields.add('title');
+  fields.add('status');
+  fields.add('experimental');
+  fields.add('date');
+  fields.add('publisher');
+  fields.add('contact');
+  fields.add('description');
+  fields.add('useContext');
+  fields.add('jurisdiction');
+  fields.add('purpose');
+  fields.add('copyright');
+  fields.add('source[x]');
+  fields.add('target[x]');
+  fields.add('group');
+end;
+
+function TFhirConceptMap2.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FGroupList.sizeInBytes(magic));
+end;
+
+procedure TFhirConceptMap2.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+function TFhirConceptMap2.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+procedure TFhirConceptMap2.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+function TFhirConceptMap2.GetIdentifierList : TFhirIdentifierList;
+begin
+  if FIdentifierList = nil then
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
+end;
+
+function TFhirConceptMap2.GetHasIdentifierList : boolean;
+begin
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
+end;
+
+procedure TFhirConceptMap2.SetVersion(value : TFhirString);
+begin
+  FVersion.free;
+  FVersion := value;
+end;
+
+function TFhirConceptMap2.GetVersionST : String;
+begin
+  if FVersion = nil then
+    result := ''
+  else
+    result := FVersion.value;
+end;
+
+procedure TFhirConceptMap2.SetVersionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FVersion = nil then
+      FVersion := TFhirString.create;
+    FVersion.value := value
+  end
+  else if FVersion <> nil then
+    FVersion.value := '';
+end;
+
+procedure TFhirConceptMap2.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirConceptMap2.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirConceptMap2.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+procedure TFhirConceptMap2.SetTitle(value : TFhirString);
+begin
+  FTitle.free;
+  FTitle := value;
+end;
+
+function TFhirConceptMap2.GetTitleST : String;
+begin
+  if FTitle = nil then
+    result := ''
+  else
+    result := FTitle.value;
+end;
+
+procedure TFhirConceptMap2.SetTitleST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FTitle = nil then
+      FTitle := TFhirString.create;
+    FTitle.value := value
+  end
+  else if FTitle <> nil then
+    FTitle.value := '';
+end;
+
+procedure TFhirConceptMap2.SetStatus(value : TFhirEnum);
+begin
+  FStatus.free;
+  FStatus := value;
+end;
+
+function TFhirConceptMap2.GetStatusST : TFhirPublicationStatusEnum;
+begin
+  if FStatus = nil then
+    result := TFhirPublicationStatusEnum(0)
+  else
+    result := TFhirPublicationStatusEnum(StringArrayIndexOfSensitive(CODES_TFhirPublicationStatusEnum, FStatus.value));
+end;
+
+procedure TFhirConceptMap2.SetStatusST(value : TFhirPublicationStatusEnum);
+begin
+  if ord(value) = 0 then
+    StatusElement := nil
+  else
+    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+end;
+
+procedure TFhirConceptMap2.SetExperimental(value : TFhirBoolean);
+begin
+  FExperimental.free;
+  FExperimental := value;
+end;
+
+function TFhirConceptMap2.GetExperimentalST : Boolean;
+begin
+  if FExperimental = nil then
+    result := false
+  else
+    result := FExperimental.value;
+end;
+
+procedure TFhirConceptMap2.SetExperimentalST(value : Boolean);
+begin
+  if FExperimental = nil then
+    FExperimental := TFhirBoolean.create;
+  FExperimental.value := value
+end;
+
+procedure TFhirConceptMap2.SetDate(value : TFhirDateTime);
+begin
+  FDate.free;
+  FDate := value;
+end;
+
+function TFhirConceptMap2.GetDateST : TFslDateTime;
+begin
+  if FDate = nil then
+    result := TFslDateTime.makeNull
+  else
+    result := FDate.value;
+end;
+
+procedure TFhirConceptMap2.SetDateST(value : TFslDateTime);
+begin
+  if FDate = nil then
+    FDate := TFhirDateTime.create;
+  FDate.value := value
+end;
+
+procedure TFhirConceptMap2.SetPublisher(value : TFhirString);
+begin
+  FPublisher.free;
+  FPublisher := value;
+end;
+
+function TFhirConceptMap2.GetPublisherST : String;
+begin
+  if FPublisher = nil then
+    result := ''
+  else
+    result := FPublisher.value;
+end;
+
+procedure TFhirConceptMap2.SetPublisherST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPublisher = nil then
+      FPublisher := TFhirString.create;
+    FPublisher.value := value
+  end
+  else if FPublisher <> nil then
+    FPublisher.value := '';
+end;
+
+function TFhirConceptMap2.GetContactList : TFhirContactDetailList;
+begin
+  if FContactList = nil then
+    FContactList := TFhirContactDetailList.Create;
+  result := FContactList;
+end;
+
+function TFhirConceptMap2.GetHasContactList : boolean;
+begin
+  result := (FContactList <> nil) and (FContactList.count > 0);
+end;
+
+procedure TFhirConceptMap2.SetDescription(value : TFhirMarkdown);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+function TFhirConceptMap2.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+procedure TFhirConceptMap2.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirMarkdown.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+function TFhirConceptMap2.GetUseContextList : TFhirUsageContextList;
+begin
+  if FUseContextList = nil then
+    FUseContextList := TFhirUsageContextList.Create;
+  result := FUseContextList;
+end;
+
+function TFhirConceptMap2.GetHasUseContextList : boolean;
+begin
+  result := (FUseContextList <> nil) and (FUseContextList.count > 0);
+end;
+
+function TFhirConceptMap2.GetJurisdictionList : TFhirCodeableConceptList;
+begin
+  if FJurisdictionList = nil then
+    FJurisdictionList := TFhirCodeableConceptList.Create;
+  result := FJurisdictionList;
+end;
+
+function TFhirConceptMap2.GetHasJurisdictionList : boolean;
+begin
+  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+end;
+
+procedure TFhirConceptMap2.SetPurpose(value : TFhirMarkdown);
+begin
+  FPurpose.free;
+  FPurpose := value;
+end;
+
+function TFhirConceptMap2.GetPurposeST : String;
+begin
+  if FPurpose = nil then
+    result := ''
+  else
+    result := FPurpose.value;
+end;
+
+procedure TFhirConceptMap2.SetPurposeST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FPurpose = nil then
+      FPurpose := TFhirMarkdown.create;
+    FPurpose.value := value
+  end
+  else if FPurpose <> nil then
+    FPurpose.value := '';
+end;
+
+procedure TFhirConceptMap2.SetCopyright(value : TFhirMarkdown);
+begin
+  FCopyright.free;
+  FCopyright := value;
+end;
+
+function TFhirConceptMap2.GetCopyrightST : String;
+begin
+  if FCopyright = nil then
+    result := ''
+  else
+    result := FCopyright.value;
+end;
+
+procedure TFhirConceptMap2.SetCopyrightST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCopyright = nil then
+      FCopyright := TFhirMarkdown.create;
+    FCopyright.value := value
+  end
+  else if FCopyright <> nil then
+    FCopyright.value := '';
+end;
+
+procedure TFhirConceptMap2.SetSource(value : TFhirDataType);
+begin
+  FSource.free;
+  FSource := value;
+end;
+
+procedure TFhirConceptMap2.SetTarget(value : TFhirDataType);
+begin
+  FTarget.free;
+  FTarget := value;
+end;
+
+function TFhirConceptMap2.GetGroupList : TFhirConceptMap2GroupList;
+begin
+  if FGroupList = nil then
+    FGroupList := TFhirConceptMap2GroupList.Create;
+  result := FGroupList;
+end;
+
+function TFhirConceptMap2.GetHasGroupList : boolean;
+begin
+  result := (FGroupList <> nil) and (FGroupList.count > 0);
+end;
+
+{ TFhirConceptMap2ListEnumerator }
+
+constructor TFhirConceptMap2ListEnumerator.Create(list : TFhirConceptMap2List);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirConceptMap2ListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirConceptMap2ListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirConceptMap2ListEnumerator.GetCurrent : TFhirConceptMap2;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirConceptMap2ListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirConceptMap2List }
+
+function TFhirConceptMap2List.AddItem(value: TFhirConceptMap2): TFhirConceptMap2;
+begin
+  assert(value.ClassName = 'TFhirConceptMap2', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap2');
+  add(value);
+  result := value;
+end;
+
+function TFhirConceptMap2List.Append: TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2List.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirConceptMap2List.GetEnumerator : TFhirConceptMap2ListEnumerator;
+begin
+  result := TFhirConceptMap2ListEnumerator.Create(self.link);
+end;
+
+function TFhirConceptMap2List.Clone: TFhirConceptMap2List;
+begin
+  result := TFhirConceptMap2List(inherited Clone);
+end;
+
+function TFhirConceptMap2List.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirConceptMap2List.GetItemN(index: Integer): TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2List.ItemClass: TFslObjectClass;
+begin
+  result := TFhirConceptMap2;
+end;
+function TFhirConceptMap2List.IndexOf(value: TFhirConceptMap2): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirConceptMap2List.Insert(index: Integer): TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirConceptMap2List.InsertItem(index: Integer; value: TFhirConceptMap2);
+begin
+  assert(value is TFhirConceptMap2);
+  Inherited Insert(index, value);
+end;
+
+function TFhirConceptMap2List.Item(index: Integer): TFhirConceptMap2;
+begin
+  result := TFhirConceptMap2(ObjectByIndex[index]);
+end;
+
+function TFhirConceptMap2List.Link: TFhirConceptMap2List;
+begin
+  result := TFhirConceptMap2List(inherited Link);
+end;
+
+procedure TFhirConceptMap2List.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirConceptMap2List.SetItemByIndex(index: Integer; value: TFhirConceptMap2);
+begin
+  assert(value is TFhirConceptMap2);
+  FhirConceptMap2s[index] := value;
+end;
+
+procedure TFhirConceptMap2List.SetItemN(index: Integer; value: TFhirConceptMap2);
+begin
+  assert(value is TFhirConceptMap2);
+  ObjectByIndex[index] := value;
+end;
+
+{$ENDIF FHIR_CONCEPTMAP2}
 {$IFDEF FHIR_CONDITIONDEFINITION}
 { TFhirConditionDefinitionObservation }
 
@@ -41909,14 +45539,14 @@ begin
 end;
 
 procedure TFhirConditionDefinitionObservation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('code');
 end;
 
 function TFhirConditionDefinitionObservation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -41968,6 +45598,7 @@ end;
 
 function TFhirConditionDefinitionObservationList.AddItem(value: TFhirConditionDefinitionObservation): TFhirConditionDefinitionObservation;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinitionObservation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinitionObservation');
   add(value);
   result := value;
 end;
@@ -42187,14 +45818,14 @@ begin
 end;
 
 procedure TFhirConditionDefinitionMedication.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('code');
 end;
 
 function TFhirConditionDefinitionMedication.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -42246,6 +45877,7 @@ end;
 
 function TFhirConditionDefinitionMedicationList.AddItem(value: TFhirConditionDefinitionMedication): TFhirConditionDefinitionMedication;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinitionMedication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinitionMedication');
   add(value);
   result := value;
 end;
@@ -42480,7 +46112,7 @@ begin
 end;
 
 procedure TFhirConditionDefinitionPrecondition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('code');
@@ -42488,7 +46120,7 @@ begin
 end;
 
 function TFhirConditionDefinitionPrecondition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -42562,6 +46194,7 @@ end;
 
 function TFhirConditionDefinitionPreconditionList.AddItem(value: TFhirConditionDefinitionPrecondition): TFhirConditionDefinitionPrecondition;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinitionPrecondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinitionPrecondition');
   add(value);
   result := value;
 end;
@@ -42781,14 +46414,14 @@ begin
 end;
 
 procedure TFhirConditionDefinitionQuestionnaire.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('purpose');
   fields.add('reference');
 end;
 
 function TFhirConditionDefinitionQuestionnaire.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -42856,6 +46489,7 @@ end;
 
 function TFhirConditionDefinitionQuestionnaireList.AddItem(value: TFhirConditionDefinitionQuestionnaire): TFhirConditionDefinitionQuestionnaire;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinitionQuestionnaire', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinitionQuestionnaire');
   add(value);
   result := value;
 end;
@@ -43075,14 +46709,14 @@ begin
 end;
 
 procedure TFhirConditionDefinitionPlan.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('role');
   fields.add('reference');
 end;
 
 function TFhirConditionDefinitionPlan.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -43134,6 +46768,7 @@ end;
 
 function TFhirConditionDefinitionPlanList.AddItem(value: TFhirConditionDefinitionPlan): TFhirConditionDefinitionPlan;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinitionPlan', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinitionPlan');
   add(value);
   result := value;
 end;
@@ -43632,7 +47267,7 @@ begin
 end;
 
 procedure TFhirConditionDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -43665,7 +47300,7 @@ begin
 end;
 
 function TFhirConditionDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDefinitionList.sizeInBytes(magic));
   inc(result, FObservationList.sizeInBytes(magic));
@@ -44177,6 +47812,7 @@ end;
 
 function TFhirConditionDefinitionList.AddItem(value: TFhirConditionDefinition): TFhirConditionDefinition;
 begin
+  assert(value.ClassName = 'TFhirConditionDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionDefinition');
   add(value);
   result := value;
 end;
@@ -44445,7 +48081,7 @@ begin
 end;
 
 procedure TFhirEventDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -44478,7 +48114,7 @@ begin
 end;
 
 function TFhirEventDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTriggerList.sizeInBytes(magic));
 end;
@@ -45029,6 +48665,7 @@ end;
 
 function TFhirEventDefinitionList.AddItem(value: TFhirEventDefinition): TFhirEventDefinition;
 begin
+  assert(value.ClassName = 'TFhirEventDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEventDefinition');
   add(value);
   result := value;
 end;
@@ -45279,7 +48916,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioActor.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('actorId');
   fields.add('type');
@@ -45288,7 +48925,7 @@ begin
 end;
 
 function TFhirExampleScenarioActor.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -45428,6 +49065,7 @@ end;
 
 function TFhirExampleScenarioActorList.AddItem(value: TFhirExampleScenarioActor): TFhirExampleScenarioActor;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioActor', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioActor');
   add(value);
   result := value;
 end;
@@ -45730,7 +49368,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioInstance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('resourceId');
   fields.add('resourceType');
@@ -45741,7 +49379,7 @@ begin
 end;
 
 function TFhirExampleScenarioInstance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FVersionList.sizeInBytes(magic));
   inc(result, FContainedInstanceList.sizeInBytes(magic));
@@ -45907,6 +49545,7 @@ end;
 
 function TFhirExampleScenarioInstanceList.AddItem(value: TFhirExampleScenarioInstance): TFhirExampleScenarioInstance;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioInstance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioInstance');
   add(value);
   result := value;
 end;
@@ -46126,14 +49765,14 @@ begin
 end;
 
 procedure TFhirExampleScenarioInstanceVersion.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('versionId');
   fields.add('description');
 end;
 
 function TFhirExampleScenarioInstanceVersion.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -46225,6 +49864,7 @@ end;
 
 function TFhirExampleScenarioInstanceVersionList.AddItem(value: TFhirExampleScenarioInstanceVersion): TFhirExampleScenarioInstanceVersion;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioInstanceVersion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioInstanceVersion');
   add(value);
   result := value;
 end;
@@ -46444,14 +50084,14 @@ begin
 end;
 
 procedure TFhirExampleScenarioInstanceContainedInstance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('resourceId');
   fields.add('versionId');
 end;
 
 function TFhirExampleScenarioInstanceContainedInstance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -46543,6 +50183,7 @@ end;
 
 function TFhirExampleScenarioInstanceContainedInstanceList.AddItem(value: TFhirExampleScenarioInstanceContainedInstance): TFhirExampleScenarioInstanceContainedInstance;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioInstanceContainedInstance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioInstanceContainedInstance');
   add(value);
   result := value;
 end;
@@ -46819,7 +50460,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioProcess.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('title');
   fields.add('description');
@@ -46829,7 +50470,7 @@ begin
 end;
 
 function TFhirExampleScenarioProcess.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FStepList.sizeInBytes(magic));
 end;
@@ -46986,6 +50627,7 @@ end;
 
 function TFhirExampleScenarioProcessList.AddItem(value: TFhirExampleScenarioProcess): TFhirExampleScenarioProcess;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioProcess', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioProcess');
   add(value);
   result := value;
 end;
@@ -47259,7 +50901,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioProcessStep.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('process');
   fields.add('pause');
@@ -47268,7 +50910,7 @@ begin
 end;
 
 function TFhirExampleScenarioProcessStep.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FProcessList.sizeInBytes(magic));
   inc(result, FAlternativeList.sizeInBytes(magic));
@@ -47361,6 +51003,7 @@ end;
 
 function TFhirExampleScenarioProcessStepList.AddItem(value: TFhirExampleScenarioProcessStep): TFhirExampleScenarioProcessStep;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioProcessStep', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioProcessStep');
   add(value);
   result := value;
 end;
@@ -47696,7 +51339,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioProcessStepOperation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('number');
   fields.add('type');
@@ -47711,7 +51354,7 @@ begin
 end;
 
 function TFhirExampleScenarioProcessStepOperation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -47961,6 +51604,7 @@ end;
 
 function TFhirExampleScenarioProcessStepOperationList.AddItem(value: TFhirExampleScenarioProcessStepOperation): TFhirExampleScenarioProcessStepOperation;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioProcessStepOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioProcessStepOperation');
   add(value);
   result := value;
 end;
@@ -48208,7 +51852,7 @@ begin
 end;
 
 procedure TFhirExampleScenarioProcessStepAlternative.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('title');
   fields.add('description');
@@ -48216,7 +51860,7 @@ begin
 end;
 
 function TFhirExampleScenarioProcessStepAlternative.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FStepList.sizeInBytes(magic));
 end;
@@ -48321,6 +51965,7 @@ end;
 
 function TFhirExampleScenarioProcessStepAlternativeList.AddItem(value: TFhirExampleScenarioProcessStepAlternative): TFhirExampleScenarioProcessStepAlternative;
 begin
+  assert(value.ClassName = 'TFhirExampleScenarioProcessStepAlternative', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenarioProcessStepAlternative');
   add(value);
   result := value;
 end;
@@ -48623,7 +52268,7 @@ begin
 end;
 
 procedure TFhirExampleScenario.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -48645,7 +52290,7 @@ begin
 end;
 
 function TFhirExampleScenario.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FActorList.sizeInBytes(magic));
   inc(result, FInstanceList.sizeInBytes(magic));
@@ -49005,6 +52650,7 @@ end;
 
 function TFhirExampleScenarioList.AddItem(value: TFhirExampleScenario): TFhirExampleScenario;
 begin
+  assert(value.ClassName = 'TFhirExampleScenario', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExampleScenario');
   add(value);
   result := value;
 end;
@@ -49297,7 +52943,7 @@ begin
 end;
 
 procedure TFhirGraphDefinitionLink.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('path');
   fields.add('sliceName');
@@ -49308,7 +52954,7 @@ begin
 end;
 
 function TFhirGraphDefinitionLink.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTargetList.sizeInBytes(magic));
 end;
@@ -49491,6 +53137,7 @@ end;
 
 function TFhirGraphDefinitionLinkList.AddItem(value: TFhirGraphDefinitionLink): TFhirGraphDefinitionLink;
 begin
+  assert(value.ClassName = 'TFhirGraphDefinitionLink', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGraphDefinitionLink');
   add(value);
   result := value;
 end;
@@ -49779,7 +53426,7 @@ begin
 end;
 
 procedure TFhirGraphDefinitionLinkTarget.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('params');
@@ -49789,7 +53436,7 @@ begin
 end;
 
 function TFhirGraphDefinitionLinkTarget.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCompartmentList.sizeInBytes(magic));
   inc(result, FLink_List.sizeInBytes(magic));
@@ -49929,6 +53576,7 @@ end;
 
 function TFhirGraphDefinitionLinkTargetList.AddItem(value: TFhirGraphDefinitionLinkTarget): TFhirGraphDefinitionLinkTarget;
 begin
+  assert(value.ClassName = 'TFhirGraphDefinitionLinkTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGraphDefinitionLinkTarget');
   add(value);
   result := value;
 end;
@@ -50192,7 +53840,7 @@ begin
 end;
 
 procedure TFhirGraphDefinitionLinkTargetCompartment.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('use');
   fields.add('code');
@@ -50202,7 +53850,7 @@ begin
 end;
 
 function TFhirGraphDefinitionLinkTargetCompartment.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -50360,6 +54008,7 @@ end;
 
 function TFhirGraphDefinitionLinkTargetCompartmentList.AddItem(value: TFhirGraphDefinitionLinkTargetCompartment): TFhirGraphDefinitionLinkTargetCompartment;
 begin
+  assert(value.ClassName = 'TFhirGraphDefinitionLinkTargetCompartment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGraphDefinitionLinkTargetCompartment');
   add(value);
   result := value;
 end;
@@ -50612,7 +54261,7 @@ begin
 end;
 
 procedure TFhirGraphDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -50632,7 +54281,7 @@ begin
 end;
 
 function TFhirGraphDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLink_List.sizeInBytes(magic));
 end;
@@ -50989,6 +54638,7 @@ end;
 
 function TFhirGraphDefinitionList.AddItem(value: TFhirGraphDefinition): TFhirGraphDefinition;
 begin
+  assert(value.ClassName = 'TFhirGraphDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGraphDefinition');
   add(value);
   result := value;
 end;
@@ -51225,7 +54875,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideDependsOn.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('uri');
   fields.add('packageId');
@@ -51233,7 +54883,7 @@ begin
 end;
 
 function TFhirImplementationGuideDependsOn.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -51351,6 +55001,7 @@ end;
 
 function TFhirImplementationGuideDependsOnList.AddItem(value: TFhirImplementationGuideDependsOn): TFhirImplementationGuideDependsOn;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDependsOn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDependsOn');
   add(value);
   result := value;
 end;
@@ -51570,14 +55221,14 @@ begin
 end;
 
 procedure TFhirImplementationGuideGlobal.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('profile');
 end;
 
 function TFhirImplementationGuideGlobal.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -51665,6 +55316,7 @@ end;
 
 function TFhirImplementationGuideGlobalList.AddItem(value: TFhirImplementationGuideGlobal): TFhirImplementationGuideGlobal;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideGlobal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideGlobal');
   add(value);
   result := value;
 end;
@@ -51977,7 +55629,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('grouping');
   fields.add('resource');
@@ -51987,7 +55639,7 @@ begin
 end;
 
 function TFhirImplementationGuideDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FGroupingList.sizeInBytes(magic));
   inc(result, FResourceList.sizeInBytes(magic));
@@ -52085,6 +55737,7 @@ end;
 
 function TFhirImplementationGuideDefinitionList.AddItem(value: TFhirImplementationGuideDefinition): TFhirImplementationGuideDefinition;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinition');
   add(value);
   result := value;
 end;
@@ -52304,14 +55957,14 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinitionGrouping.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('description');
 end;
 
 function TFhirImplementationGuideDefinitionGrouping.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -52403,6 +56056,7 @@ end;
 
 function TFhirImplementationGuideDefinitionGroupingList.AddItem(value: TFhirImplementationGuideDefinitionGrouping): TFhirImplementationGuideDefinitionGrouping;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinitionGrouping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinitionGrouping');
   add(value);
   result := value;
 end;
@@ -52689,7 +56343,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinitionResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('reference');
   fields.add('fhirVersion');
@@ -52700,7 +56354,7 @@ begin
 end;
 
 function TFhirImplementationGuideDefinitionResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFhirVersion.sizeInBytes(magic));
 end;
@@ -52721,30 +56375,6 @@ end;
 function TFhirImplementationGuideDefinitionResource.GetHasFhirVersion : boolean;
 begin
   result := (FFhirVersion <> nil) and (FFhirVersion.count > 0);
-end;
-
-function TFhirImplementationGuideDefinitionResource.GetFhirVersionST : TFhirFHIRVersionEnumList;
-  var i : integer;
-begin
-  result := [];
-  if FfhirVersion <> nil then
-    for i := 0 to FfhirVersion.count - 1 do
-      result := result + [TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, FfhirVersion[i].value))];
-end;
-
-procedure TFhirImplementationGuideDefinitionResource.SetFhirVersionST(value : TFhirFHIRVersionEnumList);
-var a : TFhirFHIRVersionEnum;
-begin
-  if FfhirVersion = nil then
-    FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-  FfhirVersion.clear;
-  for a := low(TFhirFHIRVersionEnum) to high(TFhirFHIRVersionEnum) do
-    if a in value then
-      begin
-         if FfhirVersion = nil then
-           FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-         FfhirVersion.add(TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[a], CODES_TFhirFHIRVersionEnum[a]));
-      end;
 end;
 
 procedure TFhirImplementationGuideDefinitionResource.SetName(value : TFhirString);
@@ -52867,6 +56497,7 @@ end;
 
 function TFhirImplementationGuideDefinitionResourceList.AddItem(value: TFhirImplementationGuideDefinitionResource): TFhirImplementationGuideDefinitionResource;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinitionResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinitionResource');
   add(value);
   result := value;
 end;
@@ -53128,7 +56759,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinitionPage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name[x]');
   fields.add('title');
@@ -53137,7 +56768,7 @@ begin
 end;
 
 function TFhirImplementationGuideDefinitionPage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FPageList.sizeInBytes(magic));
 end;
@@ -53244,6 +56875,7 @@ end;
 
 function TFhirImplementationGuideDefinitionPageList.AddItem(value: TFhirImplementationGuideDefinitionPage): TFhirImplementationGuideDefinitionPage;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinitionPage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinitionPage');
   add(value);
   result := value;
 end;
@@ -53463,14 +57095,14 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinitionParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('value');
 end;
 
 function TFhirImplementationGuideDefinitionParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -53562,6 +57194,7 @@ end;
 
 function TFhirImplementationGuideDefinitionParameterList.AddItem(value: TFhirImplementationGuideDefinitionParameter): TFhirImplementationGuideDefinitionParameter;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinitionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinitionParameter');
   add(value);
   result := value;
 end;
@@ -53796,7 +57429,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideDefinitionTemplate.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('source');
@@ -53804,7 +57437,7 @@ begin
 end;
 
 function TFhirImplementationGuideDefinitionTemplate.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -53922,6 +57555,7 @@ end;
 
 function TFhirImplementationGuideDefinitionTemplateList.AddItem(value: TFhirImplementationGuideDefinitionTemplate): TFhirImplementationGuideDefinitionTemplate;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideDefinitionTemplate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDefinitionTemplate');
   add(value);
   result := value;
 end;
@@ -54234,7 +57868,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideManifest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('rendering');
   fields.add('resource');
@@ -54244,7 +57878,7 @@ begin
 end;
 
 function TFhirImplementationGuideManifest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FResourceList.sizeInBytes(magic));
   inc(result, FPageList.sizeInBytes(magic));
@@ -54362,6 +57996,7 @@ end;
 
 function TFhirImplementationGuideManifestList.AddItem(value: TFhirImplementationGuideManifest): TFhirImplementationGuideManifest;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideManifest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideManifest');
   add(value);
   result := value;
 end;
@@ -54596,7 +58231,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideManifestResource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('reference');
   fields.add('example[x]');
@@ -54604,7 +58239,7 @@ begin
 end;
 
 function TFhirImplementationGuideManifestResource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -54682,6 +58317,7 @@ end;
 
 function TFhirImplementationGuideManifestResourceList.AddItem(value: TFhirImplementationGuideManifestResource): TFhirImplementationGuideManifestResource;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideManifestResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideManifestResource');
   add(value);
   result := value;
 end;
@@ -54929,7 +58565,7 @@ begin
 end;
 
 procedure TFhirImplementationGuideManifestPage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('title');
@@ -54937,7 +58573,7 @@ begin
 end;
 
 function TFhirImplementationGuideManifestPage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FAnchorList.sizeInBytes(magic));
 end;
@@ -55042,6 +58678,7 @@ end;
 
 function TFhirImplementationGuideManifestPageList.AddItem(value: TFhirImplementationGuideManifestPage): TFhirImplementationGuideManifestPage;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuideManifestPage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideManifestPage');
   add(value);
   result := value;
 end;
@@ -55372,7 +59009,7 @@ begin
 end;
 
 procedure TFhirImplementationGuide.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -55397,7 +59034,7 @@ begin
 end;
 
 function TFhirImplementationGuide.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFhirVersion.sizeInBytes(magic));
   inc(result, FDependsOnList.sizeInBytes(magic));
@@ -55746,30 +59383,6 @@ begin
   result := (FFhirVersion <> nil) and (FFhirVersion.count > 0);
 end;
 
-function TFhirImplementationGuide.GetFhirVersionST : TFhirFHIRVersionEnumList;
-  var i : integer;
-begin
-  result := [];
-  if FfhirVersion <> nil then
-    for i := 0 to FfhirVersion.count - 1 do
-      result := result + [TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, FfhirVersion[i].value))];
-end;
-
-procedure TFhirImplementationGuide.SetFhirVersionST(value : TFhirFHIRVersionEnumList);
-var a : TFhirFHIRVersionEnum;
-begin
-  if FfhirVersion = nil then
-    FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-  FfhirVersion.clear;
-  for a := low(TFhirFHIRVersionEnum) to high(TFhirFHIRVersionEnum) do
-    if a in value then
-      begin
-         if FfhirVersion = nil then
-           FfhirVersion := TFhirEnumList.create(SYSTEMS_TFhirFHIRVersionEnum, CODES_TFhirFHIRVersionEnum);
-         FfhirVersion.add(TFhirEnum.create(SYSTEMS_TFhirFHIRVersionEnum[a], CODES_TFhirFHIRVersionEnum[a]));
-      end;
-end;
-
 function TFhirImplementationGuide.GetDependsOnList : TFhirImplementationGuideDependsOnList;
 begin
   if FDependsOnList = nil then
@@ -55842,6 +59455,7 @@ end;
 
 function TFhirImplementationGuideList.AddItem(value: TFhirImplementationGuide): TFhirImplementationGuide;
 begin
+  assert(value.ClassName = 'TFhirImplementationGuide', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuide');
   add(value);
   result := value;
 end;
@@ -56178,7 +59792,7 @@ begin
 end;
 
 procedure TFhirLibrary.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -56214,7 +59828,7 @@ begin
 end;
 
 function TFhirLibrary.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FParameterList.sizeInBytes(magic));
   inc(result, FDataRequirementList.sizeInBytes(magic));
@@ -56797,6 +60411,7 @@ end;
 
 function TFhirLibraryList.AddItem(value: TFhirLibrary): TFhirLibrary;
 begin
+  assert(value.ClassName = 'TFhirLibrary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirLibrary');
   add(value);
   result := value;
 end;
@@ -57157,7 +60772,7 @@ begin
 end;
 
 procedure TFhirMeasureGroup.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('description');
@@ -57171,7 +60786,7 @@ begin
 end;
 
 function TFhirMeasureGroup.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
   inc(result, FPopulationList.sizeInBytes(magic));
@@ -57322,6 +60937,7 @@ end;
 
 function TFhirMeasureGroupList.AddItem(value: TFhirMeasureGroup): TFhirMeasureGroup;
 begin
+  assert(value.ClassName = 'TFhirMeasureGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasureGroup');
   add(value);
   result := value;
 end;
@@ -57585,7 +61201,7 @@ begin
 end;
 
 procedure TFhirMeasureGroupPopulation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('description');
@@ -57595,7 +61211,7 @@ begin
 end;
 
 function TFhirMeasureGroupPopulation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -57705,6 +61321,7 @@ end;
 
 function TFhirMeasureGroupPopulationList.AddItem(value: TFhirMeasureGroupPopulation): TFhirMeasureGroupPopulation;
 begin
+  assert(value.ClassName = 'TFhirMeasureGroupPopulation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasureGroupPopulation');
   add(value);
   result := value;
 end;
@@ -57966,7 +61583,7 @@ begin
 end;
 
 procedure TFhirMeasureGroupStratifier.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('description');
@@ -57975,7 +61592,7 @@ begin
 end;
 
 function TFhirMeasureGroupStratifier.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FComponentList.sizeInBytes(magic));
 end;
@@ -58066,6 +61683,7 @@ end;
 
 function TFhirMeasureGroupStratifierList.AddItem(value: TFhirMeasureGroupStratifier): TFhirMeasureGroupStratifier;
 begin
+  assert(value.ClassName = 'TFhirMeasureGroupStratifier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasureGroupStratifier');
   add(value);
   result := value;
 end;
@@ -58300,7 +61918,7 @@ begin
 end;
 
 procedure TFhirMeasureGroupStratifierComponent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('description');
@@ -58308,7 +61926,7 @@ begin
 end;
 
 function TFhirMeasureGroupStratifierComponent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -58386,6 +62004,7 @@ end;
 
 function TFhirMeasureGroupStratifierComponentList.AddItem(value: TFhirMeasureGroupStratifierComponent): TFhirMeasureGroupStratifierComponent;
 begin
+  assert(value.ClassName = 'TFhirMeasureGroupStratifierComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasureGroupStratifierComponent');
   add(value);
   result := value;
 end;
@@ -58647,7 +62266,7 @@ begin
 end;
 
 procedure TFhirMeasureSupplementalData.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('usage');
@@ -58656,7 +62275,7 @@ begin
 end;
 
 function TFhirMeasureSupplementalData.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FUsageList.sizeInBytes(magic));
 end;
@@ -58747,6 +62366,7 @@ end;
 
 function TFhirMeasureSupplementalDataList.AddItem(value: TFhirMeasureSupplementalData): TFhirMeasureSupplementalData;
 begin
+  assert(value.ClassName = 'TFhirMeasureSupplementalData', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasureSupplementalData');
   add(value);
   result := value;
 end;
@@ -59279,7 +62899,7 @@ begin
 end;
 
 procedure TFhirMeasure.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -59327,7 +62947,7 @@ begin
 end;
 
 function TFhirMeasure.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLibrary_List.sizeInBytes(magic));
   inc(result, FType_List.sizeInBytes(magic));
@@ -60132,6 +63752,7 @@ end;
 
 function TFhirMeasureList.AddItem(value: TFhirMeasure): TFhirMeasure;
 begin
+  assert(value.ClassName = 'TFhirMeasure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMeasure');
   add(value);
   result := value;
 end;
@@ -60382,7 +64003,7 @@ begin
 end;
 
 procedure TFhirMessageDefinitionFocus.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('profile');
@@ -60391,7 +64012,7 @@ begin
 end;
 
 function TFhirMessageDefinitionFocus.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -60531,6 +64152,7 @@ end;
 
 function TFhirMessageDefinitionFocusList.AddItem(value: TFhirMessageDefinitionFocus): TFhirMessageDefinitionFocus;
 begin
+  assert(value.ClassName = 'TFhirMessageDefinitionFocus', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMessageDefinitionFocus');
   add(value);
   result := value;
 end;
@@ -60750,14 +64372,14 @@ begin
 end;
 
 procedure TFhirMessageDefinitionAllowedResponse.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('message');
   fields.add('situation');
 end;
 
 function TFhirMessageDefinitionAllowedResponse.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -60849,6 +64471,7 @@ end;
 
 function TFhirMessageDefinitionAllowedResponseList.AddItem(value: TFhirMessageDefinitionAllowedResponse): TFhirMessageDefinitionAllowedResponse;
 begin
+  assert(value.ClassName = 'TFhirMessageDefinitionAllowedResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMessageDefinitionAllowedResponse');
   add(value);
   result := value;
 end;
@@ -61236,7 +64859,7 @@ begin
 end;
 
 procedure TFhirMessageDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -61265,7 +64888,7 @@ begin
 end;
 
 function TFhirMessageDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FReplacesList.sizeInBytes(magic));
   inc(result, FParentList.sizeInBytes(magic));
@@ -61766,6 +65389,7 @@ end;
 
 function TFhirMessageDefinitionList.AddItem(value: TFhirMessageDefinition): TFhirMessageDefinition;
 begin
+  assert(value.ClassName = 'TFhirMessageDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMessageDefinition');
   add(value);
   result := value;
 end;
@@ -62045,7 +65669,7 @@ begin
 end;
 
 procedure TFhirNamingSystemUniqueId.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('value');
@@ -62056,7 +65680,7 @@ begin
 end;
 
 function TFhirNamingSystemUniqueId.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -62218,6 +65842,7 @@ end;
 
 function TFhirNamingSystemUniqueIdList.AddItem(value: TFhirNamingSystemUniqueId): TFhirNamingSystemUniqueId;
 begin
+  assert(value.ClassName = 'TFhirNamingSystemUniqueId', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNamingSystemUniqueId');
   add(value);
   result := value;
 end;
@@ -62499,7 +66124,7 @@ begin
 end;
 
 procedure TFhirNamingSystem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -62520,7 +66145,7 @@ begin
 end;
 
 function TFhirNamingSystem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FUniqueIdList.sizeInBytes(magic));
 end;
@@ -62888,6 +66513,7 @@ end;
 
 function TFhirNamingSystemList.AddItem(value: TFhirNamingSystem): TFhirNamingSystem;
 begin
+  assert(value.ClassName = 'TFhirNamingSystem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNamingSystem');
   add(value);
   result := value;
 end;
@@ -63138,7 +66764,7 @@ begin
 end;
 
 procedure TFhirObservationDefinitionQuantitativeDetails.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('unit');
   fields.add('customaryUnit');
@@ -63147,7 +66773,7 @@ begin
 end;
 
 function TFhirObservationDefinitionQuantitativeDetails.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -63251,6 +66877,7 @@ end;
 
 function TFhirObservationDefinitionQuantitativeDetailsList.AddItem(value: TFhirObservationDefinitionQuantitativeDetails): TFhirObservationDefinitionQuantitativeDetails;
 begin
+  assert(value.ClassName = 'TFhirObservationDefinitionQuantitativeDetails', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationDefinitionQuantitativeDetails');
   add(value);
   result := value;
 end;
@@ -63630,7 +67257,7 @@ begin
 end;
 
 procedure TFhirObservationDefinitionQualifiedValue.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('context');
   fields.add('appliesTo');
@@ -63647,7 +67274,7 @@ begin
 end;
 
 function TFhirObservationDefinitionQualifiedValue.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FAppliesToList.sizeInBytes(magic));
 end;
@@ -63898,6 +67525,7 @@ end;
 
 function TFhirObservationDefinitionQualifiedValueList.AddItem(value: TFhirObservationDefinitionQualifiedValue): TFhirObservationDefinitionQualifiedValue;
 begin
+  assert(value.ClassName = 'TFhirObservationDefinitionQualifiedValue', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationDefinitionQualifiedValue');
   add(value);
   result := value;
 end;
@@ -64168,7 +67796,7 @@ begin
 end;
 
 procedure TFhirObservationDefinitionComponent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('permittedDataType');
@@ -64177,7 +67805,7 @@ begin
 end;
 
 function TFhirObservationDefinitionComponent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FPermittedDataType.sizeInBytes(magic));
   inc(result, FQualifiedValueList.sizeInBytes(magic));
@@ -64279,6 +67907,7 @@ end;
 
 function TFhirObservationDefinitionComponentList.AddItem(value: TFhirObservationDefinitionComponent): TFhirObservationDefinitionComponent;
 begin
+  assert(value.ClassName = 'TFhirObservationDefinitionComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationDefinitionComponent');
   add(value);
   result := value;
 end;
@@ -64399,7 +68028,7 @@ begin
   FEffectivePeriod.free;
   FDerivedFromCanonicalList.Free;
   FDerivedFromUriList.Free;
-  FSubject.free;
+  FSubjectList.Free;
   FPerformerType.free;
   FCategoryList.Free;
   FCode.free;
@@ -64490,7 +68119,17 @@ begin
       FDerivedFromUriList := TFhirUriList.Create;
     FDerivedFromUriList.Assign(TFhirObservationDefinition(oSource).FDerivedFromUriList);
   end;
-  subject := TFhirObservationDefinition(oSource).subject.Clone;
+  if (TFhirObservationDefinition(oSource).FSubjectList = nil) then
+  begin
+    FSubjectList.free;
+    FSubjectList := nil;
+  end
+  else
+  begin
+    if FSubjectList = nil then
+      FSubjectList := TFhirCodeableConceptList.Create;
+    FSubjectList.Assign(TFhirObservationDefinition(oSource).FSubjectList);
+  end;
   performerType := TFhirObservationDefinition(oSource).performerType.Clone;
   if (TFhirObservationDefinition(oSource).FCategoryList = nil) then
   begin
@@ -64625,7 +68264,7 @@ begin
   if (child_name = 'derivedFromUri') Then
     list.addAll(self, 'derivedFromUri', FDerivedFromUriList);
   if (child_name = 'subject') Then
-     list.add(self.link, 'subject', FSubject.Link);
+    list.addAll(self, 'subject', FSubjectList);
   if (child_name = 'performerType') Then
      list.add(self.link, 'performerType', FPerformerType.Link);
   if (child_name = 'category') Then
@@ -64679,7 +68318,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'effectivePeriod', 'Period', false, TFhirPeriod, FEffectivePeriod.Link));
   oList.add(TFHIRProperty.create(self, 'derivedFromCanonical', 'canonical', true, TFhirCanonical, FDerivedFromCanonicalList.Link));
   oList.add(TFHIRProperty.create(self, 'derivedFromUri', 'uri', true, TFhirUri, FDerivedFromUriList.Link));
-  oList.add(TFHIRProperty.create(self, 'subject', 'CodeableConcept', false, TFhirCodeableConcept, FSubject.Link));
+  oList.add(TFHIRProperty.create(self, 'subject', 'CodeableConcept', true, TFhirCodeableConcept, FSubjectList.Link));
   oList.add(TFHIRProperty.create(self, 'performerType', 'CodeableConcept', false, TFhirCodeableConcept, FPerformerType.Link));
   oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link));
   oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
@@ -64800,7 +68439,7 @@ begin
   end
   else if (propName = 'subject') then
   begin
-    Subject := propValue as TFhirCodeableConcept;
+    SubjectList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'performerType') then
@@ -64883,6 +68522,7 @@ begin
   else if (propName = 'jurisdiction') then JurisdictionList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'derivedFromCanonical') then DerivedFromCanonicalList.insertItem(index, asCanonical(propValue))
   else if (propName = 'derivedFromUri') then DerivedFromUriList.insertItem(index, asUri(propValue))
+  else if (propName = 'subject') then SubjectList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'category') then CategoryList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'permittedDataType') then FPermittedDataType.insertItem(index, asEnum(SYSTEMS_TFhirObservationDataTypeEnum, CODES_TFhirObservationDataTypeEnum, propValue))
   else if (propName = 'specimen') then SpecimenList.insertItem(index, propValue as TFhirReference)
@@ -64915,7 +68555,7 @@ begin
   else if (propName = 'effectivePeriod') then result := TFhirPeriod.create()
   else if (propName = 'derivedFromCanonical') then result := DerivedFromCanonicalList.new()
   else if (propName = 'derivedFromUri') then result := DerivedFromUriList.new()
-  else if (propName = 'subject') then result := TFhirCodeableConcept.create()
+  else if (propName = 'subject') then result := SubjectList.new()
   else if (propName = 'performerType') then result := TFhirCodeableConcept.create()
   else if (propName = 'category') then result := CategoryList.new()
   else if (propName = 'code') then result := TFhirCodeableConcept.create()
@@ -64994,7 +68634,7 @@ begin
   else if (propName = 'effectivePeriod') then EffectivePeriodElement := nil
   else if (propName = 'derivedFromCanonical') then deletePropertyValue('derivedFromCanonical', DerivedFromCanonicalList, value)
   else if (propName = 'derivedFromUri') then deletePropertyValue('derivedFromUri', DerivedFromUriList, value)
-  else if (propName = 'subject') then SubjectElement := nil
+  else if (propName = 'subject') then deletePropertyValue('subject', SubjectList, value)
   else if (propName = 'performerType') then PerformerTypeElement := nil
   else if (propName = 'category') then deletePropertyValue('category', CategoryList, value)
   else if (propName = 'code') then CodeElement := nil
@@ -65034,7 +68674,7 @@ begin
   else if (propName = 'effectivePeriod') then EffectivePeriodElement := new as TFhirPeriod
   else if (propName = 'derivedFromCanonical') then replacePropertyValue('derivedFromCanonical', DerivedFromCanonicalList, existing, new)
   else if (propName = 'derivedFromUri') then replacePropertyValue('derivedFromUri', DerivedFromUriList, existing, new)
-  else if (propName = 'subject') then SubjectElement := new as TFhirCodeableConcept
+  else if (propName = 'subject') then replacePropertyValue('subject', SubjectList, existing, new)
   else if (propName = 'performerType') then PerformerTypeElement := new as TFhirCodeableConcept
   else if (propName = 'category') then replacePropertyValue('category', CategoryList, existing, new)
   else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
@@ -65059,6 +68699,7 @@ begin
   else if (propName = 'jurisdiction') then JurisdictionList.move(source, destination)
   else if (propName = 'derivedFromCanonical') then DerivedFromCanonicalList.move(source, destination)
   else if (propName = 'derivedFromUri') then DerivedFromUriList.move(source, destination)
+  else if (propName = 'subject') then SubjectList.move(source, destination)
   else if (propName = 'category') then CategoryList.move(source, destination)
   else if (propName = 'permittedDataType') then FPermittedDataType.move(source, destination)
   else if (propName = 'specimen') then SpecimenList.move(source, destination)
@@ -65106,7 +68747,7 @@ begin
       compareDeep(copyrightElement, o.copyrightElement, true) and compareDeep(approvalDateElement, o.approvalDateElement, true) and 
       compareDeep(lastReviewDateElement, o.lastReviewDateElement, true) and compareDeep(effectivePeriodElement, o.effectivePeriodElement, true) and 
       compareDeep(derivedFromCanonicalList, o.derivedFromCanonicalList, true) and compareDeep(derivedFromUriList, o.derivedFromUriList, true) and 
-      compareDeep(subjectElement, o.subjectElement, true) and compareDeep(performerTypeElement, o.performerTypeElement, true) and 
+      compareDeep(subjectList, o.subjectList, true) and compareDeep(performerTypeElement, o.performerTypeElement, true) and 
       compareDeep(categoryList, o.categoryList, true) and compareDeep(codeElement, o.codeElement, true) and 
       compareDeep(permittedDataTypeList, o.permittedDataTypeList, true) and compareDeep(multipleResultsAllowedElement, o.multipleResultsAllowedElement, true) and 
       compareDeep(bodySiteElement, o.bodySiteElement, true) and compareDeep(methodElement, o.methodElement, true) and 
@@ -65120,12 +68761,12 @@ end;
 
 function TFhirObservationDefinition.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FIdentifier) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(FApprovalDate) and isEmptyProp(FLastReviewDate) and isEmptyProp(FEffectivePeriod) and isEmptyProp(FderivedFromCanonicalList) and isEmptyProp(FderivedFromUriList) and isEmptyProp(FSubject) and isEmptyProp(FPerformerType) and isEmptyProp(FcategoryList) and isEmptyProp(FCode) and isEmptyProp(FPermittedDataType) and isEmptyProp(FMultipleResultsAllowed) and isEmptyProp(FBodySite) and isEmptyProp(FMethod) and isEmptyProp(FspecimenList) and isEmptyProp(FdeviceList) and isEmptyProp(FPreferredReportName) and isEmptyProp(FQuantitativeDetails)
+  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FIdentifier) and isEmptyProp(FVersion) and isEmptyProp(FName) and isEmptyProp(FTitle) and isEmptyProp(FStatus) and isEmptyProp(FExperimental) and isEmptyProp(FDate) and isEmptyProp(FPublisher) and isEmptyProp(FcontactList) and isEmptyProp(FDescription) and isEmptyProp(FuseContextList) and isEmptyProp(FjurisdictionList) and isEmptyProp(FPurpose) and isEmptyProp(FCopyright) and isEmptyProp(FApprovalDate) and isEmptyProp(FLastReviewDate) and isEmptyProp(FEffectivePeriod) and isEmptyProp(FderivedFromCanonicalList) and isEmptyProp(FderivedFromUriList) and isEmptyProp(FsubjectList) and isEmptyProp(FPerformerType) and isEmptyProp(FcategoryList) and isEmptyProp(FCode) and isEmptyProp(FPermittedDataType) and isEmptyProp(FMultipleResultsAllowed) and isEmptyProp(FBodySite) and isEmptyProp(FMethod) and isEmptyProp(FspecimenList) and isEmptyProp(FdeviceList) and isEmptyProp(FPreferredReportName) and isEmptyProp(FQuantitativeDetails)
        and isEmptyProp(FqualifiedValueList) and isEmptyProp(FhasMemberList) and isEmptyProp(FcomponentList);
 end;
 
 procedure TFhirObservationDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -65165,13 +68806,14 @@ begin
 end;
 
 function TFhirObservationDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FContactList.sizeInBytes(magic));
   inc(result, FUseContextList.sizeInBytes(magic));
   inc(result, FJurisdictionList.sizeInBytes(magic));
   inc(result, FDerivedFromCanonicalList.sizeInBytes(magic));
   inc(result, FDerivedFromUriList.sizeInBytes(magic));
+  inc(result, FSubjectList.sizeInBytes(magic));
   inc(result, FCategoryList.sizeInBytes(magic));
   inc(result, FPermittedDataType.sizeInBytes(magic));
   inc(result, FSpecimenList.sizeInBytes(magic));
@@ -65547,10 +69189,16 @@ begin
   result := (FDerivedFromUriList <> nil) and (FDerivedFromUriList.count > 0);
 end;
 
-procedure TFhirObservationDefinition.SetSubject(value : TFhirCodeableConcept);
+function TFhirObservationDefinition.GetSubjectList : TFhirCodeableConceptList;
 begin
-  FSubject.free;
-  FSubject := value;
+  if FSubjectList = nil then
+    FSubjectList := TFhirCodeableConceptList.Create;
+  result := FSubjectList;
+end;
+
+function TFhirObservationDefinition.GetHasSubjectList : boolean;
+begin
+  result := (FSubjectList <> nil) and (FSubjectList.count > 0);
 end;
 
 procedure TFhirObservationDefinition.SetPerformerType(value : TFhirCodeableConcept);
@@ -65774,6 +69422,7 @@ end;
 
 function TFhirObservationDefinitionList.AddItem(value: TFhirObservationDefinition): TFhirObservationDefinition;
 begin
+  assert(value.ClassName = 'TFhirObservationDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationDefinition');
   add(value);
   result := value;
 end;
@@ -66163,7 +69812,7 @@ begin
 end;
 
 procedure TFhirOperationDefinitionParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('use');
@@ -66179,7 +69828,7 @@ begin
 end;
 
 function TFhirOperationDefinitionParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTargetProfileList.sizeInBytes(magic));
   inc(result, FReferencedFromList.sizeInBytes(magic));
@@ -66434,6 +70083,7 @@ end;
 
 function TFhirOperationDefinitionParameterList.AddItem(value: TFhirOperationDefinitionParameter): TFhirOperationDefinitionParameter;
 begin
+  assert(value.ClassName = 'TFhirOperationDefinitionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameter');
   add(value);
   result := value;
 end;
@@ -66653,14 +70303,14 @@ begin
 end;
 
 procedure TFhirOperationDefinitionParameterBinding.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('strength');
   fields.add('valueSet');
 end;
 
 function TFhirOperationDefinitionParameterBinding.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -66748,6 +70398,7 @@ end;
 
 function TFhirOperationDefinitionParameterBindingList.AddItem(value: TFhirOperationDefinitionParameterBinding): TFhirOperationDefinitionParameterBinding;
 begin
+  assert(value.ClassName = 'TFhirOperationDefinitionParameterBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameterBinding');
   add(value);
   result := value;
 end;
@@ -66967,14 +70618,14 @@ begin
 end;
 
 procedure TFhirOperationDefinitionParameterReferencedFrom.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('source');
   fields.add('sourceId');
 end;
 
 function TFhirOperationDefinitionParameterReferencedFrom.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -67066,6 +70717,7 @@ end;
 
 function TFhirOperationDefinitionParameterReferencedFromList.AddItem(value: TFhirOperationDefinitionParameterReferencedFrom): TFhirOperationDefinitionParameterReferencedFrom;
 begin
+  assert(value.ClassName = 'TFhirOperationDefinitionParameterReferencedFrom', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameterReferencedFrom');
   add(value);
   result := value;
 end;
@@ -67298,14 +70950,14 @@ begin
 end;
 
 procedure TFhirOperationDefinitionOverload.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('parameterName');
   fields.add('comment');
 end;
 
 function TFhirOperationDefinitionOverload.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FParameterNameList.sizeInBytes(magic));
 end;
@@ -67384,6 +71036,7 @@ end;
 
 function TFhirOperationDefinitionOverloadList.AddItem(value: TFhirOperationDefinitionOverload): TFhirOperationDefinitionOverload;
 begin
+  assert(value.ClassName = 'TFhirOperationDefinitionOverload', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionOverload');
   add(value);
   result := value;
 end;
@@ -67801,7 +71454,7 @@ begin
 end;
 
 procedure TFhirOperationDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -67832,7 +71485,7 @@ begin
 end;
 
 function TFhirOperationDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FResource.sizeInBytes(magic));
   inc(result, FParameterList.sizeInBytes(magic));
@@ -68429,6 +72082,7 @@ end;
 
 function TFhirOperationDefinitionList.AddItem(value: TFhirOperationDefinition): TFhirOperationDefinition;
 begin
+  assert(value.ClassName = 'TFhirOperationDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinition');
   add(value);
   result := value;
 end;
@@ -68943,7 +72597,7 @@ begin
 end;
 
 procedure TFhirQuestionnaireItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('linkId');
   fields.add('definition');
@@ -68966,7 +72620,7 @@ begin
 end;
 
 function TFhirQuestionnaireItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCodeList.sizeInBytes(magic));
   inc(result, FEnableWhenList.sizeInBytes(magic));
@@ -69378,6 +73032,7 @@ end;
 
 function TFhirQuestionnaireItemList.AddItem(value: TFhirQuestionnaireItem): TFhirQuestionnaireItem;
 begin
+  assert(value.ClassName = 'TFhirQuestionnaireItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireItem');
   add(value);
   result := value;
 end;
@@ -69612,7 +73267,7 @@ begin
 end;
 
 procedure TFhirQuestionnaireItemEnableWhen.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('question');
   fields.add('operator');
@@ -69620,7 +73275,7 @@ begin
 end;
 
 function TFhirQuestionnaireItemEnableWhen.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -69714,6 +73369,7 @@ end;
 
 function TFhirQuestionnaireItemEnableWhenList.AddItem(value: TFhirQuestionnaireItemEnableWhen): TFhirQuestionnaireItemEnableWhen;
 begin
+  assert(value.ClassName = 'TFhirQuestionnaireItemEnableWhen', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireItemEnableWhen');
   add(value);
   result := value;
 end;
@@ -69933,14 +73589,14 @@ begin
 end;
 
 procedure TFhirQuestionnaireItemAnswerOption.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value[x]');
   fields.add('initialSelected');
 end;
 
 function TFhirQuestionnaireItemAnswerOption.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -70007,6 +73663,7 @@ end;
 
 function TFhirQuestionnaireItemAnswerOptionList.AddItem(value: TFhirQuestionnaireItemAnswerOption): TFhirQuestionnaireItemAnswerOption;
 begin
+  assert(value.ClassName = 'TFhirQuestionnaireItemAnswerOption', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireItemAnswerOption');
   add(value);
   result := value;
 end;
@@ -70212,13 +73869,13 @@ begin
 end;
 
 procedure TFhirQuestionnaireItemInitial.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value[x]');
 end;
 
 function TFhirQuestionnaireItemInitial.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -70264,6 +73921,7 @@ end;
 
 function TFhirQuestionnaireItemInitialList.AddItem(value: TFhirQuestionnaireItemInitial): TFhirQuestionnaireItemInitial;
 begin
+  assert(value.ClassName = 'TFhirQuestionnaireItemInitial', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireItemInitial');
   add(value);
   result := value;
 end;
@@ -70562,7 +74220,7 @@ begin
 end;
 
 procedure TFhirQuestionnaire.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -70589,7 +74247,7 @@ begin
 end;
 
 function TFhirQuestionnaire.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDerivedFromList.sizeInBytes(magic));
   inc(result, FSubjectType.sizeInBytes(magic));
@@ -71049,6 +74707,7 @@ end;
 
 function TFhirQuestionnaireList.AddItem(value: TFhirQuestionnaire): TFhirQuestionnaire;
 begin
+  assert(value.ClassName = 'TFhirQuestionnaire', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaire');
   add(value);
   result := value;
 end;
@@ -71270,14 +74929,14 @@ begin
 end;
 
 procedure TFhirSearchParameterComponent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('definition');
   fields.add('expression');
 end;
 
 function TFhirSearchParameterComponent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -71369,6 +75028,7 @@ end;
 
 function TFhirSearchParameterComponentList.AddItem(value: TFhirSearchParameterComponent): TFhirSearchParameterComponent;
 begin
+  assert(value.ClassName = 'TFhirSearchParameterComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSearchParameterComponent');
   add(value);
   result := value;
 end;
@@ -71824,7 +75484,7 @@ begin
 end;
 
 procedure TFhirSearchParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('version');
@@ -71855,7 +75515,7 @@ begin
 end;
 
 function TFhirSearchParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FBase.sizeInBytes(magic));
   inc(result, FTarget.sizeInBytes(magic));
@@ -72467,6 +76127,7 @@ end;
 
 function TFhirSearchParameterList.AddItem(value: TFhirSearchParameter): TFhirSearchParameter;
 begin
+  assert(value.ClassName = 'TFhirSearchParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSearchParameter');
   add(value);
   result := value;
 end;
@@ -72841,7 +76502,7 @@ begin
 end;
 
 procedure TFhirSpecimenDefinitionTypeTested.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('isDerived');
   fields.add('type');
@@ -72856,7 +76517,7 @@ begin
 end;
 
 function TFhirSpecimenDefinitionTypeTested.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FRejectionCriterionList.sizeInBytes(magic));
   inc(result, FHandlingList.sizeInBytes(magic));
@@ -73043,6 +76704,7 @@ end;
 
 function TFhirSpecimenDefinitionTypeTestedList.AddItem(value: TFhirSpecimenDefinitionTypeTested): TFhirSpecimenDefinitionTypeTested;
 begin
+  assert(value.ClassName = 'TFhirSpecimenDefinitionTypeTested', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenDefinitionTypeTested');
   add(value);
   result := value;
 end;
@@ -73362,7 +77024,7 @@ begin
 end;
 
 procedure TFhirSpecimenDefinitionTypeTestedContainer.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('material');
   fields.add('type');
@@ -73375,7 +77037,7 @@ begin
 end;
 
 function TFhirSpecimenDefinitionTypeTestedContainer.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FAdditiveList.sizeInBytes(magic));
 end;
@@ -73510,6 +77172,7 @@ end;
 
 function TFhirSpecimenDefinitionTypeTestedContainerList.AddItem(value: TFhirSpecimenDefinitionTypeTestedContainer): TFhirSpecimenDefinitionTypeTestedContainer;
 begin
+  assert(value.ClassName = 'TFhirSpecimenDefinitionTypeTestedContainer', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenDefinitionTypeTestedContainer');
   add(value);
   result := value;
 end;
@@ -73715,13 +77378,13 @@ begin
 end;
 
 procedure TFhirSpecimenDefinitionTypeTestedContainerAdditive.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('additive[x]');
 end;
 
 function TFhirSpecimenDefinitionTypeTestedContainerAdditive.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -73767,6 +77430,7 @@ end;
 
 function TFhirSpecimenDefinitionTypeTestedContainerAdditiveList.AddItem(value: TFhirSpecimenDefinitionTypeTestedContainerAdditive): TFhirSpecimenDefinitionTypeTestedContainerAdditive;
 begin
+  assert(value.ClassName = 'TFhirSpecimenDefinitionTypeTestedContainerAdditive', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenDefinitionTypeTestedContainerAdditive');
   add(value);
   result := value;
 end;
@@ -74016,7 +77680,7 @@ begin
 end;
 
 procedure TFhirSpecimenDefinitionTypeTestedHandling.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('temperatureQualifier');
   fields.add('temperatureRange');
@@ -74025,7 +77689,7 @@ begin
 end;
 
 function TFhirSpecimenDefinitionTypeTestedHandling.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -74109,6 +77773,7 @@ end;
 
 function TFhirSpecimenDefinitionTypeTestedHandlingList.AddItem(value: TFhirSpecimenDefinitionTypeTestedHandling): TFhirSpecimenDefinitionTypeTestedHandling;
 begin
+  assert(value.ClassName = 'TFhirSpecimenDefinitionTypeTestedHandling', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenDefinitionTypeTestedHandling');
   add(value);
   result := value;
 end;
@@ -74764,7 +78429,7 @@ begin
 end;
 
 procedure TFhirSpecimenDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -74794,7 +78459,7 @@ begin
 end;
 
 function TFhirSpecimenDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDerivedFromCanonicalList.sizeInBytes(magic));
   inc(result, FDerivedFromUriList.sizeInBytes(magic));
@@ -75256,6 +78921,7 @@ end;
 
 function TFhirSpecimenDefinitionList.AddItem(value: TFhirSpecimenDefinition): TFhirSpecimenDefinition;
 begin
+  assert(value.ClassName = 'TFhirSpecimenDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenDefinition');
   add(value);
   result := value;
 end;
@@ -75506,7 +79172,7 @@ begin
 end;
 
 procedure TFhirStructureDefinitionMapping.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identity');
   fields.add('uri');
@@ -75515,7 +79181,7 @@ begin
 end;
 
 function TFhirStructureDefinitionMapping.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -75659,6 +79325,7 @@ end;
 
 function TFhirStructureDefinitionMappingList.AddItem(value: TFhirStructureDefinitionMapping): TFhirStructureDefinitionMapping;
 begin
+  assert(value.ClassName = 'TFhirStructureDefinitionMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionMapping');
   add(value);
   result := value;
 end;
@@ -75878,14 +79545,14 @@ begin
 end;
 
 procedure TFhirStructureDefinitionContext.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('expression');
 end;
 
 function TFhirStructureDefinitionContext.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -75973,6 +79640,7 @@ end;
 
 function TFhirStructureDefinitionContextList.AddItem(value: TFhirStructureDefinitionContext): TFhirStructureDefinitionContext;
 begin
+  assert(value.ClassName = 'TFhirStructureDefinitionContext', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionContext');
   add(value);
   result := value;
 end;
@@ -76191,13 +79859,13 @@ begin
 end;
 
 procedure TFhirStructureDefinitionSnapshot.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('element');
 end;
 
 function TFhirStructureDefinitionSnapshot.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FElementList.sizeInBytes(magic));
 end;
@@ -76250,6 +79918,7 @@ end;
 
 function TFhirStructureDefinitionSnapshotList.AddItem(value: TFhirStructureDefinitionSnapshot): TFhirStructureDefinitionSnapshot;
 begin
+  assert(value.ClassName = 'TFhirStructureDefinitionSnapshot', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionSnapshot');
   add(value);
   result := value;
 end;
@@ -76468,13 +80137,13 @@ begin
 end;
 
 procedure TFhirStructureDefinitionDifferential.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('element');
 end;
 
 function TFhirStructureDefinitionDifferential.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FElementList.sizeInBytes(magic));
 end;
@@ -76527,6 +80196,7 @@ end;
 
 function TFhirStructureDefinitionDifferentialList.AddItem(value: TFhirStructureDefinitionDifferential): TFhirStructureDefinitionDifferential;
 begin
+  assert(value.ClassName = 'TFhirStructureDefinitionDifferential', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionDifferential');
   add(value);
   result := value;
 end;
@@ -76945,7 +80615,7 @@ begin
 end;
 
 procedure TFhirStructureDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -76977,7 +80647,7 @@ begin
 end;
 
 function TFhirStructureDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FKeywordList.sizeInBytes(magic));
   inc(result, FMappingList.sizeInBytes(magic));
@@ -77540,6 +81210,7 @@ end;
 
 function TFhirStructureDefinitionList.AddItem(value: TFhirStructureDefinition): TFhirStructureDefinition;
 begin
+  assert(value.ClassName = 'TFhirStructureDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinition');
   add(value);
   result := value;
 end;
@@ -77790,7 +81461,7 @@ begin
 end;
 
 procedure TFhirStructureMapStructure.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('mode');
@@ -77799,7 +81470,7 @@ begin
 end;
 
 function TFhirStructureMapStructure.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -77939,6 +81610,7 @@ end;
 
 function TFhirStructureMapStructureList.AddItem(value: TFhirStructureMapStructure): TFhirStructureMapStructure;
 begin
+  assert(value.ClassName = 'TFhirStructureMapStructure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapStructure');
   add(value);
   result := value;
 end;
@@ -78241,7 +81913,7 @@ begin
 end;
 
 procedure TFhirStructureMapGroup.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('extends');
@@ -78252,7 +81924,7 @@ begin
 end;
 
 function TFhirStructureMapGroup.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FInputList.sizeInBytes(magic));
   inc(result, FRuleList.sizeInBytes(magic));
@@ -78418,6 +82090,7 @@ end;
 
 function TFhirStructureMapGroupList.AddItem(value: TFhirStructureMapGroup): TFhirStructureMapGroup;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroup');
   add(value);
   result := value;
 end;
@@ -78666,7 +82339,7 @@ begin
 end;
 
 procedure TFhirStructureMapGroupInput.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('type');
@@ -78675,7 +82348,7 @@ begin
 end;
 
 function TFhirStructureMapGroupInput.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -78815,6 +82488,7 @@ end;
 
 function TFhirStructureMapGroupInputList.AddItem(value: TFhirStructureMapGroupInput): TFhirStructureMapGroupInput;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupInput', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupInput');
   add(value);
   result := value;
 end;
@@ -79141,7 +82815,7 @@ begin
 end;
 
 procedure TFhirStructureMapGroupRule.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('source');
@@ -79152,7 +82826,7 @@ begin
 end;
 
 function TFhirStructureMapGroupRule.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSourceList.sizeInBytes(magic));
   inc(result, FTargetList.sizeInBytes(magic));
@@ -79296,6 +82970,7 @@ end;
 
 function TFhirStructureMapGroupRuleList.AddItem(value: TFhirStructureMapGroupRule): TFhirStructureMapGroupRule;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupRule', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupRule');
   add(value);
   result := value;
 end;
@@ -79417,7 +83092,7 @@ begin
   minElement := TFhirStructureMapGroupRuleSource(oSource).minElement.Clone;
   maxElement := TFhirStructureMapGroupRuleSource(oSource).maxElement.Clone;
   type_Element := TFhirStructureMapGroupRuleSource(oSource).type_Element.Clone;
-  defaultValue := TFhirStructureMapGroupRuleSource(oSource).defaultValue.Clone;
+  defaultValueElement := TFhirStructureMapGroupRuleSource(oSource).defaultValueElement.Clone;
   elementElement := TFhirStructureMapGroupRuleSource(oSource).elementElement.Clone;
   listModeElement := TFhirStructureMapGroupRuleSource(oSource).listModeElement.Clone;
   variableElement := TFhirStructureMapGroupRuleSource(oSource).variableElement.Clone;
@@ -79437,8 +83112,8 @@ begin
      list.add(self.link, 'max', FMax.Link);
   if (child_name = 'type') Then
      list.add(self.link, 'type', FType_.Link);
-  if (child_name = 'defaultValue[x]') or (child_name = 'defaultValue') Then
-     list.add(self.link, 'defaultValue[x]', FDefaultValue.Link);
+  if (child_name = 'defaultValue') Then
+     list.add(self.link, 'defaultValue', FDefaultValue.Link);
   if (child_name = 'element') Then
      list.add(self.link, 'element', FElement.Link);
   if (child_name = 'listMode') Then
@@ -79460,7 +83135,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'min', 'integer', false, TFhirInteger, FMin.Link));
   oList.add(TFHIRProperty.create(self, 'max', 'string', false, TFhirString, FMax.Link));
   oList.add(TFHIRProperty.create(self, 'type', 'string', false, TFhirString, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'defaultValue[x]', 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta', false, TFhirDataType, FDefaultValue.Link));
+  oList.add(TFHIRProperty.create(self, 'defaultValue', 'string', false, TFhirString, FDefaultValue.Link));
   oList.add(TFHIRProperty.create(self, 'element', 'string', false, TFhirString, FElement.Link));
   oList.add(TFHIRProperty.create(self, 'listMode', 'code', false, TFhirEnum, FListMode.Link));
   oList.add(TFHIRProperty.create(self, 'variable', 'id', false, TFhirId, FVariable.Link));
@@ -79491,9 +83166,9 @@ begin
     Type_Element := asString(propValue);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then
+  else if (propName = 'defaultValue') then
   begin
-    DefaultValue := propValue as TFhirDataType;
+    DefaultValueElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'element') then
@@ -79540,7 +83215,7 @@ begin
   else if (propName = 'min') then result := TFhirInteger.create()
   else if (propName = 'max') then result := TFhirString.create()
   else if (propName = 'type') then result := TFhirString.create()
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then raise EFHIRException.create('Cannot make property DefaultValue')
+  else if (propName = 'defaultValue') then result := TFhirString.create()
   else if (propName = 'element') then result := TFhirString.create()
   else if (propName = 'listMode') then result := TFhirEnum.create(SYSTEMS_TFhirStructureMapSourceListModeEnum[StructureMapSourceListModeNull], CODES_TFhirStructureMapSourceListModeEnum[StructureMapSourceListModeNull]) 
   else if (propName = 'variable') then result := TFhirId.create()
@@ -79556,7 +83231,7 @@ begin
   else if (propName = 'min') then result := 'integer'
   else if (propName = 'max') then result := 'string'
   else if (propName = 'type') then result := 'string'
-  else if (propName = 'defaultValue[x]') then result := 'base64Binary|boolean|canonical|code|date|dateTime|decimal|id|instant|integer|integer64|markdown|oid|positiveInt|string|time|unsignedInt|uri|url|uuid|Address|Age|Annotation|Attachment|CodeableConcept|Coding|ContactPoint|Count|Distance|Duration|HumanNa'+'me|Identifier|Money|Period|Quantity|Range|Ratio|Reference|SampledData|Signature|Timing|ContactDetail|Contributor|DataRequirement|Expression|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta'
+  else if (propName = 'defaultValue') then result := 'string'
   else if (propName = 'element') then result := 'string'
   else if (propName = 'listMode') then result := 'code'
   else if (propName = 'variable') then result := 'id'
@@ -79572,7 +83247,7 @@ begin
   else if (propName = 'min') then MinElement := nil
   else if (propName = 'max') then MaxElement := nil
   else if (propName = 'type') then Type_Element := nil
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := nil
+  else if (propName = 'defaultValue') then DefaultValueElement := nil
   else if (propName = 'element') then ElementElement := nil
   else if (propName = 'listMode') then ListModeElement := nil
   else if (propName = 'variable') then VariableElement := nil
@@ -79589,7 +83264,7 @@ begin
   else if (propName = 'min') then MinElement := asInteger(new)
   else if (propName = 'max') then MaxElement := asString(new)
   else if (propName = 'type') then Type_Element := asString(new)
-  else if (isMatchingName(propName, 'defaultValue', ['Base64Binary', 'Boolean', 'Canonical', 'Code', 'Date', 'DateTime', 'Decimal', 'Id', 'Instant', 'Integer', 'Integer64', 'Markdown', 'Oid', 'PositiveInt', 'String', 'Time', 'UnsignedInt', 'Uri', 'Url', 'Uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition', 'UsageContext', 'Dosage', 'Meta'])) then DefaultValueElement := new as TFhirDataType
+  else if (propName = 'defaultValue') then DefaultValueElement := asString(new)
   else if (propName = 'element') then ElementElement := asString(new)
   else if (propName = 'listMode') then ListModeElement := asEnum(SYSTEMS_TFhirStructureMapSourceListModeEnum, CODES_TFhirStructureMapSourceListModeEnum, new)
   else if (propName = 'variable') then VariableElement := asId(new)
@@ -79646,13 +83321,13 @@ begin
 end;
 
 procedure TFhirStructureMapGroupRuleSource.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('context');
   fields.add('min');
   fields.add('max');
   fields.add('type');
-  fields.add('defaultValue[x]');
+  fields.add('defaultValue');
   fields.add('element');
   fields.add('listMode');
   fields.add('variable');
@@ -79662,7 +83337,7 @@ begin
 end;
 
 function TFhirStructureMapGroupRuleSource.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -79770,10 +83445,30 @@ begin
     FType_.value := '';
 end;
 
-procedure TFhirStructureMapGroupRuleSource.SetDefaultValue(value : TFhirDataType);
+procedure TFhirStructureMapGroupRuleSource.SetDefaultValue(value : TFhirString);
 begin
   FDefaultValue.free;
   FDefaultValue := value;
+end;
+
+function TFhirStructureMapGroupRuleSource.GetDefaultValueST : String;
+begin
+  if FDefaultValue = nil then
+    result := ''
+  else
+    result := FDefaultValue.value;
+end;
+
+procedure TFhirStructureMapGroupRuleSource.SetDefaultValueST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDefaultValue = nil then
+      FDefaultValue := TFhirString.create;
+    FDefaultValue.value := value
+  end
+  else if FDefaultValue <> nil then
+    FDefaultValue.value := '';
 end;
 
 procedure TFhirStructureMapGroupRuleSource.SetElement(value : TFhirString);
@@ -79964,6 +83659,7 @@ end;
 
 function TFhirStructureMapGroupRuleSourceList.AddItem(value: TFhirStructureMapGroupRuleSource): TFhirStructureMapGroupRuleSource;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupRuleSource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupRuleSource');
   add(value);
   result := value;
 end;
@@ -80277,7 +83973,7 @@ begin
 end;
 
 procedure TFhirStructureMapGroupRuleTarget.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('context');
   fields.add('element');
@@ -80289,7 +83985,7 @@ begin
 end;
 
 function TFhirStructureMapGroupRuleTarget.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FListMode.sizeInBytes(magic));
   inc(result, FParameterList.sizeInBytes(magic));
@@ -80505,6 +84201,7 @@ end;
 
 function TFhirStructureMapGroupRuleTargetList.AddItem(value: TFhirStructureMapGroupRuleTarget): TFhirStructureMapGroupRuleTarget;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupRuleTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupRuleTarget');
   add(value);
   result := value;
 end;
@@ -80625,12 +84322,12 @@ end;
 procedure TFhirStructureMapGroupRuleTargetParameter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'id|string|boolean|integer|decimal', false, TFhirDataType, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'id|string|boolean|integer|decimal|date|time|dateTime', false, TFhirDataType, FValue.Link));
 end;
 
 function TFhirStructureMapGroupRuleTargetParameter.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal'])) then
+  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal', 'Date', 'Time', 'DateTime'])) then
   begin
     Value := propValue as TFhirDataType;
     result := propValue;
@@ -80645,26 +84342,26 @@ end;
 
 function TFhirStructureMapGroupRuleTargetParameter.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal'])) then raise EFHIRException.create('Cannot make property Value')
+  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal', 'Date', 'Time', 'DateTime'])) then raise EFHIRException.create('Cannot make property Value')
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirStructureMapGroupRuleTargetParameter.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'value[x]') then result := 'id|string|boolean|integer|decimal'
+  if (propName = 'value[x]') then result := 'id|string|boolean|integer|decimal|date|time|dateTime'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirStructureMapGroupRuleTargetParameter.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal'])) then ValueElement := nil
+  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal', 'Date', 'Time', 'DateTime'])) then ValueElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirStructureMapGroupRuleTargetParameter.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal'])) then ValueElement := new as TFhirDataType
+  if (isMatchingName(propName, 'value', ['Id', 'String', 'Boolean', 'Integer', 'Decimal', 'Date', 'Time', 'DateTime'])) then ValueElement := new as TFhirDataType
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -80710,13 +84407,13 @@ begin
 end;
 
 procedure TFhirStructureMapGroupRuleTargetParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value[x]');
 end;
 
 function TFhirStructureMapGroupRuleTargetParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -80762,6 +84459,7 @@ end;
 
 function TFhirStructureMapGroupRuleTargetParameterList.AddItem(value: TFhirStructureMapGroupRuleTargetParameter): TFhirStructureMapGroupRuleTargetParameter;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupRuleTargetParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupRuleTargetParameter');
   add(value);
   result := value;
 end;
@@ -80863,7 +84561,7 @@ end;
 destructor TFhirStructureMapGroupRuleDependent.Destroy;
 begin
   FName.free;
-  FVariableList.Free;
+  FParameterList.Free;
   inherited;
 end;
 
@@ -80871,16 +84569,16 @@ procedure TFhirStructureMapGroupRuleDependent.Assign(oSource : TFslObject);
 begin
   inherited;
   nameElement := TFhirStructureMapGroupRuleDependent(oSource).nameElement.Clone;
-  if (TFhirStructureMapGroupRuleDependent(oSource).FVariableList = nil) then
+  if (TFhirStructureMapGroupRuleDependent(oSource).FParameterList = nil) then
   begin
-    FVariableList.free;
-    FVariableList := nil;
+    FParameterList.free;
+    FParameterList := nil;
   end
   else
   begin
-    if FVariableList = nil then
-      FVariableList := TFhirStringList.Create;
-    FVariableList.Assign(TFhirStructureMapGroupRuleDependent(oSource).FVariableList);
+    if FParameterList = nil then
+      FParameterList := TFhirStructureMapGroupRuleTargetParameterList.Create;
+    FParameterList.Assign(TFhirStructureMapGroupRuleDependent(oSource).FParameterList);
   end;
 end;
 
@@ -80889,15 +84587,15 @@ begin
   inherited;
   if (child_name = 'name') Then
      list.add(self.link, 'name', FName.Link);
-  if (child_name = 'variable') Then
-    list.addAll(self, 'variable', FVariableList);
+  if (child_name = 'parameter') Then
+    list.addAll(self, 'parameter', FParameterList);
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'name', 'id', false, TFhirId, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'variable', 'string', true, TFhirString, FVariableList.Link));
+  oList.add(TFHIRProperty.create(self, 'parameter', '', true, TFhirStructureMapGroupRuleTargetParameter, FParameterList.Link));
 end;
 
 function TFhirStructureMapGroupRuleDependent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -80907,38 +84605,38 @@ begin
     NameElement := asId(propValue);
     result := propValue;
   end
-  else if (propName = 'variable') then
+  else if (propName = 'parameter') then
   begin
-    VariableList.add(asString(propValue)){2};     result := propValue;
-
+    ParameterList.add(propValue as TFhirStructureMapGroupRuleTargetParameter);
+    result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'variable') then VariableList.insertItem(index, asString(propValue))
+  if (propName = 'parameter') then ParameterList.insertItem(index, propValue as TFhirStructureMapGroupRuleTargetParameter)
   else inherited;
 end;
 
 function TFhirStructureMapGroupRuleDependent.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'name') then result := TFhirId.create()
-  else if (propName = 'variable') then result := VariableList.new()
+  else if (propName = 'parameter') then result := ParameterList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirStructureMapGroupRuleDependent.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'name') then result := 'id'
-  else if (propName = 'variable') then result := 'string'
+  else if (propName = 'parameter') then result := ''
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'name') then NameElement := nil
-  else if (propName = 'variable') then deletePropertyValue('variable', VariableList, value)
+  else if (propName = 'parameter') then deletePropertyValue('parameter', ParameterList, value)
   else
     inherited deleteProperty(propName, value);
 end;
@@ -80946,14 +84644,14 @@ end;
 procedure TFhirStructureMapGroupRuleDependent.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'name') then NameElement := asId(new)
-  else if (propName = 'variable') then replacePropertyValue('variable', VariableList, existing, new)
+  else if (propName = 'parameter') then replacePropertyValue('parameter', ParameterList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'variable') then VariableList.move(source, destination)
+  if (propName = 'parameter') then ParameterList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -80984,26 +84682,26 @@ begin
   else
   begin
     o := TFhirStructureMapGroupRuleDependent(other);
-    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(variableList, o.variableList, true);
+    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(parameterList, o.parameterList, true);
   end;
 end;
 
 function TFhirStructureMapGroupRuleDependent.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FvariableList);
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FparameterList);
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
-  fields.add('variable');
+  fields.add('parameter');
 end;
 
 function TFhirStructureMapGroupRuleDependent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
-  inc(result, FVariableList.sizeInBytes(magic));
+  inc(result, FParameterList.sizeInBytes(magic));
 end;
 
 procedure TFhirStructureMapGroupRuleDependent.SetName(value : TFhirId);
@@ -81032,16 +84730,16 @@ begin
     FName.value := '';
 end;
 
-function TFhirStructureMapGroupRuleDependent.GetVariableList : TFhirStringList;
+function TFhirStructureMapGroupRuleDependent.GetParameterList : TFhirStructureMapGroupRuleTargetParameterList;
 begin
-  if FVariableList = nil then
-    FVariableList := TFhirStringList.Create;
-  result := FVariableList;
+  if FParameterList = nil then
+    FParameterList := TFhirStructureMapGroupRuleTargetParameterList.Create;
+  result := FParameterList;
 end;
 
-function TFhirStructureMapGroupRuleDependent.GetHasVariableList : boolean;
+function TFhirStructureMapGroupRuleDependent.GetHasParameterList : boolean;
 begin
-  result := (FVariableList <> nil) and (FVariableList.count > 0);
+  result := (FParameterList <> nil) and (FParameterList.count > 0);
 end;
 
 { TFhirStructureMapGroupRuleDependentListEnumerator }
@@ -81080,6 +84778,7 @@ end;
 
 function TFhirStructureMapGroupRuleDependentList.AddItem(value: TFhirStructureMapGroupRuleDependent): TFhirStructureMapGroupRuleDependent;
 begin
+  assert(value.ClassName = 'TFhirStructureMapGroupRuleDependent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMapGroupRuleDependent');
   add(value);
   result := value;
 end;
@@ -81356,7 +85055,7 @@ begin
 end;
 
 procedure TFhirStructureMap.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -81379,7 +85078,7 @@ begin
 end;
 
 function TFhirStructureMap.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FStructureList.sizeInBytes(magic));
   inc(result, FImportList.sizeInBytes(magic));
@@ -81778,6 +85477,7 @@ end;
 
 function TFhirStructureMapList.AddItem(value: TFhirStructureMap): TFhirStructureMap;
 begin
+  assert(value.ClassName = 'TFhirStructureMap', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureMap');
   add(value);
   result := value;
 end;
@@ -81999,14 +85699,14 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesSoftware.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('version');
 end;
 
 function TFhirTerminologyCapabilitiesSoftware.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -82098,6 +85798,7 @@ end;
 
 function TFhirTerminologyCapabilitiesSoftwareList.AddItem(value: TFhirTerminologyCapabilitiesSoftware): TFhirTerminologyCapabilitiesSoftware;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesSoftware', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesSoftware');
   add(value);
   result := value;
 end;
@@ -82317,14 +86018,14 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesImplementation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('description');
   fields.add('url');
 end;
 
 function TFhirTerminologyCapabilitiesImplementation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -82416,6 +86117,7 @@ end;
 
 function TFhirTerminologyCapabilitiesImplementationList.AddItem(value: TFhirTerminologyCapabilitiesImplementation): TFhirTerminologyCapabilitiesImplementation;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesImplementation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesImplementation');
   add(value);
   result := value;
 end;
@@ -82663,7 +86365,7 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesCodeSystem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('uri');
   fields.add('version');
@@ -82671,7 +86373,7 @@ begin
 end;
 
 function TFhirTerminologyCapabilitiesCodeSystem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FVersionList.sizeInBytes(magic));
 end;
@@ -82771,6 +86473,7 @@ end;
 
 function TFhirTerminologyCapabilitiesCodeSystemList.AddItem(value: TFhirTerminologyCapabilitiesCodeSystem): TFhirTerminologyCapabilitiesCodeSystem;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesCodeSystem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesCodeSystem');
   add(value);
   result := value;
 end;
@@ -83085,7 +86788,7 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesCodeSystemVersion.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('isDefault');
@@ -83096,7 +86799,7 @@ begin
 end;
 
 function TFhirTerminologyCapabilitiesCodeSystemVersion.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLanguageList.sizeInBytes(magic));
   inc(result, FFilterList.sizeInBytes(magic));
@@ -83243,6 +86946,7 @@ end;
 
 function TFhirTerminologyCapabilitiesCodeSystemVersionList.AddItem(value: TFhirTerminologyCapabilitiesCodeSystemVersion): TFhirTerminologyCapabilitiesCodeSystemVersion;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesCodeSystemVersion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesCodeSystemVersion');
   add(value);
   result := value;
 end;
@@ -83475,14 +87179,14 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesCodeSystemVersionFilter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('op');
 end;
 
 function TFhirTerminologyCapabilitiesCodeSystemVersionFilter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FOpList.sizeInBytes(magic));
 end;
@@ -83561,6 +87265,7 @@ end;
 
 function TFhirTerminologyCapabilitiesCodeSystemVersionFilterList.AddItem(value: TFhirTerminologyCapabilitiesCodeSystemVersionFilter): TFhirTerminologyCapabilitiesCodeSystemVersionFilter;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesCodeSystemVersionFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesCodeSystemVersionFilter');
   add(value);
   result := value;
 end;
@@ -83837,7 +87542,7 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesExpansion.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('hierarchical');
   fields.add('paging');
@@ -83847,7 +87552,7 @@ begin
 end;
 
 function TFhirTerminologyCapabilitiesExpansion.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FParameterList.sizeInBytes(magic));
 end;
@@ -83989,6 +87694,7 @@ end;
 
 function TFhirTerminologyCapabilitiesExpansionList.AddItem(value: TFhirTerminologyCapabilitiesExpansion): TFhirTerminologyCapabilitiesExpansion;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesExpansion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesExpansion');
   add(value);
   result := value;
 end;
@@ -84208,14 +87914,14 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesExpansionParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('documentation');
 end;
 
 function TFhirTerminologyCapabilitiesExpansionParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -84307,6 +88013,7 @@ end;
 
 function TFhirTerminologyCapabilitiesExpansionParameterList.AddItem(value: TFhirTerminologyCapabilitiesExpansionParameter): TFhirTerminologyCapabilitiesExpansionParameter;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesExpansionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesExpansionParameter');
   add(value);
   result := value;
 end;
@@ -84512,13 +88219,13 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesValidateCode.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('translations');
 end;
 
 function TFhirTerminologyCapabilitiesValidateCode.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -84579,6 +88286,7 @@ end;
 
 function TFhirTerminologyCapabilitiesValidateCodeList.AddItem(value: TFhirTerminologyCapabilitiesValidateCode): TFhirTerminologyCapabilitiesValidateCode;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesValidateCode', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesValidateCode');
   add(value);
   result := value;
 end;
@@ -84784,13 +88492,13 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesTranslation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('needsMap');
 end;
 
 function TFhirTerminologyCapabilitiesTranslation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -84851,6 +88559,7 @@ end;
 
 function TFhirTerminologyCapabilitiesTranslationList.AddItem(value: TFhirTerminologyCapabilitiesTranslation): TFhirTerminologyCapabilitiesTranslation;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesTranslation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesTranslation');
   add(value);
   result := value;
 end;
@@ -85056,13 +88765,13 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilitiesClosure.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('translation');
 end;
 
 function TFhirTerminologyCapabilitiesClosure.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -85123,6 +88832,7 @@ end;
 
 function TFhirTerminologyCapabilitiesClosureList.AddItem(value: TFhirTerminologyCapabilitiesClosure): TFhirTerminologyCapabilitiesClosure;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilitiesClosure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilitiesClosure');
   add(value);
   result := value;
 end;
@@ -85476,7 +89186,7 @@ begin
 end;
 
 procedure TFhirTerminologyCapabilities.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -85506,7 +89216,7 @@ begin
 end;
 
 function TFhirTerminologyCapabilities.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCodeSystemList.sizeInBytes(magic));
 end;
@@ -85980,6 +89690,7 @@ end;
 
 function TFhirTerminologyCapabilitiesList.AddItem(value: TFhirTerminologyCapabilities): TFhirTerminologyCapabilities;
 begin
+  assert(value.ClassName = 'TFhirTerminologyCapabilities', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTerminologyCapabilities');
   add(value);
   result := value;
 end;
@@ -86201,14 +89912,14 @@ begin
 end;
 
 procedure TFhirTestScriptOrigin.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('index');
   fields.add('profile');
 end;
 
 function TFhirTestScriptOrigin.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -86280,6 +89991,7 @@ end;
 
 function TFhirTestScriptOriginList.AddItem(value: TFhirTestScriptOrigin): TFhirTestScriptOrigin;
 begin
+  assert(value.ClassName = 'TFhirTestScriptOrigin', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptOrigin');
   add(value);
   result := value;
 end;
@@ -86499,14 +90211,14 @@ begin
 end;
 
 procedure TFhirTestScriptDestination.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('index');
   fields.add('profile');
 end;
 
 function TFhirTestScriptDestination.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -86578,6 +90290,7 @@ end;
 
 function TFhirTestScriptDestinationList.AddItem(value: TFhirTestScriptDestination): TFhirTestScriptDestination;
 begin
+  assert(value.ClassName = 'TFhirTestScriptDestination', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptDestination');
   add(value);
   result := value;
 end;
@@ -86822,14 +90535,14 @@ begin
 end;
 
 procedure TFhirTestScriptMetadata.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('link');
   fields.add('capability');
 end;
 
 function TFhirTestScriptMetadata.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLink_List.sizeInBytes(magic));
   inc(result, FCapabilityList.sizeInBytes(magic));
@@ -86895,6 +90608,7 @@ end;
 
 function TFhirTestScriptMetadataList.AddItem(value: TFhirTestScriptMetadata): TFhirTestScriptMetadata;
 begin
+  assert(value.ClassName = 'TFhirTestScriptMetadata', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadata');
   add(value);
   result := value;
 end;
@@ -87114,14 +90828,14 @@ begin
 end;
 
 procedure TFhirTestScriptMetadataLink.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('description');
 end;
 
 function TFhirTestScriptMetadataLink.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -87213,6 +90927,7 @@ end;
 
 function TFhirTestScriptMetadataLinkList.AddItem(value: TFhirTestScriptMetadataLink): TFhirTestScriptMetadataLink;
 begin
+  assert(value.ClassName = 'TFhirTestScriptMetadataLink', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadataLink');
   add(value);
   result := value;
 end;
@@ -87530,7 +91245,7 @@ begin
 end;
 
 procedure TFhirTestScriptMetadataCapability.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('required');
   fields.add('validated');
@@ -87542,7 +91257,7 @@ begin
 end;
 
 function TFhirTestScriptMetadataCapability.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FOriginList.sizeInBytes(magic));
   inc(result, FLink_List.sizeInBytes(magic));
@@ -87728,6 +91443,7 @@ end;
 
 function TFhirTestScriptMetadataCapabilityList.AddItem(value: TFhirTestScriptMetadataCapability): TFhirTestScriptMetadataCapability;
 begin
+  assert(value.ClassName = 'TFhirTestScriptMetadataCapability', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadataCapability');
   add(value);
   result := value;
 end;
@@ -87962,7 +91678,7 @@ begin
 end;
 
 procedure TFhirTestScriptScope.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('artifact');
   fields.add('conformance');
@@ -87970,7 +91686,7 @@ begin
 end;
 
 function TFhirTestScriptScope.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -88048,6 +91764,7 @@ end;
 
 function TFhirTestScriptScopeList.AddItem(value: TFhirTestScriptScope): TFhirTestScriptScope;
 begin
+  assert(value.ClassName = 'TFhirTestScriptScope', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptScope');
   add(value);
   result := value;
 end;
@@ -88282,7 +91999,7 @@ begin
 end;
 
 procedure TFhirTestScriptFixture.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('autocreate');
   fields.add('autodelete');
@@ -88290,7 +92007,7 @@ begin
 end;
 
 function TFhirTestScriptFixture.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -88378,6 +92095,7 @@ end;
 
 function TFhirTestScriptFixtureList.AddItem(value: TFhirTestScriptFixture): TFhirTestScriptFixture;
 begin
+  assert(value.ClassName = 'TFhirTestScriptFixture', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptFixture');
   add(value);
   result := value;
 end;
@@ -88684,7 +92402,7 @@ begin
 end;
 
 procedure TFhirTestScriptVariable.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('defaultValue');
@@ -88697,7 +92415,7 @@ begin
 end;
 
 function TFhirTestScriptVariable.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -88945,6 +92663,7 @@ end;
 
 function TFhirTestScriptVariableList.AddItem(value: TFhirTestScriptVariable): TFhirTestScriptVariable;
 begin
+  assert(value.ClassName = 'TFhirTestScriptVariable', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptVariable');
   add(value);
   result := value;
 end;
@@ -89163,13 +92882,13 @@ begin
 end;
 
 procedure TFhirTestScriptSetup.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('action');
 end;
 
 function TFhirTestScriptSetup.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FActionList.sizeInBytes(magic));
 end;
@@ -89222,6 +92941,7 @@ end;
 
 function TFhirTestScriptSetupList.AddItem(value: TFhirTestScriptSetup): TFhirTestScriptSetup;
 begin
+  assert(value.ClassName = 'TFhirTestScriptSetup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetup');
   add(value);
   result := value;
 end;
@@ -89441,14 +93161,14 @@ begin
 end;
 
 procedure TFhirTestScriptSetupAction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('operation');
   fields.add('assert');
 end;
 
 function TFhirTestScriptSetupAction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -89500,6 +93220,7 @@ end;
 
 function TFhirTestScriptSetupActionList.AddItem(value: TFhirTestScriptSetupAction): TFhirTestScriptSetupAction;
 begin
+  assert(value.ClassName = 'TFhirTestScriptSetupAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupAction');
   add(value);
   result := value;
 end;
@@ -89950,7 +93671,7 @@ begin
 end;
 
 procedure TFhirTestScriptSetupActionOperation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('resource');
@@ -89972,7 +93693,7 @@ begin
 end;
 
 function TFhirTestScriptSetupActionOperation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FRequestHeaderList.sizeInBytes(magic));
 end;
@@ -90408,6 +94129,7 @@ end;
 
 function TFhirTestScriptSetupActionOperationList.AddItem(value: TFhirTestScriptSetupActionOperation): TFhirTestScriptSetupActionOperation;
 begin
+  assert(value.ClassName = 'TFhirTestScriptSetupActionOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionOperation');
   add(value);
   result := value;
 end;
@@ -90627,14 +94349,14 @@ begin
 end;
 
 procedure TFhirTestScriptSetupActionOperationRequestHeader.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('field');
   fields.add('value');
 end;
 
 function TFhirTestScriptSetupActionOperationRequestHeader.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -90726,6 +94448,7 @@ end;
 
 function TFhirTestScriptSetupActionOperationRequestHeaderList.AddItem(value: TFhirTestScriptSetupActionOperationRequestHeader): TFhirTestScriptSetupActionOperationRequestHeader;
 begin
+  assert(value.ClassName = 'TFhirTestScriptSetupActionOperationRequestHeader', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionOperationRequestHeader');
   add(value);
   result := value;
 end;
@@ -91251,7 +94974,7 @@ begin
 end;
 
 procedure TFhirTestScriptSetupActionAssert.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('label');
   fields.add('description');
@@ -91279,7 +95002,7 @@ begin
 end;
 
 function TFhirTestScriptSetupActionAssert.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -91882,6 +95605,7 @@ end;
 
 function TFhirTestScriptSetupActionAssertList.AddItem(value: TFhirTestScriptSetupActionAssert): TFhirTestScriptSetupActionAssert;
 begin
+  assert(value.ClassName = 'TFhirTestScriptSetupActionAssert', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionAssert');
   add(value);
   result := value;
 end;
@@ -92129,7 +95853,7 @@ begin
 end;
 
 procedure TFhirTestScriptTest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('description');
@@ -92137,7 +95861,7 @@ begin
 end;
 
 function TFhirTestScriptTest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FActionList.sizeInBytes(magic));
 end;
@@ -92242,6 +95966,7 @@ end;
 
 function TFhirTestScriptTestList.AddItem(value: TFhirTestScriptTest): TFhirTestScriptTest;
 begin
+  assert(value.ClassName = 'TFhirTestScriptTest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTest');
   add(value);
   result := value;
 end;
@@ -92461,14 +96186,14 @@ begin
 end;
 
 procedure TFhirTestScriptTestAction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('operation');
   fields.add('assert');
 end;
 
 function TFhirTestScriptTestAction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -92520,6 +96245,7 @@ end;
 
 function TFhirTestScriptTestActionList.AddItem(value: TFhirTestScriptTestAction): TFhirTestScriptTestAction;
 begin
+  assert(value.ClassName = 'TFhirTestScriptTestAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTestAction');
   add(value);
   result := value;
 end;
@@ -92738,13 +96464,13 @@ begin
 end;
 
 procedure TFhirTestScriptTeardown.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('action');
 end;
 
 function TFhirTestScriptTeardown.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FActionList.sizeInBytes(magic));
 end;
@@ -92797,6 +96523,7 @@ end;
 
 function TFhirTestScriptTeardownList.AddItem(value: TFhirTestScriptTeardown): TFhirTestScriptTeardown;
 begin
+  assert(value.ClassName = 'TFhirTestScriptTeardown', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTeardown');
   add(value);
   result := value;
 end;
@@ -93002,13 +96729,13 @@ begin
 end;
 
 procedure TFhirTestScriptTeardownAction.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('operation');
 end;
 
 function TFhirTestScriptTeardownAction.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -93054,6 +96781,7 @@ end;
 
 function TFhirTestScriptTeardownActionList.AddItem(value: TFhirTestScriptTeardownAction): TFhirTestScriptTeardownAction;
 begin
+  assert(value.ClassName = 'TFhirTestScriptTeardownAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTeardownAction');
   add(value);
   result := value;
 end;
@@ -93479,7 +97207,7 @@ begin
 end;
 
 procedure TFhirTestScript.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -93509,7 +97237,7 @@ begin
 end;
 
 function TFhirTestScript.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FOriginList.sizeInBytes(magic));
   inc(result, FDestinationList.sizeInBytes(magic));
@@ -93546,23 +97274,16 @@ begin
     FUrl.value := '';
 end;
 
-function TFhirTestScript.GetIdentifier : TFhirIdentifier;
+function TFhirTestScript.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
-    result := nil
-  else if FIdentifierList.count > 0 then
-    result := FIdentifierList[0]
-  else
-    result := nil;
+    FIdentifierList := TFhirIdentifierList.Create;
+  result := FIdentifierList;
 end;
 
-procedure TFhirTestScript.SetIdentifier(value : TFhirIdentifier);
+function TFhirTestScript.GetHasIdentifierList : boolean;
 begin
-  if FIdentifierList = nil then
-    FIdentifierList := TFhirIdentifierList.create;
-  FIdentifierList.clear;
-  if (value <> nil) then
-    FIdentifierList.add(value);
+  result := (FIdentifierList <> nil) and (FIdentifierList.count > 0);
 end;
 
 procedure TFhirTestScript.SetVersion(value : TFhirString);
@@ -93985,6 +97706,7 @@ end;
 
 function TFhirTestScriptList.AddItem(value: TFhirTestScript): TFhirTestScript;
 begin
+  assert(value.ClassName = 'TFhirTestScript', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScript');
   add(value);
   result := value;
 end;
@@ -94287,7 +98009,7 @@ begin
 end;
 
 procedure TFhirValueSetCompose.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('lockedDate');
   fields.add('inactive');
@@ -94297,7 +98019,7 @@ begin
 end;
 
 function TFhirValueSetCompose.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIncludeList.sizeInBytes(magic));
   inc(result, FExcludeList.sizeInBytes(magic));
@@ -94418,6 +98140,7 @@ end;
 
 function TFhirValueSetComposeList.AddItem(value: TFhirValueSetCompose): TFhirValueSetCompose;
 begin
+  assert(value.ClassName = 'TFhirValueSetCompose', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetCompose');
   add(value);
   result := value;
 end;
@@ -94732,7 +98455,7 @@ begin
 end;
 
 procedure TFhirValueSetComposeInclude.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('system');
   fields.add('version');
@@ -94743,7 +98466,7 @@ begin
 end;
 
 function TFhirValueSetComposeInclude.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FConceptList.sizeInBytes(magic));
   inc(result, FFilterList.sizeInBytes(magic));
@@ -94900,6 +98623,7 @@ end;
 
 function TFhirValueSetComposeIncludeList.AddItem(value: TFhirValueSetComposeInclude): TFhirValueSetComposeInclude;
 begin
+  assert(value.ClassName = 'TFhirValueSetComposeInclude', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeInclude');
   add(value);
   result := value;
 end;
@@ -95147,7 +98871,7 @@ begin
 end;
 
 procedure TFhirValueSetComposeIncludeConcept.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('display');
@@ -95155,7 +98879,7 @@ begin
 end;
 
 function TFhirValueSetComposeIncludeConcept.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDesignationList.sizeInBytes(magic));
 end;
@@ -95260,6 +98984,7 @@ end;
 
 function TFhirValueSetComposeIncludeConceptList.AddItem(value: TFhirValueSetComposeIncludeConcept): TFhirValueSetComposeIncludeConcept;
 begin
+  assert(value.ClassName = 'TFhirValueSetComposeIncludeConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeIncludeConcept');
   add(value);
   result := value;
 end;
@@ -95494,7 +99219,7 @@ begin
 end;
 
 procedure TFhirValueSetComposeIncludeConceptDesignation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('language');
   fields.add('use');
@@ -95502,7 +99227,7 @@ begin
 end;
 
 function TFhirValueSetComposeIncludeConceptDesignation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -95600,6 +99325,7 @@ end;
 
 function TFhirValueSetComposeIncludeConceptDesignationList.AddItem(value: TFhirValueSetComposeIncludeConceptDesignation): TFhirValueSetComposeIncludeConceptDesignation;
 begin
+  assert(value.ClassName = 'TFhirValueSetComposeIncludeConceptDesignation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeIncludeConceptDesignation');
   add(value);
   result := value;
 end;
@@ -95834,7 +99560,7 @@ begin
 end;
 
 procedure TFhirValueSetComposeIncludeFilter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('property');
   fields.add('op');
@@ -95842,7 +99568,7 @@ begin
 end;
 
 function TFhirValueSetComposeIncludeFilter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -95956,6 +99682,7 @@ end;
 
 function TFhirValueSetComposeIncludeFilterList.AddItem(value: TFhirValueSetComposeIncludeFilter): TFhirValueSetComposeIncludeFilter;
 begin
+  assert(value.ClassName = 'TFhirValueSetComposeIncludeFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeIncludeFilter');
   add(value);
   result := value;
 end;
@@ -96285,7 +100012,7 @@ begin
 end;
 
 procedure TFhirValueSetExpansion.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('timestamp');
@@ -96297,7 +100024,7 @@ begin
 end;
 
 function TFhirValueSetExpansion.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FParameterList.sizeInBytes(magic));
   inc(result, FProperty_List.sizeInBytes(magic));
@@ -96475,6 +100202,7 @@ end;
 
 function TFhirValueSetExpansionList.AddItem(value: TFhirValueSetExpansion): TFhirValueSetExpansion;
 begin
+  assert(value.ClassName = 'TFhirValueSetExpansion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansion');
   add(value);
   result := value;
 end;
@@ -96694,14 +100422,14 @@ begin
 end;
 
 procedure TFhirValueSetExpansionParameter.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('value[x]');
 end;
 
 function TFhirValueSetExpansionParameter.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -96773,6 +100501,7 @@ end;
 
 function TFhirValueSetExpansionParameterList.AddItem(value: TFhirValueSetExpansionParameter): TFhirValueSetExpansionParameter;
 begin
+  assert(value.ClassName = 'TFhirValueSetExpansionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionParameter');
   add(value);
   result := value;
 end;
@@ -96992,14 +100721,14 @@ begin
 end;
 
 procedure TFhirValueSetExpansionProperty.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('uri');
 end;
 
 function TFhirValueSetExpansionProperty.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -97091,6 +100820,7 @@ end;
 
 function TFhirValueSetExpansionPropertyList.AddItem(value: TFhirValueSetExpansionProperty): TFhirValueSetExpansionProperty;
 begin
+  assert(value.ClassName = 'TFhirValueSetExpansionProperty', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionProperty');
   add(value);
   result := value;
 end;
@@ -97449,7 +101179,7 @@ begin
 end;
 
 procedure TFhirValueSetExpansionContains.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('system');
   fields.add('abstract');
@@ -97463,7 +101193,7 @@ begin
 end;
 
 function TFhirValueSetExpansionContains.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDesignationList.sizeInBytes(magic));
   inc(result, FProperty_List.sizeInBytes(magic));
@@ -97688,6 +101418,7 @@ end;
 
 function TFhirValueSetExpansionContainsList.AddItem(value: TFhirValueSetExpansionContains): TFhirValueSetExpansionContains;
 begin
+  assert(value.ClassName = 'TFhirValueSetExpansionContains', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionContains');
   add(value);
   result := value;
 end;
@@ -97907,14 +101638,14 @@ begin
 end;
 
 procedure TFhirValueSetExpansionContainsProperty.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
   fields.add('value[x]');
 end;
 
 function TFhirValueSetExpansionContainsProperty.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -97986,6 +101717,7 @@ end;
 
 function TFhirValueSetExpansionContainsPropertyList.AddItem(value: TFhirValueSetExpansionContainsProperty): TFhirValueSetExpansionContainsProperty;
 begin
+  assert(value.ClassName = 'TFhirValueSetExpansionContainsProperty', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionContainsProperty');
   add(value);
   result := value;
 end;
@@ -98220,7 +101952,7 @@ begin
 end;
 
 procedure TFhirValueSetScope.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('focus');
   fields.add('inclusionCriteria');
@@ -98228,7 +101960,7 @@ begin
 end;
 
 function TFhirValueSetScope.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -98346,6 +102078,7 @@ end;
 
 function TFhirValueSetScopeList.AddItem(value: TFhirValueSetScope): TFhirValueSetScope;
 begin
+  assert(value.ClassName = 'TFhirValueSetScope', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetScope');
   add(value);
   result := value;
 end;
@@ -98599,7 +102332,7 @@ begin
 end;
 
 procedure TFhirValueSet.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -98623,7 +102356,7 @@ begin
 end;
 
 function TFhirValueSet.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -99022,6 +102755,7 @@ end;
 
 function TFhirValueSetList.AddItem(value: TFhirValueSet): TFhirValueSet;
 begin
+  assert(value.ClassName = 'TFhirValueSet', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSet');
   add(value);
   result := value;
 end;

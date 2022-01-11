@@ -28,18 +28,63 @@ public class EnumsGenerator extends BaseGenerator {
   private StringBuilder ec = new StringBuilder();
   private StringBuilder ev = new StringBuilder();
   private StringBuilder ec2 = new StringBuilder();
+  private StringBuilder uc = new StringBuilder();
+  private Map<String, String> uris = new HashMap<>();
   
   public EnumsGenerator(Definitions definitions, Configuration configuration, Date genDate, String version) throws UnsupportedEncodingException {
     super(definitions, configuration, version, genDate);
+    
+    addUri("URI_SNOMED", "http://snomed.info/sct");
+    addUri("URI_LOINC", "http://loinc.org");
+    addUri("URI_UCUM", "http://unitsofmeasure.org");
+    addUri("URI_RXNORM", "http://www.nlm.nih.gov/research/umls/rxnorm");
+    addUri("URI_CVX", "http://hl7.org/fhir/sid/cvx");
+    addUri("URI_ATC", "http://www.whocc.no/atc");
+    addUri("URI_NDC", "http://hl7.org/fhir/sid/ndc");
+    addUri("URI_GTIN", "https://www.gs1.org/gtin");
+    addUri("URI_BCP13", "urn:ietf:bcp:13");
+    addUri("URI_BCP47", "urn:ietf:bcp:47");
+    addUri("URI_11073", "urn:iso:std:iso:11073:10101");
+    addUri("URI_3166", "urn:iso:std:iso:3166");
+    addUri("URI_URIs", "urn:ietf:rfc:3986");
+    addUri("URI_DICOM", "http://dicom.nema.org/resources/ontology/DCM");
+    addUri("URI_PCLOCD", "https://fhir.infoway-inforoute.ca/CodeSystem/pCLOCD");
+    addUri("URI_CPT", "http://www.ama-assn.org/go/cpt");
+    addUri("URI_NDFRT", "http://hl7.org/fhir/ndfrt");
+    addUri("URI_MEDRT", "http://hl7.org/fhir/medrt");
+    addUri("URI_UNII", "http://fdasis.nlm.nih.gov");
+    addUri("URI_ICD10", "http://hl7.org/fhir/sid/icd-10");
+    addUri("URI_ICD9", "http://hl7.org/fhir/sid/icd-9");
+    addUri("URI_AUSTRALIAN_PASSPORT_NUMBER", "urn:oid:2.16.840.1.113883.4.330.36");
+    addUri("URI_FHIR_AUDIT_OBJECT_ROLE_R4", "http://terminology.hl7.org/CodeSystem/object-role");
+    addUri("URI_FHIR_AUDIT_OBJECT_ROLE_R3", "http://hl7.org/fhir/object-role");
+    addUri("URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R3_DICOM", "http://hl7.org/fhir/dicom-audit-lifecycle");
+    addUri("URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R3_ISO", "http://hl7.org/fhir/iso-21089-lifecycle");
+    addUri("URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R4_DICOM", "http://terminology.hl7.org/CodeSystem/dicom-audit-lifecycle");
+    addUri("URI_FHIR_AUDIT_OBJECT_LIFE_CYCLE_R4_ISO", "http://terminology.hl7.org/CodeSystem/iso-21089-lifecycle");
+    addUri("URI_FHIR_SECURITY_SOURCE_TYPE_R3", "http://hl7.org/fhir/security-source-type");
+    addUri("URI_FHIR_SECURITY_SOURCE_TYPE_R4", "http://terminology.hl7.org/CodeSystem/security-source-type");
+    addUri("URI_FHIR_AUDIT_EVENT_TYPE_R4", "http://terminology.hl7.org/CodeSystem/audit-event-type");
+    addUri("URI_FHIR_AUDIT_EVENT_TYPE_R3", "http://hl7.org/fhir/audit-event-type");
+    addUri("URI_FHIR_AUDIT_ENTITY_TYPE_R4", "http://terminology.hl7.org/CodeSystem/audit-entity-type");
+    addUri("URI_FHIR_AUDIT_ENTITY_TYPE_R3", "http://hl7.org/fhir/audit-entity-type");
+    addUri("URI_FHIR_AUDIT_EVENT_OUTCOME", "http://hl7.org/fhir/audit-event-outcome");
+    addUri("URI_FHIR_RESTFUL_OP", "http://hl7.org/fhir/restful-operation");
+
   }
 
-	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("fhir5_enums");
+	private void addUri(String cnst, String uri) {
+    uris.put(uri, cnst);    
+  }
+
+  public void generate(String filename) throws Exception {
+	  String template = config.getTemplate("fhir{N}_enums");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{enum.decl}}", ed.toString());
     template = template.replace("{{enum.consts}}", ec.toString());
     template = template.replace("{{enum.conv}}", ev.toString());
     template = template.replace("{{enum.conv.impl}}", ec2.toString());
+    template = template.replace("{{uri.consts}}", uc.toString());
     OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(filename));
     w.write(template);
     w.flush();
@@ -98,9 +143,11 @@ public class EnumsGenerator extends BaseGenerator {
     //      ls--;
     //    }
     ab = new PascalArrayBuilder("SYSTEMS_"+tn, tn, false);
-    ab.addEntry("");
+    ab.setItemType("String");
+    ab.setQuoteStrings(false);
+    ab.addEntry("FHIR_URI_NONE");
     for (ValueSetExpansionContainsComponent cc : vse.getExpansion().getContains()) {
-      ab.addEntry(cc.getSystem());
+      ab.addEntry(getUriConst(cc.getSystem()));
     }
     ec.append(ab.build());
 
@@ -138,6 +185,23 @@ public class EnumsGenerator extends BaseGenerator {
       line(ec2, "");
     }
 
+  }
+
+  private String getUriConst(String system) {
+    if (uris.containsKey(system)) {
+      return uris.get(system);
+    }
+    String res = "FHIR_URI_"+utail(system).replace("-", "_").toUpperCase();
+    if (uris.values().contains(res)) {
+      throw new Error("bang! ("+system+")");
+    }
+    uris.put(system, res);
+    uc.append("  "+res+" = '"+system+"';\r\n");
+    return res;
+  }
+
+  private String utail(String system) {
+    return system.substring(system.lastIndexOf("/")+1);
   }
 
   private String fixCode(String cc) {

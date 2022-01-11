@@ -56,6 +56,11 @@ uses
 
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_diff,
   fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
+
+  fhir4b_tests_parser,
+
+  fhir5_tests_parser,
+
   fxver_tests, fhir_tests_icao,
 
   tests_search_syntax, test_server_config;
@@ -156,6 +161,10 @@ begin
   fhir4_tests_pathengine.registerTests;
   fhir4_tests_graphql.registerTests;
   fhir4_tests_diff.registerTests;
+
+  fhir4b_tests_Parser.registerTests;
+  fhir5_tests_Parser.registerTests;
+
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
   test_server_config.registerTests;

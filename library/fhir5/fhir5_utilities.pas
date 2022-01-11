@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir5.inc}
 
 interface
@@ -178,7 +178,6 @@ type
   TFhirAuditEventParticipant = TFhirAuditEventAgent;
   TFhirAuditEventObject = TFhirAuditEventEntity;
   TFhirAuditEventEvent = TFhirAuditEvent;
-  TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
   TFhirQuestionnaireItemOption = TFhirQuestionnaireItemAnswerOption;
@@ -569,7 +568,7 @@ type
                     SignatureTypeModification, SignatureTypeAdministrative, SignatureTypeTimestamp);
 
 const
-  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion420);
+  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion430Snapshot1, FHIRVersion500Snapshot1);
   CODES_TSignatureType : array [TSignatureType] of String = ('1.2.850.10065.1.12.1.1', '1.2.850.10065.1.12.1.2', '1.2.850.10065.1.12.1.3', '1.2.850.10065.1.12.1.5', '1.2.850.10065.1.12.1.5',
                 '1.2.850.10065.1.12.1.6', '1.2.850.10065.1.12.1.7', '1.2.850.10065.1.12.1.8', '1.2.850.10065.1.12.1.9', '1.2.850.10065.1.12.1.10',
                 '1.2.850.10065.1.12.1.11', '1.2.850.10065.1.12.1.12', '1.2.850.10065.1.12.1.13', '1.2.850.10065.1.12.1.15', '1.2.850.10065.1.12.1.15',
@@ -6721,20 +6720,20 @@ procedure TFHIRCapabilityStatement2Helper.dumpFeatures(dest: TFhirCapabilityStat
 var
   pf, f : TFHIRFeature;
 begin
-  pf := TFHIRFeature.fromString(path);
-  try
-    for f in source do
-    begin
-      if f.livesOn(pf) then
-        with dest.Append do
-        begin
-          code := f.relativePath(pf);
-          value := f.value;
-        end;
-    end;
-  finally
-    pf.free;
-  end;
+//  pf := TFHIRFeature.fromString(path);
+//  try
+//    for f in source do
+//    begin
+//      if f.livesOn(pf) then
+//        with dest.Append do
+//        begin
+//          code := f.relativePath(pf);
+//          value := f.value;
+//        end;
+//    end;
+//  finally
+//    pf.free;
+//  end;
 end;
 
 function TFHIRCapabilityStatement2Helper.hasFeature(feature: TFHIRFeature): boolean;
@@ -6774,8 +6773,8 @@ function TFhirEncounterHelper.summary: String;
 begin
   if hasIdentifierList then
     result := gen(identifierList[0]);
-  if period <> nil then
-    result := result +' ['+gen(period)+']';
+  if actualPeriod <> nil then
+    result := result +' ['+gen(actualPeriod)+']';
   result := result.Trim;
 end;
 

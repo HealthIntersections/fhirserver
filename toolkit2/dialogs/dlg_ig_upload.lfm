@@ -1,0 +1,180 @@
+object Form1: TForm1
+  Left = 464
+  Height = 376
+  Top = -464
+  Width = 843
+  Caption = 'Upload Package to Server'
+  ClientHeight = 376
+  ClientWidth = 843
+  LCLVersion = '2.3.0.0'
+  object GroupBox1: TGroupBox
+    Left = 0
+    Height = 112
+    Top = 0
+    Width = 843
+    Align = alTop
+    Caption = '  Set Up  '
+    ClientHeight = 92
+    ClientWidth = 839
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 16
+      Height = 15
+      Top = 7
+      Width = 35
+      Caption = 'Server:'
+    end
+    object ComboBox1: TComboBox
+      Left = 72
+      Height = 23
+      Top = 5
+      Width = 761
+      ItemHeight = 15
+      TabOrder = 0
+      Text = 'http://test.fhir.org/r4'
+    end
+    object Label2: TLabel
+      Left = 16
+      Height = 15
+      Top = 35
+      Width = 47
+      Caption = 'Package:'
+    end
+    object ComboBox2: TComboBox
+      Left = 72
+      Height = 23
+      Top = 33
+      Width = 761
+      ItemHeight = 15
+      TabOrder = 1
+      Text = 'hl7.fhir.us.core'
+    end
+    object Label4: TLabel
+      Left = 16
+      Height = 15
+      Top = 63
+      Width = 41
+      Caption = 'Version:'
+    end
+    object ComboBox3: TComboBox
+      Left = 72
+      Height = 23
+      Top = 61
+      Width = 761
+      ItemHeight = 15
+      TabOrder = 2
+      Text = '3.0.0'
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 46
+    Top = 330
+    Width = 843
+    Align = alBottom
+    ClientHeight = 46
+    ClientWidth = 843
+    ParentFont = False
+    TabOrder = 1
+    object btnOk: TButton
+      Left = 675
+      Height = 25
+      Top = 13
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'OK'
+      Default = True
+      Enabled = False
+      ModalResult = 1
+      ParentFont = False
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 759
+      Height = 25
+      Top = 13
+      Width = 75
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      ParentFont = False
+      TabOrder = 1
+    end
+    object Label3: TLabel
+      Left = 16
+      Height = 15
+      Top = 8
+      Width = 80
+      Caption = 'Error Handling:'
+    end
+    object CheckBox1: TCheckBox
+      Left = 112
+      Height = 19
+      Top = 8
+      Width = 87
+      Caption = 'Stop on Error'
+      TabOrder = 2
+    end
+    object CheckBox2: TCheckBox
+      Left = 227
+      Height = 19
+      Top = 8
+      Width = 149
+      Caption = 'Error if Ids are reassigned'
+      TabOrder = 3
+    end
+    object CheckBox3: TCheckBox
+      Left = 408
+      Height = 19
+      Top = 8
+      Width = 171
+      Caption = 'Update Links for changed Ids'
+      TabOrder = 4
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 218
+    Top = 112
+    Width = 843
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 8
+    Caption = 'Panel2'
+    ClientHeight = 218
+    ClientWidth = 843
+    TabOrder = 2
+    object CheckListBox1: TCheckListBox
+      Left = 8
+      Height = 202
+      Top = 8
+      Width = 827
+      Align = alClient
+      Items.Strings = (
+        'AllergyIntolerance (1)'
+        'Bundle (3)'
+        'CapabilityStatement (2)'
+        'CarePlan (1)'
+        'CareTeam (1)'
+        'CodeSystem (3)'
+        'ConceptMap (1)'
+        'Condition (2)'
+        'Device (2)'
+        'DiagnosticReport (5)'
+        'DocumentReference (1)'
+        'Encounter (1)'
+        'Goal (1)'
+        'Immunization (1)'
+        'ImplementationGuide (1)'
+        'Location (1)'
+        'MedicationRequest (2)'
+      )
+      ItemHeight = 17
+      TabOrder = 0
+      Data = {
+        110000000000000000000000000000000000000000
+      }
+    end
+  end
+end

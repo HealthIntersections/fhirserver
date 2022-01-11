@@ -3,12 +3,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.engine.Configuration;
@@ -42,7 +38,7 @@ public class IndexInfoGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("fhir5_indexinfo");
+	  String template = config.getTemplate("fhir{N}_indexinfo");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{index-intf}}", indexHeaders.toString());
     template = template.replace("{{index-impl}}", indexMethods.toString());

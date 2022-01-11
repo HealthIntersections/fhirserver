@@ -29,6 +29,7 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 

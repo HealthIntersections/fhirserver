@@ -1326,12 +1326,13 @@ end;
 
 procedure TFhirIndexManageR5.checkTags(resource: TFhirResource; tags: TFHIRTagList);
 var
-  c : integer;
+  c, ct : integer;
 begin
   c := 0;
+  ct := tags.Count;
   if (resource.meta <> nil) then
     c := resource.meta.tagList.Count + resource.meta.securityList.Count + resource.meta.profileList.Count;
-  if c <> tags.Count then
+  if (c = 0) <> (ct = 0) then
     raise EFHIRException.create('Tags out of sync');
 end;
 

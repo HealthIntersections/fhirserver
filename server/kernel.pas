@@ -261,6 +261,30 @@ begin
   FTerminologies.load(Ini['terminologies'], false);
 end;
 
+function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;
+var
+  v : String;
+begin
+  v := section['version'].value;
+  if (v = 'r2') then
+    result := fhirVersionRelease2
+  else if (v = 'r3') then
+    result := fhirVersionRelease3
+  else if (v = 'r4') then
+    result := fhirVersionRelease4
+  else if (v = 'r5b') then
+    result := fhirVersionRelease4B
+  else if (v = 'r5') then
+    result := fhirVersionRelease5
+  else
+    result := fhirVersionUnknown;
+end;
+
+function versionOk(section : TFHIRServerConfigSection) : boolean;
+begin
+   result := epVersion(section) in [fhirVersionUnknown, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4]
+end;
+
 procedure TFHIRServiceKernel.loadEndPoints;
 var
   section : TFHIRServerConfigSection;
@@ -269,7 +293,7 @@ begin
   Logging.log('Load End Points');
   for section in FIni['endpoints'].sections do
   begin
-    if section['active'].valueBool then
+    if (section['active'].valueBool) and (versionOk(section)) then
       FEndPoints.Add(makeEndPoint(section));
   end;
 

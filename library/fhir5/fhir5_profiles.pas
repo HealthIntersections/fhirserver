@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 

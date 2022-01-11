@@ -113,6 +113,8 @@ begin
       FileName := FilePath([FPath, 'fhir5', IncludeName])
     else if (includeName = 'fhir4.inc') then
       FileName := FilePath([FPath, 'fhir4', IncludeName])
+    else if (includeName = 'fhir4b.inc') then
+      FileName := FilePath([FPath, 'fhir4b', IncludeName])
     else if (includeName = 'fhir3.inc') then
       FileName := FilePath([FPath, 'fhir3', IncludeName])
     else if (includeName = 'fhir2.inc') then

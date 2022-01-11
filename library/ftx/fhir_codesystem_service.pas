@@ -1385,7 +1385,7 @@ begin
         end;
         if (latest <> nil) then // might be null if it's not using semver
         begin
-          lv := TFHIRVersions.getMajMin(latest.version);
+          lv := TFHIRVersions.getMajMin(latest.version, false);
           if (lv <> '') and (lv <> version) then
             FMap.addOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
@@ -1409,7 +1409,7 @@ begin
     result := FMap[url+'|'+version]
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
       result := FMap[url+'|'+mm]
     else

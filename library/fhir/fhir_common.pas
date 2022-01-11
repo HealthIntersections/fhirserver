@@ -2343,8 +2343,8 @@ begin
             result := 1
           else
           begin
-            mm1 := TFHIRVersions.getMajMin(v1);
-            mm2 := TFHIRVersions.getMajMin(v2);
+            mm1 := TFHIRVersions.getMajMin(v1, false);
+            mm2 := TFHIRVersions.getMajMin(v2, false);
             if (mm1 = '') or (mm2 = '') then
               result := v1.compareTo(v2)
             else
@@ -2366,7 +2366,7 @@ begin
         end;
         if (latest <> T(nil)) then // might be null if it's not using semver
         begin
-          lv := TSemanticVersion.getMajMin(latest.version);
+          lv := TSemanticVersion.getMajMin(latest.version, false);
           if (lv <> version) then
             FMap.addOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
@@ -2390,7 +2390,7 @@ begin
     result := FMap[url+'|'+version]
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
       result := FMap[url+'|'+mm]
     else
@@ -2411,7 +2411,7 @@ begin
     result := true
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
       result := FMap.containsKey(url+'|'+mm)
     else
@@ -2433,7 +2433,7 @@ begin
     res := FMap[url+'|'+version]
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
       result := FMap.TryGetValue(url+'|'+mm, res)
     else
@@ -2461,7 +2461,7 @@ begin
     if (res.version <> '') then
     begin
       FMap.remove(res.url+'|'+res.version);
-      mm := TFHIRVersions.getMajMin(res.version);
+      mm := TFHIRVersions.getMajMin(res.version, false);
       if (mm <> '') then
         FMap.remove(res.url+'|'+mm);
     end;
@@ -2503,8 +2503,8 @@ begin
     result := 1
   else
   begin
-    mm1 := TFHIRVersions.getMajMin(v1);
-    mm2 := TFHIRVersions.getMajMin(v2);
+    mm1 := TFHIRVersions.getMajMin(v1, false);
+    mm2 := TFHIRVersions.getMajMin(v2, false);
     if (mm1 = '') or (mm2 = '') then
       result := v1.compareTo(v2)
     else

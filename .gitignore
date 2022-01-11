@@ -75,3 +75,7 @@ exec/Resources
 /release-notes.md
 /install/build
 /release-notes-old.md
+/tools
+/library/fhir4b-gen
+/library/fhir5-gen
+/library/fhir5-gen

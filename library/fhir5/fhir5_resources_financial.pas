@@ -34,7 +34,7 @@ unit fhir5_resources_financial;
 
 interface
 
-// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
 
 
 
@@ -72,12 +72,12 @@ type
   TFhirChargeItemDefinitionList = class;
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 {$IFDEF FHIR_CITATION}
+  TFhirCitationSummary = class;
+  TFhirCitationSummaryList = class;
   TFhirCitationClassification = class;
   TFhirCitationClassificationList = class;
   TFhirCitationStatusDate = class;
   TFhirCitationStatusDateList = class;
-  TFhirCitationRelatesTo = class;
-  TFhirCitationRelatesToList = class;
   TFhirCitationCitedArtifact = class;
   TFhirCitationCitedArtifactList = class;
   TFhirCitationCitedArtifactVersion = class;
@@ -90,8 +90,6 @@ type
   TFhirCitationCitedArtifactAbstractList = class;
   TFhirCitationCitedArtifactPart = class;
   TFhirCitationCitedArtifactPartList = class;
-  TFhirCitationCitedArtifactRelatesTo = class;
-  TFhirCitationCitedArtifactRelatesToList = class;
   TFhirCitationCitedArtifactPublicationForm = class;
   TFhirCitationCitedArtifactPublicationFormList = class;
   TFhirCitationCitedArtifactPublicationFormPublishedIn = class;
@@ -380,7 +378,7 @@ type
     function Append : TFhirAccountCoverage;
     
     // Add an already existing FhirAccountCoverage to the end of the list.
-function AddItem(value : TFhirAccountCoverage): TFhirAccountCoverage; overload;
+    function AddItem(value : TFhirAccountCoverage) : TFhirAccountCoverage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAccountCoverage) : Integer;
@@ -488,7 +486,7 @@ function AddItem(value : TFhirAccountCoverage): TFhirAccountCoverage; overload;
     function Append : TFhirAccountGuarantor;
     
     // Add an already existing FhirAccountGuarantor to the end of the list.
-function AddItem(value : TFhirAccountGuarantor): TFhirAccountGuarantor; overload;
+    function AddItem(value : TFhirAccountGuarantor) : TFhirAccountGuarantor; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAccountGuarantor) : Integer;
@@ -522,6 +520,7 @@ function AddItem(value : TFhirAccountGuarantor): TFhirAccountGuarantor; overload
   protected
     FidentifierList : TFhirIdentifierList;
     FStatus : TFhirEnum;
+    FBillingStatus : TFhirCodeableConcept;
     FType_ : TFhirCodeableConcept;
     FName : TFhirString;
     FsubjectList : TFhirReferenceList;
@@ -536,6 +535,7 @@ function AddItem(value : TFhirAccountGuarantor): TFhirAccountGuarantor; overload
     procedure SetStatus(value : TFhirEnum);
     function GetStatusST : TFhirAccountStatusEnum;
     procedure SetStatusST(value : TFhirAccountStatusEnum);
+    procedure SetBillingStatus(value : TFhirCodeableConcept);
     procedure SetType_(value : TFhirCodeableConcept);
     procedure SetName(value : TFhirString);
     function GetNameST : String;
@@ -582,6 +582,11 @@ function AddItem(value : TFhirAccountGuarantor): TFhirAccountGuarantor; overload
     // Indicates whether the account is presently used/usable or not.
     property status : TFhirAccountStatusEnum read GetStatusST write SetStatusST;
     property statusElement : TFhirEnum read FStatus write SetStatus;
+
+    // Typed access to The BillingStatus tracks the lifecycle of the account through the billing process. It indicates how transactions are treated when they are allocated to the account. (defined for API consistency)
+    property billingStatus : TFhirCodeableConcept read FBillingStatus write SetBillingStatus;
+    // The BillingStatus tracks the lifecycle of the account through the billing process. It indicates how transactions are treated when they are allocated to the account.
+    property billingStatusElement : TFhirCodeableConcept read FBillingStatus write SetBillingStatus;
 
     // Typed access to Categorizes the account for reporting and searching purposes. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
@@ -656,7 +661,7 @@ function AddItem(value : TFhirAccountGuarantor): TFhirAccountGuarantor; overload
     function Append : TFhirAccount;
     
     // Add an already existing FhirAccount to the end of the list.
-function AddItem(value : TFhirAccount): TFhirAccount; overload;
+    function AddItem(value : TFhirAccount) : TFhirAccount; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAccount) : Integer;
@@ -757,7 +762,7 @@ function AddItem(value : TFhirAccount): TFhirAccount; overload;
     function Append : TFhirChargeItemPerformer;
     
     // Add an already existing FhirChargeItemPerformer to the end of the list.
-function AddItem(value : TFhirChargeItemPerformer): TFhirChargeItemPerformer; overload;
+    function AddItem(value : TFhirChargeItemPerformer) : TFhirChargeItemPerformer; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItemPerformer) : Integer;
@@ -811,7 +816,7 @@ function AddItem(value : TFhirChargeItemPerformer): TFhirChargeItemPerformer; ov
     FEnteredDate : TFhirDateTime;
     FreasonList : TFhirCodeableConceptList;
     FserviceList : TFhirReferenceList;
-    FProduct : TFhirDataType;
+    FproductList : TFhirCodeableReferenceList;
     FaccountList : TFhirReferenceList;
     FnoteList : TFhirAnnotationList;
     FsupportingInformationList : TFhirReferenceList;
@@ -853,7 +858,8 @@ function AddItem(value : TFhirChargeItemPerformer): TFhirChargeItemPerformer; ov
     function GetHasReasonList : Boolean;
     function GetServiceList : TFhirReferenceList;
     function GetHasServiceList : Boolean;
-    procedure SetProduct(value : TFhirDataType);
+    function GetProductList : TFhirCodeableReferenceList;
+    function GetHasProductList : Boolean;
     function GetAccountList : TFhirReferenceList;
     function GetHasAccountList : Boolean;
     function GetNoteList : TFhirAnnotationList;
@@ -984,10 +990,9 @@ function AddItem(value : TFhirChargeItemPerformer): TFhirChargeItemPerformer; ov
     property serviceList : TFhirReferenceList read GetServiceList;
     property hasServiceList : boolean read GetHasServiceList;
 
-    // Typed access to Identifies the device, food, drug or other product being charged either by type code or reference to an instance. (defined for API consistency)
-    property product : TFhirDataType read FProduct write SetProduct;
     // Identifies the device, food, drug or other product being charged either by type code or reference to an instance.
-    property productElement : TFhirDataType read FProduct write SetProduct;
+    property productList : TFhirCodeableReferenceList read GetProductList;
+    property hasProductList : boolean read GetHasProductList;
 
     // Account into which this ChargeItems belongs.
     property accountList : TFhirReferenceList read GetAccountList;
@@ -1032,7 +1037,7 @@ function AddItem(value : TFhirChargeItemPerformer): TFhirChargeItemPerformer; ov
     function Append : TFhirChargeItem;
     
     // Add an already existing FhirChargeItem to the end of the list.
-function AddItem(value : TFhirChargeItem): TFhirChargeItem; overload;
+    function AddItem(value : TFhirChargeItem) : TFhirChargeItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItem) : Integer;
@@ -1146,7 +1151,7 @@ function AddItem(value : TFhirChargeItem): TFhirChargeItem; overload;
     function Append : TFhirChargeItemDefinitionApplicability;
     
     // Add an already existing FhirChargeItemDefinitionApplicability to the end of the list.
-function AddItem(value : TFhirChargeItemDefinitionApplicability): TFhirChargeItemDefinitionApplicability; overload;
+    function AddItem(value : TFhirChargeItemDefinitionApplicability) : TFhirChargeItemDefinitionApplicability; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItemDefinitionApplicability) : Integer;
@@ -1245,7 +1250,7 @@ function AddItem(value : TFhirChargeItemDefinitionApplicability): TFhirChargeIte
     function Append : TFhirChargeItemDefinitionPropertyGroup;
     
     // Add an already existing FhirChargeItemDefinitionPropertyGroup to the end of the list.
-function AddItem(value : TFhirChargeItemDefinitionPropertyGroup): TFhirChargeItemDefinitionPropertyGroup; overload;
+    function AddItem(value : TFhirChargeItemDefinitionPropertyGroup) : TFhirChargeItemDefinitionPropertyGroup; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItemDefinitionPropertyGroup) : Integer;
@@ -1361,7 +1366,7 @@ function AddItem(value : TFhirChargeItemDefinitionPropertyGroup): TFhirChargeIte
     function Append : TFhirChargeItemDefinitionPropertyGroupPriceComponent;
     
     // Add an already existing FhirChargeItemDefinitionPropertyGroupPriceComponent to the end of the list.
-function AddItem(value : TFhirChargeItemDefinitionPropertyGroupPriceComponent): TFhirChargeItemDefinitionPropertyGroupPriceComponent; overload;
+    function AddItem(value : TFhirChargeItemDefinitionPropertyGroupPriceComponent) : TFhirChargeItemDefinitionPropertyGroupPriceComponent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItemDefinitionPropertyGroupPriceComponent) : Integer;
@@ -1613,7 +1618,7 @@ function AddItem(value : TFhirChargeItemDefinitionPropertyGroupPriceComponent): 
     function Append : TFhirChargeItemDefinition;
     
     // Add an already existing FhirChargeItemDefinition to the end of the list.
-function AddItem(value : TFhirChargeItemDefinition): TFhirChargeItemDefinition; overload;
+    function AddItem(value : TFhirChargeItemDefinition) : TFhirChargeItemDefinition; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirChargeItemDefinition) : Integer;
@@ -1644,6 +1649,107 @@ function AddItem(value : TFhirChargeItemDefinition): TFhirChargeItemDefinition; 
 
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 {$IFDEF FHIR_CITATION}
+  // A human-readable display of the citation.
+  TFhirCitationSummary = class (TFhirBackboneElement)
+  protected
+    FStyle : TFhirCodeableConcept;
+    FText : TFhirMarkdown;
+    procedure SetStyle(value : TFhirCodeableConcept);
+    procedure SetText(value : TFhirMarkdown);
+    function GetTextST : String;
+    procedure SetTextST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirCitationSummary; overload;
+    function Clone : TFhirCitationSummary; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Format for display of the citation. (defined for API consistency)
+    property style : TFhirCodeableConcept read FStyle write SetStyle;
+    // Format for display of the citation.
+    property styleElement : TFhirCodeableConcept read FStyle write SetStyle;
+
+    // Typed access to The human-readable display of the citation.
+    property text : String read GetTextST write SetTextST;
+    // The human-readable display of the citation.
+    property textElement : TFhirMarkdown read FText write SetText;
+
+  end;
+
+  TFhirCitationSummaryListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirCitationSummaryList;
+    function GetCurrent : TFhirCitationSummary;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
+  public
+    constructor Create(list : TFhirCitationSummaryList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirCitationSummary read GetCurrent;
+  end;
+
+  TFhirCitationSummaryList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirCitationSummary;
+    procedure SetItemN(index : Integer; value : TFhirCitationSummary);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirCitationSummaryList; overload;
+    function Clone : TFhirCitationSummaryList; overload;
+    function GetEnumerator : TFhirCitationSummaryListEnumerator;
+    
+    //  Add a FhirCitationSummary to the end of the list.
+    function Append : TFhirCitationSummary;
+    
+    // Add an already existing FhirCitationSummary to the end of the list.
+    function AddItem(value : TFhirCitationSummary) : TFhirCitationSummary; overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirCitationSummary) : Integer;
+    
+    // Insert FhirCitationSummary before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirCitationSummary;
+    
+    // Insert an existing FhirCitationSummary before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirCitationSummary);
+    
+    // Get the iIndexth FhirCitationSummary. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirCitationSummary);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirCitationSummary;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirCitationSummaries[index : Integer] : TFhirCitationSummary read GetItemN write SetItemN; default;
+  End;
+
   // The assignment to an organizing scheme.
   TFhirCitationClassification = class (TFhirBackboneElement)
   protected
@@ -1714,7 +1820,7 @@ function AddItem(value : TFhirChargeItemDefinition): TFhirChargeItemDefinition; 
     function Append : TFhirCitationClassification;
     
     // Add an already existing FhirCitationClassification to the end of the list.
-function AddItem(value : TFhirCitationClassification): TFhirCitationClassification; overload;
+    function AddItem(value : TFhirCitationClassification) : TFhirCitationClassification; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationClassification) : Integer;
@@ -1822,7 +1928,7 @@ function AddItem(value : TFhirCitationClassification): TFhirCitationClassificati
     function Append : TFhirCitationStatusDate;
     
     // Add an already existing FhirCitationStatusDate to the end of the list.
-function AddItem(value : TFhirCitationStatusDate): TFhirCitationStatusDate; overload;
+    function AddItem(value : TFhirCitationStatusDate) : TFhirCitationStatusDate; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationStatusDate) : Integer;
@@ -1851,112 +1957,6 @@ function AddItem(value : TFhirCitationStatusDate): TFhirCitationStatusDate; over
     property FhirCitationStatusDates[index : Integer] : TFhirCitationStatusDate read GetItemN write SetItemN; default;
   End;
 
-  // Artifact related to the Citation Resource.
-  TFhirCitationRelatesTo = class (TFhirBackboneElement)
-  protected
-    FRelationshipType : TFhirCodeableConcept;
-    FtargetClassifierList : TFhirCodeableConceptList;
-    FTarget : TFhirDataType;
-    procedure SetRelationshipType(value : TFhirCodeableConcept);
-    function GetTargetClassifierList : TFhirCodeableConceptList;
-    function GetHasTargetClassifierList : Boolean;
-    procedure SetTarget(value : TFhirDataType);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirCitationRelatesTo; overload;
-    function Clone : TFhirCitationRelatesTo; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to How the Citation resource relates to the target artifact. (defined for API consistency)
-    property relationshipType : TFhirCodeableConcept read FRelationshipType write SetRelationshipType;
-    // How the Citation resource relates to the target artifact.
-    property relationshipTypeElement : TFhirCodeableConcept read FRelationshipType write SetRelationshipType;
-
-    // The clasification of the related artifact.
-    property targetClassifierList : TFhirCodeableConceptList read GetTargetClassifierList;
-    property hasTargetClassifierList : boolean read GetHasTargetClassifierList;
-
-    // Typed access to The article or artifact that the Citation Resource is related to. (defined for API consistency)
-    property target : TFhirDataType read FTarget write SetTarget;
-    // The article or artifact that the Citation Resource is related to.
-    property targetElement : TFhirDataType read FTarget write SetTarget;
-
-  end;
-
-  TFhirCitationRelatesToListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirCitationRelatesToList;
-    function GetCurrent : TFhirCitationRelatesTo;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirCitationRelatesToList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirCitationRelatesTo read GetCurrent;
-  end;
-
-  TFhirCitationRelatesToList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirCitationRelatesTo;
-    procedure SetItemN(index : Integer; value : TFhirCitationRelatesTo);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirCitationRelatesToList; overload;
-    function Clone : TFhirCitationRelatesToList; overload;
-    function GetEnumerator : TFhirCitationRelatesToListEnumerator;
-    
-    //  Add a FhirCitationRelatesTo to the end of the list.
-    function Append : TFhirCitationRelatesTo;
-    
-    // Add an already existing FhirCitationRelatesTo to the end of the list.
-function AddItem(value : TFhirCitationRelatesTo): TFhirCitationRelatesTo; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirCitationRelatesTo) : Integer;
-    
-    // Insert FhirCitationRelatesTo before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirCitationRelatesTo;
-    
-    // Insert an existing FhirCitationRelatesTo before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirCitationRelatesTo);
-    
-    // Get the iIndexth FhirCitationRelatesTo. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirCitationRelatesTo);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirCitationRelatesTo;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirCitationRelatesTos[index : Integer] : TFhirCitationRelatesTo read GetItemN write SetItemN; default;
-  End;
-
   // The article or artifact being described.
   TFhirCitationCitedArtifact = class (TFhirBackboneElement)
   protected
@@ -1969,7 +1969,7 @@ function AddItem(value : TFhirCitationRelatesTo): TFhirCitationRelatesTo; overlo
     FtitleList : TFhirCitationCitedArtifactTitleList;
     FabstractList : TFhirCitationCitedArtifactAbstractList;
     FPart : TFhirCitationCitedArtifactPart;
-    FrelatesToList : TFhirCitationCitedArtifactRelatesToList;
+    FrelatesToList : TFhirRelatedArtifactList;
     FpublicationFormList : TFhirCitationCitedArtifactPublicationFormList;
     FwebLocationList : TFhirCitationCitedArtifactWebLocationList;
     FclassificationList : TFhirCitationCitedArtifactClassificationList;
@@ -1992,7 +1992,7 @@ function AddItem(value : TFhirCitationRelatesTo): TFhirCitationRelatesTo; overlo
     function GetAbstractList : TFhirCitationCitedArtifactAbstractList;
     function GetHasAbstractList : Boolean;
     procedure SetPart(value : TFhirCitationCitedArtifactPart);
-    function GetRelatesToList : TFhirCitationCitedArtifactRelatesToList;
+    function GetRelatesToList : TFhirRelatedArtifactList;
     function GetHasRelatesToList : Boolean;
     function GetPublicationFormList : TFhirCitationCitedArtifactPublicationFormList;
     function GetHasPublicationFormList : Boolean;
@@ -2065,7 +2065,7 @@ function AddItem(value : TFhirCitationRelatesTo): TFhirCitationRelatesTo; overlo
     property partElement : TFhirCitationCitedArtifactPart read FPart write SetPart;
 
     // The artifact related to the cited artifact.
-    property relatesToList : TFhirCitationCitedArtifactRelatesToList read GetRelatesToList;
+    property relatesToList : TFhirRelatedArtifactList read GetRelatesToList;
     property hasRelatesToList : boolean read GetHasRelatesToList;
 
     // If multiple, used to represent alternative forms of the article that are not separate citations.
@@ -2120,7 +2120,7 @@ function AddItem(value : TFhirCitationRelatesTo): TFhirCitationRelatesTo; overlo
     function Append : TFhirCitationCitedArtifact;
     
     // Add an already existing FhirCitationCitedArtifact to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifact): TFhirCitationCitedArtifact; overload;
+    function AddItem(value : TFhirCitationCitedArtifact) : TFhirCitationCitedArtifact; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifact) : Integer;
@@ -2221,7 +2221,7 @@ function AddItem(value : TFhirCitationCitedArtifact): TFhirCitationCitedArtifact
     function Append : TFhirCitationCitedArtifactVersion;
     
     // Add an already existing FhirCitationCitedArtifactVersion to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactVersion): TFhirCitationCitedArtifactVersion; overload;
+    function AddItem(value : TFhirCitationCitedArtifactVersion) : TFhirCitationCitedArtifactVersion; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactVersion) : Integer;
@@ -2329,7 +2329,7 @@ function AddItem(value : TFhirCitationCitedArtifactVersion): TFhirCitationCitedA
     function Append : TFhirCitationCitedArtifactStatusDate;
     
     // Add an already existing FhirCitationCitedArtifactStatusDate to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactStatusDate): TFhirCitationCitedArtifactStatusDate; overload;
+    function AddItem(value : TFhirCitationCitedArtifactStatusDate) : TFhirCitationCitedArtifactStatusDate; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactStatusDate) : Integer;
@@ -2361,10 +2361,11 @@ function AddItem(value : TFhirCitationCitedArtifactStatusDate): TFhirCitationCit
   // The title details of the article or artifact.
   TFhirCitationCitedArtifactTitle = class (TFhirBackboneElement)
   protected
-    FType_ : TFhirCodeableConcept;
+    Ftype_List : TFhirCodeableConceptList;
     FLanguage : TFhirCodeableConcept;
     FText : TFhirMarkdown;
-    procedure SetType_(value : TFhirCodeableConcept);
+    function GetType_List : TFhirCodeableConceptList;
+    function GetHasType_List : Boolean;
     procedure SetLanguage(value : TFhirCodeableConcept);
     procedure SetText(value : TFhirMarkdown);
     function GetTextST : String;
@@ -2391,10 +2392,9 @@ function AddItem(value : TFhirCitationCitedArtifactStatusDate): TFhirCitationCit
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Used to express the reason or specific aspect for the title. (defined for API consistency)
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
     // Used to express the reason or specific aspect for the title.
-    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+    property type_List : TFhirCodeableConceptList read GetType_List;
+    property hasType_List : boolean read GetHasType_List;
 
     // Typed access to Used to express the specific language. (defined for API consistency)
     property language : TFhirCodeableConcept read FLanguage write SetLanguage;
@@ -2437,7 +2437,7 @@ function AddItem(value : TFhirCitationCitedArtifactStatusDate): TFhirCitationCit
     function Append : TFhirCitationCitedArtifactTitle;
     
     // Add an already existing FhirCitationCitedArtifactTitle to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactTitle): TFhirCitationCitedArtifactTitle; overload;
+    function AddItem(value : TFhirCitationCitedArtifactTitle) : TFhirCitationCitedArtifactTitle; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactTitle) : Integer;
@@ -2554,7 +2554,7 @@ function AddItem(value : TFhirCitationCitedArtifactTitle): TFhirCitationCitedArt
     function Append : TFhirCitationCitedArtifactAbstract;
     
     // Add an already existing FhirCitationCitedArtifactAbstract to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactAbstract): TFhirCitationCitedArtifactAbstract; overload;
+    function AddItem(value : TFhirCitationCitedArtifactAbstract) : TFhirCitationCitedArtifactAbstract; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactAbstract) : Integer;
@@ -2662,7 +2662,7 @@ function AddItem(value : TFhirCitationCitedArtifactAbstract): TFhirCitationCited
     function Append : TFhirCitationCitedArtifactPart;
     
     // Add an already existing FhirCitationCitedArtifactPart to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactPart): TFhirCitationCitedArtifactPart; overload;
+    function AddItem(value : TFhirCitationCitedArtifactPart) : TFhirCitationCitedArtifactPart; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactPart) : Integer;
@@ -2689,112 +2689,6 @@ function AddItem(value : TFhirCitationCitedArtifactPart): TFhirCitationCitedArti
     procedure ClearItems;
     
     property FhirCitationCitedArtifactParts[index : Integer] : TFhirCitationCitedArtifactPart read GetItemN write SetItemN; default;
-  End;
-
-  // The artifact related to the cited artifact.
-  TFhirCitationCitedArtifactRelatesTo = class (TFhirBackboneElement)
-  protected
-    FRelationshipType : TFhirCodeableConcept;
-    FtargetClassifierList : TFhirCodeableConceptList;
-    FTarget : TFhirDataType;
-    procedure SetRelationshipType(value : TFhirCodeableConcept);
-    function GetTargetClassifierList : TFhirCodeableConceptList;
-    function GetHasTargetClassifierList : Boolean;
-    procedure SetTarget(value : TFhirDataType);
-  
-    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
-    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    procedure Assign(oSource : TFslObject); override;
-    function Link : TFhirCitationCitedArtifactRelatesTo; overload;
-    function Clone : TFhirCitationCitedArtifactRelatesTo; overload;
-    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
-    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
-    function createPropertyValue(propName : string) : TFHIRObject; override;
-    function getTypesForProperty(propName : string): String; override;
-    procedure deleteProperty(propName : string; value : TFHIRObject); override;
-    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
-    procedure reorderProperty(propName : string; source, destination : integer); override;
-    function fhirType : string; override;
-    function Equals(other : TObject) : boolean; override;
-    function isEmpty : boolean; override;
-  {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to How the cited artifact resource relates to the target artifact. (defined for API consistency)
-    property relationshipType : TFhirCodeableConcept read FRelationshipType write SetRelationshipType;
-    // How the cited artifact resource relates to the target artifact.
-    property relationshipTypeElement : TFhirCodeableConcept read FRelationshipType write SetRelationshipType;
-
-    // The clasification of the related artifact.
-    property targetClassifierList : TFhirCodeableConceptList read GetTargetClassifierList;
-    property hasTargetClassifierList : boolean read GetHasTargetClassifierList;
-
-    // Typed access to The article or artifact that the cited artifact is related to. (defined for API consistency)
-    property target : TFhirDataType read FTarget write SetTarget;
-    // The article or artifact that the cited artifact is related to.
-    property targetElement : TFhirDataType read FTarget write SetTarget;
-
-  end;
-
-  TFhirCitationCitedArtifactRelatesToListEnumerator = class (TFslObject)
-  private
-    FIndex : integer;
-    FList : TFhirCitationCitedArtifactRelatesToList;
-    function GetCurrent : TFhirCitationCitedArtifactRelatesTo;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(list : TFhirCitationCitedArtifactRelatesToList);
-    destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirCitationCitedArtifactRelatesTo read GetCurrent;
-  end;
-
-  TFhirCitationCitedArtifactRelatesToList = class (TFHIRObjectList)
-  private
-    function GetItemN(index : Integer) : TFhirCitationCitedArtifactRelatesTo;
-    procedure SetItemN(index : Integer; value : TFhirCitationCitedArtifactRelatesTo);
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    function Link : TFhirCitationCitedArtifactRelatesToList; overload;
-    function Clone : TFhirCitationCitedArtifactRelatesToList; overload;
-    function GetEnumerator : TFhirCitationCitedArtifactRelatesToListEnumerator;
-    
-    //  Add a FhirCitationCitedArtifactRelatesTo to the end of the list.
-    function Append : TFhirCitationCitedArtifactRelatesTo;
-    
-    // Add an already existing FhirCitationCitedArtifactRelatesTo to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactRelatesTo): TFhirCitationCitedArtifactRelatesTo; overload;
-    
-    // See if an item is already in the list. returns -1 if not in the list
-    function IndexOf(value : TFhirCitationCitedArtifactRelatesTo) : Integer;
-    
-    // Insert FhirCitationCitedArtifactRelatesTo before the designated index (0 = first item)
-    function Insert(index : Integer) : TFhirCitationCitedArtifactRelatesTo;
-    
-    // Insert an existing FhirCitationCitedArtifactRelatesTo before the designated index (0 = first item)
-    procedure InsertItem(index : Integer; value : TFhirCitationCitedArtifactRelatesTo);
-    
-    // Get the iIndexth FhirCitationCitedArtifactRelatesTo. (0 = first item)
-    procedure SetItemByIndex(index : Integer; value : TFhirCitationCitedArtifactRelatesTo);
-    
-    // The number of items in the collection
-    function Item(index : Integer) : TFhirCitationCitedArtifactRelatesTo;
-    
-    // The number of items in the collection
-    function Count : Integer; overload;
-    
-    // Remove the indexth item. The first item is index 0.
-    procedure Remove(index : Integer);
-    
-    // Remove All Items from the list
-    procedure ClearItems;
-    
-    property FhirCitationCitedArtifactRelatesTos[index : Integer] : TFhirCitationCitedArtifactRelatesTo read GetItemN write SetItemN; default;
   End;
 
   // If multiple, used to represent alternative forms of the article that are not separate citations.
@@ -2946,7 +2840,7 @@ function AddItem(value : TFhirCitationCitedArtifactRelatesTo): TFhirCitationCite
     function Append : TFhirCitationCitedArtifactPublicationForm;
     
     // Add an already existing FhirCitationCitedArtifactPublicationForm to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactPublicationForm): TFhirCitationCitedArtifactPublicationForm; overload;
+    function AddItem(value : TFhirCitationCitedArtifactPublicationForm) : TFhirCitationCitedArtifactPublicationForm; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactPublicationForm) : Integer;
@@ -3070,7 +2964,7 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationForm): TFhirCitati
     function Append : TFhirCitationCitedArtifactPublicationFormPublishedIn;
     
     // Add an already existing FhirCitationCitedArtifactPublicationFormPublishedIn to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactPublicationFormPublishedIn): TFhirCitationCitedArtifactPublicationFormPublishedIn; overload;
+    function AddItem(value : TFhirCitationCitedArtifactPublicationFormPublishedIn) : TFhirCitationCitedArtifactPublicationFormPublishedIn; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactPublicationFormPublishedIn) : Integer;
@@ -3187,7 +3081,7 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationFormPublishedIn): 
     function Append : TFhirCitationCitedArtifactPublicationFormPeriodicRelease;
     
     // Add an already existing FhirCitationCitedArtifactPublicationFormPeriodicRelease to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicRelease): TFhirCitationCitedArtifactPublicationFormPeriodicRelease; overload;
+    function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicRelease) : TFhirCitationCitedArtifactPublicationFormPeriodicRelease; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactPublicationFormPeriodicRelease) : Integer;
@@ -3326,7 +3220,7 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleas
     function Append : TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication;
     
     // Add an already existing FhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication): TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication; overload;
+    function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication) : TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication) : Integer;
@@ -3358,9 +3252,10 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleas
   // Used for any URL for the article or artifact cited.
   TFhirCitationCitedArtifactWebLocation = class (TFhirBackboneElement)
   protected
-    FType_ : TFhirCodeableConcept;
+    FclassifierList : TFhirCodeableConceptList;
     FUrl : TFhirUri;
-    procedure SetType_(value : TFhirCodeableConcept);
+    function GetClassifierList : TFhirCodeableConceptList;
+    function GetHasClassifierList : Boolean;
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
     procedure SetUrlST(value : String);
@@ -3386,10 +3281,9 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleas
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
-    // Typed access to Code the reason for different URLs, e.g. abstract and full-text. (defined for API consistency)
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
     // Code the reason for different URLs, e.g. abstract and full-text.
-    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+    property classifierList : TFhirCodeableConceptList read GetClassifierList;
+    property hasClassifierList : boolean read GetHasClassifierList;
 
     // Typed access to The specific URL.
     property url : String read GetUrlST write SetUrlST;
@@ -3427,7 +3321,7 @@ function AddItem(value : TFhirCitationCitedArtifactPublicationFormPeriodicReleas
     function Append : TFhirCitationCitedArtifactWebLocation;
     
     // Add an already existing FhirCitationCitedArtifactWebLocation to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactWebLocation): TFhirCitationCitedArtifactWebLocation; overload;
+    function AddItem(value : TFhirCitationCitedArtifactWebLocation) : TFhirCitationCitedArtifactWebLocation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactWebLocation) : Integer;
@@ -3533,7 +3427,7 @@ function AddItem(value : TFhirCitationCitedArtifactWebLocation): TFhirCitationCi
     function Append : TFhirCitationCitedArtifactClassification;
     
     // Add an already existing FhirCitationCitedArtifactClassification to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactClassification): TFhirCitationCitedArtifactClassification; overload;
+    function AddItem(value : TFhirCitationCitedArtifactClassification) : TFhirCitationCitedArtifactClassification; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactClassification) : Integer;
@@ -3657,7 +3551,7 @@ function AddItem(value : TFhirCitationCitedArtifactClassification): TFhirCitatio
     function Append : TFhirCitationCitedArtifactClassificationWhoClassified;
     
     // Add an already existing FhirCitationCitedArtifactClassificationWhoClassified to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactClassificationWhoClassified): TFhirCitationCitedArtifactClassificationWhoClassified; overload;
+    function AddItem(value : TFhirCitationCitedArtifactClassificationWhoClassified) : TFhirCitationCitedArtifactClassificationWhoClassified; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactClassificationWhoClassified) : Integer;
@@ -3765,7 +3659,7 @@ function AddItem(value : TFhirCitationCitedArtifactClassificationWhoClassified):
     function Append : TFhirCitationCitedArtifactContributorship;
     
     // Add an already existing FhirCitationCitedArtifactContributorship to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactContributorship): TFhirCitationCitedArtifactContributorship; overload;
+    function AddItem(value : TFhirCitationCitedArtifactContributorship) : TFhirCitationCitedArtifactContributorship; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactContributorship) : Integer;
@@ -3808,7 +3702,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorship): TFhirCitati
     FRole : TFhirCodeableConcept;
     FcontributionInstanceList : TFhirCitationCitedArtifactContributorshipEntryContributionInstanceList;
     FCorrespondingContact : TFhirBoolean;
-    FListOrder : TFhirPositiveInt;
+    FRankingOrder : TFhirPositiveInt;
     procedure SetName(value : TFhirHumanName);
     procedure SetInitials(value : TFhirString);
     function GetInitialsST : String;
@@ -3832,9 +3726,9 @@ function AddItem(value : TFhirCitationCitedArtifactContributorship): TFhirCitati
     procedure SetCorrespondingContact(value : TFhirBoolean);
     function GetCorrespondingContactST : Boolean;
     procedure SetCorrespondingContactST(value : Boolean);
-    procedure SetListOrder(value : TFhirPositiveInt);
-    function GetListOrderST : String;
-    procedure SetListOrderST(value : String);
+    procedure SetRankingOrder(value : TFhirPositiveInt);
+    function GetRankingOrderST : String;
+    procedure SetRankingOrderST(value : String);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -3906,10 +3800,10 @@ function AddItem(value : TFhirCitationCitedArtifactContributorship): TFhirCitati
     // Indication of which contributor is the corresponding contributor for the role.
     property correspondingContactElement : TFhirBoolean read FCorrespondingContact write SetCorrespondingContact;
 
-    // Typed access to Used to code order of authors.
-    property listOrder : String read GetListOrderST write SetListOrderST;
-    // Used to code order of authors.
-    property listOrderElement : TFhirPositiveInt read FListOrder write SetListOrder;
+    // Typed access to Provides a numerical ranking to represent the degree of contributorship relative to other contributors, such as 1 for first author and 2 for second author.
+    property rankingOrder : String read GetRankingOrderST write SetRankingOrderST;
+    // Provides a numerical ranking to represent the degree of contributorship relative to other contributors, such as 1 for first author and 2 for second author.
+    property rankingOrderElement : TFhirPositiveInt read FRankingOrder write SetRankingOrder;
 
   end;
 
@@ -3942,7 +3836,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorship): TFhirCitati
     function Append : TFhirCitationCitedArtifactContributorshipEntry;
     
     // Add an already existing FhirCitationCitedArtifactContributorshipEntry to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactContributorshipEntry): TFhirCitationCitedArtifactContributorshipEntry; overload;
+    function AddItem(value : TFhirCitationCitedArtifactContributorshipEntry) : TFhirCitationCitedArtifactContributorshipEntry; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactContributorshipEntry) : Integer;
@@ -4052,7 +3946,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipEntry): TFhirC
     function Append : TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo;
     
     // Add an already existing FhirCitationCitedArtifactContributorshipEntryAffiliationInfo to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo): TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo; overload;
+    function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo) : TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo) : Integer;
@@ -4153,7 +4047,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryAffiliati
     function Append : TFhirCitationCitedArtifactContributorshipEntryContributionInstance;
     
     // Add an already existing FhirCitationCitedArtifactContributorshipEntryContributionInstance to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryContributionInstance): TFhirCitationCitedArtifactContributorshipEntryContributionInstance; overload;
+    function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryContributionInstance) : TFhirCitationCitedArtifactContributorshipEntryContributionInstance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactContributorshipEntryContributionInstance) : Integer;
@@ -4268,7 +4162,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipEntryContribut
     function Append : TFhirCitationCitedArtifactContributorshipSummary;
     
     // Add an already existing FhirCitationCitedArtifactContributorshipSummary to the end of the list.
-function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhirCitationCitedArtifactContributorshipSummary; overload;
+    function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary) : TFhirCitationCitedArtifactContributorshipSummary; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitationCitedArtifactContributorshipSummary) : Integer;
@@ -4300,12 +4194,11 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
   // The Citation Resource enables reference to any knowledge artifact for purposes of identification and attribution. The Citation Resource supports existing reference structures and developing publication practices such as versioning, expressing complex contributorship roles, and referencing computable resources.
   TFhirCitation = class (TFhirMetadataResource)
   protected
-    FsummaryList : TFhirContactDetailList;
+    FsummaryList : TFhirCitationSummaryList;
     FclassificationList : TFhirCitationClassificationList;
     FnoteList : TFhirAnnotationList;
     FcurrentStateList : TFhirCodeableConceptList;
     FstatusDateList : TFhirCitationStatusDateList;
-    FrelatesToList : TFhirCitationRelatesToList;
     FCitedArtifact : TFhirCitationCitedArtifact;
     procedure SetUrl(value : TFhirUri);
     function GetUrlST : String;
@@ -4363,7 +4256,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
     function GetHasReviewerList : Boolean;
     function GetEndorserList : TFhirContactDetailList;
     function GetHasEndorserList : Boolean;
-    function GetSummaryList : TFhirContactDetailList;
+    function GetSummaryList : TFhirCitationSummaryList;
     function GetHasSummaryList : Boolean;
     function GetClassificationList : TFhirCitationClassificationList;
     function GetHasClassificationList : Boolean;
@@ -4373,8 +4266,8 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
     function GetHasCurrentStateList : Boolean;
     function GetStatusDateList : TFhirCitationStatusDateList;
     function GetHasStatusDateList : Boolean;
-    function GetRelatesToList : TFhirCitationRelatesToList;
-    function GetHasRelatesToList : Boolean;
+    function GetRelatedArtifactList : TFhirRelatedArtifactList;
+    function GetHasRelatedArtifactList : Boolean;
     procedure SetCitedArtifact(value : TFhirCitationCitedArtifact);
   
     function GetResourceType : TFhirResourceType; override;
@@ -4501,7 +4394,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
     property hasEndorserList : boolean read GetHasEndorserList;
 
     // A human-readable display of the citation.
-    property summaryList : TFhirContactDetailList read GetSummaryList;
+    property summaryList : TFhirCitationSummaryList read GetSummaryList;
     property hasSummaryList : boolean read GetHasSummaryList;
 
     // The assignment to an organizing scheme.
@@ -4521,8 +4414,8 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
     property hasStatusDateList : boolean read GetHasStatusDateList;
 
     // Artifact related to the Citation Resource.
-    property relatesToList : TFhirCitationRelatesToList read GetRelatesToList;
-    property hasRelatesToList : boolean read GetHasRelatesToList;
+    property relatedArtifactList : TFhirRelatedArtifactList read GetRelatedArtifactList;
+    property hasRelatedArtifactList : boolean read GetHasRelatedArtifactList;
 
     // Typed access to The article or artifact being described. (defined for API consistency)
     property citedArtifact : TFhirCitationCitedArtifact read FCitedArtifact write SetCitedArtifact;
@@ -4560,7 +4453,7 @@ function AddItem(value : TFhirCitationCitedArtifactContributorshipSummary): TFhi
     function Append : TFhirCitation;
     
     // Add an already existing FhirCitation to the end of the list.
-function AddItem(value : TFhirCitation): TFhirCitation; overload;
+    function AddItem(value : TFhirCitation) : TFhirCitation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCitation) : Integer;
@@ -4668,7 +4561,7 @@ function AddItem(value : TFhirCitation): TFhirCitation; overload;
     function Append : TFhirClaimRelated;
     
     // Add an already existing FhirClaimRelated to the end of the list.
-function AddItem(value : TFhirClaimRelated): TFhirClaimRelated; overload;
+    function AddItem(value : TFhirClaimRelated) : TFhirClaimRelated; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimRelated) : Integer;
@@ -4767,7 +4660,7 @@ function AddItem(value : TFhirClaimRelated): TFhirClaimRelated; overload;
     function Append : TFhirClaimPayee;
     
     // Add an already existing FhirClaimPayee to the end of the list.
-function AddItem(value : TFhirClaimPayee): TFhirClaimPayee; overload;
+    function AddItem(value : TFhirClaimPayee) : TFhirClaimPayee; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimPayee) : Integer;
@@ -4891,7 +4784,7 @@ function AddItem(value : TFhirClaimPayee): TFhirClaimPayee; overload;
     function Append : TFhirClaimCareTeam;
     
     // Add an already existing FhirClaimCareTeam to the end of the list.
-function AddItem(value : TFhirClaimCareTeam): TFhirClaimCareTeam; overload;
+    function AddItem(value : TFhirClaimCareTeam) : TFhirClaimCareTeam; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimCareTeam) : Integer;
@@ -5020,7 +4913,7 @@ function AddItem(value : TFhirClaimCareTeam): TFhirClaimCareTeam; overload;
     function Append : TFhirClaimSupportingInfo;
     
     // Add an already existing FhirClaimSupportingInfo to the end of the list.
-function AddItem(value : TFhirClaimSupportingInfo): TFhirClaimSupportingInfo; overload;
+    function AddItem(value : TFhirClaimSupportingInfo) : TFhirClaimSupportingInfo; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimSupportingInfo) : Integer;
@@ -5142,7 +5035,7 @@ function AddItem(value : TFhirClaimSupportingInfo): TFhirClaimSupportingInfo; ov
     function Append : TFhirClaimDiagnosis;
     
     // Add an already existing FhirClaimDiagnosis to the end of the list.
-function AddItem(value : TFhirClaimDiagnosis): TFhirClaimDiagnosis; overload;
+    function AddItem(value : TFhirClaimDiagnosis) : TFhirClaimDiagnosis; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimDiagnosis) : Integer;
@@ -5266,7 +5159,7 @@ function AddItem(value : TFhirClaimDiagnosis): TFhirClaimDiagnosis; overload;
     function Append : TFhirClaimProcedure;
     
     // Add an already existing FhirClaimProcedure to the end of the list.
-function AddItem(value : TFhirClaimProcedure): TFhirClaimProcedure; overload;
+    function AddItem(value : TFhirClaimProcedure) : TFhirClaimProcedure; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimProcedure) : Integer;
@@ -5406,7 +5299,7 @@ function AddItem(value : TFhirClaimProcedure): TFhirClaimProcedure; overload;
     function Append : TFhirClaimInsurance;
     
     // Add an already existing FhirClaimInsurance to the end of the list.
-function AddItem(value : TFhirClaimInsurance): TFhirClaimInsurance; overload;
+    function AddItem(value : TFhirClaimInsurance) : TFhirClaimInsurance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimInsurance) : Integer;
@@ -5514,7 +5407,7 @@ function AddItem(value : TFhirClaimInsurance): TFhirClaimInsurance; overload;
     function Append : TFhirClaimAccident;
     
     // Add an already existing FhirClaimAccident to the end of the list.
-function AddItem(value : TFhirClaimAccident): TFhirClaimAccident; overload;
+    function AddItem(value : TFhirClaimAccident) : TFhirClaimAccident; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimAccident) : Integer;
@@ -5750,7 +5643,7 @@ function AddItem(value : TFhirClaimAccident): TFhirClaimAccident; overload;
     function Append : TFhirClaimItem;
     
     // Add an already existing FhirClaimItem to the end of the list.
-function AddItem(value : TFhirClaimItem): TFhirClaimItem; overload;
+    function AddItem(value : TFhirClaimItem) : TFhirClaimItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimItem) : Integer;
@@ -5923,7 +5816,7 @@ function AddItem(value : TFhirClaimItem): TFhirClaimItem; overload;
     function Append : TFhirClaimItemDetail;
     
     // Add an already existing FhirClaimItemDetail to the end of the list.
-function AddItem(value : TFhirClaimItemDetail): TFhirClaimItemDetail; overload;
+    function AddItem(value : TFhirClaimItemDetail) : TFhirClaimItemDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimItemDetail) : Integer;
@@ -6089,7 +5982,7 @@ function AddItem(value : TFhirClaimItemDetail): TFhirClaimItemDetail; overload;
     function Append : TFhirClaimItemDetailSubDetail;
     
     // Add an already existing FhirClaimItemDetailSubDetail to the end of the list.
-function AddItem(value : TFhirClaimItemDetailSubDetail): TFhirClaimItemDetailSubDetail; overload;
+    function AddItem(value : TFhirClaimItemDetailSubDetail) : TFhirClaimItemDetailSubDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimItemDetailSubDetail) : Integer;
@@ -6368,7 +6261,7 @@ function AddItem(value : TFhirClaimItemDetailSubDetail): TFhirClaimItemDetailSub
     function Append : TFhirClaim;
     
     // Add an already existing FhirClaim to the end of the list.
-function AddItem(value : TFhirClaim): TFhirClaim; overload;
+    function AddItem(value : TFhirClaim) : TFhirClaim; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaim) : Integer;
@@ -6485,7 +6378,7 @@ function AddItem(value : TFhirClaim): TFhirClaim; overload;
     function Append : TFhirClaimResponseItem;
     
     // Add an already existing FhirClaimResponseItem to the end of the list.
-function AddItem(value : TFhirClaimResponseItem): TFhirClaimResponseItem; overload;
+    function AddItem(value : TFhirClaimResponseItem) : TFhirClaimResponseItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseItem) : Integer;
@@ -6600,7 +6493,7 @@ function AddItem(value : TFhirClaimResponseItem): TFhirClaimResponseItem; overlo
     function Append : TFhirClaimResponseItemAdjudication;
     
     // Add an already existing FhirClaimResponseItemAdjudication to the end of the list.
-function AddItem(value : TFhirClaimResponseItemAdjudication): TFhirClaimResponseItemAdjudication; overload;
+    function AddItem(value : TFhirClaimResponseItemAdjudication) : TFhirClaimResponseItemAdjudication; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseItemAdjudication) : Integer;
@@ -6715,7 +6608,7 @@ function AddItem(value : TFhirClaimResponseItemAdjudication): TFhirClaimResponse
     function Append : TFhirClaimResponseItemDetail;
     
     // Add an already existing FhirClaimResponseItemDetail to the end of the list.
-function AddItem(value : TFhirClaimResponseItemDetail): TFhirClaimResponseItemDetail; overload;
+    function AddItem(value : TFhirClaimResponseItemDetail) : TFhirClaimResponseItemDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseItemDetail) : Integer;
@@ -6823,7 +6716,7 @@ function AddItem(value : TFhirClaimResponseItemDetail): TFhirClaimResponseItemDe
     function Append : TFhirClaimResponseItemDetailSubDetail;
     
     // Add an already existing FhirClaimResponseItemDetailSubDetail to the end of the list.
-function AddItem(value : TFhirClaimResponseItemDetailSubDetail): TFhirClaimResponseItemDetailSubDetail; overload;
+    function AddItem(value : TFhirClaimResponseItemDetailSubDetail) : TFhirClaimResponseItemDetailSubDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseItemDetailSubDetail) : Integer;
@@ -7036,7 +6929,7 @@ function AddItem(value : TFhirClaimResponseItemDetailSubDetail): TFhirClaimRespo
     function Append : TFhirClaimResponseAddItem;
     
     // Add an already existing FhirClaimResponseAddItem to the end of the list.
-function AddItem(value : TFhirClaimResponseAddItem): TFhirClaimResponseAddItem; overload;
+    function AddItem(value : TFhirClaimResponseAddItem) : TFhirClaimResponseAddItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseAddItem) : Integer;
@@ -7186,7 +7079,7 @@ function AddItem(value : TFhirClaimResponseAddItem): TFhirClaimResponseAddItem; 
     function Append : TFhirClaimResponseAddItemDetail;
     
     // Add an already existing FhirClaimResponseAddItemDetail to the end of the list.
-function AddItem(value : TFhirClaimResponseAddItemDetail): TFhirClaimResponseAddItemDetail; overload;
+    function AddItem(value : TFhirClaimResponseAddItemDetail) : TFhirClaimResponseAddItemDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseAddItemDetail) : Integer;
@@ -7329,7 +7222,7 @@ function AddItem(value : TFhirClaimResponseAddItemDetail): TFhirClaimResponseAdd
     function Append : TFhirClaimResponseAddItemDetailSubDetail;
     
     // Add an already existing FhirClaimResponseAddItemDetailSubDetail to the end of the list.
-function AddItem(value : TFhirClaimResponseAddItemDetailSubDetail): TFhirClaimResponseAddItemDetailSubDetail; overload;
+    function AddItem(value : TFhirClaimResponseAddItemDetailSubDetail) : TFhirClaimResponseAddItemDetailSubDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseAddItemDetailSubDetail) : Integer;
@@ -7428,7 +7321,7 @@ function AddItem(value : TFhirClaimResponseAddItemDetailSubDetail): TFhirClaimRe
     function Append : TFhirClaimResponseTotal;
     
     // Add an already existing FhirClaimResponseTotal to the end of the list.
-function AddItem(value : TFhirClaimResponseTotal): TFhirClaimResponseTotal; overload;
+    function AddItem(value : TFhirClaimResponseTotal) : TFhirClaimResponseTotal; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseTotal) : Integer;
@@ -7557,7 +7450,7 @@ function AddItem(value : TFhirClaimResponseTotal): TFhirClaimResponseTotal; over
     function Append : TFhirClaimResponsePayment;
     
     // Add an already existing FhirClaimResponsePayment to the end of the list.
-function AddItem(value : TFhirClaimResponsePayment): TFhirClaimResponsePayment; overload;
+    function AddItem(value : TFhirClaimResponsePayment) : TFhirClaimResponsePayment; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponsePayment) : Integer;
@@ -7675,7 +7568,7 @@ function AddItem(value : TFhirClaimResponsePayment): TFhirClaimResponsePayment; 
     function Append : TFhirClaimResponseProcessNote;
     
     // Add an already existing FhirClaimResponseProcessNote to the end of the list.
-function AddItem(value : TFhirClaimResponseProcessNote): TFhirClaimResponseProcessNote; overload;
+    function AddItem(value : TFhirClaimResponseProcessNote) : TFhirClaimResponseProcessNote; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseProcessNote) : Integer;
@@ -7801,7 +7694,7 @@ function AddItem(value : TFhirClaimResponseProcessNote): TFhirClaimResponseProce
     function Append : TFhirClaimResponseInsurance;
     
     // Add an already existing FhirClaimResponseInsurance to the end of the list.
-function AddItem(value : TFhirClaimResponseInsurance): TFhirClaimResponseInsurance; overload;
+    function AddItem(value : TFhirClaimResponseInsurance) : TFhirClaimResponseInsurance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseInsurance) : Integer;
@@ -7920,7 +7813,7 @@ function AddItem(value : TFhirClaimResponseInsurance): TFhirClaimResponseInsuran
     function Append : TFhirClaimResponseError;
     
     // Add an already existing FhirClaimResponseError to the end of the list.
-function AddItem(value : TFhirClaimResponseError): TFhirClaimResponseError; overload;
+    function AddItem(value : TFhirClaimResponseError) : TFhirClaimResponseError; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponseError) : Integer;
@@ -8204,7 +8097,7 @@ function AddItem(value : TFhirClaimResponseError): TFhirClaimResponseError; over
     function Append : TFhirClaimResponse;
     
     // Add an already existing FhirClaimResponse to the end of the list.
-function AddItem(value : TFhirClaimResponse): TFhirClaimResponse; overload;
+    function AddItem(value : TFhirClaimResponse) : TFhirClaimResponse; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClaimResponse) : Integer;
@@ -8316,7 +8209,7 @@ function AddItem(value : TFhirClaimResponse): TFhirClaimResponse; overload;
     function Append : TFhirCoverageClass;
     
     // Add an already existing FhirCoverageClass to the end of the list.
-function AddItem(value : TFhirCoverageClass): TFhirCoverageClass; overload;
+    function AddItem(value : TFhirCoverageClass) : TFhirCoverageClass; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageClass) : Integer;
@@ -8422,7 +8315,7 @@ function AddItem(value : TFhirCoverageClass): TFhirCoverageClass; overload;
     function Append : TFhirCoverageCostToBeneficiary;
     
     // Add an already existing FhirCoverageCostToBeneficiary to the end of the list.
-function AddItem(value : TFhirCoverageCostToBeneficiary): TFhirCoverageCostToBeneficiary; overload;
+    function AddItem(value : TFhirCoverageCostToBeneficiary) : TFhirCoverageCostToBeneficiary; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageCostToBeneficiary) : Integer;
@@ -8521,7 +8414,7 @@ function AddItem(value : TFhirCoverageCostToBeneficiary): TFhirCoverageCostToBen
     function Append : TFhirCoverageCostToBeneficiaryException;
     
     // Add an already existing FhirCoverageCostToBeneficiaryException to the end of the list.
-function AddItem(value : TFhirCoverageCostToBeneficiaryException): TFhirCoverageCostToBeneficiaryException; overload;
+    function AddItem(value : TFhirCoverageCostToBeneficiaryException) : TFhirCoverageCostToBeneficiaryException; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageCostToBeneficiaryException) : Integer;
@@ -8735,7 +8628,7 @@ function AddItem(value : TFhirCoverageCostToBeneficiaryException): TFhirCoverage
     function Append : TFhirCoverage;
     
     // Add an already existing FhirCoverage to the end of the list.
-function AddItem(value : TFhirCoverage): TFhirCoverage; overload;
+    function AddItem(value : TFhirCoverage) : TFhirCoverage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverage) : Integer;
@@ -8847,7 +8740,7 @@ function AddItem(value : TFhirCoverage): TFhirCoverage; overload;
     function Append : TFhirCoverageEligibilityRequestSupportingInfo;
     
     // Add an already existing FhirCoverageEligibilityRequestSupportingInfo to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityRequestSupportingInfo): TFhirCoverageEligibilityRequestSupportingInfo; overload;
+    function AddItem(value : TFhirCoverageEligibilityRequestSupportingInfo) : TFhirCoverageEligibilityRequestSupportingInfo; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityRequestSupportingInfo) : Integer;
@@ -8957,7 +8850,7 @@ function AddItem(value : TFhirCoverageEligibilityRequestSupportingInfo): TFhirCo
     function Append : TFhirCoverageEligibilityRequestInsurance;
     
     // Add an already existing FhirCoverageEligibilityRequestInsurance to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityRequestInsurance): TFhirCoverageEligibilityRequestInsurance; overload;
+    function AddItem(value : TFhirCoverageEligibilityRequestInsurance) : TFhirCoverageEligibilityRequestInsurance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityRequestInsurance) : Integer;
@@ -9112,7 +9005,7 @@ function AddItem(value : TFhirCoverageEligibilityRequestInsurance): TFhirCoverag
     function Append : TFhirCoverageEligibilityRequestItem;
     
     // Add an already existing FhirCoverageEligibilityRequestItem to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityRequestItem): TFhirCoverageEligibilityRequestItem; overload;
+    function AddItem(value : TFhirCoverageEligibilityRequestItem) : TFhirCoverageEligibilityRequestItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityRequestItem) : Integer;
@@ -9204,7 +9097,7 @@ function AddItem(value : TFhirCoverageEligibilityRequestItem): TFhirCoverageElig
     function Append : TFhirCoverageEligibilityRequestItemDiagnosis;
     
     // Add an already existing FhirCoverageEligibilityRequestItemDiagnosis to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityRequestItemDiagnosis): TFhirCoverageEligibilityRequestItemDiagnosis; overload;
+    function AddItem(value : TFhirCoverageEligibilityRequestItemDiagnosis) : TFhirCoverageEligibilityRequestItemDiagnosis; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityRequestItemDiagnosis) : Integer;
@@ -9393,7 +9286,7 @@ function AddItem(value : TFhirCoverageEligibilityRequestItemDiagnosis): TFhirCov
     function Append : TFhirCoverageEligibilityRequest;
     
     // Add an already existing FhirCoverageEligibilityRequest to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityRequest): TFhirCoverageEligibilityRequest; overload;
+    function AddItem(value : TFhirCoverageEligibilityRequest) : TFhirCoverageEligibilityRequest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityRequest) : Integer;
@@ -9510,7 +9403,7 @@ function AddItem(value : TFhirCoverageEligibilityRequest): TFhirCoverageEligibil
     function Append : TFhirCoverageEligibilityResponseInsurance;
     
     // Add an already existing FhirCoverageEligibilityResponseInsurance to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityResponseInsurance): TFhirCoverageEligibilityResponseInsurance; overload;
+    function AddItem(value : TFhirCoverageEligibilityResponseInsurance) : TFhirCoverageEligibilityResponseInsurance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityResponseInsurance) : Integer;
@@ -9703,7 +9596,7 @@ function AddItem(value : TFhirCoverageEligibilityResponseInsurance): TFhirCovera
     function Append : TFhirCoverageEligibilityResponseInsuranceItem;
     
     // Add an already existing FhirCoverageEligibilityResponseInsuranceItem to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItem): TFhirCoverageEligibilityResponseInsuranceItem; overload;
+    function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItem) : TFhirCoverageEligibilityResponseInsuranceItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityResponseInsuranceItem) : Integer;
@@ -9809,7 +9702,7 @@ function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItem): TFhirCo
     function Append : TFhirCoverageEligibilityResponseInsuranceItemBenefit;
     
     // Add an already existing FhirCoverageEligibilityResponseInsuranceItemBenefit to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItemBenefit): TFhirCoverageEligibilityResponseInsuranceItemBenefit; overload;
+    function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItemBenefit) : TFhirCoverageEligibilityResponseInsuranceItemBenefit; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityResponseInsuranceItemBenefit) : Integer;
@@ -9901,7 +9794,7 @@ function AddItem(value : TFhirCoverageEligibilityResponseInsuranceItemBenefit): 
     function Append : TFhirCoverageEligibilityResponseError;
     
     // Add an already existing FhirCoverageEligibilityResponseError to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityResponseError): TFhirCoverageEligibilityResponseError; overload;
+    function AddItem(value : TFhirCoverageEligibilityResponseError) : TFhirCoverageEligibilityResponseError; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityResponseError) : Integer;
@@ -10102,7 +9995,7 @@ function AddItem(value : TFhirCoverageEligibilityResponseError): TFhirCoverageEl
     function Append : TFhirCoverageEligibilityResponse;
     
     // Add an already existing FhirCoverageEligibilityResponse to the end of the list.
-function AddItem(value : TFhirCoverageEligibilityResponse): TFhirCoverageEligibilityResponse; overload;
+    function AddItem(value : TFhirCoverageEligibilityResponse) : TFhirCoverageEligibilityResponse; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverageEligibilityResponse) : Integer;
@@ -10242,7 +10135,7 @@ function AddItem(value : TFhirCoverageEligibilityResponse): TFhirCoverageEligibi
     function Append : TFhirEnrollmentRequest;
     
     // Add an already existing FhirEnrollmentRequest to the end of the list.
-function AddItem(value : TFhirEnrollmentRequest): TFhirEnrollmentRequest; overload;
+    function AddItem(value : TFhirEnrollmentRequest) : TFhirEnrollmentRequest; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirEnrollmentRequest) : Integer;
@@ -10392,7 +10285,7 @@ function AddItem(value : TFhirEnrollmentRequest): TFhirEnrollmentRequest; overlo
     function Append : TFhirEnrollmentResponse;
     
     // Add an already existing FhirEnrollmentResponse to the end of the list.
-function AddItem(value : TFhirEnrollmentResponse): TFhirEnrollmentResponse; overload;
+    function AddItem(value : TFhirEnrollmentResponse) : TFhirEnrollmentResponse; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirEnrollmentResponse) : Integer;
@@ -10500,7 +10393,7 @@ function AddItem(value : TFhirEnrollmentResponse): TFhirEnrollmentResponse; over
     function Append : TFhirExplanationOfBenefitRelated;
     
     // Add an already existing FhirExplanationOfBenefitRelated to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitRelated): TFhirExplanationOfBenefitRelated; overload;
+    function AddItem(value : TFhirExplanationOfBenefitRelated) : TFhirExplanationOfBenefitRelated; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitRelated) : Integer;
@@ -10599,7 +10492,7 @@ function AddItem(value : TFhirExplanationOfBenefitRelated): TFhirExplanationOfBe
     function Append : TFhirExplanationOfBenefitPayee;
     
     // Add an already existing FhirExplanationOfBenefitPayee to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitPayee): TFhirExplanationOfBenefitPayee; overload;
+    function AddItem(value : TFhirExplanationOfBenefitPayee) : TFhirExplanationOfBenefitPayee; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitPayee) : Integer;
@@ -10723,7 +10616,7 @@ function AddItem(value : TFhirExplanationOfBenefitPayee): TFhirExplanationOfBene
     function Append : TFhirExplanationOfBenefitCareTeam;
     
     // Add an already existing FhirExplanationOfBenefitCareTeam to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitCareTeam): TFhirExplanationOfBenefitCareTeam; overload;
+    function AddItem(value : TFhirExplanationOfBenefitCareTeam) : TFhirExplanationOfBenefitCareTeam; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitCareTeam) : Integer;
@@ -10852,7 +10745,7 @@ function AddItem(value : TFhirExplanationOfBenefitCareTeam): TFhirExplanationOfB
     function Append : TFhirExplanationOfBenefitSupportingInfo;
     
     // Add an already existing FhirExplanationOfBenefitSupportingInfo to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitSupportingInfo): TFhirExplanationOfBenefitSupportingInfo; overload;
+    function AddItem(value : TFhirExplanationOfBenefitSupportingInfo) : TFhirExplanationOfBenefitSupportingInfo; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitSupportingInfo) : Integer;
@@ -10974,7 +10867,7 @@ function AddItem(value : TFhirExplanationOfBenefitSupportingInfo): TFhirExplanat
     function Append : TFhirExplanationOfBenefitDiagnosis;
     
     // Add an already existing FhirExplanationOfBenefitDiagnosis to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitDiagnosis): TFhirExplanationOfBenefitDiagnosis; overload;
+    function AddItem(value : TFhirExplanationOfBenefitDiagnosis) : TFhirExplanationOfBenefitDiagnosis; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitDiagnosis) : Integer;
@@ -11098,7 +10991,7 @@ function AddItem(value : TFhirExplanationOfBenefitDiagnosis): TFhirExplanationOf
     function Append : TFhirExplanationOfBenefitProcedure;
     
     // Add an already existing FhirExplanationOfBenefitProcedure to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitProcedure): TFhirExplanationOfBenefitProcedure; overload;
+    function AddItem(value : TFhirExplanationOfBenefitProcedure) : TFhirExplanationOfBenefitProcedure; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitProcedure) : Integer;
@@ -11206,7 +11099,7 @@ function AddItem(value : TFhirExplanationOfBenefitProcedure): TFhirExplanationOf
     function Append : TFhirExplanationOfBenefitInsurance;
     
     // Add an already existing FhirExplanationOfBenefitInsurance to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitInsurance): TFhirExplanationOfBenefitInsurance; overload;
+    function AddItem(value : TFhirExplanationOfBenefitInsurance) : TFhirExplanationOfBenefitInsurance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitInsurance) : Integer;
@@ -11314,7 +11207,7 @@ function AddItem(value : TFhirExplanationOfBenefitInsurance): TFhirExplanationOf
     function Append : TFhirExplanationOfBenefitAccident;
     
     // Add an already existing FhirExplanationOfBenefitAccident to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitAccident): TFhirExplanationOfBenefitAccident; overload;
+    function AddItem(value : TFhirExplanationOfBenefitAccident) : TFhirExplanationOfBenefitAccident; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitAccident) : Integer;
@@ -11564,7 +11457,7 @@ function AddItem(value : TFhirExplanationOfBenefitAccident): TFhirExplanationOfB
     function Append : TFhirExplanationOfBenefitItem;
     
     // Add an already existing FhirExplanationOfBenefitItem to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitItem): TFhirExplanationOfBenefitItem; overload;
+    function AddItem(value : TFhirExplanationOfBenefitItem) : TFhirExplanationOfBenefitItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitItem) : Integer;
@@ -11679,7 +11572,7 @@ function AddItem(value : TFhirExplanationOfBenefitItem): TFhirExplanationOfBenef
     function Append : TFhirExplanationOfBenefitItemAdjudication;
     
     // Add an already existing FhirExplanationOfBenefitItemAdjudication to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitItemAdjudication): TFhirExplanationOfBenefitItemAdjudication; overload;
+    function AddItem(value : TFhirExplanationOfBenefitItemAdjudication) : TFhirExplanationOfBenefitItemAdjudication; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitItemAdjudication) : Integer;
@@ -11866,7 +11759,7 @@ function AddItem(value : TFhirExplanationOfBenefitItemAdjudication): TFhirExplan
     function Append : TFhirExplanationOfBenefitItemDetail;
     
     // Add an already existing FhirExplanationOfBenefitItemDetail to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitItemDetail): TFhirExplanationOfBenefitItemDetail; overload;
+    function AddItem(value : TFhirExplanationOfBenefitItemDetail) : TFhirExplanationOfBenefitItemDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitItemDetail) : Integer;
@@ -12046,7 +11939,7 @@ function AddItem(value : TFhirExplanationOfBenefitItemDetail): TFhirExplanationO
     function Append : TFhirExplanationOfBenefitItemDetailSubDetail;
     
     // Add an already existing FhirExplanationOfBenefitItemDetailSubDetail to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitItemDetailSubDetail): TFhirExplanationOfBenefitItemDetailSubDetail; overload;
+    function AddItem(value : TFhirExplanationOfBenefitItemDetailSubDetail) : TFhirExplanationOfBenefitItemDetailSubDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitItemDetailSubDetail) : Integer;
@@ -12259,7 +12152,7 @@ function AddItem(value : TFhirExplanationOfBenefitItemDetailSubDetail): TFhirExp
     function Append : TFhirExplanationOfBenefitAddItem;
     
     // Add an already existing FhirExplanationOfBenefitAddItem to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitAddItem): TFhirExplanationOfBenefitAddItem; overload;
+    function AddItem(value : TFhirExplanationOfBenefitAddItem) : TFhirExplanationOfBenefitAddItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitAddItem) : Integer;
@@ -12409,7 +12302,7 @@ function AddItem(value : TFhirExplanationOfBenefitAddItem): TFhirExplanationOfBe
     function Append : TFhirExplanationOfBenefitAddItemDetail;
     
     // Add an already existing FhirExplanationOfBenefitAddItemDetail to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitAddItemDetail): TFhirExplanationOfBenefitAddItemDetail; overload;
+    function AddItem(value : TFhirExplanationOfBenefitAddItemDetail) : TFhirExplanationOfBenefitAddItemDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitAddItemDetail) : Integer;
@@ -12552,7 +12445,7 @@ function AddItem(value : TFhirExplanationOfBenefitAddItemDetail): TFhirExplanati
     function Append : TFhirExplanationOfBenefitAddItemDetailSubDetail;
     
     // Add an already existing FhirExplanationOfBenefitAddItemDetailSubDetail to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitAddItemDetailSubDetail): TFhirExplanationOfBenefitAddItemDetailSubDetail; overload;
+    function AddItem(value : TFhirExplanationOfBenefitAddItemDetailSubDetail) : TFhirExplanationOfBenefitAddItemDetailSubDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitAddItemDetailSubDetail) : Integer;
@@ -12651,7 +12544,7 @@ function AddItem(value : TFhirExplanationOfBenefitAddItemDetailSubDetail): TFhir
     function Append : TFhirExplanationOfBenefitTotal;
     
     // Add an already existing FhirExplanationOfBenefitTotal to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitTotal): TFhirExplanationOfBenefitTotal; overload;
+    function AddItem(value : TFhirExplanationOfBenefitTotal) : TFhirExplanationOfBenefitTotal; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitTotal) : Integer;
@@ -12780,7 +12673,7 @@ function AddItem(value : TFhirExplanationOfBenefitTotal): TFhirExplanationOfBene
     function Append : TFhirExplanationOfBenefitPayment;
     
     // Add an already existing FhirExplanationOfBenefitPayment to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitPayment): TFhirExplanationOfBenefitPayment; overload;
+    function AddItem(value : TFhirExplanationOfBenefitPayment) : TFhirExplanationOfBenefitPayment; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitPayment) : Integer;
@@ -12898,7 +12791,7 @@ function AddItem(value : TFhirExplanationOfBenefitPayment): TFhirExplanationOfBe
     function Append : TFhirExplanationOfBenefitProcessNote;
     
     // Add an already existing FhirExplanationOfBenefitProcessNote to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitProcessNote): TFhirExplanationOfBenefitProcessNote; overload;
+    function AddItem(value : TFhirExplanationOfBenefitProcessNote) : TFhirExplanationOfBenefitProcessNote; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitProcessNote) : Integer;
@@ -13045,7 +12938,7 @@ function AddItem(value : TFhirExplanationOfBenefitProcessNote): TFhirExplanation
     function Append : TFhirExplanationOfBenefitBenefitBalance;
     
     // Add an already existing FhirExplanationOfBenefitBenefitBalance to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitBenefitBalance): TFhirExplanationOfBenefitBenefitBalance; overload;
+    function AddItem(value : TFhirExplanationOfBenefitBenefitBalance) : TFhirExplanationOfBenefitBenefitBalance; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitBenefitBalance) : Integer;
@@ -13151,7 +13044,7 @@ function AddItem(value : TFhirExplanationOfBenefitBenefitBalance): TFhirExplanat
     function Append : TFhirExplanationOfBenefitBenefitBalanceFinancial;
     
     // Add an already existing FhirExplanationOfBenefitBenefitBalanceFinancial to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefitBenefitBalanceFinancial): TFhirExplanationOfBenefitBenefitBalanceFinancial; overload;
+    function AddItem(value : TFhirExplanationOfBenefitBenefitBalanceFinancial) : TFhirExplanationOfBenefitBenefitBalanceFinancial; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefitBenefitBalanceFinancial) : Integer;
@@ -13547,7 +13440,7 @@ function AddItem(value : TFhirExplanationOfBenefitBenefitBalanceFinancial): TFhi
     function Append : TFhirExplanationOfBenefit;
     
     // Add an already existing FhirExplanationOfBenefit to the end of the list.
-function AddItem(value : TFhirExplanationOfBenefit): TFhirExplanationOfBenefit; overload;
+    function AddItem(value : TFhirExplanationOfBenefit) : TFhirExplanationOfBenefit; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirExplanationOfBenefit) : Integer;
@@ -13662,7 +13555,7 @@ function AddItem(value : TFhirExplanationOfBenefit): TFhirExplanationOfBenefit; 
     function Append : TFhirInsurancePlanContact;
     
     // Add an already existing FhirInsurancePlanContact to the end of the list.
-function AddItem(value : TFhirInsurancePlanContact): TFhirInsurancePlanContact; overload;
+    function AddItem(value : TFhirInsurancePlanContact) : TFhirInsurancePlanContact; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanContact) : Integer;
@@ -13768,7 +13661,7 @@ function AddItem(value : TFhirInsurancePlanContact): TFhirInsurancePlanContact; 
     function Append : TFhirInsurancePlanCoverage;
     
     // Add an already existing FhirInsurancePlanCoverage to the end of the list.
-function AddItem(value : TFhirInsurancePlanCoverage): TFhirInsurancePlanCoverage; overload;
+    function AddItem(value : TFhirInsurancePlanCoverage) : TFhirInsurancePlanCoverage; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanCoverage) : Integer;
@@ -13876,7 +13769,7 @@ function AddItem(value : TFhirInsurancePlanCoverage): TFhirInsurancePlanCoverage
     function Append : TFhirInsurancePlanCoverageBenefit;
     
     // Add an already existing FhirInsurancePlanCoverageBenefit to the end of the list.
-function AddItem(value : TFhirInsurancePlanCoverageBenefit): TFhirInsurancePlanCoverageBenefit; overload;
+    function AddItem(value : TFhirInsurancePlanCoverageBenefit) : TFhirInsurancePlanCoverageBenefit; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanCoverageBenefit) : Integer;
@@ -13975,7 +13868,7 @@ function AddItem(value : TFhirInsurancePlanCoverageBenefit): TFhirInsurancePlanC
     function Append : TFhirInsurancePlanCoverageBenefitLimit;
     
     // Add an already existing FhirInsurancePlanCoverageBenefitLimit to the end of the list.
-function AddItem(value : TFhirInsurancePlanCoverageBenefitLimit): TFhirInsurancePlanCoverageBenefitLimit; overload;
+    function AddItem(value : TFhirInsurancePlanCoverageBenefitLimit) : TFhirInsurancePlanCoverageBenefitLimit; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanCoverageBenefitLimit) : Integer;
@@ -14102,7 +13995,7 @@ function AddItem(value : TFhirInsurancePlanCoverageBenefitLimit): TFhirInsurance
     function Append : TFhirInsurancePlanPlan;
     
     // Add an already existing FhirInsurancePlanPlan to the end of the list.
-function AddItem(value : TFhirInsurancePlanPlan): TFhirInsurancePlanPlan; overload;
+    function AddItem(value : TFhirInsurancePlanPlan) : TFhirInsurancePlanPlan; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanPlan) : Integer;
@@ -14219,7 +14112,7 @@ function AddItem(value : TFhirInsurancePlanPlan): TFhirInsurancePlanPlan; overlo
     function Append : TFhirInsurancePlanPlanGeneralCost;
     
     // Add an already existing FhirInsurancePlanPlanGeneralCost to the end of the list.
-function AddItem(value : TFhirInsurancePlanPlanGeneralCost): TFhirInsurancePlanPlanGeneralCost; overload;
+    function AddItem(value : TFhirInsurancePlanPlanGeneralCost) : TFhirInsurancePlanPlanGeneralCost; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanPlanGeneralCost) : Integer;
@@ -14318,7 +14211,7 @@ function AddItem(value : TFhirInsurancePlanPlanGeneralCost): TFhirInsurancePlanP
     function Append : TFhirInsurancePlanPlanSpecificCost;
     
     // Add an already existing FhirInsurancePlanPlanSpecificCost to the end of the list.
-function AddItem(value : TFhirInsurancePlanPlanSpecificCost): TFhirInsurancePlanPlanSpecificCost; overload;
+    function AddItem(value : TFhirInsurancePlanPlanSpecificCost) : TFhirInsurancePlanPlanSpecificCost; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanPlanSpecificCost) : Integer;
@@ -14417,7 +14310,7 @@ function AddItem(value : TFhirInsurancePlanPlanSpecificCost): TFhirInsurancePlan
     function Append : TFhirInsurancePlanPlanSpecificCostBenefit;
     
     // Add an already existing FhirInsurancePlanPlanSpecificCostBenefit to the end of the list.
-function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefit): TFhirInsurancePlanPlanSpecificCostBenefit; overload;
+    function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefit) : TFhirInsurancePlanPlanSpecificCostBenefit; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanPlanSpecificCostBenefit) : Integer;
@@ -14530,7 +14423,7 @@ function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefit): TFhirInsura
     function Append : TFhirInsurancePlanPlanSpecificCostBenefitCost;
     
     // Add an already existing FhirInsurancePlanPlanSpecificCostBenefitCost to the end of the list.
-function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefitCost): TFhirInsurancePlanPlanSpecificCostBenefitCost; overload;
+    function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefitCost) : TFhirInsurancePlanPlanSpecificCostBenefitCost; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlanPlanSpecificCostBenefitCost) : Integer;
@@ -14717,7 +14610,7 @@ function AddItem(value : TFhirInsurancePlanPlanSpecificCostBenefitCost): TFhirIn
     function Append : TFhirInsurancePlan;
     
     // Add an already existing FhirInsurancePlan to the end of the list.
-function AddItem(value : TFhirInsurancePlan): TFhirInsurancePlan; overload;
+    function AddItem(value : TFhirInsurancePlan) : TFhirInsurancePlan; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInsurancePlan) : Integer;
@@ -14818,7 +14711,7 @@ function AddItem(value : TFhirInsurancePlan): TFhirInsurancePlan; overload;
     function Append : TFhirInvoiceParticipant;
     
     // Add an already existing FhirInvoiceParticipant to the end of the list.
-function AddItem(value : TFhirInvoiceParticipant): TFhirInvoiceParticipant; overload;
+    function AddItem(value : TFhirInvoiceParticipant) : TFhirInvoiceParticipant; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInvoiceParticipant) : Integer;
@@ -14926,7 +14819,7 @@ function AddItem(value : TFhirInvoiceParticipant): TFhirInvoiceParticipant; over
     function Append : TFhirInvoiceLineItem;
     
     // Add an already existing FhirInvoiceLineItem to the end of the list.
-function AddItem(value : TFhirInvoiceLineItem): TFhirInvoiceLineItem; overload;
+    function AddItem(value : TFhirInvoiceLineItem) : TFhirInvoiceLineItem; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInvoiceLineItem) : Integer;
@@ -15042,7 +14935,7 @@ function AddItem(value : TFhirInvoiceLineItem): TFhirInvoiceLineItem; overload;
     function Append : TFhirInvoiceLineItemPriceComponent;
     
     // Add an already existing FhirInvoiceLineItemPriceComponent to the end of the list.
-function AddItem(value : TFhirInvoiceLineItemPriceComponent): TFhirInvoiceLineItemPriceComponent; overload;
+    function AddItem(value : TFhirInvoiceLineItemPriceComponent) : TFhirInvoiceLineItemPriceComponent; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInvoiceLineItemPriceComponent) : Integer;
@@ -15247,7 +15140,7 @@ function AddItem(value : TFhirInvoiceLineItemPriceComponent): TFhirInvoiceLineIt
     function Append : TFhirInvoice;
     
     // Add an already existing FhirInvoice to the end of the list.
-function AddItem(value : TFhirInvoice): TFhirInvoice; overload;
+    function AddItem(value : TFhirInvoice) : TFhirInvoice; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirInvoice) : Integer;
@@ -15424,7 +15317,7 @@ function AddItem(value : TFhirInvoice): TFhirInvoice; overload;
     function Append : TFhirPaymentNotice;
     
     // Add an already existing FhirPaymentNotice to the end of the list.
-function AddItem(value : TFhirPaymentNotice): TFhirPaymentNotice; overload;
+    function AddItem(value : TFhirPaymentNotice) : TFhirPaymentNotice; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPaymentNotice) : Integer;
@@ -15583,7 +15476,7 @@ function AddItem(value : TFhirPaymentNotice): TFhirPaymentNotice; overload;
     function Append : TFhirPaymentReconciliationDetail;
     
     // Add an already existing FhirPaymentReconciliationDetail to the end of the list.
-function AddItem(value : TFhirPaymentReconciliationDetail): TFhirPaymentReconciliationDetail; overload;
+    function AddItem(value : TFhirPaymentReconciliationDetail) : TFhirPaymentReconciliationDetail; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPaymentReconciliationDetail) : Integer;
@@ -15685,7 +15578,7 @@ function AddItem(value : TFhirPaymentReconciliationDetail): TFhirPaymentReconcil
     function Append : TFhirPaymentReconciliationProcessNote;
     
     // Add an already existing FhirPaymentReconciliationProcessNote to the end of the list.
-function AddItem(value : TFhirPaymentReconciliationProcessNote): TFhirPaymentReconciliationProcessNote; overload;
+    function AddItem(value : TFhirPaymentReconciliationProcessNote) : TFhirPaymentReconciliationProcessNote; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPaymentReconciliationProcessNote) : Integer;
@@ -15884,7 +15777,7 @@ function AddItem(value : TFhirPaymentReconciliationProcessNote): TFhirPaymentRec
     function Append : TFhirPaymentReconciliation;
     
     // Add an already existing FhirPaymentReconciliation to the end of the list.
-function AddItem(value : TFhirPaymentReconciliation): TFhirPaymentReconciliation; overload;
+    function AddItem(value : TFhirPaymentReconciliation) : TFhirPaymentReconciliation; overload;
     
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirPaymentReconciliation) : Integer;
@@ -16053,14 +15946,14 @@ begin
 end;
 
 procedure TFhirAccountCoverage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('coverage');
   fields.add('priority');
 end;
 
 function TFhirAccountCoverage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -16132,6 +16025,7 @@ end;
 
 function TFhirAccountCoverageList.AddItem(value: TFhirAccountCoverage): TFhirAccountCoverage;
 begin
+  assert(value.ClassName = 'TFhirAccountCoverage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAccountCoverage');
   add(value);
   result := value;
 end;
@@ -16366,7 +16260,7 @@ begin
 end;
 
 procedure TFhirAccountGuarantor.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('party');
   fields.add('onHold');
@@ -16374,7 +16268,7 @@ begin
 end;
 
 function TFhirAccountGuarantor.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -16447,6 +16341,7 @@ end;
 
 function TFhirAccountGuarantorList.AddItem(value: TFhirAccountGuarantor): TFhirAccountGuarantor;
 begin
+  assert(value.ClassName = 'TFhirAccountGuarantor', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAccountGuarantor');
   add(value);
   result := value;
 end;
@@ -16549,6 +16444,7 @@ destructor TFhirAccount.Destroy;
 begin
   FIdentifierList.Free;
   FStatus.free;
+  FBillingStatus.free;
   FType_.free;
   FName.free;
   FSubjectList.Free;
@@ -16576,6 +16472,7 @@ begin
     FIdentifierList.Assign(TFhirAccount(oSource).FIdentifierList);
   end;
   statusElement := TFhirAccount(oSource).statusElement.Clone;
+  billingStatus := TFhirAccount(oSource).billingStatus.Clone;
   type_ := TFhirAccount(oSource).type_.Clone;
   nameElement := TFhirAccount(oSource).nameElement.Clone;
   if (TFhirAccount(oSource).FSubjectList = nil) then
@@ -16629,6 +16526,8 @@ begin
     list.addAll(self, 'identifier', FIdentifierList);
   if (child_name = 'status') Then
      list.add(self.link, 'status', FStatus.Link);
+  if (child_name = 'billingStatus') Then
+     list.add(self.link, 'billingStatus', FBillingStatus.Link);
   if (child_name = 'type') Then
      list.add(self.link, 'type', FType_.Link);
   if (child_name = 'name') Then
@@ -16654,6 +16553,7 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
   oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'billingStatus', 'CodeableConcept', false, TFhirCodeableConcept, FBillingStatus.Link));
   oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
   oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
   oList.add(TFHIRProperty.create(self, 'subject', 'Reference', true, TFhirReference, FSubjectList.Link));
@@ -16675,6 +16575,11 @@ begin
   else if (propName = 'status') then
   begin
     StatusElement := asEnum(SYSTEMS_TFhirAccountStatusEnum, CODES_TFhirAccountStatusEnum, propValue);
+    result := propValue;
+  end
+  else if (propName = 'billingStatus') then
+  begin
+    BillingStatus := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'type') then
@@ -16738,6 +16643,7 @@ function TFhirAccount.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
   else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirAccountStatusEnum[AccountStatusNull], CODES_TFhirAccountStatusEnum[AccountStatusNull]) 
+  else if (propName = 'billingStatus') then result := TFhirCodeableConcept.create()
   else if (propName = 'type') then result := TFhirCodeableConcept.create()
   else if (propName = 'name') then result := TFhirString.create()
   else if (propName = 'subject') then result := SubjectList.new()
@@ -16754,6 +16660,7 @@ function TFhirAccount.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'identifier') then result := 'Identifier'
   else if (propName = 'status') then result := 'code'
+  else if (propName = 'billingStatus') then result := 'CodeableConcept'
   else if (propName = 'type') then result := 'CodeableConcept'
   else if (propName = 'name') then result := 'string'
   else if (propName = 'subject') then result := 'Reference'
@@ -16770,6 +16677,7 @@ procedure TFhirAccount.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'status') then StatusElement := nil
+  else if (propName = 'billingStatus') then BillingStatusElement := nil
   else if (propName = 'type') then Type_Element := nil
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'subject') then deletePropertyValue('subject', SubjectList, value)
@@ -16787,6 +16695,7 @@ procedure TFhirAccount.replaceProperty(propName : string; existing, new : TFHIRO
 begin
   if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
   else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirAccountStatusEnum, CODES_TFhirAccountStatusEnum, new)
+  else if (propName = 'billingStatus') then BillingStatusElement := new as TFhirCodeableConcept
   else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
   else if (propName = 'name') then NameElement := asString(new)
   else if (propName = 'subject') then replacePropertyValue('subject', SubjectList, existing, new)
@@ -16837,24 +16746,25 @@ begin
   begin
     o := TFhirAccount(other);
     result := compareDeep(identifierList, o.identifierList, true) and compareDeep(statusElement, o.statusElement, true) and 
-      compareDeep(type_Element, o.type_Element, true) and compareDeep(nameElement, o.nameElement, true) and 
-      compareDeep(subjectList, o.subjectList, true) and compareDeep(servicePeriodElement, o.servicePeriodElement, true) and 
-      compareDeep(coverageList, o.coverageList, true) and compareDeep(ownerElement, o.ownerElement, true) and 
-      compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(guarantorList, o.guarantorList, true) and 
-      compareDeep(partOfElement, o.partOfElement, true);
+      compareDeep(billingStatusElement, o.billingStatusElement, true) and compareDeep(type_Element, o.type_Element, true) and 
+      compareDeep(nameElement, o.nameElement, true) and compareDeep(subjectList, o.subjectList, true) and 
+      compareDeep(servicePeriodElement, o.servicePeriodElement, true) and compareDeep(coverageList, o.coverageList, true) and 
+      compareDeep(ownerElement, o.ownerElement, true) and compareDeep(descriptionElement, o.descriptionElement, true) and 
+      compareDeep(guarantorList, o.guarantorList, true) and compareDeep(partOfElement, o.partOfElement, true);
   end;
 end;
 
 function TFhirAccount.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FStatus) and isEmptyProp(FType_) and isEmptyProp(FName) and isEmptyProp(FsubjectList) and isEmptyProp(FServicePeriod) and isEmptyProp(FcoverageList) and isEmptyProp(FOwner) and isEmptyProp(FDescription) and isEmptyProp(FguarantorList) and isEmptyProp(FPartOf);
+  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FStatus) and isEmptyProp(FBillingStatus) and isEmptyProp(FType_) and isEmptyProp(FName) and isEmptyProp(FsubjectList) and isEmptyProp(FServicePeriod) and isEmptyProp(FcoverageList) and isEmptyProp(FOwner) and isEmptyProp(FDescription) and isEmptyProp(FguarantorList) and isEmptyProp(FPartOf);
 end;
 
 procedure TFhirAccount.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
+  fields.add('billingStatus');
   fields.add('type');
   fields.add('name');
   fields.add('subject');
@@ -16867,7 +16777,7 @@ begin
 end;
 
 function TFhirAccount.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FSubjectList.sizeInBytes(magic));
@@ -16907,6 +16817,12 @@ begin
     StatusElement := nil
   else
     StatusElement := TFhirEnum.create(SYSTEMS_TFhirAccountStatusEnum[value], CODES_TFhirAccountStatusEnum[value]);
+end;
+
+procedure TFhirAccount.SetBillingStatus(value : TFhirCodeableConcept);
+begin
+  FBillingStatus.free;
+  FBillingStatus := value;
 end;
 
 procedure TFhirAccount.SetType_(value : TFhirCodeableConcept);
@@ -17057,6 +16973,7 @@ end;
 
 function TFhirAccountList.AddItem(value: TFhirAccount): TFhirAccount;
 begin
+  assert(value.ClassName = 'TFhirAccount', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAccount');
   add(value);
   result := value;
 end;
@@ -17278,14 +17195,14 @@ begin
 end;
 
 procedure TFhirChargeItemPerformer.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('function');
   fields.add('actor');
 end;
 
 function TFhirChargeItemPerformer.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -17337,6 +17254,7 @@ end;
 
 function TFhirChargeItemPerformerList.AddItem(value: TFhirChargeItemPerformer): TFhirChargeItemPerformer;
 begin
+  assert(value.ClassName = 'TFhirChargeItemPerformer', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItemPerformer');
   add(value);
   result := value;
 end;
@@ -17459,7 +17377,7 @@ begin
   FEnteredDate.free;
   FReasonList.Free;
   FServiceList.Free;
-  FProduct.free;
+  FProductList.Free;
   FAccountList.Free;
   FNoteList.Free;
   FSupportingInformationList.Free;
@@ -17571,7 +17489,17 @@ begin
       FServiceList := TFhirReferenceList.Create;
     FServiceList.Assign(TFhirChargeItem(oSource).FServiceList);
   end;
-  product := TFhirChargeItem(oSource).product.Clone;
+  if (TFhirChargeItem(oSource).FProductList = nil) then
+  begin
+    FProductList.free;
+    FProductList := nil;
+  end
+  else
+  begin
+    if FProductList = nil then
+      FProductList := TFhirCodeableReferenceList.Create;
+    FProductList.Assign(TFhirChargeItem(oSource).FProductList);
+  end;
   if (TFhirChargeItem(oSource).FAccountList = nil) then
   begin
     FAccountList.free;
@@ -17659,8 +17587,8 @@ begin
     list.addAll(self, 'reason', FReasonList);
   if (child_name = 'service') Then
     list.addAll(self, 'service', FServiceList);
-  if (child_name = 'product[x]') or (child_name = 'product') Then
-     list.add(self.link, 'product[x]', FProduct.Link);
+  if (child_name = 'product') Then
+    list.addAll(self, 'product', FProductList);
   if (child_name = 'account') Then
     list.addAll(self, 'account', FAccountList);
   if (child_name = 'note') Then
@@ -17694,7 +17622,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'enteredDate', 'dateTime', false, TFhirDateTime, FEnteredDate.Link));
   oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link));
   oList.add(TFHIRProperty.create(self, 'service', 'Reference', true, TFhirReference, FServiceList.Link));
-  oList.add(TFHIRProperty.create(self, 'product[x]', 'Reference|CodeableConcept', false, TFhirDataType, FProduct.Link));
+  oList.add(TFHIRProperty.create(self, 'product', 'CodeableReference', true, TFhirCodeableReference, FProductList.Link));
   oList.add(TFHIRProperty.create(self, 'account', 'Reference', true, TFhirReference, FAccountList.Link));
   oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
   oList.add(TFHIRProperty.create(self, 'supportingInformation', 'Reference', true, TFhirReference, FSupportingInformationList.Link));
@@ -17812,9 +17740,9 @@ begin
     ServiceList.add(propValue as TFhirReference);
     result := propValue;
   end
-  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then
+  else if (propName = 'product') then
   begin
-    Product := propValue as TFhirDataType;
+    ProductList.add(propValue as TFhirCodeableReference);
     result := propValue;
   end
   else if (propName = 'account') then
@@ -17845,6 +17773,7 @@ begin
   else if (propName = 'bodysite') then BodysiteList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'service') then ServiceList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'product') then ProductList.insertItem(index, propValue as TFhirCodeableReference)
   else if (propName = 'account') then AccountList.insertItem(index, propValue as TFhirReference)
   else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
   else if (propName = 'supportingInformation') then SupportingInformationList.insertItem(index, propValue as TFhirReference)
@@ -17875,7 +17804,7 @@ begin
   else if (propName = 'enteredDate') then result := TFhirDateTime.create()
   else if (propName = 'reason') then result := ReasonList.new()
   else if (propName = 'service') then result := ServiceList.new()
-  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Product')
+  else if (propName = 'product') then result := ProductList.new()
   else if (propName = 'account') then result := AccountList.new()
   else if (propName = 'note') then result := NoteList.new()
   else if (propName = 'supportingInformation') then result := SupportingInformationList.new()
@@ -17906,7 +17835,7 @@ begin
   else if (propName = 'enteredDate') then result := 'dateTime'
   else if (propName = 'reason') then result := 'CodeableConcept'
   else if (propName = 'service') then result := 'Reference'
-  else if (propName = 'product[x]') then result := 'Reference|CodeableConcept'
+  else if (propName = 'product') then result := 'CodeableReference'
   else if (propName = 'account') then result := 'Reference'
   else if (propName = 'note') then result := 'Annotation'
   else if (propName = 'supportingInformation') then result := 'Reference'
@@ -17937,7 +17866,7 @@ begin
   else if (propName = 'enteredDate') then EnteredDateElement := nil
   else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value)
   else if (propName = 'service') then deletePropertyValue('service', ServiceList, value)
-  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then ProductElement := nil
+  else if (propName = 'product') then deletePropertyValue('product', ProductList, value)
   else if (propName = 'account') then deletePropertyValue('account', AccountList, value)
   else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
   else if (propName = 'supportingInformation') then deletePropertyValue('supportingInformation', SupportingInformationList, value)
@@ -17969,7 +17898,7 @@ begin
   else if (propName = 'enteredDate') then EnteredDateElement := asDateTime(new)
   else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new)
   else if (propName = 'service') then replacePropertyValue('service', ServiceList, existing, new)
-  else if (isMatchingName(propName, 'product', ['Reference', 'CodeableConcept'])) then ProductElement := new as TFhirDataType
+  else if (propName = 'product') then replacePropertyValue('product', ProductList, existing, new)
   else if (propName = 'account') then replacePropertyValue('account', AccountList, existing, new)
   else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
   else if (propName = 'supportingInformation') then replacePropertyValue('supportingInformation', SupportingInformationList, existing, new)
@@ -17987,6 +17916,7 @@ begin
   else if (propName = 'bodysite') then BodysiteList.move(source, destination)
   else if (propName = 'reason') then ReasonList.move(source, destination)
   else if (propName = 'service') then ServiceList.move(source, destination)
+  else if (propName = 'product') then ProductList.move(source, destination)
   else if (propName = 'account') then AccountList.move(source, destination)
   else if (propName = 'note') then NoteList.move(source, destination)
   else if (propName = 'supportingInformation') then SupportingInformationList.move(source, destination)
@@ -18032,18 +17962,18 @@ begin
       compareDeep(priceOverrideElement, o.priceOverrideElement, true) and compareDeep(overrideReasonElement, o.overrideReasonElement, true) and 
       compareDeep(entererElement, o.entererElement, true) and compareDeep(enteredDateElement, o.enteredDateElement, true) and 
       compareDeep(reasonList, o.reasonList, true) and compareDeep(serviceList, o.serviceList, true) and 
-      compareDeep(productElement, o.productElement, true) and compareDeep(accountList, o.accountList, true) and 
+      compareDeep(productList, o.productList, true) and compareDeep(accountList, o.accountList, true) and 
       compareDeep(noteList, o.noteList, true) and compareDeep(supportingInformationList, o.supportingInformationList, true);
   end;
 end;
 
 function TFhirChargeItem.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FdefinitionUriList) and isEmptyProp(FdefinitionCanonicalList) and isEmptyProp(FStatus) and isEmptyProp(FpartOfList) and isEmptyProp(FCode) and isEmptyProp(FSubject) and isEmptyProp(FContext) and isEmptyProp(FOccurrence) and isEmptyProp(FperformerList) and isEmptyProp(FPerformingOrganization) and isEmptyProp(FRequestingOrganization) and isEmptyProp(FCostCenter) and isEmptyProp(FQuantity) and isEmptyProp(FbodysiteList) and isEmptyProp(FFactorOverride) and isEmptyProp(FPriceOverride) and isEmptyProp(FOverrideReason) and isEmptyProp(FEnterer) and isEmptyProp(FEnteredDate) and isEmptyProp(FreasonList) and isEmptyProp(FserviceList) and isEmptyProp(FProduct) and isEmptyProp(FaccountList) and isEmptyProp(FnoteList) and isEmptyProp(FsupportingInformationList);
+  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FdefinitionUriList) and isEmptyProp(FdefinitionCanonicalList) and isEmptyProp(FStatus) and isEmptyProp(FpartOfList) and isEmptyProp(FCode) and isEmptyProp(FSubject) and isEmptyProp(FContext) and isEmptyProp(FOccurrence) and isEmptyProp(FperformerList) and isEmptyProp(FPerformingOrganization) and isEmptyProp(FRequestingOrganization) and isEmptyProp(FCostCenter) and isEmptyProp(FQuantity) and isEmptyProp(FbodysiteList) and isEmptyProp(FFactorOverride) and isEmptyProp(FPriceOverride) and isEmptyProp(FOverrideReason) and isEmptyProp(FEnterer) and isEmptyProp(FEnteredDate) and isEmptyProp(FreasonList) and isEmptyProp(FserviceList) and isEmptyProp(FproductList) and isEmptyProp(FaccountList) and isEmptyProp(FnoteList) and isEmptyProp(FsupportingInformationList);
 end;
 
 procedure TFhirChargeItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('definitionUri');
@@ -18067,14 +17997,14 @@ begin
   fields.add('enteredDate');
   fields.add('reason');
   fields.add('service');
-  fields.add('product[x]');
+  fields.add('product');
   fields.add('account');
   fields.add('note');
   fields.add('supportingInformation');
 end;
 
 function TFhirChargeItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FDefinitionUriList.sizeInBytes(magic));
@@ -18084,6 +18014,7 @@ begin
   inc(result, FBodysiteList.sizeInBytes(magic));
   inc(result, FReasonList.sizeInBytes(magic));
   inc(result, FServiceList.sizeInBytes(magic));
+  inc(result, FProductList.sizeInBytes(magic));
   inc(result, FAccountList.sizeInBytes(magic));
   inc(result, FNoteList.sizeInBytes(magic));
   inc(result, FSupportingInformationList.sizeInBytes(magic));
@@ -18340,10 +18271,16 @@ begin
   result := (FServiceList <> nil) and (FServiceList.count > 0);
 end;
 
-procedure TFhirChargeItem.SetProduct(value : TFhirDataType);
+function TFhirChargeItem.GetProductList : TFhirCodeableReferenceList;
 begin
-  FProduct.free;
-  FProduct := value;
+  if FProductList = nil then
+    FProductList := TFhirCodeableReferenceList.Create;
+  result := FProductList;
+end;
+
+function TFhirChargeItem.GetHasProductList : boolean;
+begin
+  result := (FProductList <> nil) and (FProductList.count > 0);
 end;
 
 function TFhirChargeItem.GetAccountList : TFhirReferenceList;
@@ -18418,6 +18355,7 @@ end;
 
 function TFhirChargeItemList.AddItem(value: TFhirChargeItem): TFhirChargeItem;
 begin
+  assert(value.ClassName = 'TFhirChargeItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItem');
   add(value);
   result := value;
 end;
@@ -18654,7 +18592,7 @@ begin
 end;
 
 procedure TFhirChargeItemDefinitionApplicability.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('description');
   fields.add('language');
@@ -18662,7 +18600,7 @@ begin
 end;
 
 function TFhirChargeItemDefinitionApplicability.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -18780,6 +18718,7 @@ end;
 
 function TFhirChargeItemDefinitionApplicabilityList.AddItem(value: TFhirChargeItemDefinitionApplicability): TFhirChargeItemDefinitionApplicability;
 begin
+  assert(value.ClassName = 'TFhirChargeItemDefinitionApplicability', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItemDefinitionApplicability');
   add(value);
   result := value;
 end;
@@ -19024,14 +18963,14 @@ begin
 end;
 
 procedure TFhirChargeItemDefinitionPropertyGroup.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('applicability');
   fields.add('priceComponent');
 end;
 
 function TFhirChargeItemDefinitionPropertyGroup.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FApplicabilityList.sizeInBytes(magic));
   inc(result, FPriceComponentList.sizeInBytes(magic));
@@ -19097,6 +19036,7 @@ end;
 
 function TFhirChargeItemDefinitionPropertyGroupList.AddItem(value: TFhirChargeItemDefinitionPropertyGroup): TFhirChargeItemDefinitionPropertyGroup;
 begin
+  assert(value.ClassName = 'TFhirChargeItemDefinitionPropertyGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItemDefinitionPropertyGroup');
   add(value);
   result := value;
 end;
@@ -19345,7 +19285,7 @@ begin
 end;
 
 procedure TFhirChargeItemDefinitionPropertyGroupPriceComponent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('code');
@@ -19354,7 +19294,7 @@ begin
 end;
 
 function TFhirChargeItemDefinitionPropertyGroupPriceComponent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -19454,6 +19394,7 @@ end;
 
 function TFhirChargeItemDefinitionPropertyGroupPriceComponentList.AddItem(value: TFhirChargeItemDefinitionPropertyGroupPriceComponent): TFhirChargeItemDefinitionPropertyGroupPriceComponent;
 begin
+  assert(value.ClassName = 'TFhirChargeItemDefinitionPropertyGroupPriceComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItemDefinitionPropertyGroupPriceComponent');
   add(value);
   result := value;
 end;
@@ -19824,7 +19765,7 @@ begin
 end;
 
 procedure TFhirChargeItemDefinition.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -19852,7 +19793,7 @@ begin
 end;
 
 function TFhirChargeItemDefinition.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FDerivedFromUriList.sizeInBytes(magic));
   inc(result, FPartOfList.sizeInBytes(magic));
@@ -20292,6 +20233,7 @@ end;
 
 function TFhirChargeItemDefinitionList.AddItem(value: TFhirChargeItemDefinition): TFhirChargeItemDefinition;
 begin
+  assert(value.ClassName = 'TFhirChargeItemDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirChargeItemDefinition');
   add(value);
   result := value;
 end;
@@ -20385,6 +20327,305 @@ end;
 
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 {$IFDEF FHIR_CITATION}
+{ TFhirCitationSummary }
+
+constructor TFhirCitationSummary.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirCitationSummary.Destroy;
+begin
+  FStyle.free;
+  FText.free;
+  inherited;
+end;
+
+procedure TFhirCitationSummary.Assign(oSource : TFslObject);
+begin
+  inherited;
+  style := TFhirCitationSummary(oSource).style.Clone;
+  textElement := TFhirCitationSummary(oSource).textElement.Clone;
+end;
+
+procedure TFhirCitationSummary.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'style') Then
+     list.add(self.link, 'style', FStyle.Link);
+  if (child_name = 'text') Then
+     list.add(self.link, 'text', FText.Link);
+end;
+
+procedure TFhirCitationSummary.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'style', 'CodeableConcept', false, TFhirCodeableConcept, FStyle.Link));
+  oList.add(TFHIRProperty.create(self, 'text', 'markdown', false, TFhirMarkdown, FText.Link));
+end;
+
+function TFhirCitationSummary.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'style') then
+  begin
+    Style := propValue as TFhirCodeableConcept;
+    result := propValue;
+  end
+  else if (propName = 'text') then
+  begin
+    TextElement := asMarkdown(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirCitationSummary.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirCitationSummary.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'style') then result := TFhirCodeableConcept.create()
+  else if (propName = 'text') then result := TFhirMarkdown.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirCitationSummary.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'style') then result := 'CodeableConcept'
+  else if (propName = 'text') then result := 'markdown'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirCitationSummary.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'style') then StyleElement := nil
+  else if (propName = 'text') then TextElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCitationSummary.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'style') then StyleElement := new as TFhirCodeableConcept
+  else if (propName = 'text') then TextElement := asMarkdown(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCitationSummary.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirCitationSummary.fhirType : string;
+begin
+  result := 'Citation.summary';
+end;
+
+function TFhirCitationSummary.Link : TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary(inherited Link);
+end;
+
+function TFhirCitationSummary.Clone : TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary(inherited Clone);
+end;
+
+function TFhirCitationSummary.equals(other : TObject) : boolean; 
+var
+  o : TFhirCitationSummary;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirCitationSummary)) then
+    result := false
+  else
+  begin
+    o := TFhirCitationSummary(other);
+    result := compareDeep(styleElement, o.styleElement, true) and compareDeep(textElement, o.textElement, true);
+  end;
+end;
+
+function TFhirCitationSummary.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FStyle) and isEmptyProp(FText);
+end;
+
+procedure TFhirCitationSummary.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('style');
+  fields.add('text');
+end;
+
+function TFhirCitationSummary.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+end;
+
+procedure TFhirCitationSummary.SetStyle(value : TFhirCodeableConcept);
+begin
+  FStyle.free;
+  FStyle := value;
+end;
+
+procedure TFhirCitationSummary.SetText(value : TFhirMarkdown);
+begin
+  FText.free;
+  FText := value;
+end;
+
+function TFhirCitationSummary.GetTextST : String;
+begin
+  if FText = nil then
+    result := ''
+  else
+    result := FText.value;
+end;
+
+procedure TFhirCitationSummary.SetTextST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FText = nil then
+      FText := TFhirMarkdown.create;
+    FText.value := value
+  end
+  else if FText <> nil then
+    FText.value := '';
+end;
+
+{ TFhirCitationSummaryListEnumerator }
+
+constructor TFhirCitationSummaryListEnumerator.Create(list : TFhirCitationSummaryList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirCitationSummaryListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirCitationSummaryListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirCitationSummaryListEnumerator.GetCurrent : TFhirCitationSummary;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirCitationSummaryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
+end;
+
+{ TFhirCitationSummaryList }
+
+function TFhirCitationSummaryList.AddItem(value: TFhirCitationSummary): TFhirCitationSummary;
+begin
+  assert(value.ClassName = 'TFhirCitationSummary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationSummary');
+  add(value);
+  result := value;
+end;
+
+function TFhirCitationSummaryList.Append: TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCitationSummaryList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirCitationSummaryList.GetEnumerator : TFhirCitationSummaryListEnumerator;
+begin
+  result := TFhirCitationSummaryListEnumerator.Create(self.link);
+end;
+
+function TFhirCitationSummaryList.Clone: TFhirCitationSummaryList;
+begin
+  result := TFhirCitationSummaryList(inherited Clone);
+end;
+
+function TFhirCitationSummaryList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirCitationSummaryList.GetItemN(index: Integer): TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary(ObjectByIndex[index]);
+end;
+
+function TFhirCitationSummaryList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirCitationSummary;
+end;
+function TFhirCitationSummaryList.IndexOf(value: TFhirCitationSummary): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirCitationSummaryList.Insert(index: Integer): TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirCitationSummaryList.InsertItem(index: Integer; value: TFhirCitationSummary);
+begin
+  assert(value is TFhirCitationSummary);
+  Inherited Insert(index, value);
+end;
+
+function TFhirCitationSummaryList.Item(index: Integer): TFhirCitationSummary;
+begin
+  result := TFhirCitationSummary(ObjectByIndex[index]);
+end;
+
+function TFhirCitationSummaryList.Link: TFhirCitationSummaryList;
+begin
+  result := TFhirCitationSummaryList(inherited Link);
+end;
+
+procedure TFhirCitationSummaryList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirCitationSummaryList.SetItemByIndex(index: Integer; value: TFhirCitationSummary);
+begin
+  assert(value is TFhirCitationSummary);
+  FhirCitationSummaries[index] := value;
+end;
+
+procedure TFhirCitationSummaryList.SetItemN(index: Integer; value: TFhirCitationSummary);
+begin
+  assert(value is TFhirCitationSummary);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirCitationClassification }
 
 constructor TFhirCitationClassification.Create;
@@ -20526,14 +20767,14 @@ begin
 end;
 
 procedure TFhirCitationClassification.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('classifier');
 end;
 
 function TFhirCitationClassification.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FClassifierList.sizeInBytes(magic));
 end;
@@ -20592,6 +20833,7 @@ end;
 
 function TFhirCitationClassificationList.AddItem(value: TFhirCitationClassification): TFhirCitationClassification;
 begin
+  assert(value.ClassName = 'TFhirCitationClassification', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationClassification');
   add(value);
   result := value;
 end;
@@ -20826,7 +21068,7 @@ begin
 end;
 
 procedure TFhirCitationStatusDate.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('activity');
   fields.add('actual');
@@ -20834,7 +21076,7 @@ begin
 end;
 
 function TFhirCitationStatusDate.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -20907,6 +21149,7 @@ end;
 
 function TFhirCitationStatusDateList.AddItem(value: TFhirCitationStatusDate): TFhirCitationStatusDate;
 begin
+  assert(value.ClassName = 'TFhirCitationStatusDate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationStatusDate');
   add(value);
   result := value;
 end;
@@ -20995,326 +21238,6 @@ end;
 procedure TFhirCitationStatusDateList.SetItemN(index: Integer; value: TFhirCitationStatusDate);
 begin
   assert(value is TFhirCitationStatusDate);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirCitationRelatesTo }
-
-constructor TFhirCitationRelatesTo.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirCitationRelatesTo.Destroy;
-begin
-  FRelationshipType.free;
-  FTargetClassifierList.Free;
-  FTarget.free;
-  inherited;
-end;
-
-procedure TFhirCitationRelatesTo.Assign(oSource : TFslObject);
-begin
-  inherited;
-  relationshipType := TFhirCitationRelatesTo(oSource).relationshipType.Clone;
-  if (TFhirCitationRelatesTo(oSource).FTargetClassifierList = nil) then
-  begin
-    FTargetClassifierList.free;
-    FTargetClassifierList := nil;
-  end
-  else
-  begin
-    if FTargetClassifierList = nil then
-      FTargetClassifierList := TFhirCodeableConceptList.Create;
-    FTargetClassifierList.Assign(TFhirCitationRelatesTo(oSource).FTargetClassifierList);
-  end;
-  target := TFhirCitationRelatesTo(oSource).target.Clone;
-end;
-
-procedure TFhirCitationRelatesTo.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'relationshipType') Then
-     list.add(self.link, 'relationshipType', FRelationshipType.Link);
-  if (child_name = 'targetClassifier') Then
-    list.addAll(self, 'targetClassifier', FTargetClassifierList);
-  if (child_name = 'target[x]') or (child_name = 'target') Then
-     list.add(self.link, 'target[x]', FTarget.Link);
-end;
-
-procedure TFhirCitationRelatesTo.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'relationshipType', 'CodeableConcept', false, TFhirCodeableConcept, FRelationshipType.Link));
-  oList.add(TFHIRProperty.create(self, 'targetClassifier', 'CodeableConcept', true, TFhirCodeableConcept, FTargetClassifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'target[x]', 'uri|Identifier|Reference|Attachment', false, TFhirDataType, FTarget.Link));
-end;
-
-function TFhirCitationRelatesTo.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'relationshipType') then
-  begin
-    RelationshipType := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'targetClassifier') then
-  begin
-    TargetClassifierList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then
-  begin
-    Target := propValue as TFhirDataType;
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirCitationRelatesTo.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'targetClassifier') then TargetClassifierList.insertItem(index, propValue as TFhirCodeableConcept)
-  else inherited;
-end;
-
-function TFhirCitationRelatesTo.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'relationshipType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'targetClassifier') then result := TargetClassifierList.new()
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then raise EFHIRException.create('Cannot make property Target')
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirCitationRelatesTo.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'relationshipType') then result := 'CodeableConcept'
-  else if (propName = 'targetClassifier') then result := 'CodeableConcept'
-  else if (propName = 'target[x]') then result := 'uri|Identifier|Reference|Attachment'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirCitationRelatesTo.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'relationshipType') then RelationshipTypeElement := nil
-  else if (propName = 'targetClassifier') then deletePropertyValue('targetClassifier', TargetClassifierList, value)
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then TargetElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirCitationRelatesTo.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'relationshipType') then RelationshipTypeElement := new as TFhirCodeableConcept
-  else if (propName = 'targetClassifier') then replacePropertyValue('targetClassifier', TargetClassifierList, existing, new)
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then TargetElement := new as TFhirDataType
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirCitationRelatesTo.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'targetClassifier') then TargetClassifierList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirCitationRelatesTo.fhirType : string;
-begin
-  result := 'Citation.relatesTo';
-end;
-
-function TFhirCitationRelatesTo.Link : TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo(inherited Link);
-end;
-
-function TFhirCitationRelatesTo.Clone : TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo(inherited Clone);
-end;
-
-function TFhirCitationRelatesTo.equals(other : TObject) : boolean; 
-var
-  o : TFhirCitationRelatesTo;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirCitationRelatesTo)) then
-    result := false
-  else
-  begin
-    o := TFhirCitationRelatesTo(other);
-    result := compareDeep(relationshipTypeElement, o.relationshipTypeElement, true) and 
-      compareDeep(targetClassifierList, o.targetClassifierList, true) and compareDeep(targetElement, o.targetElement, true);
-  end;
-end;
-
-function TFhirCitationRelatesTo.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FRelationshipType) and isEmptyProp(FtargetClassifierList) and isEmptyProp(FTarget);
-end;
-
-procedure TFhirCitationRelatesTo.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('relationshipType');
-  fields.add('targetClassifier');
-  fields.add('target[x]');
-end;
-
-function TFhirCitationRelatesTo.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FTargetClassifierList.sizeInBytes(magic));
-end;
-
-procedure TFhirCitationRelatesTo.SetRelationshipType(value : TFhirCodeableConcept);
-begin
-  FRelationshipType.free;
-  FRelationshipType := value;
-end;
-
-function TFhirCitationRelatesTo.GetTargetClassifierList : TFhirCodeableConceptList;
-begin
-  if FTargetClassifierList = nil then
-    FTargetClassifierList := TFhirCodeableConceptList.Create;
-  result := FTargetClassifierList;
-end;
-
-function TFhirCitationRelatesTo.GetHasTargetClassifierList : boolean;
-begin
-  result := (FTargetClassifierList <> nil) and (FTargetClassifierList.count > 0);
-end;
-
-procedure TFhirCitationRelatesTo.SetTarget(value : TFhirDataType);
-begin
-  FTarget.free;
-  FTarget := value;
-end;
-
-{ TFhirCitationRelatesToListEnumerator }
-
-constructor TFhirCitationRelatesToListEnumerator.Create(list : TFhirCitationRelatesToList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirCitationRelatesToListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirCitationRelatesToListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirCitationRelatesToListEnumerator.GetCurrent : TFhirCitationRelatesTo;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirCitationRelatesToListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirCitationRelatesToList }
-
-function TFhirCitationRelatesToList.AddItem(value: TFhirCitationRelatesTo): TFhirCitationRelatesTo;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirCitationRelatesToList.Append: TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirCitationRelatesToList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirCitationRelatesToList.GetEnumerator : TFhirCitationRelatesToListEnumerator;
-begin
-  result := TFhirCitationRelatesToListEnumerator.Create(self.link);
-end;
-
-function TFhirCitationRelatesToList.Clone: TFhirCitationRelatesToList;
-begin
-  result := TFhirCitationRelatesToList(inherited Clone);
-end;
-
-function TFhirCitationRelatesToList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirCitationRelatesToList.GetItemN(index: Integer): TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo(ObjectByIndex[index]);
-end;
-
-function TFhirCitationRelatesToList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirCitationRelatesTo;
-end;
-function TFhirCitationRelatesToList.IndexOf(value: TFhirCitationRelatesTo): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirCitationRelatesToList.Insert(index: Integer): TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirCitationRelatesToList.InsertItem(index: Integer; value: TFhirCitationRelatesTo);
-begin
-  assert(value is TFhirCitationRelatesTo);
-  Inherited Insert(index, value);
-end;
-
-function TFhirCitationRelatesToList.Item(index: Integer): TFhirCitationRelatesTo;
-begin
-  result := TFhirCitationRelatesTo(ObjectByIndex[index]);
-end;
-
-function TFhirCitationRelatesToList.Link: TFhirCitationRelatesToList;
-begin
-  result := TFhirCitationRelatesToList(inherited Link);
-end;
-
-procedure TFhirCitationRelatesToList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirCitationRelatesToList.SetItemByIndex(index: Integer; value: TFhirCitationRelatesTo);
-begin
-  assert(value is TFhirCitationRelatesTo);
-  FhirCitationRelatesTos[index] := value;
-end;
-
-procedure TFhirCitationRelatesToList.SetItemN(index: Integer; value: TFhirCitationRelatesTo);
-begin
-  assert(value is TFhirCitationRelatesTo);
   ObjectByIndex[index] := value;
 end;
 
@@ -21425,7 +21348,7 @@ begin
   else
   begin
     if FRelatesToList = nil then
-      FRelatesToList := TFhirCitationCitedArtifactRelatesToList.Create;
+      FRelatesToList := TFhirRelatedArtifactList.Create;
     FRelatesToList.Assign(TFhirCitationCitedArtifact(oSource).FRelatesToList);
   end;
   if (TFhirCitationCitedArtifact(oSource).FPublicationFormList = nil) then
@@ -21522,7 +21445,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'title', 'BackboneElement', true, TFhirCitationCitedArtifactTitle, FTitleList.Link));
   oList.add(TFHIRProperty.create(self, 'abstract', 'BackboneElement', true, TFhirCitationCitedArtifactAbstract, FAbstractList.Link));
   oList.add(TFHIRProperty.create(self, 'part', 'BackboneElement', false, TFhirCitationCitedArtifactPart, FPart.Link));
-  oList.add(TFHIRProperty.create(self, 'relatesTo', 'BackboneElement', true, TFhirCitationCitedArtifactRelatesTo, FRelatesToList.Link));
+  oList.add(TFHIRProperty.create(self, 'relatesTo', 'RelatedArtifact', true, TFhirRelatedArtifact, FRelatesToList.Link));
   oList.add(TFHIRProperty.create(self, 'publicationForm', 'BackboneElement', true, TFhirCitationCitedArtifactPublicationForm, FPublicationFormList.Link));
   oList.add(TFHIRProperty.create(self, 'webLocation', 'BackboneElement', true, TFhirCitationCitedArtifactWebLocation, FWebLocationList.Link));
   oList.add(TFHIRProperty.create(self, 'classification', 'BackboneElement', true, TFhirCitationCitedArtifactClassification, FClassificationList.Link));
@@ -21579,7 +21502,7 @@ begin
   end
   else if (propName = 'relatesTo') then
   begin
-    RelatesToList.add(propValue as TFhirCitationCitedArtifactRelatesTo);
+    RelatesToList.add(propValue as TFhirRelatedArtifact);
     result := propValue;
   end
   else if (propName = 'publicationForm') then
@@ -21618,7 +21541,7 @@ begin
   else if (propName = 'statusDate') then StatusDateList.insertItem(index, propValue as TFhirCitationCitedArtifactStatusDate)
   else if (propName = 'title') then TitleList.insertItem(index, propValue as TFhirCitationCitedArtifactTitle)
   else if (propName = 'abstract') then AbstractList.insertItem(index, propValue as TFhirCitationCitedArtifactAbstract)
-  else if (propName = 'relatesTo') then RelatesToList.insertItem(index, propValue as TFhirCitationCitedArtifactRelatesTo)
+  else if (propName = 'relatesTo') then RelatesToList.insertItem(index, propValue as TFhirRelatedArtifact)
   else if (propName = 'publicationForm') then PublicationFormList.insertItem(index, propValue as TFhirCitationCitedArtifactPublicationForm)
   else if (propName = 'webLocation') then WebLocationList.insertItem(index, propValue as TFhirCitationCitedArtifactWebLocation)
   else if (propName = 'classification') then ClassificationList.insertItem(index, propValue as TFhirCitationCitedArtifactClassification)
@@ -21657,7 +21580,7 @@ begin
   else if (propName = 'title') then result := 'BackboneElement'
   else if (propName = 'abstract') then result := 'BackboneElement'
   else if (propName = 'part') then result := 'BackboneElement'
-  else if (propName = 'relatesTo') then result := 'BackboneElement'
+  else if (propName = 'relatesTo') then result := 'RelatedArtifact'
   else if (propName = 'publicationForm') then result := 'BackboneElement'
   else if (propName = 'webLocation') then result := 'BackboneElement'
   else if (propName = 'classification') then result := 'BackboneElement'
@@ -21768,7 +21691,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifact.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('relatedIdentifier');
@@ -21788,7 +21711,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifact.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FRelatedIdentifierList.sizeInBytes(magic));
@@ -21908,10 +21831,10 @@ begin
   FPart := value;
 end;
 
-function TFhirCitationCitedArtifact.GetRelatesToList : TFhirCitationCitedArtifactRelatesToList;
+function TFhirCitationCitedArtifact.GetRelatesToList : TFhirRelatedArtifactList;
 begin
   if FRelatesToList = nil then
-    FRelatesToList := TFhirCitationCitedArtifactRelatesToList.Create;
+    FRelatesToList := TFhirRelatedArtifactList.Create;
   result := FRelatesToList;
 end;
 
@@ -22010,6 +21933,7 @@ end;
 
 function TFhirCitationCitedArtifactList.AddItem(value: TFhirCitationCitedArtifact): TFhirCitationCitedArtifact;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifact');
   add(value);
   result := value;
 end;
@@ -22229,14 +22153,14 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactVersion.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value');
   fields.add('baseCitation');
 end;
 
 function TFhirCitationCitedArtifactVersion.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -22308,6 +22232,7 @@ end;
 
 function TFhirCitationCitedArtifactVersionList.AddItem(value: TFhirCitationCitedArtifactVersion): TFhirCitationCitedArtifactVersion;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactVersion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactVersion');
   add(value);
   result := value;
 end;
@@ -22542,7 +22467,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactStatusDate.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('activity');
   fields.add('actual');
@@ -22550,7 +22475,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactStatusDate.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -22623,6 +22548,7 @@ end;
 
 function TFhirCitationCitedArtifactStatusDateList.AddItem(value: TFhirCitationCitedArtifactStatusDate): TFhirCitationCitedArtifactStatusDate;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactStatusDate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactStatusDate');
   add(value);
   result := value;
 end;
@@ -22723,7 +22649,7 @@ end;
 
 destructor TFhirCitationCitedArtifactTitle.Destroy;
 begin
-  FType_.free;
+  FType_List.Free;
   FLanguage.free;
   FText.free;
   inherited;
@@ -22732,7 +22658,17 @@ end;
 procedure TFhirCitationCitedArtifactTitle.Assign(oSource : TFslObject);
 begin
   inherited;
-  type_ := TFhirCitationCitedArtifactTitle(oSource).type_.Clone;
+  if (TFhirCitationCitedArtifactTitle(oSource).FType_List = nil) then
+  begin
+    FType_List.free;
+    FType_List := nil;
+  end
+  else
+  begin
+    if FType_List = nil then
+      FType_List := TFhirCodeableConceptList.Create;
+    FType_List.Assign(TFhirCitationCitedArtifactTitle(oSource).FType_List);
+  end;
   language := TFhirCitationCitedArtifactTitle(oSource).language.Clone;
   textElement := TFhirCitationCitedArtifactTitle(oSource).textElement.Clone;
 end;
@@ -22741,7 +22677,7 @@ procedure TFhirCitationCitedArtifactTitle.GetChildrenByName(child_name : string;
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(self.link, 'type', FType_.Link);
+    list.addAll(self, 'type', FType_List);
   if (child_name = 'language') Then
      list.add(self.link, 'language', FLanguage.Link);
   if (child_name = 'text') Then
@@ -22751,7 +22687,7 @@ end;
 procedure TFhirCitationCitedArtifactTitle.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
   oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
   oList.add(TFHIRProperty.create(self, 'text', 'markdown', false, TFhirMarkdown, FText.Link));
 end;
@@ -22760,7 +22696,7 @@ function TFhirCitationCitedArtifactTitle.setProperty(propName : string; propValu
 begin
   if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept;
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'language') then
@@ -22778,12 +22714,13 @@ end;
 
 procedure TFhirCitationCitedArtifactTitle.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  inherited;
+  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else inherited;
 end;
 
 function TFhirCitationCitedArtifactTitle.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  if (propName = 'type') then result := Type_List.new()
   else if (propName = 'language') then result := TFhirCodeableConcept.create()
   else if (propName = 'text') then result := TFhirMarkdown.create()
   else result := inherited createPropertyValue(propName);
@@ -22799,7 +22736,7 @@ end;
 
 procedure TFhirCitationCitedArtifactTitle.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := nil
+  if (propName = 'type') then deletePropertyValue('type', Type_List, value)
   else if (propName = 'language') then LanguageElement := nil
   else if (propName = 'text') then TextElement := nil
   else
@@ -22808,7 +22745,7 @@ end;
 
 procedure TFhirCitationCitedArtifactTitle.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
   else if (propName = 'language') then LanguageElement := new as TFhirCodeableConcept
   else if (propName = 'text') then TextElement := asMarkdown(new)
   else
@@ -22817,7 +22754,9 @@ end;
 
 procedure TFhirCitationCitedArtifactTitle.reorderProperty(propName : string; source, destination : integer);
 begin
-  inherited reorderProperty(propName, source, destination);
+  if (propName = 'type') then Type_List.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirCitationCitedArtifactTitle.fhirType : string;
@@ -22846,18 +22785,18 @@ begin
   else
   begin
     o := TFhirCitationCitedArtifactTitle(other);
-    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(languageElement, o.languageElement, true) and 
+    result := compareDeep(type_List, o.type_List, true) and compareDeep(languageElement, o.languageElement, true) and 
       compareDeep(textElement, o.textElement, true);
   end;
 end;
 
 function TFhirCitationCitedArtifactTitle.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FLanguage) and isEmptyProp(FText);
+  result := inherited isEmpty  and isEmptyProp(Ftype_List) and isEmptyProp(FLanguage) and isEmptyProp(FText);
 end;
 
 procedure TFhirCitationCitedArtifactTitle.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('language');
@@ -22865,14 +22804,21 @@ begin
 end;
 
 function TFhirCitationCitedArtifactTitle.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
+  inc(result, FType_List.sizeInBytes(magic));
 end;
 
-procedure TFhirCitationCitedArtifactTitle.SetType_(value : TFhirCodeableConcept);
+function TFhirCitationCitedArtifactTitle.GetType_List : TFhirCodeableConceptList;
 begin
-  FType_.free;
-  FType_ := value;
+  if FType_List = nil then
+    FType_List := TFhirCodeableConceptList.Create;
+  result := FType_List;
+end;
+
+function TFhirCitationCitedArtifactTitle.GetHasType_List : boolean;
+begin
+  result := (FType_List <> nil) and (FType_List.count > 0);
 end;
 
 procedure TFhirCitationCitedArtifactTitle.SetLanguage(value : TFhirCodeableConcept);
@@ -22943,6 +22889,7 @@ end;
 
 function TFhirCitationCitedArtifactTitleList.AddItem(value: TFhirCitationCitedArtifactTitle): TFhirCitationCitedArtifactTitle;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactTitle', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactTitle');
   add(value);
   result := value;
 end;
@@ -23191,7 +23138,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactAbstract.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('language');
@@ -23200,7 +23147,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactAbstract.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -23304,6 +23251,7 @@ end;
 
 function TFhirCitationCitedArtifactAbstractList.AddItem(value: TFhirCitationCitedArtifactAbstract): TFhirCitationCitedArtifactAbstract;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactAbstract', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactAbstract');
   add(value);
   result := value;
 end;
@@ -23538,7 +23486,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactPart.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('value');
@@ -23546,7 +23494,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactPart.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -23624,6 +23572,7 @@ end;
 
 function TFhirCitationCitedArtifactPartList.AddItem(value: TFhirCitationCitedArtifactPart): TFhirCitationCitedArtifactPart;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactPart', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactPart');
   add(value);
   result := value;
 end;
@@ -23712,326 +23661,6 @@ end;
 procedure TFhirCitationCitedArtifactPartList.SetItemN(index: Integer; value: TFhirCitationCitedArtifactPart);
 begin
   assert(value is TFhirCitationCitedArtifactPart);
-  ObjectByIndex[index] := value;
-end;
-
-{ TFhirCitationCitedArtifactRelatesTo }
-
-constructor TFhirCitationCitedArtifactRelatesTo.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirCitationCitedArtifactRelatesTo.Destroy;
-begin
-  FRelationshipType.free;
-  FTargetClassifierList.Free;
-  FTarget.free;
-  inherited;
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.Assign(oSource : TFslObject);
-begin
-  inherited;
-  relationshipType := TFhirCitationCitedArtifactRelatesTo(oSource).relationshipType.Clone;
-  if (TFhirCitationCitedArtifactRelatesTo(oSource).FTargetClassifierList = nil) then
-  begin
-    FTargetClassifierList.free;
-    FTargetClassifierList := nil;
-  end
-  else
-  begin
-    if FTargetClassifierList = nil then
-      FTargetClassifierList := TFhirCodeableConceptList.Create;
-    FTargetClassifierList.Assign(TFhirCitationCitedArtifactRelatesTo(oSource).FTargetClassifierList);
-  end;
-  target := TFhirCitationCitedArtifactRelatesTo(oSource).target.Clone;
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
-begin
-  inherited;
-  if (child_name = 'relationshipType') Then
-     list.add(self.link, 'relationshipType', FRelationshipType.Link);
-  if (child_name = 'targetClassifier') Then
-    list.addAll(self, 'targetClassifier', FTargetClassifierList);
-  if (child_name = 'target[x]') or (child_name = 'target') Then
-     list.add(self.link, 'target[x]', FTarget.Link);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'relationshipType', 'CodeableConcept', false, TFhirCodeableConcept, FRelationshipType.Link));
-  oList.add(TFHIRProperty.create(self, 'targetClassifier', 'CodeableConcept', true, TFhirCodeableConcept, FTargetClassifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'target[x]', 'uri|Identifier|Reference|Attachment', false, TFhirDataType, FTarget.Link));
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
-begin
-  if (propName = 'relationshipType') then
-  begin
-    RelationshipType := propValue as TFhirCodeableConcept;
-    result := propValue;
-  end
-  else if (propName = 'targetClassifier') then
-  begin
-    TargetClassifierList.add(propValue as TFhirCodeableConcept);
-    result := propValue;
-  end
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then
-  begin
-    Target := propValue as TFhirDataType;
-    result := propValue;
-  end
-  else result := inherited setProperty(propName, propValue);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
-begin
-  if (propName = 'targetClassifier') then TargetClassifierList.insertItem(index, propValue as TFhirCodeableConcept)
-  else inherited;
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.createPropertyValue(propName : string) : TFHIRObject;
-begin
-  if (propName = 'relationshipType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'targetClassifier') then result := TargetClassifierList.new()
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then raise EFHIRException.create('Cannot make property Target')
-  else result := inherited createPropertyValue(propName);
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.getTypesForProperty(propName: string) : String;
-begin
-  if (propName = 'relationshipType') then result := 'CodeableConcept'
-  else if (propName = 'targetClassifier') then result := 'CodeableConcept'
-  else if (propName = 'target[x]') then result := 'uri|Identifier|Reference|Attachment'
-  else result := inherited getTypesForProperty(propName);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.deleteProperty(propName: string; value : TFHIRObject);
-begin
-  if (propName = 'relationshipType') then RelationshipTypeElement := nil
-  else if (propName = 'targetClassifier') then deletePropertyValue('targetClassifier', TargetClassifierList, value)
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then TargetElement := nil
-  else
-    inherited deleteProperty(propName, value);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.replaceProperty(propName : string; existing, new : TFHIRObject);
-begin
-  if (propName = 'relationshipType') then RelationshipTypeElement := new as TFhirCodeableConcept
-  else if (propName = 'targetClassifier') then replacePropertyValue('targetClassifier', TargetClassifierList, existing, new)
-  else if (isMatchingName(propName, 'target', ['Uri', 'Identifier', 'Reference', 'Attachment'])) then TargetElement := new as TFhirDataType
-  else
-    inherited replaceProperty(propName, existing, new);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.reorderProperty(propName : string; source, destination : integer);
-begin
-  if (propName = 'targetClassifier') then TargetClassifierList.move(source, destination)
-  else
-    inherited reorderProperty(propName, source, destination);
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.fhirType : string;
-begin
-  result := 'Citation.citedArtifact.relatesTo';
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.Link : TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo(inherited Link);
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.Clone : TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo(inherited Clone);
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.equals(other : TObject) : boolean; 
-var
-  o : TFhirCitationCitedArtifactRelatesTo;
-begin
-  if (not inherited equals(other)) then
-    result := false
-  else if (not (other is TFhirCitationCitedArtifactRelatesTo)) then
-    result := false
-  else
-  begin
-    o := TFhirCitationCitedArtifactRelatesTo(other);
-    result := compareDeep(relationshipTypeElement, o.relationshipTypeElement, true) and 
-      compareDeep(targetClassifierList, o.targetClassifierList, true) and compareDeep(targetElement, o.targetElement, true);
-  end;
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.isEmpty : boolean;
-begin
-  result := inherited isEmpty  and isEmptyProp(FRelationshipType) and isEmptyProp(FtargetClassifierList) and isEmptyProp(FTarget);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.listFieldsInOrder(fields : TStringList);
-begin
-  inherited listFieldsInOrder(fields);
-  fields.add('relationshipType');
-  fields.add('targetClassifier');
-  fields.add('target[x]');
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FTargetClassifierList.sizeInBytes(magic));
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.SetRelationshipType(value : TFhirCodeableConcept);
-begin
-  FRelationshipType.free;
-  FRelationshipType := value;
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.GetTargetClassifierList : TFhirCodeableConceptList;
-begin
-  if FTargetClassifierList = nil then
-    FTargetClassifierList := TFhirCodeableConceptList.Create;
-  result := FTargetClassifierList;
-end;
-
-function TFhirCitationCitedArtifactRelatesTo.GetHasTargetClassifierList : boolean;
-begin
-  result := (FTargetClassifierList <> nil) and (FTargetClassifierList.count > 0);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesTo.SetTarget(value : TFhirDataType);
-begin
-  FTarget.free;
-  FTarget := value;
-end;
-
-{ TFhirCitationCitedArtifactRelatesToListEnumerator }
-
-constructor TFhirCitationCitedArtifactRelatesToListEnumerator.Create(list : TFhirCitationCitedArtifactRelatesToList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-destructor TFhirCitationCitedArtifactRelatesToListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirCitationCitedArtifactRelatesToListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirCitationCitedArtifactRelatesToListEnumerator.GetCurrent : TFhirCitationCitedArtifactRelatesTo;
-begin
-  Result := FList[FIndex];
-end;
-
-function TFhirCitationCitedArtifactRelatesToListEnumerator.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FList.sizeInBytes(magic));
-end;
-
-{ TFhirCitationCitedArtifactRelatesToList }
-
-function TFhirCitationCitedArtifactRelatesToList.AddItem(value: TFhirCitationCitedArtifactRelatesTo): TFhirCitationCitedArtifactRelatesTo;
-begin
-  add(value);
-  result := value;
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Append: TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirCitationCitedArtifactRelatesToList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.GetEnumerator : TFhirCitationCitedArtifactRelatesToListEnumerator;
-begin
-  result := TFhirCitationCitedArtifactRelatesToListEnumerator.Create(self.link);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Clone: TFhirCitationCitedArtifactRelatesToList;
-begin
-  result := TFhirCitationCitedArtifactRelatesToList(inherited Clone);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.GetItemN(index: Integer): TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo(ObjectByIndex[index]);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.ItemClass: TFslObjectClass;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo;
-end;
-function TFhirCitationCitedArtifactRelatesToList.IndexOf(value: TFhirCitationCitedArtifactRelatesTo): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Insert(index: Integer): TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFhirCitationCitedArtifactRelatesToList.InsertItem(index: Integer; value: TFhirCitationCitedArtifactRelatesTo);
-begin
-  assert(value is TFhirCitationCitedArtifactRelatesTo);
-  Inherited Insert(index, value);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Item(index: Integer): TFhirCitationCitedArtifactRelatesTo;
-begin
-  result := TFhirCitationCitedArtifactRelatesTo(ObjectByIndex[index]);
-end;
-
-function TFhirCitationCitedArtifactRelatesToList.Link: TFhirCitationCitedArtifactRelatesToList;
-begin
-  result := TFhirCitationCitedArtifactRelatesToList(inherited Link);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesToList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirCitationCitedArtifactRelatesToList.SetItemByIndex(index: Integer; value: TFhirCitationCitedArtifactRelatesTo);
-begin
-  assert(value is TFhirCitationCitedArtifactRelatesTo);
-  FhirCitationCitedArtifactRelatesTos[index] := value;
-end;
-
-procedure TFhirCitationCitedArtifactRelatesToList.SetItemN(index: Integer; value: TFhirCitationCitedArtifactRelatesTo);
-begin
-  assert(value is TFhirCitationCitedArtifactRelatesTo);
   ObjectByIndex[index] := value;
 end;
 
@@ -24307,7 +23936,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactPublicationForm.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('publishedIn');
   fields.add('periodicRelease');
@@ -24323,7 +23952,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactPublicationForm.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLanguageList.sizeInBytes(magic));
 end;
@@ -24586,6 +24215,7 @@ end;
 
 function TFhirCitationCitedArtifactPublicationFormList.AddItem(value: TFhirCitationCitedArtifactPublicationForm): TFhirCitationCitedArtifactPublicationForm;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactPublicationForm', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactPublicationForm');
   add(value);
   result := value;
 end;
@@ -24862,7 +24492,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactPublicationFormPublishedIn.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('identifier');
@@ -24872,7 +24502,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactPublicationFormPublishedIn.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
 end;
@@ -24989,6 +24619,7 @@ end;
 
 function TFhirCitationCitedArtifactPublicationFormPublishedInList.AddItem(value: TFhirCitationCitedArtifactPublicationFormPublishedIn): TFhirCitationCitedArtifactPublicationFormPublishedIn;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactPublicationFormPublishedIn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactPublicationFormPublishedIn');
   add(value);
   result := value;
 end;
@@ -25237,7 +24868,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactPublicationFormPeriodicRelease.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('citedMedium');
   fields.add('volume');
@@ -25246,7 +24877,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactPublicationFormPeriodicRelease.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -25350,6 +24981,7 @@ end;
 
 function TFhirCitationCitedArtifactPublicationFormPeriodicReleaseList.AddItem(value: TFhirCitationCitedArtifactPublicationFormPeriodicRelease): TFhirCitationCitedArtifactPublicationFormPeriodicRelease;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactPublicationFormPeriodicRelease', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactPublicationFormPeriodicRelease');
   add(value);
   result := value;
 end;
@@ -25627,7 +25259,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('date');
   fields.add('year');
@@ -25638,7 +25270,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -25829,6 +25461,7 @@ end;
 
 function TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublicationList.AddItem(value: TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication): TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication');
   add(value);
   result := value;
 end;
@@ -25929,7 +25562,7 @@ end;
 
 destructor TFhirCitationCitedArtifactWebLocation.Destroy;
 begin
-  FType_.free;
+  FClassifierList.Free;
   FUrl.free;
   inherited;
 end;
@@ -25937,15 +25570,25 @@ end;
 procedure TFhirCitationCitedArtifactWebLocation.Assign(oSource : TFslObject);
 begin
   inherited;
-  type_ := TFhirCitationCitedArtifactWebLocation(oSource).type_.Clone;
+  if (TFhirCitationCitedArtifactWebLocation(oSource).FClassifierList = nil) then
+  begin
+    FClassifierList.free;
+    FClassifierList := nil;
+  end
+  else
+  begin
+    if FClassifierList = nil then
+      FClassifierList := TFhirCodeableConceptList.Create;
+    FClassifierList.Assign(TFhirCitationCitedArtifactWebLocation(oSource).FClassifierList);
+  end;
   urlElement := TFhirCitationCitedArtifactWebLocation(oSource).urlElement.Clone;
 end;
 
 procedure TFhirCitationCitedArtifactWebLocation.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
-  if (child_name = 'type') Then
-     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'classifier') Then
+    list.addAll(self, 'classifier', FClassifierList);
   if (child_name = 'url') Then
      list.add(self.link, 'url', FUrl.Link);
 end;
@@ -25953,15 +25596,15 @@ end;
 procedure TFhirCitationCitedArtifactWebLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'classifier', 'CodeableConcept', true, TFhirCodeableConcept, FClassifierList.Link));
   oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
 end;
 
 function TFhirCitationCitedArtifactWebLocation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  if (propName = 'type') then
+  if (propName = 'classifier') then
   begin
-    Type_ := propValue as TFhirCodeableConcept;
+    ClassifierList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'url') then
@@ -25974,26 +25617,27 @@ end;
 
 procedure TFhirCitationCitedArtifactWebLocation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  inherited;
+  if (propName = 'classifier') then ClassifierList.insertItem(index, propValue as TFhirCodeableConcept)
+  else inherited;
 end;
 
 function TFhirCitationCitedArtifactWebLocation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  if (propName = 'classifier') then result := ClassifierList.new()
   else if (propName = 'url') then result := TFhirUri.create()
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirCitationCitedArtifactWebLocation.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'type') then result := 'CodeableConcept'
+  if (propName = 'classifier') then result := 'CodeableConcept'
   else if (propName = 'url') then result := 'uri'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirCitationCitedArtifactWebLocation.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := nil
+  if (propName = 'classifier') then deletePropertyValue('classifier', ClassifierList, value)
   else if (propName = 'url') then UrlElement := nil
   else
     inherited deleteProperty(propName, value);
@@ -26001,7 +25645,7 @@ end;
 
 procedure TFhirCitationCitedArtifactWebLocation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  if (propName = 'classifier') then replacePropertyValue('classifier', ClassifierList, existing, new)
   else if (propName = 'url') then UrlElement := asUri(new)
   else
     inherited replaceProperty(propName, existing, new);
@@ -26009,7 +25653,9 @@ end;
 
 procedure TFhirCitationCitedArtifactWebLocation.reorderProperty(propName : string; source, destination : integer);
 begin
-  inherited reorderProperty(propName, source, destination);
+  if (propName = 'classifier') then ClassifierList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirCitationCitedArtifactWebLocation.fhirType : string;
@@ -26038,31 +25684,38 @@ begin
   else
   begin
     o := TFhirCitationCitedArtifactWebLocation(other);
-    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(urlElement, o.urlElement, true);
+    result := compareDeep(classifierList, o.classifierList, true) and compareDeep(urlElement, o.urlElement, true);
   end;
 end;
 
 function TFhirCitationCitedArtifactWebLocation.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FUrl);
+  result := inherited isEmpty  and isEmptyProp(FclassifierList) and isEmptyProp(FUrl);
 end;
 
 procedure TFhirCitationCitedArtifactWebLocation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
-  fields.add('type');
+  fields.add('classifier');
   fields.add('url');
 end;
 
 function TFhirCitationCitedArtifactWebLocation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
+  inc(result, FClassifierList.sizeInBytes(magic));
 end;
 
-procedure TFhirCitationCitedArtifactWebLocation.SetType_(value : TFhirCodeableConcept);
+function TFhirCitationCitedArtifactWebLocation.GetClassifierList : TFhirCodeableConceptList;
 begin
-  FType_.free;
-  FType_ := value;
+  if FClassifierList = nil then
+    FClassifierList := TFhirCodeableConceptList.Create;
+  result := FClassifierList;
+end;
+
+function TFhirCitationCitedArtifactWebLocation.GetHasClassifierList : boolean;
+begin
+  result := (FClassifierList <> nil) and (FClassifierList.count > 0);
 end;
 
 procedure TFhirCitationCitedArtifactWebLocation.SetUrl(value : TFhirUri);
@@ -26127,6 +25780,7 @@ end;
 
 function TFhirCitationCitedArtifactWebLocationList.AddItem(value: TFhirCitationCitedArtifactWebLocation): TFhirCitationCitedArtifactWebLocation;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactWebLocation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactWebLocation');
   add(value);
   result := value;
 end;
@@ -26374,7 +26028,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactClassification.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('classifier');
@@ -26382,7 +26036,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactClassification.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FClassifierList.sizeInBytes(magic));
 end;
@@ -26447,6 +26101,7 @@ end;
 
 function TFhirCitationCitedArtifactClassificationList.AddItem(value: TFhirCitationCitedArtifactClassification): TFhirCitationCitedArtifactClassification;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactClassification', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactClassification');
   add(value);
   result := value;
 end;
@@ -26710,7 +26365,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactClassificationWhoClassified.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('person');
   fields.add('organization');
@@ -26720,7 +26375,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactClassificationWhoClassified.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -26825,6 +26480,7 @@ end;
 
 function TFhirCitationCitedArtifactClassificationWhoClassifiedList.AddItem(value: TFhirCitationCitedArtifactClassificationWhoClassified): TFhirCitationCitedArtifactClassificationWhoClassified;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactClassificationWhoClassified', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactClassificationWhoClassified');
   add(value);
   result := value;
 end;
@@ -27084,7 +26740,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactContributorship.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('complete');
   fields.add('entry');
@@ -27092,7 +26748,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactContributorship.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FEntryList.sizeInBytes(magic));
   inc(result, FSummaryList.sizeInBytes(magic));
@@ -27179,6 +26835,7 @@ end;
 
 function TFhirCitationCitedArtifactContributorshipList.AddItem(value: TFhirCitationCitedArtifactContributorship): TFhirCitationCitedArtifactContributorship;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactContributorship', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactContributorship');
   add(value);
   result := value;
 end;
@@ -27290,7 +26947,7 @@ begin
   FRole.free;
   FContributionInstanceList.Free;
   FCorrespondingContact.free;
-  FListOrder.free;
+  FRankingOrder.free;
   inherited;
 end;
 
@@ -27368,7 +27025,7 @@ begin
     FContributionInstanceList.Assign(TFhirCitationCitedArtifactContributorshipEntry(oSource).FContributionInstanceList);
   end;
   correspondingContactElement := TFhirCitationCitedArtifactContributorshipEntry(oSource).correspondingContactElement.Clone;
-  listOrderElement := TFhirCitationCitedArtifactContributorshipEntry(oSource).listOrderElement.Clone;
+  rankingOrderElement := TFhirCitationCitedArtifactContributorshipEntry(oSource).rankingOrderElement.Clone;
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipEntry.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
@@ -27396,8 +27053,8 @@ begin
     list.addAll(self, 'contributionInstance', FContributionInstanceList);
   if (child_name = 'correspondingContact') Then
      list.add(self.link, 'correspondingContact', FCorrespondingContact.Link);
-  if (child_name = 'listOrder') Then
-     list.add(self.link, 'listOrder', FListOrder.Link);
+  if (child_name = 'rankingOrder') Then
+     list.add(self.link, 'rankingOrder', FRankingOrder.Link);
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -27414,7 +27071,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link));
   oList.add(TFHIRProperty.create(self, 'contributionInstance', 'BackboneElement', true, TFhirCitationCitedArtifactContributorshipEntryContributionInstance, FContributionInstanceList.Link));
   oList.add(TFHIRProperty.create(self, 'correspondingContact', 'boolean', false, TFhirBoolean, FCorrespondingContact.Link));
-  oList.add(TFHIRProperty.create(self, 'listOrder', 'positiveInt', false, TFhirPositiveInt, FListOrder.Link));
+  oList.add(TFHIRProperty.create(self, 'rankingOrder', 'positiveInt', false, TFhirPositiveInt, FRankingOrder.Link));
 end;
 
 function TFhirCitationCitedArtifactContributorshipEntry.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27474,9 +27131,9 @@ begin
     CorrespondingContactElement := asBoolean(propValue);
     result := propValue;
   end
-  else if (propName = 'listOrder') then
+  else if (propName = 'rankingOrder') then
   begin
-    ListOrderElement := asPositiveInt(propValue);
+    RankingOrderElement := asPositiveInt(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -27506,7 +27163,7 @@ begin
   else if (propName = 'role') then result := TFhirCodeableConcept.create()
   else if (propName = 'contributionInstance') then result := ContributionInstanceList.new()
   else if (propName = 'correspondingContact') then result := TFhirBoolean.create()
-  else if (propName = 'listOrder') then result := TFhirPositiveInt.create()
+  else if (propName = 'rankingOrder') then result := TFhirPositiveInt.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27523,7 +27180,7 @@ begin
   else if (propName = 'role') then result := 'CodeableConcept'
   else if (propName = 'contributionInstance') then result := 'BackboneElement'
   else if (propName = 'correspondingContact') then result := 'boolean'
-  else if (propName = 'listOrder') then result := 'positiveInt'
+  else if (propName = 'rankingOrder') then result := 'positiveInt'
   else result := inherited getTypesForProperty(propName);
 end;
 
@@ -27540,7 +27197,7 @@ begin
   else if (propName = 'role') then RoleElement := nil
   else if (propName = 'contributionInstance') then deletePropertyValue('contributionInstance', ContributionInstanceList, value)
   else if (propName = 'correspondingContact') then CorrespondingContactElement := nil
-  else if (propName = 'listOrder') then ListOrderElement := nil
+  else if (propName = 'rankingOrder') then RankingOrderElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -27558,7 +27215,7 @@ begin
   else if (propName = 'role') then RoleElement := new as TFhirCodeableConcept
   else if (propName = 'contributionInstance') then replacePropertyValue('contributionInstance', ContributionInstanceList, existing, new)
   else if (propName = 'correspondingContact') then CorrespondingContactElement := asBoolean(new)
-  else if (propName = 'listOrder') then ListOrderElement := asPositiveInt(new)
+  else if (propName = 'rankingOrder') then RankingOrderElement := asPositiveInt(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -27607,17 +27264,17 @@ begin
       compareDeep(telecomList, o.telecomList, true) and compareDeep(contributionTypeList, o.contributionTypeList, true) and 
       compareDeep(roleElement, o.roleElement, true) and compareDeep(contributionInstanceList, o.contributionInstanceList, true) and 
       compareDeep(correspondingContactElement, o.correspondingContactElement, true) and 
-      compareDeep(listOrderElement, o.listOrderElement, true);
+      compareDeep(rankingOrderElement, o.rankingOrderElement, true);
   end;
 end;
 
 function TFhirCitationCitedArtifactContributorshipEntry.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FInitials) and isEmptyProp(FCollectiveName) and isEmptyProp(FidentifierList) and isEmptyProp(FaffiliationInfoList) and isEmptyProp(FaddressList) and isEmptyProp(FtelecomList) and isEmptyProp(FcontributionTypeList) and isEmptyProp(FRole) and isEmptyProp(FcontributionInstanceList) and isEmptyProp(FCorrespondingContact) and isEmptyProp(FListOrder);
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FInitials) and isEmptyProp(FCollectiveName) and isEmptyProp(FidentifierList) and isEmptyProp(FaffiliationInfoList) and isEmptyProp(FaddressList) and isEmptyProp(FtelecomList) and isEmptyProp(FcontributionTypeList) and isEmptyProp(FRole) and isEmptyProp(FcontributionInstanceList) and isEmptyProp(FCorrespondingContact) and isEmptyProp(FRankingOrder);
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipEntry.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('name');
   fields.add('initials');
@@ -27630,11 +27287,11 @@ begin
   fields.add('role');
   fields.add('contributionInstance');
   fields.add('correspondingContact');
-  fields.add('listOrder');
+  fields.add('rankingOrder');
 end;
 
 function TFhirCitationCitedArtifactContributorshipEntry.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FAffiliationInfoList.sizeInBytes(magic));
@@ -27801,30 +27458,30 @@ begin
   FCorrespondingContact.value := value
 end;
 
-procedure TFhirCitationCitedArtifactContributorshipEntry.SetListOrder(value : TFhirPositiveInt);
+procedure TFhirCitationCitedArtifactContributorshipEntry.SetRankingOrder(value : TFhirPositiveInt);
 begin
-  FListOrder.free;
-  FListOrder := value;
+  FRankingOrder.free;
+  FRankingOrder := value;
 end;
 
-function TFhirCitationCitedArtifactContributorshipEntry.GetListOrderST : String;
+function TFhirCitationCitedArtifactContributorshipEntry.GetRankingOrderST : String;
 begin
-  if FListOrder = nil then
+  if FRankingOrder = nil then
     result := ''
   else
-    result := FListOrder.value;
+    result := FRankingOrder.value;
 end;
 
-procedure TFhirCitationCitedArtifactContributorshipEntry.SetListOrderST(value : String);
+procedure TFhirCitationCitedArtifactContributorshipEntry.SetRankingOrderST(value : String);
 begin
   if value <> '' then
   begin
-    if FListOrder = nil then
-      FListOrder := TFhirPositiveInt.create;
-    FListOrder.value := value
+    if FRankingOrder = nil then
+      FRankingOrder := TFhirPositiveInt.create;
+    FRankingOrder.value := value
   end
-  else if FListOrder <> nil then
-    FListOrder.value := '';
+  else if FRankingOrder <> nil then
+    FRankingOrder.value := '';
 end;
 
 { TFhirCitationCitedArtifactContributorshipEntryListEnumerator }
@@ -27863,6 +27520,7 @@ end;
 
 function TFhirCitationCitedArtifactContributorshipEntryList.AddItem(value: TFhirCitationCitedArtifactContributorshipEntry): TFhirCitationCitedArtifactContributorshipEntry;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactContributorshipEntry', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactContributorshipEntry');
   add(value);
   result := value;
 end;
@@ -28110,7 +27768,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('affiliation');
   fields.add('role');
@@ -28118,7 +27776,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
 end;
@@ -28223,6 +27881,7 @@ end;
 
 function TFhirCitationCitedArtifactContributorshipEntryAffiliationInfoList.AddItem(value: TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo): TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo');
   add(value);
   result := value;
 end;
@@ -28442,14 +28101,14 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipEntryContributionInstance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('time');
 end;
 
 function TFhirCitationCitedArtifactContributorshipEntryContributionInstance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -28516,6 +28175,7 @@ end;
 
 function TFhirCitationCitedArtifactContributorshipEntryContributionInstanceList.AddItem(value: TFhirCitationCitedArtifactContributorshipEntryContributionInstance): TFhirCitationCitedArtifactContributorshipEntryContributionInstance;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactContributorshipEntryContributionInstance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactContributorshipEntryContributionInstance');
   add(value);
   result := value;
 end;
@@ -28764,7 +28424,7 @@ begin
 end;
 
 procedure TFhirCitationCitedArtifactContributorshipSummary.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('style');
@@ -28773,7 +28433,7 @@ begin
 end;
 
 function TFhirCitationCitedArtifactContributorshipSummary.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -28857,6 +28517,7 @@ end;
 
 function TFhirCitationCitedArtifactContributorshipSummaryList.AddItem(value: TFhirCitationCitedArtifactContributorshipSummary): TFhirCitationCitedArtifactContributorshipSummary;
 begin
+  assert(value.ClassName = 'TFhirCitationCitedArtifactContributorshipSummary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitationCitedArtifactContributorshipSummary');
   add(value);
   result := value;
 end;
@@ -28962,7 +28623,6 @@ begin
   FNoteList.Free;
   FCurrentStateList.Free;
   FStatusDateList.Free;
-  FRelatesToList.Free;
   FCitedArtifact.free;
   inherited;
 end;
@@ -28978,7 +28638,7 @@ begin
   else
   begin
     if FSummaryList = nil then
-      FSummaryList := TFhirContactDetailList.Create;
+      FSummaryList := TFhirCitationSummaryList.Create;
     FSummaryList.Assign(TFhirCitation(oSource).FSummaryList);
   end;
   if (TFhirCitation(oSource).FClassificationList = nil) then
@@ -29025,17 +28685,6 @@ begin
       FStatusDateList := TFhirCitationStatusDateList.Create;
     FStatusDateList.Assign(TFhirCitation(oSource).FStatusDateList);
   end;
-  if (TFhirCitation(oSource).FRelatesToList = nil) then
-  begin
-    FRelatesToList.free;
-    FRelatesToList := nil;
-  end
-  else
-  begin
-    if FRelatesToList = nil then
-      FRelatesToList := TFhirCitationRelatesToList.Create;
-    FRelatesToList.Assign(TFhirCitation(oSource).FRelatesToList);
-  end;
   citedArtifact := TFhirCitation(oSource).citedArtifact.Clone;
 end;
 
@@ -29057,8 +28706,6 @@ begin
     list.addAll(self, 'currentState', FCurrentStateList);
   if (child_name = 'statusDate') Then
     list.addAll(self, 'statusDate', FStatusDateList);
-  if (child_name = 'relatesTo') Then
-    list.addAll(self, 'relatesTo', FRelatesToList);
   if (child_name = 'citedArtifact') Then
      list.add(self.link, 'citedArtifact', FCitedArtifact.Link);
 end;
@@ -29066,12 +28713,11 @@ end;
 procedure TFhirCitation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'summary', 'ContactDetail', true, TFhirContactDetail, FSummaryList.Link));
+  oList.add(TFHIRProperty.create(self, 'summary', 'BackboneElement', true, TFhirCitationSummary, FSummaryList.Link));
   oList.add(TFHIRProperty.create(self, 'classification', 'BackboneElement', true, TFhirCitationClassification, FClassificationList.Link));
   oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
   oList.add(TFHIRProperty.create(self, 'currentState', 'CodeableConcept', true, TFhirCodeableConcept, FCurrentStateList.Link));
   oList.add(TFHIRProperty.create(self, 'statusDate', 'BackboneElement', true, TFhirCitationStatusDate, FStatusDateList.Link));
-  oList.add(TFHIRProperty.create(self, 'relatesTo', 'BackboneElement', true, TFhirCitationRelatesTo, FRelatesToList.Link));
   oList.add(TFHIRProperty.create(self, 'citedArtifact', 'BackboneElement', false, TFhirCitationCitedArtifact, FCitedArtifact.Link));
 end;
 
@@ -29079,7 +28725,7 @@ function TFhirCitation.setProperty(propName : string; propValue: TFHIRObject) : 
 begin
   if (propName = 'summary') then
   begin
-    SummaryList.add(propValue as TFhirContactDetail);
+    SummaryList.add(propValue as TFhirCitationSummary);
     result := propValue;
   end
   else if (propName = 'classification') then
@@ -29102,11 +28748,6 @@ begin
     StatusDateList.add(propValue as TFhirCitationStatusDate);
     result := propValue;
   end
-  else if (propName = 'relatesTo') then
-  begin
-    RelatesToList.add(propValue as TFhirCitationRelatesTo);
-    result := propValue;
-  end
   else if (propName = 'citedArtifact') then
   begin
     CitedArtifact := propValue as TFhirCitationCitedArtifact;
@@ -29117,12 +28758,11 @@ end;
 
 procedure TFhirCitation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'summary') then SummaryList.insertItem(index, propValue as TFhirContactDetail)
+  if (propName = 'summary') then SummaryList.insertItem(index, propValue as TFhirCitationSummary)
   else if (propName = 'classification') then ClassificationList.insertItem(index, propValue as TFhirCitationClassification)
   else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
   else if (propName = 'currentState') then CurrentStateList.insertItem(index, propValue as TFhirCodeableConcept)
   else if (propName = 'statusDate') then StatusDateList.insertItem(index, propValue as TFhirCitationStatusDate)
-  else if (propName = 'relatesTo') then RelatesToList.insertItem(index, propValue as TFhirCitationRelatesTo)
   else inherited;
 end;
 
@@ -29133,19 +28773,17 @@ begin
   else if (propName = 'note') then result := NoteList.new()
   else if (propName = 'currentState') then result := CurrentStateList.new()
   else if (propName = 'statusDate') then result := StatusDateList.new()
-  else if (propName = 'relatesTo') then result := RelatesToList.new()
   else if (propName = 'citedArtifact') then result := TFhirCitationCitedArtifact.create()
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirCitation.getTypesForProperty(propName: string) : String;
 begin
-  if (propName = 'summary') then result := 'ContactDetail'
+  if (propName = 'summary') then result := 'BackboneElement'
   else if (propName = 'classification') then result := 'BackboneElement'
   else if (propName = 'note') then result := 'Annotation'
   else if (propName = 'currentState') then result := 'CodeableConcept'
   else if (propName = 'statusDate') then result := 'BackboneElement'
-  else if (propName = 'relatesTo') then result := 'BackboneElement'
   else if (propName = 'citedArtifact') then result := 'BackboneElement'
   else result := inherited getTypesForProperty(propName);
 end;
@@ -29157,7 +28795,6 @@ begin
   else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
   else if (propName = 'currentState') then deletePropertyValue('currentState', CurrentStateList, value)
   else if (propName = 'statusDate') then deletePropertyValue('statusDate', StatusDateList, value)
-  else if (propName = 'relatesTo') then deletePropertyValue('relatesTo', RelatesToList, value)
   else if (propName = 'citedArtifact') then CitedArtifactElement := nil
   else
     inherited deleteProperty(propName, value);
@@ -29170,7 +28807,6 @@ begin
   else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
   else if (propName = 'currentState') then replacePropertyValue('currentState', CurrentStateList, existing, new)
   else if (propName = 'statusDate') then replacePropertyValue('statusDate', StatusDateList, existing, new)
-  else if (propName = 'relatesTo') then replacePropertyValue('relatesTo', RelatesToList, existing, new)
   else if (propName = 'citedArtifact') then CitedArtifactElement := new as TFhirCitationCitedArtifact
   else
     inherited replaceProperty(propName, existing, new);
@@ -29183,7 +28819,6 @@ begin
   else if (propName = 'note') then NoteList.move(source, destination)
   else if (propName = 'currentState') then CurrentStateList.move(source, destination)
   else if (propName = 'statusDate') then StatusDateList.move(source, destination)
-  else if (propName = 'relatesTo') then RelatesToList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -29216,18 +28851,17 @@ begin
     o := TFhirCitation(other);
     result := compareDeep(summaryList, o.summaryList, true) and compareDeep(classificationList, o.classificationList, true) and 
       compareDeep(noteList, o.noteList, true) and compareDeep(currentStateList, o.currentStateList, true) and 
-      compareDeep(statusDateList, o.statusDateList, true) and compareDeep(relatesToList, o.relatesToList, true) and 
-      compareDeep(citedArtifactElement, o.citedArtifactElement, true);
+      compareDeep(statusDateList, o.statusDateList, true) and compareDeep(citedArtifactElement, o.citedArtifactElement, true);
   end;
 end;
 
 function TFhirCitation.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FsummaryList) and isEmptyProp(FclassificationList) and isEmptyProp(FnoteList) and isEmptyProp(FcurrentStateList) and isEmptyProp(FstatusDateList) and isEmptyProp(FrelatesToList) and isEmptyProp(FCitedArtifact);
+  result := inherited isEmpty  and isEmptyProp(FsummaryList) and isEmptyProp(FclassificationList) and isEmptyProp(FnoteList) and isEmptyProp(FcurrentStateList) and isEmptyProp(FstatusDateList) and isEmptyProp(FCitedArtifact);
 end;
 
 procedure TFhirCitation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('url');
   fields.add('identifier');
@@ -29256,19 +28890,18 @@ begin
   fields.add('note');
   fields.add('currentState');
   fields.add('statusDate');
-  fields.add('relatesTo');
+  fields.add('relatedArtifact');
   fields.add('citedArtifact');
 end;
 
 function TFhirCitation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSummaryList.sizeInBytes(magic));
   inc(result, FClassificationList.sizeInBytes(magic));
   inc(result, FNoteList.sizeInBytes(magic));
   inc(result, FCurrentStateList.sizeInBytes(magic));
   inc(result, FStatusDateList.sizeInBytes(magic));
-  inc(result, FRelatesToList.sizeInBytes(magic));
 end;
 
 procedure TFhirCitation.SetUrl(value : TFhirUri);
@@ -29687,10 +29320,10 @@ begin
   result := (FEndorserList <> nil) and (FEndorserList.count > 0);
 end;
 
-function TFhirCitation.GetSummaryList : TFhirContactDetailList;
+function TFhirCitation.GetSummaryList : TFhirCitationSummaryList;
 begin
   if FSummaryList = nil then
-    FSummaryList := TFhirContactDetailList.Create;
+    FSummaryList := TFhirCitationSummaryList.Create;
   result := FSummaryList;
 end;
 
@@ -29747,16 +29380,16 @@ begin
   result := (FStatusDateList <> nil) and (FStatusDateList.count > 0);
 end;
 
-function TFhirCitation.GetRelatesToList : TFhirCitationRelatesToList;
+function TFhirCitation.GetRelatedArtifactList : TFhirRelatedArtifactList;
 begin
-  if FRelatesToList = nil then
-    FRelatesToList := TFhirCitationRelatesToList.Create;
-  result := FRelatesToList;
+  if FRelatedArtifactList = nil then
+    FRelatedArtifactList := TFhirRelatedArtifactList.Create;
+  result := FRelatedArtifactList;
 end;
 
-function TFhirCitation.GetHasRelatesToList : boolean;
+function TFhirCitation.GetHasRelatedArtifactList : boolean;
 begin
-  result := (FRelatesToList <> nil) and (FRelatesToList.count > 0);
+  result := (FRelatedArtifactList <> nil) and (FRelatedArtifactList.count > 0);
 end;
 
 procedure TFhirCitation.SetCitedArtifact(value : TFhirCitationCitedArtifact);
@@ -29801,6 +29434,7 @@ end;
 
 function TFhirCitationList.AddItem(value: TFhirCitation): TFhirCitation;
 begin
+  assert(value.ClassName = 'TFhirCitation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCitation');
   add(value);
   result := value;
 end;
@@ -30037,7 +29671,7 @@ begin
 end;
 
 procedure TFhirClaimRelated.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('claim');
   fields.add('relationship');
@@ -30045,7 +29679,7 @@ begin
 end;
 
 function TFhirClaimRelated.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30103,6 +29737,7 @@ end;
 
 function TFhirClaimRelatedList.AddItem(value: TFhirClaimRelated): TFhirClaimRelated;
 begin
+  assert(value.ClassName = 'TFhirClaimRelated', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimRelated');
   add(value);
   result := value;
 end;
@@ -30322,14 +29957,14 @@ begin
 end;
 
 procedure TFhirClaimPayee.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('party');
 end;
 
 function TFhirClaimPayee.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30381,6 +30016,7 @@ end;
 
 function TFhirClaimPayeeList.AddItem(value: TFhirClaimPayee): TFhirClaimPayee;
 begin
+  assert(value.ClassName = 'TFhirClaimPayee', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimPayee');
   add(value);
   result := value;
 end;
@@ -30644,7 +30280,7 @@ begin
 end;
 
 procedure TFhirClaimCareTeam.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('provider');
@@ -30654,7 +30290,7 @@ begin
 end;
 
 function TFhirClaimCareTeam.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -30759,6 +30395,7 @@ end;
 
 function TFhirClaimCareTeamList.AddItem(value: TFhirClaimCareTeam): TFhirClaimCareTeam;
 begin
+  assert(value.ClassName = 'TFhirClaimCareTeam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimCareTeam');
   add(value);
   result := value;
 end;
@@ -31036,7 +30673,7 @@ begin
 end;
 
 procedure TFhirClaimSupportingInfo.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('category');
@@ -31047,7 +30684,7 @@ begin
 end;
 
 function TFhirClaimSupportingInfo.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -31143,6 +30780,7 @@ end;
 
 function TFhirClaimSupportingInfoList.AddItem(value: TFhirClaimSupportingInfo): TFhirClaimSupportingInfo;
 begin
+  assert(value.ClassName = 'TFhirClaimSupportingInfo', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimSupportingInfo');
   add(value);
   result := value;
 end;
@@ -31419,7 +31057,7 @@ begin
 end;
 
 procedure TFhirClaimDiagnosis.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('diagnosis[x]');
@@ -31429,7 +31067,7 @@ begin
 end;
 
 function TFhirClaimDiagnosis.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
 end;
@@ -31526,6 +31164,7 @@ end;
 
 function TFhirClaimDiagnosisList.AddItem(value: TFhirClaimDiagnosis): TFhirClaimDiagnosis;
 begin
+  assert(value.ClassName = 'TFhirClaimDiagnosis', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimDiagnosis');
   add(value);
   result := value;
 end;
@@ -31814,7 +31453,7 @@ begin
 end;
 
 procedure TFhirClaimProcedure.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('type');
@@ -31824,7 +31463,7 @@ begin
 end;
 
 function TFhirClaimProcedure.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
   inc(result, FUdiList.sizeInBytes(magic));
@@ -31943,6 +31582,7 @@ end;
 
 function TFhirClaimProcedureList.AddItem(value: TFhirClaimProcedure): TFhirClaimProcedure;
 begin
+  assert(value.ClassName = 'TFhirClaimProcedure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimProcedure');
   add(value);
   result := value;
 end;
@@ -32248,7 +31888,7 @@ begin
 end;
 
 procedure TFhirClaimInsurance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('focal');
@@ -32260,7 +31900,7 @@ begin
 end;
 
 function TFhirClaimInsurance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FPreAuthRefList.sizeInBytes(magic));
 end;
@@ -32404,6 +32044,7 @@ end;
 
 function TFhirClaimInsuranceList.AddItem(value: TFhirClaimInsurance): TFhirClaimInsurance;
 begin
+  assert(value.ClassName = 'TFhirClaimInsurance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimInsurance');
   add(value);
   result := value;
 end;
@@ -32638,7 +32279,7 @@ begin
 end;
 
 procedure TFhirClaimAccident.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('date');
   fields.add('type');
@@ -32646,7 +32287,7 @@ begin
 end;
 
 function TFhirClaimAccident.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -32719,6 +32360,7 @@ end;
 
 function TFhirClaimAccidentList.AddItem(value: TFhirClaimAccident): TFhirClaimAccident;
 begin
+  assert(value.ClassName = 'TFhirClaimAccident', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimAccident');
   add(value);
   result := value;
 end;
@@ -33335,7 +32977,7 @@ begin
 end;
 
 procedure TFhirClaimItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('careTeamSequence');
@@ -33361,7 +33003,7 @@ begin
 end;
 
 function TFhirClaimItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCareTeamSequenceList.sizeInBytes(magic));
   inc(result, FDiagnosisSequenceList.sizeInBytes(magic));
@@ -33637,6 +33279,7 @@ end;
 
 function TFhirClaimItemList.AddItem(value: TFhirClaimItem): TFhirClaimItem;
 begin
+  assert(value.ClassName = 'TFhirClaimItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimItem');
   add(value);
   result := value;
 end;
@@ -34050,7 +33693,7 @@ begin
 end;
 
 procedure TFhirClaimItemDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('revenue');
@@ -34067,7 +33710,7 @@ begin
 end;
 
 function TFhirClaimItemDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FProgramCodeList.sizeInBytes(magic));
@@ -34247,6 +33890,7 @@ end;
 
 function TFhirClaimItemDetailList.AddItem(value: TFhirClaimItemDetail): TFhirClaimItemDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimItemDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimItemDetail');
   add(value);
   result := value;
 end;
@@ -34634,7 +34278,7 @@ begin
 end;
 
 procedure TFhirClaimItemDetailSubDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('revenue');
@@ -34650,7 +34294,7 @@ begin
 end;
 
 function TFhirClaimItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FProgramCodeList.sizeInBytes(magic));
@@ -34817,6 +34461,7 @@ end;
 
 function TFhirClaimItemDetailSubDetailList.AddItem(value: TFhirClaimItemDetailSubDetail): TFhirClaimItemDetailSubDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimItemDetailSubDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimItemDetailSubDetail');
   add(value);
   result := value;
 end;
@@ -35501,7 +35146,7 @@ begin
 end;
 
 procedure TFhirClaim.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -35533,7 +35178,7 @@ begin
 end;
 
 function TFhirClaim.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FRelatedList.sizeInBytes(magic));
@@ -35838,6 +35483,7 @@ end;
 
 function TFhirClaimList.AddItem(value: TFhirClaim): TFhirClaim;
 begin
+  assert(value.ClassName = 'TFhirClaim', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaim');
   add(value);
   result := value;
 end;
@@ -36126,7 +35772,7 @@ begin
 end;
 
 procedure TFhirClaimResponseItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('itemSequence');
   fields.add('noteNumber');
@@ -36135,7 +35781,7 @@ begin
 end;
 
 function TFhirClaimResponseItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FNoteNumberList.sizeInBytes(magic));
   inc(result, FAdjudicationList.sizeInBytes(magic));
@@ -36240,6 +35886,7 @@ end;
 
 function TFhirClaimResponseItemList.AddItem(value: TFhirClaimResponseItem): TFhirClaimResponseItem;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseItem');
   add(value);
   result := value;
 end;
@@ -36488,7 +36135,7 @@ begin
 end;
 
 procedure TFhirClaimResponseItemAdjudication.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('reason');
@@ -36497,7 +36144,7 @@ begin
 end;
 
 function TFhirClaimResponseItemAdjudication.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -36581,6 +36228,7 @@ end;
 
 function TFhirClaimResponseItemAdjudicationList.AddItem(value: TFhirClaimResponseItemAdjudication): TFhirClaimResponseItemAdjudication;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseItemAdjudication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseItemAdjudication');
   add(value);
   result := value;
 end;
@@ -36867,7 +36515,7 @@ begin
 end;
 
 procedure TFhirClaimResponseItemDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('detailSequence');
   fields.add('noteNumber');
@@ -36876,7 +36524,7 @@ begin
 end;
 
 function TFhirClaimResponseItemDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FNoteNumberList.sizeInBytes(magic));
   inc(result, FAdjudicationList.sizeInBytes(magic));
@@ -36981,6 +36629,7 @@ end;
 
 function TFhirClaimResponseItemDetailList.AddItem(value: TFhirClaimResponseItemDetail): TFhirClaimResponseItemDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseItemDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseItemDetail');
   add(value);
   result := value;
 end;
@@ -37240,7 +36889,7 @@ begin
 end;
 
 procedure TFhirClaimResponseItemDetailSubDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('subDetailSequence');
   fields.add('noteNumber');
@@ -37248,7 +36897,7 @@ begin
 end;
 
 function TFhirClaimResponseItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FNoteNumberList.sizeInBytes(magic));
   inc(result, FAdjudicationList.sizeInBytes(magic));
@@ -37340,6 +36989,7 @@ end;
 
 function TFhirClaimResponseItemDetailSubDetailList.AddItem(value: TFhirClaimResponseItemDetailSubDetail): TFhirClaimResponseItemDetailSubDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseItemDetailSubDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseItemDetailSubDetail');
   add(value);
   result := value;
 end;
@@ -37912,7 +37562,7 @@ begin
 end;
 
 procedure TFhirClaimResponseAddItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('itemSequence');
   fields.add('detailSequence');
@@ -37935,7 +37585,7 @@ begin
 end;
 
 function TFhirClaimResponseAddItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FItemSequenceList.sizeInBytes(magic));
   inc(result, FDetailSequenceList.sizeInBytes(magic));
@@ -38173,6 +37823,7 @@ end;
 
 function TFhirClaimResponseAddItemList.AddItem(value: TFhirClaimResponseAddItem): TFhirClaimResponseAddItem;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseAddItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseAddItem');
   add(value);
   result := value;
 end;
@@ -38543,7 +38194,7 @@ begin
 end;
 
 procedure TFhirClaimResponseAddItemDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('productOrService');
   fields.add('modifier');
@@ -38557,7 +38208,7 @@ begin
 end;
 
 function TFhirClaimResponseAddItemDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FNoteNumberList.sizeInBytes(magic));
@@ -38699,6 +38350,7 @@ end;
 
 function TFhirClaimResponseAddItemDetailList.AddItem(value: TFhirClaimResponseAddItemDetail): TFhirClaimResponseAddItemDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseAddItemDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseAddItemDetail');
   add(value);
   result := value;
 end;
@@ -39043,7 +38695,7 @@ begin
 end;
 
 procedure TFhirClaimResponseAddItemDetailSubDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('productOrService');
   fields.add('modifier');
@@ -39056,7 +38708,7 @@ begin
 end;
 
 function TFhirClaimResponseAddItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FNoteNumberList.sizeInBytes(magic));
@@ -39185,6 +38837,7 @@ end;
 
 function TFhirClaimResponseAddItemDetailSubDetailList.AddItem(value: TFhirClaimResponseAddItemDetailSubDetail): TFhirClaimResponseAddItemDetailSubDetail;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseAddItemDetailSubDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseAddItemDetailSubDetail');
   add(value);
   result := value;
 end;
@@ -39404,14 +39057,14 @@ begin
 end;
 
 procedure TFhirClaimResponseTotal.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('amount');
 end;
 
 function TFhirClaimResponseTotal.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -39463,6 +39116,7 @@ end;
 
 function TFhirClaimResponseTotalList.AddItem(value: TFhirClaimResponseTotal): TFhirClaimResponseTotal;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseTotal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseTotal');
   add(value);
   result := value;
 end;
@@ -39740,7 +39394,7 @@ begin
 end;
 
 procedure TFhirClaimResponsePayment.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('adjustment');
@@ -39751,7 +39405,7 @@ begin
 end;
 
 function TFhirClaimResponsePayment.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -39842,6 +39496,7 @@ end;
 
 function TFhirClaimResponsePaymentList.AddItem(value: TFhirClaimResponsePayment): TFhirClaimResponsePayment;
 begin
+  assert(value.ClassName = 'TFhirClaimResponsePayment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponsePayment');
   add(value);
   result := value;
 end;
@@ -40090,7 +39745,7 @@ begin
 end;
 
 procedure TFhirClaimResponseProcessNote.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('number');
   fields.add('type');
@@ -40099,7 +39754,7 @@ begin
 end;
 
 function TFhirClaimResponseProcessNote.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -40219,6 +39874,7 @@ end;
 
 function TFhirClaimResponseProcessNoteList.AddItem(value: TFhirClaimResponseProcessNote): TFhirClaimResponseProcessNote;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseProcessNote', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseProcessNote');
   add(value);
   result := value;
 end;
@@ -40482,7 +40138,7 @@ begin
 end;
 
 procedure TFhirClaimResponseInsurance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('focal');
@@ -40492,7 +40148,7 @@ begin
 end;
 
 function TFhirClaimResponseInsurance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -40617,6 +40273,7 @@ end;
 
 function TFhirClaimResponseInsuranceList.AddItem(value: TFhirClaimResponseInsurance): TFhirClaimResponseInsurance;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseInsurance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseInsurance');
   add(value);
   result := value;
 end;
@@ -40866,7 +40523,7 @@ begin
 end;
 
 procedure TFhirClaimResponseError.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('itemSequence');
   fields.add('detailSequence');
@@ -40875,7 +40532,7 @@ begin
 end;
 
 function TFhirClaimResponseError.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -40999,6 +40656,7 @@ end;
 
 function TFhirClaimResponseErrorList.AddItem(value: TFhirClaimResponseError): TFhirClaimResponseError;
 begin
+  assert(value.ClassName = 'TFhirClaimResponseError', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponseError');
   add(value);
   result := value;
 end;
@@ -41695,7 +41353,7 @@ begin
 end;
 
 procedure TFhirClaimResponse.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -41727,7 +41385,7 @@ begin
 end;
 
 function TFhirClaimResponse.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FItemList.sizeInBytes(magic));
@@ -42095,6 +41753,7 @@ end;
 
 function TFhirClaimResponseList.AddItem(value: TFhirClaimResponse): TFhirClaimResponse;
 begin
+  assert(value.ClassName = 'TFhirClaimResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClaimResponse');
   add(value);
   result := value;
 end;
@@ -42331,7 +41990,7 @@ begin
 end;
 
 procedure TFhirCoverageClass.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('value');
@@ -42339,7 +41998,7 @@ begin
 end;
 
 function TFhirCoverageClass.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -42437,6 +42096,7 @@ end;
 
 function TFhirCoverageClassList.AddItem(value: TFhirCoverageClass): TFhirCoverageClass;
 begin
+  assert(value.ClassName = 'TFhirCoverageClass', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageClass');
   add(value);
   result := value;
 end;
@@ -42684,7 +42344,7 @@ begin
 end;
 
 procedure TFhirCoverageCostToBeneficiary.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('value[x]');
@@ -42692,7 +42352,7 @@ begin
 end;
 
 function TFhirCoverageCostToBeneficiary.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FExceptionList.sizeInBytes(magic));
 end;
@@ -42757,6 +42417,7 @@ end;
 
 function TFhirCoverageCostToBeneficiaryList.AddItem(value: TFhirCoverageCostToBeneficiary): TFhirCoverageCostToBeneficiary;
 begin
+  assert(value.ClassName = 'TFhirCoverageCostToBeneficiary', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageCostToBeneficiary');
   add(value);
   result := value;
 end;
@@ -42976,14 +42637,14 @@ begin
 end;
 
 procedure TFhirCoverageCostToBeneficiaryException.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('period');
 end;
 
 function TFhirCoverageCostToBeneficiaryException.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -43035,6 +42696,7 @@ end;
 
 function TFhirCoverageCostToBeneficiaryExceptionList.AddItem(value: TFhirCoverageCostToBeneficiaryException): TFhirCoverageCostToBeneficiaryException;
 begin
+  assert(value.ClassName = 'TFhirCoverageCostToBeneficiaryException', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageCostToBeneficiaryException');
   add(value);
   result := value;
 end;
@@ -43538,7 +43200,7 @@ begin
 end;
 
 procedure TFhirCoverage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -43560,7 +43222,7 @@ begin
 end;
 
 function TFhirCoverage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FPayorList.sizeInBytes(magic));
@@ -43828,6 +43490,7 @@ end;
 
 function TFhirCoverageList.AddItem(value: TFhirCoverage): TFhirCoverage;
 begin
+  assert(value.ClassName = 'TFhirCoverage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverage');
   add(value);
   result := value;
 end;
@@ -44064,7 +43727,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityRequestSupportingInfo.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('information');
@@ -44072,7 +43735,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityRequestSupportingInfo.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -44165,6 +43828,7 @@ end;
 
 function TFhirCoverageEligibilityRequestSupportingInfoList.AddItem(value: TFhirCoverageEligibilityRequestSupportingInfo): TFhirCoverageEligibilityRequestSupportingInfo;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityRequestSupportingInfo', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityRequestSupportingInfo');
   add(value);
   result := value;
 end;
@@ -44399,7 +44063,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityRequestInsurance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('focal');
   fields.add('coverage');
@@ -44407,7 +44071,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityRequestInsurance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -44500,6 +44164,7 @@ end;
 
 function TFhirCoverageEligibilityRequestInsuranceList.AddItem(value: TFhirCoverageEligibilityRequestInsurance): TFhirCoverageEligibilityRequestInsurance;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityRequestInsurance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityRequestInsurance');
   add(value);
   result := value;
 end;
@@ -44885,7 +44550,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityRequestItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('supportingInfoSequence');
   fields.add('category');
@@ -44900,7 +44565,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityRequestItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FSupportingInfoSequenceList.sizeInBytes(magic));
   inc(result, FModifierList.sizeInBytes(magic));
@@ -45028,6 +44693,7 @@ end;
 
 function TFhirCoverageEligibilityRequestItemList.AddItem(value: TFhirCoverageEligibilityRequestItem): TFhirCoverageEligibilityRequestItem;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityRequestItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityRequestItem');
   add(value);
   result := value;
 end;
@@ -45233,13 +44899,13 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityRequestItemDiagnosis.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('diagnosis[x]');
 end;
 
 function TFhirCoverageEligibilityRequestItemDiagnosis.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -45285,6 +44951,7 @@ end;
 
 function TFhirCoverageEligibilityRequestItemDiagnosisList.AddItem(value: TFhirCoverageEligibilityRequestItemDiagnosis): TFhirCoverageEligibilityRequestItemDiagnosis;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityRequestItemDiagnosis', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityRequestItemDiagnosis');
   add(value);
   result := value;
 end;
@@ -45740,7 +45407,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityRequest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -45759,7 +45426,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityRequest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FPurpose.sizeInBytes(magic));
@@ -45973,6 +45640,7 @@ end;
 
 function TFhirCoverageEligibilityRequestList.AddItem(value: TFhirCoverageEligibilityRequest): TFhirCoverageEligibilityRequest;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityRequest');
   add(value);
   result := value;
 end;
@@ -46236,7 +45904,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityResponseInsurance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('coverage');
   fields.add('inforce');
@@ -46245,7 +45913,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityResponseInsurance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FItemList.sizeInBytes(magic));
 end;
@@ -46331,6 +45999,7 @@ end;
 
 function TFhirCoverageEligibilityResponseInsuranceList.AddItem(value: TFhirCoverageEligibilityResponseInsurance): TFhirCoverageEligibilityResponseInsurance;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityResponseInsurance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityResponseInsurance');
   add(value);
   result := value;
 end;
@@ -46762,7 +46431,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityResponseInsuranceItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('productOrService');
@@ -46781,7 +46450,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityResponseInsuranceItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FBenefitList.sizeInBytes(magic));
@@ -47016,6 +46685,7 @@ end;
 
 function TFhirCoverageEligibilityResponseInsuranceItemList.AddItem(value: TFhirCoverageEligibilityResponseInsuranceItem): TFhirCoverageEligibilityResponseInsuranceItem;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityResponseInsuranceItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityResponseInsuranceItem');
   add(value);
   result := value;
 end;
@@ -47250,7 +46920,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityResponseInsuranceItemBenefit.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('allowed[x]');
@@ -47258,7 +46928,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityResponseInsuranceItemBenefit.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -47316,6 +46986,7 @@ end;
 
 function TFhirCoverageEligibilityResponseInsuranceItemBenefitList.AddItem(value: TFhirCoverageEligibilityResponseInsuranceItemBenefit): TFhirCoverageEligibilityResponseInsuranceItemBenefit;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityResponseInsuranceItemBenefit', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityResponseInsuranceItemBenefit');
   add(value);
   result := value;
 end;
@@ -47521,13 +47192,13 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityResponseError.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('code');
 end;
 
 function TFhirCoverageEligibilityResponseError.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -47573,6 +47244,7 @@ end;
 
 function TFhirCoverageEligibilityResponseErrorList.AddItem(value: TFhirCoverageEligibilityResponseError): TFhirCoverageEligibilityResponseError;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityResponseError', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityResponseError');
   add(value);
   result := value;
 end;
@@ -48031,7 +47703,7 @@ begin
 end;
 
 procedure TFhirCoverageEligibilityResponse.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -48051,7 +47723,7 @@ begin
 end;
 
 function TFhirCoverageEligibilityResponse.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FPurpose.sizeInBytes(magic));
@@ -48320,6 +47992,7 @@ end;
 
 function TFhirCoverageEligibilityResponseList.AddItem(value: TFhirCoverageEligibilityResponse): TFhirCoverageEligibilityResponse;
 begin
+  assert(value.ClassName = 'TFhirCoverageEligibilityResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverageEligibilityResponse');
   add(value);
   result := value;
 end;
@@ -48632,7 +48305,7 @@ begin
 end;
 
 procedure TFhirEnrollmentRequest.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -48644,7 +48317,7 @@ begin
 end;
 
 function TFhirEnrollmentRequest.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
 end;
@@ -48764,6 +48437,7 @@ end;
 
 function TFhirEnrollmentRequestList.AddItem(value: TFhirEnrollmentRequest): TFhirEnrollmentRequest;
 begin
+  assert(value.ClassName = 'TFhirEnrollmentRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnrollmentRequest');
   add(value);
   result := value;
 end;
@@ -49090,7 +48764,7 @@ begin
 end;
 
 procedure TFhirEnrollmentResponse.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -49103,7 +48777,7 @@ begin
 end;
 
 function TFhirEnrollmentResponse.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
 end;
@@ -49265,6 +48939,7 @@ end;
 
 function TFhirEnrollmentResponseList.AddItem(value: TFhirEnrollmentResponse): TFhirEnrollmentResponse;
 begin
+  assert(value.ClassName = 'TFhirEnrollmentResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnrollmentResponse');
   add(value);
   result := value;
 end;
@@ -49501,7 +49176,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitRelated.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('claim');
   fields.add('relationship');
@@ -49509,7 +49184,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitRelated.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -49567,6 +49242,7 @@ end;
 
 function TFhirExplanationOfBenefitRelatedList.AddItem(value: TFhirExplanationOfBenefitRelated): TFhirExplanationOfBenefitRelated;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitRelated', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitRelated');
   add(value);
   result := value;
 end;
@@ -49786,14 +49462,14 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitPayee.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('party');
 end;
 
 function TFhirExplanationOfBenefitPayee.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -49845,6 +49521,7 @@ end;
 
 function TFhirExplanationOfBenefitPayeeList.AddItem(value: TFhirExplanationOfBenefitPayee): TFhirExplanationOfBenefitPayee;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitPayee', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitPayee');
   add(value);
   result := value;
 end;
@@ -50108,7 +49785,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitCareTeam.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('provider');
@@ -50118,7 +49795,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitCareTeam.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -50223,6 +49900,7 @@ end;
 
 function TFhirExplanationOfBenefitCareTeamList.AddItem(value: TFhirExplanationOfBenefitCareTeam): TFhirExplanationOfBenefitCareTeam;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitCareTeam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitCareTeam');
   add(value);
   result := value;
 end;
@@ -50500,7 +50178,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitSupportingInfo.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('category');
@@ -50511,7 +50189,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitSupportingInfo.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -50607,6 +50285,7 @@ end;
 
 function TFhirExplanationOfBenefitSupportingInfoList.AddItem(value: TFhirExplanationOfBenefitSupportingInfo): TFhirExplanationOfBenefitSupportingInfo;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitSupportingInfo', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitSupportingInfo');
   add(value);
   result := value;
 end;
@@ -50883,7 +50562,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitDiagnosis.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('diagnosis[x]');
@@ -50893,7 +50572,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitDiagnosis.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
 end;
@@ -50990,6 +50669,7 @@ end;
 
 function TFhirExplanationOfBenefitDiagnosisList.AddItem(value: TFhirExplanationOfBenefitDiagnosis): TFhirExplanationOfBenefitDiagnosis;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitDiagnosis', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitDiagnosis');
   add(value);
   result := value;
 end;
@@ -51278,7 +50958,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitProcedure.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('type');
@@ -51288,7 +50968,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitProcedure.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FType_List.sizeInBytes(magic));
   inc(result, FUdiList.sizeInBytes(magic));
@@ -51407,6 +51087,7 @@ end;
 
 function TFhirExplanationOfBenefitProcedureList.AddItem(value: TFhirExplanationOfBenefitProcedure): TFhirExplanationOfBenefitProcedure;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitProcedure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitProcedure');
   add(value);
   result := value;
 end;
@@ -51654,7 +51335,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitInsurance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('focal');
   fields.add('coverage');
@@ -51662,7 +51343,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitInsurance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FPreAuthRefList.sizeInBytes(magic));
 end;
@@ -51742,6 +51423,7 @@ end;
 
 function TFhirExplanationOfBenefitInsuranceList.AddItem(value: TFhirExplanationOfBenefitInsurance): TFhirExplanationOfBenefitInsurance;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitInsurance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitInsurance');
   add(value);
   result := value;
 end;
@@ -51976,7 +51658,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitAccident.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('date');
   fields.add('type');
@@ -51984,7 +51666,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitAccident.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -52057,6 +51739,7 @@ end;
 
 function TFhirExplanationOfBenefitAccidentList.AddItem(value: TFhirExplanationOfBenefitAccident): TFhirExplanationOfBenefitAccident;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitAccident', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitAccident');
   add(value);
   result := value;
 end;
@@ -52726,7 +52409,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('careTeamSequence');
@@ -52754,7 +52437,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCareTeamSequenceList.sizeInBytes(magic));
   inc(result, FDiagnosisSequenceList.sizeInBytes(magic));
@@ -53056,6 +52739,7 @@ end;
 
 function TFhirExplanationOfBenefitItemList.AddItem(value: TFhirExplanationOfBenefitItem): TFhirExplanationOfBenefitItem;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitItem');
   add(value);
   result := value;
 end;
@@ -53304,7 +52988,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitItemAdjudication.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('reason');
@@ -53313,7 +52997,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitItemAdjudication.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -53397,6 +53081,7 @@ end;
 
 function TFhirExplanationOfBenefitItemAdjudicationList.AddItem(value: TFhirExplanationOfBenefitItemAdjudication): TFhirExplanationOfBenefitItemAdjudication;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitItemAdjudication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitItemAdjudication');
   add(value);
   result := value;
 end;
@@ -53863,7 +53548,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitItemDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('revenue');
@@ -53882,7 +53567,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitItemDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FProgramCodeList.sizeInBytes(magic));
@@ -54088,6 +53773,7 @@ end;
 
 function TFhirExplanationOfBenefitItemDetailList.AddItem(value: TFhirExplanationOfBenefitItemDetail): TFhirExplanationOfBenefitItemDetail;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitItemDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitItemDetail');
   add(value);
   result := value;
 end;
@@ -54528,7 +54214,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitItemDetailSubDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('revenue');
@@ -54546,7 +54232,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FProgramCodeList.sizeInBytes(magic));
@@ -54739,6 +54425,7 @@ end;
 
 function TFhirExplanationOfBenefitItemDetailSubDetailList.AddItem(value: TFhirExplanationOfBenefitItemDetailSubDetail): TFhirExplanationOfBenefitItemDetailSubDetail;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitItemDetailSubDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitItemDetailSubDetail');
   add(value);
   result := value;
 end;
@@ -55311,7 +54998,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitAddItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('itemSequence');
   fields.add('detailSequence');
@@ -55334,7 +55021,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitAddItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FItemSequenceList.sizeInBytes(magic));
   inc(result, FDetailSequenceList.sizeInBytes(magic));
@@ -55572,6 +55259,7 @@ end;
 
 function TFhirExplanationOfBenefitAddItemList.AddItem(value: TFhirExplanationOfBenefitAddItem): TFhirExplanationOfBenefitAddItem;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitAddItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitAddItem');
   add(value);
   result := value;
 end;
@@ -55942,7 +55630,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitAddItemDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('productOrService');
   fields.add('modifier');
@@ -55956,7 +55644,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitAddItemDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FNoteNumberList.sizeInBytes(magic));
@@ -56098,6 +55786,7 @@ end;
 
 function TFhirExplanationOfBenefitAddItemDetailList.AddItem(value: TFhirExplanationOfBenefitAddItemDetail): TFhirExplanationOfBenefitAddItemDetail;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitAddItemDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitAddItemDetail');
   add(value);
   result := value;
 end;
@@ -56442,7 +56131,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitAddItemDetailSubDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('productOrService');
   fields.add('modifier');
@@ -56455,7 +56144,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitAddItemDetailSubDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FModifierList.sizeInBytes(magic));
   inc(result, FNoteNumberList.sizeInBytes(magic));
@@ -56584,6 +56273,7 @@ end;
 
 function TFhirExplanationOfBenefitAddItemDetailSubDetailList.AddItem(value: TFhirExplanationOfBenefitAddItemDetailSubDetail): TFhirExplanationOfBenefitAddItemDetailSubDetail;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitAddItemDetailSubDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitAddItemDetailSubDetail');
   add(value);
   result := value;
 end;
@@ -56803,14 +56493,14 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitTotal.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('amount');
 end;
 
 function TFhirExplanationOfBenefitTotal.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -56862,6 +56552,7 @@ end;
 
 function TFhirExplanationOfBenefitTotalList.AddItem(value: TFhirExplanationOfBenefitTotal): TFhirExplanationOfBenefitTotal;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitTotal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitTotal');
   add(value);
   result := value;
 end;
@@ -57139,7 +56830,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitPayment.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('adjustment');
@@ -57150,7 +56841,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitPayment.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -57241,6 +56932,7 @@ end;
 
 function TFhirExplanationOfBenefitPaymentList.AddItem(value: TFhirExplanationOfBenefitPayment): TFhirExplanationOfBenefitPayment;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitPayment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitPayment');
   add(value);
   result := value;
 end;
@@ -57489,7 +57181,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitProcessNote.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('number');
   fields.add('type');
@@ -57498,7 +57190,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitProcessNote.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -57618,6 +57310,7 @@ end;
 
 function TFhirExplanationOfBenefitProcessNoteList.AddItem(value: TFhirExplanationOfBenefitProcessNote): TFhirExplanationOfBenefitProcessNote;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitProcessNote', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitProcessNote');
   add(value);
   result := value;
 end;
@@ -57937,7 +57630,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitBenefitBalance.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('excluded');
@@ -57950,7 +57643,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitBenefitBalance.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FFinancialList.sizeInBytes(magic));
 end;
@@ -58100,6 +57793,7 @@ end;
 
 function TFhirExplanationOfBenefitBenefitBalanceList.AddItem(value: TFhirExplanationOfBenefitBenefitBalance): TFhirExplanationOfBenefitBenefitBalance;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitBenefitBalance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitBenefitBalance');
   add(value);
   result := value;
 end;
@@ -58334,7 +58028,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefitBenefitBalanceFinancial.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('allowed[x]');
@@ -58342,7 +58036,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefitBenefitBalanceFinancial.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -58400,6 +58094,7 @@ end;
 
 function TFhirExplanationOfBenefitBenefitBalanceFinancialList.AddItem(value: TFhirExplanationOfBenefitBenefitBalanceFinancial): TFhirExplanationOfBenefitBenefitBalanceFinancial;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefitBenefitBalanceFinancial', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefitBenefitBalanceFinancial');
   add(value);
   result := value;
 end;
@@ -59401,7 +59096,7 @@ begin
 end;
 
 procedure TFhirExplanationOfBenefit.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -59449,7 +59144,7 @@ begin
 end;
 
 function TFhirExplanationOfBenefit.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FRelatedList.sizeInBytes(magic));
@@ -59955,6 +59650,7 @@ end;
 
 function TFhirExplanationOfBenefitList.AddItem(value: TFhirExplanationOfBenefit): TFhirExplanationOfBenefit;
 begin
+  assert(value.ClassName = 'TFhirExplanationOfBenefit', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirExplanationOfBenefit');
   add(value);
   result := value;
 end;
@@ -60218,7 +59914,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanContact.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('purpose');
   fields.add('name');
@@ -60227,7 +59923,7 @@ begin
 end;
 
 function TFhirInsurancePlanContact.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FTelecomList.sizeInBytes(magic));
 end;
@@ -60298,6 +59994,7 @@ end;
 
 function TFhirInsurancePlanContactList.AddItem(value: TFhirInsurancePlanContact): TFhirInsurancePlanContact;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanContact');
   add(value);
   result := value;
 end;
@@ -60557,7 +60254,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanCoverage.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('network');
@@ -60565,7 +60262,7 @@ begin
 end;
 
 function TFhirInsurancePlanCoverage.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FNetworkList.sizeInBytes(magic));
   inc(result, FBenefitList.sizeInBytes(magic));
@@ -60637,6 +60334,7 @@ end;
 
 function TFhirInsurancePlanCoverageList.AddItem(value: TFhirInsurancePlanCoverage): TFhirInsurancePlanCoverage;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanCoverage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanCoverage');
   add(value);
   result := value;
 end;
@@ -60884,7 +60582,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanCoverageBenefit.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('requirement');
@@ -60892,7 +60590,7 @@ begin
 end;
 
 function TFhirInsurancePlanCoverageBenefit.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FLimitList.sizeInBytes(magic));
 end;
@@ -60977,6 +60675,7 @@ end;
 
 function TFhirInsurancePlanCoverageBenefitList.AddItem(value: TFhirInsurancePlanCoverageBenefit): TFhirInsurancePlanCoverageBenefit;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanCoverageBenefit', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanCoverageBenefit');
   add(value);
   result := value;
 end;
@@ -61196,14 +60895,14 @@ begin
 end;
 
 procedure TFhirInsurancePlanCoverageBenefitLimit.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('value');
   fields.add('code');
 end;
 
 function TFhirInsurancePlanCoverageBenefitLimit.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -61255,6 +60954,7 @@ end;
 
 function TFhirInsurancePlanCoverageBenefitLimitList.AddItem(value: TFhirInsurancePlanCoverageBenefitLimit): TFhirInsurancePlanCoverageBenefitLimit;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanCoverageBenefitLimit', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanCoverageBenefitLimit');
   add(value);
   result := value;
 end;
@@ -61593,7 +61293,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanPlan.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('type');
@@ -61604,7 +61304,7 @@ begin
 end;
 
 function TFhirInsurancePlanPlan.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FCoverageAreaList.sizeInBytes(magic));
@@ -61715,6 +61415,7 @@ end;
 
 function TFhirInsurancePlanPlanList.AddItem(value: TFhirInsurancePlanPlan): TFhirInsurancePlanPlan;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanPlan', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanPlan');
   add(value);
   result := value;
 end;
@@ -61963,7 +61664,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanPlanGeneralCost.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('groupSize');
@@ -61972,7 +61673,7 @@ begin
 end;
 
 function TFhirInsurancePlanPlanGeneralCost.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -62076,6 +61777,7 @@ end;
 
 function TFhirInsurancePlanPlanGeneralCostList.AddItem(value: TFhirInsurancePlanPlanGeneralCost): TFhirInsurancePlanPlanGeneralCost;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanPlanGeneralCost', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanPlanGeneralCost');
   add(value);
   result := value;
 end;
@@ -62308,14 +62010,14 @@ begin
 end;
 
 procedure TFhirInsurancePlanPlanSpecificCost.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('category');
   fields.add('benefit');
 end;
 
 function TFhirInsurancePlanPlanSpecificCost.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FBenefitList.sizeInBytes(magic));
 end;
@@ -62374,6 +62076,7 @@ end;
 
 function TFhirInsurancePlanPlanSpecificCostList.AddItem(value: TFhirInsurancePlanPlanSpecificCost): TFhirInsurancePlanPlanSpecificCost;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanPlanSpecificCost', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanPlanSpecificCost');
   add(value);
   result := value;
 end;
@@ -62606,14 +62309,14 @@ begin
 end;
 
 procedure TFhirInsurancePlanPlanSpecificCostBenefit.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('cost');
 end;
 
 function TFhirInsurancePlanPlanSpecificCostBenefit.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FCostList.sizeInBytes(magic));
 end;
@@ -62672,6 +62375,7 @@ end;
 
 function TFhirInsurancePlanPlanSpecificCostBenefitList.AddItem(value: TFhirInsurancePlanPlanSpecificCostBenefit): TFhirInsurancePlanPlanSpecificCostBenefit;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanPlanSpecificCostBenefit', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanPlanSpecificCostBenefit');
   add(value);
   result := value;
 end;
@@ -62933,7 +62637,7 @@ begin
 end;
 
 procedure TFhirInsurancePlanPlanSpecificCostBenefitCost.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('applicability');
@@ -62942,7 +62646,7 @@ begin
 end;
 
 function TFhirInsurancePlanPlanSpecificCostBenefitCost.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FQualifiersList.sizeInBytes(magic));
 end;
@@ -63013,6 +62717,7 @@ end;
 
 function TFhirInsurancePlanPlanSpecificCostBenefitCostList.AddItem(value: TFhirInsurancePlanPlanSpecificCostBenefitCost): TFhirInsurancePlanPlanSpecificCostBenefitCost;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlanPlanSpecificCostBenefitCost', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlanPlanSpecificCostBenefitCost');
   add(value);
   result := value;
 end;
@@ -63520,7 +63225,7 @@ begin
 end;
 
 procedure TFhirInsurancePlan.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -63539,7 +63244,7 @@ begin
 end;
 
 function TFhirInsurancePlan.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FType_List.sizeInBytes(magic));
@@ -63762,6 +63467,7 @@ end;
 
 function TFhirInsurancePlanList.AddItem(value: TFhirInsurancePlan): TFhirInsurancePlan;
 begin
+  assert(value.ClassName = 'TFhirInsurancePlan', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInsurancePlan');
   add(value);
   result := value;
 end;
@@ -63983,14 +63689,14 @@ begin
 end;
 
 procedure TFhirInvoiceParticipant.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('role');
   fields.add('actor');
 end;
 
 function TFhirInvoiceParticipant.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -64042,6 +63748,7 @@ end;
 
 function TFhirInvoiceParticipantList.AddItem(value: TFhirInvoiceParticipant): TFhirInvoiceParticipant;
 begin
+  assert(value.ClassName = 'TFhirInvoiceParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInvoiceParticipant');
   add(value);
   result := value;
 end;
@@ -64289,7 +63996,7 @@ begin
 end;
 
 procedure TFhirInvoiceLineItem.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('sequence');
   fields.add('chargeItem[x]');
@@ -64297,7 +64004,7 @@ begin
 end;
 
 function TFhirInvoiceLineItem.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FPriceComponentList.sizeInBytes(magic));
 end;
@@ -64382,6 +64089,7 @@ end;
 
 function TFhirInvoiceLineItemList.AddItem(value: TFhirInvoiceLineItem): TFhirInvoiceLineItem;
 begin
+  assert(value.ClassName = 'TFhirInvoiceLineItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInvoiceLineItem');
   add(value);
   result := value;
 end;
@@ -64630,7 +64338,7 @@ begin
 end;
 
 procedure TFhirInvoiceLineItemPriceComponent.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('code');
@@ -64639,7 +64347,7 @@ begin
 end;
 
 function TFhirInvoiceLineItemPriceComponent.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -64739,6 +64447,7 @@ end;
 
 function TFhirInvoiceLineItemPriceComponentList.AddItem(value: TFhirInvoiceLineItemPriceComponent): TFhirInvoiceLineItemPriceComponent;
 begin
+  assert(value.ClassName = 'TFhirInvoiceLineItemPriceComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInvoiceLineItemPriceComponent');
   add(value);
   result := value;
 end;
@@ -65227,7 +64936,7 @@ begin
 end;
 
 procedure TFhirInvoice.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -65248,7 +64957,7 @@ begin
 end;
 
 function TFhirInvoice.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FParticipantList.sizeInBytes(magic));
@@ -65490,6 +65199,7 @@ end;
 
 function TFhirInvoiceList.AddItem(value: TFhirInvoice): TFhirInvoice;
 begin
+  assert(value.ClassName = 'TFhirInvoice', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirInvoice');
   add(value);
   result := value;
 end;
@@ -65874,7 +65584,7 @@ begin
 end;
 
 procedure TFhirPaymentNotice.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -65891,7 +65601,7 @@ begin
 end;
 
 function TFhirPaymentNotice.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
 end;
@@ -66056,6 +65766,7 @@ end;
 
 function TFhirPaymentNoticeList.AddItem(value: TFhirPaymentNotice): TFhirPaymentNotice;
 begin
+  assert(value.ClassName = 'TFhirPaymentNotice', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPaymentNotice');
   add(value);
   result := value;
 end;
@@ -66393,7 +66104,7 @@ begin
 end;
 
 procedure TFhirPaymentReconciliationDetail.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('predecessor');
@@ -66408,7 +66119,7 @@ begin
 end;
 
 function TFhirPaymentReconciliationDetail.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -66523,6 +66234,7 @@ end;
 
 function TFhirPaymentReconciliationDetailList.AddItem(value: TFhirPaymentReconciliationDetail): TFhirPaymentReconciliationDetail;
 begin
+  assert(value.ClassName = 'TFhirPaymentReconciliationDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPaymentReconciliationDetail');
   add(value);
   result := value;
 end;
@@ -66742,14 +66454,14 @@ begin
 end;
 
 procedure TFhirPaymentReconciliationProcessNote.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('type');
   fields.add('text');
 end;
 
 function TFhirPaymentReconciliationProcessNote.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
 end;
 
@@ -66837,6 +66549,7 @@ end;
 
 function TFhirPaymentReconciliationProcessNoteList.AddItem(value: TFhirPaymentReconciliationProcessNote): TFhirPaymentReconciliationProcessNote;
 begin
+  assert(value.ClassName = 'TFhirPaymentReconciliationProcessNote', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPaymentReconciliationProcessNote');
   add(value);
   result := value;
 end;
@@ -67287,7 +67000,7 @@ begin
 end;
 
 procedure TFhirPaymentReconciliation.listFieldsInOrder(fields : TStringList);
-begin
+begin;
   inherited listFieldsInOrder(fields);
   fields.add('identifier');
   fields.add('status');
@@ -67307,7 +67020,7 @@ begin
 end;
 
 function TFhirPaymentReconciliation.sizeInBytesV(magic : integer) : cardinal;
-begin
+begin;
   result := inherited sizeInBytesV(magic);
   inc(result, FIdentifierList.sizeInBytes(magic));
   inc(result, FDetailList.sizeInBytes(magic));
@@ -67540,6 +67253,7 @@ end;
 
 function TFhirPaymentReconciliationList.AddItem(value: TFhirPaymentReconciliation): TFhirPaymentReconciliation;
 begin
+  assert(value.ClassName = 'TFhirPaymentReconciliation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirPaymentReconciliation');
   add(value);
   result := value;
 end;

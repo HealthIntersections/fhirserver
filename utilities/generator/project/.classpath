@@ -15,5 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r5"/>
 	<classpathentry kind="lib" path="C:/Users/graha/.m2/repository/xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="C:/Users/graha/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/graha/.m2/repository/ca/uhn/hapi/fhir/hapi-fhir-base/5.4.0/hapi-fhir-base-5.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

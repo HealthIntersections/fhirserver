@@ -761,8 +761,8 @@ src : String;
 vars : TFslMap<TFHIRObject>;
 list : TFslList<TJsonObject>;
 begin
-conn := FDB.getConnection('Package.server.versions');
-try
+  conn := FDB.getConnection('Package.server.versions');
+  try
     conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
     conn.prepare;
     conn.Execute;

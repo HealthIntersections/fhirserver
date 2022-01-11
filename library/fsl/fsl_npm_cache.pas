@@ -93,6 +93,8 @@ type
     FLock : TFslLock;
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
+    function PathForPackage(id, ver : String) : String;
+
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
     procedure clearCache;
     function checkPackageSize(dir : String) : integer;
@@ -782,7 +784,7 @@ begin
     if not packageExists(id, '') then
       raise EIOException.create('Unable to load package '+id+' as it couldn''t be found');
     ver := latestPackageVersion(id);
-    result := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
+    result := loadPackageFromCache(PathForPackage(id, ver));
   end;
 end;
 
@@ -795,14 +797,14 @@ begin
     autoInstallPackage(id, ver);
     if not packageExists(id, ver) then
       raise EIOException.create('Unable to load package '+id+'#'+ver+' as it couldn''t be found');
-    result := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
+    result := loadPackageFromCache(PathForPackage(id, ver));
   end;
 end;
 
 procedure TFHIRPackageManager.loadPackage(id, ver: String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation);
 var
   c : integer;
-  s : String;
+  p, s : String;
   f : TFileStream;
   npm : TNpmPackage;
   fi : TNpmPackageResource;
@@ -814,12 +816,13 @@ begin
   autoInstallPackage(id, ver);
   if not packageExists(id, ver) then
     raise EIOException.create('Unable to load package '+id+'#'+ver+' as it doesn''t exist');
+  p := PathForPackage(id, ver);
   if (ver = '') then
     ver := latestPackageVersion(id);
 
   work(0, false, 'Scanning Package');
 
-  npm := loadPackageFromCache(FilePath([FFolder, id+'#'+ver]));
+  npm := loadPackageFromCache(p);
   try
     if npm.info.has('dependencies') then
     begin
@@ -835,7 +838,7 @@ begin
     begin
       if not isIgnored(ExtractFileName(fi.Name)) and ((resources = nil) or resources.contains(fi.ResourceType)) then
       begin
-        f := TFileStream.Create(FilePath([FFolder, id+'#'+ver, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
+        f := TFileStream.Create(FilePath([p, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
             loadInfo.OnLoadEvent(fi.ResourceType, fi.id, f);
@@ -909,7 +912,7 @@ begin
 
       pd := nil;
       for t in list do
-        if (t.Id = id) and ((ver = '') or (t.Version = ver)) and ((pd = nil) or isMoreRecentVersion(t.version, pd.version)) then
+        if (t.Id = id) and ((ver = '') or TSemanticVersion.matches(t.Version, ver, semverPatch)) and ((pd = nil) or isMoreRecentVersion(t.version, pd.version)) then
           pd := t;
       if (pd <> nil) then
         self.install(pd.Url);
@@ -969,34 +972,35 @@ begin
 end;
 
 function TFHIRPackageManager.packageExists(id, ver: String): boolean;
-var
-  s, t : String;
 begin
-  if ver = '' then
-  begin
-    result := false;
+  result := PathForPackage(id, ver) <> '';
+end;
+
+function TFHIRPackageManager.PathForPackage(id, ver: String): String;
+var
+  ts : TStringlist;
+  s, n, t : String;
+  a : TSemanticVersionLevel;
+begin
+  result := '';
+  ts := TStringList.Create;
+  try
     for s in TDirectory.GetDirectories(FFolder) do
+      ts.Add(s);
+    for a := semverLabel downto semverMajor do
     begin
-        t := ExtractFileName(s);
-        if t.StartsWith(id+'#') then
-          exit(true);
+      for s in ts do
+      begin
+        n := ExtractFileName(s);
+        t := n.Substring(n.IndexOf('#')+1);
+        n := n.Substring(0, n.IndexOf('#'));
+
+        if (n = id) and ((ver = '') or TSemanticVersion.matches(ver, t, a)) and FileExists(FilePath([s, 'package', 'package.json'])) then
+          exit(s);
+      end;
     end;
-  end
-  else if ver.CountChar('.') = 1 then
-  begin
-    result := false;
-    for s in TDirectory.GetDirectories(FFolder) do
-    begin
-      t := ExtractFileName(s);
-      if t.StartsWith(id+'#'+ver) then
-        exit(true);
-    end;
-  end
-  else
-  begin
-    result := FolderExists(FilePath([FFolder, id+'#'+ver]));
-    if result then
-      result := FileExists(FilePath([FFolder, id+'#'+ver, 'package', 'package.json']));
+  finally
+    ts.Free;
   end;
 end;
 
