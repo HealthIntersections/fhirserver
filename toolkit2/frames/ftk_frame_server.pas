@@ -38,7 +38,8 @@ uses
   fui_lcl_managers,
   fhir_common, fhir_factory, fhir_client,
   ftk_utilities, ftk_constants, ftk_context,
-  ftk_worker_base;
+  ftk_worker_base,
+  dlg_server_upload;
 
 type
   TFrame = TBaseWorkerFrame;
@@ -68,6 +69,7 @@ type
 
   TServerWorkerFrame = class(TFrame)
     btnSearch: TButton;
+    Button1: TButton;
     cbxSearchType: TComboBox;
     cbxGender: TComboBox;
     cbAll: TCheckBox;
@@ -91,6 +93,7 @@ type
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
     procedure btnSearchClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure cbxGenderChange(Sender: TObject);
     procedure edtDobChange(Sender: TObject);
     procedure edtIdChange(Sender: TObject);
@@ -292,6 +295,28 @@ begin
     0: doPatientSearch;
   else
     abort;
+  end;
+end;
+
+procedure TServerWorkerFrame.Button1Click(Sender: TObject);
+begin
+  cursor := crHourGlass;
+  try
+    if FServer.client = nil then
+      Context.OnConnectToServer(self, FServer);
+  finally
+    cursor := crDefault;
+  end;
+
+  if FServer.client <> nil then
+  begin
+    ServerPackageUploadForm := TServerPackageUploadForm.create(self);
+    try
+      ServerPackageUploadForm.client := FServer.client.link;
+      ServerPackageUploadForm.showModal;
+    finally
+      FreeAndNil(ServerPackageUploadForm);
+    end;
   end;
 end;
 

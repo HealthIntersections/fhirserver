@@ -17,7 +17,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <RevisionNr Value="11"/>
+      <RevisionNr Value="12"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
@@ -686,10 +686,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="..\lib\libfhir.txt"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="frames\ftk_frame_igpub.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="IgPubPageFrame"/>
@@ -732,6 +728,12 @@
         <Filename Value="dialogs\dlg_ig_upload.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_server_upload.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServerPackageUploadForm"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

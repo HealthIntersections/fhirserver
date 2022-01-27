@@ -23,14 +23,14 @@ uses
   ftx_sct_combiner, ftx_sct_expressions, ftx_sct_importer, ftx_sct_publisher, 
   ftx_sct_services, ftx_service, ftx_ucum_base, ftx_ucum_expressions, 
   ftx_ucum_handlers, ftx_ucum_search, ftx_ucum_services, ftx_ucum_validators, 
-  v2_base, v2_conformance, v2_dictionary, v2_dictionary_Compiled, 
+  v2_base, v2_conformance, v2_dictionary, v2_dictionary_compiled, 
   v2_dictionary_database, v2_dictionary_v21, v2_dictionary_v22, 
   v2_dictionary_v23, v2_dictionary_v24, v2_dictionary_v25, v2_dictionary_v26, 
   v2_dictionary_v27, v2_dictionary_v231, v2_dictionary_v251, 
-  v2_dictionary_Versions, v2_message, v2_objects, v2_protocol, 
-  dicom_dictionary, dicom_jpegls, dicom_objects, dicom_parser, dicom_Writer, 
+  v2_dictionary_versions, v2_message, v2_objects, v2_protocol, 
+  dicom_dictionary, dicom_jpegls, dicom_objects, dicom_parser, dicom_writer, 
   ftx_lang, fhir_healthcard, fhir_context, fhir_icao, fhir_qrcode, qrcodegen, 
-  fhir_colour_utils, LazarusPackageIntf;
+  fhir_colour_utils, fhir_package_upload, LazarusPackageIntf;
 
 implementation
 

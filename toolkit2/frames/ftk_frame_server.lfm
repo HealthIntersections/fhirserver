@@ -14,9 +14,9 @@ object ServerWorkerFrame: TServerWorkerFrame
     Height = 364
     Top = 0
     Width = 1177
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Metadata'
@@ -40,7 +40,6 @@ object ServerWorkerFrame: TServerWorkerFrame
           Top = 6
           Width = 56
           Caption = 'Search for:'
-          ParentColor = False
         end
         object cbxSearchType: TComboBox
           Left = 70
@@ -100,7 +99,6 @@ object ServerWorkerFrame: TServerWorkerFrame
               Top = 10
               Width = 35
               Caption = 'Name:'
-              ParentColor = False
             end
             object edtName: TEdit
               Left = 54
@@ -116,7 +114,6 @@ object ServerWorkerFrame: TServerWorkerFrame
               Top = 10
               Width = 41
               Caption = 'Gender:'
-              ParentColor = False
             end
             object cbxGender: TComboBox
               Left = 306
@@ -139,7 +136,6 @@ object ServerWorkerFrame: TServerWorkerFrame
               Top = 12
               Width = 25
               Caption = 'DoB:'
-              ParentColor = False
             end
             object edtDob: TEdit
               Left = 448
@@ -156,7 +152,6 @@ object ServerWorkerFrame: TServerWorkerFrame
               Top = 12
               Width = 13
               Caption = 'Id:'
-              ParentColor = False
             end
             object edtId: TEdit
               Left = 566
@@ -219,10 +214,10 @@ object ServerWorkerFrame: TServerWorkerFrame
             ClientWidth = 1161
             TabOrder = 2
             object cbAll: TCheckBox
-              Left = 968
+              Left = 970
               Height = 19
               Top = 4
-              Width = 165
+              Width = 163
               Anchors = [akTop, akRight]
               Caption = 'Iterate and load all matches'
               TabOrder = 0
@@ -232,7 +227,18 @@ object ServerWorkerFrame: TServerWorkerFrame
       end
     end
     object TabSheet3: TTabSheet
-      Caption = 'TabSheet3'
+      Caption = 'Content Management'
+      ClientHeight = 336
+      ClientWidth = 1169
+      object Button1: TButton
+        Left = 8
+        Height = 25
+        Top = 8
+        Width = 104
+        Caption = 'Upload Package'
+        OnClick = Button1Click
+        TabOrder = 0
+      end
     end
   end
 end
