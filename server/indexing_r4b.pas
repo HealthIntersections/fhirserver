@@ -1,4 +1,4 @@
-unit indexing_r4B;
+unit indexing_r4b;
 
 {$IFDEF FPC}
   {$MODE Delphi}

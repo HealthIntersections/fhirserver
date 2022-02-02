@@ -900,7 +900,8 @@ begin
     result := TFhirId.create()
   else if name = 'positiveInt' then
     result := TFhirPositiveInt.create()
-{gen-factory-start}  else if name = 'Address' then
+{gen-factory-start}
+  else if name = 'Address' then
     result := TFhirAddress.create()
   else if name = 'Annotation' then
     result := TFhirAnnotation.create()

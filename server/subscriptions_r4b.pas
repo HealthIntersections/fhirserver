@@ -1,4 +1,4 @@
-unit subscriptions_r4B;
+unit subscriptions_r4b;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

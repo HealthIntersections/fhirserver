@@ -894,7 +894,8 @@ begin
     result := TFhirId.create()
   else if name = 'positiveInt' then
     result := TFhirPositiveInt.create()
-{gen-factory-start}  else if name = 'CodeableReference' then
+{gen-factory-start}
+  else if name = 'CodeableReference' then
     result := TFhirCodeableReference.create()
   else if name = 'RatioRange' then
     result := TFhirRatioRange.create()
