@@ -50,16 +50,17 @@ type
     FMajor: integer;
     FMinor: integer;
     FPatch: integer;
+    FValid : boolean;
+
     procedure SetBuildLabel(const value: String);
 
     procedure applyToDelphiProject(project : String; debug : boolean);
     procedure applyToLazarusProject(project : String; debug : boolean);
-    function GetValid: boolean;
   public
     constructor Create; override;
 
     property Raw : String read FRaw;
-    property valid : boolean read GetValid;
+    property valid : boolean read FValid;
     property Major : integer read FMajor write FMajor;
     property Minor : integer read FMinor write FMinor;
     property Patch : integer read FPatch write FPatch;
@@ -130,13 +131,13 @@ begin
   else if (SameText(ver, 'r2b')) then
     result := TSemanticVersion.fromString('1.4.0')
   else if (SameText(ver, 'r3')) then
-    result := TSemanticVersion.fromString('1.4.0')
-  else if (SameText(ver, 'r4')) then
     result := TSemanticVersion.fromString('3.0.2')
-  else if (SameText(ver, 'r4b')) then
+  else if (SameText(ver, 'r4')) then
     result := TSemanticVersion.fromString('4.0.1')
+  else if (SameText(ver, 'r4b')) then
+    result := TSemanticVersion.fromString('4.3.0')
   else if (SameText(ver, 'r5')) then
-    result := TSemanticVersion.fromString('4.6.0')
+    result := TSemanticVersion.fromString('5.0.0')
   else
   begin
     c := ver.CountChar('.');
@@ -157,24 +158,31 @@ begin
         result.FBuildLabel := r;
         parts[2] := l;
       end;
+      result.FValid := true;
 
       if (length(parts) > 0) then
         if StrToIntDef(parts[0], -1) > -1 then
           result.FMajor := StrToInt(parts[0])
         else if strict then
-          raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer');
+          raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
+        else
+          result.FValid := false;
 
       if (length(parts) > 1) then
         if StrToIntDef(parts[1], -1) > -1 then
           result.FMinor := StrToInt(parts[1])
         else if strict then
-          raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer');
+          raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
+        else
+          result.FValid := false;
 
       if (length(parts) > 2) then
         if StrToIntDef(parts[2], -1) > -1 then
           result.FPatch := StrToInt(parts[2])
         else if strict then
-          raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer');
+          raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
+        else
+          result.FValid := false;
 
       result.Link;
     finally
@@ -235,11 +243,6 @@ begin
   except
     result := '';
   end;
-end;
-
-function TSemanticVersion.GetValid: boolean;
-begin
-  result := FRaw = '';
 end;
 
 procedure TSemanticVersion.incVer(step : TSemanticVersionLevel);

@@ -849,7 +849,7 @@ begin
     result := f.fetchFile(name);
 end;
 
-function TNpmPackage.loadBytes(res : TNpmPackageResource) : TBytes; overload;
+function TNpmPackage.loadBytes(res : TNpmPackageResource) : TBytes;
 var
   f : TNpmPackageFolder;
 begin
