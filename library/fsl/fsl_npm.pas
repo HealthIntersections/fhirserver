@@ -58,8 +58,11 @@ Type
   public
   end;
 
+  TNpmPackageFolder = class;
+
   TNpmPackageResource = class (TNpmPackageObject)
   private
+    FFolder : TNpmPackageFolder;
     FName : String;
     FType : String;
     FId : String;
@@ -161,7 +164,9 @@ Type
     function load(folder, name : String) : TStream; overload;
     function loadBytes(name : String) : TBytes; overload;
     function loadBytes(folder, name : String) : TBytes; overload;
-    function loadResource(resType, id : String) : TStream;
+    function loadBytes(res : TNpmPackageResource) : TBytes; overload;
+    function loadResource(resType, id : String) : TStream; overload;
+    function loadResource(res : TNpmPackageResource) : TStream; overload;
     function loadExampleResource(resType, id : String) : TStream;
     function hasFile(name : String) : boolean; overload;
     function hasFile(folder, name : String) : boolean; overload;
@@ -402,6 +407,7 @@ begin
     f := e as TJsonObject;
     r := TNpmPackageResource.Create;
     FResources.Add(r);
+    r.FFolder := self;
     r.Name := f.str['filename'];
     r.ResourceType := f.str['resourceType'];
     r.Id := f.str['id'];
@@ -794,10 +800,18 @@ begin
   sl := TStringList.create;
   try
     f := findFolder('package');
-    for t in types do
+    if (length(types) = 0) then
+    begin
       for r in f.FResources do
-        if r.ResourceType = t then
-          sl.add(r.Name);
+        sl.add(r.Name);
+    end
+    else
+    begin
+      for t in types do
+        for r in f.FResources do
+          if r.ResourceType = t then
+            sl.add(r.Name);
+    end;
     sl.sort;
     result := sl.toStringArray;
   finally
@@ -833,6 +847,16 @@ begin
   result := nil;
   if (f <> nil) and f.hasFile(name) then
     result := f.fetchFile(name);
+end;
+
+function TNpmPackage.loadBytes(res : TNpmPackageResource) : TBytes; overload;
+var
+  f : TNpmPackageFolder;
+begin
+  f := res.FFolder;
+  result := nil;
+  if (f <> nil) and f.hasFile(res.name) then
+    result := f.fetchFile(res.name);
 end;
 
 function TNpmPackage.loadBytes(name: String): TBytes;
@@ -926,6 +950,21 @@ begin
     for r in f.FResources do
       if (r.resourceType = resType) and (r.id = id) then
         exit(load('package', r.name));
+  end;
+  result := nil;
+end;
+
+function TNpmPackage.loadResource(res : TNpmPackageResource): TStream;
+var
+  f : TNpmPackageFolder;
+  r : TNpmPackageResource;
+begin
+  f := res.FFolder;
+  if (f <> nil) then
+  begin
+    for r in f.FResources do
+      if (r.resourceType = res.ResourceType) and (r.id = res.id) then
+        exit(load(f.name, r.name));
   end;
   result := nil;
 end;

@@ -1,9 +1,5 @@
 unit indexing_r5;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
-
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -31,6 +27,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$i fhir.inc}
 
 interface
 

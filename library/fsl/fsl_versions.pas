@@ -54,9 +54,12 @@ type
 
     procedure applyToDelphiProject(project : String; debug : boolean);
     procedure applyToLazarusProject(project : String; debug : boolean);
+    function GetValid: boolean;
   public
     constructor Create; override;
 
+    property Raw : String read FRaw;
+    property valid : boolean read GetValid;
     property Major : integer read FMajor write FMajor;
     property Minor : integer read FMinor write FMinor;
     property Patch : integer read FPatch write FPatch;
@@ -234,6 +237,11 @@ begin
   end;
 end;
 
+function TSemanticVersion.GetValid: boolean;
+begin
+  result := FRaw = '';
+end;
+
 procedure TSemanticVersion.incVer(step : TSemanticVersionLevel);
 begin
   case step of
@@ -271,11 +279,14 @@ begin
   if (sameText(v1, v2)) then
     exit(true);
   try
-    o1 := fromString(v1);
+    o1 := fromString(v1, false);
     try
-      o2 := fromString(v2);
+      o2 := fromString(v2, false);
       try
-        result := o1.matches(o2, level);
+        if (not o1.valid) or (not o2.valid) then
+          result := o1.raw = o2.raw
+        else
+          result := o1.matches(o2, level);
       finally
         o2.free;
       end;
