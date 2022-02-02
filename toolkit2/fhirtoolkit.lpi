@@ -734,6 +734,7 @@
         <Filename Value="dialogs\dlg_server_upload.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ServerPackageUploadForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

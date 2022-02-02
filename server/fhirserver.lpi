@@ -20,7 +20,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <RevisionNr Value="11"/>
+      <RevisionNr Value="12"/>
     </VersionInfo>
     <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
@@ -79,7 +79,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -311,58 +311,61 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="17">
+    <RequiredPackages Count="18">
       <Item1>
-        <PackageName Value="Pdfium"/>
+        <PackageName Value="fhir4b"/>
       </Item1>
       <Item2>
-        <PackageName Value="fcomp"/>
+        <PackageName Value="Pdfium"/>
       </Item2>
       <Item3>
-        <PackageName Value="tzdb_fpc"/>
+        <PackageName Value="fcomp"/>
       </Item3>
       <Item4>
-        <PackageName Value="idetester"/>
+        <PackageName Value="tzdb_fpc"/>
       </Item4>
       <Item5>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="idetester"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_xver"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir_fui"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir_fsl"/>
       </Item9>
       <Item10>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir5"/>
       </Item10>
       <Item11>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir4"/>
       </Item11>
       <Item12>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir3"/>
       </Item12>
       <Item13>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir2"/>
       </Item13>
       <Item14>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="fhir"/>
       </Item14>
       <Item15>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownTests"/>
       </Item15>
       <Item16>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item16>
       <Item17>
-        <PackageName Value="LCL"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item17>
+      <Item18>
+        <PackageName Value="LCL"/>
+      </Item18>
     </RequiredPackages>
     <Units Count="83">
       <Unit0>

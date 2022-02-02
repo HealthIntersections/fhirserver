@@ -39,7 +39,7 @@ interface
 
 
 uses
-  Classes, SysUtils, EncdDecd, 
+  Classes, SysUtils,
   fsl_base, fsl_utilities, fsl_crypto, fsl_stream, 
   fhir_objects, fhir_xhtml, fhir_uris, 
   fhir4b_base;
