@@ -30,7 +30,7 @@ fi
 echo "## git extrasyn"
 
 if [ ! -d "extrasyn" ] ; then
-    git clone https://github.com/mriscoc/extrasyn
+    git clone https://github.com/grahamegrieve/extrasyn
 else
     cd extrasyn && git pull && cd ..
 fi

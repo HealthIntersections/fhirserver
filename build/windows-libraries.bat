@@ -19,7 +19,7 @@ cd source
 
 git clone https://github.com/grahamegrieve/tzdb
 git clone https://github.com/grahamegrieve/delphi-markdown 
-git clone https://github.com/mriscoc/extrasyn 
+git clone https://github.com/grahamegrieve/extrasyn 
 git clone https://github.com/grahamegrieve/HtmlViewer
 git clone https://github.com/grahamegrieve/lazarus-ide-tester 
 git clone https://github.com/grahamegrieve/ZXing.Delphi
