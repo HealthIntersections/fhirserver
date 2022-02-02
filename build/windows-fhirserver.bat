@@ -39,6 +39,9 @@ echo ## compile packages/fhir3.lpk
 echo ## compile packages/fhir4.lpk
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir4.lpk -q -q
 
+echo ## compile packages/fhir4b.lpk
+%tmp%\tools\lazarus\lazbuild.exe packages/fhir4b.lpk -q -q
+
 echo ## compile packages/fhir5.lpk
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir5.lpk -q -q
 

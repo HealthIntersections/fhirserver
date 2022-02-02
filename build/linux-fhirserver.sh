@@ -31,6 +31,9 @@ $BUILD/tools/lazarus/lazbuild packages/fhir3.lpk -q -q
 echo "## compile packages/fhir4.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir4.lpk -q -q
 
+echo "## compile packages/fhir4b.lpk"
+$BUILD/tools/lazarus/lazbuild packages/fhir4b.lpk -q -q
+
 echo "## compile packages/fhir5.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir5.lpk -q -q
 
