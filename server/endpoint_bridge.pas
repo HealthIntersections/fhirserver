@@ -208,7 +208,7 @@ Type
     FBridge : TBridgeEndPoint;
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
     Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
@@ -368,10 +368,13 @@ function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWeb
 var
   wep : TBridgeWebServer;
 begin
+  inherited makeWebEndPoint(common);
   wep := TBridgeWebServer.Create(Config.name, Config['path'].value, common, self);
   wep.FBridge := self;
   WebEndPoint := wep;
   result := wep;
+  FServerContext.FormalURLPlain := 'http://'+Common.host+nonDefPort(Common.statedPort, 80)+WebEndPoint.PathNoSlash;
+  FServerContext.FormalURLSecure := 'https://'+Common.host+nonDefPort(Common.statedSSLPort, 443)+WebEndPoint.PathNoSlash;
 end;
 
 procedure TBridgeEndPoint.SetCacheStatus(status: boolean);
@@ -933,7 +936,7 @@ begin
   raise EFslException.Create('Authentication is not supported for this endpoint');
 end;
 
-function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 begin
   result := processContent('template-fhir.html', secure, 'Bridge Home Page', 'Home Page');
 end;

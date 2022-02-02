@@ -124,6 +124,7 @@ end;
 
 function TICAOWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FICAOServer := TICAOWebServer.Create(config.name, config['path'].value, common);
   FICAOServer.FJWK := FJWK.link;
   FICAOServer.FJWKSFile := FJWKSFile;

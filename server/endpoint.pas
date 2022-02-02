@@ -123,8 +123,10 @@ type
     FSettings : TFHIRServerSettings;
     FTerminologies : TCommonTerminologies;
     FWebEndPoint : TFhirWebServerEndpoint;
+    FCommon : TFHIRWebServerCommon;
   protected
     FPcm : TFHIRPackageManager;
+    function nonDefPort(port, def : word) : String;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
     destructor Destroy; override;
@@ -135,9 +137,10 @@ type
     property Settings : TFHIRServerSettings read FSettings;
     property Terminologies : TCommonTerminologies read FTerminologies;
     property WebEndPoint : TFhirWebServerEndpoint read FWebEndPoint write FWebEndPoint;
+    property Common : TFHIRWebServerCommon read FCommon;
 
     function summary : String; virtual; abstract;
-    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;
+    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual;
     function cacheSize(magic : integer) : UInt64; virtual;
     procedure clearCache; virtual;
     procedure SetCacheStatus(status : boolean); virtual;
@@ -388,6 +391,7 @@ begin
   FConfig.Free;
   FSettings.Free;
   FDatabase.Free;
+  FCommon.Free;
   inherited;
 end;
 
@@ -426,6 +430,11 @@ begin
  // nothing
 end;
 
+function TFHIRServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+begin
+  FCommon := common.link;
+end;
+
 procedure TFHIRServerEndPoint.SetCacheStatus(status: boolean);
 begin
   if WebEndPoint <> nil then
@@ -446,6 +455,15 @@ procedure TFHIRServerEndPoint.Unload;
 begin
  // nothing
 end;
+
+function TFHIRServerEndPoint.nonDefPort(port, def : word) : String;
+begin
+  if port = def then
+    result := ''
+  else
+    result := ':'+inttostr(port);
+end;
+
 
 end.
 

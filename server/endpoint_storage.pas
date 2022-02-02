@@ -175,7 +175,7 @@ type
     function encodeAsyncResponseAsJson(request: TFHIRRequest; reqUrl: String; secure: boolean; fmt: TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
     procedure StopAsyncTasks;
   protected
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; virtual; abstract;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; virtual; abstract;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; virtual; abstract;
     Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; virtual; abstract;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; virtual; abstract;
@@ -1264,8 +1264,12 @@ Begin
                     end
                     else if request.unparsedParams.contains('error=') then // oAuth failure
                     begin
-                      response.redirect(oRequest.baseUrl+'?'+request.unparsedParams);
-                      result := 'Redirect#2 -> '+oRequest.baseUrl+'?'+request.unparsedParams;
+                      if secure then
+                        s := oRequest.secureURL+'?'+request.unparsedParams
+                      else
+                        s := oRequest.baseUrl+'?'+request.unparsedParams;
+                      response.redirect(s);
+                      result := 'Redirect#2 -> '+s;
                     end
                     else
                     begin
@@ -1277,8 +1281,12 @@ Begin
                       end
                       else
                       begin
-                        response.redirect(oRequest.baseUrl);
-                        result := 'Redirect#5 -> '+oRequest.baseUrl;
+                      if secure then
+                        s := oRequest.secureURL
+                      else
+                        s := oRequest.baseUrl;
+                        response.redirect(s);
+                        result := 'Redirect#5 -> '+s;
                       end;
                     end;
                   end
@@ -1297,7 +1305,7 @@ Begin
                       response.ResponseNo := 200;
                       response.contentType := 'text/html; charset=UTF-8';
                       response.FreeContentStream := true;
-                      response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
+                      response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, sRawHost, path, oRequest.Session, secure));
                     end
                     else
                     begin

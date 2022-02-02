@@ -115,6 +115,7 @@ end;
 
 function TSnomedWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FSnomedServer := TSnomedWebServer.Create(config.name, config['path'].value, common);
   FSnomedServer.FTx := Terminologies.Link;
   WebEndPoint := FSnomedServer;

@@ -240,6 +240,7 @@ end;
 
 function TPackageServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FPackageServer := TFHIRPackageWebServer.Create(config.name, config['path'].value, common);
   FPackageServer.DB := Database.Link;
   FPackageServer.NextScan := FUpdater.FNextRun;
