@@ -213,7 +213,7 @@ type
     function terminologies : TCommonTerminologies;
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
     Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
@@ -1456,10 +1456,13 @@ end;
 
 function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FWeb := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
   FWeb.FEndPoint := self;
   WebEndPoint := FWeb;
   result := FWeb;
+  FServerContext.FormalURLPlain := 'http://'+Common.host+nonDefPort(Common.statedPort, 80)+WebEndPoint.PathNoSlash;
+  FServerContext.FormalURLSecure := 'https://'+Common.host+nonDefPort(Common.statedSSLPort, 443)+WebEndPoint.PathNoSlash;
 end;
 
 procedure TTerminologyServerEndPoint.SetCacheStatus(status: boolean);
@@ -1617,7 +1620,7 @@ begin
   raise EFslException.Create('Authentication is not supported for the terminology server');
 end;
 
-function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   h : THtmlPublisher;
   s : String;

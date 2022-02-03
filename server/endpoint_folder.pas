@@ -110,6 +110,7 @@ end;
 
 function TFolderWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FFolderServer := TFolderWebServer.Create(config.name, config['path'].value, common);
   FFolderServer.FFolder := config['folder'].value;
   FFolderServer.FLog := TLogger.Create(FilePath([FFolderServer.FFolder, 'log.txt']));

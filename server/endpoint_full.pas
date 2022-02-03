@@ -159,7 +159,7 @@ Type
 //    Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
     Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -571,6 +571,7 @@ end;
 
 function TFullServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FWeb := TFullServerWebEndPoint.Create(Config.name, Config['path'].value, common, self);
   FWeb.FEndPoint := self;
   FServerContext.userProvider.OnProcessFile := FWeb.ReturnProcessedFile;
@@ -586,6 +587,8 @@ begin
   WebEndPoint := result;
   FSubscriptionThread.Start;
   FEmailThread.Start;
+  FServerContext.FormalURLPlain := 'http://'+Common.host+nonDefPort(Common.statedPort, 80)+WebEndPoint.PathNoSlash;
+  FServerContext.FormalURLSecure := 'https://'+Common.host+nonDefPort(Common.statedSSLPort, 443)+WebEndPoint.PathNoSlash;
 end;
 
 procedure TFullServerEndPoint.SetCacheStatus(status: boolean);
@@ -989,7 +992,7 @@ begin
   result := result + TFHIRXhtmlComposer.Footer(factory, path, lang, logid);
 end;
 
-function TFullServerWebEndPoint.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFullServerWebEndPoint.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawhost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
@@ -1042,7 +1045,7 @@ begin
           else if Common.StatedSSLPort = 0 then
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + Host + port(Common.StatedSSLPort, 443) + PathNoSlash +
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + rawHost + port(Common.StatedSSLPort, 443) + PathNoSlash +
               '">Secure API</a>)</p>'#13#10);
 
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +

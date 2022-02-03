@@ -653,6 +653,7 @@ var
   client : TFHIRPackageClient;
   list : TFslList<TFHIRPackageInfo>;
 begin
+  sleep(1000);
   client := TFHIRPackageClient.create(PACKAGE_SERVER_BACKUP);
   try
     list := client.search('', '', '', false);

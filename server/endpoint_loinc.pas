@@ -115,6 +115,7 @@ end;
 
 function TLoincWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
+  inherited makeWebEndPoint(common);
   FLoincServer := TLoincWebServer.Create(config.name, config['path'].value, common);
   FLoincServer.FTx := Terminologies.Link;
   WebEndPoint := FLoincServer;

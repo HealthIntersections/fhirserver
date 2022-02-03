@@ -181,7 +181,9 @@ type
     procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; exception : TFhirCodeSystemConceptW = nil);
     function locCode(list: TFhirCodeSystemConceptListW; code, synonym: String): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
+    function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
+    procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -636,6 +638,28 @@ begin
   result := FCs.CodeSystem.isAbstract(TFhirCodeSystemProviderContext(context).concept);
 end;
 
+function TFhirCodeSystemProvider.conceptHasProperty(concept: TFhirCodeSystemConceptW; url, value: string): boolean;
+var
+  p : String;
+  t : TFhirCodeSystemPropertyW;
+  cs : TFhirCodeSystemW;
+  v : TFhirCodeSystemConceptPropertyW;
+begin
+  result := false;
+  p := '';
+  for t in FCs.CodeSystem.properties.forEnum do
+    if (t.uri = url) then
+      p := t.code;
+  for cs in FCs.Supplements do
+    for t in cs.properties.forEnum do
+      if (t.uri = url) then
+        p := t.code;
+  if (p <> '') then
+    for v in concept.properties.forEnum do
+      if (v.code = p) and (v.value <> nil) and (v.value.primitiveValue = value) then
+        exit(true);
+end;
+
 function TFhirCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
 begin
   result := FCs.FCodeSystem.content;
@@ -879,6 +903,19 @@ begin
   result := concept.conceptList.Count > 0;
 end;
 
+procedure TFhirCodeSystemProvider.listChildrenByProperty(code: String; list, children: TFhirCodeSystemConceptListW);
+var
+  item : TFhirCodeSystemConceptW;
+begin
+  for item in list do
+  begin
+    if conceptHasProperty(item, 'http://hl7.org/fhir/concept-properties#parent', code) then
+      children.Add(item.link)
+    else if item.conceptCount > 0 then
+      listChildrenByProperty(code, item.conceptList, children);
+  end;
+end;
+
 function TFhirCodeSystemProvider.locate(code: String; var message : String): TCodeSystemProviderContext;
 begin
   result := DoLocate(code);
@@ -967,6 +1004,7 @@ var
   ex: TFhirExtensionW;
   ctxt : TCodeSystemProviderContext;
   s : TArray<String>;
+  cl : TFhirCodeSystemConceptListW;
 begin
   SetLength(s, 1);
   s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
@@ -976,8 +1014,20 @@ begin
 
   if filter(context, base) then
     list.Add(base.Link, 0);
+  // 1. Add children in the heirarchy
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list, filter, context);
+
+  // 2. find any codes that identify this as a parent in their properties
+  cl := TFhirCodeSystemConceptListW.create;
+  try
+    listChildrenByProperty(base.code, FCs.FCodeSystem.conceptList, cl);
+    for i := 0 to cl.count - 1 do
+      iterateCodes(cl[i], list, filter, context);
+  finally
+    cl.free;
+  end;
+  // 3. Look in http://hl7.org/fhir/StructureDefinition/codesystem-subsumes extension (deprecated now)
   el := base.extensions('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
   try
     for e in el do
@@ -1362,8 +1412,8 @@ begin
             result := 1
           else
           begin
-            mm1 := TFHIRVersions.getMajMin(v1);
-            mm2 := TFHIRVersions.getMajMin(v2);
+            mm1 := TFHIRVersions.getMajMin(v1, false);
+            mm2 := TFHIRVersions.getMajMin(v2, false);
             if (mm1 = '') or (mm2 = '') then
               result := v1.compareTo(v2)
             else
