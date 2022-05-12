@@ -1637,13 +1637,20 @@ end;
 procedure TTerminologyServerStore.listVersions(url: String; list: TStringList);
 var
   cs : TFHIRCodeSystemEntry;
+  v : String;
 begin
   FCommonTerminologies.listVersions(url, list);
   FLock.Lock;
   try
     for cs in FCodeSystems.list do
-      if (cs.url = url) and (cs.version <> '') then
-        list.Add(cs.version);
+    begin
+      if (cs.url = url) then
+      begin
+        v := cs.version;
+        if (v <> '') and (list.IndexOf(v) = -1) then
+          list.Add(v);
+      end;
+    end;
   finally
     FLock.Unlock;
   end;
@@ -1962,7 +1969,8 @@ var
 begin
   for pc in FProviderClasses.Values do
     if (pc.systemUri(nil) = url) and (pc.version(nil) <> '') then
-      list.Add(pc.version(nil));
+      if list.IndexOf(pc.version(nil)) = -1 then
+        list.Add(pc.version(nil));
 end;
 
 procedure TCommonTerminologies.load(txlist: TFHIRServerConfigSection; testing : boolean);
