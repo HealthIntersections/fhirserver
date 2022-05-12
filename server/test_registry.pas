@@ -53,6 +53,7 @@ uses
   fcomp_tests_graph,
   v2_tests, cda_tests, fdb_tests,
   ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
+  fhir_tools_settings,
 
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_diff,
   fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
@@ -74,26 +75,19 @@ implementation
   // * the official tests github repo (local root)
   // * the github repo for the server (local root)
   // the tests don't clone these repos - this must be done first
-
+  //
+  // use the file fhir-tool-settings.conf to set these.
+  // see https://confluence.hl7.org/display/FHIR/Using+fhir-tool-settings.conf
 const
 {$IFDEF WINDOWS}
-  DefaultMDTestRoot =      'c:\work\markdown';
-  DefaultServerTestsRoot = 'c:\work\fhirserver';
-  DefaultFHIRTestsRoot =   'c:\work\org.hl7.fhir\fhir-test-cases';
   DefaultMSSQLDriver = 'SQL Server';
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
 {$IFDEF LINUX}
-  DefaultMDTestRoot =      '/home/gg/markdown';
-  DefaultServerTestsRoot = '/home/gg/fhirserver';
-  DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
 {$IFDEF OSX}
-  DefaultServerTestsRoot = '/users/grahamegrieve/work/fhirserver';
-  DefaultMDTestRoot =      '/users/grahamegrieve/work/markdown';
-  DefaultFHIRTestsRoot =   '/users/grahamegrieve/work/fhir-test-cases';
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
@@ -104,9 +98,9 @@ var
 begin
   ini := TIniFile.Create(filename);
   try
-    ini.WriteString('locations', 'fhirserver', DefaultServerTestsRoot);
-    ini.WriteString('locations', 'fhir-test-cases', DefaultFHIRTestsRoot);
-    ini.WriteString('locations', 'markdown', DefaultMDTestRoot);
+    ini.WriteString('locations', 'fhirserver', ToolsGlobalSettings.fhirServerPath);
+    ini.WriteString('locations', 'fhir-test-cases', ToolsGlobalSettings.testsPath);
+    ini.WriteString('locations', 'markdown', ToolsGlobalSettings.markdownPath);
 
     // database tests:
     ini.WriteString('mssql', 'driver', DefaultMSSQLDriver);
