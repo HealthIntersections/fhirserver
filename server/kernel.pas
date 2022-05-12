@@ -35,7 +35,7 @@ interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
-  {$IFDEF FPC} gui_lcl, {$ELSE} gui_vcl, {$ENDIF}
+  {$IFDEF FPC} gui_lcl, Interfaces, {$ELSE} gui_vcl, {$ENDIF}
 
   IdOpenSSLLoader,
 
@@ -720,6 +720,7 @@ begin
     CoInitialize(nil);
     {$ENDIF}
     fhir_objects.loadMessages;
+    Logging.Log('Loaded');
     tz := TimeZoneBias;
     if tz = 0 then
       Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
@@ -774,17 +775,21 @@ end;
 
 procedure ExecuteFhirServer;
 {$IFDEF FPC}
-var
-  fc : TFakeConsoleForm;
 begin
   if hasCommandLineParam('fake-console') then
   begin
+    RequireDerivedFormResource := True;
+    Application.Title := 'FHIRServer';
+    Application.Scaled := True;
     Application.Initialize;
-    Application.CreateForm(TFakeConsoleForm, fc);
-    fc.Op := ExecuteFhirServerInner;
-    fc.showModal;
-    fc.close;
-    fc.free;
+    Application.CreateForm(TFakeConsoleForm, FakeConsoleForm);
+    FakeConsoleForm.caption := 'FHIRServer';
+    FakeConsoleForm.Op := ExecuteFhirServerInner;
+    Application.run;
+
+
+    FakeConsoleForm.close;
+    FakeConsoleForm.free;
   end
   else
   begin
@@ -806,4 +811,3 @@ end;
 {$ENDIF}
 
 end.
-
