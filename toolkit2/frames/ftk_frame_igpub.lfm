@@ -14,7 +14,6 @@ object IgPubPageFrame: TIgPubPageFrame
     Top = 46
     Width = 296
     Align = alLeft
-    Caption = 'Panel1'
     ClientHeight = 318
     ClientWidth = 296
     TabOrder = 0
@@ -59,7 +58,6 @@ object IgPubPageFrame: TIgPubPageFrame
     Width = 876
     Align = alClient
     BorderWidth = 6
-    Caption = 'Panel2'
     ClientHeight = 318
     ClientWidth = 876
     TabOrder = 2
@@ -90,7 +88,6 @@ object IgPubPageFrame: TIgPubPageFrame
       BorderSpacing.Top = 4
       BorderSpacing.Bottom = 4
       BevelOuter = bvNone
-      Caption = 'Panel7'
       ClientHeight = 18
       ClientWidth = 862
       TabOrder = 1
@@ -110,7 +107,6 @@ object IgPubPageFrame: TIgPubPageFrame
     Top = 0
     Width = 1177
     Align = alTop
-    Caption = 'Panel3'
     ClientHeight = 46
     ClientWidth = 1177
     TabOrder = 3
@@ -126,27 +122,29 @@ object IgPubPageFrame: TIgPubPageFrame
       TabOrder = 0
       object cbxVersions: TComboBox
         Left = 8
-        Height = 23
+        Height = 20
         Hint = 'Publisher Version:'
         Top = 8
         Width = 56
-        ItemHeight = 15
+        ItemHeight = 26
         ParentShowHint = False
         ShowHint = True
         Style = csDropDownList
         TabOrder = 0
+        Text = '0'
       end
       object cbxTxServer: TComboBox
         Left = 72
-        Height = 23
+        Height = 20
         Hint = 'Terminology Server'
         Top = 8
         Width = 160
-        ItemHeight = 15
+        ItemHeight = 26
         ParentShowHint = False
         ShowHint = True
         Style = csDropDownList
         TabOrder = 1
+        Text = '0'
       end
     end
     object Panel4: TPanel
@@ -155,7 +153,6 @@ object IgPubPageFrame: TIgPubPageFrame
       Top = 1
       Width = 655
       Align = alLeft
-      Caption = 'Panel4'
       ClientHeight = 44
       ClientWidth = 655
       TabOrder = 1
@@ -225,14 +222,14 @@ object IgPubPageFrame: TIgPubPageFrame
           OnClick = tbQAClick
         end
         object ToolButton8: TToolButton
-          Left = 496
+          Left = 504
           Height = 40
           Top = 2
           Caption = 'ToolButton8'
           Style = tbsSeparator
         end
         object tbConfig: TToolButton
-          Left = 504
+          Left = 512
           Hint = 'IG configuration'
           Top = 2
           Caption = 'Config'

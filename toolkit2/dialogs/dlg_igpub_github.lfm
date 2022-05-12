@@ -1,7 +1,7 @@
 object IgGitHubDialog: TIgGitHubDialog
   Left = 778
   Height = 485
-  Top = -650
+  Top = 25
   Width = 504
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
@@ -14,7 +14,7 @@ object IgGitHubDialog: TIgGitHubDialog
   LCLVersion = '2.3.0.0'
   object edtGitOrg: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 85
     Width = 480
     Anchors = [akTop, akLeft, akRight]
@@ -56,31 +56,43 @@ object IgGitHubDialog: TIgGitHubDialog
       Height = 25
       Hint = 'Paste a GitHub URL, or a build.fhir.org URL'
       Top = 6
-      Width = 136
+      Width = 96
       Caption = 'Paste'
       OnClick = btnPasteClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
     end
+    object btnCopyGHUrl: TButton
+      Left = 112
+      Height = 25
+      Hint = 'Paste a GitHub URL, or a build.fhir.org URL'
+      Top = 6
+      Width = 96
+      Caption = 'Copy GH'
+      OnClick = btnCopyGHUrlClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
   end
   object Label1: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 64
-    Width = 139
+    Width = 158
     Caption = 'GitHub Repo Organization'
   end
   object Label3: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 8
-    Width = 95
+    Width = 107
     Caption = 'Containing Folder'
   end
   object edtFolder: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 26
     Width = 448
     Anchors = [akTop, akLeft, akRight]
@@ -89,14 +101,14 @@ object IgGitHubDialog: TIgGitHubDialog
   end
   object Label2: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 176
-    Width = 37
+    Width = 43
     Caption = 'Branch'
   end
   object edtBranch: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 192
     Width = 480
     Anchors = [akTop, akLeft, akRight]
@@ -139,14 +151,14 @@ object IgGitHubDialog: TIgGitHubDialog
   end
   object Label4: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 120
-    Width = 103
+    Width = 116
     Caption = 'GitHub Repo Name'
   end
   object edtGitRepoName: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 141
     Width = 480
     Anchors = [akTop, akLeft, akRight]
@@ -154,14 +166,14 @@ object IgGitHubDialog: TIgGitHubDialog
   end
   object Label5: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 232
-    Width = 99
+    Width = 113
     Caption = 'Local Folder Name'
   end
   object edtLocalFolder: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 248
     Width = 480
     Anchors = [akTop, akLeft, akRight]
@@ -169,9 +181,9 @@ object IgGitHubDialog: TIgGitHubDialog
   end
   object Label6: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 284
-    Width = 45
+    Width = 54
     Caption = 'Progress'
   end
   object Memo1: TMemo

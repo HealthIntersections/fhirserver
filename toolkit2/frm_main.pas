@@ -635,9 +635,9 @@ type
     property Context : TToolkitContext read FContext;
 
     // used by the project manager
-    function createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor; overload;
-    function createNewFile(kinds : TSourceEditorKindSet; bytes : TBytes = []) : TToolkitEditor; overload;
-    function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor; overload;
+    function createNewFile(kind : TSourceEditorKind; bytes : TBytes = nil) : TToolkitEditor; overload;
+    function createNewFile(kinds : TSourceEditorKindSet; bytes : TBytes = nil) : TToolkitEditor; overload;
+    function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = nil) : TToolkitEditor; overload;
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
     function openFile(address : String) : TToolkitEditor;
     procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
@@ -1340,7 +1340,7 @@ begin
   openFile(FTempStore.getMRU((sender as TMenuItem).tag));
 end;
 
-function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = []) : TToolkitEditor;
+function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; bytes : TBytes = nil) : TToolkitEditor;
 begin
   result := createNewFile(kind, '', '', bytes);
 end;
@@ -1368,7 +1368,7 @@ begin
 
 end;
 
-function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = []) : TToolkitEditor;
+function TMainToolkitForm.createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = nil) : TToolkitEditor;
 var
   session : TToolkitEditSession;
   editor : TToolkitEditor;

@@ -46,6 +46,7 @@ type
     btnCancel: TButton;
     btnOk: TButton;
     btnPaste: TButton;
+    btnCopyGHUrl: TButton;
     edtLocalFolder: TEdit;
     edtGitOrg: TEdit;
     edtBranch: TEdit;
@@ -64,6 +65,7 @@ type
     Timer1: TTimer;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure btnCopyGHUrlClick(Sender: TObject);
     procedure btnPasteClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -113,6 +115,11 @@ procedure TIgGitHubDialog.btnOkClick(Sender: TObject);
 begin
   if cloneIg then
     ModalResult := mrOk;
+end;
+
+procedure TIgGitHubDialog.btnCopyGHUrlClick(Sender: TObject);
+begin
+  Clipboard.AsText:= 'https://github.com/'+edtGitOrg.text+'/'+edtGitRepoName.text;
 end;
 
 procedure TIgGitHubDialog.btnCancelClick(Sender: TObject);
@@ -170,10 +177,10 @@ begin
       repo := p[4];
       if (length(p) > 6) then
       begin
-        if ('tree' <> p[5]) then
-          raise EFslException.create('Unable to understand IG location '+url)
+        if ('tree' = p[5]) or ('blob' = p[5]) then
+          branch := p[6]
         else
-          branch := p[6];
+          raise EFslException.create('Unable to understand IG location '+url);
       end;
     end;
     if (org = '') or (repo = '') then
