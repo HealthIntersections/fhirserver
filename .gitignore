@@ -79,3 +79,5 @@ exec/Resources
 /library/fhir4b-gen
 /library/fhir5-gen
 /library/fhir5-gen
+
+testcases/snomed/test.cache

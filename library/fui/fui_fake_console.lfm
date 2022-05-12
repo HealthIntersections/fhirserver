@@ -1,7 +1,7 @@
 object FakeConsoleForm: TFakeConsoleForm
-  Left = 705
+  Left = 414
   Height = 409
-  Top = -715
+  Top = 210
   Width = 1039
   Caption = 'Fake Console Form'
   ClientHeight = 409
@@ -10,16 +10,14 @@ object FakeConsoleForm: TFakeConsoleForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Memo1: TMemo
     Left = 0
     Height = 409
     Top = 0
     Width = 1039
     Align = alClient
-    Lines.Strings = (
-      'Memo1'
-    )
+    ReadOnly = True
     TabOrder = 0
   end
   object Timer1: TTimer
