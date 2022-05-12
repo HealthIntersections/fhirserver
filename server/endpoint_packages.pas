@@ -88,7 +88,7 @@ type
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
     procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
     procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
@@ -843,7 +843,7 @@ begin
     result := '';
 end;
 
-procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalURL, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalURL, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
@@ -866,6 +866,12 @@ begin
       filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageURLs where URL like '''+SQLWrapString(canonicalUrl)+'%'')';
     if FHIRVersion <> '' then
       filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+SQLWrapString(getVersion(FHIRVersion))+'%'')';
+
+    if dependency <> '' then
+      if dependency.Contains('#') then
+        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'%'')'
+      else
+        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'#%'')';
 
     conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Kind, PackageVersions.Canonical, Packages.DownloadCount, Security, Packages.ManualToken, Description from Packages, PackageVersions '+
       'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
@@ -1248,7 +1254,7 @@ begin
     begin
       if not pm.has('lastUpdated') then
       begin
-        serveSearch(pm['name'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['sort'], secure, request, response);
+        serveSearch(pm['name'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
         result := 'Search Packages';
       end
       else if pm['lastUpdated'].startsWith('-') then
