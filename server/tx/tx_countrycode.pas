@@ -76,6 +76,7 @@ type
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function version(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -128,6 +129,11 @@ begin
   result := FCodes.Count;
 end;
 
+
+function TCountryCodeServices.version(context: TCodeSystemProviderContext): String;
+begin
+  result := '2018';
+end;
 
 function TCountryCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
 begin
