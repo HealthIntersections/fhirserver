@@ -30,7 +30,8 @@ uses
   v2_dictionary_versions, v2_message, v2_objects, v2_protocol, 
   dicom_dictionary, dicom_jpegls, dicom_objects, dicom_parser, dicom_writer, 
   ftx_lang, fhir_healthcard, fhir_context, fhir_icao, fhir_qrcode, qrcodegen, 
-  fhir_colour_utils, fhir_package_upload, LazarusPackageIntf;
+  fhir_colour_utils, fhir_package_upload, fhir_tools_settings, 
+  LazarusPackageIntf;
 
 implementation
 

@@ -35,8 +35,8 @@ var
 
 begin
   RequireDerivedFormResource := True;
-  Application.Title := 'FHIRToolkit';
-  Application.Scaled := True;
+  Application.Title:='FHIRToolkit';
+  Application.Scaled:=True;
   Application.Initialize;
 
   frm := TToolkitAboutForm.create(Application);

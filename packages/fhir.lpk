@@ -399,6 +399,10 @@
         <Filename Value="..\library\fhir\fhir_package_upload.pas"/>
         <UnitName Value="fhir_package_upload"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_tools_settings.pas"/>
+        <UnitName Value="fhir_tools_settings"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

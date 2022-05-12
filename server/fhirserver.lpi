@@ -13,7 +13,6 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="FHIRServer"/>
-      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <Icon Value="0"/>
     </General>
@@ -79,7 +78,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -230,7 +229,19 @@
             <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
@@ -240,9 +251,14 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
+              <DebugInfoType Value="dsDwarf3"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -252,7 +268,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -WM11.0 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -730,7 +746,6 @@
       <LinkSmart Value="True"/>
       <Options>
         <PassLinkerOptions Value="True"/>
-        <LinkerOptions Value="-R .\"/>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>

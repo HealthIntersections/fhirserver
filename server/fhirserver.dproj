@@ -99,7 +99,7 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>esbpcs_base_db_rt_d17;esbpcs_base_rt_d17;fs17;frx17;bindcompfmx;DBXSqliteDriver;vcldbx;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;TeeDB;bindcomp;inetdb;esbpcs_xtras_db_rt_d17;vclib;inetdbbde;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;Tee;esbpcs_calcs_rt_d17;esbpcs_dates_rt_d17;DataSnapProviderClient;xmlrtl;svnui;ibxpress;DbxCommonDriver;DBXSybaseASEDriver;vclimg;esbpcs_stats_rt_d17;IndyProtocols;dbxcds;DBXMySQLDriver;DatasnapConnectorsFreePascal;MetropolisUILiveTile;esbpcs_calcs_db_rt_d17;esbpcs_xtras_rt_d17;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;FMXTee;TeeUI;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;vclribbon;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;Intraweb;fmxase;vcl;IndyCore;DataSnapConnectors;esbpcs_stats_db_rt_d17;IndyIPCommon;CloudService;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;FmxTeeUI;inet;fsDB17;fmxobj;frxDB17;CodeSiteExpressPkg;esbpcs_dates_db_rt_d17;vclx;frxe17;inetdbxpress;webdsnap;svn;DBXSybaseASADriver;fmxdae;bdertl;dbexpress;adortl;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\qrcode;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\server\dependencies\Indy10\System;..\..\server\dependencies\Indy10\Core;..\..\server\dependencies\Indy10\Protocols;..\..\server\dependencies\jcl;..\..\server\dependencies\d64\debug;..\..\server\library;..\..\server\dependencies\qrcode;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <DCC_Define>USE_VCL_BITMAP;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
@@ -107,7 +107,7 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\static;C:\work\fhirserver\dependencies\Indy10;C:\work\source\ZXing.Delphi\Lib\Classes\Common;C:\work\source\ZXing.Delphi\Lib\Classes\1D Barcodes;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes;C:\work\source\ZXing.Delphi\Lib\Classes\Common\ReedSolomon;C:\work\source\ZXing.Delphi\Lib\Classes\Common\Detector;C:\work\source\ZXing.Delphi\Lib\Classes\Filtering;C:\work\source\ZXing.Delphi\Lib\Classes;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Decoder;C:\work\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Detector;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\server\dependencies\Indy10\System;..\..\server\dependencies\Indy10\Core;..\..\server\dependencies\Indy10\Protocols;..\..\server\dependencies\jcl;..\..\server\library;..\..\server\dependencies\Indy10\OpenSSL;..\..\server\dependencies\Indy10\OpenSSL\static;..\..\server\dependencies\Indy10;..\..\source\ZXing.Delphi\Lib\Classes\Common;..\..\source\ZXing.Delphi\Lib\Classes\1D Barcodes;..\..\source\ZXing.Delphi\Lib\Classes\2D Barcodes;..\..\source\ZXing.Delphi\Lib\Classes\Common\ReedSolomon;..\..\source\ZXing.Delphi\Lib\Classes\Common\Detector;..\..\source\ZXing.Delphi\Lib\Classes\Filtering;..\..\source\ZXing.Delphi\Lib\Classes;..\..\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Decoder;..\..\source\ZXing.Delphi\Lib\Classes\2D Barcodes\Detector;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <DCC_Define>USE_VCL_BITMAP;$(DCC_Define)</DCC_Define>
         <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero</Debugger_RunParams>
@@ -125,26 +125,26 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r5 -packages hl7.fhir.r5.core</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -ini ..\..\server\Exec\fhir.dev.local.ini -password gg -endpoint r5 -packages hl7.fhir.r5.core</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\d32\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\server\dependencies\d32\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_Define>INDY_V10;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
-        <DCC_DcuOutput>C:\work\fhirserver\tmp\units\32\</DCC_DcuOutput>
+        <DCC_DcuOutput>..\..\server\tmp\units\32\</DCC_DcuOutput>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
+        <DCC_ExeOutput>..\..\server\Exec\32\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
         <Debugger_RunParams>-cmd exec -cfg http://tx.fhir.org/config -local c:\temp\zero</Debugger_RunParams>
-        <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
-        <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
+        <DCC_DcuOutput>..\..\server\tmp\units\64\</DCC_DcuOutput>
+        <DCC_ExeOutput>..\..\server\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
         <DCC_Inlining>off</DCC_Inlining>
@@ -161,7 +161,7 @@
         <DCC_USE_BEFORE_DEF>error</DCC_USE_BEFORE_DEF>
         <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
-        <Debugger_CWD>C:\work\fhirserver\exec\64</Debugger_CWD>
+        <Debugger_CWD>..\..\server\exec\64</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_RangeChecking>true</DCC_RangeChecking>
@@ -175,7 +175,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\FHIR.Loinc.Base\LOINCDB.MDB</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini ..\..\server\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\FHIR.Loinc.Base\LOINCDB.MDB</Debugger_RunParams>
         <Manifest_File>None</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
@@ -188,18 +188,18 @@
         <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
         <DCC_PentiumSafeDivide>true</DCC_PentiumSafeDivide>
-        <Debugger_RunParams>-tests -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
+        <Debugger_RunParams>-tests -ini ..\..\server\Exec\fhir.local.ini</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win32)'!=''">
         <DCC_UnitSearchPath>C:\Program Files (x86)\Embarcadero\Studio\21.0\source\DunitX;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_ExeOutput>C:\work\fhirserver\exec\32\</DCC_ExeOutput>
+        <DCC_ExeOutput>..\..\server\exec\32\</DCC_ExeOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -testinsight -version *</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version *</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
-        <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
+        <DCC_ExeOutput>..\..\server\exec\64\</DCC_ExeOutput>
+        <DCC_DcuOutput>..\..\server\tmp\units\64\</DCC_DcuOutput>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
@@ -697,15 +697,16 @@
         <DCCReference Include="web_event.pas"/>
         <DCCReference Include="web_server.pas"/>
         <DCCReference Include="web_source.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_tools_settings.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
-        <BuildConfiguration Include="Release">
-            <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
         <BuildConfiguration Include="Test">
@@ -757,8 +758,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -768,13 +769,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput">
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -1097,6 +1098,10 @@
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
@@ -1107,6 +1112,10 @@
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -1136,6 +1145,10 @@
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
@@ -1161,6 +1174,9 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -1718,6 +1734,10 @@
                         <RemoteDir>Contents\Resources</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
                 </DeployClass>
                 <DeployClass Required="true" Name="ProjectOutput">
                     <Platform Name="Android">
@@ -1744,6 +1764,9 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -1784,17 +1807,17 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

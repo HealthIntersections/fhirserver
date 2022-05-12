@@ -84,7 +84,6 @@ uses
   MarkdownCommonMark in '..\..\source\delphi-markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireball in '..\..\source\delphi-markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\source\delphi-markdown\source\MarkdownProcessor.pas',
-
   CommonTestBase in '..\..\source\delphi-markdown\tests\CommonTestBase.pas',
   Jcl8087 in '..\dependencies\jcl\Jcl8087.pas',
   JclAnsiStrings in '..\dependencies\jcl\JclAnsiStrings.pas',
@@ -559,7 +558,8 @@ uses
   web_cache in 'web_cache.pas',
   web_event in 'web_event.pas',
   web_server in 'web_server.pas',
-  web_source in 'web_source.pas';
+  web_source in 'web_source.pas',
+  fhir_tools_settings in '..\library\fhir\fhir_tools_settings.pas';
 
 begin
   ExecuteFhirServer;

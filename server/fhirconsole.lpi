@@ -24,7 +24,7 @@
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win32">
         <MacroValues Count="1">
-          <Macro3 Name="LCLWidgetType" Value="win32"/>
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
         </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
@@ -68,7 +68,7 @@
       </Item2>
       <Item3 Name="win64">
         <MacroValues Count="1">
-          <Macro3 Name="LCLWidgetType" Value="win32"/>
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
         </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
@@ -173,6 +173,9 @@
         </CompilerOptions>
       </Item5>
       <Item6 Name="osx-m1">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -194,6 +197,12 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
           </Linking>
+          <Other>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
+          </Other>
         </CompilerOptions>
       </Item6>
       <Item7 Name="win64-release">
@@ -237,10 +246,11 @@
           </Other>
         </CompilerOptions>
       </Item7>
-      <SharedMatrixOptions Count="3">
+      <SharedMatrixOptions Count="4">
         <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="601568390877" Modes="osx" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
-        <Item3 ID="116515061841" Modes="win32,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="601568390877" Modes="osx,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item3 ID="986226565548" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
+        <Item4 ID="116515061841" Modes="win32,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -404,7 +414,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="4">
       <Item1>
         <Name Value="EIdSocketError"/>
       </Item1>
@@ -414,6 +424,9 @@
       <Item3>
         <Name Value="ELibraryException"/>
       </Item3>
+      <Item4>
+        <Name Value="&lt;Unknown Class>"/>
+      </Item4>
     </Exceptions>
   </Debugging>
 </CONFIG>
