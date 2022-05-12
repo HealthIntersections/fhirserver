@@ -291,6 +291,7 @@ function TValueSetWorker.findCodeSystem(url, version: String; params: TFHIRExpan
 var
   r : TFHIRMetadataResourceW;
   cs : TFhirCodeSystemW;
+  ts : TStringlist;
 begin
   if (url = '') then
     exit(nil);
@@ -331,7 +332,22 @@ begin
 
 
   if not nullok then
-    raise ETerminologySetup.create('Unable to provide support for code system '+url);
+    if version = '' then
+      raise ETerminologySetup.create('Unable to provide support for code system '+url)
+    else
+    begin
+      ts := TStringList.Create;
+      try
+        FOnListCodeSystemVersions(self, url, ts);
+        if (ts.Count = 0) then
+          raise ETerminologySetup.create('Unable to provide support for code system '+url)
+        else
+          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
+      finally
+        ts.Free;
+      end;
+
+    end;
 end;
 
 function TValueSetWorker.findValueSet(url: String): TFHIRValueSetW;
@@ -537,7 +553,7 @@ begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
       if not (('concept' = ccf.prop) and (ccf.Op in [foIsA, foDescendentOf])) then
         if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
-          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.systemUri(nil));
+          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '"  from the value set '+FValueSet.url+' was not understood in the context of ' + cs.systemUri(nil));
     end;
   end;
 end;
@@ -2029,7 +2045,7 @@ begin
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
                     if f = nil then
-                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.systemUri(nil));
+                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri(nil));
                     filters.Insert(offset, f);
                     if cs.isNotClosed(filter, f) then
                       notClosed := true;
