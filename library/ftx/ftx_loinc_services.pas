@@ -35,7 +35,8 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http,
-  fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_utilities, fhir_factory,
+  fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -526,6 +527,13 @@ end;
 
 // the bytes contain UTF8
 function memU8toString(bytes : TBytes; index, chars : integer) : String;
+{$IFNDEF FPC}
+var
+  utf8str: UTF8String;
+{$ENDIF}
+  var UTFEncoding: TEncoding;
+  theseBytes:TBytes;
+
 begin
   if chars = 0 then
     exit('');
@@ -535,7 +543,13 @@ begin
   setLength(result, chars);
   Move(bytes[index], result[1], chars);
   {$ELSE}
-  result := TEncoding.UTF8.GetString(bytes, index, chars);
+  UTFEncoding:= TEncoding.UTF8;
+  theseBytes := Copy(bytes, index, chars);
+  try
+    result :=UTFEncoding.GetString(theseBytes);
+  except
+    writeln(result)
+  end;
   {$ENDIF}
 end;
 
