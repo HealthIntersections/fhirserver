@@ -158,6 +158,7 @@ Type
     FOnGetValueSet : TGetValueSetEvent;
     FOnGetCSProvider : TGetProviderEvent;
     FOnListCodeSystemVersions : TGetSystemVersionsEvent;
+    FOnGetExpansion : TGetExpansionEvent;
     FParams : TFHIRExpansionParams;
     FAdditionalResources : TFslMetadataResourceList;
     FLanguages : TIETFLanguageDefinitions;
@@ -171,7 +172,7 @@ Type
     procedure listDisplays(displays : TCodeDisplays; c: TFhirCodeSystemConceptW); overload;
     procedure listDisplays(displays: TCodeDisplays; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW); overload;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
     destructor Destroy; override;
   end;
 
@@ -182,6 +183,7 @@ Type
     FId: String;
     FLog : String;
 
+    function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TCodeDisplays; out isabstract : boolean): boolean;
@@ -191,7 +193,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String); overload;
     destructor Destroy; override;
 
     property id : String read FId;
@@ -211,7 +213,6 @@ Type
   private
     FCount : integer;
     FOffset : integer;
-    FOnGetExpansion : TGetExpansionEvent;
     FLang : String;
 
     function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
@@ -236,7 +237,7 @@ Type
     procedure checkCanExpandValueset(uri: String);
     function isValidLang(lang: String): boolean;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion : TGetExpansionEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -267,13 +268,14 @@ end;
 
 { TValueSetWorker }
 
-constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions);
+constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions);
 begin
   Create;
   FFactory := factory;
   FOnGetValueSet := getVS;
   FOnGetCSProvider := getCS;
   FOnListCodeSystemVersions := getVersions;
+  FOnGetExpansion := getExpansion;
   FAdditionalResources := txResources;
   FLanguages := languages;
 end;
@@ -380,9 +382,9 @@ end;
 
 { TValueSetChecker }
 
-constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : string);
+constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : string);
 begin
-  inherited Create(factory, getVs, getCs, getVersions, txResources, languages);
+  inherited Create(factory, getVs, getCs, getVersions, getExpansion, txResources, languages);
   FId := id;
   FOthers := TFslStringObjectMatch.create;
   FOthers.PreventDuplicates;
@@ -397,6 +399,42 @@ begin
   inherited;
 end;
 
+function TValueSetChecker.determineSystemFromExpansion(code: String): String;
+var
+  exp : TFHIRValueSetExpander;
+  dep : TStringList;
+  vse : TFHIRValueSetW;
+  c : TFhirValueSetExpansionContainsW;
+begin
+  try
+    exp := TFHIRValueSetExpander.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion,
+      FAdditionalResources.link, FLanguages.link);
+    try
+      dep := TStringList.Create;
+      try
+        vse := exp.expand(FValueSet, FParams, '', dep, 0, 10000, 0);
+        try
+          result := '';
+          for c in vse.expansion.contains.forEnum do
+            if (c.code = code) then
+              if result = '' then
+                result := c.systemUri
+              else
+                exit('');
+        finally
+          vse.free;
+        end;
+      finally
+        dep.Free;
+      end;
+    finally
+      exp.Free;
+    end;
+  except
+    result := ''; // suppress?
+  end;
+end;
+
 function TValueSetChecker.determineSystem(code: String): String;
 var
   vsi : TFhirValueSetComposeIncludeW;
@@ -405,52 +443,61 @@ var
   match : boolean;
   msg : String;
   loc : TCodeSystemProviderContext;
+  needDoExpansion : boolean;
 begin
   result := '';
-  for vsi in FValueSet.excludes.forEnum do
-    exit('');
+  needDoExpansion := false;
 
+  for vsi in FValueSet.excludes.forEnum do
+    needDoExpansion := true;
   for vsi in FValueSet.includes do
   begin
-    if length(vsi.valueSets) > 0 then
-      exit('');
-    if vsi.systemUri = '' then
-      exit('');
-    if vsi.hasFilters then
-      exit('');
-    cs := findCodeSystem(vsi.systemUri, '', nil, true);
-    if (cs = nil) then
-      exit('');
-    try
-      if (vsi.hasConcepts) then
-      begin
-        for cc in vsi.concepts.forEnum do
+    if (length(vsi.valueSets) > 0) or (vsi.systemUri = '') or vsi.hasFilters then
+      needDoExpansion := true;
+  end;
+
+  if needDoExpansion then
+  begin
+    result := determineSystemFromExpansion(code);
+  end
+  else
+  begin
+    for vsi in FValueSet.includes do
+    begin
+      cs := findCodeSystem(vsi.systemUri, '', nil, true);
+      if (cs = nil) then
+        exit('');
+      try
+        if (vsi.hasConcepts) then
         begin
-          // if cs.casesensitive then
-          match := cc.code = code;
-          if (match) then
+          for cc in vsi.concepts.forEnum do
           begin
+            // if cs.casesensitive then
+            match := cc.code = code;
+            if (match) then
+            begin
+              if (result = '') then
+                result := vsi.systemUri
+              else if (result <> vsi.systemUri) then
+                exit('');
+            end;
+          end;
+        end
+        else
+        begin
+          loc := cs.locate(code, msg);
+          if loc <> nil then
+          begin
+            cs.Close(loc);
             if (result = '') then
               result := vsi.systemUri
             else if (result <> vsi.systemUri) then
               exit('');
           end;
         end;
-      end
-      else
-      begin
-        loc := cs.locate(code, msg);
-        if loc <> nil then
-        begin
-          cs.Close(loc);
-          if (result = '') then
-            result := vsi.systemUri
-          else if (result <> vsi.systemUri) then
-            exit('');
-        end;
+      finally
+        cs.Free;
       end;
-    finally
-      cs.Free;
     end;
   end;
 end;
@@ -494,7 +541,7 @@ begin
         try
           if other = nil then
             raise ETerminologyError.create('Unable to find value set '+s);
-          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FAdditionalResources.link, FLanguages.link, other.url);
+          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url);
           try
             checker.prepare(other, params);
             FOthers.Add(s, checker.Link);
@@ -531,7 +578,7 @@ begin
       try
         if other = nil then
           raise ETerminologyError.create('Unable to find value set ' + s);
-        checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FAdditionalResources.link, FLanguages.link, other.url);
+        checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url);
         try
           checker.prepare(other, FParams);
           FOthers.Add(s, checker.Link);
@@ -1560,10 +1607,9 @@ begin
   end;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; getExpansion: TGetExpansionEvent);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions);
 begin
-  inherited create(factory, getVS, getCS, getVersions, txResources, languages);
-  FOnGetExpansion := getExpansion;
+  inherited create(factory, getVS, getCS, getVersions, getExpansion, txResources, languages);
 end;
 
 procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>);
