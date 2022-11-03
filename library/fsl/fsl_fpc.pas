@@ -119,6 +119,7 @@ type
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
 procedure FileSetModified(const FileName : String; dateTime : TDateTime);
+function FileCanBeReadOnly : boolean;
 
 //function ColorToString(Color: TColor): AnsiString;
 
@@ -461,15 +462,23 @@ begin
     raise EFslException.Create('chmod failed');
 {$ENDIF}
 {$IFDEF OSX}
-begin
-  raise EFslException.Create('Not supported');
-end;
+  // nothing
 {$ENDIF}
 end;
 
 procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 begin
   FileSetDate(filename, DateTimeToFileDate(dateTIme));
+end;
+
+function FileCanBeReadOnly : boolean;
+begin
+  {$IFDEF OSX}
+  result := false;
+  {$ELSE}
+  result := true;
+  {$ENDIF}
+
 end;
 
 { TShortStringHelper }
@@ -694,7 +703,7 @@ begin
   begin
     if FZStream.avail_in = 0 then
     begin
-      FZStream.avail_in := FStream.Read(FBuffer, Length(FBuffer));
+      FZStream.avail_in := FStream.Read(FBuffer[0], Length(FBuffer));
 
       if FZStream.avail_in = 0 then
       begin
@@ -757,14 +766,14 @@ begin
     if localOffset > 0 then
     begin
       SetLength(buf, BufSize);
-      for i := 1 to localOffset div BufSize do ReadBuffer(buf, BufSize);
-      ReadBuffer(buf, localOffset mod BufSize);
+      for i := 1 to localOffset div BufSize do ReadBuffer(buf[0], BufSize);
+      ReadBuffer(buf[0], localOffset mod BufSize);
     end;
   end
   else if (Offset = 0) and (Origin = soEnd) then
   begin
     SetLength(buf, BufSize);
-    while Read(buf, BufSize) > 0 do ;
+    while Read(buf[0], BufSize) > 0 do ;
   end
   else
     raise EIOException.Create('Invalid Operation');
@@ -829,6 +838,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally
@@ -850,6 +860,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally
@@ -871,6 +882,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally

@@ -835,7 +835,7 @@ begin
     FProcess.Execute;
     repeat
       SetLength(Buffer, BUF_SIZE);
-      BytesRead := FProcess.Output.Read(Buffer, BUF_SIZE);
+      BytesRead := FProcess.Output.Read(Buffer[0], BUF_SIZE);
       processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
     until BytesRead = 0;
     FExitCode := FProcess.ExitCode;

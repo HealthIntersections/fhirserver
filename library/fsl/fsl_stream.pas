@@ -6030,8 +6030,8 @@ begin
 
   // --- EOF reached?
   Result := FALSE;
-    FStream.ReadBuffer (Rec, RECORDSIZE);
-    if Rec [0] = #0 then EXIT;   // EOF reached
+  FStream.ReadBuffer(Rec[0], RECORDSIZE);
+  if Rec [0] = #0 then EXIT;   // EOF reached
   Result := TRUE;
 
   ClearDirRec (DirRec);
@@ -6140,7 +6140,7 @@ begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer(Result, {$IFNDEF FPC}0, {$ENDIF}FBytesToGo);
+  FStream.ReadBuffer(Result[0], {$IFNDEF FPC}0, {$ENDIF}FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;
