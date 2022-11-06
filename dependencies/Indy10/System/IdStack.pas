@@ -142,6 +142,9 @@ uses
   Classes,
   IdException, IdStackConsts, IdGlobal, SysUtils;
 
+const
+  DNS_CACHE_MINUTES_EXPIRY = 10;
+
 type
   EIdSocketError = class(EIdException)
   protected
@@ -271,10 +274,30 @@ type
     property Addresses[AIndex: Integer]: TIdStackLocalAddress read GetAddress; default;
   end;
 
+  { TIdStackNameResolution }
+
+  TIdStackNameResolution = class (TObject)
+  private
+    FWhen : TDateTime;
+    FHost : String;
+    FIP : String;
+  public
+    constructor Create(when : TDateTime; host : String; ip : String);
+
+    property When : TDateTime read FWhen write FWhen;
+    property Host : String read FHost write FHost;
+    property IP : String read FIP write FIP;
+  end;
+
   TIdStack = class(TObject)
   protected
     FLocalAddresses: TStrings;
+    FHostNames : TObjectList;
+    FLock : TIdCriticalSection;
+
     //
+    function KnownHostAddress(host : string) : String;
+    procedure RecordKnownHostAddress(host, ip : String);
     procedure IPVersionUnsupported;
     function HostByName(const AHostName: string;
       const AIPVersion: TIdIPVersion = ID_DEFAULT_IP_VERSION): string; virtual; abstract;
@@ -491,6 +514,18 @@ begin
   GStackClass := AStackClass;
 end;
 
+{ TIdStackNameResolution }
+
+constructor TIdStackNameResolution.Create(when: TDateTime; host: String; ip: String);
+begin
+  Inherited Create;
+  FWhen := when;
+  FHost := host;
+  FIP := ip;
+end;
+
+{ TIdPacketInfo }
+
 procedure TIdPacketInfo.Reset;
 begin
   FSourceIP := '';
@@ -613,11 +648,15 @@ constructor TIdStack.Create;
 begin
   // Here for .net
   inherited Create;
+  FHostNames := TStringList.create;
+  FLock := TIdCriticalSection.Create;
 end;
 
 destructor TIdStack.Destroy;
 begin
+  FreeAndNil(FHostNames);
   FreeAndNil(FLocalAddresses);
+  FreeAndNil(FLock);
   inherited Destroy;
 end;
 
@@ -734,6 +773,38 @@ begin
   end;
 end;
 
+function TIdStack.KnownHostAddress(host : string) : String;
+var
+  oldAge : TDateTime;
+  i : integer;
+  t : TIdStackNameResolution;
+begin
+  oldAge := now - (DNS_CACHE_MINUTES_EXPIRY * 0.000694444444444);
+  FLock.Enter;
+  try
+    for i := FHostNames.count - 1 do
+    begin
+      t := FHostNames[i];
+      if (t.when < oldAge) then
+        FHostNames.delete(i)
+      else if t.Host = host then
+        exit(t.IP);
+    end;
+  finally
+    FLock.Leave;
+  end;
+end;
+
+procedure TIdStack.RecordKnownHostAddress(host, ip : String);
+begin
+  FLock.Enter;
+  try
+    FHostNames.add(TIdStackNameResolution.create(now, host, ip));
+  finally
+    FLock.Leave;
+  end;
+end;
+
 function TIdStack.IsIP(AIP: string): Boolean;
 var
   i: Integer;
@@ -763,7 +834,10 @@ end;
 function TIdStack.ResolveHost(const AHost: string;
   const AIPVersion: TIdIPVersion = ID_DEFAULT_IP_VERSION): string;
 begin
-  Result := '';
+  Result := KnownHostAddress(AHost);
+  if (Result <> '') then
+    exit;
+
   case AIPVersion of
     Id_IPv4: begin
         // Sometimes 95 forgets who localhost is
@@ -789,6 +863,7 @@ begin
       IPVersionUnsupported;
     end;
   end;
+  RecordKnownHostAddress(AHost, result);
 end;
 
 function TIdStack.SendTo(ASocket: TIdStackSocketHandle; const ABuffer: TIdBytes;
