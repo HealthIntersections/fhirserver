@@ -70,7 +70,9 @@ type
   TCriticalSectionProcedure = reference to procedure;
   {$ENDIF}
 
-  TFslLock = class(TObject)
+  { TFslLock }
+
+  TFslLock = class(TFslObject)
   Private
     FCritSect: TRTLCriticalSection;
 
@@ -97,6 +99,7 @@ type
     constructor Create; Overload;
     constructor Create(AName: String); Overload;
     destructor Destroy; Override;
+    function link : TFslLock; overload;
 
     // core functionality
     procedure Lock; Overload;
@@ -1012,6 +1015,11 @@ begin
   inherited;
 end;
 
+function TFslLock.link: TFslLock;
+begin
+  result := TFslLock(Inherited link);
+end;
+
 
 function threadToString(id : TThreadId) : String;
 begin
@@ -1078,7 +1086,7 @@ begin
   FLockName[FEntryCount - 1] := Name;
 end;
 
-function TFslLock.TryLock: Boolean;
+function TFslLock.Trylock: Boolean;
 begin
   Result := TryEnterCriticalSection(FCritSect);
   if Result then

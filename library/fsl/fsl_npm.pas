@@ -60,8 +60,11 @@ Type
 
   TNpmPackageFolder = class;
 
+  { TNpmPackageResource }
+
   TNpmPackageResource = class (TNpmPackageObject)
   private
+    FFilename: String;
     FFolder : TNpmPackageFolder;
     FName : String;
     FType : String;
@@ -84,9 +87,11 @@ Type
     property URL : String read FURL write FURL;
     property Version : String read FVersion write FVersion;
     property size : Integer read FSize write FSize;
+    property filename : String read FFilename write FFilename;
 
     function matches(text : String) : boolean;
   end;
+
 
   TNpmPackageFolder = class (TNpmPackageObject)
   private
@@ -160,6 +165,7 @@ Type
 
     function list(folder : String) : TArray<String>;
     function listResources(types : TArray<String>) : TArray<String>;
+    function listResourceInfo(folder : String) : TFslList<TNpmPackageResource>;
     function load(name : String) : TStream; overload;
     function load(folder, name : String) : TStream; overload;
     function loadBytes(name : String) : TBytes; overload;
@@ -415,6 +421,7 @@ begin
     r.Kind := f.str['kind'];
     r.URL := f.str['url'];
     r.Version := f.str['version'];
+    r.FFilename := FilePath([FFolder, f.str['filename']]);
     if FFolder <> '' then
       r.size := FileSize(FilePath([FFolder, r.name]));
   end;
@@ -817,6 +824,20 @@ begin
   finally
     sl.free;
   end;
+end;
+
+function TNpmPackage.listResourceInfo(folder : String): TFslList<TNpmPackageResource>;
+var
+  sl : TStringList;
+  t : String;
+  f : TNpmPackageFolder;
+  r : TNpmPackageResource;
+begin
+  f := findFolder(folder);
+  if (f <> nil) then
+    result := f.FResources.link
+  else
+    result := nil;
 end;
 
 function TNpmPackage.load(folder, name: String): TStream;

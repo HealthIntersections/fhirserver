@@ -1793,6 +1793,7 @@ Type
 function hasCommandLineParam(name : String) : boolean;
 function getCommandLineParam(name : String; out res : String) : boolean;
 function commandLineAsString : String;
+function executableDirectory : String;
 
 
 type
@@ -2645,7 +2646,7 @@ Begin
     result := false
   else
   {$ENDIF}
-  Result := SysUtils.DeleteFile(sFilename);
+    Result := SysUtils.DeleteFile(sFilename);
 End;
 
 
@@ -8335,7 +8336,8 @@ begin
   format := checkFormat(format);
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
-    replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
+    if not replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2)) then ;
+      replaceSubstring(Result, 'y', copy(IntToStr(year), 3, 2));
   if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
     if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
       if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
@@ -15604,7 +15606,7 @@ begin
         if i <= 255 then
         begin
           b.Append('%');
-          b.append(inttostr(i));
+          b.append(inttohex(i, 2));
         end
         else
           raise EFslException.Create('Not handled - non-ansi characters in URLs');
@@ -16972,6 +16974,14 @@ begin
     else
       result := result + ' '+s;
   end
+end;
+
+function executableDirectory : String;
+begin
+  result := PathFolder(paramstr(0));
+  {$IFDEF OSX}
+  result := PathFolder(result.replace('/Contents/MacOS/', ''));
+  {$ENDIF}
 end;
 
 function AllContentHex(s: String): Boolean;

@@ -1035,7 +1035,8 @@ begin
     except
     end;
     try
-      TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
+      if list.Empty then
+        TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
     except
     end;
     pck := nil;
