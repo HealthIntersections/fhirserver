@@ -1841,7 +1841,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR3.seeResource(res : TFHIRResourceProxyV); overload;
+procedure TBaseWorkerContextR3.seeResource(res : TFHIRResourceProxyV);
 begin
   seeResourceProxy(res as TFHIRResourceProxy)
 end;

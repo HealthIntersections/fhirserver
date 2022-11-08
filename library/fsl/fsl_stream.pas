@@ -1353,7 +1353,7 @@ type
   protected
     FStream     : TStream;   // Internal Stream
     FOwnsStream : boolean;   // True if FStream is owned by the TTarArchive instance
-    FBytesToGo  : int64;     // Bytes until the next Header Record
+    FBytesToGo  : NativeInt;     // Bytes until the next Header Record
   public
     constructor Create (Stream   : TStream); overload;
     constructor Create (Filename : String; FileMode : WORD = fmOpenRead or fmShareDenyWrite);  overload;
@@ -6135,12 +6135,12 @@ function  TTarArchive.ReadFile : TBytes;
           // Reads file data for the last Directory Record. The entire file is returned
           // as a large ANSI String.
 var
-  RestBytes : longint;
+  RestBytes : NativeInt;
 begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer(Result[0], {$IFNDEF FPC}0, {$ENDIF}FBytesToGo);
+  FStream.ReadBuffer(Result{$IFDEF FPC}[0]{$ENDIF}, 0, FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;

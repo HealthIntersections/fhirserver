@@ -188,8 +188,8 @@ type
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; virtual; abstract; overload;
-    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; virtual; abstract; overload;
+    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; virtual; abstract;
+    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; virtual; abstract;
 
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;

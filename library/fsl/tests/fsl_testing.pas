@@ -123,8 +123,8 @@ type
     function GetValue(section, name : String): String;
     function testFile(root : String; parts : array of String) : String;
   public
-    constructor Create(filename : String);
-    constructor Create(folder, filename : String);
+    constructor Create(filename : String); overload;
+    constructor Create(folder, filename : String); overload;
     destructor Destroy; override;
     property filename : String read FFilename;
     property value[section, name : String] : String read GetValue; default;

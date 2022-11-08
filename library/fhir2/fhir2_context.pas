@@ -56,8 +56,8 @@ type
      procedure loadResource;  override;
      function wrapResource : TFHIRXVersionResourceWrapper; override;
    public
-     constructor Create(factory : TFHIRFactory; resource : TFHIRResource);
-     constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource);
+     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
+     constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
      destructor Destroy; override;
 
      function link : TFHIRResourceProxy; overload;

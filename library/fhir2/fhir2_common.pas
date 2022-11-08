@@ -123,6 +123,7 @@ type
     procedure SetValue(const Value: String); override;
     function GetTypeV: TFhirCodeableConceptW; override;
     procedure SetTypeV(const Value: TFhirCodeableConceptW); override;
+  public
     function renderText : String; override;
   end;
 

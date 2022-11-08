@@ -580,8 +580,10 @@ begin
 
     svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
     try
+      {$IFDEF FPC}
       if FakeConsoleForm <> nil then
         FakeConsoleForm.OnStop := svc.StopCommand;
+      {$ENDIF}
       if getCommandLineParam('cmd', cmd) then
       begin
         if (cmd = 'exec') or (cmd = 'console') then

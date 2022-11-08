@@ -139,7 +139,7 @@ interface
 {$I IdCompilerDefines.inc}
 
 uses
-  Classes,
+  Classes, Contnrs,
   IdException, IdStackConsts, IdGlobal, SysUtils;
 
 const
@@ -648,7 +648,7 @@ constructor TIdStack.Create;
 begin
   // Here for .net
   inherited Create;
-  FHostNames := TStringList.create;
+  FHostNames := TObjectList.create;
   FLock := TIdCriticalSection.Create;
 end;
 
@@ -782,9 +782,9 @@ begin
   oldAge := now - (DNS_CACHE_MINUTES_EXPIRY * 0.000694444444444);
   FLock.Enter;
   try
-    for i := FHostNames.count - 1 do
+    for i := FHostNames.count - 1 downto 0 do
     begin
-      t := FHostNames[i];
+      t := FHostNames[i] as TIdStackNameResolution;
       if (t.when < oldAge) then
         FHostNames.delete(i)
       else if t.Host = host then

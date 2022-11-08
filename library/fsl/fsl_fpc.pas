@@ -80,6 +80,8 @@ function unicodeChars(s : String) : TUCharArray;
 function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this function does nothing.
 function UCharArrayToString(chars : TUCharArray) : String;
 
+function FileCanBeReadOnly : boolean;
+
 {$IFDEF FPC}
 
 procedure InitializeCriticalSection(out cs : TRTLCriticalSection);
@@ -119,7 +121,6 @@ type
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
 procedure FileSetModified(const FileName : String; dateTime : TDateTime);
-function FileCanBeReadOnly : boolean;
 
 //function ColorToString(Color: TColor): AnsiString;
 
@@ -362,6 +363,17 @@ end;
 
 {$ENDIF}
 
+function FileCanBeReadOnly : boolean;
+begin
+  {$IFDEF OSX}
+  result := false;
+  {$ELSE}
+  result := true;
+  {$ENDIF}
+
+end;
+
+
 {$IFDEF FPC}
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
@@ -469,16 +481,6 @@ end;
 procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 begin
   FileSetDate(filename, DateTimeToFileDate(dateTIme));
-end;
-
-function FileCanBeReadOnly : boolean;
-begin
-  {$IFDEF OSX}
-  result := false;
-  {$ELSE}
-  result := true;
-  {$ENDIF}
-
 end;
 
 { TShortStringHelper }

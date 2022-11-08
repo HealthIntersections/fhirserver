@@ -2366,7 +2366,7 @@ begin
       {$IFDEF FPC}
       rl.sortE(self.compare);
       {$ELSE}
-      rl.sortF(function (const L, R: T): Integer
+      rl.sortF(function (const L, R: TFHIRResourceProxyV): Integer
         var v1, v2, mm1, mm2 : string;
         begin
           v1 := l.version;
@@ -2394,7 +2394,7 @@ begin
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
-        latest := T(nil);
+        latest := nil;
         for tt in rl do
         begin
           if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
