@@ -47,6 +47,22 @@ const
   CODES_TFHIRProjectNodeKind : array [TFHIRProjectNodeKind] of String = ('project', 'folder', 'file');
 
 type
+  { TProjectIgnorer }
+
+  TProjectIgnorer = class (TFslObject)
+  private
+    FFolder : String;
+    FLines : TStringList;
+    function matchesLine(line, path : String) : boolean;
+
+  public
+    constructor Create(folder, ignoreFile: String);
+    destructor Destroy; override;
+    function Link : TProjectIgnorer; overload;
+
+    function ignore(path : String) : boolean;
+  end;
+
   { TFHIRProjectNode }
 
   TFHIRProjectNode = class (TFslTreeNode)
@@ -54,7 +70,10 @@ type
     FId : String;
     FName : String;
     FAddress : String;
+    FIgnoreFile : String;
+    FIgnorer : TProjectIgnorer;
     FKind : TFHIRProjectNodeKind;
+    FFormat : TSourceEditorKind;
     FChildren : TFslList<TFHIRProjectNode>;
     function nameExists(name : String) : boolean;
   protected
@@ -78,6 +97,8 @@ type
     property kind : TFHIRProjectNodeKind read FKind write FKind;
     property name : String read FName write FName;
     property address : String read FAddress write FAddress;
+    property format : TSourceEditorKind read FFormat write FFormat;
+    property ignoreFile : String read FIgnoreFile write FIgnoreFile;
     property children : TFslList<TFHIRProjectNode> read FChildren;
   end;
 
@@ -179,6 +200,7 @@ end;
 destructor TFHIRProjectNode.Destroy;
 begin
   FChildren.Free;
+  FIgnorer.Free;
   inherited Destroy;
 end;
 
@@ -228,6 +250,8 @@ begin
     result['kind'] := CODES_TFHIRProjectNodeKind[FKind];
     result['name'] := FName;
     result['address'] := FAddress;
+    result['ignoreFile'] := FIgnoreFile;
+    result.int['format'] := integer(FFormat);
     if FChildren.Count > 0 then
       for i := 0 to FChildren.count - 1 do
          result.forceArr['children'].add(FChildren[i].toJson);
@@ -247,6 +271,8 @@ begin
     result.FKind := TFHIRProjectNodeKind(StringArrayIndexOf(CODES_TFHIRProjectNodeKind, json['kind']));
     result.FName := json['name'];
     result.FAddress := json['address'];
+    result.FIgnoreFile := json['ignoreFile'];
+    result.FFormat := TSourceEditorKind(json.int['format']);
     for i := 0 to json.forceArr['children'].count - 1 do
        result.FChildren.add(TFHIRProjectNode.fromJson(json.forceArr['children'].Obj[i]));
     result.link;
@@ -257,35 +283,44 @@ end;
 
 procedure TFHIRProjectNode.loadFromAddress;
 var
-  s : String;
+  s, ext : String;
   n : TFHIRProjectNode;
+  i : integer;
 begin
   FChildren.clear;
+
+  if (FIgnorer = nil) then
+    FIgnorer := TProjectIgnorer.create(address, FIgnoreFile);
 
   if address <> '' then
   begin
     for s in TDirectory.getDirectories(address) do
     begin
-      if FileGetAttr(s) and faHidden = 0 then
+      if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s+'/') then
       begin
         n := TFHIRProjectNode.create;
         FChildren.add(n);
         n.kind := pnkFolder;
         n.name := ExtractFileName(s);
         n.address := s;
+        n.FIgnorer := FIgnorer.Link;
         n.loadFromAddress;
       end;
     end;
 
     for s in TDirectory.GetFiles(address) do
     begin
-      if FileGetAttr(s) and faHidden = 0 then
+      if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s) then
       begin
         n := TFHIRProjectNode.create;
         FChildren.add(n);
         n.kind := pnkFile;
         n.name := ExtractFileName(s);
         n.address := s;
+        ext := lowercase(ExtractFileExt(s));
+        i := StringArrayIndexOf(EXTENSIONS_TSourceEditorKind, ext);
+        if (i > -1) then
+          n.format := TSourceEditorKind(i);
       end;
     end;
   end;
@@ -432,6 +467,8 @@ begin
 end;
 
 function TProjectTreeManager.getImageIndex(item: TFHIRProjectNode): integer;
+var
+  fmt : TSourceEditorKind;
 begin
   case item.kind of
     pnkProject :
@@ -444,7 +481,11 @@ begin
       if (item.address <> '') and (Context.EditorForAddress('file:'+item.address) <> nil) then
         result := ICON_OPEN_FILE
       else
-        result := ICON_FILE;
+      begin
+        result := ICONS_TSourceEditorKind[item.format];
+        if (result = -1) then
+          result := ICON_FILE;
+      end
   else
     result := -1;
   end;
@@ -844,6 +885,59 @@ begin
     save;
     FManager.refresh(p);
   end;
+end;
+
+{ TProjectIgnorer }
+
+function TProjectIgnorer.matchesLine(line, path: String): boolean;
+var
+  n : String;
+begin
+  path := path.trim;
+  if path.startsWith('#') then
+    exit(false);
+
+  result := false;
+  n := path.substring(FFolder.length);
+  if (n = line) then
+    exit(true);
+  if (path.endsWith('/')) then
+    path := path.subString(0, path.Length-1);
+  n := extractFileName(path);
+  if (n = line) then
+    exit(true);
+end;
+
+constructor TProjectIgnorer.Create(folder, ignoreFile : String);
+begin
+  inherited Create;
+  FLines := TStringList.create;
+  FFolder := folder;
+  if ignoreFile <> '' then
+  begin
+    FLines.LoadFromFile(FilePath([FFolder, ignoreFile]));
+  end;
+end;
+
+destructor TProjectIgnorer.Destroy;
+begin
+  FLines.free;
+  inherited Destroy;
+end;
+
+function TProjectIgnorer.Link : TProjectIgnorer;
+begin
+  result := TProjectIgnorer(inherited Link);
+end;
+
+function TProjectIgnorer.ignore(path : String) : boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in FLines do
+    if matchesLine(s, path) then
+      exit(true);
 end;
 
 end.

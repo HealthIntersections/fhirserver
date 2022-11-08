@@ -177,6 +177,8 @@ type
     cbxVersions: TComboBox;
     ImageList1: TImageList;
     lvFolders: TListView;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
     mnuAddFolder: TMenuItem;
     mnuAddGit: TMenuItem;
     mnuAddFolders: TMenuItem;
@@ -213,6 +215,8 @@ type
     tbDown: TToolButton;
     ToolButton8: TToolButton;
     tbConfig: TToolButton;
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
     procedure mnuCleanClick(Sender: TObject);
     procedure mnuClearTxClick(Sender: TObject);
     procedure mnuCommandClick(Sender: TObject);
@@ -253,6 +257,9 @@ type
   end;
 
 implementation
+
+uses
+  frm_main;
 
 {$R *.lfm}
 
@@ -428,7 +435,9 @@ begin
   for s in TDirectory.GetFiles(folder) do
   begin
     progress(self, i, false, 'Delete Files  '+folder);
+    {$IFDEF WINDOWS}
     FileSetReadOnly(s, false);
+    {$ENDIF}
     deleteFile(s);
   end;
 end;
@@ -1034,6 +1043,17 @@ begin
   end;
 end;
 
+procedure TIgPubPageFrame.MenuItem1Click(Sender: TObject);
+begin
+  raise Exception.create('todo');
+end;
+
+procedure TIgPubPageFrame.MenuItem2Click(Sender: TObject);
+begin
+  if FManager.FCurrent <> nil then
+    MainToolkitForm.newProject(FManager.FCurrent.name, FManager.FCurrent.folder);
+end;
+
 procedure TIgPubPageFrame.ClearDirectory(dir : String);
 var
   s : String;
@@ -1081,7 +1101,18 @@ begin
       proc.free;
     end;
     {$ELSE}
-    raise EFslException.create('Not done yet');
+    proc := TProcess.create(nil);
+    try
+      proc.CurrentDirectory := FilePath([FManager.FCurrent.FFolder]);
+      proc.Executable := 'open';
+      proc.Parameters.Add('-a');
+      proc.Parameters.Add('Terminal');
+      proc.Parameters.Add(proc.CurrentDirectory);
+      proc.showWindow := swoShow;
+      proc.Execute;
+    finally
+      proc.free;
+    end;
     {$ENDIF}
   end;
 end;

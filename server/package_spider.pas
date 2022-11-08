@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging, fsl_versions,
-  fsl_fetcher,
+  fsl_fetcher, fsl_zulip,
   fdb_manager,
   fsl_npm;
 
@@ -57,6 +57,25 @@ Type
 
   TSendEmailEvent = procedure (dest, subj, body : String) of object;
 
+  TZulipItem = class (TFslObject)
+  private
+    FWhen : TDateTime;
+  end;
+
+  TZulipTracker = class (TFslObject)
+  private
+    FZulip : TZulipSender;
+    FErrors : TFslMap<TZulipItem>;
+  public
+    constructor Create(address, email, apikey : String);
+    destructor Destroy; override;
+
+    function Link : TZulipTracker; overload;
+
+    procedure error(err : String);
+    procedure send;
+  end;
+
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFDBConnection;
@@ -65,6 +84,7 @@ Type
     FOnSendEmail : TSendEmailEvent;
     FTotalBytes : Cardinal;
     FIni : TIniFile;
+    FZulip : TZulipTracker;
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
@@ -78,6 +98,9 @@ Type
     procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
+    constructor Create(zulip : TZulipTracker);
+    destructor Destroy; override;
+
     procedure update(DB : TFDBConnection);
 
     property errors : String read FErrors;
@@ -147,6 +170,18 @@ begin
   end;
 end;
 
+constructor TPackageUpdater.Create(zulip: TZulipTracker);
+begin
+  inherited Create;
+  FZulip := zulip;
+end;
+
+destructor TPackageUpdater.Destroy;
+begin
+  FZulip.Free;
+  inherited;
+end;
+
 procedure TPackageUpdater.DoSendEmail(dest, subj, body: String);
 var
   dt : TDateTime;
@@ -201,6 +236,8 @@ begin
   begin
     FErrors := FErrors + msg+' (from '+source+')'+#13#10;
     FFeedErrors := FFeedErrors + msg+' (from '+source+')'+#13#10;
+    if FZulip <> nil then
+      FZulip.error(msg+' (from '+source+')');
   end;
   Logging.log(msg);
 end;
@@ -299,7 +336,7 @@ var
 begin
   conn := db.GetConnection('test');
   try
-    this := TPackageUpdater.Create;
+    this := TPackageUpdater.Create(nil);
     try
       this.update(conn);
     finally
@@ -344,6 +381,8 @@ begin
         Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
       end;
     end;
+    if FZulip <> nil then
+      FZulip.send;
     log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
   finally
     FIni.Free;
@@ -475,6 +514,53 @@ begin
   package := package.Substring(0, i);
   mask := mask.Substring(0, i);
   result := package = mask;
+end;
+
+{ TZulipTracker }
+
+constructor TZulipTracker.Create(address, email, apikey: String);
+begin
+  inherited create;
+  FZulip := TZulipSender.create(address, email, apikey);
+  FErrors := TFslMap<TZulipItem>.create;
+end;
+
+destructor TZulipTracker.Destroy;
+begin
+  FErrors.Free;
+  FZulip.Free;
+  inherited;
+end;
+
+procedure TZulipTracker.error(err: String);
+begin
+  if not FErrors.ContainsKey(err) then
+    FErrors.Add(err, TZulipItem.create);
+end;
+
+function TZulipTracker.Link: TZulipTracker;
+begin
+  result := TZulipTracker(inherited link);
+end;
+
+procedure TZulipTracker.send;
+var
+  msg : String;
+  s : string;
+  item : TZulipItem;
+begin
+  msg := '';
+  for s in Ferrors.Keys do
+  begin
+    item := FErrors[s];
+    if item.FWhen < now - 1 then
+    begin
+      msg := msg + '* '+s+#13#10;
+      item.FWhen := now;
+    end;
+  end;
+  if msg <> '' then
+    FZulip.sendMessage('tooling/Package Crawlers', 'Packages2', msg);
 end;
 
 end.

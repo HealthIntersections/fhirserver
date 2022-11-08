@@ -829,7 +829,7 @@ begin
         ResourceName := adaptor.ResourceName;
       end
       else if not Fworker.factory.isResourceName(sType) {and not RecogniseCustomResource(sType, aResourceType)} then
-        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, itNotSupported, 'MSG_NO_MODULE', lang, [sType])
+        Raise ERestfulExceptionUnknown.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, itNotSupported, 'MSG_NO_MODULE', lang, [sType])
       else
         ResourceName := sType;
     sId := NextSegment(sURL);

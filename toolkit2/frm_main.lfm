@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
-  Left = 2445
+  Left = 664
   Height = 946
-  Top = 646
+  Top = 49
   Width = 1064
   Caption = 'FHIR Toolkit'
   ClientHeight = 946
@@ -3207,7 +3207,7 @@ object MainToolkitForm: TMainToolkitForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object pnlStatus: TStatusBar
     Left = 0
     Height = 18
@@ -3618,6 +3618,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 46
                   Caption = 'Search:'
+                  ParentColor = False
                   ParentFont = False
                 end
                 object chkCase: TCheckBox
@@ -3669,6 +3670,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 15
                   Caption = 'In:'
+                  ParentColor = False
                   ParentFont = False
                 end
                 object cbxSearchType: TComboBox
@@ -4693,6 +4695,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 13
                   Width = 62
                   Caption = 'Transform'
+                  ParentColor = False
                 end
                 object cbxTextTransform: TComboBox
                   Left = 72

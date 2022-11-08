@@ -1,21 +1,21 @@
 object ProjectSettingsForm: TProjectSettingsForm
-  Left = 1183
-  Height = 162
-  Top = 27
+  Left = 1184
+  Height = 209
+  Top = 227
   Width = 496
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'New Project'
-  ClientHeight = 162
+  ClientHeight = 209
   ClientWidth = 496
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
-    Top = 121
+    Top = 168
     Width = 496
     Align = alBottom
     BevelOuter = bvNone
@@ -47,14 +47,15 @@ object ProjectSettingsForm: TProjectSettingsForm
   end
   object Label3: TLabel
     Left = 14
-    Height = 17
+    Height = 16
     Top = 16
-    Width = 44
+    Width = 39
     Caption = 'Name:'
+    ParentColor = False
   end
   object edtName: TEdit
     Left = 94
-    Height = 33
+    Height = 21
     Top = 14
     Width = 391
     Anchors = [akTop, akLeft, akRight]
@@ -63,14 +64,15 @@ object ProjectSettingsForm: TProjectSettingsForm
   end
   object Label1: TLabel
     Left = 14
-    Height = 17
-    Top = 64
-    Width = 80
+    Height = 16
+    Top = 61
+    Width = 72
     Caption = 'Disk Folder:'
+    ParentColor = False
   end
   object edtFolder: TEdit
     Left = 96
-    Height = 33
+    Height = 21
     Top = 56
     Width = 362
     Anchors = [akTop, akLeft, akRight]
@@ -115,13 +117,73 @@ object ProjectSettingsForm: TProjectSettingsForm
   end
   object Label2: TLabel
     Left = 14
-    Height = 17
+    Height = 16
     Top = 96
-    Width = 454
+    Width = 411
     Caption = 'If you don''t pick a folder, the project is just a collection of other files'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 16
+    Height = 16
+    Top = 133
+    Width = 67
+    Caption = 'Ignore File:'
+    ParentColor = False
+  end
+  object edtIgnoreFile: TEdit
+    Left = 98
+    Height = 21
+    Top = 128
+    Width = 360
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = edtNameChange
+    TabOrder = 3
+  end
+  object btnIgnoreFile: TSpeedButton
+    Left = 462
+    Height = 25
+    Top = 128
+    Width = 23
+    Anchors = [akTop, akRight]
+    Glyph.Data = {
+      36030000424D3803000000000000360000002800000010000000100000000100
+      18000000000000000000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FF078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+      BE078DBE1594C3FF00FFFF00FFFF00FF078DBE47BAE8078DBE96DEFD61CBF764
+      CDF764CDF865CDF765CDF866CEF85EC9F450B9E08BD5EA078DBEFF00FFFF00FF
+      078DBE4FC0EB078DBEA1E6FF6ED5FA71D6FB71D6FA72D6FB72D6FB73D7FC6AD2
+      F757BFE193DAEB078DBEFF00FF078DBE078DBE55C4EB078DBEA8ECFF78DDFB7C
+      DEFB7CDEFB7CDEFB7DDEFB7DDFFB74DAF85EC4E197DDEB078DBE078DBE47BAE8
+      078DBE5CCAED078DBEABF2FF7FE5FB83E6FC82E6FC83E6FC82E6FC83E7FD7AE2
+      F95CC6E198E0EB078DBE078DBE4FC0EB078DBE60CFEC078DBEEFFFFFB9FAFFBD
+      FBFFBEFBFFBDFBFFBDFBFFBFFCFFB5F6FF9ADCECBAEBF3078DBE078DBE55C4EB
+      078DBE6DD8EF078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+      BE078DBE078DBE078DBE078DBE5CCAED078DBE8DEEFA8DEEFA8DEEFA8DEEFA8D
+      EEFA8DEEFA8DEEFA8DEEFA8DEEFA8DEEFA078DBEFF00FFFF00FF078DBE60CFEC
+      078DBEDEFEFFABFFFFACFFFFACFFFFAEFFFFAEFFFFAFFFFFAFFFFFB2FFFFA4FD
+      FF078DBEFF00FFFF00FF078DBE6DD8EF078DBE078DBEDEFDFE9FFCFEAEFDFE62
+      CEE4078DBE078DBE078DBE078DBE078DBE078DBEFF00FFFF00FF078DBE8DEEFA
+      8DEEFA8DEEFA078DBE078DBE078DBE078DBE8DEEFA8DEEFA8DEEFA078DBEFF00
+      FFFF00FFFF00FFFF00FF078DBEDEFEFFABFFFFACFFFFACFFFFAEFFFFAEFFFFAF
+      FFFFAFFFFFB2FFFFA4FDFF078DBEFF00FFFF00FFFF00FFFF00FFFF00FF078DBE
+      DEFDFE9FFCFEAEFDFE62CEE4078DBE078DBE078DBE078DBE078DBEFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+    }
+    OnClick = btnIgnoreFileClick
   end
   object fd: TSelectDirectoryDialog
-    Left = 242
-    Top = 96
+    Left = 16
+    Top = 160
+  end
+  object od: TOpenDialog
+    Title = 'Choose Ignore file'
+    Options = [ofNoChangeDir, ofEnableSizing, ofForceShowHidden, ofViewDetail]
+    Left = 56
+    Top = 160
   end
 end

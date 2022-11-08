@@ -117,7 +117,8 @@ type
     FSMSToken: String;
     FSMSAccount: String;
     FHostSms: String;
-    FLangFile: String; // for status update messages
+    FLangFile: String;
+    FZulipPassword: String; // for status update messages
 
   public
     constructor Create; override;
@@ -147,6 +148,7 @@ type
     Property SMSAccount : String read FSMSAccount;// write FSMSAccount;
     Property SMSToken : String read FSMSToken;// write FSMSToken;
     Property SMSFrom : String read FSMSFrom;// write FSMSFrom;
+    Property ZulipPassword : String read FZulipPassword;
     property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
     property HostSms : String read FHostSms write FHostSms;
@@ -304,6 +306,7 @@ begin
   FSMSFrom := ini['destinations'].section['sms']['from'].value;
   FSMSToken := ini['destinations'].section['sms']['token'].value;
   FSMSAccount := ini['destinations'].section['sms']['account'].value;
+  FZulipPassword := ini['destinations'].section['zulip']['password'].value;
 
   FLangFile := ini.service['langfile'].value;
 end;

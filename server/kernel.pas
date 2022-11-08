@@ -74,6 +74,8 @@ Uses
 type
   TFHIRServiceKernel = class;
 
+  { TFHIRServiceKernel }
+
   TFHIRServiceKernel = class (TSystemService)
   private
     FIni : TFHIRServerConfigFile;
@@ -111,6 +113,8 @@ type
     procedure DoStop; Override;
     procedure dump; override;
 
+    procedure StopCommand(sender : TObject);
+
 //    property loadStore : boolean read FLoadStore write FLoadStore;
     property Ini : TFHIRServerConfigFile read FIni;
     property Settings : TFHIRServerSettings read FSettings;
@@ -134,7 +138,8 @@ var
 
 { TFHIRServiceKernel }
 
-constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
+constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName,
+  Welcome: String; ini: TFHIRServerConfigFile);
 begin
   inherited create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
@@ -305,7 +310,7 @@ begin
   end;
 end;
 
-procedure TFHIRServiceKernel.StartWebServer;
+procedure TFHIRServiceKernel.startWebServer;
 var
   ep : TFHIRServerEndPoint;
 begin
@@ -317,6 +322,11 @@ begin
   begin
     Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
+  end
+  else if FolderExists('/Users/grahamegrieve/work/server/server/web') then
+  begin
+    Logging.log('Web source from /Users/grahamegrieve/work/server/server/web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('/Users/grahamegrieve/work/server/server/web')
   end
   else if FolderExists(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web'])) then
   begin
@@ -337,7 +347,7 @@ begin
   FWebServer.Start;
 end;
 
-procedure TFHIRServiceKernel.StopWebServer;
+procedure TFHIRServiceKernel.stopWebServer;
 begin
   if FWebServer <> nil then
   begin
@@ -359,7 +369,7 @@ begin
   FEndpoints := nil;
 end;
 
-procedure TFHIRServiceKernel.UnloadTerminologies;
+procedure TFHIRServiceKernel.unloadTerminologies;
 begin
   FTerminologies.Free;
   FTerminologies := nil;
@@ -368,6 +378,11 @@ end;
 procedure TFHIRServiceKernel.dump;
 begin
   // nothing?
+end;
+
+procedure TFHIRServiceKernel.StopCommand(sender: TObject);
+begin
+  Stop('User command', false);
 end;
 
 function TFHIRServiceKernel.command(cmd: String): boolean;
@@ -565,6 +580,8 @@ begin
 
     svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
     try
+      if FakeConsoleForm <> nil then
+        FakeConsoleForm.OnStop := svc.StopCommand;
       if getCommandLineParam('cmd', cmd) then
       begin
         if (cmd = 'exec') or (cmd = 'console') then

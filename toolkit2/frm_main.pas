@@ -644,6 +644,7 @@ type
     procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     function closeFiles(path : String) : boolean;
     function openFromURL(url : String) : boolean;
+    procedure newProject(name, src : String);
   end;
 
 var
@@ -2444,16 +2445,23 @@ begin
 end;
 
 procedure TMainToolkitForm.actionCreateNewProjectExecute(Sender: TObject);
+begin
+  newProject('', '');
+end;
+
+procedure TMainToolkitForm.newProject(name, src : String);
 var
   proj : TFHIRProjectNode;
 begin
   proj := TFHIRProjectNode.create;
   try
     proj.id := NewGuidId;
+    proj.name := name;
+    proj.address := src;
     ProjectSettingsForm := TProjectSettingsForm.create(self);
     try
-      ProjectSettingsForm.Project := proj.link;
       ProjectSettingsForm.Projects := FProjectsView.Projects.link;
+      ProjectSettingsForm.Project := proj.link;
       if ProjectSettingsForm.ShowModal = mrOk then
       begin
         proj.loadFromAddress;

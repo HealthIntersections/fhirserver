@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons,
-  fsl_base,
+  fsl_base, fsl_utilities,
   fui_lcl_utilities,
   ftk_project_tree;
 
@@ -46,14 +46,19 @@ type
   TProjectSettingsForm = class(TForm)
     btnOk: TButton;
     btnCancel: TButton;
+    edtIgnoreFile: TEdit;
     edtName: TEdit;
     edtFolder: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
+    od: TOpenDialog;
     Panel1: TPanel;
     fd: TSelectDirectoryDialog;
     SpeedButton1: TSpeedButton;
+    btnIgnoreFile: TSpeedButton;
+    procedure btnIgnoreFileClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -92,6 +97,8 @@ begin
     edtFolder.text := fd.FileName;
   if edtName.text = '' then
     edtName.text := ExtractFileName(edtFolder.Text);
+  if (fileExists(FilePath([fd.fileName, '.gitIgnore']))) then
+    edtIgnoreFile.text := '.gitIgnore';
 end;
 
 procedure TProjectSettingsForm.edtNameChange(Sender: TObject);
@@ -108,12 +115,25 @@ procedure TProjectSettingsForm.btnOkClick(Sender: TObject);
 begin
   project.name := edtName.text;
   project.address := edtFolder.text;
+  project.ignoreFile := edtIgnoreFile.text;
+end;
+
+procedure TProjectSettingsForm.btnIgnoreFileClick(Sender: TObject);
+begin
+  od.InitialDir := edtFolder.text;
+  od.fileName := FilePath([od.InitialDir, edtIgnoreFile.text]);
+  if od.execute then
+    edtIgnoreFile.text := ExtractFileName(od.FileName);
 end;
 
 procedure TProjectSettingsForm.SetProject(AValue: TFHIRProjectNode);
 begin
   FProject.Free;
   FProject := AValue;
+  edtName.text := FProject.name;
+  edtFolder.text := FProject.address;
+  if (edtIgnoreFile.text = '') and (fileExists(FilePath([FProject.address, '.gitIgnore']))) then
+    edtIgnoreFile.text := '.gitIgnore';
 end;
 
 procedure TProjectSettingsForm.SetProjects(AValue: TFslList<TFHIRProjectNode>);
