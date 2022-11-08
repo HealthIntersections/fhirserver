@@ -102,7 +102,6 @@ type
     constructor Create(folder, filter : String; count : integer; clss : TFslTestSuiteCaseClass); overload;
   end;
 
-
   TFslTestThread = class (TThread)
   private
     FProc : TTestMethodWithContext;
@@ -125,6 +124,7 @@ type
     function testFile(root : String; parts : array of String) : String;
   public
     constructor Create(filename : String);
+    constructor Create(folder, filename : String);
     destructor Destroy; override;
     property filename : String read FFilename;
     property value[section, name : String] : String read GetValue; default;
@@ -143,6 +143,8 @@ type
     function SSLKeyFile : String;
     function SSLPassword : String;
     function SSLCAFile : String;
+
+    function ZulipPassword : String;
   end;
 
 var
@@ -407,9 +409,33 @@ end;
 const
   psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
 
+constructor TFslTestSettings.Create(folder, filename: String);
+begin
+  inherited create;
+  if (folder = '') then
+    folder := executableDirectory;
+  FFilename := FilePath([folder, filename]);
+  FIni := TIniFile.create(filename);
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  Logging.log('Test Locations: ');
+  Logging.log('  fhirserver='+FServerTestsRoot);
+  Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
+  Logging.log('  markdown='+MDTestRoot);
+  Logging.log('  snomed='+GSnomedDataFile);
+end;
+
 constructor TFslTestSettings.Create(filename: String);
 begin
   inherited create;
+  if (not FileExists(filename)) then
+    raise EFslException.create('Test Settings File '+filename+' not found');
   FFilename := filename;
   FIni := TIniFile.create(filename);
   if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
@@ -498,6 +524,11 @@ begin
   end;
 end;
 
+function TFslTestSettings.ZulipPassword: String;
+begin
+  result := Fini.ReadString('zulip', 'password', '');
+end;
+
 function TFslTestSettings.GetValue(section, name : String): String;
 begin
   result := FIni.ReadString(section, name, '');
@@ -530,7 +561,7 @@ begin
 end;
 
 initialization
-  TestSettings := TFslTestSettings.Create('fhir-tests.ini');
+  TestSettings := TFslTestSettings.Create('', 'fhir-tests.ini');
 finalization
   TestSettings.Free;
 end.

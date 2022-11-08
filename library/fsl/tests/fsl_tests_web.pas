@@ -40,7 +40,7 @@ uses
   IdLogDebug, IdServerInterceptLogFile,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   fsl_json, fsl_utilities,
-  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto;
+  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto, fsl_zulip;
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
@@ -70,6 +70,11 @@ type
     procedure TestCert;
     procedure TestEc256;
     procedure TestHash;
+  End;
+
+  TZulipTests = Class (TFslTestCase)
+  Published
+    procedure TestSend;
   End;
 
   TOpenSSLTests = Class (TFslTestCase)
@@ -378,6 +383,7 @@ begin
   RegisterTest('Web.Language Parser Tests', TLangParserTests.Suite);
   RegisterTest('Web.OpenSSL', TOpenSSLTests.Suite);
   RegisterTest('Web.JWT Tests', TJWTTests.Suite);
+  RegisterTest('Web.Zulip Tests', TZulipTests.Suite);
 end;
 
 { TOpenSSLTests }
@@ -574,6 +580,25 @@ begin
       // nothing
     end;
   end;
+end;
+
+{ TZulipTests }
+
+procedure TZulipTests.TestSend;
+var
+  zs : TZulipSender;
+begin
+  if TestSettings.ZulipPassword <> '' then
+  begin
+    zs := TZulipSender.Create('https://fhir.zulipchat.com/api/v1/messages',
+      'pascal-github-bot@chat.fhir.org', TestSettings.ZulipPassword);
+    try
+      zs.sendMessage('testing', 'Pascal Library Test', 'This is a test message [2]');
+    finally
+      zs.free;
+    end;
+  end;
+  assertPass;
 end;
 
 end.
