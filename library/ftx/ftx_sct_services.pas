@@ -541,6 +541,7 @@ operations
     FEditionName : String;
 
     function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
+    function filterEquals(id : UInt64): TCodeSystemProviderFilterContext;
     function filterIsA(id : UInt64; includeBase : boolean): TCodeSystemProviderFilterContext;
 
   //  Function FindWord(s : String; var index : Integer) : Boolean;
@@ -4041,6 +4042,23 @@ begin
   TSnomedFilterContext(ctxt).free;
 end;
 
+function TSnomedServices.filterEquals(id : UInt64): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  index : cardinal;
+begin
+  res := TSnomedFilterContext.Create;
+  try
+    if not Concept.FindConcept(id, index) then
+      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    Setlength(res.descendants, 0);
+    res.descendants[0] := index;
+    result := TSnomedFilterContext(res.link);
+  finally
+    res.Free;
+  end;
+end;
+
 function TSnomedServices.filterIsA(id : UInt64; includeBase : boolean): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
@@ -4090,7 +4108,9 @@ begin
     else if op = foDescendentOf then
       result := filterIsA(id, false)
     else if op = foIn then
-      result := filterIn(id);
+      result := filterIn(id)
+    else if op = foEqual then
+      result := filterEquals(id)
 end;
 
 function TSnomedServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
