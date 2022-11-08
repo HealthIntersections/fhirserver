@@ -156,7 +156,7 @@ type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker): TFHIRRequest;
-    Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
+    Procedure ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -1956,7 +1956,7 @@ begin
   end;
 end;
 
-Procedure TStorageWebEndpoint.ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
+Procedure TStorageWebEndpoint.ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
   relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
 var
   oComp: TFHIRComposer;
@@ -2093,7 +2093,7 @@ begin
       if response.contentType = '' then
         response.contentType := 'text/plain';
       b := TEncoding.UTF8.GetBytes(oResponse.Body);
-      stream.Write(b, Length(b));
+      stream.Write(b[0], Length(b));
     end;
     stream.Position := 0;
     if gzip and (stream.Size > 0) then
