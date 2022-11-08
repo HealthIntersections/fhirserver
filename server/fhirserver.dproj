@@ -142,7 +142,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -cfg http://tx.fhir.org/config -local c:\temp\zero</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg Z:\work\server\exec\fhirserver.cfg -local c:\temp\zero</Debugger_RunParams>
         <DCC_DcuOutput>..\..\server\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>..\..\server\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -196,7 +196,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -xtestinsight -version *</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg https://storage.googleapis.com/tx-fhir-org -local c:\temp\zero -testinsight -version *</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>..\..\server\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>..\..\server\tmp\units\64\</DCC_DcuOutput>
@@ -210,6 +210,8 @@
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Release>3</VerInfo_Release>
         <DCC_Optimize>false</DCC_Optimize>
+        <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -698,6 +700,7 @@
         <DCCReference Include="web_server.pas"/>
         <DCCReference Include="web_source.pas"/>
         <DCCReference Include="..\library\fhir\fhir_tools_settings.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_zulip.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

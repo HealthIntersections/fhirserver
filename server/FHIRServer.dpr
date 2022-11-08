@@ -559,7 +559,8 @@ uses
   web_event in 'web_event.pas',
   web_server in 'web_server.pas',
   web_source in 'web_source.pas',
-  fhir_tools_settings in '..\library\fhir\fhir_tools_settings.pas';
+  fhir_tools_settings in '..\library\fhir\fhir_tools_settings.pas',
+  fsl_zulip in '..\library\fsl\fsl_zulip.pas';
 
 begin
   ExecuteFhirServer;

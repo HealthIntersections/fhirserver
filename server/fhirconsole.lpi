@@ -414,7 +414,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="4">
+    <Exceptions Count="5">
       <Item1>
         <Name Value="EIdSocketError"/>
       </Item1>
@@ -427,6 +427,9 @@
       <Item4>
         <Name Value="&lt;Unknown Class>"/>
       </Item4>
+      <Item5>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item5>
     </Exceptions>
   </Debugging>
 </CONFIG>
