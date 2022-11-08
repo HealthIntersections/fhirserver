@@ -54,6 +54,7 @@ type
     FEndPoint : TPackageServerEndPoint;
     FNextRun : TDateTime;
     FLastEmail : TDateTime;
+    FZulip : TZulipTracker;
     procedure RunUpdater;
     procedure doSendEmail(dest, subj, body : String);
   protected
@@ -318,11 +319,14 @@ begin
   FDB := db;
   FEndPoint := endPoint;
   FNextRun := now + 1/(24 * 60);
+  FZulip := TZulipTracker.Create('https://fhir.zulipchat.com/api/v1/messages',
+      'pascal-github-bot@chat.fhir.org', FEndPoint.Settings.ZulipPassword);
 end;
 
 destructor TPackageUpdaterThread.Destroy;
 begin
   FDB.Free;
+  FZulip.Free;
   inherited;
 end;
 
@@ -355,7 +359,7 @@ var
 begin
   conn := FDB.getConnection('server.packages.update');
   try
-    upd := TPackageUpdater.create;
+    upd := TPackageUpdater.create(FZulip.link);
     try
       upd.OnSendEmail := doSendEmail;
       try
@@ -870,6 +874,8 @@ begin
     if dependency <> '' then
       if dependency.Contains('#') then
         filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'%'')'
+      else if dependency.Contains('|') then
+        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency.Replace('|', '#'))+'%'')'
       else
         filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'#%'')';
 

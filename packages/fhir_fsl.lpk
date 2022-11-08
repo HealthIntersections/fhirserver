@@ -172,6 +172,10 @@
         <Filename Value="..\library\fsl\fsl_versions.pas"/>
         <UnitName Value="fsl_versions"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_zulip.pas"/>
+        <UnitName Value="fsl_zulip"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
