@@ -36,10 +36,35 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_versions,
   fsl_npm, fsl_npm_cache,
-  fhir_objects, fhir_factory, fhir_common, 
+  fhir_objects, fhir_factory, fhir_common, fhir_parser,
   fhir4_types, fhir4_resources, fhir4_resources_base;
 
 type
+  { TFHIRResourceProxy }
+
+  TFHIRResourceProxy = class (TFHIRResourceProxyV)
+  private
+    // always available
+    FFactory : TFHIRFactory;
+
+    // for lazy loading
+    FWorker : TFHIRWorkerContextV;
+    FInfo : TNpmPackageResource;
+    FLock : TFslLock;
+
+    function GetResource : TFHIRResource;
+  protected
+    procedure loadResource;  override;
+    function wrapResource : TFHIRXVersionResourceWrapper; override;
+  public
+    constructor Create(factory : TFHIRFactory; resource : TFHIRResource);
+    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource);
+    destructor Destroy; override;
+
+    function link : TFHIRResourceProxy; overload;
+    property resource : TFHIRResource read GetResource;
+  end;
+
   TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;
@@ -155,6 +180,93 @@ implementation
 
 uses
   fhir4_utilities, fhir4_json, fhir_utilities;
+
+{ TFHIRResourceProxy }
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory;
+  resource: TFHIRResource);
+begin
+  if resource is TFHIRMetadataResource then
+    inherited Create(resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
+  else
+    inherited Create(resource, '', '');
+  FFactory := factory;
+end;
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
+  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+begin
+  inherited create(fhirVersionRelease4, pi.resourceType, pi.id, pi.url, pi.version);
+  FFactory := factory;
+  FWorker := worker;
+  FInfo := pi;
+  FLock := lock;
+end;
+
+destructor TFHIRResourceProxy.Destroy;
+begin
+  FFactory.Free;
+  FWorker.Free;
+  FInfo.Free;
+  FLock.Free;
+  inherited Destroy;
+end;
+
+function TFHIRResourceProxy.link : TFHIRResourceProxy;
+begin
+  result := TFHIRResourceProxy(inherited link);
+end;
+
+function TFHIRResourceProxy.GetResource: TFHIRResource;
+begin
+  result := ResourceV as TFHIRResource;
+end;
+
+procedure TFHIRResourceProxy.loadResource;
+var
+  p : TFHIRParser;
+  stream : TStream;
+  r : TFHIRResourceV;
+begin
+  if FInfo = nil then
+    exit; // not lazy loading
+
+  FLock.lock;
+  try
+    if FResourceV <> nil then
+      exit;
+  finally
+    FLock.unlock;
+  end;
+  r := nil;
+
+  p := FFactory.makeParser(FWorker.link, ffJson, THTTPLanguages.Create('en'));
+  try
+    stream := TFileStream.create(FInfo.filename, fmOpenRead);
+    try
+      try
+        r := p.parseResource(stream);
+      except
+        on e : Exception do
+          raise EFHIRException.create('Error reading '+fInfo.filename+': '+e.message);
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    p.free;
+  end;
+   try
+    FResourceV := r;
+  finally
+    FLock.unlock;
+  end;
+end;
+
+function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
+begin
+  result := FFactory.wrapResource(resource.link);
+end;
 
 { TFHIRWorkerContext }
 

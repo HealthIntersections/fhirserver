@@ -62,6 +62,7 @@ const
     {$IFDEF FHIR_SEARCHPARAMETER}frtSearchParameter, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition, {$ENDIF}
     frtValueSet];
+  TERMINOLOGY_RESOURCES : Array of String = ['ValueSet', 'ConceptMap'];
 
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;
@@ -273,9 +274,17 @@ type
   private
     function GetXmlId: String;
     procedure SetmlId(const Value: String);
+    function GetHasUrl : boolean;
+    function GetUrl : String;
+    function GetHasVersion : boolean;
+    function GetVersion : String;
   public
     property xmlId : String read GetXmlId write SetmlId;
 
+    property hasUrlGen : boolean read GetHasUrl;
+    property urlGen : String read GetUrl;
+    property hasVersionGen : boolean read GetHasVersion;
+    property versionGen : String read GetVersion;
     procedure checkNoImplicitRules(place, role : String);
   end;
 
@@ -2533,6 +2542,87 @@ procedure TFHIRResourceHelper.SetmlId(const Value: String);
 begin
   id := value;
 end;
+
+function TFHIRResourceHelper.GetHasUrl : boolean;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).url <> ''
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).url <> ''
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).url <> ''
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).url <> ''
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).url <> ''
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).url <> ''
+  else
+    result := false;
+end;
+
+function TFHIRResourceHelper.GetUrl : String;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).url
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).url
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).url
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).url
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).url
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).url
+  else
+    result := '';
+end;
+
+function TFHIRResourceHelper.GetHasVersion : boolean;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).version <> ''
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).version <> ''
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).version <> ''
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).version <> ''
+  else if self is TFHIRQuestionnaire then
+    result := TFHIRQuestionnaire(self).version <> ''
+  else if self is TFHIRSearchParameter then
+    result := TFHIRQuestionnaire(self).version <> ''
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).version <> ''
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).version <> ''
+  else
+    result := false;
+end;
+
+function TFHIRResourceHelper.GetVersion : String;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).version
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).version
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).version
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).version
+  else if self is TFHIRQuestionnaire then
+    result := TFHIRQuestionnaire(self).version
+  else if self is TFHIRSearchParameter then
+    result := TFHIRQuestionnaire(self).version
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).version
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).version
+  else
+    result := '';
+end;
+
 
 { TFHIRBundleHelper }
 

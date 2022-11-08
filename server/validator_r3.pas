@@ -64,7 +64,7 @@ type
     Function Link : TFHIRServerWorkerContextR3; overload;
 
     procedure checkResource(r : TFhirResource);
-    procedure SeeResource(r : TFhirResource); override;
+    procedure SeeResourceProxy(r : TFhirResourceProxy); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
@@ -178,21 +178,17 @@ begin
   result := FPatientIdExpressions[rt];
 end;
 
-procedure TFHIRServerWorkerContextR3.SeeResource(r : TFhirResource);
+procedure TFHIRServerWorkerContextR3.SeeResourceProxy(r : TFhirResourceProxy);
 var
   sp : TFhirSearchParameter;
   b : TFhirEnum;
   s : string;
 begin
-  checkResource(r);
-  if r is TFHIRDomainResource then
-    TFHIRDomainResource(r).text := nil;
-
-  if (r.ResourceType in [frtValueSet, frtConceptMap, frtCodeSystem]) then
+  if StringArrayExists(TERMINOLOGY_RESOURCES, r.fhirType) then
     FTerminologyServer.SeeSpecificationResource(r)
-  else if r.resourceType = frtSearchParameter then
+  else if r.fhirType = 'SearchParameter' then
   begin
-    sp := r as TFhirSearchParameter;
+    sp := r.resource as TFhirSearchParameter;
     for b in sp.base do
     begin
       s := b.value+'.'+sp.code;
@@ -200,22 +196,22 @@ begin
         FSearchParameters.Add(s, sp.link)
     end;
   end
-  else if r.resourceType = frtCompartmentDefinition then
-    FCompartments.Add(TFhirCompartmentDefinition(r).url, TFhirCompartmentDefinition(r).link)
-  else if r.resourceType = frtQuestionnaire then
+  else if r.fhirType = 'CompartmentDefinition' then
+    FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
+  else if r.fhirType = 'Questionnaire' then
   begin
     FLock.lock;
     try
       if FQuestionnaires.ContainsKey(r.id) then
-        FQuestionnaires[r.id] := (r as TFhirQuestionnaire).link
+        FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
       else
-        FQuestionnaires.add(r.id, (r as TFhirQuestionnaire).link)
+        FQuestionnaires.add(r.id, (r.resource as TFhirQuestionnaire).link)
     finally
       FLock.Unlock;
     end;
   end
   else
-    inherited SeeResource(r);
+    inherited SeeResourceProxy(r);
 end;
 
 function TFHIRServerWorkerContextR3.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;

@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_fpc, fsl_npm_cache,
-  fhir_objects, fhir_parser, fhir_factory, fhir_uris,
+  fhir_objects, fhir_parser, fhir_factory, fhir_uris, fhir_common,
   fhir5_resources, fhir5_resources_base, fhir5_parser, fhir5_enums, fhir5_types, fhir5_context, fhir5_utilities, fhir5_constants;
 
 Const
@@ -116,18 +116,20 @@ Type
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
-    FNamingSystems : TFslMap<fhir5_resources.TFhirNamingSystem>;
+    FNamingSystems : TFslMap<TFHIRResourceProxy>;
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
+    procedure loadResourceProxy(p : TFHIRResourceProxy);
   public
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR5; overload;
 
     property Profiles : TProfileManager read FProfiles;
-    procedure SeeResource(r : TFhirResource); overload; virtual;
+    procedure seeResourceProxy(r : TFhirResourceProxy); overload; virtual;
     procedure seeResource(res : TFHIRResourceV); overload; override;
+    procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
@@ -1553,7 +1555,7 @@ begin
   FLock := TFslLock.Create('worker-context r5');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create('profiles.custom');
-  FNamingSystems := TFslMap<fhir5_resources.TFhirNamingSystem>.create('profiles.ns');
+  FNamingSystems := TFslMap<TFHIRResourceProxy>.create('profiles.ns');
 end;
 
 destructor TBaseWorkerContextR5.Destroy;
@@ -1572,11 +1574,17 @@ begin
 end;
 
 function TBaseWorkerContextR5.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+var
+  r : TFHIRResourceProxy;
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
   else if (t in [frtNull, frtNamingSystem]) and FNamingSystems.ContainsKey(url) then
-    result := FNamingSystems[url].Link
+  begin
+    r := FNamingSystems[url];
+    loadResourceProxy(r);
+    result := r.resource.Link;
+  end
   else
     result := nil;
   end
@@ -1586,12 +1594,15 @@ function TBaseWorkerContextR5.oid2Uri(oid: String): String;
 var
   uri : String;
   ns : TFhirNamingSystem;
+  r : TFHIRResourceProxy;
 begin
   uri := UriForKnownOid(oid);
   if (uri <> '') then
     exit(uri);
-  for ns in FNamingSystems.Values do
+  for r in FNamingSystems.Values do
   begin
+    loadResourceProxy(r);
+    ns := r.resource as TFhirNamingSystem;
     if ns.hasOid(oid) then
     begin
       uri := ns.getUri;
@@ -1842,9 +1853,21 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR5.SeeResource(res: TFHIRResourceV);
+procedure TBaseWorkerContextR5.seeResource(res : TFHIRResourceProxyV); overload;
 begin
-  SeeResource(res as TFHIRResource);
+  seeResourceProxy(res as TFHIRResourceProxy)
+end;
+
+procedure TBaseWorkerContextR5.SeeResource(res: TFHIRResourceV);
+var
+  proxy : TFHIRResourceProxy;
+begin
+  proxy := TFHIRResourceProxy.create(factory.link, res.link as TFHIRResource);
+  try
+    SeeResourceProxy(proxy);
+  finally
+    proxy.free;
+  end;
 end;
 
 procedure TBaseWorkerContextR5.Load(feed: TFHIRBundle);
@@ -1865,18 +1888,23 @@ begin
   FProfiles.generateSnapshots;
 end;
 
+procedure TBaseWorkerContextR5.loadResourceProxy(p : TFHIRResourceProxy);
+begin
+  raise exception.create('todo');
+end;
 
-procedure TBaseWorkerContextR5.SeeResource(r: TFhirResource);
+procedure TBaseWorkerContextR5.SeeResourceProxy(r: TFhirResourceProxy);
 var
   p : TFhirStructureDefinition;
 begin
-  if r is TFHirStructureDefinition then
+  if r.fhirType  = 'StructureDefinition' then
   begin
-    p := r as TFHIRStructureDefinition;
+    loadResourceProxy(r);
+    p := r.resource as TFHirStructureDefinition;
     FProfiles.SeeProfile(0, p);
   end
-  else if (r.ResourceType = frtNamingSystem) then
-    FNamingSystems.AddOrSetValue(TFhirNamingSystem(r).url, TFhirNamingSystem(r).Link)
+  else if (r.fhirType = 'NamingSystem') then
+    FNamingSystems.AddOrSetValue(r.Id, r.Link)
 end;
 
 procedure TBaseWorkerContextR5.setNonSecureTypes(names: array of String);

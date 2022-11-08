@@ -38,11 +38,14 @@ interface
 uses
   SysUtils, Classes, System.NetEncoding,
   fsl_base, fsl_utilities, fsl_stream, fsl_http,
-  fsl_ucum,
+  fsl_ucum, fsl_npm, fsl_threads,
   fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_xhtml, fhir_common,  fhir_elementmodel,
   fhir_client, fhir_client_threaded, fhir_uris;
 
 type
+
+  { TFHIRFactoryR5 }
+
   TFHIRFactoryR5 = class (TFHIRFactory)
   public
     function link : TFHIRFactoryR5; overload;
@@ -67,6 +70,9 @@ type
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
     function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
+
+    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
+    function makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -347,6 +353,16 @@ end;
 function TFHIRFactoryR5.makeHealthcareCard: THealthcareCard;
 begin
   raise EFslException.Create('Healthcare Cards are not supported in version '+versionString);
+end;
+
+function TFHIRFactoryR5.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxy.create(self.link, lock, worker, pi);
+end;
+
+function TFHIRFactoryR5.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxy.create(self.link, resource as TFHIRResource);
 end;
 
 function TFHIRFactoryR5.makeInteger(s: string): TFHIRObject;

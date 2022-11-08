@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_versions, fsl_http,
+  SysUtils, Classes, Generics.Collections, Dialogs,
+  fsl_base, fsl_utilities, fsl_versions, fsl_http, fsl_logging,
   fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 
 Type
@@ -55,6 +55,7 @@ const
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
 
 type
+
   // base wrappers.....
   TFhirExtensionW = class;
 
@@ -1331,13 +1332,46 @@ type
     function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
   end;
 
- TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
+  { TFHIRResourceProxyV }
+
+  TFHIRResourceProxyV = class abstract (TFslObject)
   private
-    FMap : TFslMap<T>;
-    FList : TFslList<T>;
+    FFhirObjectVersion : TFHIRVersion;
+    FFhirType : String;
+    FId  : String;
+    FUrl : String;
+    FVersion : String;
+    FResourceW : TFHIRXVersionResourceWrapper;
+    function GetResourceV : TFHIRResourceV;
+    function GetResourceW : TFHIRXVersionResourceWrapper;
+  protected
+    FResourceV : TFHIRResourceV;
+    procedure loadResource; virtual; abstract;
+    function wrapResource : TFHIRXVersionResourceWrapper; virtual; abstract;
+    procedure SetResourceV(value : TFHIRResourceV);
+  public
+    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version : String); overload;
+    constructor Create(resource : TFHIRResourceV; url, version : String); overload;
+    destructor Destroy; override;
+    function link : TFHIRResourceProxyV; overload;
+
+    property fhirObjectVersion : TFHIRVersion read FFhirObjectVersion;
+    property fhirType : String read FFhirType;
+    property id  : String read FId write FId;
+    property url : String read FUrl;
+    property version : String read FVersion;
+
+    property resourceV : TFHIRResourceV read GetResourceV;
+    property resourceW : TFHIRXVersionResourceWrapper read getResourceW;
+  end;
+
+  TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
+  private
+    FMap : TFslMap<TFHIRResourceProxyV>;
+    FList : TFslList<TFHIRResourceProxyV>;
     procedure updateList(url, version: String);
     {$IFDEF FPC}
-    function Compare(sender : TObject; const l, r : T) : integer;
+    function Compare(sender : TObject; const l, r : TFHIRResourceProxyV) : integer;
     {$ENDIF}
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1349,9 +1383,10 @@ type
     function clone : TFHIRMetadataResourceManagerW<T>; overload;
     procedure Assign(oSource : TFslObject); override;
 
-    procedure see(r: T);
+    procedure see(res: TFHIRResourceProxyV);
     procedure drop(id : String);
     function get(url: String): T; overload;
+    function getP(url: String): TFHIRResourceProxyV; overload;
     function get(url, version: String): T; overload;
     function has(url: String): boolean; overload;
     function has(url, version: String): boolean; overload;
@@ -1406,6 +1441,7 @@ type
 
 
   end;
+
 
 implementation
 
@@ -2248,9 +2284,9 @@ end;
 constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('Metadata Resource Manager ('+T.className+')');
-  FMap.defaultValue := T(nil);
-  FList := TFslList<T>.create;
+  FMap := TFslMap<TFHIRResourceProxyV>.create('Metadata Resource Manager ('+T.className+')');
+  FMap.defaultValue := nil;
+  FList := TFslList<TFHIRResourceProxyV>.create;
 end;
 
 destructor TFHIRMetadataResourceManagerW<T>.Destroy;
@@ -2282,24 +2318,24 @@ begin
   result := TFHIRMetadataResourceManagerW<T>(inherited link);
 end;
 
-procedure TFHIRMetadataResourceManagerW<T>.see(r : T);
+procedure TFHIRMetadataResourceManagerW<T>.see(res : TFHIRResourceProxyV);
 begin
-  if (r.id = '') then
-    r.id := newGUIDId;
-  if (FMap.containsKey(r.id)) then
-    drop(r.id);
+  if (res.id = '') then
+    res.id := newGUIDId;
+  if (FMap.containsKey(res.id)) then
+    drop(res.id);
 
-  FList.add(r.link);
-  FMap.addOrSetValue(r.id, r.link); // we do this so we can drop by id
+  FList.add(res.link);
+  FMap.addOrSetValue(res.id, res.link); // we do this so we can drop by id
 
-  if (r.url <> '') then
+  if (res.url <> '') then
   begin
     // first, this is the correct resource for this version (if it has a version)
-    if (r.version <> '') then
+    if (res.version <> '') then
     begin
-      FMap.addOrSetValue(r.url+'|'+r.version, r.link);
+      FMap.addOrSetValue(res.url+'|'+res.version, res.link);
     end;
-    updateList(r.url, r.version);
+    updateList(res.url, res.version);
   end;
 end;
 
@@ -2312,11 +2348,11 @@ end;
 
 procedure TFHIRMetadataResourceManagerW<T>.updateList(url, version : String);
 var
-  rl : TFslList<T>;
-  tt, latest : T;
+  rl : TFslList<TFHIRResourceProxyV>;
+  tt, latest : TFHIRResourceProxyV;
   lv : String;
 begin
-  rl := TFslList<T>.create;
+  rl := TFslList<TFHIRResourceProxyV>.create;
   try
     for tt in FList do
     begin
@@ -2364,7 +2400,7 @@ begin
           if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
             latest := tt;
         end;
-        if (latest <> T(nil)) then // might be null if it's not using semver
+        if (latest <> nil) then // might be null if it's not using semver
         begin
           lv := TSemanticVersion.getMajMin(latest.version, false);
           if (lv <> version) then
@@ -2379,6 +2415,11 @@ end;
 
 function TFHIRMetadataResourceManagerW<T>.get(url : String) : T;
 begin
+  result := FMap[url].resourceW as T;
+end;
+
+function TFHIRMetadataResourceManagerW<T>.getP(url : String) : TFHIRResourceProxyV;
+begin
   result := FMap[url];
 end;
 
@@ -2387,14 +2428,14 @@ var
   mm : String;
 begin
   if (FMap.containsKey(url+'|'+version)) then
-    result := FMap[url+'|'+version]
+    result := FMap[url+'|'+version].resourceW as T
   else
   begin
     mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
-      result := FMap[url+'|'+mm]
+      result := FMap[url+'|'+mm].resourceW as T
     else
-      result := T(nil);
+      result := nil;
   end;
 end;
 
@@ -2420,26 +2461,38 @@ begin
 end;
 
 function TFHIRMetadataResourceManagerW<T>.has(url : String; var res : T) : boolean;
+var
+  r : TFHIRResourceProxyV;
 begin
-  result := FMap.TryGetValue(url, res);
+  r := nil;
+  result := FMap.TryGetValue(url, r);
+  if result and (r <> nil) then
+    res := r.resourceW as T
+  else
+    res := nil;
 end;
 
 function TFHIRMetadataResourceManagerW<T>.has(url, version : string; var res : T) : boolean;
 var
   mm : String;
+  r : TFHIRResourceProxyV;
 begin
   res := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
-    res := FMap[url+'|'+version]
+    res := FMap[url+'|'+version].resourceW as T
   else
   begin
     mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
-      result := FMap.TryGetValue(url+'|'+mm, res)
+    begin
+      result := FMap.TryGetValue(url+'|'+mm, r)  ;
+      if result then
+        res := r.resourceW as T;
+    end
     else
      result := false;
   end;
-  result := res <> T(nil);
+  result := res <> nil;
 end;
 
 function TFHIRMetadataResourceManagerW<T>.count : integer;
@@ -2449,11 +2502,11 @@ end;
 
 procedure TFHIRMetadataResourceManagerW<T>.drop(id : String);
 var
-  res : T;
+  res : TFHIRResourceProxyV;
   mm : String;
 begin
   res := FMap[id];
-  if (res <> T(nil)) then
+  if (res <> nil) then
   begin
     FList.remove(res);
     FMap.remove(id);
@@ -2470,16 +2523,19 @@ begin
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.listAll(list : TFslList<T>);
+var
+  tt : TFHIRResourceProxyV;
 begin
-  list.addAll(Flist);
+  for tt in FList do
+    list.add((tt.resourceW as T).link);
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.listAllM(list : TFslMetadataResourceList);
 var
-  tt : T;
+  tt : TFHIRResourceProxyV;
 begin
   for tt in FList do
-    list.add(tt.link);
+    list.add((tt.resourceW as T).link);
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.clear();
@@ -2489,7 +2545,7 @@ begin
 end;
 
 {$IFDEF FPC}
-function TFHIRMetadataResourceManagerW<T>.Compare(sender : TObject; const l, r : T) : integer;
+function TFHIRMetadataResourceManagerW<T>.Compare(sender : TObject; const l, r : TFHIRResourceProxyV) : integer;
 var
   v1, v2, mm1, mm2 : string;
 begin
@@ -2599,6 +2655,59 @@ begin
   FType.Free;
   FType := Value;
   SetTypeV(value);
+end;
+
+{ TFHIRResourceProxyV }
+
+constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version : String);
+begin
+  inherited Create;
+  FFhirObjectVersion := fhirObjectVersion;
+  FFhirType := fhirType;
+  FId := id;
+  FUrl := url;
+  FVersion := version;
+end;
+
+constructor TFHIRResourceProxyV.Create(resource : TFHIRResourceV; url, version : String);
+begin
+  inherited Create;
+  FFhirObjectVersion := resource.fhirObjectVersion;
+  FFhirType := resource.fhirType;
+  FId := resource.id;
+  FResourceV := resource;
+  FUrl := url;
+  FVersion := version;
+end;
+
+destructor TFHIRResourceProxyV.Destroy;
+begin
+  FResourceV.free;
+  FResourceW.free;
+  inherited;
+end;
+
+function TFHIRResourceProxyV.link : TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxyV(inherited link);
+end;
+
+function TFHIRResourceProxyV.GetResourceV : TFHIRResourceV;
+begin
+  loadResource;
+  result := FResourceV;
+end;
+
+function TFHIRResourceProxyV.GetResourceW : TFHIRXVersionResourceWrapper;
+begin
+  if FResourceW = nil then
+    FResourceW := wrapResource;
+  result := FResourceW;
+end;
+
+procedure TFHIRResourceProxyV.SetResourceV(value: TFHIRResourceV);
+begin
+  FResourceV := value;
 end;
 
 end.

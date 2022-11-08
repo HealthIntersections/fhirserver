@@ -36,7 +36,9 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache,
-  fsl_ucum, fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml, fhir_elementmodel, fhir_client, fhir_uris;
+  fsl_ucum, fsl_npm, fsl_threads,
+  fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml,
+  fhir_elementmodel, fhir_client, fhir_uris;
 
 type
   TFhirReferenceValidationPolicy = (rvpIGNORE, rvpCHECK_VALID);
@@ -117,6 +119,8 @@ type
 
   TFHIRValidatorClass = class of TFHIRValidatorV;
 
+  { TFHIRFactory }
+
   TFHIRFactory = class abstract (TFslObject)
   public
     function link : TFHIRFactory; overload;
@@ -184,6 +188,10 @@ type
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
+    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; virtual; abstract; overload;
+    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; virtual; abstract; overload;
+
+    function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
     function wrapCapabilityStatement2(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; virtual; abstract;
@@ -266,6 +274,7 @@ type
 
     procedure loadResourceJson(rType, id : String; json : TStream); override;
     procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
+    procedure seeResource(res : TFHIRResourceProxyV); overload; virtual; abstract;
     procedure dropResource(rtpe, id : String); overload; virtual; abstract;
 
     procedure setNonSecureTypes(names : Array of String); virtual; abstract;
@@ -380,6 +389,58 @@ begin
   result := makeCoding(systemUri, '', code, display);
 end;
 
+function TFHIRFactory.wrapResource(r: TFHIRResourceV): TFHIRXVersionResourceWrapper;
+begin
+  if (r.fhirType = 'CapabilityStatement') then
+    result := wrapCapabilityStatement(r)
+  else if (r.fhirType = 'StructureDefinition') then
+    result := wrapStructureDefinition(r)
+  else if (r.fhirType = 'ValueSet') then
+    result := wrapValueSet(r)
+  else if (r.fhirType = 'CodeSystem') then
+    result :=  wrapCodeSystem(r)
+  else if (r.fhirType = 'ConceptMap') then
+    result := wrapConceptMap(r)
+  else if (r.fhirType = 'OperationOutcome') then
+    result := wrapOperationOutcome(r)
+  else if (r.fhirType = 'Bundle') then
+    result := wrapBundle(r)
+  else if (r.fhirType = 'Params') then
+    result := wrapParams(r)
+  else if (r.fhirType = 'Binary') then
+    result := wrapBinary(r)
+  else if (r.fhirType = 'AuditEvent') then
+    result := wrapAuditEvent(r)
+  else if (r.fhirType = 'Subscription') then
+    result := wrapSubscription(r)
+  else if (r.fhirType = 'SubscriptionTopic') then
+    result := wrapSubscriptionTopic(r)
+  else if (r.fhirType = 'Observation') then
+    result := wrapObservation(r)
+  else if (r.fhirType = 'Group') then
+    result := wrapGroup(r)
+  else if (r.fhirType = 'Patient') then
+    result := wrapPatient(r)
+  else if (r.fhirType = 'Encounter') then
+    result := wrapEncounter(r)
+  else if (r.fhirType = 'NamingSystem') then
+    result := wrapNamingSystem(r)
+  else if (r.fhirType = 'StructureMap') then
+    result := wrapStructureMap(r)
+  else if (r.fhirType = 'EventDefinition') then
+    result := wrapEventDefinition(r)
+  else if (r.fhirType = 'Consent') then
+    result := wrapConsent(r)
+  else if (r.fhirType = 'TestScript') then
+    result := wrapTestScript(r)
+  else if (r.fhirType = 'Provenance') then
+    result := wrapProvenance(r)
+  else if (r.fhirType = 'Immunization') then
+    result := wrapImmunization(r)
+  else
+    result := nil;
+end;
+
 function TFHIRFactory.makeCoding(systemUri, code: String): TFHIRObject;
 begin
   result := makeCoding(systemUri, '', code, '');
@@ -425,6 +486,8 @@ begin
   FVersionArray[v].free;
   FVersionArray[v] := value;
 end;
+
+
 
 { TFHIRWorkerContextWithFactory }
 

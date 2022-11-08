@@ -135,11 +135,13 @@ Type
   // the terminology server maintains a cache of terminology related resources
   // the rest server notifies terminology server whenever this list changes
   // (and at start up)
+
+  { TTerminologyServerStore }
+
   TTerminologyServerStore = class (TFslObject)
   private
     FFactory : TFHIRFactory;
     FStem : TFslWordStemmer;
-    FTagid : integer;
     FCommonTerminologies : TCommonTerminologies;
 
     FLastConceptKey : integer;
@@ -157,13 +159,16 @@ Type
     FCodeSystemsByVsUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
     FSupplementsById : TFslMap<TFHIRCodeSystemW>; // All supplements
 
-    FBaseValueSets : TFslMap<TFHIRValueSetW>; // value sets out of the specification - these can be overriden, but they never go away
+    FBaseValueSets : TFslMap<TFHIRResourceProxyV>; // value sets out of the specification - these can be overriden, but they never go away
     FBaseCodeSystems : TFslMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
 
     FBaseConceptMaps : TFslMap<TLoadedConceptMap>; // value sets out of the specification - these can be overriden, but they never go away
     FConceptMapsById : TFslMap<TLoadedConceptMap>;
     FConceptMapsByURL : TFslMap<TLoadedConceptMap>;
 
+    FLoading : boolean;
+
+    procedure SetLoading(AValue: boolean);
     procedure UpdateConceptMaps;
     procedure BuildStems(cs : TFhirCodeSystemW);
 
@@ -187,9 +192,8 @@ Type
     property CommonTerminologies : TCommonTerminologies read FCommonTerminologies;
 
     // maintenance procedures
-    procedure SeeSpecificationResource(resource : TFHIRResourceV);
-    procedure SeeTerminologyResource(resource : TFHIRResourceV);
-    procedure checkTerminologyResource(resource : TFHIRResourceV);
+    procedure SeeSpecificationResource(resource : TFHIRResourceProxyV);
+    procedure SeeTerminologyResource(resource : TFHIRResourceProxyV);
     procedure DropTerminologyResource(aType : String; id : String);
 
     // access procedures. All return values are owned, and must be freed
@@ -231,6 +235,8 @@ Type
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
     procedure defineFeatures(features: TFslList<TFHIRFeature>); virtual;
+
+    property Loading : boolean read FLoading write SetLoading;
   end;
 
 implementation
@@ -732,12 +738,6 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.checkTerminologyResource(resource: TFHIRResourceV);
-begin
-  resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
-  FFactory.checkNoModifiers(resource, 'Repository.SeeResource', 'Resource');
-end;
-
 function exempt(vs : TFhirCodeSystemW) : boolean;
 begin
   if (vs.fhirObjectVersion = fhirVersionRelease2) and vs.URL.startsWith('http://hl7.org/fhir/ValueSet/v2-')
@@ -772,7 +772,7 @@ begin
   FValueSets := TFHIRMetadataResourceManagerW<TFhirValueSetW>.create;
   FCodeSystems := TFHIRCodeSystemManager.create;
   FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.create('tx.cs.url');
-  FBaseValueSets := TFslMap<TFhirValueSetW>.create('tx.vs.base');
+  FBaseValueSets := TFslMap<TFhirResourceProxyV>.create('tx.vs.base');
   FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create('tx.cs.base');
   FSupplementsById := TFslMap<TFhirCodeSystemW>.create('tx.cs.suppl');
 
@@ -1011,7 +1011,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.SeeSpecificationResource(resource : TFHIRResourceV);
+procedure TTerminologyServerStore.SeeSpecificationResource(resource : TFHIRResourceProxyV);
 var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
@@ -1019,48 +1019,39 @@ var
 begin
   FLock.Lock('SeeSpecificationResource');
   try
-    inc(FTagid);
-    resource.TagInt := FTagId;
     if (resource.fhirType = 'ValueSet') then
     begin
-      vs := FFactory.wrapValueSet(resource.link);
-      try
-        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
-          FCommonTerminologies.FUcum.SetCommonUnits(factory.wrapValueSet(resource.Link));
+      if (resource.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
+        FCommonTerminologies.FUcum.SetCommonUnits(resource.resourceW.Link as TFHIRValueSetW);
 
-        FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
-        FValueSets.see(vs);
-        if (vs.fhirObjectVersion = fhirVersionRelease2) then
+      FBaseValueSets.AddOrSetValue(resource.url, resource.Link);
+      FValueSets.see(resource);
+      if (resource.fhirObjectVersion = fhirVersionRelease2) then
+      begin
+        vs := resource.resourceW as TFHIRValueSetW;
+        if vs.hasInlineCS then
         begin
-          if vs.hasInlineCS then
-          begin
-            cs := FFactory.wrapCodesystem(resource.Link);
-            try
-              AddCodeSystemToCache(cs, true);
-            finally
-              cs.free;
-            end;
+          cs := FFactory.wrapCodesystem(vs.Resource.link);
+          try
+            AddCodeSystemToCache(cs, true);
+          finally
+            cs.free;
           end;
         end;
-        UpdateConceptMaps;
-      finally
-        vs.Free;
       end;
+      if not loading then
+        UpdateConceptMaps;
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin
-      cs := FFactory.wrapCodesystem(resource.link);
-      try
-        AddCodeSystemToCache(cs, true);
-      finally
-        cs.Free;
-      end;
+      cs := resource.resourceW as TFHIRCodeSystemW;
+      AddCodeSystemToCache(cs, true);
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
       cm := TLoadedConceptMap.Create;
       try
-        cm.Resource := FFactory.wrapConceptMap(resource.Link);
+        cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
         cm.Source := getValueSetByUrl(cm.Resource.source);
         cm.Target := getValueSetByUrl(cm.Resource.target);
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
@@ -1075,30 +1066,27 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.SeeTerminologyResource(resource : TFHIRResourceV);
+procedure TTerminologyServerStore.SeeTerminologyResource(resource : TFHIRResourceProxyV);
 var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
   cm : TLoadedConceptMap;
 begin
-  checkTerminologyResource(resource);
-
   FLock.Lock('SeeTerminologyResource');
   try
-    inc(FTagid);
-    resource.TagInt := FTagId;
     if (resource.fhirType = 'ValueSet') then
     begin
-      vs := FFactory.wrapValueSet(resource.link);
-      try
-        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
-          FCommonTerminologies.FUcum.SetCommonUnits(vs.link);
+      if (resource.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
+        FCommonTerminologies.FUcum.SetCommonUnits(resource.resourceW.link as TFHIRValueSetW);
 
-        FValueSets.see(vs);
-        invalidateVS(vs.url);
+      FValueSets.see(resource);
+      invalidateVS(resource.url);
+      if (resource.fhirObjectVersion = fhirVersionRelease2) then
+      begin
+        vs := resource.resourceW as TFHIRValueSetW;
         if vs.hasInlineCS then
         begin
-          cs := FFactory.wrapCodesystem(resource.Link);
+          cs := FFactory.wrapCodesystem(vs.resource.Link);
           try
             AddCodeSystemToCache(cs, true);
           finally
@@ -1106,24 +1094,18 @@ begin
           end;
         end;
         UpdateConceptMaps;
-      finally
-        vs.free;
       end;
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin
-      cs := FFactory.wrapCodesystem(resource.link);
-      try
-        AddCodeSystemToCache(cs, false);
-      finally
-        cs.Free;
-      end;
+      cs := resource.resourceW as TFHIRCodeSystemW;
+      AddCodeSystemToCache(cs, false);
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
       cm := TLoadedConceptMap.Create;
       try
-        cm.Resource := FFactory.wrapConceptMap(resource.Link);
+        cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
         cm.Source := getValueSetByUrl(cm.Resource.source);
         cm.Target := getValueSetByUrl(cm.Resource.target);
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
@@ -1144,20 +1126,26 @@ end;
 
 procedure TTerminologyServerStore.DropTerminologyResource(aType : String; id : String);
 var
-  vs, vs1 : TFhirValueSetW;
+  vs, vs1 : TFhirResourceProxyV;
   cm, cm1 : TLoadedConceptMap;
   cs : TFhirCodeSystemW;
+  vsW : TFHIRValueSetW;
 begin
   FLock.Lock('DropTerminologyResource');
   try
     if (aType = 'ValueSet') then
     begin
-      vs := FValueSets.get(id);
+      vs := FValueSets.getP(id);
       if vs <> nil then
       begin
         vs1 := FBaseValueSets[vs.url];
-        if (vs.hasInlineCS) then
-          removeCodeSystemFromCache(vs.id);
+
+        if (vs.fhirObjectVersion = fhirVersionRelease2) then
+        begin
+          //vs := resource.resourceW as TFHIRValueSetW;
+          //if (vs.hasInlineCS) then
+          //  removeCodeSystemFromCache(vs.id);
+        end;
         FValueSets.drop(id);
 
         // add the base one back if we are dropping a value set that overrides it
@@ -1165,11 +1153,18 @@ begin
         if vs1 <> nil then
         begin
           FValueSets.see(vs1.Link);
-          cs := FFactory.wrapCodesystem(vs.Resource.link);
-          try
-            AddCodeSystemToCache(cs, false);
-          finally
-            cs.Free;
+          if (vs1.fhirObjectVersion = fhirVersionRelease2) then
+          begin
+            //vs := vs1.resourceW as TFHIRValueSetW;
+            //if (vs.hasInlineCS) then
+            //begin
+            //  cs := vs1.ResourceW.link as TFHIRValueSet;
+            //  try
+            //    AddCodeSystemToCache(cs, false);
+            //  finally
+            //    cs.Free;
+            //  end;
+            //end;
           end;
         end;
         UpdateConceptMaps;
@@ -1226,6 +1221,20 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.SetLoading(AValue: boolean);
+begin
+  if FLoading then
+  begin
+    FLock.Lock;
+    try
+      UpdateConceptMaps;
+    finally
+      FLock.Unlock;
+    end;
+  end;
+  FLoading := AValue;
+end;
+
 function TTerminologyServerStore.ValueSetCount: integer;
 begin
   FLock.Lock('ValueSetCount');
@@ -1243,7 +1252,8 @@ begin
   FCommonTerminologies.getCacheInfo(ci);
 end;
 
-function TTerminologyServerStore.getCodeSystem(url: String; txResources : TFslMetadataResourceList = nil): TFhirCodeSystemW;
+function TTerminologyServerStore.getCodeSystem(url: String;
+  txResources: TFslMetadataResourceList): TFHIRCodeSystemW;
 var
   r : TFHIRMetadataResourceW;
 begin
@@ -1269,7 +1279,8 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemById(id: String): TFhirCodeSystemW;
+function TTerminologyServerStore.getCodeSystemById(id: String
+  ): TFHIRCodeSystemW;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -1282,7 +1293,8 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemByValueSet(vs: String): TFhirCodeSystemW;
+function TTerminologyServerStore.getCodeSystemByValueSet(vs: String
+  ): TFHIRCodeSystemW;
 var
   cse : TFHIRCodeSystemEntry;
 begin
@@ -1403,7 +1415,8 @@ begin
   FCommonTerminologies.clearSnomed;
 end;
 
-Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
+function TTerminologyServerStore.getProvider(system: String; version: String;
+  profile: TFHIRExpansionParams; noException: boolean): TCodeSystemProvider;
 var
   defToLatest : boolean;
   cs : TFHIRCodeSystemEntry;
@@ -1486,7 +1499,8 @@ begin
 end;
 
 
-function TTerminologyServerStore.getProvider(codesystem: TFhirCodeSystemW; profile : TFHIRExpansionParams): TCodeSystemProvider;
+function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW;
+  profile: TFHIRExpansionParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
   result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));

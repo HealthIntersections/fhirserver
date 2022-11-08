@@ -71,6 +71,7 @@ const
     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap, {$ENDIF}
     frtValueSet];
+  TERMINOLOGY_RESOURCES : Array of String = ['CodeSystem', 'ValueSet', 'ConceptMap'];
 
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;

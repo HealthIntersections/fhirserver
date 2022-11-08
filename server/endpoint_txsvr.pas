@@ -80,20 +80,20 @@ type
   TTerminologyServerData = class (TFslObject)
   private
     FPackages : TStringList;
-    FCodeSystems : TFslMap<TFHIRMetadataResourceW>;
-    FValueSets : TFslMap<TFHIRMetadataResourceW>;
-    FNamingSystems : TFslMap<TFHIRMetadataResourceW>;
-    FConceptMaps : TFslMap<TFHIRMetadataResourceW>;
+    FCodeSystems : TFslMap<TFHIRResourceProxyV>;
+    FValueSets : TFslMap<TFHIRResourceProxyV>;
+    FNamingSystems : TFslMap<TFHIRResourceProxyV>;
+    FConceptMaps : TFslMap<TFHIRResourceProxyV>;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link : TTerminologyServerData; overload;
-    property CodeSystems : TFslMap<TFHIRMetadataResourceW> read FCodeSystems;
-    property ValueSets : TFslMap<TFHIRMetadataResourceW> read FValueSets;
-    property NamingSystems : TFslMap<TFHIRMetadataResourceW> read FNamingSystems;
-    property ConceptMaps : TFslMap<TFHIRMetadataResourceW> read FConceptMaps;
+    property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
+    property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
+    property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
+    property ConceptMaps : TFslMap<TFHIRResourceProxyV> read FConceptMaps;
   end;
 
   TTerminologyFhirServerStorage = class;
@@ -136,10 +136,11 @@ type
 
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
+    FLock : TFslLock;
     FData : TTerminologyServerData;
     FServerContext : TFHIRServerContext; // free from owner
     function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
-    procedure loadResource(res: TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+    procedure loadResource(res: TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
     procedure loadBytes(factory: TFHIRFactory; name: String; cnt: TBytes);
     procedure loadFromZip(factory: TFHIRFactory; cnt: TBytes);
   protected
@@ -336,13 +337,13 @@ end;
 constructor TTerminologyServerData.Create;
 begin
   inherited create;
-  FCodeSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FCodeSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FCodeSystems.defaultValue := nil;
-  FValueSets := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FValueSets := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FValueSets.defaultValue := nil;
-  FNamingSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FNamingSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FNamingSystems.defaultValue := nil;
-  FConceptMaps := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FConceptMaps := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
 end;
@@ -454,63 +455,74 @@ function TTerminologyServerOperationEngine.GetResourceById(request: TFHIRRequest
 begin
   needSecure := false;
   if aType = 'CodeSystem' then
-    result := FData.CodeSystems[id].Resource.Link
+    result := FData.CodeSystems[id].ResourceV.Link
   else if aType = 'ValueSet' then
-    result := FData.ValueSets[id].Resource.Link
+    result := FData.ValueSets[id].ResourceV.Link
   else if aType = 'NamingSystem' then
-    result := FData.NamingSystems[id].Resource.Link
+    result := FData.NamingSystems[id].ResourceV.Link
   else if aType = 'ConceptMap' then
-    result := FData.ConceptMaps[id].Resource.Link
+    result := FData.ConceptMaps[id].ResourceV.Link
   else
     result := nil;
 end;
 
 function TTerminologyServerOperationEngine.getResourceByUrl(aType, url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResourceV;
 var
-  res : TFHIRMetadataResourceW;
+  res : TFHIRResourceProxyV;
 begin
   result := nil;
   needSecure := false;
   if (aType = '') or (aType = 'CodeSystem') then
     for res in FData.CodeSystems.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'ConceptMap') then
     for res in FData.ConceptMaps.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'NamingSystem') then
     for res in FData.NamingSystems.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'ValueSet') then
     for res in FData.ValueSets.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
 end;
 
 function TTerminologyServerOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
 var
-  res : TFHIRMetadataResourceW;
+  res : TFHIRResourceV;
 begin
   result := false;
+  res := nil;
   if request.ResourceName = 'CodeSystem' then
-    res := FData.CodeSystems[request.Id].Link
+  begin
+    if (FData.CodeSystems.ContainsKey(request.id)) then
+      res := FData.CodeSystems[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'ValueSet' then
-    res := FData.ValueSets[request.Id].Link
+  begin
+    if (FData.ValueSets.ContainsKey(request.id)) then
+      res := FData.ValueSets[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'NamingSystem' then
-    res := FData.NamingSystems[request.Id].Link
+  begin
+    if (FData.NamingSystems.ContainsKey(request.id)) then
+      res := FData.NamingSystems[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'ConceptMap' then
-    res := FData.ConceptMaps[request.Id].Link
-  else
-    res := nil;
+  begin
+    if (FData.ConceptMaps.ContainsKey(request.id)) then
+      res := FData.ConceptMaps[request.Id].resourceV.Link
+  end;
 
   try
     if res <> nil then
     begin
       response.HTTPCode := 200;
       response.Message := 'OK';
-      response.Resource := res.Resource.link;
+      response.Resource := res.Link;
       result := true;
     end
     else
@@ -541,6 +553,7 @@ var
   isMatch : boolean;
   i, t, offset, count : integer;
   be : TFhirBundleEntryW;
+  p : TFHIRResourceProxyV;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -577,13 +590,17 @@ begin
         list := TFslMetadataResourceList.create;
         try
           if (hasScope(request, 'CodeSystem')) then
-            FData.CodeSystems.listAll(list);
+            for p in FData.CodeSystems.Values do
+              list.add(p.resourceW.link as TFhirMetadataResourceW);
           if (hasScope(request, 'ValueSet')) then
-            FData.ValueSets.listAll(list);
+            for p in FData.ValueSets.Values do
+              list.add(p.resourceW.link as TFhirMetadataResourceW);
           if (hasScope(request, 'ConceptMap')) then
-            FData.ConceptMaps.listAll(list);
+            for p in FData.ConceptMaps.Values do
+              list.add(p.resourceW.link as TFhirMetadataResourceW);
           if (hasScope(request, 'NamingSystem')) then
-            FData.NamingSystems.listAll(list);
+            for p in FData.NamingSystems.Values do
+              list.add(p.resourceW.link as TFhirMetadataResourceW);
 
           filtered := TFslMetadataResourceList.create;
           try
@@ -962,10 +979,12 @@ constructor TTerminologyFhirServerStorage.Create(factory : TFHIRFactory);
 begin
   inherited Create(factory);
   FData := TTerminologyServerData.create;
+  FLock := TFslLock.create('tx.storage');
 end;
 
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
+  FLock.Free;
   FData.Free;
   inherited;
 end;
@@ -1058,44 +1077,40 @@ begin
   result := TTerminologyFhirServerStorage(inherited link);
 end;
 
-procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
 var
   cs : TFhirCodeSystemW;
 begin
   if res.fhirType = 'CodeSystem' then
   begin
-    cs := factory.wrapCodeSystem(res.link);
-    try
-      if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
-      begin
-        if FData.FCodeSystems.ContainsKey(res.id) then
-          res.id := inttostr(FData.FCodeSystems.Count+1);
-        FData.FCodeSystems.Add(res.id, cs.link);
-        FServerContext.ValidatorContext.seeResource(res);
-      end;
-    finally
-      cs.Free;
+    cs := res.resourceW as TFhirCodeSystemW;
+    if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
+    begin
+      if FData.FCodeSystems.ContainsKey(res.id) then
+        res.id := inttostr(FData.FCodeSystems.Count+1);
+      FData.FCodeSystems.Add(res.id, res.link);
+      FServerContext.ValidatorContext.seeResource(res);
     end;
   end
   else if res.fhirType = 'ConceptMap' then
   begin
     if FData.FConceptMaps.ContainsKey(res.id) then
       res.id := inttostr(FData.FConceptMaps.Count+1);
-    FData.FConceptMaps.Add(res.id, factory.wrapConceptMap(res.link));
+    FData.FConceptMaps.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'NamingSystem' then
   begin
     if FData.FNamingSystems.ContainsKey(res.id) then
       res.id := inttostr(FData.FNamingSystems.Count+1);
-    FData.FNamingSystems.Add(res.id, factory.wrapNamingSystem(res.link));
+    FData.FNamingSystems.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'ValueSet' then
   begin
     if FData.FValueSets.ContainsKey(res.id) then
       res.id := inttostr(FData.FValueSets.Count+1);
-    FData.FValueSets.Add(res.id, factory.wrapValueSet(res.link));
+    FData.FValueSets.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end;
 end;
@@ -1104,45 +1119,34 @@ procedure TTerminologyFhirServerStorage.loadPackage(pid: String; ignoreEmptyCode
 var
   npm : TNpmPackage;
   s : String;
-  res : TFHIRResourceV;
+  res : TFHIRResourceProxyV;
   i : integer;
-  p : TFHIRParser;
+  list : TFslList<TNpmPackageResource>;
+  pi : TNpmPackageResource;
 begin
   i := 0;
 
-  p := factory.makeParser(FServerContext.ValidatorContext.Link, ffJson, THTTPLanguages.Create('en'));
+  npm := FServerContext.pcm.loadPackage(pid);
   try
-    npm := FServerContext.pcm.loadPackage(pid);
-    try
-      Logging.start('Load package '+npm.name+'#'+npm.version);
-      FData.FPackages.Add(npm.name+'#'+npm.version);
-      for s in npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']) do
+    Logging.start('Load package '+npm.name+'#'+npm.version);
+    FData.FPackages.Add(npm.name+'#'+npm.version);
+    for pi in npm.listResourceInfo('package') do
+    begin
+      if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
       begin
         inc(i);
         if (i mod 100 = 0) then
           Logging.continue('.');
+        res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
         try
-          res := p.parseResource(npm.loadBytes(s));
-        except
-          on e : Exception do
-            raise EFHIRException.Create('Error Parsing '+s+': '+e.Message);
-        end;
-        try
-          try
-            loadResource(res, ignoreEmptyCodeSystems);
-          except
-            on e : Exception do
-              raise EFHIRException.Create('Error Loading '+s+': '+e.Message);
-          end;
+          loadResource(res, ignoreEmptyCodeSystems);
         finally
           res.Free;
         end;
       end;
-    finally
-      npm.Free;
     end;
   finally
-    p.Free;
+    npm.Free;
   end;
   Logging.finish(' '+inttostr(i)+' resources');
 end;
@@ -1176,6 +1180,7 @@ var
   fmt : TFHIRFormat;
   p : TFHIRParser;
   res : TFHIRResourceV;
+  pr : TFHIRResourceProxyV;
 begin
   if name.EndsWith('.zip') then
     loadFromZip(factory, cnt)
@@ -1194,7 +1199,12 @@ begin
     try
       res := p.parseResource(cnt);
       try
-        loadResource(res, false);
+        pr := factory.makeProxy(res.link);
+        try
+          loadResource(pr, false);
+        finally
+          pr.free;
+        end;
       finally
         res.Free;
       end;
@@ -1224,11 +1234,17 @@ var
   procedure load(fn : String);
   var
     res : TFHIRResourceV;
+    pr : TFHIRResourceProxyV;
   begin
     inc(result);
     res := p.parseResource(FileToBytes(fn));
     try
-      loadResource(res, true);
+      pr := factory.makeProxy(res.link);
+      try
+        loadResource(pr, true);
+      finally
+        pr.free;
+      end;
     finally
       res.Free;
     end;
@@ -1481,6 +1497,7 @@ begin
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
 
+  FServerContext.TerminologyServer.Loading := true;
   FStore.loadPackage(FStore.factory.corePackage, false);
   if UTGFolder <> '' then
     FStore.loadUTGFolder(UTGFolder);
@@ -1488,6 +1505,8 @@ begin
   for pid in Config['packages'].values do
     if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
       FStore.loadPackage(pid, true);
+
+  FServerContext.TerminologyServer.Loading := false;
 
   FStore.Initialise;
 end;

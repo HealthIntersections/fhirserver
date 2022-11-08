@@ -3213,17 +3213,17 @@ begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, itBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', request.lang);
 
-  if resource.ResourceType = frtValueSet then
-  begin
-    vs := TFHIRValueSet(resource);
-    ServerContext.TerminologyServer.checkTerminologyResource(vs)
-  end
-  else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
-    ServerContext.TerminologyServer.checkTerminologyResource(resource)
-  else if resource.ResourceType = frtStructureDefinition then
-    vc.checkResource(resource as TFhirStructureDefinition)
-  else if resource.ResourceType = frtQuestionnaire then
-    vc.checkResource(resource as TFhirQuestionnaire)
+  //if resource.ResourceType = frtValueSet then
+  //begin
+  //  vs := TFHIRValueSet(resource);
+  //  ServerContext.TerminologyServer.checkTerminologyResource(p)
+  //end
+  //else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
+  //  ServerContext.TerminologyServer.checkTerminologyResource(resource)
+  //else if resource.ResourceType = frtStructureDefinition then
+  //  vc.checkResource(resource as TFhirStructureDefinition)
+  //else if resource.ResourceType = frtQuestionnaire then
+  //  vc.checkResource(resource as TFhirQuestionnaire)
 end;
 
 function TFHIRNativeStorageServiceR3.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
@@ -3377,23 +3377,29 @@ procedure TFHIRNativeStorageServiceR3.SeeResource(key, vkey, pvkey: integer; id:
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;
+  p : TFHIRResourceProxy;
 begin
   resource := res as TFHIRResource;
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, itBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', lang);
 
-  if resource.ResourceType = frtValueSet then
-  begin
-    vs := TFHIRValueSet(resource);
-    vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
-    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-  end
-  else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
-    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-  else if resource.ResourceType = frtStructureDefinition then
-    ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
-  else if resource.ResourceType = frtQuestionnaire then
-    ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
+  p := TFHIRResourceProxy.create(factory.link, resource.link);
+  try
+    if resource.ResourceType = frtValueSet then
+    begin
+      vs := TFHIRValueSet(resource);
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
+      ServerContext.TerminologyServer.SeeTerminologyResource(p)
+    end
+    else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
+      ServerContext.TerminologyServer.SeeTerminologyResource(p)
+    else if resource.ResourceType = frtStructureDefinition then
+      ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
+    else if resource.ResourceType = frtQuestionnaire then
+      ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
+  finally
+    p.free;
+  end;
 
   if created then
     ServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)
