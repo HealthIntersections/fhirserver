@@ -384,7 +384,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="84">
+    <Units Count="85">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -727,6 +727,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit83>
+      <Unit84>
+        <Filename Value="$00000001085B6770"/>
+        <IsPartOfProject Value="True"/>
+      </Unit84>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -771,7 +775,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="24">
+    <Exceptions Count="25">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -853,6 +857,10 @@
       <Item24>
         <Name Value="00000018ERestfulExceptionUnknown"/>
       </Item24>
+      <Item25>
+        <Name Value="00000018EIdHTTPProtocolException"/>
+        <Enabled Value="False"/>
+      </Item25>
     </Exceptions>
   </Debugging>
 </CONFIG>

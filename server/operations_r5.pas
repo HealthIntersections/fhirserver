@@ -3288,7 +3288,7 @@ begin
             end
             else
             begin
-              addResource(manager, request.secure, request, bundle, composition, composition.subject, true, patIds);
+              addResource(manager, request.secure, request, bundle, composition, composition.subjectList[0], true, patIds);
               addSections(manager, request.secure, request, bundle, composition, composition.sectionList, patIds);
 
               for i := 0 to composition.authorList.Count - 1 do
@@ -3662,7 +3662,7 @@ begin
     op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
   else
     op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
-  op.resource := TFhirFHIRDefinedTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRDefinedTypeEnum, req.ResourceName));
+  op.resource := req.ResourceName;
   if resp.format = ffJson then
     op.Accept := 'application/fhir+json'
   else
