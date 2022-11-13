@@ -28,60 +28,105 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$mode objfpc}{$H+}
+{$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  ValEdit, ComCtrls, Grids, Buttons,
   fsl_utilities,
   fhir_colour_utils,
-  fui_lcl_utilities;
+  fui_lcl_utilities, fui_lcl_managers,
+  ftk_context,
+  dlg_txsrvr_props;
 
 type
+  { TServerManager }
+  TServerManager = class(TListManager<TToolkitContextTerminologyServer>)
+  public
+    function canSort : boolean; override;
+    function manageColWidths : boolean; override;
+    function allowedOperations(item : TToolkitContextTerminologyServer) : TNodeOperationSet;override;
+    function AskOnDelete(item : TToolkitContextTerminologyServer) : boolean; override;
+    function loadList : boolean; override;
+
+    function getCellText(item : TToolkitContextTerminologyServer; col : integer) : String; override;
+    function getSummaryText(item : TToolkitContextTerminologyServer) : String; override;
+    function compareItem(left, right : TToolkitContextTerminologyServer; col : integer) : integer; override;
+    function getCanCopy(item : TToolkitContextTerminologyServer; mode : String) : boolean; override;
+    function getCopyValue(item : TToolkitContextTerminologyServer; mode : String) : String; override;
+
+    function addItem(mode : String) : TToolkitContextTerminologyServer; override;
+    function editItem(item : TToolkitContextTerminologyServer; mode : String) : boolean; override;
+    function deleteItem(item : TToolkitContextTerminologyServer) : boolean; override;
+  end;
 
   { TToolkitSettingsForm }
 
   TToolkitSettingsForm = class(TForm)
-    btnOk: TButton;
-    btnCancel: TButton;
+    btnAddServer: TBitBtn;
+    btnEditServer: TBitBtn;
+    btnDeleteServer: TBitBtn;
+    btnClearCache: TButton;
     btnEditorFont: TButton;
     btnLogFont: TButton;
+    btnOk: TButton;
+    btnCancel: TButton;
     btnViewFont: TButton;
-    btnClearCache: TButton;
     Button6: TButton;
     chkSideBySide: TCheckBox;
+    dlgExe: TOpenDialog;
     dlgFont: TFontDialog;
     edtCache: TEdit;
-    edtTxServer: TEdit;
     edtTxLog: TEdit;
+    GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
+    GroupBox5: TGroupBox;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
     Label3: TLabel;
     Label5: TLabel;
     Label7: TLabel;
-    lblEditorFont: TLabel;
-    Label4: TLabel;
     lblDiff: TLabel;
+    lblEditorFont: TLabel;
     lblLogFont: TLabel;
-    Label6: TLabel;
     lblViewFont: TLabel;
-    dlgExe: TOpenDialog;
+    lvServers: TListView;
+    PageControl1: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure btnClearCacheClick(Sender: TObject);
     procedure btnEditorFontClick(Sender: TObject);
     procedure btnLogFontClick(Sender: TObject);
     procedure btnViewFontClick(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure GroupBox5Click(Sender: TObject);
+    procedure lvServersResize(Sender: TObject);
+    procedure vlServersClick(Sender: TObject);
   private
     FDiffTool : String;
+    FManager : TServerManager;
+    FTx : TToolkitContextTerminologyServers;
   public
+
+    procedure loadServers(tx : TToolkitContextTerminologyServers);
+    procedure saveServers(tx : TToolkitContextTerminologyServers);
+
     property DiffTool : String read FDiffTool write FDiffTool;
   end;
 
@@ -91,6 +136,129 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TServerManager }
+
+function TServerManager.canSort : boolean;
+begin
+  result := true;
+end;
+
+function TServerManager.manageColWidths: boolean;
+begin
+  Result := false;
+end;
+
+function TServerManager.allowedOperations(item : TToolkitContextTerminologyServer) : TNodeOperationSet;
+begin
+  result := [opAdd, opDelete, opEdit];
+end;
+
+function TServerManager.AskOnDelete(item : TToolkitContextTerminologyServer) : boolean;
+begin
+  result := true;
+end;
+
+function TServerManager.loadList : boolean;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  for t in ToolkitSettingsForm.FTx.List do
+    Data.add(t.copy);
+end;
+
+function TServerManager.getCellText(item : TToolkitContextTerminologyServer; col : integer) : String;
+begin
+  case col of
+    0:result := item.name;
+    1:result := item.address;
+    2:if item.default then result := 'true' else result := '';
+    3:result := '??';
+  end;
+end;
+
+function TServerManager.getSummaryText(item : TToolkitContextTerminologyServer) : String;
+begin
+  result := item.name+': '+item.address;
+end;
+
+function TServerManager.compareItem(left, right : TToolkitContextTerminologyServer; col : integer) : integer;
+begin
+  case col of
+    0:result := compareStr(left.name, right.name);
+    1:result := compareStr(left.address, right.address);
+    2:result := integer(left.default) - integer(right.default);
+    3:result := 0;
+  end;
+end;
+
+function TServerManager.getCanCopy(item : TToolkitContextTerminologyServer; mode : String) : boolean;
+begin
+  result := true;
+end;
+
+function TServerManager.getCopyValue(item : TToolkitContextTerminologyServer; mode : String) : String;
+begin
+  result := item.address;
+end;
+
+function TServerManager.addItem(mode : String) : TToolkitContextTerminologyServer;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  result := nil;
+  TxServerPropertiesDialog := TTxServerPropertiesDialog.create(ToolkitSettingsForm);
+  try
+    if (TxServerPropertiesDialog.showModal = mrOK) then
+    begin
+      result := TToolkitContextTerminologyServer.create;
+      result.name := TxServerPropertiesDialog.edtName.text;
+      result.address := TxServerPropertiesDialog.edtAddress.text;
+      result.default := TxServerPropertiesDialog.chkDefault.checked;
+      if result.default then
+      begin
+        for t in Data do
+          t.Default := false;
+        refresh;
+      end;
+    end;
+  finally
+    FreeAndNil(TxServerPropertiesDialog);
+  end;
+end;
+
+function TServerManager.editItem(item : TToolkitContextTerminologyServer; mode : String) : boolean;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  TxServerPropertiesDialog := TTxServerPropertiesDialog.create(ToolkitSettingsForm);
+  try
+    TxServerPropertiesDialog.edtName.text := item.name;
+    TxServerPropertiesDialog.edtAddress.text := item.address;
+    TxServerPropertiesDialog.chkDefault.checked := item.default;
+    result := TxServerPropertiesDialog.showModal = mrOK;
+    if (result) then
+    begin
+      item.name := TxServerPropertiesDialog.edtName.text;
+      item.address := TxServerPropertiesDialog.edtAddress.text;
+      item.default := TxServerPropertiesDialog.chkDefault.checked;
+      if item.default then
+      begin
+        for t in Data do
+          if (t <> item) then
+            t.Default := false;
+        refresh;
+      end;
+    end;
+  finally
+    FreeAndNil(TxServerPropertiesDialog);
+  end;
+end;
+
+function TServerManager.deleteItem(item: TToolkitContextTerminologyServer): boolean;
+begin
+  Result := true;
+end;
 
 { TToolkitSettingsForm }
 
@@ -118,6 +286,42 @@ begin
   lblLogFont.caption := describeFont(lblLogFont.Font);
   lblViewFont.caption := describeFont(lblViewFont.Font);
   lblDiff.caption := ExtractFileName(FDiffTool);
+  lvServersResize(self);
+end;
+
+procedure TToolkitSettingsForm.GroupBox5Click(Sender: TObject);
+begin
+
+end;
+
+procedure TToolkitSettingsForm.lvServersResize(Sender: TObject);
+begin
+  lvServers.columns[1].Width := lvServers.ClientWidth - (lvServers.columns[0].Width + lvServers.columns[2].Width + lvServers.columns[3].Width);
+end;
+
+procedure TToolkitSettingsForm.vlServersClick(Sender: TObject);
+begin
+
+end;
+
+procedure TToolkitSettingsForm.loadServers(tx: TToolkitContextTerminologyServers);
+begin
+  FTx := tx;
+  FManager.DoLoad;
+end;
+
+procedure TToolkitSettingsForm.saveServers(tx: TToolkitContextTerminologyServers);
+var
+  t, i : TToolkitContextTerminologyServer;
+begin
+  for t in FManager.Data do
+  begin
+    i := tx.getById(t.id);
+    if (i = nil) then
+      tx.List.add(t.link)
+    else
+      i.updateFrom(t);
+  end;
 end;
 
 procedure TToolkitSettingsForm.btnEditorFontClick(Sender: TObject);
@@ -168,6 +372,16 @@ end;
 procedure TToolkitSettingsForm.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
+  FManager := TServerManager.create;
+  FManager.List := lvServers;
+  FManager.registerControl(btnAddServer, copAdd);
+  FManager.registerControl(btnEditServer, copEdit);
+  FManager.registerControl(btnDeleteServer, copDelete);
+end;
+
+procedure TToolkitSettingsForm.FormDestroy(Sender: TObject);
+begin
+  FManager.Free;
 end;
 
 end.

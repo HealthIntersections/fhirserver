@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
   Left = 664
   Height = 946
-  Top = 49
+  Top = 38
   Width = 1064
   Caption = 'FHIR Toolkit'
   ClientHeight = 946
@@ -4656,11 +4656,11 @@ object MainToolkitForm: TMainToolkitForm
           Height = 755
           Top = 0
           Width = 288
-          ActivePage = tbText
+          ActivePage = tbInspector
           Align = alClient
           Images = imgMain
           ParentFont = False
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           OnChange = pgRightChange
           object tbText: TTabSheet
@@ -4800,25 +4800,28 @@ object MainToolkitForm: TMainToolkitForm
               Width = 282
               Align = alClient
               BevelOuter = bvNone
+              BorderWidth = 2
               Caption = 'pnlInspector'
               ClientHeight = 725
               ClientWidth = 282
               TabOrder = 0
               object vlInspector: TValueListEditor
-                Left = 0
-                Height = 725
-                Top = 0
-                Width = 282
+                Left = 2
+                Height = 721
+                Top = 2
+                Width = 278
                 Align = alClient
                 AutoEdit = False
+                FixedColor = 15395562
                 FixedCols = 0
                 ParentFont = False
+                PopupMenu = pmInspector
                 RowCount = 2
                 TabOrder = 0
-                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
+                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goThumbTracking, goCellEllipsis]
                 ColWidths = (
                   64
-                  216
+                  212
                 )
               end
             end
@@ -13306,6 +13309,22 @@ object MainToolkitForm: TMainToolkitForm
       Caption = 'Delete'
       ImageIndex = 110
       OnClick = mnuTextDeleteClick
+    end
+  end
+  object pmInspector: TPopupMenu
+    Images = imgMain
+    OnPopup = pmInspectorPopup
+    Left = 187
+    Top = 558
+    object mnuInspectorCopyValue: TMenuItem
+      Caption = 'Copy Value'
+      ImageIndex = 18
+      OnClick = mnuInspectorCopyValueClick
+    end
+    object mnuInspectorCopyAll: TMenuItem
+      Caption = 'Copy All'
+      ImageIndex = 72
+      OnClick = mnuInspectorCopyAllClick
     end
   end
 end

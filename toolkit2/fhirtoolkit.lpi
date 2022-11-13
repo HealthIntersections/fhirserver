@@ -741,6 +741,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_txsrvr_props.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TxServerPropertiesDialog"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

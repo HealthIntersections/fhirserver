@@ -331,7 +331,7 @@ begin
   end
   else
   begin
-    htmlCard.LoadFromString(FCardManager.Focus.htmlReport(context.TerminologyService));
+    htmlCard.LoadFromString(FCardManager.Focus.htmlReport(context.TxServers.defaultServer));
     mnuSaveQR.Enabled := true;
   end;
   pbCard.Invalidate;

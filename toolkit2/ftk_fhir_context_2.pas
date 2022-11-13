@@ -60,7 +60,7 @@ Type
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
-    procedure SeeResource(r : TFhirResource); override;
+    procedure SeeResourceProxy(r : TFhirResourceProxy); override;
   public
     constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager); virtual;
     destructor Destroy; Override;
@@ -199,13 +199,13 @@ begin
   result := TToolkitValidatorContextR2(inherited Link);
 end;
 
-procedure TToolkitValidatorContextR2.SeeResource(r: TFhirResource);
+procedure TToolkitValidatorContextR2.SeeResourceProxy(r: TFhirResourceProxy);
 var
   vs : TFhirValueset;
 begin
-  if (r.ResourceType = frtNull) then
+  if (r.resource.ResourceType = frtNull) then
   begin
-    vs := (r as TFHIRValueSet);
+    vs := (r.resource as TFHIRValueSet);
     FValueSets.Add(vs.url, vs.Link);
     if (vs.codeSystem <> nil) then
       FCodeSystems.Add(vs.codeSystem.system, vs.Link)
@@ -325,7 +325,7 @@ begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, FLanguages.link, '');
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '');
       try
         params := TFHIRExpansionParams.Create;
         try

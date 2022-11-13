@@ -231,11 +231,13 @@ type
     procedure showDesigner; virtual; abstract;
     procedure showTextTab; virtual; abstract;
     procedure BeginEndSelect; virtual; abstract;
-    procedure updateFont; virtual; abstract;
+    procedure updateSettings; virtual; abstract;
     function getSource : String; virtual; abstract;
     procedure resizeControls; virtual; abstract;
     procedure saveStatus; virtual; // called before shut down because shut down order isn't always predictable
     procedure insertText(text : String; escape : boolean); virtual; abstract;
+    function pollForInspector : boolean; virtual;
+    procedure inspect; virtual;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -302,6 +304,53 @@ type
     property OnChange : TNotifyEvent read FOnChange write FOnChange;
   end;
 
+  { TToolkitContextTerminologyServer }
+
+  TToolkitContextTerminologyServer = class (TFHIRTerminologyService)
+  private
+    FAddress: String;
+    FDefault: boolean;
+    FId: String;
+    FName: String;
+    FVersion: TFHIRVersion;
+  public
+    Constructor Create; override;
+    function link : TToolkitContextTerminologyServer; overload;
+
+    function copy : TToolkitContextTerminologyServer;
+    procedure updateFrom(src : TToolkitContextTerminologyServer);
+
+    property id : String read FId write FId; // not persistent
+    property name : String read FName write FName;
+    property address : String read FAddress write FAddress;
+    property version : TFHIRVersion read FVersion write FVersion;
+    property default : boolean read FDefault write FDefault;
+  end;
+
+
+  { TToolkitContextTerminologyServers }
+
+  TToolkitContextTerminologyServers = class (TFslObject)
+  private
+    FCache: String;
+    FList : TFslList<TToolkitContextTerminologyServer>;
+    FLogFile: String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    procedure load(ini : TIniFile);
+    procedure save(ini : TIniFile);
+
+    function defaultServer : TToolkitContextTerminologyServer;
+    function getByName(name : String) : TToolkitContextTerminologyServer;
+    function getByID(id : String) : TToolkitContextTerminologyServer;
+
+    property list : TFslList<TToolkitContextTerminologyServer> read FList;
+    property logFile : String read FLogFile write FLogFile;
+    property cache : String read FCache write FCache;
+  end;
+
   { TToolkitContext }
 
   TToolkitContext = class (TFslObject)
@@ -327,7 +376,7 @@ type
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
-    FTerminologyService: TFHIRTerminologyService;
+    FTxServers: TToolkitContextTerminologyServers;
     FToolBarHeight: integer;
     FSettings : TiniFile;
     FContexts : Array [TFHIRVersion] of TFHIRWorkerContextWithFactory;
@@ -341,7 +390,6 @@ type
     procedure SetFocus(AValue: TToolkitEditor);
     procedure SetLanguages(AValue: TIETFLanguageDefinitions);
     procedure SetSideBySide(AValue: boolean);
-    procedure SetTerminologyService(AValue: TFHIRTerminologyService);
     procedure SetToolBarHeight(AValue: integer);
   public
     constructor Create(images : TImageList; actions : TActionList);
@@ -353,7 +401,7 @@ type
     property actions : TActionList read FActions;
     function locateOnScreen(x, y : Integer) : TPoint;
     property Font : TFont read FFont write FFont;
-    procedure updateFont;
+    procedure updateSettings;
     property ToolBarHeight : integer read FToolBarHeight write SetToolBarHeight;
 
     property hasFocus : boolean read GetHasFocus;
@@ -364,7 +412,7 @@ type
     property storages : TFslList<TStorageService> read FStorages;
     function StorageForAddress(address : String; server : TFHIRServerEntry = nil) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
-    property TerminologyService : TFHIRTerminologyService read FTerminologyService write SetTerminologyService;
+    property TxServers : TToolkitContextTerminologyServers read FTxServers;
     property Languages : TIETFLanguageDefinitions read FLanguages write SetLanguages;
     property pcm : TFHIRPackageManager read FPcm;
 
@@ -407,6 +455,147 @@ type
 
 implementation
 
+var
+  GServerId : integer = 0;
+
+{ TToolkitContextTerminologyServer }
+
+constructor TToolkitContextTerminologyServer.Create;
+begin
+  inherited Create;
+  inc(GServerId);
+  FId := inttostr(GServerId);
+end;
+
+function TToolkitContextTerminologyServer.link: TToolkitContextTerminologyServer;
+begin
+  result := TToolkitContextTerminologyServer(inherited Link);
+end;
+
+function TToolkitContextTerminologyServer.copy: TToolkitContextTerminologyServer;
+begin
+  result := TToolkitContextTerminologyServer.create;
+  try
+    result.id := id;
+    result.name := name;
+    result.address := address;
+    result.default := default;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TToolkitContextTerminologyServer.updateFrom(src: TToolkitContextTerminologyServer);
+begin
+  name := src.name;
+  address := src.address;
+  default := src.default;
+end;
+
+{ TToolkitContextTerminologyServers }
+
+constructor TToolkitContextTerminologyServers.Create;
+begin
+  inherited Create;
+  FList := TFslList<TToolkitContextTerminologyServer>.create;
+end;
+
+destructor TToolkitContextTerminologyServers.Destroy;
+begin
+  FList.free;
+  inherited Destroy;
+end;
+
+procedure TToolkitContextTerminologyServers.load(ini: TIniFile);
+var
+  i, t : integer;
+  s : String;
+  srvr : TToolkitContextTerminologyServer;
+begin
+  t := ini.readInteger('tx', 'server-count', 0);
+
+  for i := 1 to t do
+  begin
+    srvr := TToolkitContextTerminologyServer.create;
+    try
+      srvr.Name := ini.readString('tx', 'server'+inttostr(i), '');
+      srvr.Address := ini.readString('tx', 'server'+inttostr(i)+'-address', '');
+      FList.add(srvr.link);
+    finally
+      srvr.free;
+    end;
+  end;
+  if (FList.Count = 0) then
+  begin
+    srvr := TToolkitContextTerminologyServer.create;
+    try
+      srvr.Name := 'tx.fhir.org';
+      srvr.Address := 'http://tx.fhir.org';
+      FList.add(srvr.link);
+    finally
+      srvr.free;
+    end;
+  end;
+  s := ini.ReadString('tx', 'server', 'tx.fhir.org');
+  srvr := getByName(s);
+  if (srvr = nil) then
+    FList[0].default := true
+  else
+    srvr.default := true;
+  FLogFile := ini.ReadString('tx', 'log', '');
+  FCache := IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache';
+end;
+
+procedure TToolkitContextTerminologyServers.save(ini: TIniFile);
+var
+  i : integer;
+  srvr : TToolkitContextTerminologyServer;
+begin
+  ini.WriteInteger('tx', 'server-count', FList.count);
+  for i := 1 to FList.count  do
+  begin
+    srvr := FList[i-1];
+    ini.writeString('tx', 'server'+inttostr(i), srvr.name);
+    ini.writeString('tx', 'server'+inttostr(i)+'-address', srvr.Address);
+    if (srvr.default) then
+      ini.writeString('tx', 'server', srvr.name);
+  end;
+  ini.WriteString('tx', 'log', FLogFile);
+end;
+
+function TToolkitContextTerminologyServers.defaultServer: TToolkitContextTerminologyServer;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  result := nil;
+  for t in FList do
+    if t.default then
+      exit(t);
+  if (FList.count > 0) then
+    result := FList[0];
+end;
+
+function TToolkitContextTerminologyServers.getByName(name: String): TToolkitContextTerminologyServer;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  result := nil;
+  for t in FList do
+    if (t.name = name) then
+      exit(t);
+end;
+
+function TToolkitContextTerminologyServers.getByID(id: String): TToolkitContextTerminologyServer;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  result := nil;
+  for t in FList do
+    if (t.id = id) then
+      exit(t);
+end;
+
 { TToolkitEditorInspectorView }
 
 procedure TToolkitEditorInspectorView.SetActive(AValue: boolean);
@@ -428,11 +617,23 @@ begin
 end;
 
 procedure TToolkitEditorInspectorView.populate(ts: TStringList);
+var
+  bDo : boolean;
+  i : integer;
 begin
-  FSource.Clear;
-  FSource.Assign(ts);
-  Active := true;
-  OnChange(self);
+  bDo := ts.count <> FSource.count;
+  if not bDo then
+  begin
+    for i := 0 to ts.count - 1 do
+      bDo := bDo or (ts[i] <> FSource[i]);
+  end;
+  if (bDo) then
+  begin
+    FSource.Clear;
+    FSource.Assign(ts);
+    Active := true;
+    OnChange(self);
+  end;
 end;
 
 procedure TToolkitEditorInspectorView.clear;
@@ -714,6 +915,16 @@ begin
   FContext := nil; // we're cut off after this executes
 end;
 
+function TToolkitEditor.pollForInspector: boolean;
+begin
+  result := false;
+end;
+
+procedure TToolkitEditor.inspect;
+begin
+
+end;
+
 { TToolkitContextObject }
 
 constructor TToolkitContextObject.create(context: TToolkitContext);
@@ -769,12 +980,6 @@ begin
   end;
 end;
 
-procedure TToolkitContext.SetTerminologyService(AValue: TFHIRTerminologyService);
-begin
-  FTerminologyService.Free;
-  FTerminologyService := AValue;
-end;
-
 procedure TToolkitContext.SetToolBarHeight(AValue: integer);
 var
  editor : TToolkitEditor;
@@ -798,6 +1003,7 @@ begin
   FImages := images;
   FActions := actions;
   FPcm := TFHIRPackageManager.create(true);
+  FTxServers := TToolkitContextTerminologyServers.create;
 end;
 
 destructor TToolkitContext.Destroy;
@@ -807,7 +1013,7 @@ begin
   FPcm.free;
   for a in TFHIRVersion do
     FContexts[a].Free;
-  FTerminologyService.Free;
+  FTxServers.Free;
   FInspector.Free;
   FMessageView.Free;
   Logging.removeListener(FConsole);
@@ -829,12 +1035,12 @@ begin
   OnLocate(self, x, y, result);
 end;
 
-procedure TToolkitContext.updateFont;
+procedure TToolkitContext.updateSettings;
 var
   editor : TToolkitEditor;
 begin
   for editor in Editors do
-    editor.updateFont;
+    editor.updateSettings;
 end;
 
 function TToolkitContext.StorageForAddress(address: String; server : TFHIRServerEntry = nil): TStorageService;

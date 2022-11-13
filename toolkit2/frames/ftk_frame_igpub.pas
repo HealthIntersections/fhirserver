@@ -57,19 +57,6 @@ type
     property url : String read FUrl write FUrl;
   end;
 
-  { TIgTxServer }
-
-  TIgTxServer = class (TFslObject)
-  private
-    FUrl: String;
-    FName: String;
-  public
-    constructor Create(name, url : String);
-    function link : TIgTxServer; overload;
-    property name : String read FName write FName;
-    property url : String read FUrl write FUrl;
-  end;
-
   TIGPublicationFolderStatus = (fsNotRun, fsRunning, fsSuccess, fsError);
 
   { TIGPublicationFolder }
@@ -90,6 +77,7 @@ type
     procedure emitLine(line : String; repl : boolean);
     function log : String;
     function ghURL : String;
+    procedure inspect(ts : TStringList);
   public
     constructor Create(manager : TIGPublicationManager); overload;
     constructor Create(manager : TIGPublicationManager; name, folder : String; RunLength, LineCount : integer); overload;
@@ -229,7 +217,6 @@ type
   private
     FTempStore: TFHIRToolkitTemporaryStorage;
     FIgPublisherVersions : TFslList<TIgPublisherVersion>;
-    FTxServers : TFslList<TIgTxServer>;
     FJavaCmd : String;
     FDevParams : String;
     FCounter : integer;
@@ -240,13 +227,15 @@ type
     procedure SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
 
     procedure listVersions(json : TJsonObject);
-    procedure loadServers(json : TJsonObject);
     procedure loadFolders(json : TJsonObject);
+    procedure loadServers;
     procedure updateButtons;
     procedure doReloadVersions(sender : TObject);
     procedure ClearDirectory(dir : String);
   protected
     procedure save(json : TJsonObject); override;
+    procedure updateSettings;  override;
+    procedure inspect; override;
   public
     destructor Destroy; override;
     procedure init(json : TJsonObject); override;
@@ -285,20 +274,6 @@ begin
     cmd := l.trim;
     folder := r.trim;
   end;
-end;
-
-{ TIgTxServer }
-
-constructor TIgTxServer.Create(name, url: String);
-begin
-  inherited Create;
-  self.name := name;
-  self.url := url;
-end;
-
-function TIgTxServer.link: TIgTxServer;
-begin
-  result := TIgTxServer(inherited link);
 end;
 
 { TIgPublisherVersion }
@@ -611,10 +586,21 @@ begin
 end;
 
 procedure TIGPublicationManager.focusItemChange(item: TIGPublicationFolder);
+var
+  ts : TStringList;
 begin
   FFrame.mStatus.Clear;
   FCurrent := item;
   FCurrentLine := 0;
+
+  ts := TStringList.create;
+  try
+    if (item <> nil) then
+      item.inspect(ts);
+    FFrame.Context.Inspector.Populate(ts);
+  finally
+    ts.Free;
+  end;
 end;
 
 function TIGPublicationManager.addItem(mode: String): TIGPublicationFolder;
@@ -726,7 +712,7 @@ begin
     engine.OnEmitLine := item.emitLine;
     engine.javaCmd := FFrame.FJavaCmd;
     engine.devParams := FFrame.FDevParams;
-    engine.txSrvr := (FFrame.cbxTxServer.items.objects[FFrame.cbxTxServer.ItemIndex] as TIgTxServer).url;
+    engine.txSrvr := (FFrame.cbxTxServer.items.objects[FFrame.cbxTxServer.ItemIndex] as TToolkitContextTerminologyServer).address;
     engine.version := FFrame.cbxVersions.text;
     engine.url := (FFrame.cbxVersions.items.Objects[FFrame.cbxVersions.ItemIndex] as TIgPublisherVersion).FUrl;
     engine.Start;
@@ -875,6 +861,19 @@ begin
   end;
 end;
 
+procedure TIGPublicationFolder.inspect(ts: TStringList);
+begin
+  ts.Values['Path'] := FFolder;
+  case FStatus of
+    fsNotRun : ts.Values['Status'] := 'Not run this session';
+    fsRunning : ts.Values['Status'] := 'Building Now';
+    fsSuccess : ts.Values['Status'] := 'Built Succesfully';
+    fsError : ts.Values['Status'] := 'Failed';
+  end;
+  if FStatus <> fsNotRun then
+    ts.Values['Run Time'] := DescribePeriod(FRunLength * DATETIME_MILLISECOND_ONE);
+end;
+
 { TIgPubPageFrame }
 
 destructor TIgPubPageFrame.Destroy;
@@ -882,7 +881,6 @@ begin
   FManager.Free;
   FTempStore.free;
   FIgPublisherVersions.Free;
-  FTxServers.Free;
   inherited;
 end;
 
@@ -901,7 +899,6 @@ var
   grp : TControlEntry;
 begin
   FIgPublisherVersions := TFslList<TIgPublisherVersion>.create;
-  FTxServers := TFslList<TIgTxServer>.create;
 
   FManager := TIGPublicationManager.create;
   FManager.FFrame := self;
@@ -940,8 +937,8 @@ begin
     FJavaCmd := 'java';
   FDevParams := json.str['dev-params'];
   listVersions(json);
-  loadServers(json);
   loadFolders(json);
+  loadServers;
 end;
 
 procedure TIgPubPageFrame.tbConfigClick(Sender: TObject);
@@ -1231,36 +1228,6 @@ begin
   end;
 end;
 
-procedure TIgPubPageFrame.loadServers(json: TJsonObject);
-var
-  arr : TJsonArray;
-  o : TJsonObject;
-  procedure addServer(name, url : String);
-  var
-    tx : TIgTxServer;
-  begin
-    tx := TIgTxServer.create(name, url);
-    try
-      FTxServers.add(tx.Link);
-      cbxTxServer.items.AddObject(name, tx);
-    finally
-      tx.free;
-    end;
-  end;
-begin
-  if json.has('tx-servers') then
-  begin
-    for o in json.arr['tx-servers'].asObjects.forEnum do
-      addServer(o['name'], o['address']);
-  end
-  else
-  begin
-    addServer('tx.fhir.org', 'http://tx.fhir.org');
-    addServer('localhost', 'http://local.fhir.org:960');
-  end;
-  cbxTxServer.itemIndex := json.int['tx-server'];
-end;
-
 procedure TIgPubPageFrame.loadFolders(json: TJsonObject);
 var
   arr : TJsonArray;
@@ -1269,6 +1236,15 @@ begin
   arr := json.forceArr['igs'];
   FManager.FFolderList := arr.link;
   FManager.doLoad;
+end;
+
+procedure TIgPubPageFrame.loadServers;
+var
+  t : TToolkitContextTerminologyServer;
+begin
+  cbxTxServer.items.clear;
+  for t in Context.txServers.list do
+    cbxTxServer.items.addObject(t.name, t);
 end;
 
 procedure TIgPubPageFrame.updateButtons;
@@ -1310,7 +1286,6 @@ var
   v : TJsonObject;
   arr : TJsonArray;
   igp : TIgPublisherVersion;
-  tx : TIgTxServer;
 begin
   json.str['igpub-page'] := 'true';
   json.str['default-root'] := FDefaultRootFolder;
@@ -1329,18 +1304,6 @@ begin
     end;
   end;
   json.int['ig-pub-version'] := cbxVersions.itemIndex;
-
-  arr := json.forceArr['tx-servers'];
-  arr.clear;
-  for tx in FTxServers do;
-  begin
-    v := TJsonObject.create;
-    arr.add(v);
-    v.str['name'] := tx.name;
-    v.str['address'] := tx.url;
-  end;
-  json.int['tx-server'] := cbxTxServer.itemIndex;
-
   arr := json.forceArr['igs'];
   arr.clear;
   for i := 0 to FManager.Data.count - 1 do
@@ -1351,6 +1314,25 @@ begin
     v.str['folder'] := FManager.Data[i].folder;
     v.int['run-length'] := FManager.Data[i].RunLength;
     v.int['line-count'] := FManager.Data[i].LineCount;
+  end;
+end;
+
+procedure TIgPubPageFrame.updateSettings;
+begin
+  loadServers;
+end;
+
+procedure TIgPubPageFrame.inspect;
+var
+  ts : TStringList;
+begin
+  ts := TStringList.create;
+  try
+    if FManager.Focus <> nil then
+      FManager.Focus.inspect(ts);
+    Context.Inspector.Populate(ts);
+  finally
+    ts.Free;
   end;
 end;
 

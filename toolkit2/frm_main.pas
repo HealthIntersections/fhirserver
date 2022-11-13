@@ -183,6 +183,8 @@ type
     lvMessages: TListView;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    mnuInspectorCopyAll: TMenuItem;
+    mnuInspectorCopyValue: TMenuItem;
     mnuTextDown: TMenuItem;
     mnuTextDelete: TMenuItem;
     mnuTextAdd: TMenuItem;
@@ -380,6 +382,7 @@ type
     btnCopyLog: TSpeedButton;
     btnStopTask: TSpeedButton;
     pmText: TPopupMenu;
+    pmInspector: TPopupMenu;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
@@ -518,6 +521,8 @@ type
     procedure MenuItem118Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem40Click(Sender: TObject);
+    procedure mnuInspectorCopyAllClick(Sender: TObject);
+    procedure mnuInspectorCopyValueClick(Sender: TObject);
     procedure mnuTextAddClick(Sender: TObject);
     procedure mnuTextDeleteClick(Sender: TObject);
     procedure mnuTextDownClick(Sender: TObject);
@@ -539,6 +544,7 @@ type
     procedure pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure pgLeftChange(Sender: TObject);
     procedure pgRightChange(Sender: TObject);
+    procedure pmInspectorPopup(Sender: TObject);
     procedure pmMessageViewPopup(Sender: TObject);
     procedure pnlRightClick(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
@@ -602,6 +608,7 @@ type
     procedure updateTasks;
     procedure updateConsole;
     procedure updateActions;
+    procedure updateInspectorContent;
     procedure checkActiveTabCurrency;
     procedure checkLastUpdated;
     procedure updateStatusBar;
@@ -765,10 +772,7 @@ begin
   FContext.Font := SynEdit1.Font;
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
-  FContext.TerminologyService := TToolkitTerminologyService.create(
-      FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'),
-      FIni.ReadString('tx', 'log', ''),
-      IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache');
+  FContext.TxServers.load(FIni);
   FServerView := TFHIRServersView.create(FIni);
   FServerView.ControlFile := FilePath([ExtractFileDir(FIni.FileName), 'servers.json']);
   FServerView.Images := imgMain;
@@ -931,6 +935,27 @@ end;
 procedure TMainToolkitForm.MenuItem40Click(Sender: TObject);
 begin
   AddServer('hapi.fhir.org', 'http://hapi.fhir.org/baseR4');
+end;
+
+procedure TMainToolkitForm.mnuInspectorCopyAllClick(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := vlInspector.Strings.Text;
+  Clipboard.Close;
+end;
+
+procedure TMainToolkitForm.mnuInspectorCopyValueClick(Sender: TObject);
+var
+  i : integer;
+begin
+  for i := 0 to vlInspector.RowCount -1 do
+    if vlInspector.isCellSelected[1, i] then
+    begin
+      Clipboard.Open;
+      Clipboard.AsText := vlInspector.Values[vlInspector.Keys[i]];
+      Clipboard.Close;
+      exit;
+    end;
 end;
 
 procedure TMainToolkitForm.mnuTextAddClick(Sender: TObject);
@@ -1130,6 +1155,7 @@ begin
   updateConsole;
   updateActions;
   updateTasks;
+  updateInspectorContent;
 end;
 
 procedure TMainToolkitForm.updateTasks;
@@ -1229,6 +1255,12 @@ end;
 
 procedure TMainToolkitForm.updateActions;
 begin
+end;
+
+procedure TMainToolkitForm.updateInspectorContent;
+begin
+  if (FContext.Focus <> nil) and FContext.focus.pollForInspector then
+    FContext.focus.inspect;
 end;
 
 procedure TMainToolkitForm.checkActiveTabCurrency;
@@ -1603,7 +1635,7 @@ begin
   begin
     //vlInspector.Enabled := true;
     vlInspector.Color := clWhite;
-    vlInspector.FixedColor := clBtnFace;
+    vlInspector.FixedColor := $00EAEAEA;
     vlInspector.FixedCols := 1;
     vlInspector.Strings.Assign(Context.Inspector.Content);
   end
@@ -1612,7 +1644,7 @@ begin
     //vlInspector.Enabled := false;
     if Context.hasFocus and (context.focus.Pause > 500) then
       vlInspector.Color := $fcf3f5;
-    vlInspector.FixedColor := clBtnFace;
+    vlInspector.FixedColor := $00EAEAEA;
     vlInspector.FixedCols := 1;
   end;
 end;
@@ -2964,21 +2996,27 @@ begin
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
     ToolkitSettingsForm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
-    ToolkitSettingsForm.edtTxServer.Text := FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4');
+    ToolkitSettingsForm.loadServers(context.TxServers);
     ToolkitSettingsForm.edtTxLog.Text := FIni.ReadString('tx', 'log', '');
     ToolkitSettingsForm.edtCache.Text := IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-tx.cache';
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
-      SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
-      Context.updateFont;
-      mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
-      lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
       actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
       Context.SideBySide := actionToolsSideBySideMode.Checked;
       FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
       FIni.WriteString('Tools', 'Diff', ToolkitSettingsForm.DiffTool);
-      FIni.WriteString('tx', 'server', ToolkitSettingsForm.edtTxServer.Text);
+      ToolkitSettingsForm.saveServers(context.TxServers);
+      context.TxServers.save(FIni);
       FIni.WriteString('tx', 'log', ToolkitSettingsForm.edtTxLog.Text);
+      try
+        SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
+        Context.updateSettings;
+        mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
+        lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
+      except
+        on e : Exception do
+          showMessage('Error applying fonts: '+e.Message);
+      end;
       copyFonts;
       saveFonts;
     end;
@@ -3398,6 +3436,31 @@ procedure TMainToolkitForm.pgRightChange(Sender: TObject);
 begin
   if FDoingLayout then exit;
   FViewManager.active[tvlRight] := pgRight.ActivePageIndex;
+end;
+
+procedure TMainToolkitForm.pmInspectorPopup(Sender: TObject);
+var
+  bSel : boolean;
+  bAll : boolean;
+  i : integer;
+  s : String;
+begin
+  mnuInspectorCopyValue.caption := 'Copy Value';
+  bSel := false;
+  bAll := false;
+  for i := 1 to vlInspector.RowCount -1 do
+  begin
+    s := vlInspector.Keys[i];
+    bAll := bAll or (s <> '');
+    if (s <> '') and (vlInspector.isCellSelected[1, i]) then
+    begin
+      mnuInspectorCopyValue.caption := 'Copy '+vlInspector.Keys[i];
+      bSel := true;
+      break;
+    end;
+  end;
+  mnuInspectorCopyValue.enabled := bSel;
+  mnuInspectorCopyAll.enabled := bAll;
 end;
 
 

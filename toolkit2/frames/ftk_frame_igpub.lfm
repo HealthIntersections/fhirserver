@@ -6,8 +6,8 @@ object IgPubPageFrame: TIgPubPageFrame
   ClientHeight = 364
   ClientWidth = 1177
   TabOrder = 0
-  DesignLeft = 551
-  DesignTop = 38
+  DesignLeft = 426
+  DesignTop = 217
   object Panel1: TPanel
     Left = 0
     Height = 318

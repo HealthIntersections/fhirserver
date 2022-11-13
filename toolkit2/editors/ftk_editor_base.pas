@@ -244,7 +244,7 @@ type
     procedure showDesigner; override;
     procedure showTextTab; override;
     procedure BeginEndSelect; override;
-    procedure updateFont; override;
+    procedure updateSettings; override;
     function getSource : String; override;
     procedure resizeControls; override;
     procedure insertText(text : String; escape : boolean); override;
@@ -1491,7 +1491,7 @@ begin
   end;
 end;
 
-procedure TBaseEditor.updateFont;
+procedure TBaseEditor.updateSettings;
 begin
   if TextEditor <> nil then
     TextEditor.font.assign(Context.Font);

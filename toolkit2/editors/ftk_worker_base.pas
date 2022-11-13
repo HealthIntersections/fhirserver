@@ -59,6 +59,8 @@ type
     procedure init(json : TJsonObject); virtual; abstract;
     procedure finalise(); virtual;
     procedure changed;
+    procedure updateSettings;  virtual;
+    procedure inspect; virtual;
   public
     destructor Destroy; override;
     property Context : TToolkitContext read FContext;
@@ -96,11 +98,13 @@ type
     procedure showDesigner; override;
     procedure showTextTab; override;
     procedure BeginEndSelect; override;
-    procedure updateFont; override;
+    procedure updateSettings; override;
     function getSource : String; override;
     procedure resizeControls; override;
     procedure saveStatus; override;
     function FileExtension : String; override;
+    function pollForInspector : boolean; override;
+    procedure inspect; override;
   end;
 
 implementation
@@ -133,6 +137,16 @@ begin
   FWorker.Session.NeedsSaving := true;
   FWorker.lastChange := GetTickCount64;
   FWorker.lastChangeChecked := false;
+end;
+
+procedure TBaseWorkerFrame.updateSettings;
+begin
+  // nothing
+end;
+
+procedure TBaseWorkerFrame.inspect;
+begin
+
 end;
 
 { TBaseWorker }
@@ -274,9 +288,9 @@ begin
   abort;
 end;
 
-procedure TBaseWorker.updateFont;
+procedure TBaseWorker.updateSettings;
 begin
-  abort;
+  FFrame.updateSettings;
 end;
 
 function TBaseWorker.getSource: String;
@@ -298,6 +312,17 @@ end;
 function TBaseWorker.FileExtension: String;
 begin
   result := 'bin';
+end;
+
+function TBaseWorker.pollForInspector: boolean;
+begin
+  Result := true;
+end;
+
+procedure TBaseWorker.inspect;
+begin
+  inherited inspect;
+  FFrame.inspect;
 end;
 
 end.
