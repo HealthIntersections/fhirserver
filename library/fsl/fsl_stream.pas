@@ -6140,7 +6140,7 @@ begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer(Result{$IFDEF FPC}[0]{$ENDIF}, 0, FBytesToGo);
+  FStream.ReadBuffer(Result{$IFDEF FPC}[0]{$ELSE}, 0{$ENDIF}, FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;

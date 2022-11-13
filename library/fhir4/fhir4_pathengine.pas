@@ -135,6 +135,8 @@ type
   TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject of object;
   TFHIRResolveConstantEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; name : String; beforeContext : boolean) : TFHIRObject of object;
 
+  { TFHIRPathEngine }
+
   TFHIRPathEngine = class (TFHIRPathEngineV)
   private
     worker : TFHIRWorkerContext;
@@ -277,7 +279,9 @@ type
     function equal(left, right : TFHIRObject) : TEqualityTriState;  overload;
     function equivalent(left, right : TFHIRObject) : boolean;  overload;
     function asBoolFromDec(s: String): TEqualityTriState;
-    function asBoolFromInt(s: String): TEqualityTriState;  protected
+    function asBoolFromInt(s: String): TEqualityTriState;
+    function typeMatches(v, t: String): boolean;
+  protected
     function asBool(item : TFHIRObject) : TEqualityTriState; overload;
     function asBool(items : TFHIRSelectionList) : TEqualityTriState; overload;
 
@@ -2173,6 +2177,25 @@ begin
   end;
 end;
 
+function TFHIRPathEngine.typeMatches(v, t : String ) : boolean;
+var
+  sd : TFHIRStructureDefinition;
+begin
+  if v = t then
+    result := true
+  else
+  begin
+    result := false;
+    sd := worker.fetchTypeDefinition(t);
+    while (sd <> nil) do
+    begin
+      if (v = sd.type_) then
+        exit(true);
+      sd := worker.fetchStructureDefinition(sd.baseDefinition);
+    end;
+  end;
+end;
+
 function TFHIRPathEngine.funcIs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   ns, n : string;
@@ -2219,7 +2242,7 @@ begin
           result.add(TFHIRBoolean.create(false).noExtensions);
       end
       else if (ns = 'FHIR') then
-        result.add(TFHIRBoolean.create(n = focus[0].value.fhirType).noExtensions)
+        result.add(TFHIRBoolean.create(typeMatches(n, focus[0].value.fhirType)).noExtensions)
       else
         result.add(TFHIRBoolean.create(false).noExtensions);
     end;

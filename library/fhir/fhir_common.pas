@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, Dialogs,
+  SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_versions, fsl_http, fsl_logging,
   fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 

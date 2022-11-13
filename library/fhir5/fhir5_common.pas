@@ -67,8 +67,8 @@ const
   MAP_TFHIRConceptEquivalenceR : array [TFHIRConceptEquivalence] of TFhirConceptMapRelationshipEnum = (ConceptMapRelationshipNull, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipRelatedto, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipSourceIsBroaderThanTarget, ConceptMapRelationshipSourceIsNarrowerThanTarget, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo, ConceptMapRelationshipNotRelatedTo);
   MAP_TContactType : array [TContactType] of TFhirContactPointSystemEnum = (ContactPointSystemNull, ContactPointSystemPhone, ContactPointSystemFax, ContactPointSystemEmail, ContactPointSystemPager, ContactPointSystemUrl, ContactPointSystemSms, ContactPointSystemOther);
   MAP_TContactType2 : array [TFhirContactPointSystemEnum] of TContactType = (cpsNull, cpsPhone, cpsFax, cpsEmail, cpsPager, cpsUrl, cpsSms, cpsOther);
-  MAP_TSubscriptionStatus : array [TFhirSubscriptionStateEnum] of TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff, ssEnteredInError);
-  MAP_TSubscriptionStatus2 : array [TSubscriptionStatus] of TFhirSubscriptionStateEnum = (SubscriptionStateNull, SubscriptionStateRequested, SubscriptionStateActive, SubscriptionStateError, SubscriptionStateOff, SubscriptionStateEnteredInError);
+  MAP_TSubscriptionStatus : array [TFhirSubscriptionStatusCodesEnum] of TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff, ssEnteredInError);
+  MAP_TSubscriptionStatus2 : array [TSubscriptionStatus] of TFhirSubscriptionStatusCodesEnum = (SubscriptionStatusCodesNull, SubscriptionStatusCodesRequested, SubscriptionStatusCodesActive, SubscriptionStatusCodesError, SubscriptionStatusCodesOff, SubscriptionStatusCodesEnteredInError);
   BUNDLE_TYPE_TITLE : Array[TFhirBundleTypeEnum] of String = ('', 'Document', 'Message', 'Transaction', 'Transaction Response', 'Batch', 'Batch Response', 'History Record', 'Search Results', 'Resource Collection', 'Subscription Notification');
   MAP_TFHIRBundleType  : array [TBundleType] of TFhirBundleTypeEnum = (BundleTypeNull, BundleTypeDocument, BundleTypeMessage, BundleTypeTransaction, BundleTypeTransactionResponse, BundleTypeBatch, BundleTypeBatchResponse, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection);
   MAP_TFHIRBundleTypeR : array [TFhirBundleTypeEnum] of TBundleType = (btNull, btDocument, btMessage, btTransaction, btTransactionResponse, btBatch, btBatchResponse, btHistory, btSearchset, btCollection, btCollection);
@@ -255,75 +255,6 @@ type
   TFHIRCapabilityStatement5 = class (TFHIRCapabilityStatementW)
   private
     function statement : TFhirCapabilityStatement;
-  public
-    function GetLanguage: String; override;
-    procedure SetLanguage(const Value: String); override;
-    function hasRest : boolean; override;
-    function hasSecurity(system, code : String) : boolean; override;
-
-    procedure readSmartExtension(var authorize, token, register: String); override;
-    procedure addSmartExtensions(authorize, token, register, manage: String; caps : Array of String); override;
-    function hasFormat(fmt : String) : boolean; override;
-
-    procedure contact(kind : TContactType; value : String); override;
-    procedure software(name, version, release : String); override;
-    procedure impl(url, desc : String); override;
-    procedure fmt(mt : String); override;
-    procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
-    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
-    function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
-    procedure addOperation(name, url : String); override;
-
-    function getURL: String; override;
-    procedure setUrl(Value: String); override;
-    function getName : String; override;
-    procedure setName(value : String); override;
-    function getVersion : String; override;
-    procedure setVersion(value : String); override;
-    function getDescription : String; override;
-    procedure setDescription(value : String); override;
-    function getStatus: TPublicationStatus; override;
-    procedure setStatus(Value: TPublicationStatus); override;
-    function getDate: TFslDateTime; override;
-    procedure setDate(Value: TFslDateTime); override;
-    function getFhirVersion: string; override;
-    procedure setFhirVersion(Value: string); override;
-    function getKind: TCapabilityStatementKind; override;
-    procedure setKind(Value: TCapabilityStatementKind); override;
-    function getAcceptUnknown: TCapabilityStatementAcceptUnknown; override;
-    procedure setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown); override;
-
-    function supportsType(name : String; interaction : TFHIRInteraction) : boolean; override;
-    procedure listTypes(interactions : TFHIRInteractions; names : TStrings); override;
-    procedure listSearchParams(name : String; list : TFslList<TFHIRSearchParamDefinitionW>); override;
-    procedure addInstantiates(url : String); override;
-  end;
-
-  TFHIRSearchParamDefinition25 = class (TFHIRSearchParamDefinitionW)
-  private
-    function param : TFhirCapabilityStatement2RestResourceSearchParam;
-  public
-    function name : String; override;
-    function documentation : String; override;
-    function type_ : TFHIRSearchParamType; override;
-  end;
-
-  TFhirCapabilityStatementRestResource25 = class (TFhirCapabilityStatementRestResourceW)
-  public
-    function getCode: String; override;
-    procedure setCode(Value: String); override;
-    function getProfile: String; override;
-    function hasInteraction : boolean; override;
-    procedure setProfile(Value: String); override;
-    procedure addInteraction(code : String);  override;
-    function getReadHistory: boolean; override;
-    procedure setReadHistory(Value: boolean); override;
-    procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
-  end;
-
-  TFHIRCapabilityStatement25 = class (TFHIRCapabilityStatementW)
-  private
-    function statement : TFhirCapabilityStatement2;
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -1349,7 +1280,7 @@ var
 begin
   links.Clear;
   for bl in bundle.link_List do
-    links.AddOrSetValue(bl.relation, bl.url);
+    links.AddOrSetValue(CODES_TFhirLinkRelationTypesEnum[bl.relation], bl.url);
 end;
 
 function TFHIRBundle5.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
@@ -3591,10 +3522,10 @@ end;
 
 function TFhirConceptMap5.source: String;
 begin
-  if (cm.source is TFhirReference) then
-    result := (cm.source as TFhirReference).reference
-  else if cm.source <> nil then
-    result := cm.source.primitiveValue;
+  if (cm.sourceScope is TFhirReference) then
+    result := (cm.sourceScope as TFhirReference).reference
+  else if cm.sourceScope <> nil then
+    result := cm.sourceScope.primitiveValue;
 end;
 
 function TFhirConceptMap5.sourceDesc: String;
@@ -3604,10 +3535,10 @@ end;
 
 function TFhirConceptMap5.target: String;
 begin
-  if (cm.target is TFhirReference) then
-    result := (cm.target as TFhirReference).reference
-  else if cm.target <> nil then
-    result := cm.target.primitiveValue;
+  if (cm.targetScope is TFhirReference) then
+    result := (cm.targetScope as TFhirReference).reference
+  else if cm.targetScope <> nil then
+    result := cm.targetScope.primitiveValue;
 end;
 
 function TFhirConceptMap5.targetDesc: String;
@@ -5163,7 +5094,7 @@ begin
   else if ed.triggerList[0].dataList.Count = 0 then
     result := ''
   else
-    result := CODES_TFhirAllTypesEnum[ed.triggerList[0].dataList[0].type_];
+    result := CODES_TFhirFHIRTypesEnum[ed.triggerList[0].dataList[0].type_];
 end;
 
 function TFHIREventDefinition5.ed: TFHIREventDefinition;
@@ -5739,8 +5670,14 @@ end;
 { TFhirConceptMapGroupElementDependsOn5 }
 
 function TFhirConceptMapGroupElementDependsOn5.display: String;
+var
+  e : TFhirConceptMapGroupElementTargetDependsOn;
 begin
-  result := (Element as TFhirConceptMapGroupElementTargetDependsOn).display;
+  e := Element as TFhirConceptMapGroupElementTargetDependsOn;
+  if e.value is TFhirCoding then
+    result := TFhirCoding(e.value).display
+  else
+    result := '';
 end;
 
 function TFhirConceptMapGroupElementDependsOn5.property_: String;
@@ -5749,508 +5686,28 @@ begin
 end;
 
 function TFhirConceptMapGroupElementDependsOn5.system_: String;
+var
+  e : TFhirConceptMapGroupElementTargetDependsOn;
 begin
-  result := (Element as TFhirConceptMapGroupElementTargetDependsOn).system;
+  e := Element as TFhirConceptMapGroupElementTargetDependsOn;
+  if e.value is TFhirCoding then
+    result := TFhirCoding(e.value).system
+  else
+    result := '';
 end;
 
 function TFhirConceptMapGroupElementDependsOn5.value: String;
-begin
-  result := (Element as TFhirConceptMapGroupElementTargetDependsOn).code;
-end;
-
-{ TFHIRCapabilityStatement25 }
-
-procedure TFHIRCapabilityStatement25.addInstantiates(url: String);
-begin
-  statement.instantiatesList.Append.value := url;
-end;
-
-procedure TFHIRCapabilityStatement25.addOperation(name, url: String);
 var
-  t : TFhirCapabilityStatement2RestResourceOperation;
+  e : TFhirConceptMapGroupElementTargetDependsOn;
 begin
-  t := statement.restList[0].operationList.append;
-  t.name := name;
-  t.definition := url;
-end;
-
-function TFHIRCapabilityStatement25.addResource(code: String): TFhirCapabilityStatementRestResourceW;
-begin
-  result := TFhirCapabilityStatementRestResource25.create(statement.restList[0].resourceList.append.link);
-  result.code := code;
-end;
-
-procedure TFHIRCapabilityStatement25.addSmartExtensions(authorize, token, register, manage: String; caps : Array of String);
-var
-  ext: TFhirExtension;
-  s : string;
-  f : TFhirCapabilityStatement2RestFeature;
-begin
-  if statement.restList.isEmpty then
-    statement.restList.append.mode := RestfulCapabilityModeServer;
-
-  f := statement.restList[0].featureList.Append;
-  f.code := CapabilityFeatureSecurityCors;
-  f.value := CapabilityFeatureValueTrue;
-
-  if authorize <> '' then
-  begin
-//    f := statement.restList[0].featureList.Append;
-//    f.code := CapabilityFeatureSecurityService;
-//    f.value := CapabilityFeatureValue;
-
-//    f := statement.restList[0].featureList.Append;
-//    f.code := 'oauth-uris-register';
-//    f.value := register;
-//
-//    f := statement.restList[0].featureList.Append;
-//    f.code := 'oauth-uris-authorize';
-//    f.value := authorize;
-//
-//    f := statement.restList[0].featureList.Append;
-//    f.code := 'oauth-uris-token';
-//    f.value := token;
-//
-//    f := statement.restList[0].featureList.Append;
-//    f.code := 'oauth-uris-manage';
-//    f.value := manage;
-//
-//    for s in caps do
-//    begin
-//      f := statement.restList[0].featureList.Append;
-//      f.code := 'smart-capabilities';
-//      f.value := s;
-//    end;
-  end;
-end;
-
-procedure TFHIRCapabilityStatement25.contact(kind: TContactType; value: String);
-var
-  c : TFhirContactPoint;
-  ct : TFhirConformanceContact;
-begin
-  ct := statement.contactList.Append;
-  c := ct.telecomList.Append;
-  c.system := MAP_TContactType[kind];
-  c.value := 'http://healthintersections.com.au/';
-end;
-
-procedure TFHIRCapabilityStatement25.defineFeatures(features: TFslList<TFHIRFeature>);
-begin
-  statement.defineFeatures(features);
-end;
-
-function TFHIRCapabilityStatement25.getURL: String;
-begin
-  result := statement.url;
-end;
-
-function TFHIRCapabilityStatement25.hasFormat(fmt: String): boolean;
-begin
-  result := statement.formatList.hasCode(fmt);
-end;
-
-function TFHIRCapabilityStatement25.hasRest: boolean;
-begin
-  result := statement.restList.Count > 0;
-end;
-
-function TFHIRCapabilityStatement25.hasSecurity(system, code: String): boolean;
-var
-  cs : TFHIRCapabilityStatement2;
-  cc : TFhirCodeableConcept;
-begin
-  cs := statement;
-  result := false;
-//  if (cs.restList[0].security <> nil) then
-//    for cc in cs.restList[0].security.serviceList do
-//      if cc.hasCode(system, code) then
-//        exit(true);
-end;
-
-procedure TFHIRCapabilityStatement25.impl(url, desc: String);
-begin
-  if statement.implementation_ = nil then
-    statement.implementation_ := TFhirCapabilityStatement2Implementation.Create;
-  statement.implementation_.description := desc;
-  statement.implementation_.url := url;
-end;
-
-procedure TFHIRCapabilityStatement25.listSearchParams(name: String; list: TFslList<TFHIRSearchParamDefinitionW>);
-var
-  r : TFhirCapabilityStatement2Rest;
-  rr : TFhirCapabilityStatement2RestResource;
-  sp : TFhirCapabilityStatement2RestResourceSearchParam;
-begin
-  for r in statement.restList do
-  begin
-    if r.mode = RestfulCapabilityModeServer then
-    begin
-      if name = 'All Types' then
-        for sp in r.searchParamList do
-          list.Add(TFHIRSearchParamDefinition5.create(sp.Link))
-      else
-      begin
-        for rr in r.resourceList do
-        begin
-          if CODES_TFhirResourceTypesEnum[rr.type_] = name then
-            for sp in rr.searchParamList do
-              list.Add(TFHIRSearchParamDefinition5.create(sp.Link))
-        end;
-      end;
-    end;
-  end;
-end;
-
-procedure TFHIRCapabilityStatement25.listTypes(interactions: TFHIRInteractions; names: TStrings);
-var
-  r : TFhirCapabilityStatement2Rest;
-  it : TFhirCapabilityStatement2RestInteraction;
-  rr : TFhirCapabilityStatement2RestResource;
-  ok : boolean;
-  int : TFhirCapabilityStatement2RestResourceInteraction;
-  i : TFHIRInteraction;
-begin
-  for r in statement.restList do
-  begin
-    if r.mode = RestfulCapabilityModeServer then
-    begin
-      ok := false;
-      for it in r.interactionList do
-        for i in ALL_INTERACTIONS do
-          if (i in interactions) and (it.code = INTERACTION_MAP2[i]) then
-            ok := true;
-      if ok then
-        names.Add('All Types');
-      for rr in r.resourceList do
-      begin
-        ok := false;
-        for int in rr.interactionList do
-          for i in ALL_INTERACTIONS do
-            if (i in interactions) and (int.code = INTERACTION_MAP[i]) then
-              ok := true;
-        if ok then
-          names.Add(CODES_TFHIRResourceTypesEnum[rr.type_]);
-      end;
-    end;
-  end;
-end;
-
-procedure TFHIRCapabilityStatement25.readSmartExtension(var authorize, token, register: String);
-var
-  ex1, ex2 : TFhirExtension;
-begin
-//  for ex1 in statement.restList[0].security.extensionList do
-//    if ex1.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris' then
-//      for ex2 in ex1.extensionList do
-//        if ex2.url = 'authorize' then
-//          authorize := TFHIRUri(ex2.value).value
-//        else if ex2.url = 'token' then
-//          token := TFHIRUri(ex2.value).value
-//        else if ex2.url = 'register' then
-//          register := TFHIRUri(ex2.value).value;
-end;
-
-procedure TFHIRCapabilityStatement25.SetUrl(Value: String);
-begin
-  statement.url := value;
-end;
-
-function TFHIRCapabilityStatement25.getName : String;
-begin
-  result := statement.Name;
-end;
-
-procedure TFHIRCapabilityStatement25.setName(value : String);
-begin
-  statement.Name := value;
-end;
-
-function TFHIRCapabilityStatement25.getVersion : String;
-begin
-  result := statement.Version;
-end;
-
-procedure TFHIRCapabilityStatement25.setVersion(value : String);
-begin
-  statement.Version := value;
-end;
-
-procedure TFHIRCapabilityStatement25.software(name, version, release: String);
-begin
-  if statement.software = nil then
-    statement.software := TFhirCapabilityStatement2Software.Create;
-  statement.software.name := name;
-  statement.software.version := version;
-  statement.software.releaseDate := TFslDateTime.fromHL7(release);
-end;
-
-function TFHIRCapabilityStatement25.getDescription : String;
-begin
-  result := statement.Description;
-end;
-
-function TFHIRCapabilityStatement25.GetFhirVersion: string;
-begin
-  result := CODES_TFhirFHIRVersionEnum[statement.fhirVersion];
-end;
-
-procedure TFHIRCapabilityStatement25.setDescription(value : String);
-begin
-  statement.Description := value;
-end;
-
-procedure TFHIRCapabilityStatement25.SetFhirVersion(Value: string);
-begin
-  statement.fhirVersion := TFhirFHIRVersionEnum(StringArrayIndexOfSensitive(CODES_TFhirFHIRVersionEnum, value));
-end;
-
-function TFHIRCapabilityStatement25.GetStatus: TPublicationStatus;
-begin
-  result := MAP_TPublicationStatusR[statement.Status];
-end;
-
-procedure TFHIRCapabilityStatement25.SetStatus(Value: TPublicationStatus);
-begin
-  statement.Status := MAP_TPublicationStatus[value];
-end;
-
-procedure TFHIRCapabilityStatement25.fmt(mt: String);
-begin
-  statement.formatList.Append.value := mt;
-end;
-
-function TFHIRCapabilityStatement25.GetDate: TFslDateTime;
-begin
-  result := statement.Date;
-end;
-
-procedure TFHIRCapabilityStatement25.SetDate(Value: TFslDateTime);
-begin
-  statement.Date := value;
-end;
-
-
-procedure TFHIRCapabilityStatement25.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
-//var
-//  ext : TFhirExtension;
-begin
-  if statement.restList.isEmpty then
-    statement.restList.append.mode := RestfulCapabilityModeServer;
-  if (ws <> '') then
-    statement.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', ws);
-  if transactions then
-    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
-  if search then
-    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
-  if history then
-    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
-  statement.text := TFhirNarrative.create;
-  statement.text.status := NarrativeStatusGenerated;
-  statement.instantiatesList.AddItem(TFHIRCanonical.Create('http://hl7.org/fhir/Conformance/terminology-server'));
-  // commented out until we sort out cds-hooks
-//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-//  ext.addExtension('name', 'Fetch Patient Alerts');
-//  ext.addExtension('activity', pv);
-//  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
-//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-//  ext.addExtension('name', 'Get Terminology Information');
-//  ext.addExtension('activity', cv);
-//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-//  ext.addExtension('name', 'Get identifier Information');
-//  ext.addExtension('activity', iv);
-end;
-
-function TFHIRCapabilityStatement25.statement: TFhirCapabilityStatement2;
-begin
-  result := FRes as TFHIRCapabilityStatement2;
-end;
-
-function TFHIRCapabilityStatement25.supportsType(name: String; interaction: TFHIRInteraction): boolean;
-var
-  r : TFhirCapabilityStatement2Rest;
-  it : TFhirCapabilityStatement2RestInteraction;
-  rr : TFhirCapabilityStatement2RestResource;
-  ok : boolean;
-  int : TFhirCapabilityStatement2RestResourceInteraction;
-  i : TFHIRInteraction;
-begin
-  result := false;
-  for r in statement.restList do
-  begin
-    if r.mode = RestfulCapabilityModeServer then
-    begin
-      if name = 'All Types' then
-      begin
-        ok := false;
-        for it in r.interactionList do
-          for i in ALL_INTERACTIONS do
-            if (i = interaction) and (it.code = INTERACTION_MAP2[i]) then
-              ok := true;
-        exit(ok);
-      end
-      else
-      begin
-        for rr in r.resourceList do
-        begin
-          if CODES_TFHIRResourceTypesEnum[rr.type_] = name then
-          begin
-            ok := false;
-            for int in rr.interactionList do
-              for i in ALL_INTERACTIONS do
-                if (i = interaction) and (int.code = INTERACTION_MAP[i]) then
-                  ok := true;
-            if ok then
-              exit(ok);
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
-
-function TFHIRCapabilityStatement25.getKind: TCapabilityStatementKind;
-begin
-  case statement.kind of
-    CapabilityStatementKindInstance : result := cskInstance;
-    CapabilityStatementKindCapability : result := cskCapability;
-    CapabilityStatementKindRequirements : result := cskRequirements;
+  e := Element as TFhirConceptMapGroupElementTargetDependsOn;
+  if e.value is TFhirCoding then
+    result := TFhirCoding(e.value).system
+  else if e.value <> nil then
+    result := e.value.ToString
   else
-    result := cskNull;
-  end;
+    result := '';
 end;
-
-function TFHIRCapabilityStatement25.GetLanguage: String;
-begin
-  result := (resource as TFHIRResource).language;
-end;
-
-procedure TFHIRCapabilityStatement25.setKind(Value: TCapabilityStatementKind);
-begin
-  case value of
-    cskInstance : statement.kind := CapabilityStatementKindInstance;
-    cskCapability : statement.kind := CapabilityStatementKindCapability;
-    cskRequirements : statement.kind := CapabilityStatementKindRequirements;
-  else
-    statement.kind := CapabilityStatementKindNull;
-  end;
-end;
-
-procedure TFHIRCapabilityStatement25.SetLanguage(const Value: String);
-begin
-  (resource as TFHIRResource).language := value;
-end;
-
-function TFHIRCapabilityStatement25.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
-begin
-  result := csauNull;
-end;
-
-procedure TFHIRCapabilityStatement25.setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown);
-begin
-end;
-
-
-{ TFHIRSearchParamDefinition25 }
-
-function TFHIRSearchParamDefinition25.documentation: String;
-begin
-  result := param.documentation;
-end;
-
-function TFHIRSearchParamDefinition25.name: String;
-begin
-  result := param.name;
-end;
-
-function TFHIRSearchParamDefinition25.param: TFhirCapabilityStatement2RestResourceSearchParam;
-begin
-  result := FElement as TFhirCapabilityStatement2RestResourceSearchParam;
-end;
-
-function TFHIRSearchParamDefinition25.type_: TFHIRSearchParamType;
-begin
-  result := MAP_SearchParamType[param.type_];
-end;
-
-
-{ TFhirCapabilityStatementRestResource25 }
-
-procedure TFhirCapabilityStatementRestResource25.addParam(html, n, url, d: String; t: TFHIRSearchParamType; tgts: array of String);
-var
-  param : TFhirCapabilityStatement2RestResourceSearchParam;
-begin
-  param := TFhirCapabilityStatement2RestResourceSearchParam.create;
-  try
-    param.name := n;
-    param.definition := url;
-    param.documentation := d;
-    param.type_ := MAP_TFHIRSearchParamType2[t];
-    (Element as TFhirCapabilityStatement2RestResource).searchParamList.add(param.link);
-  finally
-    param.free;
-  end;
-//  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
-end;
-
-function TFhirCapabilityStatementRestResource25.GetCode: String;
-begin
-  result := CODES_TFhirResourceTypesEnum[(Element as TFhirCapabilityStatement2RestResource).type_];
-end;
-
-procedure TFhirCapabilityStatementRestResource25.SetCode(Value: String);
-begin
-  (Element as TFhirCapabilityStatement2RestResource).type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', value);
-end;
-
-function TFhirCapabilityStatementRestResource25.GetProfile: String;
-begin
-  result := (Element as TFhirCapabilityStatement2RestResource).profile;
-end;
-
-procedure TFhirCapabilityStatementRestResource25.SetProfile(Value: String);
-begin
-  (Element as TFhirCapabilityStatement2RestResource).profile := value;
-end;
-
-procedure TFhirCapabilityStatementRestResource25.addInteraction(code: String);
-begin
-  (Element as TFhirCapabilityStatement2RestResource).interactionList.Append.codeElement := TFhirEnum.create('http://hl7.org/fhir/ValueSet/type-restful-interaction', code);
-end;
-
-function TFhirCapabilityStatementRestResource25.GetReadHistory: boolean;
-var
-  f : TFhirCapabilityStatement2RestFeature;
-begin
-  result := false;
-  for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
-    if f.code = CapabilityFeatureReadHistory then
-      exit(f.value = CapabilityFeatureValueTrue);
-end;
-
-function TFhirCapabilityStatementRestResource25.hasInteraction: boolean;
-begin
-  result := (Element as TFhirCapabilityStatement2RestResource).interactionList.Count > 0;
-end;
-
-procedure TFhirCapabilityStatementRestResource25.SetReadHistory(Value: boolean);
-var
-  f : TFhirCapabilityStatement2RestFeature;
-begin
-  for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
-  begin
-    if f.code = CapabilityFeatureReadHistory then
-    begin
-      f.value := CapabilityFeatureValueTrue;
-      exit;
-    end;
-  end;
-  f := (Element as TFhirCapabilityStatement2RestResource).featureList.Append;
-  f.code := CapabilityFeatureReadHistory;
-  f.value := CapabilityFeatureValueTrue;
-end;
-
-
 
 { TFHIRSubscriptionTopic5 }
 
@@ -6318,16 +5775,16 @@ end;
 
 function TFhirImmunization5.GetManufacturerIdSystem: String;
 begin
-  if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
-    result := imm.manufacturer.identifier.system
+  if (imm.manufacturer <> nil) and (imm.manufacturer.reference <> nil) and (imm.manufacturer.reference.identifier <> nil) then
+    result := imm.manufacturer.reference.identifier.system
   else
     result := '';
 end;
 
 function TFhirImmunization5.GetManufacturerIdValue: String;
 begin
-  if (imm.manufacturer <> nil) and (imm.manufacturer.identifier <> nil) then
-    result := imm.manufacturer.identifier.value
+  if (imm.manufacturer <> nil) and (imm.manufacturer.reference <> nil) and (imm.manufacturer.reference.identifier <> nil) then
+    result := imm.manufacturer.reference.identifier.value
   else
     result := '';
 end;
@@ -6400,19 +5857,23 @@ end;
 procedure TFhirImmunization5.SetManufacturerIdSystem(const Value: String);
 begin
   if imm.manufacturer = nil then
-    imm.manufacturer := TFhirReference.Create;
-  if imm.manufacturer.identifier = nil then
-    imm.manufacturer.identifier := TFhirIdentifier.Create;
-  imm.manufacturer.identifier.system := value;
+    imm.manufacturer := TFhirCodeableReference.Create;
+  if imm.manufacturer.reference = nil then
+    imm.manufacturer.reference := TFhirReference.create;
+  if imm.manufacturer.reference.identifier = nil then
+    imm.manufacturer.reference.identifier := TFhirIdentifier.Create;
+  imm.manufacturer.reference.identifier.system := value;
 end;
 
 procedure TFhirImmunization5.SetManufacturerIdValue(const Value: String);
 begin
   if imm.manufacturer = nil then
-    imm.manufacturer := TFhirReference.Create;
-  if imm.manufacturer.identifier = nil then
-    imm.manufacturer.identifier := TFhirIdentifier.Create;
-  imm.manufacturer.identifier.value := value;
+    imm.manufacturer := TFhirCodeableReference.Create;
+  if imm.manufacturer.reference = nil then
+    imm.manufacturer.reference := TFhirReference.Create;
+  if imm.manufacturer.reference.identifier = nil then
+    imm.manufacturer.reference.identifier := TFhirIdentifier.Create;
+  imm.manufacturer.reference.identifier.value := value;
 end;
 
 procedure TFhirImmunization5.SetPatient(const Value: String);

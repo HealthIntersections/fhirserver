@@ -553,15 +553,6 @@ type
     function targetDesc: String;
   end;
 
-  TFHIRCapabilityStatement2Helper = class helper (TFhirResourceHelper) for TFhirCapabilityStatement2
-  private
-    procedure dumpFeatures(dest : TFhirCapabilityStatement2RestFeatureList; source : TFslList<TFHIRFeature>; path : String);
-  public
-    procedure defineFeature(feature : TFHIRFeature);
-    procedure defineFeatures(features : TFslList<TFHIRFeature>);
-    function hasFeature(feature : TFHIRFeature) : boolean;
-  end;
-
 
   TSignatureType = (SignatureTypeAuthor, SignatureTypeCoAuthor, SignatureTypeParticipant, SignatureTypeTranscriptionist, SignatureTypeVerification,
                     SignatureTypeValidation, SignatureTypeConsent, SignatureTypeWitnessSignature, SignatureTypeWitnessEvent, SignatureTypeWitnessIdentity,
@@ -569,7 +560,7 @@ type
                     SignatureTypeModification, SignatureTypeAdministrative, SignatureTypeTimestamp);
 
 const
-  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion430Snapshot1, FHIRVersion500Snapshot1);
+  FHIR_ENUM_VERSIONS : Array [TFHIRVersion] of TFhirFHIRVersionEnum = (FHIRVersionNull, FHIRVersion0082, FHIRVersion102, FHIRVersion301, FHIRVersion400, FHIRVersion430, FHIRVersion500Ballot);
   CODES_TSignatureType : array [TSignatureType] of String = ('1.2.850.10065.1.12.1.1', '1.2.850.10065.1.12.1.2', '1.2.850.10065.1.12.1.3', '1.2.850.10065.1.12.1.5', '1.2.850.10065.1.12.1.5',
                 '1.2.850.10065.1.12.1.6', '1.2.850.10065.1.12.1.7', '1.2.850.10065.1.12.1.8', '1.2.850.10065.1.12.1.9', '1.2.850.10065.1.12.1.10',
                 '1.2.850.10065.1.12.1.11', '1.2.850.10065.1.12.1.12', '1.2.850.10065.1.12.1.13', '1.2.850.10065.1.12.1.15', '1.2.850.10065.1.12.1.15',
@@ -2988,22 +2979,22 @@ end;
 
 function TFhirConceptMapHelper.sourceDesc: String;
 begin
-  if source = nil then
+  if sourceScope = nil then
     result := ''
-  else if source is TFhirUri then
-    result := TFhirUri(source).value
+  else if sourceScope is TFhirUri then
+    result := TFhirUri(sourceScope).value
   else
-    result := TFhirReference(source).reference
+    result := TFhirCanonical(sourceScope).value
 end;
 
 function TFhirConceptMapHelper.targetDesc: String;
 begin
-  if target = nil then
+  if targetScope = nil then
     result := ''
-  else if target is TFhirUri then
-    result := TFhirUri(target).value
+  else if targetScope is TFhirUri then
+    result := TFhirUri(targetScope).value
   else
-    result := TFhirReference(target).reference
+    result := TFhirCanonical(targetScope).value
 end;
 
 { TFHIRDomainResourceHelper }
@@ -3148,10 +3139,10 @@ begin
     result.identifierList.Add(identifier.Link);
     result.status := DocumentReferenceStatusCurrent;
     result.docStatus := cmp.status;
-    result.identifierList.Add(cmp.identifier.Link);
+    result.identifierList.AddAll(cmp.identifierList);
     result.categoryList.AddAll(cmp.categoryList);
     result.type_ := cmp.type_.Link;
-    result.subject := cmp.subject.Link;
+    result.subject := cmp.subjectList[0].Link;
     result.date := cmp.date;
     result.Link;
   finally
@@ -3230,7 +3221,7 @@ begin
         '  <title>'+cmp.title+'</title>'+#13#10+
         '</head>'+#13#10+
         '<body>'+#13#10);
-      sbj := findResource(cmp.subject) as TFhirDomainResource;
+      sbj := findResource(cmp.subjectList[0]) as TFhirDomainResource;
       addNarrative(false, sbj.text);
       addNarrative(true, cmp.text);
       for section in cmp.sectionList do
@@ -3255,7 +3246,7 @@ var
 begin
   result := '';
   for i := 0 to link_List.count -  1 do
-    if link_List[i].relation = s then
+    if CODES_TFhirLinkRelationTypesEnum[link_List[i].relation] = s then
     begin
       result := link_List[i].url;
       exit;
@@ -3267,14 +3258,14 @@ var
   i : integer;
 begin
   for i := 0 to link_List.count -  1 do
-    if link_List[i].relation = s then
+    if CODES_TFhirLinkRelationTypesEnum[link_List[i].relation] = s then
     begin
       link_List[i].url := value;
       exit;
     end;
   with link_List.Append do
   begin
-    relation := s;
+    relation := TFhirLinkRelationTypesEnum(StringArrayIndexOf(CODES_TFhirLinkRelationTypesEnum, s));
     url := value;
   end;
 end;
@@ -3455,7 +3446,7 @@ var
   link : TFhirBundleLink;
 begin
   link := Append;
-  link.relation := rel;
+  link.relation := TFhirLinkRelationTypesEnum(StringArrayIndexOf(CODES_TFhirLinkRelationTypesEnum, rel));
   link.url := ref;
 end;
 
@@ -3470,7 +3461,7 @@ begin
     bl := Item(i);
     if (result <> '') then
       result := result +', ';
-    result := result + '<'+bl.url+'>;rel='+bl.relation;
+    result := result + '<'+bl.url+'>;rel='+CODES_TFhirLinkRelationTypesEnum[bl.relation];
   end;
 end;
 
@@ -3480,7 +3471,7 @@ var
 begin
   result := '';
   for i := 0 to count - 1 do
-    if Item(i).relation = rel then
+    if CODES_TFhirLinkRelationTypesEnum[Item(i).relation] = rel then
       result := Item(i).url;
 
 end;
@@ -6556,12 +6547,12 @@ end;
 
 function TFhirConceptMapGroupElementTargetDependsOnHelper.GetCode: String;
 begin
-  result := value;
+  result := value.toString;
 end;
 
 procedure TFhirConceptMapGroupElementTargetDependsOnHelper.SetCode(const sValue: String);
 begin
-  value := sValue;
+  value := TFhirString.create(sValue);
 end;
 
 { TFHIRCompositionSectionHelper }
@@ -6629,7 +6620,7 @@ var
 begin
   result := '';
   for i := 0 to link_List.count -  1 do
-    if link_List[i].relation = s then
+    if CODES_TFhirLinkRelationTypesEnum[link_List[i].relation] = s then
     begin
       result := link_List[i].url;
       exit;
@@ -6641,14 +6632,14 @@ var
   i : integer;
 begin
   for i := 0 to link_List.count -  1 do
-    if link_List[i].relation = s then
+    if CODES_TFhirLinkRelationTypesEnum[link_List[i].relation] = s then
     begin
       link_List[i].url := value;
       exit;
     end;
   with link_List.Append do
   begin
-    relation := s;
+    relation := TFhirLinkRelationTypesEnum(StringArrayIndexOf(CODES_TFhirLinkRelationTypesEnum, s));
     url := value;
   end;
 end;
@@ -6691,56 +6682,6 @@ begin
     result := result + gen(useContextList[i]);
 end;
 
-{ TFHIRCapabilityStatement2Helper }
-
-procedure TFHIRCapabilityStatement2Helper.defineFeature(feature: TFHIRFeature);
-begin
-
-end;
-
-procedure TFHIRCapabilityStatement2Helper.defineFeatures(features: TFslList<TFHIRFeature>);
-var
-  rest : TFhirCapabilityStatement2Rest;
-  res : TFhirCapabilityStatement2RestResource;
-  int : TFhirCapabilityStatement2RestResourceInteraction;
-begin
-  for rest in restList do
-  begin
-    dumpFeatures(rest.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]);
-    for res in rest.resourceList do
-    begin
-      dumpFeatures(res.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]+'.resource:'+CODES_TFhirResourceTypesEnum[res.type_]);
-      for int in res.interactionList do
-        dumpFeatures(int.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]+'.resource:'+CODES_TFhirResourceTypesEnum[res.type_]+'.interaction:'+
-           CODES_TFhirTypeRestfulInteractionEnum[int.code]);
-    end;
-  end;
-end;
-
-procedure TFHIRCapabilityStatement2Helper.dumpFeatures(dest: TFhirCapabilityStatement2RestFeatureList; source: TFslList<TFHIRFeature>; path: String);
-var
-  pf, f : TFHIRFeature;
-begin
-//  pf := TFHIRFeature.fromString(path);
-//  try
-//    for f in source do
-//    begin
-//      if f.livesOn(pf) then
-//        with dest.Append do
-//        begin
-//          code := f.relativePath(pf);
-//          value := f.value;
-//        end;
-//    end;
-//  finally
-//    pf.free;
-//  end;
-end;
-
-function TFHIRCapabilityStatement2Helper.hasFeature(feature: TFHIRFeature): boolean;
-begin
-  result := false;
-end;
 
 function describeResource(r: TFHIRResource): String;
 begin

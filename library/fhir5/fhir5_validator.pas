@@ -3470,7 +3470,7 @@ end;
 procedure TFHIRValidator5.checkSampledDataValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRSampledData);
 begin
   checkFixedValue(ctxt, path + '.origin', focus.getNamedChild('origin'), fixed.Origin, 'origin');
-  checkFixedValue(ctxt, path + '.period', focus.getNamedChild('period'), fixed.PeriodElement, 'period');
+  checkFixedValue(ctxt, path + '.interval', focus.getNamedChild('interval'), fixed.intervalElement, 'interval');
   checkFixedValue(ctxt, path + '.factor', focus.getNamedChild('factor'), fixed.FactorElement, 'factor');
   checkFixedValue(ctxt, path + '.lowerLimit', focus.getNamedChild('lowerLimit'), fixed.LowerLimitElement, 'lowerLimit');
   checkFixedValue(ctxt, path + '.upperLimit', focus.getNamedChild('upperLimit'), fixed.UpperLimitElement, 'upperLimit');

@@ -29,12 +29,12 @@ unit fhir5_resources_base;
   
 }
 
-{$I fhir.inc}
-{$I fhir5.inc}
+{$i fhir.inc}
+{$i fhir5.inc}
 
 interface
 
-// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
+// Generated on Thu, Nov 10, 2022 for FHIR v5.0.0
 
 
 
@@ -46,9 +46,10 @@ uses
 
 type
   TFhirResourceType = (
-    frtNull, // Resource type not known / not Specified
+    frtNull, // Resource type not known / not Specified 
     {$IFDEF FHIR_ACCOUNT}frtAccount, {$ENDIF}
     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition, {$ENDIF}
+    {$IFDEF FHIR_ACTORDEFINITION}frtActorDefinition, {$ENDIF}
     {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}frtAdministrableProductDefinition, {$ENDIF}
     {$IFDEF FHIR_ADVERSEEVENT}frtAdverseEvent, {$ENDIF}
     {$IFDEF FHIR_ALLERGYINTOLERANCE}frtAllergyIntolerance, {$ENDIF}
@@ -62,7 +63,6 @@ type
     {$IFDEF FHIR_BODYSTRUCTURE}frtBodyStructure, {$ENDIF}
     {$IFDEF FHIR_BUNDLE}frtBundle, {$ENDIF}
     {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement, {$ENDIF}
-    {$IFDEF FHIR_CAPABILITYSTATEMENT2}frtCapabilityStatement2, {$ENDIF}
     {$IFDEF FHIR_CAREPLAN}frtCarePlan, {$ENDIF}
     {$IFDEF FHIR_CARETEAM}frtCareTeam, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}frtChargeItem, {$ENDIF}
@@ -72,14 +72,12 @@ type
     {$IFDEF FHIR_CLAIMRESPONSE}frtClaimResponse, {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION}frtClinicalImpression, {$ENDIF}
     {$IFDEF FHIR_CLINICALUSEDEFINITION}frtClinicalUseDefinition, {$ENDIF}
-    {$IFDEF FHIR_CLINICALUSEISSUE}frtClinicalUseIssue, {$ENDIF}
     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem, {$ENDIF}
     {$IFDEF FHIR_COMMUNICATION}frtCommunication, {$ENDIF}
     {$IFDEF FHIR_COMMUNICATIONREQUEST}frtCommunicationRequest, {$ENDIF}
     {$IFDEF FHIR_COMPARTMENTDEFINITION}frtCompartmentDefinition, {$ENDIF}
     {$IFDEF FHIR_COMPOSITION}frtComposition, {$ENDIF}
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
-    {$IFDEF FHIR_CONCEPTMAP2}frtConceptMap2, {$ENDIF}
     {$IFDEF FHIR_CONDITION}frtCondition, {$ENDIF}
     {$IFDEF FHIR_CONDITIONDEFINITION}frtConditionDefinition, {$ENDIF}
     {$IFDEF FHIR_CONSENT}frtConsent, {$ENDIF}
@@ -110,6 +108,8 @@ type
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}frtExplanationOfBenefit, {$ENDIF}
     {$IFDEF FHIR_FAMILYMEMBERHISTORY}frtFamilyMemberHistory, {$ENDIF}
     {$IFDEF FHIR_FLAG}frtFlag, {$ENDIF}
+    {$IFDEF FHIR_FORMULARYITEM}frtFormularyItem, {$ENDIF}
+    {$IFDEF FHIR_GENOMICSTUDY}frtGenomicStudy, {$ENDIF}
     {$IFDEF FHIR_GOAL}frtGoal, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_GROUP}frtGroup, {$ENDIF}
@@ -169,6 +169,8 @@ type
     {$IFDEF FHIR_REGULATEDAUTHORIZATION}frtRegulatedAuthorization, {$ENDIF}
     {$IFDEF FHIR_RELATEDPERSON}frtRelatedPerson, {$ENDIF}
     {$IFDEF FHIR_REQUESTGROUP}frtRequestGroup, {$ENDIF}
+    {$IFDEF FHIR_REQUESTORCHESTRATION}frtRequestOrchestration, {$ENDIF}
+    {$IFDEF FHIR_REQUIREMENTS}frtRequirements, {$ENDIF}
     {$IFDEF FHIR_RESEARCHSTUDY}frtResearchStudy, {$ENDIF}
     {$IFDEF FHIR_RESEARCHSUBJECT}frtResearchSubject, {$ENDIF}
     {$IFDEF FHIR_RISKASSESSMENT}frtRiskAssessment, {$ENDIF}
@@ -196,6 +198,7 @@ type
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
     {$IFDEF FHIR_TESTREPORT}frtTestReport, {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT}frtTestScript, {$ENDIF}
+    {$IFDEF FHIR_TRANSPORT}frtTransport, {$ENDIF}
     {$IFDEF FHIR_VALUESET}frtValueSet, {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT}frtVerificationResult, {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION}frtVisionPrescription, {$ENDIF}
@@ -226,7 +229,7 @@ type
     procedure SetLanguage(value : TFhirCode);
     function GetLanguageST : String;
     procedure SetLanguageST(value : String);
-
+  
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
     procedure listFieldsInOrder(fields : TStringList); override;
@@ -379,7 +382,7 @@ type
     // A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make it "clinically safe" for a human to just read the narrative. Resource definitions may define what content should be represented in the narrative to ensure clinical safety.
     property textElement : TFhirNarrative read FText write SetText;
 
-    // These resources do not have an independent existence apart from the resource that contains them - they cannot be identified independently, nor can they have their own independent transaction scope.
+    // These resources do not have an independent existence apart from the resource that contains them - they cannot be identified independently, nor can they have their own independent transaction scope. This is allowed to be a Parameters resource if and only if it is referenced by a resource that provides context/meaning.
     property containedList : TFhirResourceList read GetContainedList;
     property hasContainedList : boolean read GetHasContainedList;
 

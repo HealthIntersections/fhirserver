@@ -119,7 +119,6 @@ Type
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
-    procedure loadResourceProxy(p : TFHIRResourceProxy);
   public
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
@@ -1564,7 +1563,6 @@ begin
   else if (t in [frtNull, frtNamingSystem]) and FNamingSystems.ContainsKey(url) then
   begin
     r := FNamingSystems[url];
-    loadResourceProxy(r);
     result := r.resource.Link;
   end
   else
@@ -1583,7 +1581,6 @@ begin
     exit(uri);
   for r in FNamingSystems.Values do
   begin
-    LoadResourceProxy(r);
     ns := r.resource as TFHIRNamingSystem;
     if ns.hasOid(oid) then
     begin
@@ -1870,18 +1867,12 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR3.loadResourceProxy(p : TFHIRResourceProxy);
-begin
-  raise exception.create('todo');
-end;
-
 procedure TBaseWorkerContextR3.SeeResourceProxy(r: TFhirResourceProxy);
 var
   p : TFhirStructureDefinition;
 begin
   if r.fhirType  = 'StructureDefinition' then
   begin
-    loadResourceProxy(r);
     p := r.resource as TFHirStructureDefinition;
     FProfiles.SeeProfile(0, p);
   end

@@ -193,7 +193,6 @@ type
 
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
-    function wrapCapabilityStatement2(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; virtual; abstract;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; virtual; abstract;
     function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; virtual; abstract;

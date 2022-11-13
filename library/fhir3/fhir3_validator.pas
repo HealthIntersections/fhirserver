@@ -43,7 +43,7 @@ Uses
 
 
 Type
-  TNodeStack = class (TFslObject)
+  TNodeStack = class (TFslObject)
   private
     parent: TNodeStack;
     literalPath: String; // fhir path format

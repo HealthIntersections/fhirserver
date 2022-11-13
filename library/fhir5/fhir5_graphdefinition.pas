@@ -47,6 +47,7 @@ type
     FLexer : TFHIRPathLexer;
 
     procedure readHeader(gd :  TFhirGraphDefinition);
+    function readResourceTypeA : TFhirAllResourceTypesEnum;
     function readResourceType : TFhirResourceTypesEnum;
     function readProfile : String;
     function readSearchLink : TFhirGraphDefinitionLink;
@@ -256,7 +257,7 @@ begin
       else
         FLexer.takeToken(';');
       tgt := result.targetList.Append;
-      tgt.type_ := readResourceType;
+      tgt.type_ := readResourceTypeA;
       tgt.profile := readProfile;
       while FLexer.takeToken('where') do
         tgt.compartmentList.Add(readCompartmentRule(GraphCompartmentUseCondition));
@@ -278,6 +279,17 @@ begin
     result := '';
 end;
 
+function TFHIRGraphDefinitionParser5.readResourceTypeA: TFhirAllResourceTypesEnum;
+var
+  i : integer;
+begin
+  i := StringArrayIndexOfSensitive(CODES_TFhirAllResourceTypesEnum, FLexer.current);
+  if i < 1 then
+    raise FLexer.error('Unexpected token "'+FLexer.current+'" expecting a resource type');
+  FLexer.next;
+  result := TFhirAllResourceTypesEnum(i);
+end;
+
 function TFHIRGraphDefinitionParser5.readResourceType: TFhirResourceTypesEnum;
 var
   i : integer;
@@ -296,7 +308,7 @@ begin
   result := TFhirGraphDefinitionLink.Create;
   try
     tgt := result.targetList.Append;
-    tgt.type_ := readResourceType;
+    tgt.type_ := readResourceTypeA;
     FLexer.token('?');
     tgt.params := FLexer.readToWS;
     while FLexer.takeToken('where') do
@@ -427,7 +439,7 @@ begin
       b.Append(#13#10);
       b.Append(StringPadLeft('', ' ', indent+2));
     end;
-    b.Append(CODES_TFhirResourceTypesEnum[item.targetList[i].type_]);
+    b.Append(CODES_TFhirAllResourceTypesEnum[item.targetList[i].type_]);
     if item.targetList[i].profile <> '' then
     begin
       b.Append('(');
@@ -453,7 +465,7 @@ end;
 procedure TFHIRGraphDefinitionParser5.writeSearchItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
 begin
   b.Append('search ');
-  b.Append(CODES_TFhirResourceTypesEnum[item.targetList[0].type_]);
+  b.Append(CODES_TFhirAllResourceTypesEnum[item.targetList[0].type_]);
   b.Append('?');
   b.Append(item.targetList[0].params);
   if (item.min <> '') or (item.max <> '') then
@@ -647,7 +659,7 @@ begin
             check(tgtCtxt <> focus, 'how to handle contained resources is not yet resolved'); // todo
             for tl in link.targetList do
             begin
-              if CODES_TFhirResourceTypesEnum[tl.type_] = res.fhirType then
+              if CODES_TFhirAllResourceTypesEnum[tl.type_] = res.fhirType then
               begin
                 if not isInBundle(res as TFhirResource) then
                 begin
@@ -680,16 +692,16 @@ var
   l : TFhirGraphDefinitionLink;
 begin
   check(link.targetList.Count = 1, 'If there is no path, there must be one and only one target at '+focusPath);
-  check(link.targetList[0].type_ <> ResourceTypesNull, 'If there is no path, there must be type on the target at '+focusPath);
+  check(link.targetList[0].type_ <> AllResourceTypesNull, 'If there is no path, there must be type on the target at '+focusPath);
   check(link.targetList[0].params.Contains('{ref}'), 'If there is no path, the target must have parameters that include a parameter using {ref} at '+focusPath);
-  path := focusPath+' -> '+CODES_TFhirResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
+  path := focusPath+' -> '+CODES_TFhirAllResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
 
   list := TFslList<TFHIRResourceV>.create;
   try
     params := TFslList<TGraphQLArgument>.create;
     try
       parseParams(params, link.targetList[0].params, focus);
-      FOnListResources(appInfo, CODES_TFhirResourceTypesEnum[link.targetList[0].type_], params, list);
+      FOnListResources(appInfo, CODES_TFhirAllResourceTypesEnum[link.targetList[0].type_], params, list);
     finally
       params.free;
     end;

@@ -195,6 +195,7 @@ type
 
     // to override:
     function canSort : boolean; virtual;
+    function manageColWidths : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
     function AskOnDelete(item : T) : boolean; virtual;
     function loadList : boolean; virtual; abstract; // return false if not loaded ok
@@ -999,7 +1000,7 @@ var
   i : integer;
 begin
   FList := AValue;
-  List.AutoWidthLastColumn := true;
+  List.AutoWidthLastColumn := ManageColWidths;
   List.RowSelect := true;
   List.OnCompare := doListCompare;
   List.OnSelectItem := doListChange;
@@ -1461,6 +1462,11 @@ end;
 function TListManager<T>.canSort: boolean;
 begin
   result := false;
+end;
+
+function TListManager<T>.manageColWidths: boolean;
+begin
+  result := true;
 end;
 
 function TListManager<T>.AskOnDelete(item: T): boolean;

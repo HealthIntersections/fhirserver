@@ -29,12 +29,12 @@ unit fhir5_resources;
   
 }
 
-{$I fhir.inc}
-{$I fhir5.inc}
+{$i fhir.inc}
+{$i fhir5.inc}
 
 interface
 
-// Generated on Mon, Dec 27, 2021 17:55+1100 for FHIR v5.0.0
+// Generated on Thu, Nov 10, 2022 for FHIR v5.0.0
 
 
 
@@ -61,6 +61,10 @@ type
   TFhirAccountCoverageList = fhir5_resources_financial.TFhirAccountCoverageList;
   TFhirAccountGuarantor = fhir5_resources_financial.TFhirAccountGuarantor;
   TFhirAccountGuarantorList = fhir5_resources_financial.TFhirAccountGuarantorList;
+  TFhirAccountRelatedAccount = fhir5_resources_financial.TFhirAccountRelatedAccount;
+  TFhirAccountRelatedAccountList = fhir5_resources_financial.TFhirAccountRelatedAccountList;
+  TFhirAccountBalance = fhir5_resources_financial.TFhirAccountBalance;
+  TFhirAccountBalanceList = fhir5_resources_financial.TFhirAccountBalanceList;
   TFhirAccount = fhir5_resources_financial.TFhirAccount;
   TFhirAccountList = fhir5_resources_financial.TFhirAccountList;
 {$ENDIF FHIR_ACCOUNT}
@@ -72,6 +76,10 @@ type
   TFhirActivityDefinition = fhir5_resources_other.TFhirActivityDefinition;
   TFhirActivityDefinitionList = fhir5_resources_other.TFhirActivityDefinitionList;
 {$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ACTORDEFINITION}
+  TFhirActorDefinition = fhir5_resources_canonical.TFhirActorDefinition;
+  TFhirActorDefinitionList = fhir5_resources_canonical.TFhirActorDefinitionList;
+{$ENDIF FHIR_ACTORDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
   TFhirAdministrableProductDefinitionProperty = fhir5_resources_medications.TFhirAdministrableProductDefinitionProperty;
   TFhirAdministrableProductDefinitionPropertyList = fhir5_resources_medications.TFhirAdministrableProductDefinitionPropertyList;
@@ -103,6 +111,8 @@ type
   TFhirAdverseEventList = fhir5_resources_clinical.TFhirAdverseEventList;
 {$ENDIF FHIR_ADVERSEEVENT}
 {$IFDEF FHIR_ALLERGYINTOLERANCE}
+  TFhirAllergyIntoleranceParticipant = fhir5_resources_clinical.TFhirAllergyIntoleranceParticipant;
+  TFhirAllergyIntoleranceParticipantList = fhir5_resources_clinical.TFhirAllergyIntoleranceParticipantList;
   TFhirAllergyIntoleranceReaction = fhir5_resources_clinical.TFhirAllergyIntoleranceReaction;
   TFhirAllergyIntoleranceReactionList = fhir5_resources_clinical.TFhirAllergyIntoleranceReactionList;
   TFhirAllergyIntolerance = fhir5_resources_clinical.TFhirAllergyIntolerance;
@@ -111,6 +121,14 @@ type
 {$IFDEF FHIR_APPOINTMENT}
   TFhirAppointmentParticipant = fhir5_resources_clinical.TFhirAppointmentParticipant;
   TFhirAppointmentParticipantList = fhir5_resources_clinical.TFhirAppointmentParticipantList;
+  TFhirAppointmentRecurrenceTemplate = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplate;
+  TFhirAppointmentRecurrenceTemplateList = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateList;
+  TFhirAppointmentRecurrenceTemplateWeeklyTemplate = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateWeeklyTemplate;
+  TFhirAppointmentRecurrenceTemplateWeeklyTemplateList = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateWeeklyTemplateList;
+  TFhirAppointmentRecurrenceTemplateMonthlyTemplate = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateMonthlyTemplate;
+  TFhirAppointmentRecurrenceTemplateMonthlyTemplateList = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateMonthlyTemplateList;
+  TFhirAppointmentRecurrenceTemplateYearlyTemplate = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateYearlyTemplate;
+  TFhirAppointmentRecurrenceTemplateYearlyTemplateList = fhir5_resources_clinical.TFhirAppointmentRecurrenceTemplateYearlyTemplateList;
   TFhirAppointment = fhir5_resources_clinical.TFhirAppointment;
   TFhirAppointmentList = fhir5_resources_clinical.TFhirAppointmentList;
 {$ENDIF FHIR_APPOINTMENT}
@@ -206,28 +224,6 @@ type
   TFhirCapabilityStatement = fhir5_resources_canonical.TFhirCapabilityStatement;
   TFhirCapabilityStatementList = fhir5_resources_canonical.TFhirCapabilityStatementList;
 {$ENDIF FHIR_CAPABILITYSTATEMENT}
-{$IFDEF FHIR_CAPABILITYSTATEMENT2}
-  TFhirCapabilityStatement2Software = fhir5_resources_canonical.TFhirCapabilityStatement2Software;
-  TFhirCapabilityStatement2SoftwareList = fhir5_resources_canonical.TFhirCapabilityStatement2SoftwareList;
-  TFhirCapabilityStatement2Implementation = fhir5_resources_canonical.TFhirCapabilityStatement2Implementation;
-  TFhirCapabilityStatement2ImplementationList = fhir5_resources_canonical.TFhirCapabilityStatement2ImplementationList;
-  TFhirCapabilityStatement2Rest = fhir5_resources_canonical.TFhirCapabilityStatement2Rest;
-  TFhirCapabilityStatement2RestList = fhir5_resources_canonical.TFhirCapabilityStatement2RestList;
-  TFhirCapabilityStatement2RestFeature = fhir5_resources_canonical.TFhirCapabilityStatement2RestFeature;
-  TFhirCapabilityStatement2RestFeatureList = fhir5_resources_canonical.TFhirCapabilityStatement2RestFeatureList;
-  TFhirCapabilityStatement2RestResource = fhir5_resources_canonical.TFhirCapabilityStatement2RestResource;
-  TFhirCapabilityStatement2RestResourceList = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceList;
-  TFhirCapabilityStatement2RestResourceInteraction = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceInteraction;
-  TFhirCapabilityStatement2RestResourceInteractionList = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceInteractionList;
-  TFhirCapabilityStatement2RestResourceSearchParam = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceSearchParam;
-  TFhirCapabilityStatement2RestResourceSearchParamList = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceSearchParamList;
-  TFhirCapabilityStatement2RestResourceOperation = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceOperation;
-  TFhirCapabilityStatement2RestResourceOperationList = fhir5_resources_canonical.TFhirCapabilityStatement2RestResourceOperationList;
-  TFhirCapabilityStatement2RestInteraction = fhir5_resources_canonical.TFhirCapabilityStatement2RestInteraction;
-  TFhirCapabilityStatement2RestInteractionList = fhir5_resources_canonical.TFhirCapabilityStatement2RestInteractionList;
-  TFhirCapabilityStatement2 = fhir5_resources_canonical.TFhirCapabilityStatement2;
-  TFhirCapabilityStatement2List = fhir5_resources_canonical.TFhirCapabilityStatement2List;
-{$ENDIF FHIR_CAPABILITYSTATEMENT2}
 {$IFDEF FHIR_CAREPLAN}
   TFhirCarePlanActivity = fhir5_resources_clinical.TFhirCarePlanActivity;
   TFhirCarePlanActivityList = fhir5_resources_clinical.TFhirCarePlanActivityList;
@@ -253,8 +249,6 @@ type
   TFhirChargeItemDefinitionApplicabilityList = fhir5_resources_financial.TFhirChargeItemDefinitionApplicabilityList;
   TFhirChargeItemDefinitionPropertyGroup = fhir5_resources_financial.TFhirChargeItemDefinitionPropertyGroup;
   TFhirChargeItemDefinitionPropertyGroupList = fhir5_resources_financial.TFhirChargeItemDefinitionPropertyGroupList;
-  TFhirChargeItemDefinitionPropertyGroupPriceComponent = fhir5_resources_financial.TFhirChargeItemDefinitionPropertyGroupPriceComponent;
-  TFhirChargeItemDefinitionPropertyGroupPriceComponentList = fhir5_resources_financial.TFhirChargeItemDefinitionPropertyGroupPriceComponentList;
   TFhirChargeItemDefinition = fhir5_resources_financial.TFhirChargeItemDefinition;
   TFhirChargeItemDefinitionList = fhir5_resources_financial.TFhirChargeItemDefinitionList;
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
@@ -277,26 +271,20 @@ type
   TFhirCitationCitedArtifactAbstractList = fhir5_resources_financial.TFhirCitationCitedArtifactAbstractList;
   TFhirCitationCitedArtifactPart = fhir5_resources_financial.TFhirCitationCitedArtifactPart;
   TFhirCitationCitedArtifactPartList = fhir5_resources_financial.TFhirCitationCitedArtifactPartList;
+  TFhirCitationCitedArtifactRelatesTo = fhir5_resources_financial.TFhirCitationCitedArtifactRelatesTo;
+  TFhirCitationCitedArtifactRelatesToList = fhir5_resources_financial.TFhirCitationCitedArtifactRelatesToList;
   TFhirCitationCitedArtifactPublicationForm = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationForm;
   TFhirCitationCitedArtifactPublicationFormList = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormList;
   TFhirCitationCitedArtifactPublicationFormPublishedIn = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPublishedIn;
   TFhirCitationCitedArtifactPublicationFormPublishedInList = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPublishedInList;
-  TFhirCitationCitedArtifactPublicationFormPeriodicRelease = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPeriodicRelease;
-  TFhirCitationCitedArtifactPublicationFormPeriodicReleaseList = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPeriodicReleaseList;
-  TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication;
-  TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublicationList = fhir5_resources_financial.TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublicationList;
   TFhirCitationCitedArtifactWebLocation = fhir5_resources_financial.TFhirCitationCitedArtifactWebLocation;
   TFhirCitationCitedArtifactWebLocationList = fhir5_resources_financial.TFhirCitationCitedArtifactWebLocationList;
   TFhirCitationCitedArtifactClassification = fhir5_resources_financial.TFhirCitationCitedArtifactClassification;
   TFhirCitationCitedArtifactClassificationList = fhir5_resources_financial.TFhirCitationCitedArtifactClassificationList;
-  TFhirCitationCitedArtifactClassificationWhoClassified = fhir5_resources_financial.TFhirCitationCitedArtifactClassificationWhoClassified;
-  TFhirCitationCitedArtifactClassificationWhoClassifiedList = fhir5_resources_financial.TFhirCitationCitedArtifactClassificationWhoClassifiedList;
   TFhirCitationCitedArtifactContributorship = fhir5_resources_financial.TFhirCitationCitedArtifactContributorship;
   TFhirCitationCitedArtifactContributorshipList = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipList;
   TFhirCitationCitedArtifactContributorshipEntry = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntry;
   TFhirCitationCitedArtifactContributorshipEntryList = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntryList;
-  TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo;
-  TFhirCitationCitedArtifactContributorshipEntryAffiliationInfoList = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntryAffiliationInfoList;
   TFhirCitationCitedArtifactContributorshipEntryContributionInstance = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntryContributionInstance;
   TFhirCitationCitedArtifactContributorshipEntryContributionInstanceList = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipEntryContributionInstanceList;
   TFhirCitationCitedArtifactContributorshipSummary = fhir5_resources_financial.TFhirCitationCitedArtifactContributorshipSummary;
@@ -323,6 +311,8 @@ type
   TFhirClaimAccidentList = fhir5_resources_financial.TFhirClaimAccidentList;
   TFhirClaimItem = fhir5_resources_financial.TFhirClaimItem;
   TFhirClaimItemList = fhir5_resources_financial.TFhirClaimItemList;
+  TFhirClaimItemBodySite = fhir5_resources_financial.TFhirClaimItemBodySite;
+  TFhirClaimItemBodySiteList = fhir5_resources_financial.TFhirClaimItemBodySiteList;
   TFhirClaimItemDetail = fhir5_resources_financial.TFhirClaimItemDetail;
   TFhirClaimItemDetailList = fhir5_resources_financial.TFhirClaimItemDetailList;
   TFhirClaimItemDetailSubDetail = fhir5_resources_financial.TFhirClaimItemDetailSubDetail;
@@ -341,6 +331,8 @@ type
   TFhirClaimResponseItemDetailSubDetailList = fhir5_resources_financial.TFhirClaimResponseItemDetailSubDetailList;
   TFhirClaimResponseAddItem = fhir5_resources_financial.TFhirClaimResponseAddItem;
   TFhirClaimResponseAddItemList = fhir5_resources_financial.TFhirClaimResponseAddItemList;
+  TFhirClaimResponseAddItemBodySite = fhir5_resources_financial.TFhirClaimResponseAddItemBodySite;
+  TFhirClaimResponseAddItemBodySiteList = fhir5_resources_financial.TFhirClaimResponseAddItemBodySiteList;
   TFhirClaimResponseAddItemDetail = fhir5_resources_financial.TFhirClaimResponseAddItemDetail;
   TFhirClaimResponseAddItemDetailList = fhir5_resources_financial.TFhirClaimResponseAddItemDetailList;
   TFhirClaimResponseAddItemDetailSubDetail = fhir5_resources_financial.TFhirClaimResponseAddItemDetailSubDetail;
@@ -382,22 +374,6 @@ type
   TFhirClinicalUseDefinition = fhir5_resources_clinical.TFhirClinicalUseDefinition;
   TFhirClinicalUseDefinitionList = fhir5_resources_clinical.TFhirClinicalUseDefinitionList;
 {$ENDIF FHIR_CLINICALUSEDEFINITION}
-{$IFDEF FHIR_CLINICALUSEISSUE}
-  TFhirClinicalUseIssueContraindication = fhir5_resources_clinical.TFhirClinicalUseIssueContraindication;
-  TFhirClinicalUseIssueContraindicationList = fhir5_resources_clinical.TFhirClinicalUseIssueContraindicationList;
-  TFhirClinicalUseIssueContraindicationOtherTherapy = fhir5_resources_clinical.TFhirClinicalUseIssueContraindicationOtherTherapy;
-  TFhirClinicalUseIssueContraindicationOtherTherapyList = fhir5_resources_clinical.TFhirClinicalUseIssueContraindicationOtherTherapyList;
-  TFhirClinicalUseIssueIndication = fhir5_resources_clinical.TFhirClinicalUseIssueIndication;
-  TFhirClinicalUseIssueIndicationList = fhir5_resources_clinical.TFhirClinicalUseIssueIndicationList;
-  TFhirClinicalUseIssueInteraction = fhir5_resources_clinical.TFhirClinicalUseIssueInteraction;
-  TFhirClinicalUseIssueInteractionList = fhir5_resources_clinical.TFhirClinicalUseIssueInteractionList;
-  TFhirClinicalUseIssueInteractionInteractant = fhir5_resources_clinical.TFhirClinicalUseIssueInteractionInteractant;
-  TFhirClinicalUseIssueInteractionInteractantList = fhir5_resources_clinical.TFhirClinicalUseIssueInteractionInteractantList;
-  TFhirClinicalUseIssueUndesirableEffect = fhir5_resources_clinical.TFhirClinicalUseIssueUndesirableEffect;
-  TFhirClinicalUseIssueUndesirableEffectList = fhir5_resources_clinical.TFhirClinicalUseIssueUndesirableEffectList;
-  TFhirClinicalUseIssue = fhir5_resources_clinical.TFhirClinicalUseIssue;
-  TFhirClinicalUseIssueList = fhir5_resources_clinical.TFhirClinicalUseIssueList;
-{$ENDIF FHIR_CLINICALUSEISSUE}
 {$IFDEF FHIR_CODESYSTEM}
   TFhirCodeSystemFilter = fhir5_resources_canonical.TFhirCodeSystemFilter;
   TFhirCodeSystemFilterList = fhir5_resources_canonical.TFhirCodeSystemFilterList;
@@ -454,25 +430,11 @@ type
   TFhirConceptMap = fhir5_resources_canonical.TFhirConceptMap;
   TFhirConceptMapList = fhir5_resources_canonical.TFhirConceptMapList;
 {$ENDIF FHIR_CONCEPTMAP}
-{$IFDEF FHIR_CONCEPTMAP2}
-  TFhirConceptMap2Group = fhir5_resources_canonical.TFhirConceptMap2Group;
-  TFhirConceptMap2GroupList = fhir5_resources_canonical.TFhirConceptMap2GroupList;
-  TFhirConceptMap2GroupElement = fhir5_resources_canonical.TFhirConceptMap2GroupElement;
-  TFhirConceptMap2GroupElementList = fhir5_resources_canonical.TFhirConceptMap2GroupElementList;
-  TFhirConceptMap2GroupElementTarget = fhir5_resources_canonical.TFhirConceptMap2GroupElementTarget;
-  TFhirConceptMap2GroupElementTargetList = fhir5_resources_canonical.TFhirConceptMap2GroupElementTargetList;
-  TFhirConceptMap2GroupElementTargetDependsOn = fhir5_resources_canonical.TFhirConceptMap2GroupElementTargetDependsOn;
-  TFhirConceptMap2GroupElementTargetDependsOnList = fhir5_resources_canonical.TFhirConceptMap2GroupElementTargetDependsOnList;
-  TFhirConceptMap2GroupUnmapped = fhir5_resources_canonical.TFhirConceptMap2GroupUnmapped;
-  TFhirConceptMap2GroupUnmappedList = fhir5_resources_canonical.TFhirConceptMap2GroupUnmappedList;
-  TFhirConceptMap2 = fhir5_resources_canonical.TFhirConceptMap2;
-  TFhirConceptMap2List = fhir5_resources_canonical.TFhirConceptMap2List;
-{$ENDIF FHIR_CONCEPTMAP2}
 {$IFDEF FHIR_CONDITION}
+  TFhirConditionParticipant = fhir5_resources_clinical.TFhirConditionParticipant;
+  TFhirConditionParticipantList = fhir5_resources_clinical.TFhirConditionParticipantList;
   TFhirConditionStage = fhir5_resources_clinical.TFhirConditionStage;
   TFhirConditionStageList = fhir5_resources_clinical.TFhirConditionStageList;
-  TFhirConditionEvidence = fhir5_resources_clinical.TFhirConditionEvidence;
-  TFhirConditionEvidenceList = fhir5_resources_clinical.TFhirConditionEvidenceList;
   TFhirCondition = fhir5_resources_clinical.TFhirCondition;
   TFhirConditionList = fhir5_resources_clinical.TFhirConditionList;
 {$ENDIF FHIR_CONDITION}
@@ -491,8 +453,8 @@ type
   TFhirConditionDefinitionList = fhir5_resources_canonical.TFhirConditionDefinitionList;
 {$ENDIF FHIR_CONDITIONDEFINITION}
 {$IFDEF FHIR_CONSENT}
-  TFhirConsentPolicy = fhir5_resources_other.TFhirConsentPolicy;
-  TFhirConsentPolicyList = fhir5_resources_other.TFhirConsentPolicyList;
+  TFhirConsentPolicyBasis = fhir5_resources_other.TFhirConsentPolicyBasis;
+  TFhirConsentPolicyBasisList = fhir5_resources_other.TFhirConsentPolicyBasisList;
   TFhirConsentVerification = fhir5_resources_other.TFhirConsentVerification;
   TFhirConsentVerificationList = fhir5_resources_other.TFhirConsentVerificationList;
   TFhirConsentProvision = fhir5_resources_other.TFhirConsentProvision;
@@ -539,6 +501,8 @@ type
   TFhirContractList = fhir5_resources_other.TFhirContractList;
 {$ENDIF FHIR_CONTRACT}
 {$IFDEF FHIR_COVERAGE}
+  TFhirCoveragePaymentBy = fhir5_resources_financial.TFhirCoveragePaymentBy;
+  TFhirCoveragePaymentByList = fhir5_resources_financial.TFhirCoveragePaymentByList;
   TFhirCoverageClass = fhir5_resources_financial.TFhirCoverageClass;
   TFhirCoverageClassList = fhir5_resources_financial.TFhirCoverageClassList;
   TFhirCoverageCostToBeneficiary = fhir5_resources_financial.TFhirCoverageCostToBeneficiary;
@@ -587,14 +551,14 @@ type
   TFhirDeviceDeviceNameList = fhir5_resources_admin.TFhirDeviceDeviceNameList;
   TFhirDeviceVersion = fhir5_resources_admin.TFhirDeviceVersion;
   TFhirDeviceVersionList = fhir5_resources_admin.TFhirDeviceVersionList;
+  TFhirDeviceSpecialization = fhir5_resources_admin.TFhirDeviceSpecialization;
+  TFhirDeviceSpecializationList = fhir5_resources_admin.TFhirDeviceSpecializationList;
   TFhirDeviceProperty = fhir5_resources_admin.TFhirDeviceProperty;
   TFhirDevicePropertyList = fhir5_resources_admin.TFhirDevicePropertyList;
-  TFhirDeviceOperationalStatus = fhir5_resources_admin.TFhirDeviceOperationalStatus;
-  TFhirDeviceOperationalStatusList = fhir5_resources_admin.TFhirDeviceOperationalStatusList;
-  TFhirDeviceAssociationStatus = fhir5_resources_admin.TFhirDeviceAssociationStatus;
-  TFhirDeviceAssociationStatusList = fhir5_resources_admin.TFhirDeviceAssociationStatusList;
-  TFhirDeviceLink = fhir5_resources_admin.TFhirDeviceLink;
-  TFhirDeviceLinkList = fhir5_resources_admin.TFhirDeviceLinkList;
+  TFhirDeviceOperation = fhir5_resources_admin.TFhirDeviceOperation;
+  TFhirDeviceOperationList = fhir5_resources_admin.TFhirDeviceOperationList;
+  TFhirDeviceAssociation = fhir5_resources_admin.TFhirDeviceAssociation;
+  TFhirDeviceAssociationList = fhir5_resources_admin.TFhirDeviceAssociationList;
   TFhirDevice = fhir5_resources_admin.TFhirDevice;
   TFhirDeviceList = fhir5_resources_admin.TFhirDeviceList;
 {$ENDIF FHIR_DEVICE}
@@ -603,6 +567,8 @@ type
   TFhirDeviceDefinitionUdiDeviceIdentifierList = fhir5_resources_admin.TFhirDeviceDefinitionUdiDeviceIdentifierList;
   TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistribution = fhir5_resources_admin.TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistribution;
   TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistributionList = fhir5_resources_admin.TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistributionList;
+  TFhirDeviceDefinitionRegulatoryIdentifier = fhir5_resources_admin.TFhirDeviceDefinitionRegulatoryIdentifier;
+  TFhirDeviceDefinitionRegulatoryIdentifierList = fhir5_resources_admin.TFhirDeviceDefinitionRegulatoryIdentifierList;
   TFhirDeviceDefinitionDeviceName = fhir5_resources_admin.TFhirDeviceDefinitionDeviceName;
   TFhirDeviceDefinitionDeviceNameList = fhir5_resources_admin.TFhirDeviceDefinitionDeviceNameList;
   TFhirDeviceDefinitionClassification = fhir5_resources_admin.TFhirDeviceDefinitionClassification;
@@ -613,10 +579,6 @@ type
   TFhirDeviceDefinitionPackagingList = fhir5_resources_admin.TFhirDeviceDefinitionPackagingList;
   TFhirDeviceDefinitionPackagingDistributor = fhir5_resources_admin.TFhirDeviceDefinitionPackagingDistributor;
   TFhirDeviceDefinitionPackagingDistributorList = fhir5_resources_admin.TFhirDeviceDefinitionPackagingDistributorList;
-  TFhirDeviceDefinitionPackagingUdiDeviceIdentifier = fhir5_resources_admin.TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
-  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList = fhir5_resources_admin.TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
-  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierMarketDistribution = fhir5_resources_admin.TFhirDeviceDefinitionPackagingUdiDeviceIdentifierMarketDistribution;
-  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierMarketDistributionList = fhir5_resources_admin.TFhirDeviceDefinitionPackagingUdiDeviceIdentifierMarketDistributionList;
   TFhirDeviceDefinitionVersion = fhir5_resources_admin.TFhirDeviceDefinitionVersion;
   TFhirDeviceDefinitionVersionList = fhir5_resources_admin.TFhirDeviceDefinitionVersionList;
   TFhirDeviceDefinitionProperty = fhir5_resources_admin.TFhirDeviceDefinitionProperty;
@@ -653,10 +615,14 @@ type
   TFhirDeviceRequestList = fhir5_resources_clinical.TFhirDeviceRequestList;
 {$ENDIF FHIR_DEVICEREQUEST}
 {$IFDEF FHIR_DEVICEUSAGE}
+  TFhirDeviceUsageAdherence = fhir5_resources_clinical.TFhirDeviceUsageAdherence;
+  TFhirDeviceUsageAdherenceList = fhir5_resources_clinical.TFhirDeviceUsageAdherenceList;
   TFhirDeviceUsage = fhir5_resources_clinical.TFhirDeviceUsage;
   TFhirDeviceUsageList = fhir5_resources_clinical.TFhirDeviceUsageList;
 {$ENDIF FHIR_DEVICEUSAGE}
 {$IFDEF FHIR_DIAGNOSTICREPORT}
+  TFhirDiagnosticReportSupportingInfo = fhir5_resources_clinical.TFhirDiagnosticReportSupportingInfo;
+  TFhirDiagnosticReportSupportingInfoList = fhir5_resources_clinical.TFhirDiagnosticReportSupportingInfoList;
   TFhirDiagnosticReportMedia = fhir5_resources_clinical.TFhirDiagnosticReportMedia;
   TFhirDiagnosticReportMediaList = fhir5_resources_clinical.TFhirDiagnosticReportMediaList;
   TFhirDiagnosticReport = fhir5_resources_clinical.TFhirDiagnosticReport;
@@ -675,6 +641,8 @@ type
   TFhirDocumentReferenceRelatesToList = fhir5_resources_clinical.TFhirDocumentReferenceRelatesToList;
   TFhirDocumentReferenceContent = fhir5_resources_clinical.TFhirDocumentReferenceContent;
   TFhirDocumentReferenceContentList = fhir5_resources_clinical.TFhirDocumentReferenceContentList;
+  TFhirDocumentReferenceContentProfile = fhir5_resources_clinical.TFhirDocumentReferenceContentProfile;
+  TFhirDocumentReferenceContentProfileList = fhir5_resources_clinical.TFhirDocumentReferenceContentProfileList;
   TFhirDocumentReference = fhir5_resources_clinical.TFhirDocumentReference;
   TFhirDocumentReferenceList = fhir5_resources_clinical.TFhirDocumentReferenceList;
 {$ENDIF FHIR_DOCUMENTREFERENCE}
@@ -687,8 +655,8 @@ type
   TFhirEncounterParticipantList = fhir5_resources_admin.TFhirEncounterParticipantList;
   TFhirEncounterDiagnosis = fhir5_resources_admin.TFhirEncounterDiagnosis;
   TFhirEncounterDiagnosisList = fhir5_resources_admin.TFhirEncounterDiagnosisList;
-  TFhirEncounterHospitalization = fhir5_resources_admin.TFhirEncounterHospitalization;
-  TFhirEncounterHospitalizationList = fhir5_resources_admin.TFhirEncounterHospitalizationList;
+  TFhirEncounterAdmission = fhir5_resources_admin.TFhirEncounterAdmission;
+  TFhirEncounterAdmissionList = fhir5_resources_admin.TFhirEncounterAdmissionList;
   TFhirEncounterLocation = fhir5_resources_admin.TFhirEncounterLocation;
   TFhirEncounterLocationList = fhir5_resources_admin.TFhirEncounterLocationList;
   TFhirEncounter = fhir5_resources_admin.TFhirEncounter;
@@ -751,10 +719,12 @@ type
   TFhirEvidenceReportList = fhir5_resources_other.TFhirEvidenceReportList;
 {$ENDIF FHIR_EVIDENCEREPORT}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
-  TFhirEvidenceVariableCharacteristicCombination = fhir5_resources_other.TFhirEvidenceVariableCharacteristicCombination;
-  TFhirEvidenceVariableCharacteristicCombinationList = fhir5_resources_other.TFhirEvidenceVariableCharacteristicCombinationList;
   TFhirEvidenceVariableCharacteristic = fhir5_resources_other.TFhirEvidenceVariableCharacteristic;
   TFhirEvidenceVariableCharacteristicList = fhir5_resources_other.TFhirEvidenceVariableCharacteristicList;
+  TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValue = fhir5_resources_other.TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValue;
+  TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValueList = fhir5_resources_other.TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValueList;
+  TFhirEvidenceVariableCharacteristicDefinitionByCombination = fhir5_resources_other.TFhirEvidenceVariableCharacteristicDefinitionByCombination;
+  TFhirEvidenceVariableCharacteristicDefinitionByCombinationList = fhir5_resources_other.TFhirEvidenceVariableCharacteristicDefinitionByCombinationList;
   TFhirEvidenceVariableCharacteristicTimeFromEvent = fhir5_resources_other.TFhirEvidenceVariableCharacteristicTimeFromEvent;
   TFhirEvidenceVariableCharacteristicTimeFromEventList = fhir5_resources_other.TFhirEvidenceVariableCharacteristicTimeFromEventList;
   TFhirEvidenceVariableCategory = fhir5_resources_other.TFhirEvidenceVariableCategory;
@@ -801,6 +771,8 @@ type
   TFhirExplanationOfBenefitAccidentList = fhir5_resources_financial.TFhirExplanationOfBenefitAccidentList;
   TFhirExplanationOfBenefitItem = fhir5_resources_financial.TFhirExplanationOfBenefitItem;
   TFhirExplanationOfBenefitItemList = fhir5_resources_financial.TFhirExplanationOfBenefitItemList;
+  TFhirExplanationOfBenefitItemBodySite = fhir5_resources_financial.TFhirExplanationOfBenefitItemBodySite;
+  TFhirExplanationOfBenefitItemBodySiteList = fhir5_resources_financial.TFhirExplanationOfBenefitItemBodySiteList;
   TFhirExplanationOfBenefitItemAdjudication = fhir5_resources_financial.TFhirExplanationOfBenefitItemAdjudication;
   TFhirExplanationOfBenefitItemAdjudicationList = fhir5_resources_financial.TFhirExplanationOfBenefitItemAdjudicationList;
   TFhirExplanationOfBenefitItemDetail = fhir5_resources_financial.TFhirExplanationOfBenefitItemDetail;
@@ -809,6 +781,8 @@ type
   TFhirExplanationOfBenefitItemDetailSubDetailList = fhir5_resources_financial.TFhirExplanationOfBenefitItemDetailSubDetailList;
   TFhirExplanationOfBenefitAddItem = fhir5_resources_financial.TFhirExplanationOfBenefitAddItem;
   TFhirExplanationOfBenefitAddItemList = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemList;
+  TFhirExplanationOfBenefitAddItemBodySite = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemBodySite;
+  TFhirExplanationOfBenefitAddItemBodySiteList = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemBodySiteList;
   TFhirExplanationOfBenefitAddItemDetail = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemDetail;
   TFhirExplanationOfBenefitAddItemDetailList = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemDetailList;
   TFhirExplanationOfBenefitAddItemDetailSubDetail = fhir5_resources_financial.TFhirExplanationOfBenefitAddItemDetailSubDetail;
@@ -838,6 +812,24 @@ type
   TFhirFlag = fhir5_resources_clinical.TFhirFlag;
   TFhirFlagList = fhir5_resources_clinical.TFhirFlagList;
 {$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_FORMULARYITEM}
+  TFhirFormularyItem = fhir5_resources_medications.TFhirFormularyItem;
+  TFhirFormularyItemList = fhir5_resources_medications.TFhirFormularyItemList;
+{$ENDIF FHIR_FORMULARYITEM}
+{$IFDEF FHIR_GENOMICSTUDY}
+  TFhirGenomicStudyAnalysis = fhir5_resources_clinical.TFhirGenomicStudyAnalysis;
+  TFhirGenomicStudyAnalysisList = fhir5_resources_clinical.TFhirGenomicStudyAnalysisList;
+  TFhirGenomicStudyAnalysisInput = fhir5_resources_clinical.TFhirGenomicStudyAnalysisInput;
+  TFhirGenomicStudyAnalysisInputList = fhir5_resources_clinical.TFhirGenomicStudyAnalysisInputList;
+  TFhirGenomicStudyAnalysisOutput = fhir5_resources_clinical.TFhirGenomicStudyAnalysisOutput;
+  TFhirGenomicStudyAnalysisOutputList = fhir5_resources_clinical.TFhirGenomicStudyAnalysisOutputList;
+  TFhirGenomicStudyAnalysisPerformer = fhir5_resources_clinical.TFhirGenomicStudyAnalysisPerformer;
+  TFhirGenomicStudyAnalysisPerformerList = fhir5_resources_clinical.TFhirGenomicStudyAnalysisPerformerList;
+  TFhirGenomicStudyAnalysisDevice = fhir5_resources_clinical.TFhirGenomicStudyAnalysisDevice;
+  TFhirGenomicStudyAnalysisDeviceList = fhir5_resources_clinical.TFhirGenomicStudyAnalysisDeviceList;
+  TFhirGenomicStudy = fhir5_resources_clinical.TFhirGenomicStudy;
+  TFhirGenomicStudyList = fhir5_resources_clinical.TFhirGenomicStudyList;
+{$ENDIF FHIR_GENOMICSTUDY}
 {$IFDEF FHIR_GOAL}
   TFhirGoalTarget = fhir5_resources_clinical.TFhirGoalTarget;
   TFhirGoalTargetList = fhir5_resources_clinical.TFhirGoalTargetList;
@@ -869,10 +861,6 @@ type
 {$IFDEF FHIR_HEALTHCARESERVICE}
   TFhirHealthcareServiceEligibility = fhir5_resources_admin.TFhirHealthcareServiceEligibility;
   TFhirHealthcareServiceEligibilityList = fhir5_resources_admin.TFhirHealthcareServiceEligibilityList;
-  TFhirHealthcareServiceAvailableTime = fhir5_resources_admin.TFhirHealthcareServiceAvailableTime;
-  TFhirHealthcareServiceAvailableTimeList = fhir5_resources_admin.TFhirHealthcareServiceAvailableTimeList;
-  TFhirHealthcareServiceNotAvailable = fhir5_resources_admin.TFhirHealthcareServiceNotAvailable;
-  TFhirHealthcareServiceNotAvailableList = fhir5_resources_admin.TFhirHealthcareServiceNotAvailableList;
   TFhirHealthcareService = fhir5_resources_admin.TFhirHealthcareService;
   TFhirHealthcareServiceList = fhir5_resources_admin.TFhirHealthcareServiceList;
 {$ENDIF FHIR_HEALTHCARESERVICE}
@@ -881,6 +869,8 @@ type
   TFhirImagingSelectionPerformerList = fhir5_resources_clinical.TFhirImagingSelectionPerformerList;
   TFhirImagingSelectionInstance = fhir5_resources_clinical.TFhirImagingSelectionInstance;
   TFhirImagingSelectionInstanceList = fhir5_resources_clinical.TFhirImagingSelectionInstanceList;
+  TFhirImagingSelectionInstanceImageRegion = fhir5_resources_clinical.TFhirImagingSelectionInstanceImageRegion;
+  TFhirImagingSelectionInstanceImageRegionList = fhir5_resources_clinical.TFhirImagingSelectionInstanceImageRegionList;
   TFhirImagingSelectionImageRegion = fhir5_resources_clinical.TFhirImagingSelectionImageRegion;
   TFhirImagingSelectionImageRegionList = fhir5_resources_clinical.TFhirImagingSelectionImageRegionList;
   TFhirImagingSelection = fhir5_resources_clinical.TFhirImagingSelection;
@@ -899,8 +889,8 @@ type
 {$IFDEF FHIR_IMMUNIZATION}
   TFhirImmunizationPerformer = fhir5_resources_clinical.TFhirImmunizationPerformer;
   TFhirImmunizationPerformerList = fhir5_resources_clinical.TFhirImmunizationPerformerList;
-  TFhirImmunizationEducation = fhir5_resources_clinical.TFhirImmunizationEducation;
-  TFhirImmunizationEducationList = fhir5_resources_clinical.TFhirImmunizationEducationList;
+  TFhirImmunizationProgramEligibility = fhir5_resources_clinical.TFhirImmunizationProgramEligibility;
+  TFhirImmunizationProgramEligibilityList = fhir5_resources_clinical.TFhirImmunizationProgramEligibilityList;
   TFhirImmunizationReaction = fhir5_resources_clinical.TFhirImmunizationReaction;
   TFhirImmunizationReactionList = fhir5_resources_clinical.TFhirImmunizationReactionList;
   TFhirImmunizationProtocolApplied = fhir5_resources_clinical.TFhirImmunizationProtocolApplied;
@@ -959,8 +949,6 @@ type
   TFhirIngredientList = fhir5_resources_medications.TFhirIngredientList;
 {$ENDIF FHIR_INGREDIENT}
 {$IFDEF FHIR_INSURANCEPLAN}
-  TFhirInsurancePlanContact = fhir5_resources_financial.TFhirInsurancePlanContact;
-  TFhirInsurancePlanContactList = fhir5_resources_financial.TFhirInsurancePlanContactList;
   TFhirInsurancePlanCoverage = fhir5_resources_financial.TFhirInsurancePlanCoverage;
   TFhirInsurancePlanCoverageList = fhir5_resources_financial.TFhirInsurancePlanCoverageList;
   TFhirInsurancePlanCoverageBenefit = fhir5_resources_financial.TFhirInsurancePlanCoverageBenefit;
@@ -993,8 +981,6 @@ type
   TFhirInvoiceParticipantList = fhir5_resources_financial.TFhirInvoiceParticipantList;
   TFhirInvoiceLineItem = fhir5_resources_financial.TFhirInvoiceLineItem;
   TFhirInvoiceLineItemList = fhir5_resources_financial.TFhirInvoiceLineItemList;
-  TFhirInvoiceLineItemPriceComponent = fhir5_resources_financial.TFhirInvoiceLineItemPriceComponent;
-  TFhirInvoiceLineItemPriceComponentList = fhir5_resources_financial.TFhirInvoiceLineItemPriceComponentList;
   TFhirInvoice = fhir5_resources_financial.TFhirInvoice;
   TFhirInvoiceList = fhir5_resources_financial.TFhirInvoiceList;
 {$ENDIF FHIR_INVOICE}
@@ -1017,18 +1003,22 @@ type
 {$IFDEF FHIR_LOCATION}
   TFhirLocationPosition = fhir5_resources_admin.TFhirLocationPosition;
   TFhirLocationPositionList = fhir5_resources_admin.TFhirLocationPositionList;
-  TFhirLocationHoursOfOperation = fhir5_resources_admin.TFhirLocationHoursOfOperation;
-  TFhirLocationHoursOfOperationList = fhir5_resources_admin.TFhirLocationHoursOfOperationList;
   TFhirLocation = fhir5_resources_admin.TFhirLocation;
   TFhirLocationList = fhir5_resources_admin.TFhirLocationList;
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
   TFhirManufacturedItemDefinitionProperty = fhir5_resources_medications.TFhirManufacturedItemDefinitionProperty;
   TFhirManufacturedItemDefinitionPropertyList = fhir5_resources_medications.TFhirManufacturedItemDefinitionPropertyList;
+  TFhirManufacturedItemDefinitionComponent = fhir5_resources_medications.TFhirManufacturedItemDefinitionComponent;
+  TFhirManufacturedItemDefinitionComponentList = fhir5_resources_medications.TFhirManufacturedItemDefinitionComponentList;
+  TFhirManufacturedItemDefinitionComponentConstituent = fhir5_resources_medications.TFhirManufacturedItemDefinitionComponentConstituent;
+  TFhirManufacturedItemDefinitionComponentConstituentList = fhir5_resources_medications.TFhirManufacturedItemDefinitionComponentConstituentList;
   TFhirManufacturedItemDefinition = fhir5_resources_medications.TFhirManufacturedItemDefinition;
   TFhirManufacturedItemDefinitionList = fhir5_resources_medications.TFhirManufacturedItemDefinitionList;
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
 {$IFDEF FHIR_MEASURE}
+  TFhirMeasureTerm = fhir5_resources_canonical.TFhirMeasureTerm;
+  TFhirMeasureTermList = fhir5_resources_canonical.TFhirMeasureTermList;
   TFhirMeasureGroup = fhir5_resources_canonical.TFhirMeasureGroup;
   TFhirMeasureGroupList = fhir5_resources_canonical.TFhirMeasureGroupList;
   TFhirMeasureGroupPopulation = fhir5_resources_canonical.TFhirMeasureGroupPopulation;
@@ -1103,6 +1093,10 @@ type
   TFhirMedicationKnowledgeMedicineClassificationList = fhir5_resources_medications.TFhirMedicationKnowledgeMedicineClassificationList;
   TFhirMedicationKnowledgePackaging = fhir5_resources_medications.TFhirMedicationKnowledgePackaging;
   TFhirMedicationKnowledgePackagingList = fhir5_resources_medications.TFhirMedicationKnowledgePackagingList;
+  TFhirMedicationKnowledgeStorageGuideline = fhir5_resources_medications.TFhirMedicationKnowledgeStorageGuideline;
+  TFhirMedicationKnowledgeStorageGuidelineList = fhir5_resources_medications.TFhirMedicationKnowledgeStorageGuidelineList;
+  TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSetting = fhir5_resources_medications.TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSetting;
+  TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSettingList = fhir5_resources_medications.TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSettingList;
   TFhirMedicationKnowledgeRegulatory = fhir5_resources_medications.TFhirMedicationKnowledgeRegulatory;
   TFhirMedicationKnowledgeRegulatoryList = fhir5_resources_medications.TFhirMedicationKnowledgeRegulatoryList;
   TFhirMedicationKnowledgeRegulatorySubstitution = fhir5_resources_medications.TFhirMedicationKnowledgeRegulatorySubstitution;
@@ -1141,10 +1135,10 @@ type
   TFhirMedicinalProductDefinitionContactList = fhir5_resources_medications.TFhirMedicinalProductDefinitionContactList;
   TFhirMedicinalProductDefinitionName = fhir5_resources_medications.TFhirMedicinalProductDefinitionName;
   TFhirMedicinalProductDefinitionNameList = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameList;
-  TFhirMedicinalProductDefinitionNameNamePart = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameNamePart;
-  TFhirMedicinalProductDefinitionNameNamePartList = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameNamePartList;
-  TFhirMedicinalProductDefinitionNameCountryLanguage = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameCountryLanguage;
-  TFhirMedicinalProductDefinitionNameCountryLanguageList = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameCountryLanguageList;
+  TFhirMedicinalProductDefinitionNamePart = fhir5_resources_medications.TFhirMedicinalProductDefinitionNamePart;
+  TFhirMedicinalProductDefinitionNamePartList = fhir5_resources_medications.TFhirMedicinalProductDefinitionNamePartList;
+  TFhirMedicinalProductDefinitionNameUsage = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameUsage;
+  TFhirMedicinalProductDefinitionNameUsageList = fhir5_resources_medications.TFhirMedicinalProductDefinitionNameUsageList;
   TFhirMedicinalProductDefinitionCrossReference = fhir5_resources_medications.TFhirMedicinalProductDefinitionCrossReference;
   TFhirMedicinalProductDefinitionCrossReferenceList = fhir5_resources_medications.TFhirMedicinalProductDefinitionCrossReferenceList;
   TFhirMedicinalProductDefinitionOperation = fhir5_resources_medications.TFhirMedicinalProductDefinitionOperation;
@@ -1173,22 +1167,12 @@ type
   TFhirMessageHeaderList = fhir5_resources_other.TFhirMessageHeaderList;
 {$ENDIF FHIR_MESSAGEHEADER}
 {$IFDEF FHIR_MOLECULARSEQUENCE}
-  TFhirMolecularSequenceReferenceSeq = fhir5_resources_clinical.TFhirMolecularSequenceReferenceSeq;
-  TFhirMolecularSequenceReferenceSeqList = fhir5_resources_clinical.TFhirMolecularSequenceReferenceSeqList;
-  TFhirMolecularSequenceVariant = fhir5_resources_clinical.TFhirMolecularSequenceVariant;
-  TFhirMolecularSequenceVariantList = fhir5_resources_clinical.TFhirMolecularSequenceVariantList;
-  TFhirMolecularSequenceQuality = fhir5_resources_clinical.TFhirMolecularSequenceQuality;
-  TFhirMolecularSequenceQualityList = fhir5_resources_clinical.TFhirMolecularSequenceQualityList;
-  TFhirMolecularSequenceQualityRoc = fhir5_resources_clinical.TFhirMolecularSequenceQualityRoc;
-  TFhirMolecularSequenceQualityRocList = fhir5_resources_clinical.TFhirMolecularSequenceQualityRocList;
-  TFhirMolecularSequenceRepository = fhir5_resources_clinical.TFhirMolecularSequenceRepository;
-  TFhirMolecularSequenceRepositoryList = fhir5_resources_clinical.TFhirMolecularSequenceRepositoryList;
-  TFhirMolecularSequenceStructureVariant = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariant;
-  TFhirMolecularSequenceStructureVariantList = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariantList;
-  TFhirMolecularSequenceStructureVariantOuter = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariantOuter;
-  TFhirMolecularSequenceStructureVariantOuterList = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariantOuterList;
-  TFhirMolecularSequenceStructureVariantInner = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariantInner;
-  TFhirMolecularSequenceStructureVariantInnerList = fhir5_resources_clinical.TFhirMolecularSequenceStructureVariantInnerList;
+  TFhirMolecularSequenceRelative = fhir5_resources_clinical.TFhirMolecularSequenceRelative;
+  TFhirMolecularSequenceRelativeList = fhir5_resources_clinical.TFhirMolecularSequenceRelativeList;
+  TFhirMolecularSequenceRelativeStartingSequence = fhir5_resources_clinical.TFhirMolecularSequenceRelativeStartingSequence;
+  TFhirMolecularSequenceRelativeStartingSequenceList = fhir5_resources_clinical.TFhirMolecularSequenceRelativeStartingSequenceList;
+  TFhirMolecularSequenceRelativeEdit = fhir5_resources_clinical.TFhirMolecularSequenceRelativeEdit;
+  TFhirMolecularSequenceRelativeEditList = fhir5_resources_clinical.TFhirMolecularSequenceRelativeEditList;
   TFhirMolecularSequence = fhir5_resources_clinical.TFhirMolecularSequence;
   TFhirMolecularSequenceList = fhir5_resources_clinical.TFhirMolecularSequenceList;
 {$ENDIF FHIR_MOLECULARSEQUENCE}
@@ -1211,16 +1195,24 @@ type
 {$IFDEF FHIR_NUTRITIONORDER}
   TFhirNutritionOrderOralDiet = fhir5_resources_clinical.TFhirNutritionOrderOralDiet;
   TFhirNutritionOrderOralDietList = fhir5_resources_clinical.TFhirNutritionOrderOralDietList;
+  TFhirNutritionOrderOralDietSchedule = fhir5_resources_clinical.TFhirNutritionOrderOralDietSchedule;
+  TFhirNutritionOrderOralDietScheduleList = fhir5_resources_clinical.TFhirNutritionOrderOralDietScheduleList;
   TFhirNutritionOrderOralDietNutrient = fhir5_resources_clinical.TFhirNutritionOrderOralDietNutrient;
   TFhirNutritionOrderOralDietNutrientList = fhir5_resources_clinical.TFhirNutritionOrderOralDietNutrientList;
   TFhirNutritionOrderOralDietTexture = fhir5_resources_clinical.TFhirNutritionOrderOralDietTexture;
   TFhirNutritionOrderOralDietTextureList = fhir5_resources_clinical.TFhirNutritionOrderOralDietTextureList;
   TFhirNutritionOrderSupplement = fhir5_resources_clinical.TFhirNutritionOrderSupplement;
   TFhirNutritionOrderSupplementList = fhir5_resources_clinical.TFhirNutritionOrderSupplementList;
+  TFhirNutritionOrderSupplementSchedule = fhir5_resources_clinical.TFhirNutritionOrderSupplementSchedule;
+  TFhirNutritionOrderSupplementScheduleList = fhir5_resources_clinical.TFhirNutritionOrderSupplementScheduleList;
   TFhirNutritionOrderEnteralFormula = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormula;
   TFhirNutritionOrderEnteralFormulaList = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaList;
+  TFhirNutritionOrderEnteralFormulaAdditive = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdditive;
+  TFhirNutritionOrderEnteralFormulaAdditiveList = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdditiveList;
   TFhirNutritionOrderEnteralFormulaAdministration = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdministration;
   TFhirNutritionOrderEnteralFormulaAdministrationList = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdministrationList;
+  TFhirNutritionOrderEnteralFormulaAdministrationSchedule = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdministrationSchedule;
+  TFhirNutritionOrderEnteralFormulaAdministrationScheduleList = fhir5_resources_clinical.TFhirNutritionOrderEnteralFormulaAdministrationScheduleList;
   TFhirNutritionOrder = fhir5_resources_clinical.TFhirNutritionOrder;
   TFhirNutritionOrderList = fhir5_resources_clinical.TFhirNutritionOrderList;
 {$ENDIF FHIR_NUTRITIONORDER}
@@ -1229,14 +1221,16 @@ type
   TFhirNutritionProductNutrientList = fhir5_resources_medications.TFhirNutritionProductNutrientList;
   TFhirNutritionProductIngredient = fhir5_resources_medications.TFhirNutritionProductIngredient;
   TFhirNutritionProductIngredientList = fhir5_resources_medications.TFhirNutritionProductIngredientList;
-  TFhirNutritionProductProductCharacteristic = fhir5_resources_medications.TFhirNutritionProductProductCharacteristic;
-  TFhirNutritionProductProductCharacteristicList = fhir5_resources_medications.TFhirNutritionProductProductCharacteristicList;
+  TFhirNutritionProductCharacteristic = fhir5_resources_medications.TFhirNutritionProductCharacteristic;
+  TFhirNutritionProductCharacteristicList = fhir5_resources_medications.TFhirNutritionProductCharacteristicList;
   TFhirNutritionProductInstance = fhir5_resources_medications.TFhirNutritionProductInstance;
   TFhirNutritionProductInstanceList = fhir5_resources_medications.TFhirNutritionProductInstanceList;
   TFhirNutritionProduct = fhir5_resources_medications.TFhirNutritionProduct;
   TFhirNutritionProductList = fhir5_resources_medications.TFhirNutritionProductList;
 {$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
+  TFhirObservationTriggeredBy = fhir5_resources_clinical.TFhirObservationTriggeredBy;
+  TFhirObservationTriggeredByList = fhir5_resources_clinical.TFhirObservationTriggeredByList;
   TFhirObservationReferenceRange = fhir5_resources_clinical.TFhirObservationReferenceRange;
   TFhirObservationReferenceRangeList = fhir5_resources_clinical.TFhirObservationReferenceRangeList;
   TFhirObservationComponent = fhir5_resources_clinical.TFhirObservationComponent;
@@ -1273,8 +1267,8 @@ type
   TFhirOperationOutcomeList = fhir5_resources_other.TFhirOperationOutcomeList;
 {$ENDIF FHIR_OPERATIONOUTCOME}
 {$IFDEF FHIR_ORGANIZATION}
-  TFhirOrganizationContact = fhir5_resources_admin.TFhirOrganizationContact;
-  TFhirOrganizationContactList = fhir5_resources_admin.TFhirOrganizationContactList;
+  TFhirOrganizationQualification = fhir5_resources_admin.TFhirOrganizationQualification;
+  TFhirOrganizationQualificationList = fhir5_resources_admin.TFhirOrganizationQualificationList;
   TFhirOrganization = fhir5_resources_admin.TFhirOrganization;
   TFhirOrganizationList = fhir5_resources_admin.TFhirOrganizationList;
 {$ENDIF FHIR_ORGANIZATION}
@@ -1285,12 +1279,12 @@ type
 {$IFDEF FHIR_PACKAGEDPRODUCTDEFINITION}
   TFhirPackagedProductDefinitionLegalStatusOfSupply = fhir5_resources_medications.TFhirPackagedProductDefinitionLegalStatusOfSupply;
   TFhirPackagedProductDefinitionLegalStatusOfSupplyList = fhir5_resources_medications.TFhirPackagedProductDefinitionLegalStatusOfSupplyList;
-  TFhirPackagedProductDefinitionPackage = fhir5_resources_medications.TFhirPackagedProductDefinitionPackage;
-  TFhirPackagedProductDefinitionPackageList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackageList;
-  TFhirPackagedProductDefinitionPackageProperty = fhir5_resources_medications.TFhirPackagedProductDefinitionPackageProperty;
-  TFhirPackagedProductDefinitionPackagePropertyList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagePropertyList;
-  TFhirPackagedProductDefinitionPackageContainedItem = fhir5_resources_medications.TFhirPackagedProductDefinitionPackageContainedItem;
-  TFhirPackagedProductDefinitionPackageContainedItemList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackageContainedItemList;
+  TFhirPackagedProductDefinitionPackaging = fhir5_resources_medications.TFhirPackagedProductDefinitionPackaging;
+  TFhirPackagedProductDefinitionPackagingList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagingList;
+  TFhirPackagedProductDefinitionPackagingProperty = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagingProperty;
+  TFhirPackagedProductDefinitionPackagingPropertyList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagingPropertyList;
+  TFhirPackagedProductDefinitionPackagingContainedItem = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagingContainedItem;
+  TFhirPackagedProductDefinitionPackagingContainedItemList = fhir5_resources_medications.TFhirPackagedProductDefinitionPackagingContainedItemList;
   TFhirPackagedProductDefinition = fhir5_resources_medications.TFhirPackagedProductDefinition;
   TFhirPackagedProductDefinitionList = fhir5_resources_medications.TFhirPackagedProductDefinitionList;
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
@@ -1315,18 +1309,24 @@ type
   TFhirPaymentNoticeList = fhir5_resources_financial.TFhirPaymentNoticeList;
 {$ENDIF FHIR_PAYMENTNOTICE}
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
-  TFhirPaymentReconciliationDetail = fhir5_resources_financial.TFhirPaymentReconciliationDetail;
-  TFhirPaymentReconciliationDetailList = fhir5_resources_financial.TFhirPaymentReconciliationDetailList;
+  TFhirPaymentReconciliationAllocation = fhir5_resources_financial.TFhirPaymentReconciliationAllocation;
+  TFhirPaymentReconciliationAllocationList = fhir5_resources_financial.TFhirPaymentReconciliationAllocationList;
   TFhirPaymentReconciliationProcessNote = fhir5_resources_financial.TFhirPaymentReconciliationProcessNote;
   TFhirPaymentReconciliationProcessNoteList = fhir5_resources_financial.TFhirPaymentReconciliationProcessNoteList;
   TFhirPaymentReconciliation = fhir5_resources_financial.TFhirPaymentReconciliation;
   TFhirPaymentReconciliationList = fhir5_resources_financial.TFhirPaymentReconciliationList;
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
 {$IFDEF FHIR_PERMISSION}
-  TFhirPermissionProcessingActivity = fhir5_resources_other.TFhirPermissionProcessingActivity;
-  TFhirPermissionProcessingActivityList = fhir5_resources_other.TFhirPermissionProcessingActivityList;
   TFhirPermissionJustification = fhir5_resources_other.TFhirPermissionJustification;
   TFhirPermissionJustificationList = fhir5_resources_other.TFhirPermissionJustificationList;
+  TFhirPermissionRule = fhir5_resources_other.TFhirPermissionRule;
+  TFhirPermissionRuleList = fhir5_resources_other.TFhirPermissionRuleList;
+  TFhirPermissionRuleData = fhir5_resources_other.TFhirPermissionRuleData;
+  TFhirPermissionRuleDataList = fhir5_resources_other.TFhirPermissionRuleDataList;
+  TFhirPermissionRuleDataResource = fhir5_resources_other.TFhirPermissionRuleDataResource;
+  TFhirPermissionRuleDataResourceList = fhir5_resources_other.TFhirPermissionRuleDataResourceList;
+  TFhirPermissionRuleActivity = fhir5_resources_other.TFhirPermissionRuleActivity;
+  TFhirPermissionRuleActivityList = fhir5_resources_other.TFhirPermissionRuleActivityList;
   TFhirPermission = fhir5_resources_other.TFhirPermission;
   TFhirPermissionList = fhir5_resources_other.TFhirPermissionList;
 {$ENDIF FHIR_PERMISSION}
@@ -1371,10 +1371,6 @@ type
   TFhirPractitionerList = fhir5_resources_admin.TFhirPractitionerList;
 {$ENDIF FHIR_PRACTITIONER}
 {$IFDEF FHIR_PRACTITIONERROLE}
-  TFhirPractitionerRoleAvailableTime = fhir5_resources_admin.TFhirPractitionerRoleAvailableTime;
-  TFhirPractitionerRoleAvailableTimeList = fhir5_resources_admin.TFhirPractitionerRoleAvailableTimeList;
-  TFhirPractitionerRoleNotAvailable = fhir5_resources_admin.TFhirPractitionerRoleNotAvailable;
-  TFhirPractitionerRoleNotAvailableList = fhir5_resources_admin.TFhirPractitionerRoleNotAvailableList;
   TFhirPractitionerRole = fhir5_resources_admin.TFhirPractitionerRole;
   TFhirPractitionerRoleList = fhir5_resources_admin.TFhirPractitionerRoleList;
 {$ENDIF FHIR_PRACTITIONERROLE}
@@ -1438,17 +1434,39 @@ type
   TFhirRequestGroup = fhir5_resources_other.TFhirRequestGroup;
   TFhirRequestGroupList = fhir5_resources_other.TFhirRequestGroupList;
 {$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_REQUESTORCHESTRATION}
+  TFhirRequestOrchestrationAction = fhir5_resources_other.TFhirRequestOrchestrationAction;
+  TFhirRequestOrchestrationActionList = fhir5_resources_other.TFhirRequestOrchestrationActionList;
+  TFhirRequestOrchestrationActionCondition = fhir5_resources_other.TFhirRequestOrchestrationActionCondition;
+  TFhirRequestOrchestrationActionConditionList = fhir5_resources_other.TFhirRequestOrchestrationActionConditionList;
+  TFhirRequestOrchestrationActionInput = fhir5_resources_other.TFhirRequestOrchestrationActionInput;
+  TFhirRequestOrchestrationActionInputList = fhir5_resources_other.TFhirRequestOrchestrationActionInputList;
+  TFhirRequestOrchestrationActionOutput = fhir5_resources_other.TFhirRequestOrchestrationActionOutput;
+  TFhirRequestOrchestrationActionOutputList = fhir5_resources_other.TFhirRequestOrchestrationActionOutputList;
+  TFhirRequestOrchestrationActionRelatedAction = fhir5_resources_other.TFhirRequestOrchestrationActionRelatedAction;
+  TFhirRequestOrchestrationActionRelatedActionList = fhir5_resources_other.TFhirRequestOrchestrationActionRelatedActionList;
+  TFhirRequestOrchestrationActionParticipant = fhir5_resources_other.TFhirRequestOrchestrationActionParticipant;
+  TFhirRequestOrchestrationActionParticipantList = fhir5_resources_other.TFhirRequestOrchestrationActionParticipantList;
+  TFhirRequestOrchestrationActionDynamicValue = fhir5_resources_other.TFhirRequestOrchestrationActionDynamicValue;
+  TFhirRequestOrchestrationActionDynamicValueList = fhir5_resources_other.TFhirRequestOrchestrationActionDynamicValueList;
+  TFhirRequestOrchestration = fhir5_resources_other.TFhirRequestOrchestration;
+  TFhirRequestOrchestrationList = fhir5_resources_other.TFhirRequestOrchestrationList;
+{$ENDIF FHIR_REQUESTORCHESTRATION}
+{$IFDEF FHIR_REQUIREMENTS}
+  TFhirRequirementsStatement = fhir5_resources_canonical.TFhirRequirementsStatement;
+  TFhirRequirementsStatementList = fhir5_resources_canonical.TFhirRequirementsStatementList;
+  TFhirRequirements = fhir5_resources_canonical.TFhirRequirements;
+  TFhirRequirementsList = fhir5_resources_canonical.TFhirRequirementsList;
+{$ENDIF FHIR_REQUIREMENTS}
 {$IFDEF FHIR_RESEARCHSTUDY}
   TFhirResearchStudyLabel = fhir5_resources_other.TFhirResearchStudyLabel;
   TFhirResearchStudyLabelList = fhir5_resources_other.TFhirResearchStudyLabelList;
   TFhirResearchStudyFocus = fhir5_resources_other.TFhirResearchStudyFocus;
   TFhirResearchStudyFocusList = fhir5_resources_other.TFhirResearchStudyFocusList;
-  TFhirResearchStudyClassification = fhir5_resources_other.TFhirResearchStudyClassification;
-  TFhirResearchStudyClassificationList = fhir5_resources_other.TFhirResearchStudyClassificationList;
   TFhirResearchStudyAssociatedParty = fhir5_resources_other.TFhirResearchStudyAssociatedParty;
   TFhirResearchStudyAssociatedPartyList = fhir5_resources_other.TFhirResearchStudyAssociatedPartyList;
-  TFhirResearchStudyStatusDate = fhir5_resources_other.TFhirResearchStudyStatusDate;
-  TFhirResearchStudyStatusDateList = fhir5_resources_other.TFhirResearchStudyStatusDateList;
+  TFhirResearchStudyProgressStatus = fhir5_resources_other.TFhirResearchStudyProgressStatus;
+  TFhirResearchStudyProgressStatusList = fhir5_resources_other.TFhirResearchStudyProgressStatusList;
   TFhirResearchStudyRecruitment = fhir5_resources_other.TFhirResearchStudyRecruitment;
   TFhirResearchStudyRecruitmentList = fhir5_resources_other.TFhirResearchStudyRecruitmentList;
   TFhirResearchStudyComparisonGroup = fhir5_resources_other.TFhirResearchStudyComparisonGroup;
@@ -1493,6 +1511,8 @@ type
   TFhirSlotList = fhir5_resources_admin.TFhirSlotList;
 {$ENDIF FHIR_SLOT}
 {$IFDEF FHIR_SPECIMEN}
+  TFhirSpecimenFeature = fhir5_resources_clinical.TFhirSpecimenFeature;
+  TFhirSpecimenFeatureList = fhir5_resources_clinical.TFhirSpecimenFeatureList;
   TFhirSpecimenCollection = fhir5_resources_clinical.TFhirSpecimenCollection;
   TFhirSpecimenCollectionList = fhir5_resources_clinical.TFhirSpecimenCollectionList;
   TFhirSpecimenProcessing = fhir5_resources_clinical.TFhirSpecimenProcessing;
@@ -1766,6 +1786,16 @@ type
   TFhirTestScript = fhir5_resources_canonical.TFhirTestScript;
   TFhirTestScriptList = fhir5_resources_canonical.TFhirTestScriptList;
 {$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_TRANSPORT}
+  TFhirTransportRestriction = fhir5_resources_clinical.TFhirTransportRestriction;
+  TFhirTransportRestrictionList = fhir5_resources_clinical.TFhirTransportRestrictionList;
+  TFhirTransportInput = fhir5_resources_clinical.TFhirTransportInput;
+  TFhirTransportInputList = fhir5_resources_clinical.TFhirTransportInputList;
+  TFhirTransportOutput = fhir5_resources_clinical.TFhirTransportOutput;
+  TFhirTransportOutputList = fhir5_resources_clinical.TFhirTransportOutputList;
+  TFhirTransport = fhir5_resources_clinical.TFhirTransport;
+  TFhirTransportList = fhir5_resources_clinical.TFhirTransportList;
+{$ENDIF FHIR_TRANSPORT}
 {$IFDEF FHIR_VALUESET}
   TFhirValueSetCompose = fhir5_resources_canonical.TFhirValueSetCompose;
   TFhirValueSetComposeList = fhir5_resources_canonical.TFhirValueSetComposeList;
@@ -1787,6 +1817,8 @@ type
   TFhirValueSetExpansionContainsList = fhir5_resources_canonical.TFhirValueSetExpansionContainsList;
   TFhirValueSetExpansionContainsProperty = fhir5_resources_canonical.TFhirValueSetExpansionContainsProperty;
   TFhirValueSetExpansionContainsPropertyList = fhir5_resources_canonical.TFhirValueSetExpansionContainsPropertyList;
+  TFhirValueSetExpansionContainsPropertySubProperty = fhir5_resources_canonical.TFhirValueSetExpansionContainsPropertySubProperty;
+  TFhirValueSetExpansionContainsPropertySubPropertyList = fhir5_resources_canonical.TFhirValueSetExpansionContainsPropertySubPropertyList;
   TFhirValueSetScope = fhir5_resources_canonical.TFhirValueSetScope;
   TFhirValueSetScopeList = fhir5_resources_canonical.TFhirValueSetScopeList;
   TFhirValueSet = fhir5_resources_canonical.TFhirValueSet;

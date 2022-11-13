@@ -401,7 +401,7 @@ begin
   end;
 
   assertTrue(TestSettings.SMTPUsername <> '', 'Must provide username(/source email) for SMTP test in '+TestSettings.filename+' ([email] sender=)');
-  assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destinatino for SMTP test in '+TestSettings.filename+' ([email] destination=)');
+  assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destination for SMTP test in '+TestSettings.filename+' ([email] destination=)');
 
   sender := TIdSMTP.Create(Nil);
   try
@@ -426,6 +426,7 @@ begin
       msg.From.Text := TestSettings.SMTPUsername;
       msg.Body.Text := 'Test Email from FHIRServer Unit tests';
       sender.Send(msg);
+      assertTrue(true);
     Finally
       msg.Free;
     End;

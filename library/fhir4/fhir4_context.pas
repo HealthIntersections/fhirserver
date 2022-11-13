@@ -126,6 +126,7 @@ type
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; virtual; abstract;
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;

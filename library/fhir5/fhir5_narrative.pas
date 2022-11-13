@@ -1771,8 +1771,8 @@ begin
   if (sd.Origin <> nil) then
     CommaAdd(s, 'Origin: ' + displayQuantity(sd.Origin));
 
-  if (sd.Period <> '') then
-    CommaAdd(s, 'Period: ' + sd.Period);
+  if (sd.Interval <> '') then
+    CommaAdd(s, ': Interval' + sd.Interval);
 
   if (sd.Factor <> '') then
     CommaAdd(s, 'Factor: ' + sd.Factor);
