@@ -157,7 +157,7 @@ public class PascalGenerator {
     fgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_factory.pas"));
     igen.generate(Utilities.path(dest, "fhir"+n(r4b)+".inc"));
     iigen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_indexinfo.pas"));
-    jsgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_javascript.pas"));
+    // jsgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_javascript.pas"));
     ogen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_operations.pas"));
     rgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_resources.pas"));
     tgen.generate(Utilities.path(dest,  "fhir"+n(r4b)+"_types.pas"));

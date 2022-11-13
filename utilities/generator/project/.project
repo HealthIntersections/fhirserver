@@ -14,11 +14,15 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>kotlin_bin</name>
-			<type>2</type>
-			<locationURI>org.jetbrains.kotlin.core.filesystem:/org.fhir.delphi/kotlin_bin</locationURI>
-		</link>
-	</linkedResources>
+	<filteredResources>
+		<filter>
+			<id>1668080803735</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.core.resources.regexFilterMatcher</id>
+				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

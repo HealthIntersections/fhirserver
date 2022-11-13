@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
-import org.hl7.fhir.r5.model.Enumerations.FHIRAllTypes;
+import org.hl7.fhir.r5.model.Enumerations.FHIRTypes;
 import org.hl7.fhir.r5.model.Enumerations.OperationParameterUse;
 import org.hl7.fhir.r5.model.OperationDefinition;
 import org.hl7.fhir.r5.model.OperationDefinition.OperationDefinitionParameterComponent;
@@ -165,7 +165,7 @@ public class OperationsGenerator extends BaseGenerator {
               params.append("    if (F"+Utilities.capitalize(pn)+" <> nil) then\r\n");
           }
           if (!isPrimitive(p.getType()) && !"token".equals(p.getType().toCode())) {
-            if (isResource(p.getType().toCode()) || p.getType() == FHIRAllTypes.ANY) {
+            if (isResource(p.getType().toCode()) || p.getType() == FHIRTypes.BASE) {
               params.append("      result.addParameter('"+p.getName()+"', F"+Utilities.capitalize(pn)+".Link);"+marker()+"\r\n");
               create.append("  F"+Utilities.capitalize(pn)+" := (params.res['"+p.getName()+"'] as "+pt+").Link;"+marker()+"\r\n");
             } else if (pt.equals("String")) {
@@ -310,7 +310,7 @@ public class OperationsGenerator extends BaseGenerator {
   }
 
 
-  private boolean isPrimitive(FHIRAllTypes type) {
+  private boolean isPrimitive(FHIRTypes type) {
     return type == null ? false : simpleTypes.containsKey(type.toCode());
   }
 

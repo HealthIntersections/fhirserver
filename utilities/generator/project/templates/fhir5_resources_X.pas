@@ -29,8 +29,8 @@ unit fhir5_resources_{{N}};
   
 }
 
-{$I fhir.inc}
-{$I fhir5.inc}
+{$i fhir.inc}
+{$i fhir5.inc}
 
 interface
 

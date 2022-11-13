@@ -81,3 +81,5 @@ exec/Resources
 /library/fhir5-gen
 
 testcases/snomed/test.cache
+
+exec/fhirserver.cfg
