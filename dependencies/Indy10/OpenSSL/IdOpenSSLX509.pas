@@ -154,11 +154,16 @@ uses
 function TIdOpenSSLX509.ASN1TimeToDateTime(
   const ATimeASN1: PASN1_TIME): TDateTime;
 var
-  LTime: TIdC_TM;
+  LTime: PIdC_TM;
 begin
-  Result := 0;
-  if ASN1_TIME_to_tm(ATimeASN1, @LTime) = 1 then
-  Result := TMToDateTime(LTime);
+  getMem(LTime, sizeof(TIdC_TM));
+  try
+    Result := 0;
+    if ASN1_TIME_to_tm(ATimeASN1, LTime) = 1 then
+      Result := TMToDateTime(LTime^);
+  finally
+    FreeMem(LTime);
+  end;
 end;
 
 procedure TIdOpenSSLX509.AssignTo(Dest: TPersistent);
