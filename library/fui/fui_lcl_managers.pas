@@ -54,12 +54,12 @@ uses
   fhir_objects, fhir_factory, fhir_parser;
 
 type
-  TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy, opRefresh, opStop, opUpdate);
+  TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy, opRefresh, opStop, opUpdate, opInfo);
   TNodeOperationSet = set of TNodeOperation;
 
   { TControlEntry }
 
-  TControlOperation = (copNone, copAdd, copAddSet, copEdit, copDelete, copUp, copDown, copReload, copExecute, copRefresh, copStop, copCopy, copUpdate);
+  TControlOperation = (copNone, copAdd, copAddSet, copEdit, copDelete, copUp, copDown, copReload, copExecute, copRefresh, copStop, copCopy, copUpdate, copInfo);
 
   { TControlEntryMenuItem }
 
@@ -190,6 +190,7 @@ type
     procedure doExecute(mode : String);
     procedure doUpdate(mode : String);
     procedure doStop(mode : String);
+    procedure doInfo(mode : String);
     procedure doCopy(mode : String);
     procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
 
@@ -216,9 +217,10 @@ type
     function editItem(item : T; mode : String) : boolean; virtual;
     function deleteItem(item : T) : boolean; virtual;
     function executeItem(item : T; mode : String) : boolean; virtual;
-    function updateItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : T; virtual;
     function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
+    procedure itemInfo(item : T; mode : String); virtual;
   end;
 
   TFslTreeNode = class abstract (TFslObject)
@@ -283,6 +285,7 @@ type
     procedure doExecute(mode : String);
     procedure doUpdate(mode : String);
     procedure doStop(mode : String);
+    procedure doInfo(mode : String);
     procedure doCopy(mode : String);
 
     // to override:
@@ -304,11 +307,12 @@ type
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
     function deleteItem(parent, item : T) : boolean; virtual; // parent might be nil if we're at the root
     function executeItem(item : T; mode : String) : boolean; virtual;
-    function updateItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : T; virtual;
     function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
     function getCopyValue(item : T; mode : String) : String; virtual;
     function getCanCopy(item : T; mode : String) : boolean; virtual;
+    procedure itemInfo(item : T; mode : String); virtual;
   end;
 
   PTreeData = ^TTreeData;
@@ -376,6 +380,7 @@ type
     procedure doExecute(mode : String);
     procedure doUpdate(mode : String);
     procedure doStop(mode : String);
+    procedure doInfo(mode : String);
     procedure doCopy(mode : String);
 
     // to override:
@@ -397,11 +402,12 @@ type
     function editItemText(parent, item : T; var text : String) : boolean; virtual;
     function deleteItem(parent, item : T) : boolean; virtual; // parent might be nil if we're at the root
     function executeItem(item : T; mode : String) : boolean; virtual;
-    function updateItem(item : T; mode : String) : boolean; virtual;
+    function updateItem(item : T; mode : String) : T; virtual;
     function stopItem(item : T; mode : String) : boolean; virtual;
     function refreshItem(item : T) : boolean; virtual;
     function getCopyValue(item : T; mode : String) : String; virtual;
     function getCanCopy(item : T; mode : String) : boolean; virtual;
+    procedure itemInfo(item : T; mode : String); virtual;
   end;
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
@@ -943,6 +949,7 @@ begin
         copUpdate : doUpdate(entry.mode);
         copStop : doStop(entry.mode);
         copCopy : doCopy(entry.mode);
+        copInfo : doInfo(entry.mode);
       end;
 end;
 
@@ -1065,6 +1072,7 @@ begin
   updateControls(copUp, (opOrder in ops) and (i > 0) and not Filtered);
   updateControls(copDown, (opOrder in ops) and (i > -1) and (i < FFiltered.count - 1) and not Filtered);
   updateControls(copRefresh, opRefresh in ops);
+  updateControls(copInfo, opInfo in ops);
   updateControls(copExecute, opExecute in ops);
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
@@ -1166,6 +1174,7 @@ begin
     copUpdate : doupdate(mode);
     copStop : doStop(mode);
     copCopy : doCopy(mode);
+    copInfo : doInfo(mode);
   end;
 end;
 
@@ -1349,13 +1358,14 @@ end;
 
 procedure TListManager<T>.doUpdate(mode: String);
 var
-  item : T;
+  item, n : T;
 begin
   if HasFocus then
   begin
     item := getFocus;
-    if UpdateItem(item, mode) then
-      refresh(item);
+    n := UpdateItem(item, mode);
+    if n <> nil then
+      refreshItem(n);
   end;
 end;
 
@@ -1368,6 +1378,17 @@ begin
     item := getFocus;
     if StopItem(item, mode) then
       refresh(item);
+  end;
+end;
+
+procedure TListManager<T>.doInfo(mode: String);
+var
+  item : T;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    itemInfo(item, mode);
   end;
 end;
 
@@ -1537,7 +1558,7 @@ begin
   raise EFslException.Create('Execute is not supported here');
 end;
 
-function TListManager<T>.updateItem(item: T; mode: String): boolean;
+function TListManager<T>.updateItem(item: T; mode: String): T;
 begin
   raise EFslException.Create('Update is not supported here');
 end;
@@ -1550,6 +1571,11 @@ end;
 function TListManager<T>.refreshItem(item: T) : boolean;
 begin
   result := false;
+end;
+
+procedure TListManager<T>.itemInfo(item: T; mode: String);
+begin
+  raise EFslException.Create('ItemInfo is not supported here');
 end;
 
 
@@ -1934,10 +1960,15 @@ begin
 end;
 
 procedure TTreeManager<T>.doUpdate(mode: String);
+var
+  n : T;
 begin
   if HasFocus then
-    if UpdateItem(getFocus, mode) then
-      refreshTreeNode(getFocus);
+  begin
+    n := UpdateItem(getFocus, mode);
+    if n <> nil then
+      refreshItem(n);
+  end;
 end;
 
 procedure TTreeManager<T>.doStop(mode: String);
@@ -1945,6 +1976,17 @@ begin
   if HasFocus then
     if StopItem(getFocus, mode) then
       refreshTreeNode(getFocus);
+end;
+
+procedure TTreeManager<T>.doInfo(mode: String);
+var
+  item : T;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    itemInfo(item, mode);
+  end;
 end;
 
 procedure TTreeManager<T>.doCopy(mode: String);
@@ -2128,6 +2170,7 @@ begin
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
   updateControls(copCopy, FHasCopy);
+  updateControls(copInfo, opInfo in ops);
   updateMenuControls;
   FCanEdit := opEdit in ops;
 
@@ -2167,8 +2210,8 @@ procedure TTreeManager<T>.doPopup(sender: TObject);
     i : integer;
   begin
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name);
-    for i := 0 to item.Count do
+      item.Enabled := getCanCopy(focus, item.name.subString(7));
+    for i := 0 to item.Count - 1 do
       visitItem(item.Items[i]);
   end;
 begin
@@ -2194,6 +2237,7 @@ begin
         copUpdate : doUpdate(entry.mode);
         copStop : doStop(entry.mode);
         copCopy : doCopy(entry.mode);
+        copInfo : doInfo(entry.mode);
       end;
 end;
 
@@ -2221,6 +2265,7 @@ begin
     copUpdate : doUpdate(mode);
     copStop : doStop(mode);
     copCopy : doCopy(mode);
+    copInfo : doInfo(mode);
   end;
 end;
 
@@ -2283,7 +2328,7 @@ begin
   raise EFslException.Create('Execute is not supported here');
 end;
 
-function TTreeManager<T>.updateItem(item : T; mode : String) : boolean;
+function TTreeManager<T>.updateItem(item : T; mode : String) : T;
 begin
   raise EFslException.Create('Update is not supported here');
 end;
@@ -2309,6 +2354,11 @@ end;
 function TTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
 begin
   result := item <> nil;
+end;
+
+procedure TTreeManager<T>.itemInfo(item: T; mode: String);
+begin
+  raise EFslException.Create('ItemInfo is not supported here');
 end;
 
 { TVTreeManager }
@@ -2441,10 +2491,15 @@ begin
 end;
 
 procedure TVTreeManager<T>.doUpdate(mode: String);
+var
+  n : T;
 begin
   if HasFocus then
-    if UpdateItem(getFocus, mode) then
-      refreshTreeNode(getFocus);
+  begin
+    n := UpdateItem(getFocus, mode);
+    if n <> nil then
+      refreshitem(getFocus);
+  end;
 end;
 
 procedure TVTreeManager<T>.doStop(mode: String);
@@ -2452,6 +2507,17 @@ begin
   if HasFocus then
     if StopItem(getFocus, mode) then
       refreshTreeNode(getFocus);
+end;
+
+procedure TVTreeManager<T>.doInfo(mode: String);
+var
+  item : T;
+begin
+  if HasFocus then
+  begin
+    item := getFocus;
+    itemInfo(item, mode);
+  end;
 end;
 
 procedure TVTreeManager<T>.doCopy(mode: String);
@@ -2654,6 +2720,7 @@ begin
   updateControls(copUpdate, opUpdate in ops);
   updateControls(copStop, opStop in ops);
   updateControls(copCopy, FHasCopy);
+  updateControls(copInfo, opInfo in ops);
   updateMenuControls;
   FCanEdit := opEdit in ops;
 
@@ -2730,7 +2797,7 @@ procedure TVTreeManager<T>.doPopup(sender: TObject);
     i : integer;
   begin
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name);
+      item.Enabled := getCanCopy(focus, item.name.subString(7));
     for i := 0 to item.Count do
       visitItem(item.Items[i]);
   end;
@@ -2757,6 +2824,7 @@ begin
         copupdate : doUpdate(entry.mode);
         copStop : doStop(entry.mode);
         copCopy : doCopy(entry.mode);
+        copInfo : doInfo(entry.mode);
       end;
 end;
 
@@ -2784,6 +2852,7 @@ begin
     copUpdate : doUpdate(mode);
     copStop : doStop(mode);
     copCopy : doCopy(mode);
+    copInfo : doInfo(mode);
   end;
 end;
 
@@ -2846,7 +2915,7 @@ begin
   raise EFslException.Create('Execute is not supported here');
 end;
 
-function TVTreeManager<T>.updateItem(item : T; mode : String) : boolean;
+function TVTreeManager<T>.updateItem(item : T; mode : String) : T;
 begin
   raise EFslException.Create('Update is not supported here');
 end;
@@ -2872,6 +2941,11 @@ end;
 function TVTreeManager<T>.getCanCopy(item: T; mode: String): boolean;
 begin
   result := item <> nil;
+end;
+
+procedure TVTreeManager<T>.itemInfo(item: T; mode: String);
+begin
+  raise EFslException.Create('ItemInfo is not supported here');
 end;
 
 { TPanelStack }
