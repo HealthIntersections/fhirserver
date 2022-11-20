@@ -75,6 +75,7 @@ type
     btnCancel: TButton;
     btnViewFont: TButton;
     Button6: TButton;
+    chkToolbarCaptions: TCheckBox;
     chkSideBySide: TCheckBox;
     dlgExe: TOpenDialog;
     dlgFont: TFontDialog;
@@ -104,6 +105,8 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Panel7: TPanel;
+    Panel8: TPanel;
+    Panel9: TPanel;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;

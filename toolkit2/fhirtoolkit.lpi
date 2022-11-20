@@ -723,12 +723,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="dialogs\dlg_working.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="WorkInProgressForm"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
         <Filename Value="dialogs\dlg_ig_upload.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>

@@ -66,6 +66,7 @@ type
     property Context : TToolkitContext read FContext;
     procedure getFocus; virtual;
     procedure saveStatus; virtual; // called before shut down because shut down order isn't always predictable
+    procedure changeToolbarButtons; virtual;
   end;
 
   { TBaseWorker }
@@ -92,6 +93,7 @@ type
     procedure EditPause; override;
     procedure MovePause; override;
     procedure ChangeSideBySideMode; override;
+    procedure ChangeToolbarButtons; override;
     function hasTextTab : boolean; override;
     function hasDesigner : boolean; override;
     function IsShowingDesigner : boolean; override;
@@ -125,6 +127,11 @@ procedure TBaseWorkerFrame.saveStatus;
 begin
   FContext.Free;
   FContext := nil;
+end;
+
+procedure TBaseWorkerFrame.changeToolbarButtons;
+begin
+  // nothing
 end;
 
 procedure TBaseWorkerFrame.finalise();
@@ -256,6 +263,11 @@ end;
 procedure TBaseWorker.ChangeSideBySideMode;
 begin
 
+end;
+
+procedure TBaseWorker.ChangeToolbarButtons;
+begin
+  FFrame.changeToolbarButtons;
 end;
 
 function TBaseWorker.hasTextTab: boolean;

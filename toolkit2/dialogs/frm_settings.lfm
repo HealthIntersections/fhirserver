@@ -1,7 +1,7 @@
 object ToolkitSettingsForm: TToolkitSettingsForm
-  Left = 669
+  Left = 409
   Height = 479
-  Top = 277
+  Top = 194
   Width = 519
   BorderIcons = [biSystemMenu]
   Caption = 'FHIRToolkit Settings'
@@ -63,9 +63,9 @@ object ToolkitSettingsForm: TToolkitSettingsForm
     Height = 439
     Top = 0
     Width = 519
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Appearance'
@@ -205,22 +205,50 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       end
       object GroupBox1: TGroupBox
         Left = 0
-        Height = 63
+        Height = 104
         Top = 152
         Width = 513
         Align = alTop
         Caption = '  Visual Design'
-        ClientHeight = 44
+        ClientHeight = 85
         ClientWidth = 503
         TabOrder = 1
-        object chkSideBySide: TCheckBox
-          Left = 16
-          Height = 18
-          Top = 16
-          Width = 212
-          Caption = 'Side By Side (Designer and Text)'
-          ParentFont = False
+        object Panel8: TPanel
+          Left = 0
+          Height = 40
+          Top = 0
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
           TabOrder = 0
+          object chkSideBySide: TCheckBox
+            Left = 16
+            Height = 18
+            Top = 10
+            Width = 212
+            Caption = 'Side By Side (Designer and Text)'
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object Panel9: TPanel
+          Left = 0
+          Height = 40
+          Top = 40
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 1
+          object chkToolbarCaptions: TCheckBox
+            Left = 16
+            Height = 18
+            Top = 10
+            Width = 187
+            Caption = 'Captions on Toolbar Buttons'
+            TabOrder = 0
+          end
         end
       end
     end
@@ -252,6 +280,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
             item
               AutoSize = True
               Caption = 'Address'
+              Width = 100
             end          
             item
               Caption = 'Default'

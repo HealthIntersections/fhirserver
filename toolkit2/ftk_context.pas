@@ -225,6 +225,7 @@ type
     procedure getFocus(content : TMenuItem); virtual; abstract;
     procedure loseFocus(); virtual; abstract;
     procedure ChangeSideBySideMode; virtual; abstract;
+    procedure ChangeToolbarButtons; virtual;
     function hasDesigner : boolean; virtual; abstract;
     function hasTextTab : boolean; virtual; abstract;
     function IsShowingDesigner : boolean; virtual; abstract;
@@ -376,6 +377,7 @@ type
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
+    FToolbarCaptions: boolean;
     FTxServers: TToolkitContextTerminologyServers;
     FToolBarHeight: integer;
     FSettings : TiniFile;
@@ -390,6 +392,7 @@ type
     procedure SetFocus(AValue: TToolkitEditor);
     procedure SetLanguages(AValue: TIETFLanguageDefinitions);
     procedure SetSideBySide(AValue: boolean);
+    procedure SetToolbarCaptions(AValue: boolean);
     procedure SetToolBarHeight(AValue: integer);
   public
     constructor Create(images : TImageList; actions : TActionList);
@@ -418,6 +421,7 @@ type
 
     // global settings
     property SideBySide : boolean read FSideBySide write SetSideBySide;
+    property ToolbarCaptions : boolean read FToolbarCaptions write SetToolbarCaptions;
 
 //    property ProjectManager : TToolkitProjectManagerView;
     property MessageView : TToolkitMessagesView read FMessageView;
@@ -910,6 +914,11 @@ begin
   tab.Caption := FSession.Caption{$IFDEF WINDOWS}+'    '{$ENDIF};
 end;
 
+procedure TToolkitEditor.ChangeToolbarButtons;
+begin
+  // nothing
+end;
+
 procedure TToolkitEditor.saveStatus;
 begin
   FContext := nil; // we're cut off after this executes
@@ -977,6 +986,18 @@ begin
     FSideBySide := AValue;
     for editor in Editors do
       editor.ChangeSideBySideMode;
+  end;
+end;
+
+procedure TToolkitContext.SetToolbarCaptions(AValue: boolean);
+var
+  editor : TToolkitEditor;
+begin
+  if FToolbarCaptions <> AValue then
+  begin
+    FToolbarCaptions := AValue;
+    for editor in Editors do
+      editor.ChangeToolbarButtons;
   end;
 end;
 

@@ -48,7 +48,7 @@ uses
   ftk_store, ftk_store_files, ftk_store_internal, ftk_store_http, ftk_store_server,
   ftk_factory, ftk_search, ftk_serverlist, ftk_project_tree, ftk_worker_server, ftk_engine_text, ftk_text_view,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
+  fui_lcl_cache, fui_lcl_utilities, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
   dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade;
 
@@ -646,7 +646,7 @@ type
     function createNewFile(kinds : TSourceEditorKindSet; bytes : TBytes = nil) : TToolkitEditor; overload;
     function createNewFile(kind : TSourceEditorKind; filename, path : String; bytes : TBytes = nil) : TToolkitEditor; overload;
     function determineClipboardFormat(var cnt : TBytes) : TSourceEditorKind;
-    function openFile(address : String) : TToolkitEditor;
+    function openFile(address : String; kind : TSourceEditorKind = sekNull) : TToolkitEditor;
     procedure renameProjectFile(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     procedure renameFolder(op, np : string); // if the file is open, update it's session and tab caption and update it's timestamp
     function closeFiles(path : String) : boolean;
@@ -790,6 +790,7 @@ begin
   FProjectsView.load;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
+  FContext.ToolbarCaptions := FIni.readBool('Settings', 'ToolbarCaptions', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
   FFileSystem := TFileStorageService.create(self, FIni);
@@ -1483,7 +1484,7 @@ begin
   end;
 end;
 
-function TMainToolkitForm.openFile(address: String) : TToolkitEditor;
+function TMainToolkitForm.openFile(address: String; kind : TSourceEditorKind = sekNull) : TToolkitEditor;
 var
   loaded : TLoadedBytes;
   editor : TToolkitEditor;
@@ -1498,7 +1499,10 @@ begin
   begin
     store := Context.StorageForAddress(address);
     loaded := store.load(address, true);
-    session := FFactory.examineFile(address, loaded.mimeType, loaded.content, false);
+    if (kind <> sekNull) then
+      session := FFactory.makeNewSession(kind)
+    else
+      session := FFactory.examineFile(address, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
       session.address := address;
@@ -2995,6 +2999,7 @@ begin
     ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
+    ToolkitSettingsForm.chkToolbarCaptions.Checked := FIni.ReadBool('Settings', 'ToolbarCaptions', true);
     ToolkitSettingsForm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
     ToolkitSettingsForm.loadServers(context.TxServers);
     ToolkitSettingsForm.edtTxLog.Text := FIni.ReadString('tx', 'log', '');
@@ -3003,7 +3008,10 @@ begin
     begin
       actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
       Context.SideBySide := actionToolsSideBySideMode.Checked;
+      Context.ToolbarCaptions := ToolkitSettingsForm.chkToolbarCaptions.Checked;
+      setToolbarForCaptions(Toolbar1, Context.ToolbarCaptions, FViewManager.bigToolbar);
       FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
+      FIni.WriteBool('Settings', 'ToolbarCaptions', Context.ToolbarCaptions);
       FIni.WriteString('Tools', 'Diff', ToolkitSettingsForm.DiffTool);
       ToolkitSettingsForm.saveServers(context.TxServers);
       context.TxServers.save(FIni);
@@ -3282,13 +3290,7 @@ begin
     else
       unmaximiseSource;
 
-    if FViewManager.bigToolbar then
-      ToolBar1.ImagesWidth := 32
-    else
-      ToolBar1.ImagesWidth := 16;
-    ToolBar1.Height := ToolBar1.ImagesWidth+10;
-    ToolBar1.ButtonHeight := ToolBar1.ImagesWidth+8;
-    ToolBar1.ButtonWidth := ToolBar1.ImagesWidth+7;
+    setToolbarForCaptions(Toolbar1, Context.ToolbarCaptions, FViewManager.bigToolbar);
 
     // hide all tabs
     hideTabs(pgLeft);

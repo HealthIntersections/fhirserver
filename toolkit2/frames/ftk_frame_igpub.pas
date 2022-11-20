@@ -36,8 +36,15 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Dialogs, Graphics, Process,
   LclIntf, Buttons, Menus,
   fsl_base, fsl_utilities, fsl_json, fsl_fetcher, fsl_threads, fsl_fpc, fsl_versions, fsl_stream,
-  fui_lcl_managers, fui_lcl_progress,
+  fui_lcl_managers, fui_lcl_progress, fui_lcl_utilities,
   ftk_context, ftk_store_temp, ftk_worker_base, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github;
+
+const
+  {$IFDEF WINDOWS}
+  TEXT_CMDPROMPT_NAME = 'Command Prompt here';
+  {$ELSE}
+  TEXT_CMDPROMPT_NAME = 'Terminal here';
+  {$ENDIF}
 
 type
   TFrame = TBaseWorkerFrame;
@@ -155,7 +162,8 @@ type
     function executeItem(item : TIGPublicationFolder; mode : String) : boolean; override;
     function stopItem(item : TIGPublicationFolder; mode : String) : boolean; override;
     function refreshItem(item : TIGPublicationFolder) : boolean; override;
-    function updateItem(item : TIGPublicationFolder; mode : String) : boolean; override;
+    function updateItem(item : TIGPublicationFolder; mode : String) : TIGPublicationFolder; override;
+    procedure itemInfo(item : TIGPublicationFolder; mode : String); override;
   end;
 
   { TIgPubPageFrame }
@@ -241,6 +249,7 @@ type
     procedure init(json : TJsonObject); override;
     procedure saveStatus; override;
     procedure getFocus; override;
+    procedure changeToolbarButtons; override;
 
     property TempStore : TFHIRToolkitTemporaryStorage read FTempStore write SetTempStore;
   end;
@@ -513,10 +522,10 @@ begin
   if item = nil then
     result := [opAdd]
   else if item.status = fsRunning then
-    result := [opAdd, opOrder, opDelete, opStop]
+    result := [opAdd, opOrder, opInfo, opStop]
   else
   begin
-    result := [opAdd, opOrder, opDelete, opExecute];
+    result := [opAdd, opOrder, opDelete, opExecute, opInfo];
     if FolderExists(FilePath([item.folder, '.git'])) then
       result := result + [opUpdate];
   end;
@@ -738,9 +747,9 @@ begin
   result := false; // nothing yet
 end;
 
-function TIGPublicationManager.updateItem(item: TIGPublicationFolder; mode : String): boolean;
+function TIGPublicationManager.updateItem(item: TIGPublicationFolder; mode : String): TIGPublicationFolder;
 begin
-  result := false;
+  result := nil;
   if (item.status = fsRunning ) then
     MessageDlg('Update IG', 'The IG '+item.name+' is being built or updated', mtError, [mbok], 0)
   else
@@ -752,8 +761,28 @@ begin
     item.engine.Start;
     item.StartRun := 0;
     item.status := fsRunning;
-    result := true;
+    result := item;
   end;
+end;
+
+procedure TIGPublicationManager.itemInfo(item: TIGPublicationFolder; mode: String);
+begin
+  if mode = 'terminal' then
+    FFrame.mnuCommandClick(self)
+  else if mode = 'project' then
+    FFrame.MenuItem2Click(self)
+  else if mode = 'clean' then
+    FFrame.mnuCleanClick(self)
+  else if mode = 'clear' then
+    FFrame.mnuClearTxClick(self)
+  else if mode = 'jekyll' then
+    FFrame.mnuJekyllClick(self)
+  else if mode = 'folder' then
+    FFrame.mnuFolderClick(self)
+  else if mode = 'file' then
+    FFrame.MenuItem1Click(self)
+  else if mode <> 'group' then
+    inherited itemInfo(item, mode);
 end;
 
 { TIGPublicationFolder }
@@ -894,9 +923,15 @@ begin
   inherited GetFocus;
 end;
 
+procedure TIgPubPageFrame.changeToolbarButtons;
+begin
+  setToolbarForCaptions(Toolbar1, Context.ToolbarCaptions, false);
+end;
+
 procedure TIgPubPageFrame.init(json: TJsonObject);
 var
   grp : TControlEntry;
+  mDev : TMenuItem;
 begin
   FIgPublisherVersions := TFslList<TIgPublisherVersion>.create;
 
@@ -914,16 +949,26 @@ begin
   FManager.registerControl(tbStop, copStop);
 
   FManager.registerMenuEntry('Add', 4, copAdd);
-  FManager.registerMenuEntry('Delete', 12, copDelete);
   FManager.registerMenuEntry('Up', 11, copUp);
   FManager.registerMenuEntry('Down', 10, copDown);
+  FManager.registerMenuEntry('Delete', 12, copDelete);
   FManager.registerMenuEntry('-', -1, copNone);
   FManager.registerMenuEntry('Copy', 13, copCopy);
   FManager.registerMenuEntry('-', -1, copNone);
   FManager.registerMenuEntry('Build', 1, copExecute);
   FManager.registerMenuEntry('Stop', 5, copStop);
+  mDev := FManager.registerMenuEntry('Dev Tools', 1, copInfo, 'group');
+
+  FManager.registerSubMenuEntry(mDev, TEXT_CMDPROMPT_NAME, 21, copInfo, 'terminal');
+  FManager.registerSubMenuEntry(mDev, 'Open As Project', 24, copInfo, 'project');
+  FManager.registerSubMenuEntry(mDev, 'Clean Generated Files', 17, copInfo, 'clean');
+  FManager.registerSubMenuEntry(mDev, 'Clear Tx Cache', 19, copInfo, 'clear');
+  FManager.registerSubMenuEntry(mDev, 'Run Jekyll', 20, copInfo, 'jekyll');
+  FManager.registerSubMenuEntry(mDev, 'Open Folder', 18, copInfo, 'folder');
+  FManager.registerSubMenuEntry(mDev, 'Open File', 23, copInfo, 'file');
   FManager.registerMenuEntry('-', -1, copNone);
   FManager.registerMenuEntry('Update', 16, copUpdate);
+  FManager.registerMenuEntry('Update w. Stash', 25, copUpdate, 'stash');
 
   FManager.Images := ImageList1;
   FManager.list := lvFolders;
@@ -939,6 +984,7 @@ begin
   listVersions(json);
   loadFolders(json);
   loadServers;
+  changeToolbarButtons;
 end;
 
 procedure TIgPubPageFrame.tbConfigClick(Sender: TObject);
@@ -1261,11 +1307,7 @@ begin
   begin
     tbOpen.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'index.html']));
     tbQA.enabled := FileExists(FilePath([FManager.FCurrent.FFolder, 'output', 'qa.html']));
-    {$IFDEF WINDOWS}
-    mnuCommand.caption := 'Command Prompt here';
-    {$ELSE}
-    mnuCommand.caption := 'Terminal here';
-    {$ENDIF}
+    mnuCommand.caption := TEXT_CMDPROMPT_NAME;
     tbDevTools.enabled := true;
     mnuClean.enabled := true;
     mnuCommand.enabled := true;
