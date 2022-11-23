@@ -3792,7 +3792,7 @@ begin
     // there's only one display name - for now?
     list.see(displayExpression(ctxt.FExpression).Trim)
   else
-    ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, FDefaultLanguage, $FF);
+   ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, 0, $FF);
 end;
 
 procedure TSnomedServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);

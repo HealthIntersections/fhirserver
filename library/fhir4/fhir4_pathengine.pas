@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir4.inc}
 
 interface
 
@@ -1808,7 +1809,7 @@ begin
             result.add(b.Link);
       end
       else if (tn.StartsWith('FHIR.')) then
-        if (b.value.hasType(tn.Substring(5))) then
+        if (typeMatches(tn.Substring(5), b.value.fhirType())) then
           result.add(b.Link);
     result.Link;
   finally
@@ -4706,7 +4707,7 @@ begin
       if not (left[0].value is TFHIRElement) or (left[0].value as TFHIRElement).DisallowExtensions then
         result.add(TFHIRBoolean.create((capitalise(left[0].value.fhirType) = tn) or ('System.'+capitalise(left[0].value.fhirType) = tn)).noExtensions)
       else
-        result.add(TFHIRBoolean.create(left[0].value.hasType(tn)).noExtensions);
+        result.add(TFHIRBoolean.create(typeMatches(tn, left[0].value.fhirType)).noExtensions);
     end;
     result.link;
   finally

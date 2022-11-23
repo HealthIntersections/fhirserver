@@ -2812,6 +2812,8 @@ begin
     begin
       if FolderExists('c:\temp') then
         result := 'c:\temp'
+      else if FolderExists('~/temp') then
+        result := '~/temp'
       else
         result := SystemTemp();
     end

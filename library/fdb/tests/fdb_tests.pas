@@ -247,6 +247,8 @@ begin
   end;
 end;
 
+// docker run -d --name mssql-server --platform linux/arm64/v8 -e ACCEPT_EULA=Y -e SA_PASSWORD={pwd} -p 1433:1433 mcr.microsoft.com/azure-sql-edge
+
 procedure TFDBTests.TestMSSQL;
 var
   db: TFDBManager;

@@ -1120,6 +1120,7 @@ end;
 
 procedure TMainToolkitForm.tvProjectsEditing(Sender: TObject; Node: TTreeNode; var AllowEdit: Boolean);
 begin
+  AllowEdit := false;
 end;
 
 procedure TMainToolkitForm.tvProjectsEditingEnd(Sender: TObject;

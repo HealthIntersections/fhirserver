@@ -4569,6 +4569,7 @@ object MainToolkitForm: TMainToolkitForm
                 RightClickSelect = True
                 ScrollBars = ssAutoVertical
                 TabOrder = 1
+                OnEditing = tvProjectsEditing
                 Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoRightClickSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoNoDoubleClickExpand, tvoThemedDraw]
               end
             end

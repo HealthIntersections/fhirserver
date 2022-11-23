@@ -36,7 +36,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="tests;admin;..\..\idetester\source;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="tests;admin;..\..\idetester\source;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -78,7 +78,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -130,7 +130,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -187,7 +187,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -226,7 +226,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -235,6 +235,8 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <RelocatableUnit Value="True"/>
             <Checks>
               <IOChecks Value="True"/>
               <RangeChecks Value="True"/>
@@ -247,7 +249,6 @@
             <Optimizations>
               <OptimizationLevel Value="0"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -283,7 +284,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -384,7 +385,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="85">
+    <Units Count="83">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -720,17 +721,6 @@
         <Filename Value="tx_version.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit82>
-      <Unit83>
-        <Filename Value="..\library\fui\fui_fake_console_settings.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FakeConsoleSettingsForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit83>
-      <Unit84>
-        <Filename Value="$00000001085B6770"/>
-        <IsPartOfProject Value="True"/>
-      </Unit84>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -742,7 +732,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
       <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-      <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx;..\library\fui"/>
+      <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

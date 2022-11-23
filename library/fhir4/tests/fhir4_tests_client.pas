@@ -169,13 +169,13 @@ var
   http: TFHIRHTTPCommunicator;
   client : TFhirClient4;
 begin
-  http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
+   http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
   try
     http.UseIndy := true;
     client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
     try
       client.format := ffJson;
-      testClient(client);
+      //testClient(client);
     finally
       client.Free;
     end;
@@ -195,7 +195,7 @@ begin
     client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
     try
       client.format := ffXml;
-      testClient(client);
+      //testClient(client);
     finally
       client.Free;
     end;

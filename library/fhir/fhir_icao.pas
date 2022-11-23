@@ -398,7 +398,7 @@ var
   bc : TReadResult;
 begin
   Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>'#13#10);
-  scanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
+  scanner := TScanManager.create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
   try
     bc := scanner.Scan(image);
     try

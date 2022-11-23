@@ -1362,6 +1362,7 @@ end;
 procedure TIgPubPageFrame.updateSettings;
 begin
   loadServers;
+  mStatus.Font.assign(Context.Font);
 end;
 
 procedure TIgPubPageFrame.inspect;
