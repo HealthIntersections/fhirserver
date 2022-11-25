@@ -127,6 +127,7 @@ type
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; virtual; abstract;
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
@@ -445,7 +446,7 @@ end;
 constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('metadate resource manager '+t.className);
+  FMap := TFslMap<T>.create('metadata resource manager '+t.className);
   FMap.defaultValue := T(nil);
   FList := TFslList<T>.create;
 end;
@@ -502,7 +503,8 @@ end;
 
 {$IFDEF FPC}
 function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
-var v1, v2, mm1, mm2 : string;
+var 
+  v1, v2, mm1, mm2 : string;
 begin
   v1 := l.version;
   v2 := r.version;
@@ -568,7 +570,7 @@ begin
       {$ENDIF}
 
       // the current is the latest
-      FMap.add(url, rl[rl.count-1].link);
+      FMap.AddOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
@@ -582,7 +584,7 @@ begin
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
-            FMap.add(url+'|'+lv, rl[rl.count-1].link);
+            FMap.AddOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
       end;
     end;

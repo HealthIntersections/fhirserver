@@ -740,7 +740,7 @@ begin
     x.addText('Generated Summary: ');
   end;
   path := CODES_TFhirResourceType[res.ResourceType];
-  profile := Fprofiles.ProfileByType[res.ResourceType];
+  profile := Fprofiles.ProfileByType[res.fhirType];
   if (profile <> nil) then
     x.addText('unknown resource ' +path)
   else

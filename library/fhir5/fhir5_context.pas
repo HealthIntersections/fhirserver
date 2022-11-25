@@ -89,7 +89,7 @@ type
     FList : TFslList<T>;
     procedure updateList(url, version: String);
     {$IFDEF FPC}
-    function sort(sender : TObject; const L, R: T): Integer;
+    function doSort(sender : TObject; const L, R: T): Integer;
     {$ENDIF}
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -128,6 +128,7 @@ type
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; virtual; abstract;
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
@@ -201,6 +202,7 @@ begin
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;
+  FLock := lock;
 end;
 
 destructor TFHIRResourceProxy.Destroy;
@@ -406,9 +408,9 @@ end;
 
 constructor TResourceMemoryCache.Create;
 begin
-  inherited;
+  inherited Create;
   Flist := TFslList<TFhirResource>.create;
-  FLoadInfo := TPackageLoadingInformation.Create('4.2');
+  FLoadInfo := TPackageLoadingInformation.Create('5.0');
   FLoadInfo.OnLoadEvent := load;
 end;
 
@@ -500,7 +502,7 @@ begin
 end;
 
 {$IFDEF FPC}
-function TFHIRMetadataResourceManager<T>.sort(sender : TObject; const L, R: T): Integer;
+function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
 var
   v1, v2, mm1, mm2 : string;
 begin
@@ -542,7 +544,7 @@ begin
     begin
       // sort by version as much as we are able
       {$IFDEF FPC}
-      rl.sortE(sort);
+      rl.sortE(doSort);
       {$ELSE}
       rl.sortF(function (const L, R: T): Integer
         var v1, v2, mm1, mm2 : string;

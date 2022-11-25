@@ -51,9 +51,10 @@ Type
     lock : TFslLock;
     FProfilesById : TFslMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
+    FProfilesByType : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
 //    FExtensions : TFslStringObjectMatch;
     function GetProfileByUrl(url: String): TFHirStructureDefinition;
-    function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
+    function GetProfileByType(typeName : String): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -71,7 +72,7 @@ Type
     function getLinks(non_resources : boolean) : TFslStringMatch;
 
     property ProfileByURL[url : String] : TFHirStructureDefinition read GetProfileByUrl; default;
-    property ProfileByType[aType : TFhirResourceType] : TFHirStructureDefinition read GetProfileByType;
+    property ProfileByType[typeName : String] : TFHirStructureDefinition read GetProfileByType;
     property ProfilesByURL : TFslMap<TFHIRStructureDefinition> read FProfilesByURL;
 
     procedure generateSnapshots;
@@ -137,6 +138,7 @@ Type
     procedure registerCustomResource(cr : TFHIRCustomResourceInformation);
     procedure setNonSecureTypes(names : Array of String); override;
     function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; override;
 
     function getResourceNames : TFslStringSet; override;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
@@ -1591,8 +1593,8 @@ end;
 function TBaseWorkerContextR5.oid2Uri(oid: String): String;
 var
   uri : String;
-  ns : TFhirNamingSystem;
   r : TFHIRResourceProxy;
+  ns : TFhirNamingSystem;
 begin
   uri := UriForKnownOid(oid);
   if (uri <> '') then
@@ -1709,6 +1711,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+function TBaseWorkerContextR5.fetchTypeDefinition(typeName: String): TFhirStructureDefinition;
+begin
+  result := FProfiles.ProfileByType[typeName];
 end;
 
 function TBaseWorkerContextR5.getStructure(url: String): TFHIRStructureDefinition;
@@ -1926,12 +1933,14 @@ begin
   lock := TFslLock.Create('profiles r5');
   FProfilesById := TFslMap<TFhirStructureDefinition>.create('profiles.id');
   FProfilesByURL := TFslMap<TFhirStructureDefinition>.create('profiles.url');
+  FProfilesByType := TFslMap<TFhirStructureDefinition>.create('profiles.type');
 end;
 
 destructor TProfileManager.Destroy;
 begin
   FProfilesById.free;
   FProfilesByURL.free;
+  FProfilesByType.free;
   lock.Free;
   inherited;
 end;
@@ -2033,17 +2042,32 @@ begin
   end;
 end;
 
-function TProfileManager.GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition;
+function TProfileManager.GetProfileByType(typeName : String): TFHirStructureDefinition;
+var
+  t : TFHirStructureDefinition;
 begin
-  result := GetProfileByUrl('http://hl7.org/fhir/Profile/'+CODES_TFHIRResourceType[aType]);
+  Lock.Lock('GetProfileByType');
+  try
+    if FProfilesByType.ContainsKey(typeName) then
+      result := FProfilesByType[typeName].Link
+    else
+      result := nil;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 function TProfileManager.GetProfileByUrl(url: String): TFHirStructureDefinition;
 begin
-  if FProfilesByURL.ContainsKey(url) then
-    result := FProfilesByURL[url].Link
-  else
-    result := nil;
+  Lock.Lock('GetProfileByUrl');
+  try
+    if FProfilesByURL.ContainsKey(url) then
+      result := FProfilesByURL[url].Link
+    else
+      result := nil;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 function TProfileManager.getProfileStructure(source: TFHirStructureDefinition; url: String; var profile: TFHirStructureDefinition): boolean;
@@ -2098,6 +2122,7 @@ begin
   try
     FProfilesById.AddOrSetValue(profile.id, profile.Link);
     FProfilesByURL.AddOrSetValue(profile.url, profile.Link);
+    FProfilesByType.AddOrSetValue(profile.type_, profile.Link);
   finally
     lock.Unlock;
   end;
@@ -2115,6 +2140,7 @@ begin
       p := FProfilesById[id];
       FProfilesByURL.Remove(p.url);
       FProfilesById.Remove(id);
+      FProfilesByType.remove(p.type_);
     end;
   finally
     lock.Unlock;
@@ -2126,6 +2152,7 @@ begin
   result := inherited sizeInBytesV(magic);
   inc(result, FProfilesById.sizeInBytes(magic));
   inc(result, FProfilesByURL.sizeInBytes(magic));
+  inc(result, FProfilesByType.sizeInBytes(magic));
 end;
 
 { TProfileDefinition }
