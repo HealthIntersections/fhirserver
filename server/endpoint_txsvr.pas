@@ -1129,26 +1129,29 @@ begin
   npm := FServerContext.pcm.loadPackage(pid);
   try
     Logging.start('Load package '+npm.name+'#'+npm.version);
-    FData.FPackages.Add(npm.name+'#'+npm.version);
-    for pi in npm.listResourceInfo('package') do
-    begin
-      if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
+    try
+      FData.FPackages.Add(npm.name+'#'+npm.version);
+      for pi in npm.listResourceInfo('package') do
       begin
-        inc(i);
-        if (i mod 100 = 0) then
-          Logging.continue('.');
-        res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
-        try
-          loadResource(res, ignoreEmptyCodeSystems);
-        finally
-          res.Free;
+        if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
+        begin
+          inc(i);
+          if (i mod 100 = 0) then
+            Logging.continue('.');
+          res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+          try
+            loadResource(res, ignoreEmptyCodeSystems);
+          finally
+            res.Free;
+          end;
         end;
       end;
+    finally
+      Logging.finish(' '+inttostr(i)+' resources');
     end;
   finally
     npm.Free;
   end;
-  Logging.finish(' '+inttostr(i)+' resources');
 end;
 
 function TTerminologyFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
