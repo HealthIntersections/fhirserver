@@ -2812,8 +2812,8 @@ begin
     begin
       if FolderExists('c:\temp') then
         result := 'c:\temp'
-      else if FolderExists('~/temp') then
-        result := '~/temp'
+      else if FolderExists(GetUserDir+'temp') then
+        result := GetUserDir+'temp'
       else
         result := SystemTemp();
     end
@@ -7643,7 +7643,7 @@ var
   err : String;
 begin
   err := '';
-  if (year < 1000) or (year > 3000) then
+  if (year < 0001) or (year > 9999) then
     err := 'Year is not valid'
   else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
     err := 'Month is not valid'
@@ -8469,7 +8469,7 @@ begin
   result.FractionPrecision := 0;
 
   if Length(value) >=4 then
-    result.Year := vs(Value, 1, 4, 1800, 2400, 'years');
+    result.Year := vs(Value, 1, 4, 0001, 9999, 'years');
   if Length(value) < 7 then
     result.FPrecision := dtpYear
   else
@@ -8910,7 +8910,7 @@ end;
 
 function TFslDateTime.privToString: String;
 begin
-  Result := 'yyyymmddhhnnss';
+  Result := 'yyyy-mm-ddThh:nn:ss';
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
   if month <> 0 then

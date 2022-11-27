@@ -4517,11 +4517,11 @@ object MainToolkitForm: TMainToolkitForm
           Height = 755
           Top = 0
           Width = 300
-          ActivePage = tbProjects
+          ActivePage = tbServers
           Align = alClient
           Images = imgMain
           ParentFont = False
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           OnChange = pgLeftChange
           object tbProjects: TTabSheet
@@ -4622,7 +4622,14 @@ object MainToolkitForm: TMainToolkitForm
                 Top = 26
                 Width = 294
                 Align = alClient
-                Columns = <>
+                Columns = <                
+                  item
+                    AutoSize = True
+                    Caption = 'Servers'
+                    Width = 100
+                  end>
+                RowSelect = True
+                ScrollBars = ssVertical
                 SmallImages = imgMain
                 TabOrder = 1
               end

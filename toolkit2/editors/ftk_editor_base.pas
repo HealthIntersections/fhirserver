@@ -1494,7 +1494,7 @@ end;
 procedure TBaseEditor.updateSettings;
 begin
   if TextEditor <> nil then
-    TextEditor.font.assign(Context.Font);
+    TextEditor.font.assign(Context.EditorFont);
 end;
 
 function TBaseEditor.getSource: String;

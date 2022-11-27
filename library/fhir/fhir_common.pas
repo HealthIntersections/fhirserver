@@ -910,6 +910,7 @@ type
     property active : boolean read GetActive write SetActive;
     function activeStr : String; virtual; abstract;
     function gender : String; virtual; abstract;
+    function genderPlus : String; virtual; abstract;
     property dob : String read GetDob write SetDob;
     property identifier[systemUri : String] : String read GetIdentifier write SetIdentifier;
 

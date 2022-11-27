@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, ExtCtrls, Graphics,
-  Menus, ExtDlgs, IntfGraphics, FPImage, FPWriteBMP,
+  Menus, ExtDlgs, IntfGraphics, Buttons, DateTimePicker, FPImage, FPWriteBMP,
   HtmlView,
   fsl_utilities, fsl_json, fsl_crypto,
   fhir_objects, fhir_parser, fhir_healthcard, fhir_common, fui_lcl_managers,
@@ -68,12 +68,45 @@ type
   { TPatientFrame }
 
   TPatientFrame = class(TFrame)
+    btnAddGenderId: TBitBtn;
+    btnAddPronoun: TBitBtn;
+    btnAddSFCU: TBitBtn;
+    btnAddRecord: TBitBtn;
+    btnDeleteGenderId: TBitBtn;
+    btnDeletePronoun: TBitBtn;
+    btnDeleteSFCU: TBitBtn;
+    btnDeleteRecord: TBitBtn;
+    btnEditGenderid: TBitBtn;
+    btnEditPronoun: TBitBtn;
+    btnEditSFCU: TBitBtn;
+    btnEditRecord: TBitBtn;
     btnFetchHealthCards: TButton;
     cbCovidOnly: TCheckBox;
+    CheckBox1: TCheckBox;
+    ComboBox1: TComboBox;
+    ComboBox2: TComboBox;
+    DateTimePicker1: TDateTimePicker;
+    edtNameSummary: TEdit;
+    gbGenderIdentity: TGroupBox;
+    gbPronouns: TGroupBox;
+    gbSexForClinicalUse: TGroupBox;
+    gbRecordedSexOrGender: TGroupBox;
     htmlCard: THtmlViewer;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    lvGenderId: TListView;
+    lvPronouns: TListView;
+    ListView3: TListView;
+    ListView4: TListView;
     lvCards: TListView;
     mnuSaveQR: TMenuItem;
     PageControl1: TPageControl;
+    PageControl2: TPageControl;
+    pnlAdminGender: TPanel;
+    pnlPatientDetails: TPanel;
     pbCard: TPaintBox;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -86,10 +119,15 @@ type
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
     procedure btnFetchHealthCardsClick(Sender: TObject);
     procedure mnuSaveQRClick(Sender: TObject);
     procedure Panel4Resize(Sender: TObject);
     procedure pbCardPaint(Sender: TObject);
+    procedure TabSheet4Resize(Sender: TObject);
   private
     FCardManager : THealthcardManager;
     FCards : TFHIRParametersW;
@@ -306,7 +344,7 @@ var
 begin
   pbCard.Canvas.Brush.Color := clWhite;
   pbCard.Canvas.FillRect(Rect(0, 0, pbCard.Width, pbCard.Height));
-  if FCardManager.Focus <> nil then
+  if FCaRdManager.Focus <> nil then
   begin
     bmp := TBitmap.create;
     try
@@ -320,6 +358,13 @@ begin
       bmp.free;
     end;
   end;
+end;
+
+procedure TPatientFrame.TabSheet4Resize(Sender: TObject);
+begin
+  gbGenderIdentity.Height := (tabSheet4.Height - pnlAdminGender.height) div 4;
+  gbPronouns.Height := (tabSheet4.Height - pnlAdminGender.height) div 4;
+  gbSexForClinicalUse.Height := (tabSheet4.Height - pnlAdminGender.height) div 4;
 end;
 
 procedure TPatientFrame.DoSelectCard(sender: TObject);

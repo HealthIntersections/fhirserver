@@ -8,7 +8,7 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, frm_main,
+  Forms, datetimectrls, frm_main,
   { you can add units after this }
   fsl_base, fsl_threads, fsl_logging, fsl_utilities, fsl_collections, fsl_xml,
   fsl_json, fui_lcl_managers, fhir_objects, fhir_xhtml, fsl_http, v2_dictionary,

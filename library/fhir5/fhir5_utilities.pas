@@ -819,9 +819,12 @@ type
     function summary : String;
   end;
 
+  { TFhirPatientHelper }
+
   TFhirPatientHelper = class helper for TFhirPatient
   public
     function summary : String;
+    function genderPlus : String;
   end;
 
   TFhirPersonHelper = class helper for TFhirPerson
@@ -6790,6 +6793,11 @@ begin
     result := gen(nameList[0])
   else
     result := '??';
+end;
+
+function TFhirPatientHelper.genderPlus: String;
+begin
+  result := 'todo' + CODES_TFhirAdministrativeGenderEnum[gender];
 end;
 
 { TFhirPersonHelper }

@@ -188,6 +188,8 @@ type
   TFhirConformanceContact = TFHIRContactDetail;
   TFhirQuestionnaireItemOption = TFhirQuestionnaireItemAnswerOption;
 
+  { TFhirPeriodHelper }
+
   TFhirPeriodHelper = class helper for TFhirPeriod
   private
     function GetEditString: String;
@@ -198,6 +200,7 @@ type
     class function fromEdit(s : String) : TFhirPeriod;
     property editString : String read GetEditString write SetEditString;
     function point : TDateTime;
+    function isCurrent : boolean;
   end;
 
   TFhirBinaryHelper = class helper for TFhirBinary
@@ -829,9 +832,14 @@ type
     function summary : String;
   end;
 
+  { TFhirPatientHelper }
+
   TFhirPatientHelper = class helper for TFhirPatient
+  private
+    function findCurrentExtensionValue(url: String): TFHIRCodeableConcept;
   public
     function summary : String;
+    function genderPlus : String;
   end;
 
   TFhirPersonHelper = class helper for TFhirPerson
@@ -1813,7 +1821,7 @@ end;
 function HumanNamesAsText(names : TFhirHumanNameList):String;
 begin
   if (names = nil) or (names.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := HumanNameAsText(names[0]);
 end;
@@ -1848,7 +1856,7 @@ end;
 function IdentifiersAsText(ids : TFhirIdentifierList):String;
 begin
   if (ids = nil) or (ids.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := IdentifierAsText(ids[0]);
 end;
@@ -1866,7 +1874,7 @@ end;
 function ContactsAsText(cps : TFHIRContactPointList):String;
 begin
   if (cps = nil) or (cps.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := ContactAsText(cps[0]);
 end;
@@ -6389,14 +6397,15 @@ end;
 
 { TFhirPeriodHelper }
 
-class function TFhirPeriodHelper.fromDateTimes(start, end_: TDateTime) : TFHIRPeriod;
+class function TFhirPeriodHelper.fromDateTimes(start, end_: TDateTime
+  ): TFhirPeriod;
 begin
   result := TFhirPeriod.create;
   result.start := TFslDateTime.make(start, dttzUTC);
   result.end_ := TFslDateTime.make(end_, dttzUTC);
 end;
 
-class function TFhirPeriodHelper.fromDates(start, end_: TDateTime) : TFHIRPeriod;
+class function TFhirPeriodHelper.fromDates(start, end_: TDateTime): TFhirPeriod;
 begin
   result := TFhirPeriod.create;
   result.start := TFslDateTime.make(start, dttzUTC, dtpDay);
@@ -6438,6 +6447,18 @@ begin
     result := end_.DateTime
   else
     result := 0;
+end;
+
+function TFhirPeriodHelper.isCurrent: boolean;
+var
+  now : TFslDateTime;
+begin
+  now := TFslDateTime.makeUTC;
+  result := true;
+  if (not start.null) then
+    result := now.after(start, true);
+  if (not end_.null) then
+      result := now.before(end_, true);
 end;
 
 procedure TFhirPeriodHelper.SetEditString(const Value: String);
@@ -7194,6 +7215,72 @@ begin
     result := gen(nameList[0])
   else
     result := '??';
+end;
+
+function TFhirPatientHelper.findCurrentExtensionValue(url : String) : TFHIRCodeableConcept;
+var
+  ext, ep, ev : TFHIRExtension;
+begin
+  result := nil;
+  for ext in ExtensionList do
+  begin
+    if (ext.url = url) then
+    begin
+      ep := ext.getExtensionByUrl('period');
+      ev := ext.getExtensionByUrl('value');
+      if (ev <> nil) and (ev.value is TFHIRCodeableConcept) and ((ep = nil) or ((ep.value is TFHIRPeriod) and (ep.value as TFHIRPeriod).isCurrent)) then
+         exit(ev.value as TFHIRCodeableConcept);
+    end;
+  end;
+end;
+
+function TFhirPatientHelper.genderPlus: String;
+var
+  genderId : TFHIRCodeableConcept;
+  pronouns : TFHIRCodeableConcept;
+  i : String;
+  p : String;
+begin
+  genderId := findCurrentExtensionValue('http://hl7.org/fhir/StructureDefinition/individual-genderIdentity');
+  if (genderId = nil) then
+    i := ''
+  else if genderId.text <> '' then
+    i := genderId.text
+  else if genderId.hasCode('http://snomed.info/sct', '446141000124107') then
+    i := 'Female'
+  else if genderId.hasCode('http://snomed.info/sct', '446151000124109') then
+    i := 'Male'
+  else if genderId.hasCode('http://snomed.info/sct', '33791000087105') then
+    i := 'Non-Binary'
+  else if genderId.hasCode('http://terminology.hl7.org/CodeSystem/v3-NullFlavor', 'UNK') then
+    i := 'Unknown'
+  else
+    i := gen(genderId);
+  pronouns := findCurrentExtensionValue('http://hl7.org/fhir/StructureDefinition/individual-pronouns');
+  if (pronouns = nil) then
+    p := ''
+  else if pronouns.text <> '' then
+    p := '"'+pronouns.text+'"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29518-0') then
+    p := '"he/him"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29519-8') then
+    p := '"she/her"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29520-6') then
+    p := '"they/them"'
+  else
+    p := gen(pronouns);
+  result := CODES_TFhirAdministrativeGenderEnum[gender];
+  if (p <> '') or (i <> '') then
+  begin
+    result := result + ' (';
+    if (i <> '') then
+      result := result + i;
+    if (p <> '') and (i <> '') then
+      result := result + ', ';
+    if (p <> '') then
+      result := result + p;
+    result := result + ')';
+  end;
 end;
 
 { TFhirPersonHelper }

@@ -35,8 +35,9 @@ interface
 uses
   Classes, SysUtils,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList, IniFiles,
-  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang, fsl_npm_cache,
-  fhir_objects, fhir_client, fhir_factory,
+  MarkdownProcessor,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging, fsl_lang, fsl_npm_cache, fsl_http,
+  fhir_objects, fhir_client, fhir_factory, fhir_parser,
   fhir4_factory, fhir3_factory,
   ftk_store, ftk_console, ftk_utilities;
 
@@ -358,7 +359,9 @@ type
   private
     FActions: TActionList;
     FConsole: TToolkitConsole;
-    FFont: TFont;
+    FEditorFont: TFont;
+    FViewFont: TFont;
+    FLogFont: TFont;
     FInspector: TToolkitEditorInspectorView;
     FLanguages: TIETFLanguageDefinitions;
     FMessageView : TToolkitMessagesView;
@@ -403,7 +406,9 @@ type
     property images : TImageList read FImages;
     property actions : TActionList read FActions;
     function locateOnScreen(x, y : Integer) : TPoint;
-    property Font : TFont read FFont write FFont;
+    property EditorFont : TFont read FEditorFont write FEditorFont;
+    property ViewFont : TFont read FViewFont write FViewFont;
+    property LogFont : TFont read FLogFont write FLogFont;
     procedure updateSettings;
     property ToolBarHeight : integer read FToolBarHeight write SetToolBarHeight;
 
@@ -445,6 +450,9 @@ type
     procedure OpenResource(url : String);
 
     property context[version : TFHIRVersion] : TFHIRWorkerContextWithFactory read GetContext write SetContext;
+
+    procedure saveTempResource(r : TFHIRResourceV; filename : String);
+    function processMarkdown(md : String) : String;
 
     property OnUpdateActions : TNotifyEvent read FOnUpdateActions write FOnUpdateActions;
     property OnChangeFocus : TNotifyEvent read FOnChangeFocus write FOnChangeFocus;
@@ -1145,6 +1153,40 @@ end;
 procedure TToolkitContext.OpenResource(url: String);
 begin
   OnOpenResourceUrl(self, url);
+end;
+
+procedure TToolkitContext.saveTempResource(r: TFHIRResourceV; filename: String);
+var
+  ctxt : TFHIRWorkerContextWithFactory;
+  parser : TFHIRComposer;
+  f : TFileStream;
+begin
+  ctxt := context[r.fhirObjectVersion];
+  parser := ctxt.factory.makeComposer(ctxt.link, ffJson, defLang, OutputStylePretty);
+  try
+    f := TFileStream.create(FilePath(['[tmp]', filename+'.json']), fmCreate);
+    try
+      parser.compose(f, r);
+    finally
+      f.free;
+    end;
+  finally
+    parser.free;
+  end;
+
+end;
+
+function TToolkitContext.processMarkdown(md: String): String;
+var
+  proc : TMarkdownProcessor;
+begin
+  proc := TMarkdownProcessor.createDialect(mdCommonMark);
+  try
+    proc.allowUnsafe := false;
+    result := proc.process(md);
+  finally
+    proc.free;
+  end;
 end;
 
 function onlySourceKind(kinds : TSourceEditorKindSet) : TSourceEditorKind;

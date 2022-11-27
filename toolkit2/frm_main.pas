@@ -586,6 +586,7 @@ type
     FViews : Array [TViewManagerPanelId] of TWinControl;
     FLeftStack : TPanelStack;
     FRightStack : TPanelStack;
+    FCreatingTab : boolean;
 
     function checkDoSave(editor : TToolkitEditor): boolean;
     procedure copyFonts;
@@ -769,7 +770,10 @@ begin
   FContext.OnOpenSource := doOpenSource;
   FContext.MessageView.OnChange := updateMessages;
   FContext.Inspector.OnChange := updateInspector;
-  FContext.Font := SynEdit1.Font;
+  FContext.EditorFont := SynEdit1.Font;
+  FContext.ViewFont := lvMessages.Font;
+  FContext.LogFont := mConsole.Font;
+  FContext.EditorFont := SynEdit1.Font;
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
   FContext.TxServers.load(FIni);
@@ -1447,26 +1451,31 @@ begin
         else // (length(bytes) > 0
           session.info.Values['Format'] := CODES_TFHIRFormat[DetectFormat(bytes)];
       end;
+      FCreatingTab := true;
+      try
 
-      if path <> '' then
-        session.Address := 'file:'+path;
-      if (filename <> '') then
-        session.caption := filename;
-      editor := FFactory.makeEditor(session.link, FTempStore);
-      FContext.addEditor(editor);
-      tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab, editor.makeRootPanel(tab));
-      if path <> '' then
-      begin
-        BytesToFile(bytes, path);
-        session.Timestamp := FileGetModified(path);
+        if path <> '' then
+          session.Address := 'file:'+path;
+        if (filename <> '') then
+          session.caption := filename;
+        editor := FFactory.makeEditor(session.link, FTempStore);
+        FContext.addEditor(editor);
+        tab := pgEditors.AddTabSheet;
+        editor.bindToTab(tab, editor.makeRootPanel(tab));
+        if path <> '' then
+        begin
+          BytesToFile(bytes, path);
+          session.Timestamp := FileGetModified(path);
+        end;
+        if (length(bytes) = 0) then
+          editor.newContent
+        else
+          editor.loadBytes(bytes);
+        editor.session.NeedsSaving := false;
+        editor.lastChangeChecked := true;
+      finally
+        FCreatingTab := false;
       end;
-      if (length(bytes) = 0) then
-        editor.newContent
-      else
-        editor.loadBytes(bytes);
-      editor.session.NeedsSaving := false;
-      editor.lastChangeChecked := true;
       pgEditors.ActivePage := tab;
       storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
@@ -1596,22 +1605,27 @@ begin
     if (store = nil) then
       exit(showError('Unable to fetch '+url+': not a supported protocol'));
     try
-      loaded := store.load(url, true);
-      // well, we can open whatever it is
-      session := FFactory.examineFile(url, loaded.mimeType, loaded.content, true);
-      session.address := url;
-      session.Timestamp := loaded.timestamp;
-      editor := FFactory.makeEditor(session, FTempStore);
-      FContext.addEditor(editor);
-      tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab, editor.makeRootPanel(tab));
-      editor.LoadBytes(loaded.content);
-      editor.session.NeedsSaving := false;
-      pgEditors.ActivePage := tab;
-      storeOpenFileList;
-      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
-      FTempStore.removeFromMRU(editor.session.address);
-      FContext.Focus := editor;
+      FCreatingTab := true;
+      try
+        loaded := store.load(url, true);
+        // well, we can open whatever it is
+        session := FFactory.examineFile(url, loaded.mimeType, loaded.content, true);
+        session.address := url;
+        session.Timestamp := loaded.timestamp;
+        editor := FFactory.makeEditor(session, FTempStore);
+        FContext.addEditor(editor);
+        tab := pgEditors.AddTabSheet;
+        editor.bindToTab(tab, editor.makeRootPanel(tab));
+        editor.LoadBytes(loaded.content);
+        editor.session.NeedsSaving := false;
+        pgEditors.ActivePage := tab;
+        storeOpenFileList;
+        FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+        FTempStore.removeFromMRU(editor.session.address);
+        FContext.Focus := editor;
+      finally
+        FCreatingTab := false;
+      end;
       clearContentMenu;
       FContext.Focus.getFocus(mnuContent);
       editor.lastChangeChecked := true;
@@ -1865,16 +1879,21 @@ begin
     pgEditors.ActivePage := worker.tab
   else
   begin
-    session := FFactory.makeNewSession(sekServer);
-    session.caption := 'Server '+server.Name;
-    session.address := 'internal:server.'+server.name;
-    worker := FFactory.makeEditor(session, FTempStore) as TServerWorker;
-    FContext.addEditor(worker);
-    tab := pgEditors.AddTabSheet;
-    worker.bindToTab(tab, worker.makeRootPanel(tab));
-    worker.newContent;
-    worker.session.NeedsSaving := false;
-    worker.lastChangeChecked := true;
+    FCreatingTab := true;
+    try
+      session := FFactory.makeNewSession(sekServer);
+      session.caption := 'Server '+server.Name;
+      session.address := 'internal:server.'+server.name;
+      worker := FFactory.makeEditor(session, FTempStore) as TServerWorker;
+      FContext.addEditor(worker);
+      tab := pgEditors.AddTabSheet;
+      worker.bindToTab(tab, worker.makeRootPanel(tab));
+      worker.newContent;
+      worker.session.NeedsSaving := false;
+      worker.lastChangeChecked := true;
+    finally
+      FCreatingTab := false;
+    end;
     pgEditors.ActivePage := tab;
     storeOpenFileList;
     FTempStore.storeContent(worker.session.Guid, true, worker.getBytes);
@@ -1927,14 +1946,19 @@ begin
     session := FFactory.examineFile(url, loaded.mimeType, loaded.content, false);
     if session <> nil then
     begin
-      session.address := url;
-      session.Timestamp := loaded.timestamp;
-      editor := FFactory.makeEditor(session, FTempStore);
-      FContext.addEditor(editor);
-      tab := pgEditors.AddTabSheet;
-      editor.bindToTab(tab, editor.makeRootPanel(tab));
-      editor.LoadBytes(loaded.content);
-      editor.session.NeedsSaving := false;
+      FCreatingTab := true;
+      try
+        session.address := url;
+        session.Timestamp := loaded.timestamp;
+        editor := FFactory.makeEditor(session, FTempStore);
+        FContext.addEditor(editor);
+        tab := pgEditors.AddTabSheet;
+        editor.bindToTab(tab, editor.makeRootPanel(tab));
+        editor.LoadBytes(loaded.content);
+        editor.session.NeedsSaving := false;
+      finally
+        FCreatingTab := false;
+      end;
       pgEditors.ActivePage := tab;
       storeOpenFileList;
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
@@ -1959,15 +1983,20 @@ var
   store : TStorageService;
   session : TToolkitEditSession;
 begin
-  session := FFactory.makeNewSession(sekFHIR);
-  session.info.Values['Format'] := CODES_TFHIRFormat[format];
-  editor := FFactory.makeEditor(session, FTempStore);
-  FContext.addEditor(editor);
-  tab := pgEditors.AddTabSheet;
-  editor.bindToTab(tab, editor.makeRootPanel(tab));
-  editor.loadBytes(src);
-  editor.session.NeedsSaving := false;
-  editor.lastChangeChecked := true;
+  FCreatingTab := true;
+  try
+    session := FFactory.makeNewSession(sekFHIR);
+    session.info.Values['Format'] := CODES_TFHIRFormat[format];
+    editor := FFactory.makeEditor(session, FTempStore);
+    FContext.addEditor(editor);
+    tab := pgEditors.AddTabSheet;
+    editor.bindToTab(tab, editor.makeRootPanel(tab));
+    editor.loadBytes(src);
+    editor.session.NeedsSaving := false;
+    editor.lastChangeChecked := true;
+  finally
+    FCreatingTab := false;
+  end;
   pgEditors.ActivePage := tab;
   storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
@@ -1985,14 +2014,19 @@ var
   store : TStorageService;
   session : TToolkitEditSession;
 begin
-  session := FFactory.makeNewSession(kind);
-  editor := FFactory.makeEditor(session, FTempStore);
-  FContext.addEditor(editor);
-  tab := pgEditors.AddTabSheet;
-  editor.bindToTab(tab, editor.makeRootPanel(tab));
-  editor.loadBytes(src);
-  editor.session.NeedsSaving := false;
-  editor.lastChangeChecked := true;
+  FCreatingTab := true;
+  try
+    session := FFactory.makeNewSession(kind);
+    editor := FFactory.makeEditor(session, FTempStore);
+    FContext.addEditor(editor);
+    tab := pgEditors.AddTabSheet;
+    editor.bindToTab(tab, editor.makeRootPanel(tab));
+    editor.loadBytes(src);
+    editor.session.NeedsSaving := false;
+    editor.lastChangeChecked := true;
+  finally
+    FCreatingTab := false;
+  end;
   pgEditors.ActivePage := tab;
   storeOpenFileList;
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
@@ -3017,6 +3051,8 @@ begin
       ToolkitSettingsForm.saveServers(context.TxServers);
       context.TxServers.save(FIni);
       FIni.WriteString('tx', 'log', ToolkitSettingsForm.edtTxLog.Text);
+      copyFonts;
+      saveFonts;
       try
         SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
         Context.updateSettings;
@@ -3026,8 +3062,6 @@ begin
         on e : Exception do
           showMessage('Error applying fonts: '+e.Message);
       end;
-      copyFonts;
-      saveFonts;
     end;
   finally
     ToolkitSettingsForm.Free;
@@ -3158,6 +3192,8 @@ end;
 
 procedure TMainToolkitForm.pgEditorsChange(Sender: TObject);
 begin
+  if FCreatingTab then
+    exit;
   if FContext.Focus <> nil then
     FContext.Focus.loseFocus();
   FContext.Focus := FContext.EditorForTab(pgEditors.ActivePage);
@@ -3373,7 +3409,7 @@ procedure TMainToolkitForm.startLoadingContexts;
   end;
 begin
   //SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3'), FContext.pcm), 'hl7.fhir.r3.core');
-  //SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'), FContext.pcm), 'hl7.fhir.r4.core');
+  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'), FContext.pcm), 'hl7.fhir.r4.core');
 end;
 
 procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);

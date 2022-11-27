@@ -843,6 +843,8 @@ type
     function characteristics : TFslList<TFHIRGroupCharacteristicW>; override;
   end;
 
+  { TFhirPatient2 }
+
   TFhirPatient2 = class (TFhirPatientW)
   protected
     function GetActive: boolean; override;
@@ -861,6 +863,7 @@ type
     function nameSummary : String; override;
     function activeStr : String; override;
     function gender : String; override;
+    function genderPlus : String; override;
     function identifierSummary : String; override;
     function contactSummary : String; override;
   end;
@@ -4822,7 +4825,7 @@ end;
 
 { TFhirPatient2 }
 
-function TFhirPatient2.pat : TFhirPatient;
+function TFhirPatient2.pat: TFHIRPatient;
 begin
   result := resource as TFhirPatient;
 end;
@@ -4847,12 +4850,12 @@ begin
     result := 'false';
 end;
 
-function TFhirPatient2.getActive: boolean;
+function TFhirPatient2.GetActive: boolean;
 begin
   result := pat.active;
 end;
 
-procedure TFhirPatient2.setActive(const value : boolean);
+procedure TFhirPatient2.SetActive(const Value: boolean);
 begin
   pat.active := value;
 end;
@@ -4862,7 +4865,12 @@ begin
   result := CODES_TFhirAdministrativeGenderEnum[pat.gender];
 end;
 
-function TFhirPatient2.getdob: String;
+function TFhirPatient2.genderPlus: String;
+begin
+  result := Gender;
+end;
+
+function TFhirPatient2.GetDob: String;
 begin
   result := pat.birthDate.toXML;
 end;
@@ -4916,7 +4924,7 @@ begin
   n.familyList.add(value);
 end;
 
-procedure TFhirPatient2.setdob(const value : String);
+procedure TFhirPatient2.SetDob(const Value: String);
 begin
   pat.birthDate := TFslDateTime.fromXML(value);
 end;

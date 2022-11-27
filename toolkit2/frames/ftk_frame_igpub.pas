@@ -1362,7 +1362,8 @@ end;
 procedure TIgPubPageFrame.updateSettings;
 begin
   loadServers;
-  mStatus.Font.assign(Context.Font);
+  mStatus.Font.assign(Context.LogFont);
+  lvFolders.Font.assign(Context.ViewFont);
 end;
 
 procedure TIgPubPageFrame.inspect;

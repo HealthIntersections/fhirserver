@@ -375,6 +375,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item>
+      <Item>
         <PackageName Value="Pdfium"/>
       </Item>
       <Item>
@@ -808,6 +811,12 @@
       </Item>
       <Item>
         <Name Value="EIdConnClosedGracefully"/>
+      </Item>
+      <Item>
+        <Name Value="ESemVerException"/>
+      </Item>
+      <Item>
+        <Name Value="00000010ESemVerException"/>
       </Item>
     </Exceptions>
   </Debugging>
