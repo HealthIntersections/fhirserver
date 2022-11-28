@@ -1028,7 +1028,7 @@ begin
     cl.free;
   end;
   // 3. Look in http://hl7.org/fhir/StructureDefinition/codesystem-subsumes extension (deprecated now)
-  el := base.extensions('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
+  el := base.getExtensionsV('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
   try
     for e in el do
     begin

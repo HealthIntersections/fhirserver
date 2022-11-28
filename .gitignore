@@ -83,3 +83,5 @@ exec/Resources
 testcases/snomed/test.cache
 
 exec/fhirserver.cfg
+
+toolkit/icoms/

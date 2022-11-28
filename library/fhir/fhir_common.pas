@@ -66,6 +66,7 @@ type
     FElement : TFHIRObject;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function NoElementOk : boolean; virtual;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; virtual; abstract; // this must be overridden in *every concrete subclass*
   public
     constructor Create(elem : TFHIRObject);
     destructor Destroy; override;
@@ -84,12 +85,13 @@ type
     property Element : TFHIRObject read FElement;
 
     function AsJson : String; override;
+
     // extensions:
     function hasExtension(url : String) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); overload; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; override;
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
@@ -191,6 +193,8 @@ type
     function sizeInBytesV(magic : integer) : cardinal; override;
     function GetLanguage: String;  virtual; abstract;
     procedure SetLanguage(const Value: String); virtual; abstract;
+
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; virtual; abstract; // this must be overridden in *every concrete subclass*
   public
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
@@ -209,6 +213,13 @@ type
     property language : String read GetLanguage write SetLanguage;
 
     function AsJson : String; override;
+
+    // extensions:
+    function hasExtension(url : String) : boolean; override;
+    function getExtensionString(url : String) : String; override;
+    function extensionCount(url : String) : integer; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; override;
 
     property Resource : TFHIRResourceV read FRes;
   end;
@@ -1497,6 +1508,33 @@ begin
   Result := FRes.asJson;
 end;
 
+function TFHIRXVersionResourceWrapper.hasExtension(url: String): boolean;
+begin
+  Result:=inherited hasExtension(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionString(url: String): String;
+begin
+  Result:=inherited getExtensionString(url);
+end;
+
+function TFHIRXVersionResourceWrapper.extensionCount(url: String): integer;
+begin
+  Result:=inherited extensionCount(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionsV(url: String): TFslList<
+  TFHIRObject>;
+begin
+  Result:=inherited getExtensionsV(url);
+end;
+
+procedure TFHIRXVersionResourceWrapper.addExtensionV(url: String;
+  value: TFHIRObject);
+begin
+  inherited addExtensionV(url, value);
+end;
+
 function TFHIRXVersionResourceWrapper.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := FRes.FhirObjectVersion;
@@ -1617,9 +1655,9 @@ end;
 
 { TFHIRXVersionElementWrapper }
 
-procedure TFHIRXVersionElementWrapper.addExtension(url: String; value: TFHIRObject);
+procedure TFHIRXVersionElementWrapper.addExtensionV(url: String; value: TFHIRObject);
 begin
-  FElement.addExtension(url, value);
+  FElement.addExtensionV(url, value);
 end;
 
 constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
@@ -1641,10 +1679,11 @@ begin
   result := FElement.extensionCount(url);
 end;
 
-function TFHIRXVersionElementWrapper.extensions(url: String): TFslList<TFHIRObject>;
+function TFHIRXVersionElementWrapper.getExtensionsV(url: String): TFslList<TFHIRObject>;
 begin
-  result := FElement.extensions(url);
+  result := FElement.getExtensionsV(url);
 end;
+
 
 function TFHIRXVersionElementWrapper.createPropertyValue(propName: string): TFHIRObject;
 begin

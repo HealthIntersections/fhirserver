@@ -65,6 +65,21 @@ type
     function executeItem(item : THealthcareCard; mode : String) : boolean; override;
   end;
 
+  { TGenderIdentityManager }
+
+  TGenderIdentityManager = class (TListManager<TFHIRExtensionW>)
+  private
+    FFrame : TPatientFrame;
+  public
+    function canSort : boolean; override;
+    function allowedOperations(item : TFHIRExtensionW) : TNodeOperationSet; override;
+    function loadList : boolean; override;
+
+    function getCellText(item : TFHIRExtensionW; col : integer) : String; override;
+    function getSummaryText(item : TFHIRExtensionW) : String; override;
+    function compareItem(left, right : TFHIRExtensionW; col : integer) : integer; override;
+  end;
+
   { TPatientFrame }
 
   TPatientFrame = class(TFrame)
@@ -82,10 +97,9 @@ type
     btnEditRecord: TBitBtn;
     btnFetchHealthCards: TButton;
     cbCovidOnly: TCheckBox;
-    CheckBox1: TCheckBox;
-    ComboBox1: TComboBox;
-    ComboBox2: TComboBox;
-    DateTimePicker1: TDateTimePicker;
+    cbActive: TCheckBox;
+    cbxGender: TComboBox;
+    edtDoB: TDateTimePicker;
     edtNameSummary: TEdit;
     gbGenderIdentity: TGroupBox;
     gbPronouns: TGroupBox;
@@ -95,7 +109,6 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
     Label5: TLabel;
     lvGenderId: TListView;
     lvPronouns: TListView;
@@ -130,6 +143,7 @@ type
     procedure TabSheet4Resize(Sender: TObject);
   private
     FCardManager : THealthcardManager;
+    FGenderIdManager : TGenderIdentityManager;
     FCards : TFHIRParametersW;
     FPatient : TFhirPatientW;
 
@@ -145,6 +159,61 @@ type
 implementation
 
 {$R *.lfm}
+
+{ TGenderIdentityManager }
+
+function TGenderIdentityManager.canSort: boolean;
+begin
+  Result := true
+end;
+
+function TGenderIdentityManager.allowedOperations(item: TFHIRExtensionW): TNodeOperationSet;
+begin
+  result := [opAdd, opDelete, opEdit];
+end;
+
+function TGenderIdentityManager.loadList: boolean;
+var
+  ext : TFHIRObject;
+begin
+  !
+  for ext in FFrame.FPatient.extensions('http://hl7.org/fhir/StructureDefinition/individual-genderIdentity') do
+    FData.add(FFrame.Context.factory(ext.fhirObjectVersion).WrapExtension(ext.link));
+end;
+
+function TGenderIdentityManager.getCellText(item: TFHIRExtensionW; col: integer): String;
+var
+  ext : TFHIRObject;
+  ew : TFhirExtensionW;
+begin
+  case col of
+    0: ext := item.extension('value');
+    1: ext := item.extension('period');
+    2: ext := item.extension('comment');
+  end;
+  if (ext <> nil) then
+  begin
+    ew := FFrame.Context.factory(ext.fhirObjectVersion).WrapExtension(ext);
+    try
+      result := ew.renderText;
+    finally
+      ew.free;
+    end;
+  end
+  else
+    result := '';
+end;
+
+
+function TGenderIdentityManager.getSummaryText(item: TFHIRExtensionW): String;
+begin
+  Result:=inherited getSummaryText(item);
+end;
+
+function TGenderIdentityManager.compareItem(left, right: TFHIRExtensionW; col: integer): integer;
+begin
+  Result:=inherited compareItem(left, right, col);
+end;
 
 { THealthcardManager }
 
@@ -245,12 +314,19 @@ end;
 procedure TPatientFrame.initialize;
 begin
   lvCards.SmallImages := Context.images;
+
   FCardManager := THealthcardManager.create;
   FCardManager.Settings := Context.Settings;
   FCardManager.FFrame := self;
   FCardManager.Images := Context.images;
   FCardManager.List := lvCards;
   FCardManager.OnSetFocus := DoSelectCard;
+
+  FGenderIdManager := TGenderIdentityManager.Create;
+  FGenderIdManager.Settings := Context.Settings;
+  FGenderIdManager.FFrame := self;
+  FGenderIdManager.Images := Context.images;
+  FGenderIdManager.List := lvGenderId;
 end;
 
 procedure TPatientFrame.bind;
@@ -261,12 +337,22 @@ begin
     TabSheet2.Visible := false;
     PageControl1.ShowTabs := false;
   end;
+  cbxGender.itemIndex := StringArrayIndexOf(['male', 'female', 'other', 'unknown'], FPatient.gender);
+  case StringArrayIndexOf(['', 'true', 'false'], FPatient.activeStr) of
+    0: cbActive.State := cbGrayed;
+    1: cbActive.State := cbChecked;
+    2: cbActive.State := cbUnchecked;
+  end;
+  edtNameSummary.text := FPatient.nameSummary;
+  edtDoB.Date := TFslDateTime.fromXml(FPatient.dob).DateTime;
+  FGenderIdManager.doLoad;
 end;
 
 procedure TPatientFrame.saveStatus;
 begin
   inherited saveStatus;
   FCardManager.saveStatus;
+  FGenderIdManager.saveStatus;
 end;
 
 procedure TPatientFrame.btnFetchHealthCardsClick(Sender: TObject);

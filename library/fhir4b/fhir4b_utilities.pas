@@ -834,7 +834,7 @@ type
   TFhirPatientHelper = class helper for TFhirPatient
   public
     function summary : String;
-    function genderPlus : String; override;
+    function genderPlus : String;
   end;
 
   TFhirPersonHelper = class helper for TFhirPerson
@@ -7201,7 +7201,7 @@ end;
 
 function TFhirPatientHelper.genderPlus: String;
 begin
-  result := 'todo' + CODES_TFhirAdministrativeGenderEnum[pat.gender];
+  result := 'todo' + CODES_TFhirAdministrativeGenderEnum[gender];
 end;
 
 { TFhirPersonHelper }

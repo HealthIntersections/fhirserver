@@ -862,7 +862,7 @@ begin
     slUnknown : actLineMarkers.ImageIndex := 51;
     slCRLF: actLineMarkers.ImageIndex := 51;
     slLF : actLineMarkers.ImageIndex := 53;
-    slCR : actLineMarkers.ImageIndex := 54;
+    slCR : actLineMarkers.ImageIndex := 52;
   end;
   if getFixedEncoding = senUnknown then
   begin
@@ -1220,8 +1220,8 @@ begin
 
   actLineMarkers := makeAction(TextToolbar, 'End of Lines', 4);
   actLineMarkersWindows := makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
-  actLineMarkersUnix := makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
-  actLineMarkersMac := makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
+  actLineMarkersUnix := makeSubAction(actLineMarkers, 'Unix (LF)', 53, 1, DoMnuLineMarkers);
+  actLineMarkersMac := makeSubAction(actLineMarkers, 'Macintosh (CR)', 52, 2, DoMnuLineMarkers);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
@@ -1394,8 +1394,7 @@ begin
   case (Sender as TMenuItem).Tag of
     0: Session.EndOfLines := slCRLF;
     1: Session.EndOfLines := slLF;
-    2: Session.EndOfLines := slLF;
-    3: Session.EndOfLines := slCR;
+    2: Session.EndOfLines := slCR;
   end;
   updateToolbarButtons;
 end;

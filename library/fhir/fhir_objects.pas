@@ -441,8 +441,9 @@ type
     function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
-    function extensions(url : String) : TFslList<TFHIRObject>; virtual;
-    procedure addExtension(url : String; value : TFHIRObject); virtual;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual;
+    function getExtensionV(url : String) : TFHIRObject;
+    procedure addExtensionV(url : String; value : TFHIRObject); virtual;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
     function getNamedChildren : TFslList<TFHIRNamedValue>;
@@ -1025,7 +1026,7 @@ begin
   result := TFHIRObject(Inherited Clone);
 end;
 
-procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
+procedure TFHIRObject.addExtensionV(url: String; value: TFHIRObject);
 begin
   raise EFHIRException.create('Extensions are not supported on this object');
 end;
@@ -1281,9 +1282,26 @@ begin
   result := 0;
 end;
 
-function TFHIRObject.extensions(url: String): TFslList<TFHIRObject>;
+function TFHIRObject.getExtensionsV(url: String): TFslList<TFHIRObject>;
 begin
   result := TFslList<TFHIRObject>.create;
+end;
+
+function TFHIRObject.getExtensionV(url : String) : TFHIRObject;
+var
+  list : TFslList<TFHIRObject>;
+begin
+  list := getExtensionsV(url);
+  try
+    if list.count > 1 then
+      raise EFHIRException.create('Multiple matches for extension "'+url+'"')
+    else if list.count = 1 then
+      result := list[0].link
+    else
+      result := nil;
+  finally
+    list.free;
+  end;
 end;
 
 function TFHIRObject.GetCommentsStart: TFslStringList;

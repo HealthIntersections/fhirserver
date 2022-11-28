@@ -23,11 +23,11 @@ object PatientFrame: TPatientFrame
       ClientWidth = 874
       object pnlPatientDetails: TPanel
         Left = 0
-        Height = 120
+        Height = 96
         Top = 0
         Width = 874
         Align = alTop
-        ClientHeight = 120
+        ClientHeight = 96
         ClientWidth = 874
         TabOrder = 0
         object edtNameSummary: TEdit
@@ -36,7 +36,7 @@ object PatientFrame: TPatientFrame
           Top = 8
           Width = 775
           Anchors = [akTop, akLeft, akRight]
-          Color = 15987699
+          Color = 15132390
           ReadOnly = True
           TabOrder = 0
           Text = 'edtNameSummary'
@@ -57,14 +57,15 @@ object PatientFrame: TPatientFrame
           Caption = 'Active:'
           ParentColor = False
         end
-        object CheckBox1: TCheckBox
+        object cbActive: TCheckBox
           Left = 80
           Height = 18
           Top = 36
           Width = 775
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
-          Caption = 'CheckBox1'
+          Caption = 'This record is active'
+          State = cbGrayed
           TabOrder = 1
         end
         object Label3: TLabel
@@ -75,24 +76,7 @@ object PatientFrame: TPatientFrame
           Caption = 'DoB:'
           ParentColor = False
         end
-        object Label4: TLabel
-          Left = 8
-          Height = 16
-          Top = 94
-          Width = 57
-          Caption = 'Marriage:'
-          ParentColor = False
-        end
-        object ComboBox1: TComboBox
-          Left = 80
-          Height = 20
-          Top = 92
-          Width = 775
-          ItemHeight = 18
-          TabOrder = 2
-          Text = 'ComboBox1'
-        end
-        object DateTimePicker1: TDateTimePicker
+        object edtDoB: TDateTimePicker
           Left = 80
           Height = 21
           Top = 64
@@ -101,7 +85,7 @@ object PatientFrame: TPatientFrame
           MaxDate = 2958465
           MinDate = -53780
           AutoSize = False
-          TabOrder = 3
+          TabOrder = 2
           TrailingSeparator = False
           TextForNullDate = 'NULL'
           LeadingZeros = True
@@ -118,8 +102,8 @@ object PatientFrame: TPatientFrame
       end
       object PageControl2: TPageControl
         Left = 0
-        Height = 486
-        Top = 120
+        Height = 510
+        Top = 96
         Width = 874
         ActivePage = TabSheet4
         Align = alClient
@@ -133,7 +117,7 @@ object PatientFrame: TPatientFrame
         end
         object TabSheet4: TTabSheet
           Caption = 'Gender Information'
-          ClientHeight = 456
+          ClientHeight = 480
           ClientWidth = 868
           OnResize = TabSheet4Resize
           object gbGenderIdentity: TGroupBox
@@ -607,12 +591,12 @@ object PatientFrame: TPatientFrame
           end
           object gbRecordedSexOrGender: TGroupBox
             Left = 0
-            Height = 131
+            Height = 155
             Top = 325
             Width = 868
             Align = alClient
             Caption = 'Record of Sex or Gender'
-            ClientHeight = 112
+            ClientHeight = 136
             ClientWidth = 858
             TabOrder = 3
             object btnAddRecord: TBitBtn
@@ -738,7 +722,7 @@ object PatientFrame: TPatientFrame
             end
             object ListView4: TListView
               Left = 32
-              Height = 112
+              Height = 136
               Top = 0
               Width = 826
               Align = alRight
@@ -793,10 +777,10 @@ object PatientFrame: TPatientFrame
               Caption = 'Admin Gender:'
               ParentColor = False
             end
-            object ComboBox2: TComboBox
+            object cbxGender: TComboBox
               Left = 112
               Height = 20
-              Top = 6
+              Top = 4
               Width = 751
               ItemHeight = 26
               ItemIndex = 0

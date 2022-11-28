@@ -245,8 +245,8 @@ type
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
   {$IFNDEF FPC}published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
@@ -9043,7 +9043,7 @@ begin
 end;
 
 
-procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
+procedure TFhirElement.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
@@ -9062,14 +9062,14 @@ begin
       inc(result);
 end;
       
-function TFhirElement.extensions(url: String): TFslList<TFHIRObject>;
+function TFhirElement.getExtensionsV(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
   result := TFslList<TFHIRObject>.create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally

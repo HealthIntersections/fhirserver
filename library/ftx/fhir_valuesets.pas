@@ -1396,7 +1396,7 @@ begin
       begin
         if FParams.limitedExpansion then
         begin
-          exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+          exp.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
           if (table <> nil) then
             div_.addTag('p').setAttribute('style', 'color: Maroon').addText(e.message);
         end
@@ -1414,7 +1414,7 @@ begin
     end;
     if notClosed then
     begin
-      exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
+      exp.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
       if (table <> nil) then
         div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
     end;
@@ -1739,7 +1739,7 @@ begin
         map.add(s, n.link);
       end;
       if definition <> '' then
-        n.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-definition', FFactory.makeString(definition));
+        n.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-definition', FFactory.makeString(definition));
     finally
       n.free;
     end;
@@ -1976,7 +1976,7 @@ begin
             begin
               base := expandValueSet(cs.SpecialEnumeration, filter.filter, dependencies, notClosed);
               try
-                expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                 if doDelete then
                   excludeValueSet(list, map, base, expansion, valueSets, 0)
                 else
@@ -2082,7 +2082,7 @@ begin
                   if cs.specialEnumeration <> '' then
                   begin
                     filters.Insert(offset, cs.specialFilter(prep, true));
-                    expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                    expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                     notClosed := true;
                   end;
                   for i := 0 to fcl.count - 1 do

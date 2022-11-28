@@ -355,8 +355,8 @@ type
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function hasExtensions : boolean; override;
@@ -865,7 +865,7 @@ begin
     list.addAll(self, 'modifierExtension', FModifierExtensionList);
 end;
 
-procedure TFhirDomainResource.addExtension(url: String; value: TFHIRObject);
+procedure TFhirDomainResource.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
@@ -884,14 +884,14 @@ begin
       inc(result);
 end;
       
-function TFhirDomainResource.extensions(url: String): TFslList<TFHIRObject>;
+function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
   result := TFslList<TFHIRObject>.create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
