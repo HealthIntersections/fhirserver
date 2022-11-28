@@ -2812,8 +2812,10 @@ begin
     begin
       if FolderExists('c:\temp') then
         result := 'c:\temp'
+      {$IFDEF FPC}
       else if FolderExists(GetUserDir+'temp') then
         result := GetUserDir+'temp'
+      {$ENDIF}
       else
         result := SystemTemp();
     end

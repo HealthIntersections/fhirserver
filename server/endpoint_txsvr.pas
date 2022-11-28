@@ -1144,7 +1144,7 @@ begin
           finally
             res.Free;
           end;
-        end;
+        end;                                                        
       end;
     finally
       Logging.finish(' '+inttostr(i)+' resources');

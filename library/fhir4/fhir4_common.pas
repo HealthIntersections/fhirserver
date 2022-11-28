@@ -129,6 +129,7 @@ type
   private
     function id : TFHIRIdentifier;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetSystem: String; override;
     function GetUse: TIdentifierUse; override;
     function GetValue: String; override;
@@ -835,6 +836,7 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function getTopic: string; override;
@@ -1176,6 +1178,7 @@ type
   private
     function ts : TFHIRTestScript;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function getURL: String; override;
@@ -4516,6 +4519,11 @@ begin
   result := resource as TFhirSubscription;
 end;
 
+function TFHIRSubscription4.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension4.create(extension.link);
+end;
+
 { TFhirBinary4 }
 
 function TFhirBinary4.content: TBytes;
@@ -6029,6 +6037,11 @@ begin
 end;
 
 
+function TFHIRTestScript4.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension4.create(extension.link);
+end;
+
 { TFhirProvenance4 }
 
 procedure TFhirProvenance4.addTarget(url: String);
@@ -6316,6 +6329,11 @@ end;
 procedure TFhirIdentifier4.SetValue(const Value: String);
 begin
   id.value := value;
+end;
+
+function TFhirIdentifier4.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension4.create(extension.link);
 end;
 
 const

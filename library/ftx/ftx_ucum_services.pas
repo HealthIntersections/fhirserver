@@ -308,6 +308,7 @@ type
   private
     FCode : String;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function getCode : String; override;
     function getDisplay : String; override;
     procedure setCode(Value: String); override;
@@ -346,6 +347,11 @@ function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV(magic : integer) :
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := nil; // not supported here
 end;
 
 { TUcumServices }

@@ -128,8 +128,8 @@ type
   TFhirIdentifier2 = class (TFhirIdentifierW)
   private
     function id : TFHIRIdentifier;
-    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetSystem: String; override;
     function GetUse: TIdentifierUse; override;
     function GetValue: String; override;

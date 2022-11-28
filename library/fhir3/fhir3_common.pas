@@ -1203,6 +1203,7 @@ type
   private
     function ts : TFHIRTestScript;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
     function getURL: String; override;
@@ -6194,6 +6195,11 @@ end;
 function TFhirTestScript3.ts : TFhirTestScript;
 begin
   result := (Fres as TFhirTestScript);
+end;
+
+function TFHIRTestScript3.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension3.create(extension.link);
 end;
 
 { TFhirProvenance3 }
