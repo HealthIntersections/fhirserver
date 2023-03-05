@@ -206,6 +206,9 @@ type
 
 
   // Base StructureDefinition for Element Type: Base definition for all elements in a resource.
+
+  { TFhirElement }
+
   TFhirElement = class abstract (TFhirBase)
   private
     FDisallowExtensions: boolean;
@@ -247,6 +250,9 @@ type
     function extensionCount(url : String) : integer; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+
   {$IFNDEF FPC}published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
@@ -8955,7 +8961,7 @@ begin
     inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirElement.equals(other : TObject) : boolean; 
+function TFhirElement.Equals(other: TObject): boolean;
 var
   o : TFhirElement;
 begin
@@ -9031,7 +9037,7 @@ begin
   result := FExtensionList;
 end;
 
-function TFhirElement.GetHasExtensionList : boolean;
+function TFhirElement.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
@@ -9050,6 +9056,24 @@ begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirDataType;
+end;
+
+procedure TFhirElement.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirElement.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
 end;
 
 function TFhirElement.extensionCount(url: String): integer;

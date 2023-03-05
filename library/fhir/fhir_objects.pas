@@ -437,6 +437,7 @@ type
     function makeStringValue(v : String) : TFHIRObject; virtual; abstract;
     function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
     function makeIntValue(v : String) : TFHIRObject; virtual; abstract;
+
     function hasExtension(url : String) : boolean; virtual;
     function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
@@ -444,6 +445,8 @@ type
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual;
     function getExtensionV(url : String) : TFHIRObject;
     procedure addExtensionV(url : String; value : TFHIRObject); virtual;
+    procedure deleteExtensionV(extension : TFHIRObject); virtual;
+    procedure deleteExtensionByUrl(url : String);virtual;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
     function getNamedChildren : TFslList<TFHIRNamedValue>;
@@ -1031,6 +1034,16 @@ begin
   raise EFHIRException.create('Extensions are not supported on this object');
 end;
 
+procedure TFHIRObject.deleteExtensionV(extension: TFHIRObject);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+procedure TFHIRObject.deleteExtensionByUrl(url: String);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
 function TFHIRObject.asJson: String;
 begin
   raise EFslException.Create('Need to override asjson in '+ClassName);
@@ -1245,7 +1258,7 @@ begin
   FTags.AddOrSetValue(name, value);
 end;
 
-function TFHIRObject.getDateValue: TFslDateTime;
+function TFHIRObject.GetDateValue: TFslDateTime;
 begin
   result := TFslDateTime.makeNull;
 end;

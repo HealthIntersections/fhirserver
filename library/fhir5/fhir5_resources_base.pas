@@ -336,6 +336,9 @@ type
   End;
 
   // A resource that includes narrative, extensions, and contained resources.
+
+  { TFhirDomainResource }
+
   TFhirDomainResource = class abstract (TFhirResource)
   protected
     FText : TFhirNarrative;
@@ -373,6 +376,9 @@ type
     function extensionCount(url : String) : integer; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function hasExtensions : boolean; override;
@@ -890,6 +896,24 @@ begin
   ex.value := value as TFhirDataType;
 end;
 
+procedure TFhirDomainResource.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
 function TFhirDomainResource.extensionCount(url: String): integer;
 var
   ex : TFhirExtension;
@@ -1038,7 +1062,7 @@ begin
     inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirDomainResource.equals(other : TObject) : boolean; 
+function TFhirDomainResource.Equals(other: TObject): boolean;
 var
   o : TFhirDomainResource;
 begin
@@ -1099,7 +1123,7 @@ begin
   result := FContainedList;
 end;
 
-function TFhirDomainResource.GetHasContainedList : boolean;
+function TFhirDomainResource.GetHasContainedList: Boolean;
 begin
   result := (FContainedList <> nil) and (FContainedList.count > 0);
 end;
@@ -1111,7 +1135,7 @@ begin
   result := FExtensionList;
 end;
 
-function TFhirDomainResource.GetHasExtensionList : boolean;
+function TFhirDomainResource.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
@@ -1123,7 +1147,7 @@ begin
   result := FModifierExtensionList;
 end;
 
-function TFhirDomainResource.GetHasModifierExtensionList : boolean;
+function TFhirDomainResource.GetHasModifierExtensionList: Boolean;
 begin
   result := (FModifierExtensionList <> nil) and (FModifierExtensionList.count > 0);
 end;
