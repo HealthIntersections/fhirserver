@@ -52,7 +52,8 @@ type
   // mean that the provider is supported by all 3 of compiler, application, and system
   // access is odbc but settings are done differently
   TFDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
-                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite);
+                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite
+                  {$IFDEF FPC}, kdbpSQLDB {$ENDIF});
 
   TFDBProviderSet = set of TFDBProvider;
 
@@ -177,6 +178,9 @@ type
     to get a connection. The connection must always be returned using
     TDBConnPool.YieldConnection otherwise the connection will leak.
   }
+
+  { TFDBConnection }
+
   TFDBConnection = class (TFslObject)
   Private
     FOwner: TFDBManager;
@@ -199,6 +203,7 @@ type
     FTerminated: Boolean;
     FPrepared : boolean;
     FTransactionId: String;
+    function GetDialect: TFDBPlatform;
     function GetTables : TStrings;
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
     function GetColBlobAsString(ACol: Integer): String;
@@ -287,6 +292,7 @@ type
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
     property Owner: TFDBManager Read FOwner;
+    Property Dialect : TFDBPlatform read GetDialect;
     property Prepared : boolean read FPrepared;
 
     // when the application finishes with the connection, it should use one of these to free the connection
@@ -810,7 +816,8 @@ begin
     BindBlobV(AParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindBlobFromString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindBlobFromString(AParamName: String;
+  AParamValue: String);
 var
   b : TBytes;
 begin
@@ -866,7 +873,7 @@ begin
     end;
 end;
 
-Function TFDBConnection.ExecSQL(ASql: String) : integer;
+function TFDBConnection.ExecSQL(ASql: String): integer;
 begin
   if asql = '' then
     exit(0);
@@ -1092,6 +1099,11 @@ begin
   result := FTables;
 end;
 
+function TFDBConnection.GetDialect: TFDBPlatform;
+begin
+  result := Owner.Platform;
+end;
+
 
 procedure TFDBConnection.Initialise;
 begin
@@ -1123,12 +1135,13 @@ begin
   BindNullV(AParamName);
 end;
 
-procedure TFDBConnection.BindString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindString(AParamName: String; AParamValue: String);
 begin
   BindStringV(AParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindStringOrNull(AParamName, AParamValue: String);
+procedure TFDBConnection.BindStringOrNull(AParamName: String;
+  AParamValue: String);
 begin
   if AParamValue = '' then
     BindNull(aParamName)
@@ -1136,7 +1149,8 @@ begin
     BindString(aParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
+procedure TFDBConnection.BindTimeStamp(AParamName: String;
+  AParamValue: fsl_utilities.TTimeStamp);
 begin
   BindTimeStampV(AParamName, AParamValue);
 end;
@@ -1171,7 +1185,8 @@ begin
   ExecuteV;
 end;
 
-procedure TFDBConnection.RenameColumn(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
+procedure TFDBConnection.RenameColumn(ATableName, AOldColumnName,
+  ANewColumnName: String; AColumnDetails: String);
 begin
   RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails);
 end;
@@ -1242,7 +1257,8 @@ begin
   result := GetColStringV(ACol);
 end;
 
-function TFDBConnection.GetColTimestamp(ACol: Integer): TTimestamp;
+function TFDBConnection.GetColTimestamp(ACol: Integer
+  ): fsl_utilities.TTimestamp;
 begin
   result := GetColTimestampV(ACol);
 end;
@@ -1292,7 +1308,7 @@ Begin
   result := DatabaseSizeV;
 End;
 
-Function TFDBConnection.TableSize(sName : String):int64;
+function TFDBConnection.TableSize(sName: String): int64;
 Begin
   result := TableSizeV(sName);
 End;

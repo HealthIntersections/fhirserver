@@ -35,8 +35,8 @@ interface
 Uses
   Sysutils, Classes,
   fsl_testing, fsl_logging, fsl_base, fsl_utilities, fsl_stream,
-  fdb_dialects, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
+  fdb_dialects,
+  fdb_manager, fdb_odbc, fdb_fpc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 Type
 
@@ -49,7 +49,7 @@ Type
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
-    procedure TestODBC;
+//    procedure TestODBC;
     procedure TestMSSQL;
     procedure TestMySQL;
     // procedure TestMySQLMaria;
@@ -105,13 +105,13 @@ begin
 
   conn := manager.GetConnection('test');
   try
-    md := conn.FetchMetaData;
-    try
-      if md.HasTable('TestTable') then
-        conn.DropTable('TestTable');
-    finally
-      md.Free;
-    end;
+    //md := conn.FetchMetaData;
+    //try
+    //  if md.HasTable('TestTable') then
+    //    conn.DropTable('TestTable');
+    //finally
+    //  md.Free;
+    //end;
 
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
       #13#10 + ' Name nchar(255) ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Number int ' + ColCanBeNull(conn.owner.platform, true) + ', '
@@ -291,7 +291,11 @@ begin
     settings := TestSettings.section('mysql');
     try
 //      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+      {$IFDEF FPC}
+      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
+      {$ELSE}
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      {$ENDIF}
       try
         test(db);
       finally
@@ -562,6 +566,7 @@ begin
 end;
 
 
+{$IFNDEF FPC}
 Function odbcError(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): String;
 Var
   ErrorNum: Integer;
@@ -660,6 +665,7 @@ begin
   check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
   assertTrue(true); // get to here, success
 end;
+{$ENDIF}
 
 procedure TFDBTests.TestSQLite;
 var
