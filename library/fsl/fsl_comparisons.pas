@@ -34,7 +34,6 @@ interface
 
 Uses
   SysUtils,
-  IdGlobalProtocols,
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_turtle, fsl_stream
   {$IFDEF WINDOWS}, fsl_shell{$ENDIF};
 
@@ -291,8 +290,8 @@ begin
     x1 := x1.Replace('&#39;', '''').Replace('&quot;', '"');
     x2 := x2.Replace('&#39;', '''').Replace('&quot;', '"');
 
-    f1 := MakeTempFilename +'-source.xml';
-    f2 := MakeTempFilename +'-dest.xml';
+    f1 := TempFilename('test') +'-source.xml';
+    f2 := TempFilename('test') +'-dest.xml';
     StringToFile(x1, f1, TEncoding.UTF8);
     StringToFile(x2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
@@ -414,8 +413,8 @@ begin
     j2 := TJSONParser.ParseFile(filename2);
     try
 
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
+      f1 := TempFilename('test') +'-source.xml';
+      f2 := TempFilename('test') +'-dest.xml';
       StringToFile(TJsonWriter.writeObjectStr(j1, true), f1, TEncoding.UTF8);
       StringToFile(TJsonWriter.writeObjectStr(j2, true), f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
@@ -530,8 +529,8 @@ begin
         result := compareTurtle(t1, t2, msg);
         if not result then
         begin
-          f1 := MakeTempFilename +'-source.xml';
-          f2 := MakeTempFilename +'-dest.xml';
+          f1 := TempFilename('test') +'-source.xml';
+          f2 := TempFilename('test') +'-dest.xml';
       StringToFile(src1, f1, TEncoding.UTF8);
       StringToFile(src2, f2, TEncoding.UTF8);
 
@@ -554,8 +553,8 @@ begin
     on e : Exception do
     begin
       msg := e.Message;
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
+      f1 := TempFilename('test') +'-source.xml';
+      f2 := TempFilename('test') +'-dest.xml';
       StringToFile(src1, f1, TEncoding.UTF8);
       StringToFile(src2, f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
@@ -593,8 +592,8 @@ begin
   result := compareText(src1, src2, msg);
   if not result then
   begin
-    f1 := MakeTempFilename +'-source.txt';
-    f2 := MakeTempFilename +'-dest.txt';
+    f1 := TempFilename('test') +'-source.txt';
+    f2 := TempFilename('test') +'-dest.txt';
     StringToFile(src1, f1, TEncoding.UTF8);
     StringToFile(src2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;

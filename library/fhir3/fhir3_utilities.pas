@@ -39,7 +39,7 @@ uses
   SysUtils, Classes, Generics.Collections, ZLib,
 
   fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_turtle, fsl_xml, fsl_crypto,
-  fsl_fetcher,
+  fsl_fetcher, fsl_web_stream,
 
   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
   fhir3_context, fhir3_types, fhir3_resources, fhir3_constants, fhir3_resources_base;
@@ -392,13 +392,17 @@ type
     function supportsOperation(rName, opName : string) : boolean;
   end;
 
+  { TFHIRCodeableConceptHelper }
+
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
     constructor Create(system, code : String); overload;
-    function hasCode(System, Code : String) : boolean;
+    function hasCode(System, Code : String) : boolean; overload;
+    function hasCode(System, Version, Code : String) : boolean; overload;
     function hasCoding : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
+    procedure addCoding(systemUri, version, code, display : String);
   end;
 
   TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
@@ -3782,6 +3786,22 @@ begin
     raise EFHIRException.create('Unable to find code in '+StringArrayToString(systems));
 end;
 
+procedure TFHIRCodeableConceptHelper.addCoding(systemUri, version, code, display: String);
+var
+  c : TFhirCoding;
+begin
+  c := TFHIRCoding.create;
+  try
+    c.system := systemUri;
+    c.version := version;
+    c.code := code;
+    c.display := display;
+    codingList.add(c.link);
+  finally
+    c.free;
+  end;
+end;
+
 function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
 var
   i : integer;
@@ -3790,6 +3810,20 @@ begin
   if self <> nil then
     for i := 0 to codingList.Count - 1 do
       if (codingList[i].system = system) and (codingList[i].code = code) then
+      begin
+        result := true;
+        break;
+      end;
+end;
+
+function TFHIRCodeableConceptHelper.hasCode(System, Version, Code: String): boolean;
+var
+  i : integer;
+begin
+  result :=  false;
+  if self <> nil then
+    for i := 0 to codingList.Count - 1 do
+      if (codingList[i].system = system) and (codingList[i].version = version) and (codingList[i].code = code) then
       begin
         result := true;
         break;
