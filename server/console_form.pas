@@ -174,6 +174,7 @@ type
     edtRXNSQLiteFile: TEdit;
     edtRProxySSLPort: TEdit;
     edtRProxyCertHeader: TEdit;
+    edtZulipPassword: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
     edtUNIISQLiteFile: TEdit;
@@ -285,6 +286,7 @@ type
     Label8: TLabel;
     Label80: TLabel;
     Label81: TLabel;
+    Label82: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -538,6 +540,7 @@ type
     procedure edtRProxySSLPortChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
+    procedure edtZulipPasswordChange(Sender: TObject);
     procedure edtRProxyPortChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure edtWebMaxConnectionsChange(Sender: TObject);
@@ -1138,6 +1141,8 @@ begin
     edtLangFile.Enabled := true;
     edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
     edtTelnetPassword.Enabled := true;
+    edtZulipPassword.Text := FConfig['destinations'].section['zulip']['password'].value;
+    edtZulipPassword.Enabled := true;
     edtCardPrivate.Text := FConfig.web['card-key'].value;
     edtCardPrivate.Enabled := true;
     edtCardPublic.Text := FConfig.web['card-jwks'].value;
@@ -1219,7 +1224,9 @@ begin
     edtLangFile.Text := '';
     edtLangFile.Enabled := false;
     edtTelnetPassword.Text := '';
+    edtZulipPassword.Text := '';
     edtTelnetPassword.Enabled := false;
+    edtZulipPassword.Enabled := false;
     lvPackages.Enabled := true;
   finally
     FLoading := false;
@@ -1290,6 +1297,8 @@ begin
     lblDoco.caption := 'The Salt used when hashing passwords. Note that changing the salt will invalidate all passwords'
   else if ActiveControl = edtTelnetPassword then
     lblDoco.caption := 'The password required to connect to telnet when connecting from an external computer (not localhost). Default is no password required. Note that the telnet interface can make no changes on the server'
+  else if ActiveControl = edtZulipPassword then
+    lblDoco.caption := 'The password required to connect to zulip when sending messages to chat.fhir.org. Default is no password required. Note that the telnet interface can make no changes on the server'
   else if ActiveControl = edtPrivateKey then
     lblDoco.caption := 'The private key file for the SSL certificate'
   else if ActiveControl = edtSSLCert then
@@ -1570,6 +1579,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['telnet-password'].value := edtTelnetPassword.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtZulipPasswordChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig['destinations'].section['zulip']['password'].value := edtZulipPassword.Text;
     FConfig.Save;
   end;
 end;
