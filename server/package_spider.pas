@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, IniFiles,
   fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging, fsl_versions,
   fsl_fetcher, fsl_zulip,
-  fdb_manager,
+  fdb_manager, fdb_dialects,
   fsl_npm;
 
 const
@@ -95,7 +95,7 @@ Type
     function hasStored(guid : String) : boolean;
     procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
-    procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
+    procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
     constructor Create(zulip : TZulipTracker);
@@ -129,7 +129,7 @@ begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
     '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :c)';
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :c)';
   conn.prepare;
   conn.BindDateTimeEx('d', date);
   conn.BindString('u', canonical);
@@ -288,32 +288,26 @@ var
   kind : TFHIRPackageKind;
   ts : TStringList;
 begin
-  npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil);
+  npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil, true);
   try
     id := npm.name;
     version := npm.version;
     if (id+'#'+version <> idver) then
-    begin
-      log('Error processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
-      exit;
-    end;
+      log('Warning processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
     if npm.notForPublication then
-    begin
-      log('Error processing '+idver+': this package is not suitable for publication', source, true);
-      exit;
-    end;
+      log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise EFslException.Create('Id "'+id+'" is not valid');
+      raise EFslException.Create('NPM Id "'+id+'" is not valid from '+source);
     if not TSemanticVersion.isValid(version) then
-      raise EFslException.Create('Version "'+version+'" is not valid');
+      raise EFslException.Create('NPM Version "'+version+'" is not valid from '+source);
     if (canonical = '') then
-      raise EFslException.Create('No canonical found in rss');
+      raise EFslException.Create('No canonical found in npm from '+source);
     if not isAbsoluteUrl(canonical) then
-      raise EFslException.Create('Canonical "'+canonical+'" is not valid');
+      raise EFslException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
 
     ts := TStringList.create;
     try
@@ -394,6 +388,7 @@ var
   xml : TMXmlElement;
   channel : TMXmlElement;
   item : TMXmlElement;
+  i : integer;
 begin
   try
     log('Fetch '+url, source, false);
@@ -405,11 +400,13 @@ begin
       begin
         if (channel.Name = 'channel') then
         begin
+          i := 0;
           for item in channel.Children do
           begin
             if (item.Name = 'item') then
             begin
-              updateItem(url, item, pr);
+              updateItem(url, item, i, pr);
+              inc(i);
             end;
           end;
         end;
@@ -429,7 +426,7 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; pr : TPackageRestrictions);
+procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; i : integer; pr : TPackageRestrictions);
 var
   guid : String;
   content : TBytes;
@@ -437,6 +434,11 @@ var
   id, url, d, list: String;
 begin
   url := '??';
+  if item.element('guid') = nil then
+  begin
+    log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);
+    exit;
+  end;
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
@@ -484,6 +486,7 @@ function TPackageRestrictions.isOk(package, feed: String; var list : String): bo
 var
   e, f : TJsonNode;
   eo : TJsonObject;
+  p, m, ff, v : String;
 begin
   result := true;
   list := '';
@@ -492,12 +495,16 @@ begin
     for e in FJson do
     begin
       eo := e as TJsonObject;
-      if matches(fix(package), fix(eo.str['mask'])) then
+      p := fix(package);
+      m := fix(eo.str['mask']);
+      if matches(p, m) then
       begin
         result := false;
         for f in eo.arr['feeds'] do
         begin
-          result := result or (fix(feed) = fix(TJsonString(f).value));
+          ff := fix(feed);
+          v := fix(TJsonString(f).value);
+          result := result or (ff = v);
           CommaAdd(list, TJsonString(f).value);
         end;
         exit(result);

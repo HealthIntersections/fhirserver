@@ -271,35 +271,48 @@ var
   c : TFDBConnection;
   m : TFDBMetaData;
   t : TFDBTable;
+  inst : TFHIRDatabaseInstaller;
 begin
   c := Database.GetConnection('Version check');
   try
     m := c.FetchMetaData;
     try
-      if m.HasTable('Packages') then
+      if not (m.HasTable('Packages')) then
       begin
-        t := m.GetTable('Packages');
-        if not t.hasColumn('Security') then
-          c.ExecSQL('ALTER TABLE Packages ADD Security int NULL');
-      end;
-      if m.HasTable('PackageVersions') then
-      begin
-        t := m.GetTable('PackageVersions');
-        if not t.hasColumn('UploadCount') then
-        begin
-          c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
-          c.ExecSQL('Update PackageVersions set UploadCount = 1');
+        inst := TFHIRDatabaseInstaller.create(c, nil, nil);
+        try
+          inst.installPackageServer;
+        finally
+          inst.free;
         end;
-      end;
-      if not m.HasTable('PackageURLs') then
+      end
+      else
       begin
-        c.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
-        c.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
-        c.ExecSQL('Delete from PackageDependencies');
-        c.ExecSQL('Delete from PackageFHIRVersions');
-        c.ExecSQL('Delete from PackagePermissions');
-        c.ExecSQL('Delete from PackageVersions');
-        c.ExecSQL('Delete from PackageDependencies');
+        if m.HasTable('Packages') then
+        begin
+          t := m.GetTable('Packages');
+          if not t.hasColumn('Security') then
+            c.ExecSQL('ALTER TABLE Packages ADD Security int NULL');
+        end;
+        if m.HasTable('PackageVersions') then
+        begin
+          t := m.GetTable('PackageVersions');
+          if not t.hasColumn('UploadCount') then
+          begin
+            c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
+            c.ExecSQL('Update PackageVersions set UploadCount = 1');
+          end;
+        end;
+        if not m.HasTable('PackageURLs') then
+        begin
+          c.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+          c.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
+          c.ExecSQL('Delete from PackageDependencies');
+          c.ExecSQL('Delete from PackageFHIRVersions');
+          c.ExecSQL('Delete from PackagePermissions');
+          c.ExecSQL('Delete from PackageVersions');
+          c.ExecSQL('Delete from PackageDependencies');
+        end;
       end;
     finally
       m.Free;
@@ -1026,7 +1039,7 @@ begin
   try
     check(isValidPackageId(id), 404, 'Invalid Package ID "'+id+'"');
     src := StreamToBytes(request.PostStream);
-    npm := TNpmPackage.fromPackage(src, 'Post Content', nil);
+    npm := TNpmPackage.fromPackage(src, 'Post Content', nil, false);
     try
       check(npm.name = id, 400, 'Package ID mismatch: "'+id+'" vs "'+npm.name+'"');
       check(npm.version <> '', 400, 'Package has no version');
@@ -1125,7 +1138,7 @@ begin
     if request.PostStream = nil then
       raise EFslException.Create('No Post Content found');
     blob := StreamToBytes(request.PostStream);
-    npm := TNpmPackage.fromPackage(blob, '', nil);
+    npm := TNpmPackage.fromPackage(blob, '', nil, false);
     try
       id := npm.info['name'];
       version := npm.info['version'];
