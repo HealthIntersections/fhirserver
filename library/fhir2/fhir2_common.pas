@@ -80,12 +80,23 @@ type
   { TFHIRExtension2 }
 
   TFHIRExtension2 = class (TFHIRExtensionW)
+  private
+    function ext : TFHIRExtension;
   protected
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
   public
     function url : String; override;
     function value : TFHIRObject; override;
     function renderText : String; override;
+    function valueAsCodeableConcept : TFhirCodeableConceptW; override;
+    function valueAsCoding : TFhirCodingW; override;
+    function valueAsPeriod : TFhirPeriodW; override;
+    function valueAsQuantity : TFhirQuantityW; override;
+    function valueAsIdentifier : TFhirIdentifierW; override;
+    function valueAsAttachment : TFhirAttachmentW; override;
+    function valueAsString : string; override;
+    procedure setValueW(value : TFhirDataTypeW); override;
+    procedure setValueV(value : TFhirObject); override;
   end;
 
   { TFHIRCoding2 }
@@ -121,6 +132,11 @@ type
     function fromSystem(System : String; required : boolean = false) : String; overload; override;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; override;
     function renderText : String; override;
+    function hasCode(systemUri, code : String) : boolean; override;
+    function hasCode(systemUri, version, code : String) : boolean; override;
+    procedure clearCodings; override;
+    procedure addCoding(systemUri, version, code, display : String); overload; override;
+
   end;
 
   { TFhirIdentifier2 }
@@ -3158,9 +3174,82 @@ end;
 
 { TFHIRExtension2 }
 
+function TFHIRExtension2.ext: TFHIRExtension;
+begin
+  result := (Element as TFHIRExtension);
+end;
+
 function TFHIRExtension2.renderText: String;
 begin
-  result := gen((Element as TFHIRExtension).value);
+  result := gen(ext.value);
+end;
+
+function TFHIRExtension2.valueAsCodeableConcept: TFhirCodeableConceptW;
+begin
+  if ext.value is TFHIRCodeableConcept then
+    result := TFHIRCodeableConcept2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsCoding: TFhirCodingW;
+begin
+  if ext.value is TFHIRCoding then
+    result := TFHIRCoding2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsPeriod: TFhirPeriodW;
+begin
+  if ext.value is TFHIRPeriod then
+    result := TFHIRPeriod2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsQuantity: TFhirQuantityW;
+begin
+  if ext.value is TFHIRQuantity then
+    result := TFHIRQuantity2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsIdentifier: TFhirIdentifierW;
+begin
+  if ext.value is TFHIRIdentifier then
+    result := TFHIRIdentifier2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsAttachment: TFhirAttachmentW;
+begin
+  if ext.value is TFHIRAttachment then
+    result := TFHIRAttachment2.create(ext.value.link)
+  else
+    result := nil;
+end;
+
+function TFHIRExtension2.valueAsString: string;
+begin
+  if ext.value is TFhirPrimitiveType then
+    result := ext.value.primitiveValue
+  else
+    result := '';
+end;
+
+procedure TFHIRExtension2.setValueW(value: TFhirDataTypeW);
+begin
+  setValueV(value.Element);
+end;
+
+procedure TFHIRExtension2.setValueV(value: TFhirObject);
+begin
+  if not (value is TFHIRType) then
+    raise EFHIRException.create('Wrong type at TFHIRExtension2.setValueV: '+value.ClassName+' ('+Codes_TFHIRVersion[value.fhirObjectVersion]);
+  ext.value := (value as TFHIRType).link;
 end;
 
 function TFHIRExtension2.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
@@ -3170,12 +3259,12 @@ end;
 
 function TFHIRExtension2.url: String;
 begin
-  result := (Element as TFHIRExtension).url;
+  result := ext.url;
 end;
 
 function TFHIRExtension2.value: TFHIRObject;
 begin
-  result := (Element as TFHIRExtension).value;
+  result := ext.value;
 end;
 
 { TFHIRCoding2 }
@@ -4967,6 +5056,26 @@ end;
 function TFhirCodeableConcept2.summary: String;
 begin
   result := summarise(Element as TFhirCodeableConcept);
+end;
+
+function TFhirCodeableConcept2.hasCode(systemUri, code: String): boolean;
+begin
+  result := (Element as TFhirCodeableConcept).hasCode(systemUri, code);
+end;
+
+function TFhirCodeableConcept2.hasCode(systemUri, version, code: String): boolean;
+begin
+  result := (Element as TFhirCodeableConcept).hasCode(systemUri, version, code);
+end;
+
+procedure TFhirCodeableConcept2.clearCodings;
+begin
+  (Element as TFhirCodeableConcept).codingList.Clear;
+end;
+
+procedure TFhirCodeableConcept2.addCoding(systemUri, version, code, display : String);
+begin
+  (Element as TFhirCodeableConcept).addCoding(systemUri, version, code, display);
 end;
 
 { TFHIRGroup2 }
