@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="fhir_fdb"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <IncludeFiles Value="../library"/>
+        <OtherUnitFiles Value="../library/fdb"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="../library/fdb/fdb_dialects.pas"/>
+        <UnitName Value="fdb_dialects"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_fpc.pas"/>
+        <UnitName Value="fdb_fpc"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_logging.pas"/>
+        <UnitName Value="fdb_logging"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_manager.pas"/>
+        <UnitName Value="fdb_manager"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_odbc_headers.pas"/>
+        <UnitName Value="fdb_odbc_headers"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_odbc_objects.pas"/>
+        <UnitName Value="fdb_odbc_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_odbc.pas"/>
+        <UnitName Value="fdb_odbc"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_settings.pas"/>
+        <UnitName Value="fdb_settings"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_sqlite3_objects.pas"/>
+        <UnitName Value="fdb_sqlite3_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_sqlite3_utilities.pas"/>
+        <UnitName Value="fdb_sqlite3_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_sqlite3_wrapper.pas"/>
+        <UnitName Value="fdb_sqlite3_wrapper"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_sqlite3.pas"/>
+        <UnitName Value="fdb_sqlite3"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

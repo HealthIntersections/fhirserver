@@ -89,7 +89,7 @@ begin
       begin
         json := TJSONParser.Parse(client.Buffer.AsText);
         try
-          raise Exception.Create('Error Sending Message '+json.str['msg']);
+          raise Exception.Create('Error Sending Message: '+json.str['msg']);
         finally
           json.free;
         end;

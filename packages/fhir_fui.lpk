@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fui;..\dependencies\mediafoundation"/>
         <UnitOutputDirectory Value="lib\fui\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>

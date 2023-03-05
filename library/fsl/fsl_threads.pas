@@ -40,7 +40,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
   {$IFDEF FPC} process, {$ENDIF}
 
-  SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
+  SysUtils, SyncObjs, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_fpc;
 
 const
@@ -64,6 +64,7 @@ function GetThreadReport : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
+procedure CloseThreadInternal(name : String);
 
 type
   {$IFNDEF FPC}
@@ -709,9 +710,6 @@ begin
     GHaveCritSect := true;
     GBackgroundTasks := TBackgroundTaskManager.Create;
     GThreadList := TList.Create;
-    IdThread.fsThreadName := SetThreadName;
-    IdThread.fsThreadStatus := SetThreadStatus;
-    IdThread.fsThreadClose := CloseThreadInternal;
     GetThreadNameStatusDelegate := GetThreadNameStatus;
   end;
 end;
@@ -722,9 +720,6 @@ var
   p : PTheadRecord;
 begin
   GHaveCritSect := false;
-  IdThread.fsThreadName := nil;
-  IdThread.fsThreadStatus := nil;
-  IdThread.fsThreadClose := nil;
   for i := GThreadList.Count - 1 downto 0 do
   begin
     p := GThreadList[i];

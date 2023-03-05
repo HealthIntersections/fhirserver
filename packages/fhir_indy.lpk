@@ -19,7 +19,7 @@
       </Parsing>
       <Other>
         <CompilerMessages>
-          <IgnoredMessages idx5091="True" idx5024="True"/>
+          <IgnoredMessages idx6058="True" idx5091="True" idx5024="True"/>
         </CompilerMessages>
         <CustomOptions Value="-Ur STATICLOAD_OPENSSL"/>
       </Other>

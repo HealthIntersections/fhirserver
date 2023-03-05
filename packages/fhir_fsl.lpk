@@ -19,7 +19,7 @@
       </Parsing>
       <Other>
         <CompilerMessages>
-          <IgnoredMessages idx5091="True" idx5024="True"/>
+          <IgnoredMessages idx6058="True" idx5091="True" idx5024="True"/>
         </CompilerMessages>
       </Other>
     </CompilerOptions>
@@ -35,14 +35,6 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_comparisons.pas"/>
         <UnitName Value="fsl_comparisons"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_crypto.pas"/>
-        <UnitName Value="fsl_crypto"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_fetcher.pas"/>
-        <UnitName Value="fsl_fetcher"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_fpc.pas"/>
@@ -73,28 +65,8 @@
         <UnitName Value="fsl_logging"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fsl\fsl_msxml.pas"/>
-        <UnitName Value="fsl_msxml"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fsl\fsl_npm.pas"/>
         <UnitName Value="fsl_npm"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_npm_cache.pas"/>
-        <UnitName Value="fsl_npm_cache"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_npm_client.pas"/>
-        <UnitName Value="fsl_npm_client"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_oauth.pas"/>
-        <UnitName Value="fsl_oauth"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_openssl.pas"/>
-        <UnitName Value="fsl_openssl"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_rdf.pas"/>
@@ -133,20 +105,8 @@
         <UnitName Value="fsl_turtle"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fsl\fsl_twilio.pas"/>
-        <UnitName Value="fsl_twilio"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fsl\fsl_utilities.pas"/>
         <UnitName Value="fsl_utilities"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_websocket.pas"/>
-        <UnitName Value="fsl_websocket"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_wininet.pas"/>
-        <UnitName Value="fsl_wininet"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_xml.pas"/>
@@ -172,14 +132,10 @@
         <Filename Value="..\library\fsl\fsl_versions.pas"/>
         <UnitName Value="fsl_versions"/>
       </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_zulip.pas"/>
-        <UnitName Value="fsl_zulip"/>
-      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
-        <PackageName Value="fhir_indy"/>
+        <PackageName Value="LazUtils"/>
       </Item>
       <Item>
         <PackageName Value="tzdb_fpc"/>
