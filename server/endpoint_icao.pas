@@ -40,7 +40,7 @@ uses
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   PdfiumCore,
   fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads,
-  fhir_objects, fhir_icao,
+  fhir_objects, fhir_icao, fsl_web_stream,
   fhir4_factory,
   utilities, server_config, time_tracker, storage,
   web_base, endpoint, healthcard_generator;

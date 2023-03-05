@@ -417,41 +417,44 @@ var
   msg : TIdMessage;
   ssl : TIdOpenSSLIOHandlerClient;
 begin
-  sender := TIdSMTP.Create(Nil);
-  try
-    sender.Host := settings.SMTPHost;
-    sender.port := StrToInt(settings.SMTPPort);
-    sender.Username := settings.SMTPUsername;
-    sender.Password := settings.SMTPPassword;
-    if settings.SMTPUseTLS then
-    begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
-      sender.IOHandler := ssl;
-      sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
-      ssl.Host := settings.SMTPHost;
-      ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(settings.SMTPPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-      ssl.Options.VerifyServerCertificate := false;
-    end;
-    sender.Connect;
-    msg := TIdMessage.Create(Nil);
+  if (settings.SMTPHost <> '') and (settings.SMTPPort <> '') then
+  begin
+    sender := TIdSMTP.Create(Nil);
     try
-      msg.Subject := subj;
-      msg.Recipients.Add.Address := dest;
-      msg.From.Text := settings.SMTPSender;
-      msg.Body.Text := body;
-      Logging.log('Send '+msg.MsgId+' to '+dest);
-      sender.Send(msg);
+      sender.Host := settings.SMTPHost;
+      sender.port := StrToInt(settings.SMTPPort);
+      sender.Username := settings.SMTPUsername;
+      sender.Password := settings.SMTPPassword;
+      if settings.SMTPUseTLS then
+      begin
+        ssl := TIdOpenSSLIOHandlerClient.create;
+        sender.IOHandler := ssl;
+        sender.UseTLS := utUseExplicitTLS;
+        ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
+        ssl.Host := settings.SMTPHost;
+        ssl.MaxLineAction := maException;
+        ssl.Port := StrToInt(settings.SMTPPort);
+        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+        ssl.Options.VerifyServerCertificate := false;
+      end;
+      sender.Connect;
+      msg := TIdMessage.Create(Nil);
+      try
+        msg.Subject := subj;
+        msg.Recipients.Add.Address := dest;
+        msg.From.Text := settings.SMTPSender;
+        msg.Body.Text := body;
+        Logging.log('Send '+msg.MsgId+' to '+dest);
+        sender.Send(msg);
+      Finally
+        msg.Free;
+      End;
+      sender.Disconnect;
     Finally
-      msg.Free;
+      sender.IOHandler.free;
+      sender.Free;
     End;
-    sender.Disconnect;
-  Finally
-    sender.IOHandler.free;
-    sender.Free;
-  End;
+  end;
 end;
 
 procedure sendSMS(settings : TFHIRServerSettings; Dest,Msg: String);

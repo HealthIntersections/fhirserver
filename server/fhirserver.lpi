@@ -765,9 +765,10 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="25">
+    <Exceptions Count="27">
       <Item1>
         <Name Value="EAbort"/>
+        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>
@@ -795,12 +796,15 @@
       </Item7>
       <Item8>
         <Name Value="EIdSocketError"/>
+        <Enabled Value="False"/>
       </Item8>
       <Item9>
         <Name Value="EIdConnClosedGracefully"/>
+        <Enabled Value="False"/>
       </Item9>
       <Item10>
         <Name Value="EIdCouldNotBindSocket"/>
+        <Enabled Value="False"/>
       </Item10>
       <Item11>
         <Name Value="EXmlException"/>
@@ -812,6 +816,7 @@
       </Item12>
       <Item13>
         <Name Value="EAssertionFailedError"/>
+        <Enabled Value="False"/>
       </Item13>
       <Item14>
         <Name Value="ERegExpr"/>
@@ -819,9 +824,11 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
+        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
+        <Enabled Value="False"/>
       </Item16>
       <Item17>
         <Name Value="ETerminologyError"/>
@@ -831,9 +838,11 @@
       </Item18>
       <Item19>
         <Name Value="EIdReadTimeout"/>
+        <Enabled Value="False"/>
       </Item19>
       <Item20>
         <Name Value="EIdResolveError"/>
+        <Enabled Value="False"/>
       </Item20>
       <Item21>
         <Name Value="00000015EAssertionFailedError"/>
@@ -849,8 +858,14 @@
       </Item24>
       <Item25>
         <Name Value="00000018EIdHTTPProtocolException"/>
-        <Enabled Value="False"/>
       </Item25>
+      <Item26>
+        <Name Value="EListError"/>
+        <Enabled Value="False"/>
+      </Item26>
+      <Item27>
+        <Name Value="0000000fEIdResolveError\rEIdNotASocket"/>
+      </Item27>
     </Exceptions>
   </Debugging>
 </CONFIG>

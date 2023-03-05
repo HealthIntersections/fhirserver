@@ -262,10 +262,10 @@
     </RunParams>
     <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="fcomp"/>
       </Item1>
       <Item2>
-        <PackageName Value="fcomp"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item2>
       <Item3>
         <PackageName Value="LazControls"/>

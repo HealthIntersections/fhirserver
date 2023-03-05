@@ -43,7 +43,7 @@ uses
   IdContext, IdCustomHTTPServer, IdOpenSSLX509, IdGlobalProtocols, IdCompressorZLib, IdZlib,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging,
   fhir_objects, fhir_client, fhir_common, fhir_parser, fhir_utilities, fhir_xhtml, fhir_ndjson,
-  fdb_manager,
+  fdb_manager, fsl_web_stream,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
   tx_manager, tx_webserver, telnet_server, time_tracker,

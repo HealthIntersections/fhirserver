@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Registry,
   IdContext, IdCustomHTTPServer,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads, fsl_web_stream,
   fhir_objects,
   session,
   storage,
