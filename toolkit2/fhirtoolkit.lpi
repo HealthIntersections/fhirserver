@@ -219,7 +219,7 @@
           </Linking>
           <Other>
             <CompilerMessages>
-              <IgnoredMessages idx5024="True"/>
+              <IgnoredMessages idx6058="True" idx5024="True"/>
             </CompilerMessages>
             <CustomOptions Value="-WM11.0
 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
@@ -742,6 +742,20 @@
         <Filename Value="dialogs\dlg_txsrvr_props.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TxServerPropertiesDialog"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_gender_identity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="GenderIdentityDialog"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dialogs\dlg_pronouns.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PronounsDialog"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

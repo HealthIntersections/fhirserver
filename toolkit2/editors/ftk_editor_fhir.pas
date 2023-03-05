@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils,
-  Controls, StdCtrls, ComCtrls,
+  Controls, StdCtrls, ComCtrls, DIalogs,
   SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_logging, fsl_stream,
   fsl_http,
@@ -92,6 +92,7 @@ type
     function hasDesigner : boolean; override;
     procedure makeDesigner; override;
     procedure updateDesigner; override;
+    procedure commitDesigner; override;
   end;
 
 
@@ -494,6 +495,11 @@ begin
   end;
   FDesigner.Client := Store.clientForAddress(Session.Address).Link;
   FDesigner.resource := FResource.link;
+end;
+
+procedure TFHIREditor.commitDesigner;
+begin
+  ShowMessage('not done yet');
 end;
 
 

@@ -1,40 +1,40 @@
 object PatientFrame: TPatientFrame
   Left = 0
-  Height = 636
+  Height = 774
   Top = 0
-  Width = 880
-  ClientHeight = 636
-  ClientWidth = 880
+  Width = 608
+  ClientHeight = 774
+  ClientWidth = 608
   TabOrder = 0
   DesignLeft = 643
   DesignTop = 38
   object PageControl1: TPageControl
     Left = 0
-    Height = 636
+    Height = 774
     Top = 0
-    Width = 880
+    Width = 608
     ActivePage = TabSheet1
     Align = alClient
     TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Patient Details'
-      ClientHeight = 606
-      ClientWidth = 874
+      ClientHeight = 744
+      ClientWidth = 602
       object pnlPatientDetails: TPanel
         Left = 0
         Height = 96
         Top = 0
-        Width = 874
+        Width = 602
         Align = alTop
         ClientHeight = 96
-        ClientWidth = 874
+        ClientWidth = 602
         TabOrder = 0
         object edtNameSummary: TEdit
           Left = 80
           Height = 21
           Top = 8
-          Width = 775
+          Width = 503
           Anchors = [akTop, akLeft, akRight]
           Color = 15132390
           ReadOnly = True
@@ -61,7 +61,7 @@ object PatientFrame: TPatientFrame
           Left = 80
           Height = 18
           Top = 36
-          Width = 775
+          Width = 503
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
           Caption = 'This record is active'
@@ -102,9 +102,9 @@ object PatientFrame: TPatientFrame
       end
       object PageControl2: TPageControl
         Left = 0
-        Height = 510
+        Height = 648
         Top = 96
-        Width = 874
+        Width = 602
         ActivePage = TabSheet4
         Align = alClient
         TabIndex = 2
@@ -117,18 +117,18 @@ object PatientFrame: TPatientFrame
         end
         object TabSheet4: TTabSheet
           Caption = 'Gender Information'
-          ClientHeight = 480
-          ClientWidth = 868
+          ClientHeight = 618
+          ClientWidth = 596
           OnResize = TabSheet4Resize
           object gbGenderIdentity: TGroupBox
             Left = 0
             Height = 105
-            Top = 26
-            Width = 868
+            Top = 40
+            Width = 596
             Align = alTop
             Caption = 'Gender Identity'
             ClientHeight = 86
-            ClientWidth = 858
+            ClientWidth = 586
             TabOrder = 0
             object btnAddGenderId: TBitBtn
               Left = 0
@@ -255,7 +255,7 @@ object PatientFrame: TPatientFrame
               Left = 32
               Height = 86
               Top = 0
-              Width = 826
+              Width = 554
               Align = alRight
               Anchors = [akTop, akLeft, akRight, akBottom]
               Columns = <              
@@ -270,7 +270,7 @@ object PatientFrame: TPatientFrame
                 item
                   AutoSize = True
                   Caption = 'Comment'
-                  Width = 377
+                  Width = 125
                 end>
               TabOrder = 3
             end
@@ -278,12 +278,12 @@ object PatientFrame: TPatientFrame
           object gbPronouns: TGroupBox
             Left = 0
             Height = 97
-            Top = 131
-            Width = 868
+            Top = 145
+            Width = 596
             Align = alTop
             Caption = 'Pronouns'
             ClientHeight = 78
-            ClientWidth = 858
+            ClientWidth = 586
             TabOrder = 1
             object btnAddPronoun: TBitBtn
               Left = 0
@@ -410,7 +410,7 @@ object PatientFrame: TPatientFrame
               Left = 32
               Height = 78
               Top = 0
-              Width = 826
+              Width = 554
               Align = alRight
               Anchors = [akTop, akLeft, akRight, akBottom]
               Columns = <              
@@ -425,7 +425,7 @@ object PatientFrame: TPatientFrame
                 item
                   AutoSize = True
                   Caption = 'Comment'
-                  Width = 100
+                  Width = 125
                 end>
               TabOrder = 3
             end
@@ -433,12 +433,12 @@ object PatientFrame: TPatientFrame
           object gbSexForClinicalUse: TGroupBox
             Left = 0
             Height = 97
-            Top = 228
-            Width = 868
+            Top = 242
+            Width = 596
             Align = alTop
             Caption = 'Sex for Clinical Use'
             ClientHeight = 78
-            ClientWidth = 858
+            ClientWidth = 586
             TabOrder = 2
             object btnAddSFCU: TBitBtn
               Left = 0
@@ -561,11 +561,11 @@ object PatientFrame: TPatientFrame
               }
               TabOrder = 2
             end
-            object ListView3: TListView
+            object lvSFCU: TListView
               Left = 32
               Height = 78
               Top = 0
-              Width = 826
+              Width = 554
               Align = alRight
               Anchors = [akTop, akLeft, akRight, akBottom]
               Columns = <              
@@ -584,20 +584,20 @@ object PatientFrame: TPatientFrame
                 item
                   AutoSize = True
                   Caption = 'Support'
-                  Width = 150
+                  Width = 75
                 end>
               TabOrder = 3
             end
           end
           object gbRecordedSexOrGender: TGroupBox
             Left = 0
-            Height = 155
-            Top = 325
-            Width = 868
+            Height = 279
+            Top = 339
+            Width = 596
             Align = alClient
             Caption = 'Record of Sex or Gender'
-            ClientHeight = 136
-            ClientWidth = 858
+            ClientHeight = 260
+            ClientWidth = 586
             TabOrder = 3
             object btnAddRecord: TBitBtn
               Left = 0
@@ -720,17 +720,20 @@ object PatientFrame: TPatientFrame
               }
               TabOrder = 2
             end
-            object ListView4: TListView
+            object lvRecordedSex: TListView
               Left = 32
-              Height = 136
+              Height = 260
               Top = 0
-              Width = 826
+              Width = 554
               Align = alRight
               Anchors = [akTop, akLeft, akRight, akBottom]
               Columns = <              
                 item
                   Caption = 'Code'
                   Width = 100
+                end              
+                item
+                  Caption = 'ICAO'
                 end              
                 item
                   Caption = 'Type'
@@ -755,19 +758,19 @@ object PatientFrame: TPatientFrame
                 item
                   AutoSize = True
                   Caption = 'Comment'
-                  Width = 100
+                  Width = 0
                 end>
               TabOrder = 3
             end
           end
           object pnlAdminGender: TPanel
             Left = 0
-            Height = 26
+            Height = 40
             Top = 0
-            Width = 868
+            Width = 596
             Align = alTop
-            ClientHeight = 26
-            ClientWidth = 868
+            ClientHeight = 40
+            ClientWidth = 596
             TabOrder = 4
             object Label5: TLabel
               Left = 8
@@ -780,19 +783,20 @@ object PatientFrame: TPatientFrame
             object cbxGender: TComboBox
               Left = 112
               Height = 20
-              Top = 4
-              Width = 751
+              Top = 8
+              Width = 475
+              Anchors = [akTop, akLeft, akRight]
               ItemHeight = 26
               ItemIndex = 0
               Items.Strings = (
-                'Male'
                 'Female'
+                'Male'
                 'Other'
                 'Unknown'
               )
               Style = csDropDownList
               TabOrder = 0
-              Text = 'Male'
+              Text = 'Female'
             end
           end
         end
@@ -803,16 +807,16 @@ object PatientFrame: TPatientFrame
     end
     object TabSheet2: TTabSheet
       Caption = 'Health Cards'
-      ClientHeight = 606
-      ClientWidth = 874
+      ClientHeight = 744
+      ClientWidth = 602
       object Panel1: TPanel
         Left = 0
         Height = 38
         Top = 0
-        Width = 874
+        Width = 602
         Align = alTop
         ClientHeight = 38
-        ClientWidth = 874
+        ClientWidth = 602
         ParentColor = False
         TabOrder = 0
         object btnFetchHealthCards: TButton
@@ -835,9 +839,9 @@ object PatientFrame: TPatientFrame
       end
       object lvCards: TListView
         Left = 0
-        Height = 304
+        Height = 442
         Top = 38
-        Width = 874
+        Width = 602
         Align = alClient
         AutoWidthLastColumn = True
         Columns = <        
@@ -859,7 +863,7 @@ object PatientFrame: TPatientFrame
           end        
           item
             Caption = 'Summary'
-            Width = 437
+            Width = 165
           end>
         TabOrder = 1
         ViewStyle = vsReport
@@ -867,12 +871,12 @@ object PatientFrame: TPatientFrame
       object Panel2: TPanel
         Left = 0
         Height = 227
-        Top = 349
-        Width = 874
+        Top = 487
+        Width = 602
         Align = alBottom
         Caption = 'Panel2'
         ClientHeight = 227
-        ClientWidth = 874
+        ClientWidth = 602
         TabOrder = 2
         object Panel4: TPanel
           Left = 1
@@ -910,18 +914,18 @@ object PatientFrame: TPatientFrame
           Left = 187
           Height = 225
           Top = 1
-          Width = 686
+          Width = 414
           Align = alClient
           BorderWidth = 4
           Caption = 'Panel5'
           ClientHeight = 225
-          ClientWidth = 686
+          ClientWidth = 414
           TabOrder = 1
           object htmlCard: THtmlViewer
             Left = 5
             Height = 215
             Top = 5
-            Width = 676
+            Width = 404
             BorderStyle = htNone
             DefBackground = clWhite
             DefFontSize = 10
@@ -940,8 +944,8 @@ object PatientFrame: TPatientFrame
       object pnlHealthcardsOutome: TPanel
         Left = 0
         Height = 30
-        Top = 576
-        Width = 874
+        Top = 714
+        Width = 602
         Align = alBottom
         Alignment = taLeftJustify
         Caption = '  Not queried'
@@ -951,12 +955,20 @@ object PatientFrame: TPatientFrame
         Cursor = crVSplit
         Left = 0
         Height = 7
-        Top = 342
-        Width = 874
+        Top = 480
+        Width = 602
         Align = alBottom
         ResizeAnchor = akBottom
       end
     end
+  end
+  object Label8: TLabel
+    Left = 8
+    Height = 16
+    Top = 6
+    Width = 90
+    Caption = 'Admin Gender:'
+    ParentColor = False
   end
   object pmImage: TPopupMenu
     Left = 616
