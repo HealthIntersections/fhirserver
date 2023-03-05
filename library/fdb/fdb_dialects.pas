@@ -41,8 +41,8 @@ uses
 Type
   // never insert into this - order is important
 
-  TFDBPlatform = (kdbUnknown, kdbSQLServer, kdbSybase11, kdbCtree,
-                  kdbAccess,  kdbDBIsam,    kdbInterbase, kdbDB2,  kdbGenericODBC,
+  TFDBPlatform = (kdbUnknown, kdbGenericODBC, kdbSQLServer, kdbSybase11,
+                  kdbAccess,  kdbInterbase, kdbDB2,
                   kdbOracle8, kdbMySQL,     kdbASA,       kdbSybase12, kdbSQLite);
 
   TFDBPlatforms = set of TFDBPlatform;
@@ -52,6 +52,8 @@ const
   KDB_ALL_PLATFORMS = [Low(TFDBPlatform) .. High(TFDBPlatform)];
   EOL_WINDOWS = #13#10;
   EOL_PLATFORM = EOL_WINDOWS;
+  CODES_TFDBPlatform: Array[TFDBPlatform] of String = ('Unknown', 'Server', 'MSSQL', 'Sybase11', 'MSAccess',
+     'Interbase', 'DB2', 'Oracle', 'MYSQL', 'ASA', 'Sybase12', 'SQLite');
 
 // platform Recognition
 function RecogniseDriver(ADriverDesc: String): TFDBPlatform;
@@ -113,7 +115,7 @@ begin
     end;
 
   // recognise standard ODBC driver descriptions
-  if ADriverDesc = 'sql server' then
+  if ADriverDesc.Contains('sql server') then
     begin
     Result := kdbSQLServer;
     end
@@ -132,14 +134,6 @@ begin
   else if ADriverDesc = 'odbc driver 17 for sql server' then
     begin
     Result := kdbSQLServer;
-    end
-  else if ADriverDesc = 'faircom 32bit odbc driver' then
-    begin
-    Result := kdbCtree
-    end
-  else if ADriverDesc = 'c-treesql odbc driver' then
-    begin
-    Result := kdbCtree
     end
   else if ADriverDesc = 'microsoft access driver' then
     begin
@@ -200,21 +194,9 @@ begin
       begin
       Result := kdbSQLServer
       end
-    else if pos('ctree', ADriverDesc) <> 0 then
-      begin
-      Result := kdbCtree
-      end
     else if pos('access', ADriverDesc) <> 0 then
       begin
       Result := kdbAccess
-      end
-    else if pos('dbisam', ADriverDesc) <> 0 then
-      begin
-      Result := kdbDBIsam
-      end
-    else if pos('internal', ADriverDesc) <> 0 then
-      begin
-      Result := kdbDBIsam
       end
     else if pos('interbase', ADriverDesc) <> 0 then
       begin
@@ -252,9 +234,7 @@ begin
   case RecogniseDriver(ADriverDesc) of
     kdbSQLServer: Result := 'mssql';
     kdbSybase11: Result := 'sybase';
-    kdbCtree: Result := 'ctree';
     kdbAccess: Result := 'access';
-    kdbDBIsam: Result := 'internal';
     kdbInterbase: Result := 'interbase';
     kdbDB2: Result := 'IBM DB2';
     kdbOracle8: Result := 'oracle';
@@ -273,9 +253,7 @@ begin
   case ADBPlatform of
     kdbSQLServer: Result := 'Microsoft SQLServer';
     kdbSybase11: Result := 'Sybase Enterprise';
-    kdbCtree: Result := 'Faircom CTreeSQL';
     kdbAccess: Result := 'Microsoft Access';
-    kdbDBIsam: Result := 'DBISAM (Internal)';
     kdbInterbase: Result := 'Firebird (or Interbase v6)';
     kdbDB2: Result := 'IBM DB2';
     kdbOracle8: Result := 'Oracle Corporation';
@@ -295,9 +273,7 @@ begin
   case ADBPlatform of
     kdbSQLServer: Result := 'MSSQLServer';
     kdbSybase11: Result := 'SybaseSystem11';
-    kdbCtree: Result := 'CTreeSQL';
     kdbAccess: Result := 'MSAccess';
-    kdbDBIsam: Result := 'DBISAM';
     kdbInterbase: Result := 'Interbase';
     kdbDB2: Result := 'IBM DB2';
     kdbOracle8: Result := 'OracleCorporation';
@@ -318,9 +294,7 @@ begin
     kdbUnknown: Result := '';
     kdbSQLServer: Result := 'SQL Server';
     kdbSybase11: Result := '';
-    kdbCtree: Result := 'c-treeSQL ODBC Driver';
     kdbAccess: Result := 'Microsoft Access Driver (*.mdb)';
-    kdbDBIsam: Result := '';
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
     kdbOracle8: Result := '';
@@ -343,9 +317,7 @@ begin
     kdbUnknown, kdbGenericODBC: Result := '^.*$';
     kdbSQLServer: Result := '^.*sql.*$';
     kdbSybase11: Result := '^.*sybase.*server.*$';
-    kdbCtree: Result := '^.*c*tree.*$';
     kdbAccess: Result := '^.*microsoft.*access.*$';
-    kdbDBIsam: Result := '^no match$';
     kdbInterbase: Result := '^no match$';
     kdbDB2: Result := '^.*db2.*$';
     kdbOracle8: Result := '^.*oracle.*$';
@@ -368,9 +340,7 @@ begin
     kdbUnknown: Result := '';
     kdbSQLServer: Result := 'sql server';
     kdbSybase11: Result := 'sybase system 11';
-    kdbCtree: Result := 'c-treeSQL ODBC Driver';
     kdbAccess: Result := 'microsoft access driver';
-    kdbDBIsam: Result := '';
     kdbInterbase: Result := 'Interbase';
     kdbDB2: Result := 'ibm db2 odbc driver';
     kdbOracle8: Result := 'oracle odbc driver';
@@ -390,9 +360,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'int IDENTITY(1,1) Not Null';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'numeric(12, 0) IDENTITY Not Null';
-    kdbCtree: raise EDBException.create('You are using Ctree!');
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'autoinc Not Null';
     kdbInterbase: Result := 'int Not null';
     kdbDB2: Result := 'INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)';
     kdbOracle8: Result := 'number(12, 0)';
@@ -410,9 +378,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := False;
     kdbSybase11, kdbASA, kdbSybase12: Result := False;
-    kdbCtree: result := false;
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := False;
     kdbDB2: Result := False;
     kdbInterbase:
       begin
@@ -451,9 +417,7 @@ begin
     kdbUnknown: raise EDBException.create('Unknown Database Platform!');
     kdbSQLServer : Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY CLUSTERED (' + APrimaryKeyName + ')';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'PRIMARY KEY CLUSTERED (' + APrimaryKeyName + ')';
-    kdbCtree: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbAccess: raise EDBException.create('You are using MSACESS!');
-    kdbDBIsam: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbInterbase: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbDB2: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbOracle8: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
@@ -479,9 +443,7 @@ begin
     kdbSybase11: raise EDBException.create('Sybase field field for Unicode not yet resolved');
     kdbSybase12: Result := 'unichar('+inttostr(ASize)+')';
     kdbASA : result := 'char('+inttostr(ASize*2)+')';
-    kdbCtree: result := 'char('+inttostr(ASize*2)+')';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'char('+inttostr(ASize*2)+')';
     kdbInterbase: Result := 'char('+inttostr(ASize*2)+')';
     kdbDB2: result := 'char('+inttostr(ASize*2)+')';
     kdbOracle8: raise EDBException.create('Oracle field field for Unicode not yet resolved');
@@ -501,9 +463,7 @@ begin
     kdbSQLServer : Result := 'float';
     kdbSybase11, kdbSybase12: Result := 'float';
     kdbASA : result := 'FLOAT';
-    kdbCtree: result := 'FLOAT';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: result := 'float';
     kdbInterbase: result := 'float';
     kdbDB2: result := 'float';
     kdbOracle8: raise EDBException.create('Oracle field field for Float not yet resolved');
@@ -522,9 +482,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'int';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'numeric(12, 0)';
-    kdbCtree: Result := 'int';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'int';
     kdbInterbase: Result := 'int';
     kdbDB2: Result := 'int';
     kdbOracle8: Result := 'number(12,0)';
@@ -543,9 +501,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'image';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'image';
-    kdbCtree: result := 'LVARBINARY';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'blob(1,1)';
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
     kdbOracle8: Result := 'blob default empty_blob()';
@@ -565,9 +521,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'image';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'image';
-    kdbCtree: result := 'LVARBINARY';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'blob(1,1)';
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
     kdbOracle8: Result := 'blob default empty_blob()';
@@ -589,9 +543,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := '';
     kdbSybase11, kdbASA, kdbSybase12: Result := '';
-    kdbCtree: raise EDBException.create('You are using Ctree!');
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := '';
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
     kdbOracle8:
@@ -615,9 +567,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'datetime';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'datetime';
-    kdbCtree: Result := 'timestamp';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'timestamp';
     kdbInterbase: Result := 'timestamp';
     kdbDB2: Result := 'timestamp';
     kdbOracle8: Result := 'date';
@@ -636,9 +586,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'getdate()';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'getdate()';
-    kdbCtree: result := 'CURDATE()';
     kdbAccess: Result := '(Date() + Time())';
-    kdbDBIsam: Result := 'CURRENT_TIMESTAMP';
     kdbInterbase: Result := 'CURRENT_TIMESTAMP';
     kdbDB2: Result := 'CURRENT TIMESTAMP';
     kdbOracle8: Result := 'sysdate';
@@ -674,28 +622,10 @@ begin
         begin
         Result := 'Not Null';
         end;
-    kdbCtree:
-      if ABeNull then
-        begin
-        Result := ''
-        end
-      else
-        begin
-        Result := 'Not Null';
-        end;
     kdbAccess:
       if ABeNull then
         begin
         Result := 'Null'
-        end
-      else
-        begin
-        Result := 'Not Null';
-        end;
-    kdbDBIsam:
-      if ABeNull then
-        begin
-        Result := ''
         end
       else
         begin
@@ -759,9 +689,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'bit';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'bit';
-    kdbCtree: Result := 'bit';
     kdbAccess: Result := 'DB_BOOLEAN';
-    kdbDBIsam: Result := 'boolean';
     kdbInterbase: Result := 'char(1)';
     kdbDB2: Result := 'char(1)';
     kdbOracle8: Result := 'number(1)';
@@ -780,9 +708,7 @@ begin
     kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer: Result := 'char';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'char';
-    kdbCtree: Result := 'char';
     kdbAccess: Result := 'char';
-    kdbDBIsam: Result := 'char';
     kdbInterbase: Result := 'char';
     kdbDB2: Result := 'char';
     kdbOracle8: Result := 'varchar';
@@ -803,9 +729,7 @@ begin
     kdbASA : result := 'BIGINT';
     kdbSybase11, kdbSybase12: raise EDBException.create('Sybase does not support Int64 values properly');
     // Result := 'numeric(18, 0)'; If Sybase ever gets ther act together then we can use this....
-    kdbCtree: Result := 'bigint';
     kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
-    kdbDBIsam: Result := 'largeint';
     kdbInterbase: Result := 'bigint';
     kdbDB2: Result := 'bigint';
     kdbOracle8: Result := 'number';
