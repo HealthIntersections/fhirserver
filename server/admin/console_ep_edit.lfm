@@ -1,7 +1,7 @@
 object EditEPForm: TEditEPForm
   Left = 639
   Height = 475
-  Top = 263
+  Top = 25
   Width = 626
   Caption = 'Edit EndPoint'
   ClientHeight = 475
@@ -11,14 +11,15 @@ object EditEPForm: TEditEPForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object cbxVersion: TComboBox
     Left = 80
-    Height = 23
+    Height = 20
     Top = 64
     Width = 531
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 26
+    ItemIndex = 0
     Items.Strings = (
       'r2'
       'r3'
@@ -29,6 +30,7 @@ object EditEPForm: TEditEPForm
     ParentFont = False
     Style = csDropDownList
     TabOrder = 4
+    Text = 'r2'
   end
   object Panel1: TPanel
     Left = 0
@@ -137,10 +139,10 @@ object EditEPForm: TEditEPForm
       TabOrder = 1
     end
     object btnDBTest: TBitBtn
-      Left = 10
+      Left = 8
       Height = 26
       Top = 8
-      Width = 75
+      Width = 88
       Caption = 'Test DB'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -183,10 +185,10 @@ object EditEPForm: TEditEPForm
       TabOrder = 2
     end
     object btnEPInstall: TBitBtn
-      Left = 92
+      Left = 96
       Height = 26
       Top = 8
-      Width = 75
+      Width = 88
       Caption = 'Install'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -231,7 +233,7 @@ object EditEPForm: TEditEPForm
   end
   object edtIdentity: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 8
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -241,11 +243,12 @@ object EditEPForm: TEditEPForm
   end
   object cbxType: TComboBox
     Left = 80
-    Height = 23
+    Height = 20
     Top = 36
     Width = 531
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 26
+    ItemIndex = 0
     Items.Strings = (
       'full'
       'terminology'
@@ -260,10 +263,11 @@ object EditEPForm: TEditEPForm
     ParentFont = False
     Style = csDropDownList
     TabOrder = 2
+    Text = 'full'
   end
   object edtPath: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 92
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -273,50 +277,54 @@ object EditEPForm: TEditEPForm
   end
   object Label2: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 36
-    Width = 24
+    Width = 30
     Caption = 'Type'
+    ParentColor = False
     ParentFont = False
   end
   object Label4: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 67
-    Width = 38
+    Width = 45
     Caption = 'Version'
+    ParentColor = False
     ParentFont = False
   end
   object Label5: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 94
-    Width = 24
+    Width = 27
     Caption = 'Path'
+    ParentColor = False
     ParentFont = False
   end
   object Label1: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 8
-    Width = 40
+    Width = 46
     Caption = 'Identity'
+    ParentColor = False
     ParentFont = False
   end
   object cbxDriver: TComboBox
     Left = 79
-    Height = 23
+    Height = 20
     Top = 206
     Width = 531
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 19
     ParentFont = False
     TabOrder = 5
     Text = 'cbxDriver'
   end
   object edtServer: TEdit
     Left = 79
-    Height = 23
+    Height = 22
     Top = 234
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -326,7 +334,7 @@ object EditEPForm: TEditEPForm
   end
   object edtDBName: TEdit
     Left = 79
-    Height = 23
+    Height = 22
     Top = 262
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -336,7 +344,7 @@ object EditEPForm: TEditEPForm
   end
   object edtUsername: TEdit
     Left = 79
-    Height = 23
+    Height = 22
     Top = 290
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -346,7 +354,7 @@ object EditEPForm: TEditEPForm
   end
   object edtPassword: TEdit
     Left = 79
-    Height = 23
+    Height = 22
     Top = 318
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -356,57 +364,63 @@ object EditEPForm: TEditEPForm
   end
   object Label3: TLabel
     Left = 14
-    Height = 15
+    Height = 16
     Top = 184
-    Width = 48
+    Width = 57
     Caption = 'Database'
+    ParentColor = False
     ParentFont = False
   end
   object Label7: TLabel
     Left = 14
-    Height = 15
+    Height = 16
     Top = 210
-    Width = 31
+    Width = 36
     Caption = 'Driver'
+    ParentColor = False
     ParentFont = False
   end
   object Label8: TLabel
     Left = 15
-    Height = 15
+    Height = 16
     Top = 238
-    Width = 32
+    Width = 39
     Caption = 'Server'
+    ParentColor = False
     ParentFont = False
   end
   object Label9: TLabel
     Left = 15
-    Height = 15
+    Height = 16
     Top = 268
-    Width = 50
+    Width = 57
     Caption = 'DB Name'
+    ParentColor = False
     ParentFont = False
   end
   object Label10: TLabel
     Left = 14
-    Height = 15
+    Height = 16
     Top = 294
-    Width = 53
+    Width = 62
     Caption = 'Username'
+    ParentColor = False
     ParentFont = False
   end
   object Label11: TLabel
     Left = 14
-    Height = 15
+    Height = 16
     Top = 322
-    Width = 50
+    Width = 58
     Caption = 'Password'
+    ParentColor = False
     ParentFont = False
   end
   object rbMSSQL: TRadioButton
     Left = 79
     Height = 19
     Top = 180
-    Width = 130
+    Width = 153
     AutoSize = False
     Caption = 'Microsoft SQL Server'
     OnChange = rbMSSQLChange
@@ -417,7 +431,7 @@ object EditEPForm: TEditEPForm
     Left = 265
     Height = 19
     Top = 180
-    Width = 58
+    Width = 71
     AutoSize = False
     Caption = 'MySQL'
     OnChange = rbMSSQLChange
@@ -434,32 +448,34 @@ object EditEPForm: TEditEPForm
   end
   object Label6: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 122
-    Width = 33
+    Width = 37
     Caption = 'Active'
+    ParentColor = False
     ParentFont = False
   end
   object chkActive: TCheckBox
     Left = 80
-    Height = 19
+    Height = 18
     Top = 120
-    Width = 196
+    Width = 220
     Caption = 'Load this when starting the Server'
     ParentFont = False
     TabOrder = 12
   end
   object Label12: TLabel
     Left = 14
-    Height = 15
+    Height = 16
     Top = 348
-    Width = 24
+    Width = 27
     Caption = 'Path'
+    ParentColor = False
     ParentFont = False
   end
   object edtSQLiteFile: TEdit
     Left = 79
-    Height = 23
+    Height = 22
     Top = 346
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -471,7 +487,7 @@ object EditEPForm: TEditEPForm
     Left = 369
     Height = 19
     Top = 180
-    Width = 58
+    Width = 71
     AutoSize = False
     Caption = 'SQLite'
     OnChange = rbMSSQLChange
@@ -480,23 +496,24 @@ object EditEPForm: TEditEPForm
   end
   object cbAutocreate: TCheckBox
     Left = 79
-    Height = 19
+    Height = 18
     Top = 378
-    Width = 237
+    Width = 262
     Caption = 'Automatically create File if it doesn''t exist'
     TabOrder = 15
   end
   object Label13: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 158
-    Width = 36
+    Width = 43
     Caption = 'Source'
+    ParentColor = False
     ParentFont = False
   end
   object edtFolder: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 154
     Width = 531
     Anchors = [akTop, akLeft, akRight]
