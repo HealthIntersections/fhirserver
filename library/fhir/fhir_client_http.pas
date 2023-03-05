@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_json,
   IdHTTP, IdComponent,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
-  {$IFNDEF FPC}fsl_wininet, {$ENDIF}
+  {$IFNDEF FPC}fsl_wininet, {$ENDIF} fsl_web_stream,
   fhir_objects, fhir_parser, fhir_common, fhir_client, 
   fhir_oauth;
 
