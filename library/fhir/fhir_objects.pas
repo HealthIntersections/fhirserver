@@ -442,11 +442,14 @@ type
     function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
-    function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual;
-    function getExtensionV(url : String) : TFHIRObject;
+    function getExtensionsV : TFslList<TFHIRObject>; virtual; overload;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual; overload;
+    function getExtensionV(url : String) : TFHIRObject; virtual;
     procedure addExtensionV(url : String; value : TFHIRObject); virtual;
     procedure deleteExtensionV(extension : TFHIRObject); virtual;
     procedure deleteExtensionByUrl(url : String);virtual;
+    procedure stripExtensions(exemptUrls : TStringArray); virtual;
+
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
     function getNamedChildren : TFslList<TFHIRNamedValue>;
@@ -1044,6 +1047,22 @@ begin
   raise EFHIRException.create('Extensions are not supported on this object');
 end;
 
+procedure TFHIRObject.stripExtensions(exemptUrls: TStringArray);
+var
+  list : TFHIRPropertyList;
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  list := TFHIRPropertyList.create;
+  try
+    for p in list do
+      for o in p.values do
+        o.stripExtensions(exemptUrls);
+  finally
+    list.free;
+  end;
+end;
+
 function TFHIRObject.asJson: String;
 begin
   raise EFslException.Create('Need to override asjson in '+ClassName);
@@ -1293,6 +1312,11 @@ end;
 function TFHIRObject.extensionCount(url: String): integer;
 begin
   result := 0;
+end;
+
+function TFHIRObject.getExtensionsV: TFslList<TFHIRObject>;
+begin
+  result := TFslList<TFHIRObject>.create;
 end;
 
 function TFHIRObject.getExtensionsV(url: String): TFslList<TFHIRObject>;

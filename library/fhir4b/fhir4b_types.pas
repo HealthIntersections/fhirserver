@@ -248,10 +248,12 @@ type
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
 
   {$IFNDEF FPC}published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
@@ -6485,14 +6487,14 @@ type
     // This attribute provides information on the status of the marketing of the medicinal product See ISO/TS 20443 for more information and examples.
     property statusElement : TFhirCodeableConcept read FStatus write SetStatus;
 
-    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain. (defined for API consistency)
+    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain. (defined for API consistency)
     property dateRange : TFhirPeriod read FDateRange write SetDateRange;
-    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property dateRangeElement : TFhirPeriod read FDateRange write SetDateRange;
 
-    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property restoreDate : TFslDateTime read GetRestoreDateST write SetRestoreDateST;
-    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property restoreDateElement : TFhirDateTime read FRestoreDate write SetRestoreDate;
 
   end;
@@ -9076,6 +9078,16 @@ begin
       ExtensionList.DeleteByIndex(i);
 end;
 
+procedure TFhirElement.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  for i := FExtensionList.count - 1 downto 0 do
+    if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+      FExtensionList.remove(i);
+end;
+
 function TFhirElement.extensionCount(url: String): integer;
 var
   ex : TFhirExtension;
@@ -9084,6 +9096,20 @@ begin
   for ex in ExtensionList do
     if (ex.url = url) or (url = '') then
       inc(result);
+end;
+
+function TFhirElement.getExtensionsV: TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
 end;
       
 function TFhirElement.getExtensionsV(url: String): TFslList<TFHIRObject>;

@@ -44,6 +44,9 @@ uses
   fhir_client, fhir_client_threaded, fhir_uris;
 
 type
+
+  { TFHIRFactoryR3 }
+
   TFHIRFactoryR3 = class (TFHIRFactory)
   public
     function version : TFHIRVersion; override;
@@ -73,6 +76,7 @@ type
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
+    procedure clearXhtml(res : TFHIRResourceV); override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
     function describe(r : TFHIRResourceV) : String; override;
@@ -93,6 +97,7 @@ type
     function makeParameters : TFHIRParametersW; override;
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
+    function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
@@ -330,6 +335,14 @@ begin
   result := TFhirQuantity.fromDuration(dt);
 end;
 
+function TFHIRFactoryR3.wrapPrimitive(p: TFHIRObject): TFHIRPrimitiveW;
+begin
+  if (p = nil) then
+    result := nil
+  else
+    result := TFHIRPrimitive3.create(p.link);
+end;
+
 function TFHIRFactoryR3.makeElementModelManager: TFHIRBaseMMManager;
 begin
   result := TFHIRMMManager.create;
@@ -419,7 +432,10 @@ end;
 
 function TFHIRFactoryR3.makeString(s: string): TFHIRObject;
 begin
-  result := TFhirString.Create(s);
+  if (s = '') then
+    result := nil
+  else
+    result := TFhirString.Create(s);
 end;
 
 function TFHIRFactoryR3.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
@@ -474,6 +490,19 @@ begin
       exit(RESOURCE_CATEGORY[a]);
   result := tcOther;
 end;
+
+procedure TFHIRFactoryR3.clearXhtml(res : TFHIRResourceV);
+var
+  r : TFHIRDomainResource;
+begin
+  if res = nil then
+    exit;
+  if not (res is TFHIRDomainResource) then
+    exit;
+  r := res as TFHIRDomainResource;
+  r.text := nil;
+end;
+
 
 function TFHIRFactoryR3.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
 var

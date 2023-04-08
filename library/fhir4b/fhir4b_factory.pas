@@ -43,6 +43,9 @@ uses
   fhir_client, fhir_client_threaded, fhir_uris;
 
 type
+
+  { TFHIRFactoryR4B }
+
   TFHIRFactoryR4B = class (TFHIRFactory)
   public
     function link : TFHIRFactoryR4B; overload;
@@ -73,6 +76,7 @@ type
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
+    procedure clearXhtml(res : TFHIRResourceV); override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
     function describe(r : TFHIRResourceV) : String; override;
@@ -92,6 +96,7 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
+    function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
@@ -161,7 +166,7 @@ begin
   result := fhir4b_utilities.BuildOperationOutcome(lang, e, ExceptionTypeTranslations[issueCode]);
 end;
 
-function TFHIRFactoryR4B.CanonicalResources: TArray<String>;
+function TFHIRFactoryR4B.canonicalResources: TArray<String>;
 var
   i : integer;
   a : TFhirResourceType;
@@ -180,7 +185,8 @@ begin
     end;
 end;
 
-procedure TFHIRFactoryR4B.CheckNoModifiers(res: TFHIRObject; method, param: string; allowed : TArray<String> = nil);
+procedure TFHIRFactoryR4B.checkNoModifiers(res: TFHIRObject; method,
+  param: string; allowed: TArray<String>);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param)
@@ -188,12 +194,13 @@ begin
     TFHIRBackboneElement(res).checkNoModifiers(method, param)
 end;
 
-function TFHIRFactoryR4B.CorePackage: String;
+function TFHIRFactoryR4B.corePackage: String;
 begin
   result := 'hl7.fhir.r4b.core';
 end;
 
-function TFHIRFactoryR4B.CreateFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
+function TFHIRFactoryR4B.createFromProfile(worker: TFHIRWorkerContextV;
+  profile: TFhirStructureDefinitionW): TFHIRResourceV;
 var
   pu : TProfileUtilities;
 begin
@@ -408,6 +415,14 @@ begin
   result := TFHIRParameters4B.Create(TFHIRParameters.Create);
 end;
 
+function TFHIRFactoryR4B.wrapPrimitive(p: TFHIRObject): TFHIRPrimitiveW;
+begin
+  if (p = nil) then
+    result := nil
+  else
+    result := TFHIRPrimitive4B.create(p.link);
+end;
+
 function TFHIRFactoryR4B.makeParamsFromForm(s: TStream): TFHIRResourceV;
 begin
   result := parseParamsFromForm(s);
@@ -425,7 +440,10 @@ end;
 
 function TFHIRFactoryR4B.makeString(s: string): TFHIRObject;
 begin
-  result := TFhirString.Create(s);
+  if (s = '') then
+    result := nil
+  else
+    result := TFhirString.Create(s);
 end;
 
 function TFHIRFactoryR4B.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
@@ -479,6 +497,18 @@ begin
     if CODES_TFhirResourceType[a] = name then
       exit(RESOURCE_CATEGORY[a]);
   result := tcOther;
+end;
+
+procedure TFHIRFactoryR4B.clearXhtml(res : TFHIRResourceV);
+var
+  r : TFHIRDomainResource;
+begin
+  if res = nil then
+    exit;
+  if not (res is TFHIRDomainResource) then
+    exit;
+  r := res as TFHIRDomainResource;
+  r.text := nil;
 end;
 
 function TFHIRFactoryR4B.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;

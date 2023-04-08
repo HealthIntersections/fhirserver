@@ -1808,9 +1808,11 @@ Type
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
 
   published
     // Typed access to unique id for the element within a resource (for internal references).
@@ -3769,7 +3771,7 @@ function AddItem(value : TFhirPositiveInt): TFhirPositiveInt; overload;
 
     
     // Add an already existing FhirExtension to the end of the list.
-function AddItem(value : TFhirExtension): TFhirExtension; overload;
+    function AddItem(value : TFhirExtension): TFhirExtension; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8038,6 +8040,16 @@ begin
       ExtensionList.DeleteByIndex(i);
 end;
 
+procedure TFhirElement.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  for i := FExtensionList.count - 1 downto 0 do
+    if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+      FExtensionList.remove(i);
+end;
+
 function TFhirElement.extensionCount(url: String): integer;
 var
   ex : TFhirExtension;
@@ -8057,6 +8069,20 @@ begin
     for ex in ExtensionList do
       if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirElement.getExtensionsV: TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      result.Add(ex.Link);
     result.link;
   finally
     result.Free;

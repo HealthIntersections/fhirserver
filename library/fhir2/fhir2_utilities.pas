@@ -2273,6 +2273,8 @@ begin
           result := TFhirCode(self.ExtensionList.Item(ndx).value).value
         else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
           result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+          result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
         else
           result := '';
       end;
@@ -2306,6 +2308,8 @@ begin
     result := TFhirUri(self.ExtensionList.Item(ndx).value).value
   else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
     result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
+  else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+    result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
   else
     result := '';
 end;

@@ -157,6 +157,7 @@ type
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); virtual; abstract;
     function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
+    procedure clearXhtml(res : TFHIRResourceV); virtual; abstract;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; virtual; abstract;
     function describe(r : TFHIRResourceV) : String; virtual; abstract;
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); virtual; abstract;
@@ -183,6 +184,7 @@ type
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
     function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; virtual; abstract;
+    function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; virtual; abstract;
 
     function makeParameters : TFHIRParametersW; virtual; abstract;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;

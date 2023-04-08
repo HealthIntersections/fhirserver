@@ -699,6 +699,8 @@ type
     procedure deleteProp(code : String);
   end;
 
+  { TFhirCodeSystemHelper }
+
   TFhirCodeSystemHelper = class helper for TFhirCodeSystem
   private
     function locate(parent: TFhirCodeSystemConcept; list: TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirCodeSystemConcept): boolean;
@@ -712,7 +714,9 @@ type
     property codeSystem : TFhirCodeSystem read GetCodeSystem;
     property system : String read GetSystem;
     function context : string;
-    function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
+    function isAbstract(concept :  TFhirCodeSystemConcept) : boolean; 
+    function isInactive(concept :  TFhirCodeSystemConcept) : boolean;
+    function isDeprecated(concept :  TFhirCodeSystemConcept) : boolean;
 
     function buildImplicitValueSet : TFhirValueSet;
   end;
@@ -2676,6 +2680,8 @@ begin
           result := TFhirCode(self.ExtensionList.Item(ndx).value).value
         else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
           result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+          result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
         else
           result := '';
       end;
@@ -5153,6 +5159,36 @@ begin
   for p in concept.property_List do
     if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
       exit(true);
+end;
+
+function TFhirCodeSystemHelper.isInactive(concept: TFhirCodeSystemConcept): boolean;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := false;
+  for p in concept.property_List do
+  begin
+    if (p.code = 'inactive') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit(true);
+    if (p.code = 'status') and ((p.value.ToString = 'inactive') or (p.value.ToString = 'retired')) then
+      exit(true);
+  end;
+end;
+
+function TFhirCodeSystemHelper.isDeprecated(concept: TFhirCodeSystemConcept): boolean;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := false;
+  for p in concept.property_List do
+  begin
+    if (p.code = 'deprecated') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit(true);
+    if (p.code = 'deprecationDate') and (p.value is TFhirDateTime) and (TFHIRDateTime(p.value).value.before(TFslDateTime.makeUTC, false)) then
+      exit(true);
+    if (p.code = 'status') and (p.value.ToString = 'deprecated') then
+      exit(true);
+  end;
 end;
 
 { TFhirAuditEventHelper }

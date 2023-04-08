@@ -35,9 +35,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities,
-  fsl_http,
-  fhir_objects, fhir_common, fhir_features, fhir_uris,
+  fsl_base, fsl_utilities, fsl_http, fsl_lang,
+  fhir_objects, fhir_common, fhir_extensions, fhir_features, fhir_uris,
   fhir5_types, fhir5_resources, fhir5_operations, fhir5_opbase, fhir5_enums;
 
 const
@@ -77,6 +76,14 @@ const
 
 
 type
+
+  { TFHIRPrimitive5 }
+
+  TFHIRPrimitive5 = class (TFHIRPrimitiveW)
+  public
+    function GetAsString : String; override;
+    procedure SetAsString(value : String); override;
+  end;
 
   { TFHIRExtension5 }
 
@@ -447,8 +454,18 @@ type
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
     procedure setSystem(Value: String); override;
+    function GetItemWeight : String; override;
+    procedure SetItemWeight(Value: String); override;
+    function GetAbstract : boolean; override;
+    function GetInactive : boolean; override;
+    procedure SetAbstract(Value: boolean); override;
+    procedure SetInactive(Value: boolean); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
+    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW); override;
+    procedure addProperty(code : String; value : TFHIRObject); override;
+    procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
+    procedure clearContains(); override;
   end;
 
   { TFhirValueSetExpansion5 }
@@ -468,6 +485,9 @@ type
     function addContains : TFhirValueSetExpansionContainsW; overload; override;
     function makeContains : TFhirValueSetExpansionContainsW; overload; override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
+    function getTotal : integer; override;
+    procedure setTotal(value : integer) ; override;
+    procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject); override;
   end;
 
   { TFhirValueSetComposeIncludeFilter5 }
@@ -490,6 +510,8 @@ type
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function language : String; override;
     function value : String; override;
+    function use : TFHIRCodingW; override;
+    function valueElement : TFHIRPrimitiveW; override;
   end;
 
   { TFhirValueSetComposeIncludeConcept5 }
@@ -501,6 +523,9 @@ type
     function getDisplay : String; override;
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
+    function displayElement : TFHIRPrimitiveW; override;
+    function GetItemWeight : String; override;
+    procedure SetItemWeight(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 
@@ -627,19 +652,23 @@ type
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function language : String; override;
     function useGen : String; override;
-    function use : TFHIRObject; override;
+    function use : TFHIRCodingW; override;
     function value : String; override;
+    function valueElement : TFHIRPrimitiveW; override;
   end;
 
   { TFhirCodeSystemConcept5 }
 
   TFhirCodeSystemConcept5 = class (TFhirCodeSystemConceptW)
   private
+    FCodeSystem : TFHIRCodeSystem; // not owned
     function c : TFhirCodeSystemConcept;
   public
+    constructor Create(elem : TFHIRObject; cs : TFHIRCodeSystem);
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function code : String; override;
     function display : String; override;
+    function displayElement : TFHIRPrimitiveW; override;
     function definition : String; override;
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
@@ -651,6 +680,7 @@ type
     function displayTag(tag : String) : String; override;
     procedure setDisplayTag(tag, value : String); override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
+    function itemWeight : String; override;
   end;
 
   { TFhirCodeSystemProperty5 }
@@ -699,7 +729,9 @@ type
     function conceptCount : integer; override;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
+    function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; override;
+    function isDeprecated(c : TFhirCodeSystemConceptW) : boolean; override;
     function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
@@ -1270,6 +1302,18 @@ implementation
 
 uses
   fhir5_utilities;
+
+{ TFHIRPrimitive5 }
+
+function TFHIRPrimitive5.GetAsString: String;
+begin
+  result := (FElement as TFHIRPrimitiveType).StringValue;
+end;
+
+procedure TFHIRPrimitive5.SetAsString(value: String);
+begin
+  (FElement as TFHIRPrimitiveType).StringValue := value;
+end;
 
 { TFhirOperationOutcome5 }
 
@@ -2994,6 +3038,26 @@ begin
   (Element as TFhirValueSetComposeIncludeConcept).display := Value;
 end;
 
+function TFhirValueSetComposeIncludeConcept5.displayElement: TFHIRPrimitiveW;
+begin
+  if (Element as TFhirValueSetComposeIncludeConcept).displayElement = nil then
+    result := nil
+  else
+    result := TFHIRPrimitive5.create((Element as TFhirValueSetComposeIncludeConcept).displayELement.link);
+end;
+
+function TFhirValueSetComposeIncludeConcept5.GetItemWeight: String;
+begin
+  result := (Element as TFhirValueSetComposeIncludeConcept).getExtensionString(EXT_ITEM_WEIGHT);
+  if result = '' then
+    result := (Element as TFhirValueSetComposeIncludeConcept).getExtensionString(EXT_ORDINAL_VALUE);
+end;
+
+procedure TFhirValueSetComposeIncludeConcept5.SetItemWeight(Value: String);
+begin
+  (Element as TFhirValueSetComposeIncludeConcept).setExtensionString(EXT_ITEM_WEIGHT, value);
+end;
+
 { TFHIRLookupOpResponse5 }
 
 function TFHIRLookupOpResponse5.addDesignation(lang, system, code, display, value: string): TFHIRLookupOpRespDesignationW;
@@ -3332,9 +3396,12 @@ begin
   result := (Element as TFhirCodeSystemConceptDesignation).language;
 end;
 
-function TFhirCodeSystemConceptDesignation5.use: TFHIRObject;
+function TFhirCodeSystemConceptDesignation5.use: TFHIRCodingW;
 begin
-  result := (Element as TFhirCodeSystemConceptDesignation).use;
+  if (Element as TFhirCodeSystemConceptDesignation).use = nil then
+    result := nil
+  else
+    result := TFHIRCoding5.create((Element as TFhirCodeSystemConceptDesignation).use.link);
 end;
 
 function TFhirCodeSystemConceptDesignation5.useGen: String;
@@ -3347,11 +3414,25 @@ begin
   result := (Element as TFhirCodeSystemConceptDesignation).value;
 end;
 
+function TFhirCodeSystemConceptDesignation5.valueElement: TFHIRPrimitiveW;
+begin
+  if (Element as TFhirCodeSystemConceptDesignation).valueElement = nil then
+    result := nil
+  else
+    result := TFHIRPrimitive5.create((Element as TFhirCodeSystemConceptDesignation).valueElement.link);
+end;
+
 { TFhirCodeSystemConcept5 }
 
 function TFhirCodeSystemConcept5.c: TFhirCodeSystemConcept;
 begin
   result := Element as TFhirCodeSystemConcept;
+end;
+
+constructor TFhirCodeSystemConcept5.Create(elem: TFHIRObject; cs: TFHIRCodeSystem);
+begin
+  inherited create(elem);
+  FCodeSystem := cs;
 end;
 
 function TFhirCodeSystemConcept5.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
@@ -3411,6 +3492,14 @@ begin
   result := c.display;
 end;
 
+function TFhirCodeSystemConcept5.displayElement: TFHIRPrimitiveW;
+begin
+  if c.displayElement = nil then
+    result := nil
+  else
+    result := TFHIRPrimitive5.create(c.displayElement.link);
+end;
+
 function TFhirCodeSystemConcept5.displayTag(tag: String): String;
 begin
   result := c.displayElement.Tags[tag];
@@ -3464,6 +3553,13 @@ end;
 procedure TFhirCodeSystemConcept5.setDisplayTag(tag, value: String);
 begin
   c.displayElement.Tags[tag] := value;
+end;                                  
+
+function TFhirCodeSystemConcept5.itemWeight : String;
+begin
+  result := (Element as TFhirCodeSystemConcept).getExtensionString(EXT_ITEM_WEIGHT);
+  if result = '' then
+    result := (Element as TFhirCodeSystemConcept).getExtensionString(EXT_ORDINAL_VALUE);
 end;
 
 { TFhirCodeSystem5 }
@@ -3597,9 +3693,19 @@ begin
         exit(true);
 end;
 
+function TFhirCodeSystem5.isInactive(c: TFhirCodeSystemConceptW): boolean;
+begin
+  result := cs.isInactive(c.Element as TFhirCodeSystemConcept);
+end;
+
 function TFhirCodeSystem5.isAbstract(c: TFhirCodeSystemConceptW): boolean;
 begin
   result := cs.isAbstract(c.Element as TFhirCodeSystemConcept);
+end;
+
+function TFhirCodeSystem5.isDeprecated(c: TFhirCodeSystemConceptW): boolean;
+begin
+  result := cs.isDeprecated(c.Element as TFhirCodeSystemConcept);
 end;
 
 function TFhirCodeSystem5.language: String;
@@ -3737,6 +3843,61 @@ begin
     result.Add(TFhirValueSetExpansionContains5.Create(item.Link));
 end;
 
+function TFhirValueSetExpansion5.getTotal: integer;
+begin
+  result := StrToIntDef(exp.total, 0);
+end;
+
+procedure TFhirValueSetExpansion5.setTotal(value: integer);
+begin
+  exp.total := inttostr(value);
+end;
+
+procedure TFhirValueSetExpansion5.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject);
+var
+  pdef, t1 : TFhirValueSetExpansionProperty;
+  pdv, t2 : TFhirValueSetExpansionContainsProperty;
+begin
+  pdef := nil;
+  for t1 in exp.property_List do
+  begin
+    if ((t1.uri = url) or (t1.code = code)) then
+    begin
+      pdef := t1;
+      break;
+    end;
+  end;
+  if (pdef = nil) then
+  begin
+    pdef := exp.property_List.append;
+    pdef.uri := url;
+    pdef.code := code;
+  end
+  else if (pdef.uri = '') then
+    pdef.uri := url
+  else if (pdef.uri <> url) then
+    raise EFHIRException.create('URL mismatch on expansion: '+pdef.uri+' vs '+url+' for code '+code);
+  code := pdef.code;
+
+  pdv := nil;
+  for t2 in ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list do
+  begin
+    if (t2.code = code) then
+    begin
+      pdv := t2;
+      break;
+    end;
+  end;
+  if (pdv = nil) then
+  begin
+    pdv := ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list.append;
+    pdv.code := code;
+    pdv.value := value as TFHIRDataType;
+  end
+  else
+    pdv.value := value as TFHIRDataType;
+end;
+
 procedure TFhirValueSetExpansion5.copyParams(source: TFhirValueSetExpansionW);
 var
   param : TFhirValueSetExpansionParameter;
@@ -3802,6 +3963,38 @@ begin
   end;
 end;
 
+procedure TFhirValueSetExpansionContains5.addDesignation(lang: TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW);
+var
+  d : TFhirValueSetComposeIncludeConceptDesignation;
+begin
+  d := (Element as TFhirValueSetExpansionContains).designationList.Append;
+  if (lang <> nil) then
+    d.language := lang.code;
+  if (value <> nil) then
+    d.valueElement := value.Element.link as TFHIRString;
+  if use <> nil then
+    d.use := use.Element as TFHIRCoding;
+end;
+
+procedure TFhirValueSetExpansionContains5.addProperty(code: String; value: TFHIRObject);
+var
+  p : TFhirValueSetExpansionContainsProperty;
+begin
+  p := (Element as TFhirValueSetExpansionContains).property_list.Append;
+  p.code := code;
+  p.value := value.link as TFhirDataType;
+end;
+
+procedure TFhirValueSetExpansionContains5.addContains(contained: TFhirValueSetExpansionContainsW);
+begin
+  (Element as TFhirValueSetExpansionContains).containsList.add(contained.Element.link);
+end;
+
+procedure TFhirValueSetExpansionContains5.clearContains;
+begin
+  (Element as TFhirValueSetExpansionContains).containsList.clear;
+end;
+
 function TFhirValueSetExpansionContains5.contains: TFslList<TFhirValueSetExpansionContainsW>;
 var
   item : TFhirValueSetExpansionContains;
@@ -3839,9 +4032,41 @@ end;
 procedure TFhirValueSetExpansionContains5.setSystem(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).system := value;
+end;                        
+
+function TFhirValueSetExpansionContains5.GetItemWeight: String;
+begin
+  result := (Element as TFhirValueSetExpansionContains).getExtensionString(EXT_ITEM_WEIGHT);
+  if result = '' then
+    result := (Element as TFhirValueSetExpansionContains).getExtensionString(EXT_ORDINAL_VALUE);
 end;
 
-{ TFhirValueSetComposeIncludeConceptDesignation5 }
+procedure TFhirValueSetExpansionContains5.SetItemWeight(Value: String);
+begin
+  (Element as TFhirValueSetExpansionContains).setExtensionString(EXT_ITEM_WEIGHT, value);
+end;
+
+
+function TFhirValueSetExpansionContains5.GetAbstract: boolean;
+begin
+  result := (Element as TFhirValueSetExpansionContains).abstract;
+end;
+
+function TFhirValueSetExpansionContains5.GetInactive: boolean;
+begin
+  result := (Element as TFhirValueSetExpansionContains).inactive;
+end;
+
+procedure TFhirValueSetExpansionContains5.SetAbstract(Value: boolean);
+begin
+  (Element as TFhirValueSetExpansionContains).abstract := value;
+end;
+
+procedure TFhirValueSetExpansionContains5.SetInactive(Value: boolean);
+begin
+  (Element as TFhirValueSetExpansionContains).inactive := value;
+end;
+                                                              { TFhirValueSetComposeIncludeConceptDesignation5 }
 
 function TFhirValueSetComposeIncludeConceptDesignation5.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
@@ -3856,6 +4081,22 @@ end;
 function TFhirValueSetComposeIncludeConceptDesignation5.value: String;
 begin
   result := (element as TFhirValueSetComposeIncludeConceptDesignation).value;
+end;
+
+function TFhirValueSetComposeIncludeConceptDesignation5.use: TFHIRCodingW;
+begin
+  if (element as TFhirValueSetComposeIncludeConceptDesignation).use = nil then
+    result := nil
+  else
+    result := TFHIRCoding5.create((element as TFhirValueSetComposeIncludeConceptDesignation).use.link);
+end;
+
+function TFhirValueSetComposeIncludeConceptDesignation5.valueElement: TFHIRPrimitiveW;
+begin
+  if (element as TFhirValueSetComposeIncludeConceptDesignation).valueElement = nil then
+    result := nil
+  else
+    result := TFHIRPrimitive5.create((element as TFhirValueSetComposeIncludeConceptDesignation).valueElement.link);
 end;
 
 { TFhirConceptMap5 }
