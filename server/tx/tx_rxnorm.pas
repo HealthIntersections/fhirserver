@@ -101,7 +101,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -657,10 +657,10 @@ begin
   result := TUMLSConcept(context).FDisplay.Trim;
 end;
 
-procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUMLSServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
-  list.see(TUMLSConcept(context).FOthers);
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation('', TUMLSConcept(context).FOthers);
 end;
 
 procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -668,8 +668,8 @@ var
   qry : TFDBConnection;
   b : boolean;
   p : TFHIRLookupOpRespPropertyW;
-  list: TCodeDisplays;
-  cd : TCodeDisplay;
+  list: TConceptDesignations;
+  cd : TConceptDesignation;
 begin
   if hasProp(props, 'inactive', true) then
   begin
@@ -700,13 +700,13 @@ begin
     else
       resp.addExtension('inactive', b);
   end;
-  list := TCodeDisplays.create;
+  list := TConceptDesignations.create(Factory.link);
   try
-    Displays(ctxt, list);
-    for cd in list do
+    Designations(ctxt, list);
+    for cd in list.designations do
     begin
       p := resp.addProp('other.display');
-      p.value := factory.makeString(cd.value);
+      p.value := factory.makeString(cd.value.AsString);
     end;
   finally
     list.free;

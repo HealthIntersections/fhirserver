@@ -640,7 +640,7 @@ operations
     Property DefaultLanguageRefSet : Cardinal read GetDefaultLanguage write FDefaultLanguage;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : String; Overload;
-    Procedure ListDisplayNames(list : TCodeDisplays; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
+    Procedure ListDisplayNames(list : TConceptDesignations; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
     Function GetConceptId(Const iConcept : Cardinal) : String; Overload;
     function GetDescriptionId(Const iDesc : Cardinal) : String; Overload;
     function GetRelationshipId(Const iRel : Cardinal) : String; Overload;
@@ -669,7 +669,7 @@ operations
     Function IsValidConcept(Const sTerm : String):Boolean;
     Function IsValidDescription(Const sTerm : String; var concept : UInt64; var description : String):Boolean;
     Function GetDisplayName(Const sTerm, sLangSet : String) : String; Overload;
-    Procedure ListDisplayNames(list : TCodeDisplays; Const sTerm, sLangSet : String; FlagMask : Byte); Overload;
+    Procedure ListDisplayNames(list : TConceptDesignations; Const sTerm, sLangSet : String; FlagMask : Byte); Overload;
     function ReferenceSetExists(sid : String) : Boolean;
 
     // status stuff
@@ -696,7 +696,7 @@ operations
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -2263,7 +2263,7 @@ begin
   result := FLoaded <> 0;
 end;
 
-procedure TSnomedServices.ListDisplayNames(list: TCodeDisplays; const iConcept, iLang: Cardinal; FlagMask: Byte);
+procedure TSnomedServices.ListDisplayNames(list: TConceptDesignations; const iConcept, iLang: Cardinal; FlagMask: Byte);
 var
   aMembers : TSnomedReferenceSetMemberArray;
   iLoop : integer;
@@ -2285,11 +2285,11 @@ begin
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
     if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.see(Strings.GetEntry(iDesc).trim);
+      list.addDesignation('', Strings.GetEntry(iDesc).trim, true);
   End;
 end;
 
-procedure TSnomedServices.ListDisplayNames(list: TCodeDisplays; const sTerm, sLangSet: String; FlagMask: Byte);
+procedure TSnomedServices.ListDisplayNames(list: TConceptDesignations; const sTerm, sLangSet: String; FlagMask: Byte);
 var
   iTerm, iLang : Cardinal;
 begin
@@ -3780,7 +3780,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TSnomedServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   ctxt : TSnomedExpressionContext;
 begin
@@ -3790,7 +3790,7 @@ begin
     raise ETerminologyError.create('Unable to find context in '+systemUri(nil))
   else if ctxt.isComplex then
     // there's only one display name - for now?
-    list.see(displayExpression(ctxt.FExpression).Trim)
+    list.addBase('', displayExpression(ctxt.FExpression).Trim)
   else
    ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, 0, $FF);
 end;
@@ -5024,7 +5024,7 @@ end;
 
 procedure TSnomedServices.checkExpr(concept: TSnomedConcept);
 var
-  list : TCodeDisplays;
+  list : TConceptDesignations;
   i : integer;
   ok : boolean;
   iTerm : Cardinal;
@@ -5039,19 +5039,19 @@ begin
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
-    list := TCodeDisplays.create;
+    list := TConceptDesignations.create;
     try
       ListDisplayNames(list, iTerm, 0, $FF);
       ok := false;
       d := normalise(concept.description);
-      for i := 0 to list.count - 1 do
-        if (normalise(list.display[i]) = d) then
+      for i := 0 to list.designations.count - 1 do
+        if (normalise(list.designations[i].value.asString) = d) then
         begin
           ok := true;
           break;
         end;
       if not ok then
-        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present+'")');
+        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil)+'")');
     finally
       list.free;
     end;

@@ -298,7 +298,8 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
+
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -471,7 +472,7 @@ begin
   inherited;
 end;
 
-procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TCodeDisplays);
+procedure TAllCodeSystemsProvider.Designations(context : TCodeSystemProviderContext; list : TConceptDesignations);
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;

@@ -229,21 +229,9 @@
             <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <IncludeAssertionCode Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <RelocatableUnit Value="True"/>
-            <Checks>
-              <IOChecks Value="True"/>
-              <RangeChecks Value="True"/>
-              <OverflowChecks Value="True"/>
-              <StackChecks Value="True"/>
-            </Checks>
-            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
@@ -765,7 +753,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="27">
+    <Exceptions Count="30">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -866,6 +854,15 @@
       <Item27>
         <Name Value="0000000fEIdResolveError\rEIdNotASocket"/>
       </Item27>
+      <Item28>
+        <Name Value="00000017EIdConnClosedGracefully\U00000014EIdSocketHandleError"/>
+      </Item28>
+      <Item29>
+        <Name Value="00000011ETerminologyError"/>
+      </Item29>
+      <Item30>
+        <Name Value="00000014EJsonParserException"/>
+      </Item30>
     </Exceptions>
   </Debugging>
 </CONFIG>

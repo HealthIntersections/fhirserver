@@ -89,7 +89,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -171,7 +171,7 @@ begin
   result := nil;
 end;
 
-procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TIETFLanguageCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
@@ -179,9 +179,9 @@ begin
   if (context <> nil) then
   begin
     c := context as TIETFLanguageCodeConcept;
-    list.see(FLanguages.present(c.FInfo).Trim);
+    list.addBase('', FLanguages.present(c.FInfo).Trim);
     if c.FInfo.isLangRegion then
-      list.see(FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+      list.addDesignation('', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
   end;
 end;
 

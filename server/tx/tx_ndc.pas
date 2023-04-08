@@ -246,7 +246,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -1085,9 +1085,9 @@ begin
   end;
 end;
 
-procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TNDCServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.Create('')));
+  list.addBase('', Display(context, THTTPLanguages.Create('')));
 end;
 
 function TNDCServices.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;

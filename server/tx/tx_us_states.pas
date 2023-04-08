@@ -83,7 +83,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -267,9 +267,9 @@ begin
   result := TUSStateConcept(context).display.Trim;
 end;
 
-procedure TUSStateServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUSStateServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
 end;
 
 function TUSStateServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

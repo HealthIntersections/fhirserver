@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, Generics.Defaults,
   fsl_http,
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream, fsl_lang,
   IdContext, IdCustomHTTPServer,
   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   fhir_valuesets,
@@ -490,14 +490,15 @@ var
   res : TFHIRValueSetW;
   vs : TFHIRValueSetW;
   profile : TFhirExpansionParams;
+  s : String;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
   profile := TFhirExpansionParams.Create;
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
-    if lang.header <> '' then
-      profile.displayLanguage := lang;
+    for s in lang.codes do
+      profile.displayLanguages.add(TIETFLang.makeLang(s));
 
     try
       res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);

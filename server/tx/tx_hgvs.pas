@@ -71,7 +71,7 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -152,9 +152,9 @@ begin
   result := Code(Context);
 end;
 
-procedure THGVSProvider.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure THGVSProvider.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(code(context));
+  list.addBase('', code(context));
 end;
 
 function THGVSProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;

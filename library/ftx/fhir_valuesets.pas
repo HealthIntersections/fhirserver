@@ -80,42 +80,95 @@ Type
     property mode : TFhirExpansionParamsFixedVersionMode read FMode write FMode;
   end;
 
+  { TFHIRExpansionParams }
+
   TFHIRExpansionParams = class (TFslObject)
   private
     FFixedVersions : TFslList<TFhirExpansionParamsFixedVersion>;
     FactiveOnly: boolean;
-    FdisplayLanguage: THTTPLanguages;
+    FLanguage : TIETFLang;
+    FDisplayLanguages: TFslList<TIETFLang>;
     FexcludeNested: boolean;
+    FGenerateNarrative: boolean;
     FlimitedExpansion: boolean;
     FexcludeNotForUI: boolean;
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
+    FincludeCompose: boolean;
     FincludeDefinition: boolean;
     FUid: String;
     FValueSetMode: TValueSetValidationMode;
     FDefaultToLatestVersion : boolean;
     FIncompleteOK: boolean;
+    FProperties : TStringList;
+
+    FHasactiveOnly : boolean;
+    FHasExcludeNested : boolean;
+    FHasGenerateNarrative : boolean;
+    FHasLimitedExpansion : boolean;
+    FHesExcludeNotForUI : boolean;
+    FHasExcludePostCoordinated : boolean;
+    FHasIncludeDesignations : boolean;
+    FHasIncludeCompose : boolean;
+    FHasIncludeDefinition : boolean;
+    FHasDefaultToLatestVersion : boolean;
+    FHasIncompleteOK : boolean;
+    FHasexcludeNotForUI : boolean;
+    FHasValueSetMode : boolean;
+
+    procedure SetLanguage(value : TIETFLang);
+    procedure SetActiveOnly(value : boolean);
+    procedure SetExcludeNested(value : boolean);
+    procedure SetGenerateNarrative(value : boolean);
+    procedure SetLimitedExpansion(value : boolean);
+    procedure SetExcludeNotForUI(value : boolean);
+    procedure SetExcludePostCoordinated(value : boolean);
+    procedure SetIncludeDesignations(value : boolean);
+    procedure SetIncludeCompose(value : boolean);
+    procedure SetIncludeDefinition(value : boolean);
+    procedure SetDefaultToLatestVersion(value : boolean);
+    procedure SetIncompleteOK(value : boolean);
+    procedure SetValueSetMode(value : TValueSetValidationMode);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRExpansionParams;
+
     class function defaultProfile : TFHIRExpansionParams;
+    procedure loadFromLangs(langs : THTTPLanguages);
 
     property fixedVersions : TFslList<TFhirExpansionParamsFixedVersion> read FFixedVersions;
-    property activeOnly : boolean read FactiveOnly write FactiveOnly;
-    property displayLanguage : THTTPLanguages read FdisplayLanguage write FdisplayLanguage;
-    property includeDefinition : boolean read FincludeDefinition write FincludeDefinition;
-    property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
-    property includeDesignations : boolean read FincludeDesignations write FincludeDesignations;
-    property excludeNested : boolean read FexcludeNested write FexcludeNested;
-    property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
-    property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
-    property valueSetMode : TValueSetValidationMode read FValueSetMode write FValueSetMode;
+    property activeOnly : boolean read FactiveOnly write SetActiveOnly;
+    property language : TIETFLang read FLanguage write SetLanguage;
+    property displayLanguages : TFslList<TIETFLang> read FDisplayLanguages;
+    property includeCompose : boolean read FincludeCompose write SetincludeCompose;
+    property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
+    property generateNarrative : boolean read FGenerateNarrative write SetGenerateNarrative;
+    property limitedExpansion : boolean read FlimitedExpansion write SetlimitedExpansion;
+    property includeDesignations : boolean read FincludeDesignations write SetincludeDesignations;
+    property excludeNested : boolean read FexcludeNested write SetexcludeNested;
+    property excludeNotForUI : boolean read FexcludeNotForUI write SetexcludeNotForUI;
+    property excludePostCoordinated : boolean read FexcludePostCoordinated write SetexcludePostCoordinated;
+    property valueSetMode : TValueSetValidationMode read FValueSetMode write SetValueSetMode;
     property uid : String read FUid write FUid;
-    property defaultToLatestVersion : boolean read FDefaultToLatestVersion write FDefaultToLatestVersion;
-    property incompleteOK : boolean read FIncompleteOK write FIncompleteOK;
+    property defaultToLatestVersion : boolean read FDefaultToLatestVersion write SetDefaultToLatestVersion;
+    property incompleteOK : boolean read FIncompleteOK write SetIncompleteOK;
+    property properties : TStringList read FProperties;
+
+    property hasActiveOnly : boolean read FHasactiveOnly;
+    property hasIncludeCompose : boolean read FHasincludeCompose;
+    property hasIncludeDefinition : boolean read FHasincludeDefinition;
+    property hasGenerateNarrative : boolean read FHasGenerateNarrative;
+    property hasLimitedExpansion : boolean read FHaslimitedExpansion;
+    property hasIncludeDesignations : boolean read FHasincludeDesignations;
+    property hasExcludeNested : boolean read FHasexcludeNested;
+    property hasExcludeNotForUI : boolean read FHasexcludeNotForUI;
+    property hasExcludePostCoordinated : boolean read FHasexcludePostCoordinated;
+    property hasValueSetMode : boolean read FHasValueSetMode;
+    property hasDefaultToLatestVersion : boolean read FHasDefaultToLatestVersion;
+    property hasIncompleteOK : boolean read FHasIncompleteOK;
 
     function hash : String;
   end;
@@ -168,9 +221,9 @@ Type
     function listVersions(url : String) : String;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
-    procedure listDisplays(displays : TCodeDisplays; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
-    procedure listDisplays(displays : TCodeDisplays; c: TFhirCodeSystemConceptW); overload;
-    procedure listDisplays(displays: TCodeDisplays; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW); overload;
+    procedure listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
+    procedure listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); overload;
+    procedure listDisplays(displays: TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW); overload;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
     destructor Destroy; override;
@@ -185,9 +238,9 @@ Type
 
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
-    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean; overload;
-    function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TCodeDisplays; out isabstract : boolean): boolean;
-    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TCodeDisplays; vs : TFHIRValueSetW; var message : String) : boolean;
+    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean; overload;
+    function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
+    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String) : boolean;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
   protected
@@ -214,28 +267,34 @@ Type
     FCount : integer;
     FOffset : integer;
     FLang : String;
+    FLimitCount : integer;
+    FCanBeHierarchy : boolean;
+    FRootList : TFslList<TFhirValueSetExpansionContainsW>;
+    FFullList : TFslList<TFhirValueSetExpansionContainsW>;
+    FMap : TFslMap<TFhirValueSetExpansionContainsW>;
+
 
     function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
-    procedure processCodeAndDescendants(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+    procedure processCodeAndDescendants(doDelete : boolean; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
 
-    procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
-    procedure importValueSet(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
-    procedure excludeValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
-    procedure processCodes(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cset : TFhirValueSetComposeIncludeW; vsSrc : TFHIRValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
-    procedure handleCompose(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
+    procedure handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+    procedure importValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+    procedure excludeValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+    procedure processCodes(doDelete : boolean; cset : TFhirValueSetComposeIncludeW; vsSrc : TFHIRValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
+    procedure handleCompose(source : TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 
     function passesImports(imports : TFslList<TFHIRImportedValueSet>; system, code : String; offset : integer) : boolean;
     function passesImport(import : TFHIRImportedValueSet; system, code : String) : boolean;
 
-    procedure processCode(doDelete : boolean; limitCount : integer; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; system, version, code : String; display : TCodeDisplays; definition: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
-    procedure addDefinedCode(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>);
+    function processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String; isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
+        imports : TFslList<TFHIRImportedValueSet>; csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>) : TFhirValueSetExpansionContainsW;
+    procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContainsW) : string;  overload;
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
-    procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; limitCount : integer; filter : TSearchFilterText);
+    procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText);
     procedure checkCanExpandValueset(uri: String);
-    function isValidLang(lang: String): boolean;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
 
@@ -605,7 +664,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TCodeDisplays; out isabstract : boolean): boolean;
+function TValueSetChecker.findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
 var
   i : integer;
   ccl : TFhirCodeSystemConceptListW;
@@ -620,7 +679,8 @@ begin
         isAbstract := false
       else
         isAbstract := cs.isAbstract(list[i]);
-      displays.see(cs.language, list[i].display);
+      displays.baseLang := TIETFLang.makeLang(cs.language);
+      displays.display := list[i].displayElement; {no .link}
       exit;
     end;
     ccl := list[i].conceptList;
@@ -642,20 +702,14 @@ end;
 
 function TValueSetChecker.check(system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): boolean;
 var
-  list : TCodeDisplays;
   msg, ver : string;
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
 begin
-  list := TCodeDisplays.Create;
-  try
-    result := check(system, version, code, abstractOk, implySystem, list, msg, ver, it, op, contentMode);
-  finally
-    list.Free;
-  end;
+  result := check(system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode);
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -708,7 +762,7 @@ begin
           ver := cs.version(nil);
           cause := itNull;
           try
-            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
+            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or (not FParams.activeOnly or not cs.isInactive(ctxt)));
             if (not result) then
             begin
               FLog := 'Inactive/abstract code';
@@ -716,7 +770,8 @@ begin
             end
             else
               FLog := 'found';
-            listDisplays(displays, cs, ctxt);
+            if (displays <> nil) then
+              listDisplays(displays, cs, ctxt);
           finally
             cs.Close(ctxt);
           end;
@@ -752,7 +807,7 @@ begin
           ver := cs.version(nil);
           cause := itNull;
           try
-            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or not FParams.activeOnly or not cs.isInactive(ctxt));
+            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or (not FParams.activeOnly or not cs.isInactive(ctxt)));
             if (not result) then
             begin
               cause := itBusinessRule;
@@ -881,8 +936,8 @@ end;
 
 function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
-  list : TCodeDisplays;
-  message, ver : String;
+  list : TConceptDesignations;
+  message, ver, pd : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
@@ -891,17 +946,18 @@ begin
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TCodeDisplays.Create;
+      list := TConceptDesignations.Create;
       try
         if check(coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode) then
         begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
              result.AddParamStr('message', 'The system "'+coding.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-          if (coding.display <> '') and (not list.has(coding.display)) then
-            result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.present+']');
-          if list.Count > 0 then
-            result.AddParamStr('display', list.preferred);
+          if (coding.display <> '') and (not list.hasDisplay(nil, coding.display)) then
+            result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.present(nil)+']');
+          pd := list.preferredDisplay(nil);
+          if (pd <> '') then
+            result.AddParamStr('display', pd);
           result.addParamStr('system', coding.systemUri);
           if (ver <> '') then
             result.addParamStr('version', ver);
@@ -953,11 +1009,11 @@ function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk, implySy
       result := 'None of the codes provided ('+code.summary+') are ';
   end;
 var
-  list : TCodeDisplays;
+  list : TConceptDesignations;
   v : boolean;
   ok, first : boolean;
   contentMode : TFhirCodeSystemContentMode;
-  cc, codelist, message, mt, ver: String;
+  cc, codelist, message, mt, ver, pd: String;
   prov, prov2 : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
@@ -980,14 +1036,14 @@ begin
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TCodeDisplays.Create;
+      list := TConceptDesignations.Create;
       try
         ok := false;
         codelist := '';
         mt := '';
         for c in code.codings.forEnum do
         begin
-          list.Clear;
+          list.clear;
           cc := ',{'+c.systemUri+'}'+c.code;
           codelist := codelist + cc;
           v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode);
@@ -1002,10 +1058,11 @@ begin
           begin
             if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
               msg('The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-            if (c.display <> '') and (not list.has(FLanguages, FParams.displayLanguage, c.display)) then
-              msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.present+']');
-            if list.Count > 0 then
-              result.AddParamStr('display', list.chooseDisplay(FLanguages, FParams.displayLanguage));
+            if (c.display <> '') and (not list.hasDisplay(nil {FLanguages, FParams.displayLanguage, }, c.display)) then
+              msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.present(nil)+']');
+            pd := list.preferredDisplay(nil);
+            if pd <> '' then
+              result.AddParamStr('display', pd);
             result.addParamStr('system', c.systemUri);
             result.addParamStr('code', c.code);
             if (ver <> '') then
@@ -1041,8 +1098,8 @@ begin
                  else
                  begin
                    listDisplays(list, prov, ctxt);
-                   if (c.display <> '') and (not list.has(c.display)) then
-                     msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.present+']');
+                   if (c.display <> '') and (not list.hasDisplay(nil, c.display)) then
+                     msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.present(nil)+']');
                    result.addParamStr('version', prov.version(nil));
                  end;
                finally
@@ -1084,8 +1141,8 @@ end;
 
 function TValueSetChecker.check(system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
-  list : TCodeDisplays;
-  message, ver : String;
+  list : TConceptDesignations;
+  message, ver, pd : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
@@ -1094,13 +1151,14 @@ begin
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TCodeDisplays.Create;
+      list := TConceptDesignations.Create;
       try
         if check(system, version, code, true, implySystem, list, message, ver, cause, op, contentMode) then
         begin
           result.AddParamBool('result', true);
-          if list.Count > 0 then
-            result.AddParamStr('display', list.preferred);
+          pd := list.preferredDisplay(nil);
+          if pd <> ''then
+            result.AddParamStr('display', pd);
           result.addParamStr('system', system);
           result.addParamStr('code', code);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
@@ -1145,7 +1203,7 @@ begin
     cs.Close(ctxt);
 end;
 
-function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TCodeDisplays; vs : TFHIRValueSetW; var message : String): boolean;
+function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilterW;
@@ -1288,8 +1346,6 @@ end;
 
 function TFHIRValueSetExpander.Expand(source: TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSetW;
 var
-  list : TFslList<TFhirValueSetExpansionContainsW>;
-  map : TFslMap<TFhirValueSetExpansionContainsW>;
   i, t, o : integer;
   c : TFhirValueSetExpansionContainsW;
   //e : TFhirExtension;
@@ -1301,7 +1357,8 @@ var
   ics : TFHIRValueSetCodeSystemW;
   cl : TFhirCodeSystemConceptListW;
   cs2 : TFhirCodeSystemW;
-  limitCount : integer;
+  lang : TIETFLang;
+  list : TFslList<TFhirValueSetExpansionContainsW>;
 begin
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   FFactory.checkNoModifiers(source, 'ValueSetExpander.Expand', 'ValueSet');
@@ -1309,62 +1366,72 @@ begin
   FParams := params.Link;
 
   result := Ffactory.wrapValueSet(source.Resource.Clone as TFHIRResourceV);
-  if not FParams.includeDefinition then
-  begin
+  table := nil;
+  div_ := nil;
+  if not FParams.includeCompose then
     result.clearDefinition;
-    div_ := nil;
-    table := nil;
-  end
-  else
-  begin
-    div_ := FFactory.resetXhtml(result.Resource);
-    table := div_.AddTag('table').setAttribute('class', 'grid');
-  end;
 
   if (result.hasExpansion) then
     exit; // just return the expansion
 
+  if FParams.generateNarrative then
+  begin
+    div_ := FFactory.resetXhtml(result.Resource);
+    table := div_.AddTag('table').setAttribute('class', 'grid');
+  end
+  else
+  begin
+    FFactory.clearXhtml(result.Resource);
+  end;
+
   if (source.url <> '') then
     dependencies.Add(source.url);
 
-  result.language := FParams.displayLanguage.prefLang;
+  if FParams.Language <> nil then
+    result.language := FParams.Language.code;
   FLang := result.language;
 
   filter := TSearchFilterText.create(textFilter);
-  map := TFslMap<TFhirValueSetExpansionContainsW>.create('VS.Expander.map');
-  list := TFslList<TFhirValueSetExpansionContainsW>.create;
+
+  FMap := TFslMap<TFhirValueSetExpansionContainsW>.create('VS.Expander.map');
+  FMap.defaultValue := nil;
+  FRootList := TFslList<TFhirValueSetExpansionContainsW>.create;
+  FFullList := TFslList<TFhirValueSetExpansionContainsW>.create;
+  FCanBeHierarchy := not FParams.excludeNested;
+  ;
   try
     if filter.null then
-      limitCount := UPPER_LIMIT_NO_TEXT
+      FLimitCount := UPPER_LIMIT_NO_TEXT
     else
-      limitCount := UPPER_LIMIT_TEXT;
+      FLimitCount := UPPER_LIMIT_TEXT;
 
-    if (limit < limitCount) then
-      limitCount := limit;
+    if (limit < FLimitCount) then
+      FLimitCount := limit;
     FCount := count;
     FOffset := offset;
+    if (FOffset > 0) or (FCount > 0) then
+      FCanBeHierarchy := false;
 
     exp := result.forceExpansion;
-    if source.id <> '' then
-      exp.addParamUri('expansion-source', 'ValueSet/'+source.id)
-    else if source.url <> '' then
-      exp.addParamUri('expansion-source', source.url);
+    //if source.id <> '' then
+    //  exp.addParamUri('expansion-source', 'ValueSet/'+source.id)
+    //else if source.url <> '' then
+    //  exp.addParamUri('expansion-source', source.url);
 
-    if FParams.limitedExpansion then
+    if FParams.hasLimitedExpansion then
       exp.addParamBool('limitedExpansion', FParams.limitedExpansion);
-    if FParams.displayLanguage.header <> '' then
-      exp.addParamStr('displayLanguage', FParams.displayLanguage.header);
-    if FParams.includeDesignations then
-      exp.addParamBool('includeDesignations', FParams.includeDesignations);
-    if FParams.includeDefinition then
-      exp.addParamBool('includeDefinition', FParams.includeDefinition);
-    if FParams.activeOnly then
-      exp.addParamBool('activeOnly', FParams.activeOnly);
-    if FParams.excludeNested then
+    for lang in FParams.displayLanguages do
+      if (FParams.Language = nil) or (not lang.matches(FParams.Language)) then
+        exp.addParamStr('displayLanguage', lang.code);
+    if FParams.hasExcludeNested then
       exp.addParamBool('excludeNested', FParams.excludeNested);
-    if FParams.excludeNotForUI then
+    if FParams.hasActiveOnly then
+      exp.addParamBool('activeOnly', FParams.activeOnly);
+    if FParams.hasIncludeDesignations then
+      exp.addParamBool('includeDesignations', FParams.includeDesignations);
+    if FParams.hasExcludeNotForUI then
       exp.addParamBool('excludeNotForUI', FParams.excludeNotForUI);
-    if FParams.excludePostCoordinated then
+    if FParams.hasExcludePostCoordinated then
       exp.addParamBool('excludePostCoordinated', FParams.excludePostCoordinated);
 
     try
@@ -1377,7 +1444,7 @@ begin
           try
             cs2 := FFactory.wrapCodeSystem(source.Resource.link);
             try
-              handleDefine(cs2, list, map, limitCount, ics, cl, filter, exp, nil);
+              handleDefine(cs2, ics, cl, filter, exp, nil);
             finally
               cs2.Free;
             end;
@@ -1390,7 +1457,7 @@ begin
       end;
       notClosed := false;
       if (source.checkCompose('ValueSetExpander.Expand', 'compose')) then
-        handleCompose(list, map, limitCount, source, filter, dependencies, exp, notClosed);
+        handleCompose(source, filter, dependencies, exp, notClosed);
     except
       on e : ETooCostly do
       begin
@@ -1412,11 +1479,24 @@ begin
         raise;
       end;
     end;
+
     if notClosed then
     begin
       exp.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
       if (table <> nil) then
         div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
+    end
+    else
+    begin
+      exp.Total := FFullList.count;
+      if (FCanBeHierarchy) then
+        list := FRootList
+      else
+      begin
+        list := FFullList;
+        for c in FFullList do
+          c.clearContains();
+      end;
     end;
 
     t := 0;
@@ -1424,10 +1504,10 @@ begin
     for i := 0 to list.count - 1 do
     begin
       c := list[i];
-      if map.containsKey(key(c)) then
+      if FMap.containsKey(key(c)) then
       begin
         inc(o);
-        if (o >= offset) and ((count = 0) or (t < count)) then
+        if FCanBeHierarchy or (o >= offset) and ((count = 0) or (t < count)) then
         begin
           inc(t);
           exp.addContains(c);
@@ -1444,8 +1524,9 @@ begin
 
     result.link;
   finally
-    map.free;
-    list.free;
+    FMap.free;
+    FRootList.free;
+    FFullList.free;
     result.free;
     filter.Free;
   end;
@@ -1504,7 +1585,7 @@ begin
   result := TSpecialProviderFilterContextNothing.create;
 end;
 
-procedure TFHIRValueSetExpander.handleCompose(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source: TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
+procedure TFHIRValueSetExpander.handleCompose(source: TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 var
   vs : TFHIRValueSetW;
   s : String;
@@ -1514,24 +1595,24 @@ begin
   begin
     vs := expandValueSet(s, filter.filter, dependencies, notClosed);
     try
-      importValueSet(list, map, vs, expansion, nil, 0);
+      importValueSet(vs, expansion, nil, 0);
     finally
       vs.free;
     end;
   end;
 
   for c in source.includes.forEnum do
-    checkSource(c, expansion, limitCount, filter);
+    checkSource(c, expansion, filter);
   for c in source.excludes.forEnum do
-    checkSource(c, expansion, limitCount, filter);
+    checkSource(c, expansion, filter);
 
   for c in source.includes.forEnum do
-    processCodes(false, list, map, limitCount, c, source, filter, dependencies, expansion, notClosed);
+    processCodes(false, c, source, filter, dependencies, expansion, notClosed);
   for c in source.excludes.forEnum do
-    processCodes(true, list, map, limitCount, c, source, filter, dependencies, expansion, notClosed);
+    processCodes(true, c, source, filter, dependencies, expansion, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
 var
   cm : TFhirCodeSystemConceptW;
   v : String;
@@ -1549,27 +1630,27 @@ begin
   begin
     FFactory.checkNoModifiers(cm, 'ValueSetExpander.handleDefine', 'concept');
     if filter.passes(cm.display) or filter.passes(cm.code) then
-      addDefinedCode(cs, list, map, limitCount, source.systemUri, cm, imports);
-    handleDefine(cs, list, map, limitCount, source, cm.conceptList, filter, nil, imports);
+      addDefinedCode(cs, source.systemUri, cm, imports, nil);
+    handleDefine(cs, source, cm.conceptList, filter, nil, imports);
   end;
 end;
 
-procedure TValueSetWorker.listDisplays(displays : TCodeDisplays; cs : TCodeSystemProvider; c: TCodeSystemProviderContext);
+procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext);
 begin
   // list all known language displays
-  cs.Displays(c, displays);
+  cs.Designations(c, displays);
 end;
 
-procedure TValueSetWorker.listDisplays(displays : TCodeDisplays; c: TFhirCodeSystemConceptW); // todo: supplements
+procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); // todo: supplements
 var
   ccd : TFhirCodeSystemConceptDesignationW;
 begin
   // list all known provided displays
   for ccd in c.designations.forEnum do
-    displays.see(ccd.language, ccd.value);
+    displays.addDesignation(ccd.language, ccd.valueElement); {no .link}
 end;
 
-procedure TValueSetWorker.listDisplays(displays : TCodeDisplays; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW);
+procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW);
 var
   cd : TFhirValueSetComposeIncludeConceptDesignationW;
   first : boolean;
@@ -1577,7 +1658,8 @@ begin
   if c.display <> '' then
   begin
     displays.Clear;
-    displays.see(vs.language, c.display, true);
+    displays.baseLang := TIETFLang.create(vs.language);
+    displays.display := c.displayElement; {no .link}
   end;
   first := true;
   for cd in c.designations.forEnum do
@@ -1588,7 +1670,7 @@ begin
       displays.Clear;
       first := false;
     end;
-    displays.see(cd.language, cd.value, true);
+    displays.addDesignation(cd.language, cd.valueElement); { no .link}
   end;
 end;
 
@@ -1612,23 +1694,25 @@ begin
   inherited create(factory, getVS, getCS, getVersions, getExpansion, txResources, languages);
 end;
 
-procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>);
+procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
 var
   i : integer;
-  cds : TCodeDisplays;
+  cds : TConceptDesignations;
+  n : TFhirValueSetExpansionContainsW;
 begin
   if not FParams.excludeNotForUI or not (cs.isAbstract(c)) then
   begin
-    cds := TCodeDisplays.Create;
+    cds := TConceptDesignations.Create(FFactory.link);
     try
       listDisplays(cds, c);
-      processCode(false, limitCount, list, map, system, '', c.Code, cds, c.definition, nil, imports);
+      n := processCode(parent, false, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c),  cds, c.definition, c.itemWeight,
+         nil, imports, c.getAllExtensionsW, nil, c.properties);
     finally
       cds.Free;
     end;
   end;
   for i := 0 to c.conceptList.count - 1 do
-    addDefinedCode(cs, list, map, limitCount, system, c.conceptList[i], imports);
+    addDefinedCode(cs, system, c.conceptList[i], imports, n);
 end;
 
 function TFHIRValueSetExpander.canonical(system, version : String) : String;
@@ -1638,36 +1722,6 @@ begin
   else
     result := system + '|'+version
 end;
-
-function TFHIRValueSetExpander.isValidLang(lang : String) : boolean;
-var
-  s : String;
-  l, r : TIETFLang;
-begin
-  result := true;
-  if (lang = '') then
-    exit(true);
-
-  l := FLanguages.parse(lang);
-  try
-    for s in FParams.displayLanguage.codes do
-    begin
-      result := false;
-      if (s = '') then
-        exit(true);
-      r := FLanguages.parse(s);
-      try
-        if l.matches(r) then
-          exit(true);
-      finally
-        r.Free;
-      end;
-    end;
-  finally
-    l.Free;
-  end;
-end;
-
 
 function TFHIRValueSetExpander.passesImport(import: TFHIRImportedValueSet; system, code: String): boolean;
 begin
@@ -1688,61 +1742,208 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCode(doDelete : boolean; limitCount : integer; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; system, version, code : String; display : TCodeDisplays; definition: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+function hasExtension(list : TFslList<TFhirExtensionW>; url : String) : boolean;
+var
+  ext : TFhirExtensionW;
+begin
+  result := false;
+  if (list <> nil) then
+    for ext in list do
+      if (ext.url = url) then
+        exit(true);
+end;
+
+function getExtensionString(list : TFslList<TFhirExtensionW>; url : String) : String;
+var
+  ext : TFhirExtensionW;
+begin
+  result := '';
+  if (list <> nil) then
+    for ext in list do
+      if (ext.url = url) then
+        exit(ext.value.ToString);
+end;
+
+function TFHIRValueSetExpander.processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String;
+    isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
+    csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>) : TFhirValueSetExpansionContainsW;
 var
   n : TFhirValueSetExpansionContainsW;
-  s : String;
-  cd : TCodeDisplay;
+  s, pn : String;
+  srcLang, dstLang : TIETFLang;
+  usedDisplay : boolean;
+  tu, t : TConceptDesignation;
+  ext : TFHIRExtensionW;
+  cp : TFhirCodeSystemConceptPropertyW;
 begin
-  if not passesImports(imports, system, code, 0) then
-    exit;
+  try
+    if not passesImports(imports, system, code, 0) then
+      exit;
 
-  if (limitCount > 0) and (map.Count >= limitCount) and not doDelete then
-    raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
+    if (FLimitCount > 0) and (FFullList.Count >= FLimitCount) and not doDelete then
+      raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
 
-  if (expansion <> nil) and (version <> '') then
-  begin
-    s := canonical(system, version);
-    if not expansion.hasParam('version', s) then
-      expansion.addParamUri('version', s);
-  end;
-
-  s := key(system, code);
-
-  if doDelete or not map.containsKey(s) then
-  begin
-    n := FFactory.makeValueSetContains;
-    try
-      n.systemUri := system;
-      n.Code := code;
-      n.Display := display.chooseDisplay(FLanguages, FParams.FdisplayLanguage);
-      if FParams.includeDesignations then
-      begin
-        for cd in display do
-        begin
-          if ((cd.language <> FLang) or (cd.value <> n.display)) and isValidLang(cd.language) then
-            n.addDesignation(cd.language, '', cd.value);
-        end;
-      end;
-
-      if (dodelete) then
-      begin
-        if map.ContainsKey(s) then
-        begin
-          list.Remove(map[s]);
-          map.Remove(s);
-        end;
-      end
-      else if not map.ContainsKey(s) then
-      begin
-        list.add(n.link);
-        map.add(s, n.link);
-      end;
-      if definition <> '' then
-        n.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-definition', FFactory.makeString(definition));
-    finally
-      n.free;
+    if (expansion <> nil) and (version <> '') then
+    begin
+      s := canonical(system, version);
+      if not expansion.hasParam('version', s) then
+        expansion.addParamUri('version', s);
     end;
+
+    s := key(system, code);
+
+    if doDelete or not FMap.containsKey(s) then
+    begin
+      n := FFactory.makeValueSetContains;
+      try
+        n.systemUri := system;
+        n.Code := code;
+        if isAbstract then
+          n.abstract_ := isAbstract;
+        if isInactive then
+          n.inactive := isInactive;
+
+        if (deprecated) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#status', 'status', FFactory.makeCode('deprecated'));
+
+        if FParams.includeDefinition and (definition <> '') then
+          n.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-concept-definition', FFactory.makeString(definition));
+
+        if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-label')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#label', 'label', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-label')));
+        if (hasExtension(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-label')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#label', 'label', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-label')));
+
+        if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-conceptOrder')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-conceptOrder')));
+        if (hasExtension(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-conceptOrder')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-conceptOrder')));
+
+        if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'itemWeight', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
+        if (hasExtension(vsExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')) then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'itemWeight', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
+
+        if (csExtList <> nil) then
+          for ext in csExtList do
+            if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/coding-sctdescid', 'http://hl7.org/fhir/StructureDefinition/rendering-style',
+                                  'http://hl7.org/fhir/StructureDefinition/rendering-xhtml', 'http://hl7.org/fhir/StructureDefinition/codesystem-alternate'], ext.url) then
+              n.addExtensionV(ext.url, ext.value.link);
+
+        if (vsExtList <> nil) then
+          for ext in vsExtList do
+            if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/valueset-supplement', 'http://hl7.org/fhir/StructureDefinition/valueset-deprecated',
+                                'http://hl7.org/fhir/StructureDefinition/valueset-concept-definition', 'http://hl7.org/fhir/StructureDefinition/coding-sctdescid',
+                                'http://hl7.org/fhir/StructureDefinition/rendering-style', 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml'], ext.url) then
+              n.addExtensionV(ext.url, ext.value.link);
+
+        // display and designations
+        srcLang := displays.baseLang;
+        dstLang := FParams.Language;
+        usedDisplay := false;
+        if (FParams.DisplayLanguages.Count > 0) then
+          tu := displays.findDisplay(FParams.displayLanguages)
+        else
+          tu := nil;
+        if (tu <> nil) then
+          n.Display := tu.value.asString
+        else if (displays.display <> nil) and ((srcLang = nil) or (dstLang = nil) or dstLang.matches(srcLang)) then
+        begin
+          n.Display := displays.display.asString;
+          usedDisplay := true;
+        end
+        else
+        begin
+          // we don't have a usable display
+        end;
+
+        if FParams.includeDesignations then
+        begin
+          if not usedDisplay and (displays.display <> nil) then
+            n.addDesignation(srcLang.code, '', displays.display.AsString);
+          for t in displays.designations do
+            if (t <> tu) and (((t.Language <> nil) or (t.use <> nil)) and (t.value <> nil)) then
+              n.addDesignation(t.language, t.use, t.value);
+        end;
+
+        for pn in FParams.properties do
+        begin
+          if csProps <> nil then
+            for cp in csprops do
+            begin
+              if cp.code = pn then
+                n.addProperty(pn, cp.value.link);
+            end;
+        end;
+
+
+  //    for (ParametersParameterComponent p : expParams.getParameter()) {
+  //      if ("property".equals(p.getName())) {
+  //        if (csProps != null && p.hasValue()) {
+  //          for (ConceptPropertyComponent cp : csProps) {
+  //            if (p.getValue().primitiveValue().equals(cp.getCode())) {
+  //              n.addProperty().setCode(cp.getCode()).setValue(cp.getValue());
+  //            }
+  //          }
+  //        }
+  //        if (expProps != null && p.hasValue()) {
+  //          for (org.hl7.fhir.r5.model.ValueSet.ConceptPropertyComponent cp : expProps) {
+  //            if (p.getValue().primitiveValue().equals(cp.getCode())) {
+  //              n.addProperty(cp);
+  //            }
+  //          }
+  //        }
+  //      }
+  //    }
+  //
+  //
+
+
+//
+//        n.Display := display.chooseDisplay(FLanguages, FParams.FdisplayLanguage);
+//        if FParams.includeDesignations then
+//        begin
+//          for cd in display do
+//          begin
+//            if ((cd.language <> FLang) or (cd.value <> n.display)) and isValidLang(cd.language) then
+//              n.addDesignation(cd.language, '', cd.value);
+//          end;
+//        end;
+
+        if (dodelete) then
+        begin
+          FCanBeHierarchy := false;
+          if FMap.ContainsKey(s) then
+          begin
+            FFullList.Remove(FMap[s]);
+            FMap.Remove(s);
+          end;
+        end
+        else if not FMap.ContainsKey(s) then
+        begin
+          FFullList.add(n.link);
+          FMap.add(s, n.link);
+          if (FCanBeHierarchy) then
+          begin
+            if (parent <> nil) then
+              parent.addContains(n)
+            else
+              FRootList.add(n.link);
+          end;
+        end
+        else
+          FCanBeHierarchy := false;
+        if (itemWeight <> '') then
+          n.itemWeight := itemWeight;
+        result := n;
+      finally
+        n.free;
+      end;
+    end;
+  finally
+    csExtList.free;
+    vsExtList.free;
+    csProps.free;
   end;
 end;
 
@@ -1782,25 +1983,26 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.importValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+procedure TFHIRValueSetExpander.importValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
 var
   c : TFhirValueSetExpansionContainsW;
   s : String;
 begin
+  FCanBeHierarchy := false;
   expansion.copyParams(vs.expansion);
 
   for c in vs.expansion.contains.forEnum do
   begin
     s := key(c);
-    if passesImports(imports, c.systemUri, c.code, offset) and not map.containsKey(s) then
+    if passesImports(imports, c.systemUri, c.code, offset) and not FMap.containsKey(s) then
     begin
-      list.add(c.link);
-      map.add(s, c.link);
+      FFullList.add(c.link);
+      FMap.add(s, c.link);
     end;
   end;
 end;
 
-procedure TFHIRValueSetExpander.excludeValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+procedure TFHIRValueSetExpander.excludeValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
 var
   c : TFhirValueSetExpansionContainsW;
   s : String;
@@ -1808,15 +2010,15 @@ begin
   for c in vs.expansion.contains.forEnum do
   begin
     s := key(c);
-    if passesImports(imports, c.systemUri, c.code, offset) and map.containsKey(s) then
+    if passesImports(imports, c.systemUri, c.code, offset) and FMap.containsKey(s) then
     begin
-      list.Remove(map[s]);
-      map.Remove(s);
+      FFullList.Remove(FMap[s]);
+      FMap.Remove(s);
     end;
   end;
 end;
 
-procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; limitCount : integer; filter : TSearchFilterText);
+procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText);
 var
   cs : TCodeSystemProvider;
   s : string;
@@ -1869,8 +2071,8 @@ begin
             else
               raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
 
-          if not imp and (limitCount > 0) and (cs.TotalCount > limitCount) and not (FParams.limitedExpansion) then
-            raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
+          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
+            raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
         end
       end;
 
@@ -1880,7 +2082,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cset: TFhirValueSetComposeIncludeW; vsSrc : TFHIRValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
+procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; cset: TFhirValueSetComposeIncludeW; vsSrc : TFHIRValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
   i, count, offset : integer;
@@ -1893,14 +2095,15 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display : String;
+  s, display, ov : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
   cctxt : TCodeSystemProviderContext;
-  cds : TCodeDisplays;
+  cds : TConceptDesignations;
   iter : TCodeSystemIteratorContext;
   vs : TFHIRValueSetW;
+  parent : TFhirValueSetExpansionContainsW;
   function passesFilters(c : TCodeSystemProviderContext; offset : integer) : boolean;
   var
     j : integer;
@@ -1930,14 +2133,17 @@ begin
   try
     FFactory.checkNoModifiers(cset,'ValueSetExpander.processCodes', 'set');
 
+    if (cset.hasValueSets or cset.hasConcepts or (cset.filterCount > 1)) then
+      FCanBeHierarchy := false;
+
     if cset.systemUri = '' then
     begin
       for s in cset.valueSets do
         valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
       if doDelete then
-        excludeValueSet(list, map, valueSets[0].valueSet, expansion, valueSets, 1)
+        excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1)
       else
-        importValueSet(list, map, valueSets[0].valueSet, expansion, valueSets, 1);
+        importValueSet(valueSets[0].valueSet, expansion, valueSets, 1);
     end
     else
     begin
@@ -1978,9 +2184,9 @@ begin
               try
                 expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                 if doDelete then
-                  excludeValueSet(list, map, base, expansion, valueSets, 0)
+                  excludeValueSet(base, expansion, valueSets, 0)
                 else
-                  importValueSet(list, map, base, expansion, valueSets, 0);
+                  importValueSet(base, expansion, valueSets, 0);
               finally
                 base.Free;
               end;
@@ -1998,13 +2204,13 @@ begin
 
               iter := cs.getIterator(nil);
               try
-                if valueSets.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) and not doDelete then
-                  raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
+                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete then
+                  raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
                 while iter.more do
                 begin
                   c := cs.getNextContext(iter);
                   if passesFilters(c, 0) then
-                    processCodeAndDescendants(doDelete, list, map, limitCount, cs, c, expansion, valueSets);
+                    processCodeAndDescendants(doDelete, cs, c, expansion, valueSets, nil);
                 end;
               finally
                 iter.Free;
@@ -2024,10 +2230,11 @@ begin
                     c := cs.FilterConcept(ctxt);
                     if passesFilters(c, 0) then
                     begin
-                      cds := TCodeDisplays.Create;
+                      cds := TConceptDesignations.Create(FFactory.link);
                       try
                         listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                        processCode(doDelete, limitCount, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cds, cs.definition(c), expansion, valueSets);
+                        processCode(nil, doDelete, cs.systemUri(c), cs.version(c), cs.code(c),  cs.isAbstract(c), cs.isInactive(c), cs.deprecated(c),
+                        cds, cs.definition(c), cs.itemWeight(c), expansion, valueSets, cs.getExtensions(c), nil, cs.getProperties(c));
                       finally
                         cds.free;
                       end;
@@ -2042,7 +2249,7 @@ begin
             end;
           end;
 
-          cds := TCodeDisplays.Create;
+          cds := TConceptDesignations.Create(FFactory.link);
           try
             for cc in cset.concepts.forEnum do
             begin
@@ -2055,7 +2262,13 @@ begin
                   listDisplays(cds, cs, cctxt);
                   listDisplays(cds, cc, vsSrc);
                   if filter.passes(cds) or filter.passes(cc.code) then
-                    processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cc.code, cds, cs.Definition(cctxt), expansion, valueSets);
+                  begin
+                    ov := cc.itemWeight;
+                    if ov = '' then
+                      ov := cs.itemWeight(cctxt);
+                    processCode(nil, doDelete, cs.systemUri(nil), cs.version(nil), cc.code, cs.isAbstract(cctxt), cs.isInactive(cctxt), cs.deprecated(cctxt), cds,
+                         cs.Definition(cctxt), ov, expansion, valueSets, cs.getExtensions(cctxt), cc.getAllExtensionsW, cs.getProperties(cctxt));
+                  end;
                 end;
               finally
                 cs.Close(cctxt);
@@ -2109,12 +2322,20 @@ begin
                         inc(count);
                         if count > FOffset then
                         begin
-                          cds := TCodeDisplays.Create;
+                          cds := TConceptDesignations.Create(FFactory.link);
                           try
                             if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
                             begin
                               listDisplays(cds, cs, c);
-                              processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cs.code(c), cds, cs.definition(c), expansion, nil);
+                              if cs.canParent then
+                                parent := FMap[key(cs.systemUri(c), cs.parent(c))]
+                              else
+                              begin
+                                FCanBeHierarchy := false;
+                                parent := nil;
+                              end;
+                              processCode(parent, doDelete, cs.systemUri(nil), cs.version(nil), cs.code(c), cs.isAbstract(c), cs.IsInactive(c),
+                                  cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c));
                             end;
                           finally
                             cds.free;
@@ -2148,12 +2369,13 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
 var
   i : integer;
   vs : String;
-  cds : TCodeDisplays;
+  cds : TConceptDesignations;
   iter : TCodeSystemIteratorContext;
+  n : TFhirValueSetExpansionContainsW;
 begin
   try
     if (cs.version(nil) <> '') and (expansion <> nil) then
@@ -2162,12 +2384,13 @@ begin
       if not expansion.hasParam('version', vs) then
         expansion.addParamUri('version', vs);
     end;
-    if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
+    if (not FParams.excludeNotForUI or not cs.IsAbstract(context)) and (not FParams.activeOnly or not cs.isInActive(context)) then
     begin
-      cds := TCodeDisplays.Create;
+      cds := TConceptDesignations.Create(FFactory.link);
       try
         listDisplays(cds, cs, context);
-        processCode(doDelete, limitCount, list, map, cs.systemUri(context), '', cs.Code(context), cds, cs.definition(context), expansion, imports);
+        n := processCode(parent, doDelete, cs.systemUri(context), '', cs.Code(context), cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
+        cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context));
       finally
         cds.Free;
       end;
@@ -2175,7 +2398,7 @@ begin
     iter := cs.getIterator(context);
     try
       while iter.more do
-        processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getNextContext(iter), expansion, imports);
+        processCodeAndDescendants(doDelete, cs, cs.getNextContext(iter), expansion, imports, n);
     finally
       iter.Free;
     end;
@@ -2190,13 +2413,97 @@ constructor TFHIRExpansionParams.Create;
 begin
   inherited;
   FFixedVersions := TFslList<TFhirExpansionParamsFixedVersion>.create;
+  FDisplayLanguages := TFslList<TIETFLang>.create;
+  FProperties := TStringList.create;
+
+  FGenerateNarrative := true;
+  FincludeCompose := true;
+end;
+
+procedure TFHIRExpansionParams.SetLanguage(value: TIETFLang);
+begin
+  FLanguage.free;
+  FLanguage := value;
+end;
+
+procedure TFHIRExpansionParams.SetActiveOnly(value : boolean);
+begin
+  FActiveOnly := value;
+  FHasActiveOnly := true;
+end;
+
+procedure TFHIRExpansionParams.SetExcludeNested(value : boolean);
+begin
+  FExcludeNested := value;
+  FHasExcludeNested:= true;
+end;
+
+procedure TFHIRExpansionParams.SetGenerateNarrative(value : boolean);
+begin
+  FGenerateNarrative := value;
+  FHasGenerateNarrative := true;
+end;
+
+procedure TFHIRExpansionParams.SetLimitedExpansion(value : boolean);
+begin
+  FLimitedExpansion := value;
+  FHasLimitedExpansion := true;
+end;
+
+procedure TFHIRExpansionParams.SetExcludeNotForUI(value : boolean);
+begin
+  FExcludeNotForUI := value;
+  FHasExcludeNotForUI := true;
+end;
+
+procedure TFHIRExpansionParams.SetExcludePostCoordinated(value : boolean);
+begin
+  FExcludePostCoordinated := value;
+  FHasExcludePostCoordinated := true;
+end;
+
+procedure TFHIRExpansionParams.SetIncludeDesignations(value : boolean);
+begin
+  FIncludeDesignations := value;
+  FHasIncludeDesignations := true;
+end;
+
+procedure TFHIRExpansionParams.SetIncludeCompose(value : boolean);
+begin
+  FIncludeCompose := value;
+  FHasIncludeCompose := true;
+end;
+
+procedure TFHIRExpansionParams.SetIncludeDefinition(value : boolean);
+begin
+  FIncludeDefinition := value;
+  FHasIncludeDefinition := true;
+end;
+
+procedure TFHIRExpansionParams.SetDefaultToLatestVersion(value : boolean);
+begin
+  FDefaultToLatestVersion := value;
+  FHasDefaultToLatestVersion := true;
+end;
+
+procedure TFHIRExpansionParams.SetIncompleteOK(value : boolean);
+begin
+  FIncompleteOK := value;
+  FHasIncompleteOK := true;
+end;
+
+procedure TFHIRExpansionParams.SetValueSetMode(value : TValueSetValidationMode);
+begin
+  FValueSetMode := value;
+  FHasValueSetMode := true;
 end;
 
 function TFHIRExpansionParams.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FFixedVersions.sizeInBytes(magic));
-  inc(result, FdisplayLanguage.sizeInBytes(magic));
+  inc(result, FDisplayLanguages.sizeInBytes(magic));
+  inc(result, FLanguage.sizeInBytes(magic));
   inc(result, (FUid.length * sizeof(char)) + 12);
 end;
 
@@ -2205,15 +2512,36 @@ begin
   result := TFHIRExpansionParams.Create;
 end;
 
+procedure TFHIRExpansionParams.loadFromLangs(langs: THTTPLanguages);
+var
+  s : String;
+begin
+  FDisplayLanguages.clear;
+  FLanguage := nil;
+
+  for s in langs.codes do
+  begin
+    if (s <> '') then
+    begin
+      if FLanguage = nil then
+        FLanguage := TIETFLang.makeLang(s);
+      FDisplayLanguages.add(TIETFLang.makeLang(s));
+    end;
+  end;
+end;
+
 destructor TFHIRExpansionParams.Destroy;
 begin
   FFixedVersions.Free;
+  FDisplayLanguages.Free;
+  FLanguage.Free;
+  FProperties.free;
   inherited;
 end;
 
 function TFHIRExpansionParams.hash: String;
 var
-  s : String;
+  s, lc : String;
   function b(v : boolean):string;
   begin
     if v then
@@ -2222,8 +2550,12 @@ var
       result := '0';
   end;
 begin
-  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+displayLanguage.header+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
-    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid+'|'+inttostr(ord(FValueSetMode))+'|'+ b(defaultToLatestVersion);
+  if FLanguage = nil then
+    lc := '?'
+  else
+    lc := FLanguage.code;
+  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+lc+'|'+fDisplayLanguages.toString+'|'+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
+    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid+'|'+inttostr(ord(FValueSetMode))+'|'+ b(defaultToLatestVersion)+'|'+FProperties.CommaText;
   result := inttostr(HashStringToCode32(s));
 end;
 

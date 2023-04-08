@@ -405,7 +405,7 @@ Type
     function supportsLang(const lang : THTTPLanguages): boolean;
 
     Function GetDisplayByName(Const sCode : String; langs : TLangArray) : String;
-    procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TCodeDisplays);
+    procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TConceptDesignations);
     Function Search(sText : String; all: boolean) : TMatchArray; overload;
     Function GetPropertyId(aType : TLoincPropertyType; langs : TLangArray; const sName : String) : cardinal;
     Function GetPropertyCodes(iProp : cardinal) : TCardinalArray;
@@ -446,7 +446,7 @@ Type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -998,7 +998,7 @@ begin
   result := Desc.GetEntry(iName, lang);
 end;
 
-procedure TLOINCServices.GetDisplaysByName(const sCode: String; langs: TLangArray; list: TCodeDisplays);
+procedure TLOINCServices.GetDisplaysByName(const sCode: String; langs: TLangArray; list: TConceptDesignations);
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
@@ -1016,7 +1016,7 @@ begin
   Begin
     CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    list.see(Desc.GetEntry(iDescription, ilang).trim);
+    list.addBase('', Desc.GetEntry(iDescription, ilang).trim);
     if iOtherNames <> 0 then
     begin
       names := FRefs.GetRefs(iOtherNames);
@@ -1025,7 +1025,7 @@ begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
           if (l = ilang) then
-            list.see(langDesc(iLang), s.trim);
+            list.addDesignation(langDesc(iLang), s.trim);
       end;
     end;
   End
@@ -1033,13 +1033,13 @@ begin
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
     s := Desc.GetEntry(iDescription, ilang);
-    list.see(langDesc(iLang), s.Trim);
+    list.addBase(langDesc(iLang), s.Trim);
   end
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
     s := Desc.GetEntry(text, ilang).Trim;
-    list.see(langDesc(iLang), s);
+    list.addBase(langDesc(iLang), s);
   end
 end;
 
@@ -2186,7 +2186,7 @@ begin
   result := Desc.GetEntry(iDescription, ilang);
 end;
 
-procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TLOINCServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
   GetDisplaysByName(Code(context), allLangs, list);
 end;

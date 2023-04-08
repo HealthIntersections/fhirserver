@@ -98,7 +98,7 @@ begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r3');
   FProfile := TFhirExpansionParams.create;
-  FProfile.includeDefinition := false;
+  FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('ctxt.questionnaires');
   FSearchParameters := TFslMap<TFhirSearchParameter>.create('ctxt.search');

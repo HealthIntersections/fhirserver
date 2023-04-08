@@ -545,6 +545,7 @@ procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest;
 var
   search : TFslList<TSearchParameter>;
   sp : TSearchParameter;
+  spp : TSearchParser;
   list, filtered : TFslMetadataResourceList;
   res : TFhirMetadataResourceW;
   bundle : TFHIRBundleBuilder;
@@ -577,90 +578,100 @@ begin
   else
   begin
     TypeNotFound(request, response);
-    search := TSearchParser.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
+    spp := TSearchParser.create([scpCount, scpElements, scpSummary]);
     try
-      base := TSearchParser.buildUrl(search);
-      OnCreateBuilder(request, response, btSearchset, bundle);
-      op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+      search := spp.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
       try
-        bundle.setLastUpdated(TFslDateTime.makeUTC);
-        bundle.addLink('self', base);
-        bundle.setId(FhirGUIDToString(CreateGUID));
-
-        list := TFslMetadataResourceList.create;
+        base := spp.buildUrl(request.resourceName, search);
+        OnCreateBuilder(request, response, btSearchset, bundle);
+        op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
         try
-          if (hasScope(request, 'CodeSystem')) then
-            for p in FData.CodeSystems.Values do
-              list.add(p.resourceW.link as TFhirMetadataResourceW);
-          if (hasScope(request, 'ValueSet')) then
-            for p in FData.ValueSets.Values do
-              list.add(p.resourceW.link as TFhirMetadataResourceW);
-          if (hasScope(request, 'ConceptMap')) then
-            for p in FData.ConceptMaps.Values do
-              list.add(p.resourceW.link as TFhirMetadataResourceW);
-          if (hasScope(request, 'NamingSystem')) then
-            for p in FData.NamingSystems.Values do
-              list.add(p.resourceW.link as TFhirMetadataResourceW);
+          bundle.setLastUpdated(TFslDateTime.makeUTC);
+          bundle.addLink('self', base);
+          bundle.setId(FhirGUIDToString(CreateGUID));
 
-          filtered := TFslMetadataResourceList.create;
+          list := TFslMetadataResourceList.create;
           try
-            for res in list do
-            begin
-              isMatch := true;
-              for sp in search do
-                if isMatch and not matches(res.Resource, sp) then
-                  isMatch := false;
-              if isMatch then
-                filtered.add(res.link);
-            end;
+            if (hasScope(request, 'CodeSystem')) then
+              for p in FData.CodeSystems.Values do
+                list.add(p.resourceW.link as TFhirMetadataResourceW);
+            if (hasScope(request, 'ValueSet')) then
+              for p in FData.ValueSets.Values do
+                list.add(p.resourceW.link as TFhirMetadataResourceW);
+            if (hasScope(request, 'ConceptMap')) then
+              for p in FData.ConceptMaps.Values do
+                list.add(p.resourceW.link as TFhirMetadataResourceW);
+            if (hasScope(request, 'NamingSystem')) then
+              for p in FData.NamingSystems.Values do
+                list.add(p.resourceW.link as TFhirMetadataResourceW);
 
-            if (offset > 0) or (Count < filtered.count) then
-            begin
-              bundle.addLink('first', base+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset - count >= 0 then
-                bundle.addLink('previous', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset + count < list.count then
-                bundle.addLink('next', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if count < list.count then
-                bundle.addLink('last', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((filtered.count div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-            end;
-
-            i := 0;
-            t := 0;
-            for res in filtered do
-            begin
-              inc(i);
-              if (i > offset) then
+            filtered := TFslMetadataResourceList.create;
+            try
+              for res in list do
               begin
-                be := bundle.makeEntry;
-                try
-                  bundle.addEntry(be, false);
-                  be.Url := res.url;
-                  be.resource := res.Resource.Link;
-                finally
-                  be.free;
+                isMatch := true;
+                for sp in search do
+                begin
+                  if (sp.Control = scpNull) then
+                  begin
+                    if isMatch and not matches(res.Resource, sp) then
+                      isMatch := false;
+                  end;
                 end;
-                inc(t);
-                if (t = count) then
-                  break;
+                if isMatch then
+                  filtered.add(res.link);
               end;
+
+              if (offset > 0) or (Count < filtered.count) then
+              begin
+                bundle.addLink('first', base+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset - count >= 0 then
+                  bundle.addLink('previous', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset + count < list.count then
+                  bundle.addLink('next', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if count < list.count then
+                  bundle.addLink('last', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((filtered.count div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              end;
+
+              i := 0;
+              t := 0;
+              for res in filtered do
+              begin
+                inc(i);
+                if (i > offset) then
+                begin
+                  be := bundle.makeEntry;
+                  try
+                    bundle.addEntry(be, false);
+                    be.Url := res.url;
+                    be.resource := res.Resource.Link;
+                  finally
+                    be.free;
+                  end;
+                  inc(t);
+                  if (t = count) then
+                    break;
+                end;
+              end;
+            finally
+              filtered.free;
             end;
           finally
-            filtered.free;
+            list.Free;
           end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.Body := '';
+          response.resource := bundle.getBundle;
         finally
-          list.Free;
+          op.Free;
+          bundle.Free;
         end;
-        response.HTTPCode := 200;
-        response.Message := 'OK';
-        response.Body := '';
-        response.resource := bundle.getBundle;
       finally
-        op.Free;
-        bundle.Free;
+        search.free;
       end;
     finally
-      search.free;
+      spp.free;
     end;
   end;
 end;

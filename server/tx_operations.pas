@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_logging, fsl_http,
+  fsl_base, fsl_utilities, fsl_logging, fsl_http, fsl_lang,
   fdb_manager,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
   fhir_valuesets,
@@ -310,8 +310,6 @@ begin
             if (limit < 0) then
               limit := 0;
 
-            if profile.displayLanguage.header = '' then
-              profile.displayLanguage := request.Lang;
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);
             dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
@@ -496,8 +494,8 @@ begin
                 txResources := processAdditionalResources(context, manager, nil, params);
 
               profile := buildExpansionParams(request, manager, params);
-              if profile.displayLanguage.header = '' then
-                profile.displayLanguage := request.Lang;
+              if profile.Language = nil then
+                profile.loadFromLangs(request.Lang);
               pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources, summary);
               try
                 if summary <> '' then
@@ -1193,14 +1191,15 @@ var
   obj : TFHIRObject;
   pp : TFHIRParametersW;
 begin
+  result.generateNarrative := false; // todo...?
+  result.loadfromLangs(request.lang);
+
   if (params.str('no-cache') = 'true') then
     result.uid := NewGuidId;
   if (params.str('_incomplete') <> '') then
     result.limitedExpansion := StrToBoolDef(params.str('_incomplete'), false);
   if (params.str('limitedExpansion') <> '') then
     result.limitedExpansion := StrToBoolDef(params.str('limitedExpansion'), false);
-  if (params.str('displayLanguage') <> '') then
-    result.displayLanguage := THTTPLanguages.create(params.str('displayLanguage'));
   if (params.str('includeDesignations') <> '') then
     result.includeDesignations := StrToBoolDef(params.str('includeDesignations'), false);
   if (params.str('includeDefinition') <> '') then
@@ -1228,7 +1227,11 @@ begin
         result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
       else
         raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
-    end;
+    end
+    else if (p.name = 'displayLanguage') then
+      result.displayLanguages.add(TIETFLang.makeLang(p.valueString))
+    else if (p.name = 'property') then
+      result.properties.add(p.valueString);
   end;
   if params.has('profile') then
   begin

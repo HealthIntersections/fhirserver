@@ -330,8 +330,8 @@ end;
 
 function TSnomedWebServer.processSnomedForTool(ss : TSnomedServices; code : String) : String;
 var
-  sl : TCodeDisplays;
-  cd : TCodeDisplay;
+  sl : TConceptDesignations;
+  cd : TConceptDesignation;
   id : UInt64;
   exp : TSnomedExpression;
   index : cardinal;
@@ -344,11 +344,12 @@ begin
       result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
        '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
        '" active="'+booleanToString(ss.isActive(index))+'">';
-      sl := TCodeDisplays.Create;
+      sl := TConceptDesignations.Create;
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
-        for cd in sl do
-          result := result + '<display value="'+FormatTextToXml(cd.value, xmlAttribute)+'"/>';
+        result := result + '<display value="'+FormatTextToXml(sl.display.AsString, xmlAttribute)+'"/>';
+        for cd in sl.designations do
+          result := result + '<display value="'+FormatTextToXml(cd.value.asString, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;
@@ -357,11 +358,12 @@ begin
     else if ss.IsValidDescription(code, id, s) then
     begin
       result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+FormatTextToXml(s, xmlAttribute)+'">';
-      sl := TCodeDisplays.Create;
+      sl := TConceptDesignations.Create;
       try
         ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
-        for cd in sl do
-          result := result + '<display value="'+FormatTextToXml(cd.value, xmlAttribute)+'"/>';
+        result := result + '<display value="'+FormatTextToXml(sl.display.asString, xmlAttribute)+'"/>';
+        for cd in sl.designations do
+          result := result + '<display value="'+FormatTextToXml(cd.value.asString, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;

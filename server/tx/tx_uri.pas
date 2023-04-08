@@ -66,7 +66,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -151,7 +151,7 @@ begin
   result := '';
 end;
 
-procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUriServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
 end;
 
