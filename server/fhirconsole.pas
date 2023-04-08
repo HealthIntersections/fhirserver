@@ -37,7 +37,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
   IdOpenSSLLoader,
-  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
+  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl, fsl_web_init,
   fdb_odbc_fpc,
   console_form,
   console_tx_edit, console_ep_edit, install_form, install_log, installer, 
@@ -52,7 +52,7 @@ begin
     InitialiseODBC;
     {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    GetOpenSSLLoader.OpenSSLPath := executableDirectory();
     {$ENDIF}
     {$IFDEF OSX}
     GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';

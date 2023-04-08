@@ -207,7 +207,7 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := FilePath([ExtractFilePath(ParamStr(0)), s]);
+  result := FilePath([executableDirectory(), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;

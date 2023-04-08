@@ -177,6 +177,7 @@ var
   sct : TFHIRServerConfigSection;
   ini : TIniFile;
   ep, o : TJsonObject;
+  lwi : String;
 begin
   rn := 1;
   if FileExists(fn) then
@@ -193,7 +194,13 @@ begin
   cfg := TFHIRServerConfigFile.Create(fn);
   try
     cfg.section['service']['runNumber'].value := inttostr(rn);
-    ini := TIniFile.Create(FilePath([ExtractFilePath(ParamStr(0)), 'web.ini']));
+    lwi := FilePath([executableDirectory(), 'web.ini']);
+    if (FileExists(lwi)) then    
+      Logging.log('Using web,ini file at '+lwi)
+    else
+      Logging.log('No web,ini file found at '+lwi);
+
+    ini := TIniFile.Create(lwi);
     try
       cfg.web['host'].value := ini.ReadString('web', 'host', 'localhost');
       cfg.web['http'].value := inttostr(ini.ReadInteger('web', 'http', 80));

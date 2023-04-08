@@ -39,7 +39,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache, fsl_web_init,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
@@ -328,10 +328,10 @@ begin
     Logging.log('Web source from /Users/grahamegrieve/work/server/server/web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('/Users/grahamegrieve/work/server/server/web')
   end
-  else if FolderExists(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web'])) then
+  else if FolderExists(FilePath([executableDirectory(), '..\..\server\web'])) then
   begin
     Logging.log('Web source from ../../server/web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([ExtractFilePath(paramstr(0)), '..\..\server\web']))
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([executableDirectory(), '..\..\server\web']))
   end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
@@ -720,7 +720,7 @@ begin
     Logging.Log('Loading Dependencies');
     {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    GetOpenSSLLoader.OpenSSLPath := executableDirectory();
     {$ENDIF}
     {$IFDEF OSX}
     // todo: do something about this
@@ -753,7 +753,7 @@ begin
       {$IFDEF OSX}
         cfgName := GetAppConfigDir(false)+'fhirserver.cfg';
       {$ELSE}
-        cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
+        cfgName := IncludeTrailingPathDelimiter(executableDirectory())+'fhirserver.cfg';
       {$ENDIF}
       Logging.Log('Config: '+cfgName);
 

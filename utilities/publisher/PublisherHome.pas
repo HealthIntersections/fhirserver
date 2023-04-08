@@ -169,7 +169,7 @@ var
   s : String;
   i : integer;
 begin
-  FIni := TIniFile.Create(Path([ExtractFilePath(ParamStr(0)), 'fhir-publisher.ini']));
+  FIni := TIniFile.Create(Path([executableDirectory(), 'fhir-publisher.ini']));
   FIni.ReadSection('folders', lbFolders.Items);
 //  FPublisher := TFHIRIGPublisher.Create(FIni);
 

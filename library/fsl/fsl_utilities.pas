@@ -2821,7 +2821,7 @@ begin
     end
     else if s = '[exe]' then
     begin
-      result := ExtractFilePath(ParamStr(0));
+      result := executableDirectory();
     end
     else if s = '[curr]' then
     begin

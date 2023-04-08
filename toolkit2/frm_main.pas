@@ -724,7 +724,7 @@ begin
   {$ENDIF}
   {$IFNDEF STATICLOAD_OPENSSL}
   {$IFDEF WINDOWS}
-  GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  GetOpenSSLLoader.OpenSSLPath := executableDirectory();
   {$ENDIF}
   {$ENDIF}
   try
