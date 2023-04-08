@@ -359,6 +359,10 @@
         <Filename Value="..\library\fhir\fhir_tools_settings.pas"/>
         <UnitName Value="fhir_tools_settings"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_extensions.pas"/>
+        <UnitName Value="fhir_extensions"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

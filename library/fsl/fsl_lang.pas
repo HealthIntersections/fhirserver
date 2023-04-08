@@ -105,6 +105,8 @@ https://www.w3.org/International/articles/language-tags/index.en
 
   TIETFLangPartType = (lptNone, lptLanguage, lptExtLang, lptScript, lptRegion, lptVariant, lptExtension);
 
+  { TIETFLang }
+
   TIETFLang = class (TFslObject)
   private
     FCode : String;
@@ -122,6 +124,7 @@ https://www.w3.org/International/articles/language-tags/index.en
     constructor Create(code : String);
     function Link : TIETFLang; overload;
 
+    class function makeLang(lang : String) : TIETFLang;
     property code : String read FCode;
     property language : string read Flanguage;
     property extLang : TArray<String> read FextLang;
@@ -511,7 +514,7 @@ end;
 
 { TIETFLang }
 
-constructor TIETFLang.create(code : String);
+constructor TIETFLang.Create(code: String);
 begin
   inherited create;
   self.FCode := code;
@@ -567,6 +570,14 @@ end;
 function TIETFLang.Link: TIETFLang;
 begin
   result := TIETFLang(inherited link);
+end;
+
+class function TIETFLang.makeLang(lang: String): TIETFLang;
+begin
+  if lang = '' then
+    result := nil
+  else
+    result := TIETFLang.create(lang);
 end;
 
 
