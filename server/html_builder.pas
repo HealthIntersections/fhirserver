@@ -551,9 +551,14 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
               xml := FFactory.makeComposer(FWorker.link, ffJson, lang, OutputStylePretty);
             ss := TBytesStream.create();
             try
-              x := FFactory.getXhtml(r);
-              if (x <> nil) then
-                TFHIRXhtmlParser.Compose(x, s, false, 2, relativeReferenceAdjustment);
+              if (SummaryOption in [soFull, soText]) then
+              begin
+                x := FFactory.getXhtml(r);
+                if (x <> nil) then
+                  TFHIRXhtmlParser.Compose(x, s, false, 2, relativeReferenceAdjustment);
+              end;
+              xml.SummaryOption := SummaryOption;
+              xml.ElementToCompose.assign(ElementToCompose);
               xml.Compose(ss, r);
               if bXml then
                 s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXmlToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10)

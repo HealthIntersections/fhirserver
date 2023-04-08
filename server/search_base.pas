@@ -43,9 +43,13 @@ Type
   TFHIRSearchParamModifier = (spmNull, spmMissing, spmExact, spmContains, spmText, spmIn, spmBelow, spmAbove, spmNotIn, spmType);
   TFHIRSearchParamPrefix = (sppNull, sppNotEqual, sppGreaterThan, sppLessThan, sppGreaterOrEquals, sppLesserOrEquals, sppStartsAfter, sppEndsBefore, sppAproximately);
 
+  TFHIRSearchControlParameter = (scpNull, scpContained, scpContainedType, scpCount, scpElements, scpGraph, scpInclude, scpMaxResults, scpRevInclude, scpScore, scpSort, scpSummary, scpTotal);
+  TFHIRSearchControlParameterSet = set of TFHIRSearchControlParameter;
+
   TSearchParameter = class (TFslObject)
   private
     FModifier: TFHIRSearchParamModifier;
+    FControl : TFHIRSearchControlParameter;
     FValue: String;
     FNext: TSearchParameter;
     FIndex: TFhirIndex;
@@ -63,6 +67,7 @@ Type
     function link : TSearchParameter; overload;
 
     property index : TFhirIndex read FIndex write SetIndex;
+    property control : TFHIRSearchControlParameter read FControl write FControl;
     property value : String read FValue write FValue;
     property modifier : TFHIRSearchParamModifier read FModifier write FModifier;
     property prefix : TFHIRSearchParamPrefix read FPrefix write FPrefix;
@@ -72,13 +77,21 @@ Type
     property next : TSearchParameter read FNext write SetNext;
   end;
 
+  { TSearchParser }
+
   TSearchParser = class (TFslObject)
   private
-    class function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
+    FSearchControls : TFHIRSearchControlParameterSet;
+    function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
-    class Function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
-    class Function buildUrl(search : TFslList<TSearchParameter>): String;
+    constructor create(searchControls : TFHIRSearchControlParameterSet);
+    function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
+    function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
   end;
+
+const
+  CODES_TFHIRSearchControlParameter : Array[TFHIRSearchControlParameter] of String =
+    ('', '_contained', '_containedType', '_count', '_elements', '_graph', '_include', '_maxresults', '_revinclude', '_score', '_sort', '_summary', '_total');
 
 implementation
 
@@ -86,17 +99,22 @@ implementation
 
 procedure TSearchParameter.build(b: TStringBuilder);
 begin
-  b.Append(index.Name);
-  case modifier of
-    spmMissing: b.Create.Append(':missing');
-    spmExact: b.Create.Append(':exact');
-    spmContains: b.Create.Append(':contains');
-    spmText: b.Create.Append(':text');
-    spmIn: b.Create.Append(':in');
-    spmBelow: b.Create.Append(':below');
-    spmAbove: b.Create.Append(':above');
-    spmNotIn: b.Create.Append(':not-in');
-    spmType: b.Append(':'+modifierType);
+  if (FControl <> scpNull) then
+    b.append(CODES_TFHIRSearchControlParameter[FControl])
+  else
+  begin
+    b.Append(index.Name);
+    case modifier of
+      spmMissing: b.Create.Append(':missing');
+      spmExact: b.Create.Append(':exact');
+      spmContains: b.Create.Append(':contains');
+      spmText: b.Create.Append(':text');
+      spmIn: b.Create.Append(':in');
+      spmBelow: b.Create.Append(':below');
+      spmAbove: b.Create.Append(':above');
+      spmNotIn: b.Create.Append(':not-in');
+      spmType: b.Append(':'+modifierType);
+    end;
   end;
   if next <> nil then
   begin
@@ -221,26 +239,28 @@ end;
 
 { TSearchParser }
 
-class function TSearchParser.buildUrl(search: TFslList<TSearchParameter>): String;
+function TSearchParser.buildUrl(base : String; search: TFslList<TSearchParameter>): String;
 var
   b : TStringBuilder;
   sp : TSearchParameter;
 begin
   b := TStringBuilder.Create;
   try
+    b.append(base);
+    b.append('?');
     for sp in search do
     begin
       b.Append('&');
       sp.build(b);
     end;
-    result := b.ToString.Substring(1);
+    result := b.ToString;
   finally
     b.Free;
   end;
 
 end;
 
-class function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: THTTPParameters): TFslList<TSearchParameter>;
+function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: THTTPParameters): TFslList<TSearchParameter>;
 var
   iName, iValue : integer;
   name, value : String;
@@ -258,7 +278,7 @@ begin
         begin
           sp := processParam(indexes, resourceType, name, value);
           if sp <> nil then
-            result.Add(sp);
+            result.Add(sp)
         end;
       end;
     end;
@@ -268,11 +288,14 @@ begin
   end;
 end;
 
-class function TSearchParser.processParam(indexes : TFHIRIndexInformation; resourceType, name, value: String): TSearchParameter;
+function TSearchParser.processParam(indexes : TFHIRIndexInformation; resourceType, name, value: String): TSearchParameter;
 var
   l, r, n, m : String;
   index : TFhirIndex;
+  cp : TFHIRSearchControlParameter;
+  ok : boolean;
 begin
+  result := nil;
   StringSplit(name, '.', l, r);
   if l.contains(':') then
   begin
@@ -282,56 +305,91 @@ begin
     n := l;
 
   index := indexes.Indexes.getByName(resourceType, n);
-  if index = nil then
-    exit(nil);
-
-  result := TSearchParameter.Create;
-  try
-    result.index := index.Link;
-
-    if (r <> '') then
+  if index <> nil then
     begin
-      if index.SearchType <> sptReference then
-        raise EFHIRException.create('chained, but not a reference: '+name);
-      if length(index.TargetTypes) <> 1 then
-        raise EFHIRException.create('not handled yet');
-      result.next := processParam(indexes, index.TargetTypes[0], r, value);
-    end
-    else
-    begin
-      result.value := value;
-      result.processPrefix;
-      if (m = 'missing') then
-        result.modifier := spmMissing
-      else if (m = 'exact') then
-        result.modifier := spmExact
-      else if (m = 'contains') then
-        result.modifier := spmContains
-      else if (m = 'text') then
-        result.modifier := spmText
-      else if (m = 'in') then
-        result.modifier := spmIn
-      else if (m = 'below') then
-        result.modifier := spmBelow
-      else if (m = 'above') then
-        result.modifier := spmAbove
-      else if (m = 'not-in') then
-        result.modifier := spmNotIn
-      else if (m = '') then
-        result.modifier := spmNull
-      else if indexes.factory.isResourceName(m) then
+    result := TSearchParameter.Create;
+    try
+      result.index := index.Link;
+      result.control := scpNull;
+
+      if (r <> '') then
       begin
-        result.modifier := spmType;
-        result.modifierType := m;
+        if index.SearchType <> sptReference then
+          raise EFHIRException.create('chained, but not a reference: '+name);
+        if length(index.TargetTypes) <> 1 then
+          raise EFHIRException.create('not handled yet');
+        result.next := processParam(indexes, index.TargetTypes[0], r, value);
       end
       else
-        raise EFHIRException.create('Unknown Modifier '+m);
-    end;
+      begin
+        result.value := value;
+        result.processPrefix;
+        if (m = 'missing') then
+          result.modifier := spmMissing
+        else if (m = 'exact') then
+          result.modifier := spmExact
+        else if (m = 'contains') then
+          result.modifier := spmContains
+        else if (m = 'text') then
+          result.modifier := spmText
+        else if (m = 'in') then
+          result.modifier := spmIn
+        else if (m = 'below') then
+          result.modifier := spmBelow
+        else if (m = 'above') then
+          result.modifier := spmAbove
+        else if (m = 'not-in') then
+          result.modifier := spmNotIn
+        else if (m = '') then
+          result.modifier := spmNull
+        else if indexes.factory.isResourceName(m) then
+        begin
+          result.modifier := spmType;
+          result.modifierType := m;
+        end
+        else
+          raise EFHIRException.create('Unknown Modifier '+m);
+      end;
 
-    result.Link;
-  finally
-    result.Free;
+      result.Link;
+    finally
+      result.Free;
+    end;
+  end
+  else if (StringArrayExists(CODES_TFHIRSearchControlParameter, n)) then
+  begin
+    cp := TFHIRSearchControlParameter(StringArrayIndexOf(CODES_TFHIRSearchControlParameter, n));
+    ok := false;
+    if (cp in FSearchControls) then
+    begin
+      case cp of
+        scpContained : ok := StringArrayExists(['true', 'false', 'both'], value);
+        scpContainedType : ok := StringArrayExists(['conainer', 'contained'], value);
+        scpCount : ok := StringIsInteger32(value);
+        scpElements : ok := true;
+        scpGraph : ok := true; // todo: try to resolve it?
+        scpInclude : ok := true; // todo: validate this
+        scpMaxResults : ok := StringIsInteger32(value);
+        scpRevInclude : ok := true; // todo: validate this
+        scpScore : ok := StringArrayExists(['true', 'false'], value);
+        scpSort : ok := true; // todo: validate this
+        scpSummary : ok := StringArrayExists(['true', 'false'], value);
+        scpTotal : ok := StringArrayExists(['none', 'estimate', 'accurate'], value);
+      end;
+    end;
+    if (ok) then
+    begin
+      result := TSearchParameter.Create;
+      result.control := cp;
+      result.value := value;
+    end;
   end;
+end;
+
+constructor TSearchParser.create(searchControls: TFHIRSearchControlParameterSet);
+begin
+  inherited Create;
+  FSearchControls := searchControls;
 end;
 
 end.
