@@ -35,7 +35,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-  fsl_base;
+  fsl_base,
+  ftx_service;
 
 const
   MAX_TERM_LENGTH = 1024;

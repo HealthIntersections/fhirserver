@@ -247,22 +247,27 @@ function THGVSProvider.locate(code: String; var message: String): TCodeSystemPro
 var
   json, o : TJsonObject;
 begin
-  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
   try
-    if json.bool['valid'] then
-    begin
-      result := THGVSCode.Create;
-      THGVSCode(result).code := code;
-    end
-    else
-    begin
-      result := nil;
-      message := '';
-      for o in json.forceArr['messages'].asObjects.forEnum do
-        CommaAdd(message, o.str['message']);
+    json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
+    try
+      if json.bool['valid'] then
+      begin
+        result := THGVSCode.Create;
+        THGVSCode(result).code := code;
+      end
+      else
+      begin
+        result := nil;
+        message := '';
+        for o in json.forceArr['messages'].asObjects.forEnum do
+          CommaAdd(message, o.str['message']);
+      end;
+    finally
+      json.Free;
     end;
-  finally
-    json.Free;
+  except
+    on e : Exception do
+      raise EFHIRException.create('Error parsing HGVS response: '+e.message);
   end;
 end;
 

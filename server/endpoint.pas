@@ -35,7 +35,7 @@ interface
 Uses
   SysUtils, Classes, Generics.Collections,
   IdCustomHTTPServer, IdContext, IdOpenSSLX509,
-  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache,
+  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache, fsl_i18n,
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager, kernel_thread,
@@ -124,11 +124,12 @@ type
     FTerminologies : TCommonTerminologies;
     FWebEndPoint : TFhirWebServerEndpoint;
     FCommon : TFHIRWebServerCommon;
+    FI18n : TI18nSupport;
   protected
     FPcm : TFHIRPackageManager;
     function nonDefPort(port, def : word) : String;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function link : TFHIRServerEndPoint; overload;
 
@@ -138,6 +139,7 @@ type
     property Terminologies : TCommonTerminologies read FTerminologies;
     property WebEndPoint : TFhirWebServerEndpoint read FWebEndPoint write FWebEndPoint;
     property Common : TFHIRWebServerCommon read FCommon;
+    property i18n : TI18nSupport read FI18n;
 
     function summary : String; virtual; abstract;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual;
@@ -374,7 +376,7 @@ begin
   end;
 end;
 
-constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited create;
   FConfig := config;
@@ -382,6 +384,7 @@ begin
   FDatabase := db;
   FTerminologies := common;
   FPcm := pcm;
+  FI18n := i18n;
 end;
 
 destructor TFHIRServerEndPoint.Destroy;
@@ -392,6 +395,7 @@ begin
   FSettings.Free;
   FDatabase.Free;
   FCommon.Free;
+  FI18n.free;
   inherited;
 end;
 

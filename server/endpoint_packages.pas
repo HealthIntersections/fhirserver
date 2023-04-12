@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_versions,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_versions, fsl_i18n,
   fdb_manager,
   fhir_objects,
   package_spider,
@@ -119,7 +119,7 @@ type
     FSystemToken : String;
     procedure upgradeDatabase;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     property SystemToken : String read FSystemToken write FSystemToken;
@@ -150,9 +150,9 @@ begin
   inherited;
 end;
 
-constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, nil);
+  inherited create(config, settings, db, common, nil, i18n);
   upgradeDatabase;
   FSystemToken := settings.Ini.service.prop['system-token'].value;
 end;

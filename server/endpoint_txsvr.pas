@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n,
   fdb_manager,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
@@ -238,7 +238,7 @@ type
     FWeb : TTerminologyServerWebServer;
     function version : TFHIRVersion;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -1037,12 +1037,12 @@ end;
 function TTerminologyFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
   result := TTerminologyServerOperationEngine.create(self.link, FServerContext {no link}, lang, FData.link);
-  result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirVersionsOperation.create(Factory.link));
+  result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirVersionsOperation.create(Factory.link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
 end;
 
 function TTerminologyFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
@@ -1444,9 +1444,9 @@ begin
   ServerContext.ClientCacheManager.clearCache;
 end;
 
-constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited Create(config, settings, db, common, pcm);
+  inherited Create(config, settings, db, common, pcm, i18n);
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
@@ -1509,7 +1509,8 @@ begin
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
-  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
+  FServerContext.i18nSupport := i18n.link;
+  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link, FServerContext.i18nSupport.link);
 
   FServerContext.TerminologyServer.Loading := true;
   FStore.loadPackage(FStore.factory.corePackage, false);

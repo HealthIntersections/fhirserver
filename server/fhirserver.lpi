@@ -753,7 +753,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="30">
+    <Exceptions Count="33">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -863,6 +863,15 @@
       <Item30>
         <Name Value="00000014EJsonParserException"/>
       </Item30>
+      <Item31>
+        <Name Value="ETooCostly"/>
+      </Item31>
+      <Item32>
+        <Name Value="EFinished"/>
+      </Item32>
+      <Item33>
+        <Name Value="0000000eEFHIRException"/>
+      </Item33>
     </Exceptions>
   </Debugging>
 </CONFIG>

@@ -39,7 +39,7 @@ uses
   Sysutils, Classes, Graphics, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   PdfiumCore,
-  fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads,
+  fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n,
   fhir_objects, fhir_icao, fsl_web_stream,
   fhir4_factory,
   utilities, server_config, time_tracker, storage,
@@ -81,7 +81,7 @@ type
     FJWKSFile : String;
     FStore : TX509CertificateStore;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -94,9 +94,9 @@ implementation
 
 { TICAOWebEndPoint }
 
-constructor TICAOWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
+constructor TICAOWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, nil, nil);
+  inherited create(config, settings, nil, nil, nil, i18n);
   FJWK :=  TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   FJWKSFile := Settings.Ini.web['card-jwks'].value;
   FStore := TX509CertificateStore.create;

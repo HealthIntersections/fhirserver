@@ -78,7 +78,7 @@ interface
 
 Uses
   SysUtils, StrUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http, fsl_npm_cache, fsl_i18n,
   fdb_manager, fdb_dialects,
   ftx_ucum_services,
   fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
@@ -225,7 +225,7 @@ Type
   TBridgeEndPoint = class (TStorageEndPoint)
   private
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -256,9 +256,9 @@ begin
   inherited;
 end;
 
-constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, pcm);
+  inherited create(config, settings, db, common, pcm, i18n);
 end;
 
 destructor TBridgeEndPoint.Destroy;

@@ -5039,7 +5039,7 @@ begin
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
-    list := TConceptDesignations.create;
+    list := TConceptDesignations.create(nil, FLanguages.link);
     try
       ListDisplayNames(list, iTerm, 0, $FF);
       ok := false;

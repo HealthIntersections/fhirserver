@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
-  ftx_loinc_services;
+  ftx_loinc_services, ftx_service;
 
 Const
   FLAG_LONG_COMMON = 1;

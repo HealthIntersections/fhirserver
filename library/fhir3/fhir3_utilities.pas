@@ -466,11 +466,15 @@ type
     function source : string;
   end;
 
+  { TFhirValueSetExpansionHelper }
+
   TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
   public
     procedure addParamStr(name, value : String); overload;
     procedure addParamUri(name, value : String); overload;
     procedure addParamBool(name : String; value : boolean); overload;
+    procedure addParamCode(name, value : String); overload;
+    procedure addParamInt(name : String; value : integer); overload;
   end;
 
   TFHIROperationOutcomeHelper = class helper (TFHIRDomainResourceHelper) for TFhirOperationOutcome
@@ -5459,6 +5463,24 @@ begin
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirBoolean.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamCode(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirCode.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamInt(name: String; value: integer);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirInteger.Create(inttostr(value));
 end;
 
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;

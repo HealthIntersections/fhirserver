@@ -700,7 +700,7 @@ begin
     else
       resp.addExtension('inactive', b);
   end;
-  list := TConceptDesignations.create(Factory.link);
+  list := TConceptDesignations.create(Factory.link, FLanguages.link);
   try
     Designations(ctxt, list);
     for cd in list.designations do

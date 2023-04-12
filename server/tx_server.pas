@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads, fsl_i18n,
   fdb_manager,
   fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_valuesets,
@@ -79,7 +79,7 @@ Type
   protected
     procedure invalidateVS(id : String); override;
   public
-    constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies); override;
+    constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies; i18n : TI18nSupport); override;
     destructor Destroy; override;
     function Link: TTerminologyServer; overload;
     property webBase : String read FWebBase write FWebBase;
@@ -137,7 +137,7 @@ uses
 
 { TTerminologyServer }
 
-constructor TTerminologyServer.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
+constructor TTerminologyServer.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
   inherited;
   FCaching := true;
@@ -340,7 +340,7 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link);
+    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
@@ -499,7 +499,7 @@ function TTerminologyServer.MakeChecker(uri: string; profile : TFHIRExpansionPar
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri);
+  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
   try
     vs := getValueSetByUrl(uri);
     try
@@ -523,7 +523,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       check.prepare(vs, profile);
       result := check.check(coding, abstractOk, implySystem);
@@ -547,7 +547,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       check.prepare(vs, profile);
       result := check.check(coded, abstractOk, implySystem);
@@ -1282,7 +1282,7 @@ begin
         profile := TFHIRExpansionParams.Create;
         try
           try
-            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url);
+            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
               val.prepare(vs, profile);
               if not val.check(URL, version, code, true, false, nil) then
@@ -1324,7 +1324,7 @@ begin
       profile := TFHIRExpansionParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url);
+          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
           try
             val.prepare(vs, profile);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';

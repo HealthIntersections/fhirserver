@@ -251,6 +251,7 @@ type
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
     procedure stripExtensions(exemptUrls : TStringArray); override;
@@ -9058,6 +9059,11 @@ begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirDataType;
+end;
+
+procedure TFhirElement.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
 end;
 
 procedure TFhirElement.deleteExtensionV(extension: TFHIRObject);

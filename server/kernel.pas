@@ -39,7 +39,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache, fsl_web_init,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache, fsl_web_init, fsl_i18n,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
@@ -89,6 +89,7 @@ type
     FMaintenanceThread: TFhirServerMaintenanceThread;
     FPcm : TFHIRPackageManager;
     FMaxMem : UInt64;
+    FI18n : TI18nSupport;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -120,6 +121,7 @@ type
     property Settings : TFHIRServerSettings read FSettings;
     property WebServer : TFhirWebServer read FWebServer;
     property Terminologies : TCommonTerminologies read FTerminologies;
+    property i18n : TI18nSupport read FI18n;
     property EndPoints : TFslList<TFHIRServerEndPoint> read FEndPoints;
   end;
 
@@ -158,6 +160,7 @@ begin
 
   FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
+
 end;
 
 destructor TFHIRServiceKernel.Destroy;
@@ -264,6 +267,12 @@ begin
   Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
   FTerminologies.load(Ini['terminologies'], false);
+
+  fI18n := TI18nSupport.create(FTerminologies.Languages.link);
+  FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_nl.properties'));
 end;
 
 function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;
@@ -470,22 +479,22 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
   else if config['type'].value = 'folder' then
-    result := TFolderWebEndPoint.Create(config.link, FSettings.Link)
+    result := TFolderWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'icao' then
-    result := TICAOWebEndPoint.Create(config.link, FSettings.Link)
+    result := TICAOWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'loinc' then
-    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link)
+    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link, FI18n.link)
   else if config['type'].value = 'snomed' then
-    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link)
+    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else

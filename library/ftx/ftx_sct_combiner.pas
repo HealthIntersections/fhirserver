@@ -37,7 +37,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   fsl_base, fsl_utilities,
-  ftx_sct_services;
+  ftx_sct_services, ftx_service;
 
 Type
   TTabWriter = class (TFslObject)

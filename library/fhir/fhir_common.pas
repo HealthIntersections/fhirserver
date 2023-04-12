@@ -106,6 +106,7 @@ type
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; override;
     function getExtensionsV : TFslList<TFHIRObject>; overload; override;
     procedure addExtensionV(url : String; value : TFHIRObject); overload; override;
+    procedure addExtensionV(extension : TFHIRObject); overload; override;
     function getExtensionsW(url : String) : TFslList<TFhirExtensionW>;
     function getAllExtensionsW : TFslList<TFhirExtensionW>;
     function getExtensionW(url : String) : TFhirExtensionW;
@@ -795,6 +796,16 @@ type
     function buildImplicitValueSet : TFHIRValueSetW; virtual; abstract;
   end;
 
+  { TFhirValueSetExpansionContainsPropertyW }
+
+  TFhirValueSetExpansionContainsPropertyW = class (TFHIRXVersionElementWrapper)
+  public
+    function link : TFhirValueSetExpansionContainsPropertyW; overload;
+    function code : String; virtual; abstract;
+    function value : TFHIRObject; virtual; abstract;
+  end;
+
+
   TFhirValueSetExpansionContainsW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionContainsW; overload;
@@ -819,19 +830,22 @@ type
     property itemWeight : String read GetItemWeight write SetItemWeight;
 
     procedure addDesignation(lang, use, value : String); virtual; abstract; overload;
-    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW); virtual; abstract; overload;
+    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); virtual; abstract; overload;
     procedure addProperty(code : String; value : TFHIRObject); virtual; abstract;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); virtual; abstract;
     procedure clearContains(); virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
+    function properties : TFslList<TFhirCodeSystemConceptPropertyW>; virtual; abstract;
   end;
 
   TFhirValueSetExpansionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionW; overload;
     procedure addParamStr(name, value : String); overload; virtual; abstract;
+    procedure addParamCode(name, value : String); overload; virtual; abstract;
     procedure addParamUri(name, value : String); overload; virtual; abstract;
     procedure addParamBool(name : String; value : boolean); overload; virtual; abstract;
+    procedure addParamInt(name : String; value : integer); overload; virtual; abstract;
     function hasParam(name : string) : boolean; overload; virtual; abstract;
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
@@ -931,6 +945,7 @@ type
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
 
     procedure clearDefinition; virtual; abstract;
+    procedure clearDefinitionExtensions(exemptUrls : TStringArray); virtual; abstract;
     function hasExpansion : boolean; virtual; abstract;
     function expansion : TFhirValueSetExpansionW; virtual; abstract;
     function forceExpansion : TFhirValueSetExpansionW; virtual; abstract;
@@ -1536,6 +1551,13 @@ type
 
 implementation
 
+{ TFhirValueSetExpansionContainsPropertyW }
+
+function TFhirValueSetExpansionContainsPropertyW.link: TFhirValueSetExpansionContainsPropertyW;
+begin
+  result := TFhirValueSetExpansionContainsPropertyW(inherited link);
+end;
+
 { TFHIRPrimitiveW }
 
 function TFHIRPrimitiveW.link: TFHIRPrimitiveW;
@@ -1789,6 +1811,11 @@ end;
 procedure TFHIRXVersionElementWrapper.addExtensionV(url: String; value: TFHIRObject);
 begin
   FElement.addExtensionV(url, value);
+end;
+
+procedure TFHIRXVersionElementWrapper.addExtensionV(extension: TFHIRObject);
+begin
+  FElement.addExtensionV(extension);
 end;
 
 function TFHIRXVersionElementWrapper.getExtensionsW(url: String): TFslList<TFhirExtensionW>;

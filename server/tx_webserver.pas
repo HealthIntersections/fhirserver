@@ -65,6 +65,7 @@ Type
     FWorker : TFHIRWorkerContextWithFactory;
     FServer : TTerminologyServer;
     FFHIRPath : String;
+    FLanguages : TIETFLanguageDefinitions;
     FReturnProcessFileEvent : TWebReturnProcessedFileEvent;
 
     function asJson(r : TFHIRResourceV) : String;
@@ -102,7 +103,7 @@ Type
     function ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
   public
-    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
+    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequestVersion(path : String) : boolean;
     function HandlesRequestNoVersion(path : String) : boolean;
@@ -118,7 +119,7 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
 begin
   create;
   FServer := server;
@@ -127,10 +128,12 @@ begin
   if (server <> nil) then
     FServer.webBase := BaseURl;
   FWorker := worker;
+  FLanguages := languages;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
+  FLanguages.Free;
   FWorker.Free;
   FServer.free;
   inherited;
@@ -498,7 +501,7 @@ begin
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
     for s in lang.codes do
-      profile.displayLanguages.add(TIETFLang.makeLang(s));
+      profile.displayLanguages.add(FLanguages.parse(s));
 
     try
       res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);

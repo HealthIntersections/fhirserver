@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_i18n,
   fdb_manager,
   ftx_service, ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
@@ -66,7 +66,7 @@ type
   private
     FSnomedServer : TSnomedWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -98,9 +98,9 @@ begin
   inherited;
 end;
 
-constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies);
+constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, common, nil);
+  inherited create(config, settings, nil, common, nil, i18n);
 end;
 
 destructor TSnomedWebEndPoint.Destroy;
@@ -344,7 +344,7 @@ begin
       result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
        '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
        '" active="'+booleanToString(ss.isActive(index))+'">';
-      sl := TConceptDesignations.Create;
+      sl := TConceptDesignations.Create(nil, FTx.Languages.link);
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
         result := result + '<display value="'+FormatTextToXml(sl.display.AsString, xmlAttribute)+'"/>';
@@ -358,7 +358,7 @@ begin
     else if ss.IsValidDescription(code, id, s) then
     begin
       result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+FormatTextToXml(s, xmlAttribute)+'">';
-      sl := TConceptDesignations.Create;
+      sl := TConceptDesignations.Create(nil, FTx.Languages.link);
       try
         ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
         result := result + '<display value="'+FormatTextToXml(sl.display.asString, xmlAttribute)+'"/>';

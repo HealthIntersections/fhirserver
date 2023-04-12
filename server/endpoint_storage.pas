@@ -41,9 +41,10 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509, IdGlobalProtocols, IdCompressorZLib, IdZlib,
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging, fsl_i18n,
   fhir_objects, fhir_client, fhir_common, fhir_parser, fhir_utilities, fhir_xhtml, fhir_ndjson,
   fdb_manager, fsl_web_stream,
+  ftx_service,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
   tx_manager, tx_webserver, telnet_server, time_tracker,
@@ -213,7 +214,7 @@ type
   protected
     FServerContext : TFHIRServerContext;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     property ServerContext : TFHIRServerContext read FServerContext;
     function cacheSize(magic : integer) : UInt64; override;
@@ -292,9 +293,9 @@ begin
     (WebEndPoint as TStorageWebEndpoint).FContext.clearCache;
 end;
 
-constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, pcm);
+  inherited create(config, settings, db, common, pcm, i18n);
 end;
 
 destructor TStorageEndPoint.Destroy;
@@ -1449,9 +1450,12 @@ Begin
         result := result + ' (Auth needed)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
-        else
+        else if e.IssueType = itNull then
           SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
-            itNotSupported);
+            itNotSupported)
+          else
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
+            e.issueType)
       end;
       on e: ETerminologySetup do
       begin

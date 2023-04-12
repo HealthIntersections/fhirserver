@@ -38,7 +38,7 @@ interface
 uses
   Sysutils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_i18n,
   fdb_manager,
   ftx_loinc_services, ftx_loinc_publisher,
   fhir_objects,
@@ -67,7 +67,7 @@ type
   private
     FLoincServer : TLoincWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -98,9 +98,9 @@ begin
   inherited;
 end;
 
-constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, nil);
+  inherited create(config, settings, db, common, nil, i18n);
 end;
 
 destructor TLoincWebEndPoint.Destroy;

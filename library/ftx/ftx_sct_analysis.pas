@@ -36,7 +36,8 @@ uses
   SysUtils, Classes, Math,
   fsl_utilities, fsl_http, fsl_stream, fsl_collections, fsl_json,
   ftx_sct_services, fhir_parser,
-  fsl_base;
+  fsl_base,
+  ftx_service;
 
 type
   TRelationship = class (TFslObject)

@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Classes, Math, fsl_threads,
   fsl_base, fsl_collections, fsl_http, fsl_htmlgen,
-  ftx_loinc_services;
+  ftx_loinc_services, ftx_service;
 
 Const
   MAX_ROWS = 50;

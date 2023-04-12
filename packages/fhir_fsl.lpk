@@ -132,6 +132,10 @@
         <Filename Value="..\library\fsl\fsl_versions.pas"/>
         <UnitName Value="fsl_versions"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_i18n.pas"/>
+        <UnitName Value="fsl_i18n"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

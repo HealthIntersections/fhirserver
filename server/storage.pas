@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json, fsl_lang,
   fsl_http,
   fdb_dialects, fsl_graphql,
   fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine, fsl_npm_cache,
@@ -82,6 +82,7 @@ type
   TFhirOperation = class abstract (TFslObject)
   protected
     FFactory : TFHIRFactory;
+    FLanguages : TIETFLanguageDefinitions;
     function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinitionW;
     function isWrite : boolean; virtual;
@@ -89,7 +90,7 @@ type
     function makeParams(request : TFHIRRequest) : TFhirParametersW;
 
   public
-    constructor Create(factory : TFHIRFactory);
+    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
     function Name : String; virtual;
     function Types : TArray<String>; virtual;
@@ -1634,10 +1635,11 @@ begin
   result := nil;
 end;
 
-constructor TFhirOperation.Create(factory: TFHIRFactory);
+constructor TFhirOperation.Create(factory: TFHIRFactory; languages : TIETFLanguageDefinitions);
 begin
   inherited create;
   FFactory := factory;
+  FLanguages := languages;
 end;
 
 function TFhirOperation.CreateBaseDefinition(base : String): TFHIROperationDefinitionW;
@@ -1679,6 +1681,7 @@ end;
 
 destructor TFhirOperation.Destroy;
 begin
+  FLanguages.Free;
   FFactory.Free;
   inherited;
 end;

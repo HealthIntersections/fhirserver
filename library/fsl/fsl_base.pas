@@ -101,12 +101,6 @@ Type
   public
     Constructor Create(place : String);
   End;
-  ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
-  ETerminologyError = class (EFslException); // problem in terminology operation
-  ETerminologyTodo = Class(ETerminologyError)
-  public
-    Constructor Create(place : String);
-  End;
   ETestCase = class (EFslException); // Failing test case
   EJavascriptException = class (EFslException); // exception thrown in javscript library
   EJavascriptScript = class (EJavascriptException); // error thrown by script
@@ -3421,12 +3415,6 @@ begin
   inherited create('Not done yet @ '+place);
 end;
 
-{ ETerminologyTodo }
-
-constructor ETerminologyTodo.Create(place: String);
-begin
-  inherited create('Not done yet @ '+place);
-end;
 
 { EJsonTodo }
 

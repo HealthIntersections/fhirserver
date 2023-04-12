@@ -44,12 +44,13 @@ type
   TFhirTerminologyOperation = class (TFhirOperation)
   protected
     FServer : TTerminologyServer;
+
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest; isValueSet : boolean) : TFhirCodeableConceptW;
     function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
-    constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
+    constructor Create(factory : TFHIRFactory; server : TTerminologyServer; languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
   end;
 
@@ -136,7 +137,7 @@ type
     function owningResource : String; override;
     function checkName(request: TFHIRRequest; response : TFHIRResponse; var name : String) : boolean;
   public
-    constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
+    constructor Create(factory : TFHIRFactory; server : TTerminologyServer; languages : TIETFLanguageDefinitions);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
@@ -464,7 +465,7 @@ begin
                 else if params.has('valueSet') then
                 begin
                   if not (params.obj('valueSet') is TFHIRResourceV) then
-                    raise ETerminologyError.create('Error with valueSet parameter');
+                    raise ETerminologyError.create('Error with valueSet parameter - must be a value set', itInvalid);
                   vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
                   result := result+' in vs '+vs.url+' (param)';
                   txResources := processAdditionalResources(context, manager, vs, params);
@@ -483,7 +484,7 @@ begin
               implySystem := params.str('implySystem') = 'true';
 
               if (coded = nil) then
-                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
+                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code', itNotFound);
 
               if vs <> nil then
               begin
@@ -494,8 +495,6 @@ begin
                 txResources := processAdditionalResources(context, manager, nil, params);
 
               profile := buildExpansionParams(request, manager, params);
-              if profile.Language = nil then
-                profile.loadFromLangs(request.Lang);
               pout := FServer.validate(vs, coded, profile, abstractOk, implySystem, txResources, summary);
               try
                 if summary <> '' then
@@ -683,7 +682,7 @@ begin
           else
             cm := FServer.getConceptMapBySrcTgt(params.str('valueset'), params.str('target'));
           if cm = nil then
-            raise ETerminologyError.create('Unable to find concept map to use');
+            raise ETerminologyError.create('Unable to find concept map to use', itNotFound);
           try
             // ok, now we need to find the source code to validate
             coded := loadCoded(request, true);
@@ -783,7 +782,7 @@ begin
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (request.id <> '') then
-        raise ETerminologyError.create('Lookup does not take an identified resource');
+        raise ETerminologyError.create('Lookup does not take an identified resource', itInvalid);
       req := ffactory.makeOpReqLookup;
       try
         if (request.Resource <> nil) and (request.Resource.fhirType = 'Parameters') then
@@ -869,9 +868,9 @@ begin
   end;
 end;
 
-constructor TFhirConceptMapClosureOperation.Create(factory : TFHIRFactory; server: TTerminologyServer);
+constructor TFhirConceptMapClosureOperation.Create(factory : TFHIRFactory; server: TTerminologyServer; languages : TIETFLanguageDefinitions);
 begin
-  inherited Create(factory, server);
+  inherited Create(factory, server, languages);
 end;
 
 function TFhirConceptMapClosureOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
@@ -1059,7 +1058,7 @@ begin
               if (request.Id = '') and (req.systemUri <> '') and (req.codeA <> '') and (req.codeB <> '') then
               begin
                 if not FServer.isValidCode(req.systemUri, req.codeA) or not FServer.isValidCode(req.systemUri, req.codeB) then
-                  raise ETerminologyError.create('Invalid code')
+                  raise ETerminologyError.create('Invalid code', itNotFound)
                 else if (req.codeA = req.codeB) then
                   resp.outcome := 'equivalent'
                 else if FServer.subsumes(req.systemUri, req.codeA, req.systemUri, req.codeB) then
@@ -1077,7 +1076,7 @@ begin
                 else if req.systemUri <> '' then
                   cs := FFactory.wrapCodeSystem(manager.GetResourceByUrl('CodeSystem', req.systemUri, req.version, false, needSecure))
                 else
-                  raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
+                  raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource', itUnknown);
 
                 cacheId := cs.url;
                 ca := req.codingA;
@@ -1088,9 +1087,9 @@ begin
                   if (cb = nil) and (req.codeB <> '') then
                     cb := FFactory.wrapCoding(FFactory.makeCoding(cs.url, req.codeB));
                   if ca = nil then
-                    raise ETerminologyError.create('No codeA or codingA parameter found');
+                    raise ETerminologyError.create('No codeA or codingA parameter found', itNotFound);
                   if cb = nil then
-                    raise ETerminologyError.create('No codeB or codingB parameter found');
+                    raise ETerminologyError.create('No codeB or codingB parameter found', itNotFound);
 
                   resp.outcome := FServer.subsumes(cs, ca, cb);
                 finally
@@ -1192,7 +1191,10 @@ var
   pp : TFHIRParametersW;
 begin
   result.generateNarrative := false; // todo...?
-  result.loadfromLangs(request.lang);
+  if params.language <> '' then
+    result.language := FLanguages.parse(params.language)
+  else
+    result.loadfromLangs(FLanguages, request.lang);
 
   if (params.str('no-cache') = 'true') then
     result.uid := NewGuidId;
@@ -1226,10 +1228,10 @@ begin
       else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
         result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
       else
-        raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"');
+        raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"', itInvalid);
     end
     else if (p.name = 'displayLanguage') then
-      result.displayLanguages.add(TIETFLang.makeLang(p.valueString))
+      result.displayLanguages.add(FLanguages.parse(p.valueString))
     else if (p.name = 'property') then
       result.properties.add(p.valueString);
   end;
@@ -1267,9 +1269,9 @@ begin
   end;
 end;
 
-constructor TFhirTerminologyOperation.Create(factory : TFHIRFactory; server: TTerminologyServer);
+constructor TFhirTerminologyOperation.Create(factory : TFHIRFactory; server: TTerminologyServer; languages : TIETFLanguageDefinitions);
 begin
-  inherited Create(factory);
+  inherited Create(factory, languages);
   FServer := server;
 end;
 
@@ -1326,12 +1328,13 @@ begin
       end
       else if params.has('codeableConcept') then
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link)
-      else if isValueSet and (params.has('code') and params.has('system')) then
+      else if isValueSet and (params.has('code') and (params.has('system') or params.bool('implySystem'))) then
       begin
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
-          coding.systemUri := params.str('system');
+          if params.has('system') then
+            coding.systemUri := params.str('system');
           if params.has('version') then
             coding.version := params.str('version');
           coding.code := params.str('code');
@@ -1357,13 +1360,13 @@ begin
         end;
       end
       else
-        raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code');
+        raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code', itNotFound);
     finally
       params.free;
     end;
   end
   else
-    raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
+    raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code', itNotFound);
 end;
 
 end.

@@ -40,8 +40,8 @@ todo:
 }
 uses
   SysUtils, Classes,
-  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang,
-  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml,
+  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n,
+  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions,
   fhir_codesystem_service;
 
 {  SysUtils, Classes, fsl_utilities, fsl_utilities,
@@ -52,7 +52,7 @@ uses
   //, ftx_loinc_services, ftx_sct_services, ftx_ucum_services, FHIR.Tx.Server, FHIR.Tx.Manager;}
 
 const
-  UPPER_LIMIT_NO_TEXT = 10000;
+  UPPER_LIMIT_NO_TEXT = 1000;
   UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
 
   FHIR_VERSION_CANONICAL_SPLIT_2 = '?version=';
@@ -137,16 +137,17 @@ Type
     function link : TFHIRExpansionParams;
 
     class function defaultProfile : TFHIRExpansionParams;
-    procedure loadFromLangs(langs : THTTPLanguages);
+    procedure loadFromLangs(languages: TIETFLanguageDefinitions; langs : THTTPLanguages);
 
     property fixedVersions : TFslList<TFhirExpansionParamsFixedVersion> read FFixedVersions;
     property activeOnly : boolean read FactiveOnly write SetActiveOnly;
     property language : TIETFLang read FLanguage write SetLanguage;
+    function langCode : string;
     property displayLanguages : TFslList<TIETFLang> read FDisplayLanguages;
     property includeCompose : boolean read FincludeCompose write SetincludeCompose;
     property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
     property generateNarrative : boolean read FGenerateNarrative write SetGenerateNarrative;
-    property limitedExpansion : boolean read FlimitedExpansion write SetlimitedExpansion;
+    property limitedExpansion : boolean read FlimitedExpansion write SetlimitedExpansion;   // deprecated
     property includeDesignations : boolean read FincludeDesignations write SetincludeDesignations;
     property excludeNested : boolean read FexcludeNested write SetexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write SetexcludeNotForUI;
@@ -205,6 +206,8 @@ Type
   TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW of object;
   TGetSystemVersionsEvent = procedure (sender : TObject; url : String; list : TStringlist) of object;
 
+  { TValueSetWorker }
+
   TValueSetWorker = class (TFslObject)
   private
     FFactory : TFHIRFactory;
@@ -215,19 +218,25 @@ Type
     FParams : TFHIRExpansionParams;
     FAdditionalResources : TFslMetadataResourceList;
     FLanguages : TIETFLanguageDefinitions;
+    FRequiredSupplements : TStringList;
+    FI18n : TI18nSupport;
 
     function findValueSet(url : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
+    procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
+    procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
     procedure listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
     procedure listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); overload;
     procedure listDisplays(displays: TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW); overload;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
   end;
+
+  { TValueSetChecker }
 
   TValueSetChecker = class (TValueSetWorker)
   private
@@ -238,15 +247,16 @@ Type
 
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
-    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean; overload;
+    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String) : boolean;
+    function fixedSystemFromValueSet: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
     property id : String read FId;
@@ -262,6 +272,8 @@ Type
     property log : String read FLog;
   end;
 
+  { TFHIRValueSetExpander }
+
   TFHIRValueSetExpander = class (TValueSetWorker)
   private
     FCount : integer;
@@ -273,11 +285,10 @@ Type
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
 
-
     function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
-    procedure processCodeAndDescendants(doDelete : boolean; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
+    procedure processCodeAndDescendants(doDelete : boolean; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcUrl : String);
 
-    procedure handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+    procedure handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; srcURL : String);
     procedure importValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
     procedure excludeValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
     procedure processCodes(doDelete : boolean; cset : TFhirValueSetComposeIncludeW; vsSrc : TFHIRValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
@@ -287,16 +298,16 @@ Type
     function passesImport(import : TFHIRImportedValueSet; system, code : String) : boolean;
 
     function processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String; isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
-        imports : TFslList<TFHIRImportedValueSet>; csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>) : TFhirValueSetExpansionContainsW;
-    procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
+        imports : TFslList<TFHIRImportedValueSet>; csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; srcURL : string) : TFhirValueSetExpansionContainsW;
+    procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcURL : String);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContainsW) : string;  overload;
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
-    procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText);
+    procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
     procedure checkCanExpandValueset(uri: String);
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -327,7 +338,7 @@ end;
 
 { TValueSetWorker }
 
-constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions);
+constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   Create;
   FFactory := factory;
@@ -337,22 +348,56 @@ begin
   FOnGetExpansion := getExpansion;
   FAdditionalResources := txResources;
   FLanguages := languages;
+  FRequiredSupplements := TStringList.create;
+  FI18n := i18n;
 end;
 
 destructor TValueSetWorker.Destroy;
 begin
+  FRequiredSupplements.Free;
   FLanguages.Free;
   FAdditionalResources.Free;
   FFactory.Free;
   FParams.Free;
+  FI18n.free;
   inherited;
+end;
+
+procedure TValueSetWorker.checkSupplements(cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
+var
+  ext : TFHIRExtensionW;
+  i : integer;
+begin
+  for ext in src.getExtensionsW(EXT_VSSUPPLEMENT) do
+    if not cs.hasSupplement(ext.valueAsString) then
+      raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri(nil)+' that is not known', itBusinessRule);
+  for i := FRequiredSupplements.count - 1 downto 0 do
+    if cs.hasSupplement(FRequiredSupplements[i]) then
+      FRequiredSupplements.delete(i);
+end;
+
+procedure TValueSetWorker.loadSupplements(cse : TFHIRCodeSystemEntry; url : String);
+var
+  r : TFHIRMetadataResourceW;
+  cs : TFhirCodeSystemW;
+begin
+  for r in FAdditionalResources do
+  begin
+    if r is TFHIRCodeSystemW then
+    begin
+      cs := r as TFHIRCodeSystemW;
+      if (cs.supplements = url) then
+        cse.Supplements.add(cs.link);
+    end;
+  end;
 end;
 
 function TValueSetWorker.findCodeSystem(url, version: String; params: TFHIRExpansionParams; nullOk: boolean): TCodeSystemProvider;
 var
-  r : TFHIRMetadataResourceW;
-  cs : TFhirCodeSystemW;
+  r, r2 : TFHIRMetadataResourceW;
+  cs, cs2 : TFhirCodeSystemW;
   ts : TStringlist;
+  cse : TFHIRCodeSystemEntry;
 begin
   if (url = '') then
     exit(nil);
@@ -362,14 +407,20 @@ begin
   if FAdditionalResources <> nil then
   begin
     for r in FAdditionalResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (version = r.version)) then
       begin
         if not (r is TFhirCodeSystemW) then
           raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
         cs := r as TFhirCodeSystemW;
         if (cs.content = cscmComplete) then
         begin
-          exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+          cse := TFHIRCodeSystemEntry.Create(cs.link);
+          try
+            loadSupplements(cse, url);
+            exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
+          finally
+            cse.free;
+          end;
         end;
       end;
   end;
@@ -387,7 +438,15 @@ begin
           raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
         cs := r as TFhirCodeSystemW;
         if (cs.content = cscmFragment) then
-          exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(cs.link)));
+        begin
+          cse := TFHIRCodeSystemEntry.Create(cs.link);
+          try
+            loadSupplements(cse, url);
+            exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
+          finally
+            cse.free;
+          end;
+        end;
       end;
   end;
 
@@ -441,9 +500,9 @@ end;
 
 { TValueSetChecker }
 
-constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : string);
+constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : string; i18n : TI18nSupport);
 begin
-  inherited Create(factory, getVs, getCs, getVersions, getExpansion, txResources, languages);
+  inherited Create(factory, getVs, getCs, getVersions, getExpansion, txResources, languages, i18n);
   FId := id;
   FOthers := TFslStringObjectMatch.create;
   FOthers.PreventDuplicates;
@@ -467,7 +526,7 @@ var
 begin
   try
     exp := TFHIRValueSetExpander.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion,
-      FAdditionalResources.link, FLanguages.link);
+      FAdditionalResources.link, FLanguages.link, FI18n.link);
     try
       dep := TStringList.Create;
       try
@@ -494,18 +553,41 @@ begin
   end;
 end;
 
+function TValueSetChecker.fixedSystemFromValueSet : String;
+var
+  c : TFhirValueSetComposeIncludeW;
+begin
+  if (FValueset = nil) then
+    exit('');
+
+  result := '';
+  for c in FValueSet.includes.forEnum do
+  begin
+    if (c.hasValueSets or (c.systemUri = '')) then
+      exit('');
+    if (result = '') then
+      result := c.systemUri
+    else if (result <> c.systemURI) then
+      exit('');
+  end;
+end;
+
 function TValueSetChecker.determineSystem(code: String): String;
 var
   vsi : TFhirValueSetComposeIncludeW;
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeConceptW;
   match : boolean;
-  msg : String;
+  s, msg : String;
   loc : TCodeSystemProviderContext;
   needDoExpansion : boolean;
 begin
   result := '';
   needDoExpansion := false;
+
+  s := fixedSystemFromValueSet();
+  if (s > '') then
+    exit(s);
 
   for vsi in FValueSet.excludes.forEnum do
     needDoExpansion := true;
@@ -568,6 +650,7 @@ var
   checker : TValueSetChecker;
   ics : TFHIRValueSetCodeSystemW;
   s : String;
+  cs : TFhirCodeSystemProvider;
 begin
   FParams := params.Link;
 
@@ -585,7 +668,10 @@ begin
     begin
       try
         FFactory.checkNoModifiers(ics, 'ValueSetChecker.prepare', 'CodeSystem');
-        FOthers.Add(ics.systemUri, TFhirCodeSystemProvider.create(FLanguages.link, ffactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(FValueSet.Resource.Link))));
+        cs := TFhirCodeSystemProvider.create(FLanguages.link, ffactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(FValueSet.Resource.Link)));
+        FOthers.Add(ics.systemUri, cs);
+        if (FValueSet.version <> '') then
+          FOthers.Add(ics.systemUri+'|'+FValueSet.version, cs);
       finally
         ics.Free;
       end;
@@ -599,8 +685,8 @@ begin
         other := findValueSet(s);
         try
           if other = nil then
-            raise ETerminologyError.create('Unable to find value set '+s);
-          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url);
+            raise ETerminologyError.create('Unable to find value set '+s, itUnknown);
+          checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
           try
             checker.prepare(other, params);
             FOthers.Add(s, checker.Link);
@@ -636,8 +722,8 @@ begin
       other := findValueSet(s);
       try
         if other = nil then
-          raise ETerminologyError.create('Unable to find value set ' + s);
-        checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url);
+          raise ETerminologyError.create('Unable to find value set ' + s, itUnknown);
+        checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
         try
           checker.prepare(other, FParams);
           FOthers.Add(s, checker.Link);
@@ -651,7 +737,10 @@ begin
   end;
   if not FOthers.ExistsByKey(cc.systemUri) then
     FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
-  cs := FOthers.matches[cc.systemUri] as TCodeSystemProvider;
+  if cc.version = '' then
+    cs := FOthers.matches[cc.systemUri] as TCodeSystemProvider
+  else
+    cs := FOthers.matches[cc.systemUri+'|'+cc.version] as TCodeSystemProvider;
   if cs <> nil then
   begin
     for ccf in cc.filters.forEnum do
@@ -659,7 +748,7 @@ begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
       if not (('concept' = ccf.prop) and (ccf.Op in [foIsA, foDescendentOf])) then
         if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
-          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '"  from the value set '+FValueSet.url+' was not understood in the context of ' + cs.systemUri(nil));
+          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '"  from the value set '+FValueSet.url+' was not understood in the context of ' + cs.systemUri(nil), itNotSupported);
     end;
   end;
 end;
@@ -679,7 +768,7 @@ begin
         isAbstract := false
       else
         isAbstract := cs.isAbstract(list[i]);
-      displays.baseLang := TIETFLang.makeLang(cs.language);
+      displays.baseLang := FLanguages.parse(cs.language);
       displays.display := list[i].displayElement; {no .link}
       exit;
     end;
@@ -702,14 +791,14 @@ end;
 
 function TValueSetChecker.check(system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): boolean;
 var
-  msg, ver : string;
+  msg, ver, impliedSystem : string;
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
 begin
-  result := check(system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode);
+  result := check(system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode, impliedSystem);
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : String) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -717,11 +806,12 @@ var
   excluded : boolean;
   isabstract : boolean;
   checker : TValueSetChecker;
-  s : String;
+  s, v : String;
   ics : TFHIRValueSetCodeSystemW;
   ccl : TFhirCodeSystemConceptListW;
 begin
 //  result := false;
+
   FLog := '';
   {special case:}
   contentMode := cscmNull;
@@ -828,7 +918,16 @@ begin
   else
   begin
     if (system = '') and implySystem then
+    begin
       system := determineSystem(code);
+      if (system = '') then
+      begin
+        message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.langCode, [code, FValueSet.url]);
+        exit(false);
+      end
+      else
+        impliedSystem := system;
+    end;
 
     ics := FValueSet.inlineCS; // r2
     if ics <> nil then
@@ -863,7 +962,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode);
+          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -872,20 +971,32 @@ begin
           result := true
         else if (cc.systemUri = system) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
-          cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
-          if (cs = nil) then
+          // we have two possible versions - the value set reference, and the coding reference
+          // it's an error if they don't agree
+          if (cc.version = '') and (version = '') then
+            v := ''
+          else if (cc.version = '') then
+            v := version
+          else if (version = '') or (version = cc.version) then
+            v := cc.version
+          else
           begin
-            message := 'The code system "'+cc.systemUri+'" in the include in "'+FValueSet.url+'" is not known';
-            FLog := 'Unknown code system';
+            message := 'The code system "'+cc.systemUri+'" version "'+cc.version+'" in the ValueSet include is different to the one in the value ("'+version+'")';
             exit(false);
           end;
-          contentMode := cs.contentMode;
-          if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+          cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+v]);
+          if (cs = nil) then
+            cs := findCodeSystem(system, v, FParams, true);
+          if (cs = nil) then
           begin
-            s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-            if not cs.hasSupplement(s) then
-              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
+            if (v = '') then
+              message := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system])
+            else
+              message := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+            exit(false);
           end;
+          checkSupplements(cs, cc);
+          contentMode := cs.contentMode;
 
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, FValueSet, message);
         end
@@ -895,9 +1006,9 @@ begin
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
           if checker <> nil then
-            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode)
+            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem)
           else
-            raise ETerminologyError.Create('No Match for '+s);
+            raise ETerminologyError.Create('No Match for '+s, itUnknown);
         end;
         if result then
           break;
@@ -909,20 +1020,18 @@ begin
             excluded := true
           else
           begin
-            cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
+            if (cc.version = '') then
+              cs := TCodeSystemProvider(FOthers.matches[cc.systemUri])
+            else
+              cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+cc.version]);
+            checkSupplements(cs, cc);
             contentMode := cs.contentMode;
-            if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-            begin
-              s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-              if not cs.hasSupplement(s) then
-                raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
-            end;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, FValueSet, message);
           end;
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode);
+            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
           end;
           if excluded then
             exit(false);
@@ -937,31 +1046,40 @@ end;
 function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd : String;
+  message, ver, pd, impliedSystem : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
+  dc : integer;
 begin
   result := FFactory.makeParameters;
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TConceptDesignations.Create;
+      list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode) then
+        if check(coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
              result.AddParamStr('message', 'The system "'+coding.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-          if (coding.display <> '') and (not list.hasDisplay(nil, coding.display)) then
-            result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.present(nil)+']');
-          pd := list.preferredDisplay(nil);
+          if (coding.display <> '') and (not list.hasDisplay(FParams.displayLanguages, coding.display)) then
+          begin
+             dc := list.displayCount(FParams.displayLanguages);
+             if dc = 0 then
+             else if dc = 1 then
+               result.AddParamStr('message', FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.language.language,
+                ['', coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display]))
+             else
+               result.AddParamStr('message', FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.language.language,
+                [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display]));
+          end;
+          pd := list.preferredDisplay(FParams.displayLanguages);
           if (pd <> '') then
             result.AddParamStr('display', pd);
           result.addParamStr('system', coding.systemUri);
           if (ver <> '') then
             result.addParamStr('version', ver);
-          result.addParamStr('code', coding.code);
           if cause <> itNull then
             result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
         end
@@ -1013,12 +1131,17 @@ var
   v : boolean;
   ok, first : boolean;
   contentMode : TFhirCodeSystemContentMode;
-  cc, codelist, message, mt, ver, pd: String;
+  cc, codelist, message, mt, ver, pd, ws, impliedSystem: String;
   prov, prov2 : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
+  log : String;
+  tl : TIETFLang;
+  psys, pver, pdisp, pcode : String;
+  dc : integer;
+  a : TStringArray;
   procedure msg(s : String);
   begin
     if (s = '') then
@@ -1031,12 +1154,12 @@ var
 begin
   cause := itNull;
   if FValueSet = nil then
-    raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset');
+    raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset', itInvalid);
   result := FFactory.makeParameters;
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TConceptDesignations.Create;
+      list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
         ok := false;
         codelist := '';
@@ -1046,11 +1169,15 @@ begin
           list.clear;
           cc := ',{'+c.systemUri+'}'+c.code;
           codelist := codelist + cc;
-          v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode);
+          v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
           if not v and (message <> '') then
             msg(message);
           if not v then
             cause := itInvalid;
+          if (impliedSystem <> '') then
+            ws := impliedSystem
+          else
+            ws := c.systemUri;
           ok := ok or v;
           message := '';
 
@@ -1058,28 +1185,51 @@ begin
           begin
             if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
               msg('The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-            if (c.display <> '') and (not list.hasDisplay(nil {FLanguages, FParams.displayLanguage, }, c.display)) then
-              msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.present(nil)+']');
-            pd := list.preferredDisplay(nil);
-            if pd <> '' then
-              result.AddParamStr('display', pd);
-            result.addParamStr('system', c.systemUri);
-            result.addParamStr('code', c.code);
+            if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
+            begin
+               dc := list.displayCount(FParams.displayLanguages);
+               if dc = 0 then
+               begin
+                 a := ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display];
+                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode, a));
+               end
+               else if dc = 1 then
+               begin
+                 a := ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display];
+                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode, a));
+               end
+               else
+                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
+                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display]));
+             end;
+            psys := c.systemUri;
+            pcode := c.code;
             if (ver <> '') then
-              result.addParamStr('version', ver);
+              pver := ver;
+
+            log := c.code+': langs:';
+            for tl in FParams.DisplayLanguages do
+              log := log + ' '+tl.code;
+
+            if (list.baseLang = nil) then log := log + '; baselang: nil' else log := log + '; baselang: '+list.baseLang.code;
+            if (list.display = nil) then log := log + '; display: nil' else log := log + '; display: "'+list.display.asString+'"';
+            Logging.log(log);
+            pd := list.preferredDisplay(FParams.displayLanguages);
+            if pd <> '' then
+              pdisp := pd;
           end
           else
           begin
-            prov := findCodeSystem(c.systemUri, c.version, FParams, true);
+            prov := findCodeSystem(ws, c.version, FParams, true);
             try
              if (prov = nil) then
              begin
-               prov2 := findCodeSystem(c.systemUri, '', FParams, true);
+               prov2 := findCodeSystem(ws, '', FParams, true);
                try
                  if (prov2 = nil) then
-                   msg('The code system '''+c.systemUri+''' is not known (encountered paired with code = '''+c.code+''')')
+                   msg(FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [ws]))
                  else
-                   msg('Version '''+c.version+''' of the code system '''+c.systemUri+''' is not known (encountered paired with code = '''+c.code+'''). ValidVersions = ['+listVersions(c.systemUri)+']')
+                   msg(FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']))
                finally
                  prov2.free;
                end;
@@ -1091,15 +1241,25 @@ begin
                try
                  if ctxt = nil then
                  begin
-                   msg(message);
-                   msg('The code "'+c.code+'" is not valid in the system '+c.systemUri);
+                   if (message <> '') then
+                     msg(message);
+                   msg(FI18N.translate('Unknown_Code__in_', FParams.langCode, [c.code, ws]));
                    cause := itInvalid;
                  end
                  else
                  begin
                    listDisplays(list, prov, ctxt);
-                   if (c.display <> '') and (not list.hasDisplay(nil, c.display)) then
-                     msg('The display "'+c.display+'" is not a valid display for the code '+cc+' - should be one of ['+list.present(nil)+']');
+                   if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
+                   begin
+                     dc := list.displayCount(FParams.displayLanguages);
+                     if dc = 0 then
+                     else if dc = 1 then
+                       msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                        ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]))
+                     else
+                       msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
+                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]));
+                   end;
                    result.addParamStr('version', prov.version(nil));
                  end;
                finally
@@ -1111,23 +1271,31 @@ begin
             end;
           end;
         end;
-        result.AddParamBool('result', ok);
         if (not ok) then
         begin
-          if FValueSet.name = '' then
-            msg(Summary(code) +'valid')
-          else
-            msg(Summary(code) +'valid in the value set '''+FValueSet.name+'''');
+          msg(FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_', FParams.langCode, [FValueSet.url]));
           if cause = itNull then
             cause := itUnknown;
         end;
       finally
         list.Free;
       end;
+
+      result.AddParamBool('result', ok);
+      if (psys <> '') then
+        result.addParamStr('system', psys)
+      else if ok and (impliedSystem <> '') then
+        result.addParamStr('system', impliedSystem);
+      if (pcode <>'') then
+        result.addParamStr('code', pcode);
+      if (pver <> '') then
+        result.addParamStr('version', pver);
+      if pdisp <> '' then
+        result.AddParamStr('display', pdisp);
       if mt <> '' then
         result.AddParamStr('message', mt);
-      if not (cause in [itNull]) then
-        result.addParamStr('cause', CODES_TFhirIssueType[cause]);
+      //if not (cause in [itNull]) then
+      //  result.addParamStr('issue-type', CODES_TFhirIssueType[cause]);
       if (op.hasIssues) then
         result.addParam('issues').resource := op.Resource.link;
     finally
@@ -1142,7 +1310,7 @@ end;
 function TValueSetChecker.check(system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd : String;
+  message, ver, pd, impliedSystem : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
@@ -1151,16 +1319,15 @@ begin
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
-      list := TConceptDesignations.Create;
+      list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(system, version, code, true, implySystem, list, message, ver, cause, op, contentMode) then
+        if check(system, version, code, true, implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
-          pd := list.preferredDisplay(nil);
+          pd := list.preferredDisplay(FParams.displayLanguages);
           if pd <> ''then
             result.AddParamStr('display', pd);
           result.addParamStr('system', system);
-          result.addParamStr('code', code);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
              result.AddParamStr('message', 'The system "'+system+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
           if cause <> itNull then
@@ -1359,7 +1526,10 @@ var
   cs2 : TFhirCodeSystemW;
   lang : TIETFLang;
   list : TFslList<TFhirValueSetExpansionContainsW>;
+  ext : TFHIRExtensionW;
+  noTotal : boolean;
 begin
+  noTotal := false;
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   FFactory.checkNoModifiers(source, 'ValueSetExpander.Expand', 'ValueSet');
 
@@ -1369,7 +1539,13 @@ begin
   table := nil;
   div_ := nil;
   if not FParams.includeCompose then
-    result.clearDefinition;
+    result.clearDefinition
+  else
+    result.clearDefinitionExtensions([]);
+
+  FRequiredSupplements.clear;
+  for ext in source.getExtensionsW(EXT_VSSUPPLEMENT) do
+    FRequiredSupplements.add(ext.valueAsString);
 
   if (result.hasExpansion) then
     exit; // just return the expansion
@@ -1398,15 +1574,13 @@ begin
   FRootList := TFslList<TFhirValueSetExpansionContainsW>.create;
   FFullList := TFslList<TFhirValueSetExpansionContainsW>.create;
   FCanBeHierarchy := not FParams.excludeNested;
-  ;
+
   try
     if filter.null then
-      FLimitCount := UPPER_LIMIT_NO_TEXT
+      FLimitCount := UPPER_LIMIT_TEXT
     else
-      FLimitCount := UPPER_LIMIT_TEXT;
+      FLimitCount := UPPER_LIMIT_NO_TEXT;
 
-    if (limit < FLimitCount) then
-      FLimitCount := limit;
     FCount := count;
     FOffset := offset;
     if (FOffset > 0) or (FCount > 0) then
@@ -1422,7 +1596,7 @@ begin
       exp.addParamBool('limitedExpansion', FParams.limitedExpansion);
     for lang in FParams.displayLanguages do
       if (FParams.Language = nil) or (not lang.matches(FParams.Language)) then
-        exp.addParamStr('displayLanguage', lang.code);
+        exp.addParamCode('displayLanguage', lang.code);
     if FParams.hasExcludeNested then
       exp.addParamBool('excludeNested', FParams.excludeNested);
     if FParams.hasActiveOnly then
@@ -1433,6 +1607,11 @@ begin
       exp.addParamBool('excludeNotForUI', FParams.excludeNotForUI);
     if FParams.hasExcludePostCoordinated then
       exp.addParamBool('excludePostCoordinated', FParams.excludePostCoordinated);
+    if FOffset + Fcount > 0 then
+    begin
+      exp.addParamInt('offset', FOffset);
+      exp.addParamInt('count', FCount);
+    end;
 
     try
       ics := source.inlineCS;
@@ -1444,7 +1623,7 @@ begin
           try
             cs2 := FFactory.wrapCodeSystem(source.Resource.link);
             try
-              handleDefine(cs2, ics, cl, filter, exp, nil);
+              handleDefine(cs2, ics, cl, filter, exp, nil, source.url);
             finally
               cs2.Free;
             end;
@@ -1458,7 +1637,15 @@ begin
       notClosed := false;
       if (source.checkCompose('ValueSetExpander.Expand', 'compose')) then
         handleCompose(source, filter, dependencies, exp, notClosed);
+
+      if (FRequiredSupplements.count > 0) then
+        raise ETerminologyError.create('Required supplements not found: ['+FRequiredSupplements.commaText+']', itBusinessRule);
     except
+      on e : EFinished do
+      begin
+        // nothing - we're just trapping this
+        noTotal := true;
+      end;
       on e : ETooCostly do
       begin
         if FParams.limitedExpansion then
@@ -1488,7 +1675,8 @@ begin
     end
     else
     begin
-      exp.Total := FFullList.count;
+      if not noTotal then
+        exp.Total := FFullList.count;
       if (FCanBeHierarchy) then
         list := FRootList
       else
@@ -1507,7 +1695,7 @@ begin
       if FMap.containsKey(key(c)) then
       begin
         inc(o);
-        if FCanBeHierarchy or (o >= offset) and ((count = 0) or (t < count)) then
+        if FCanBeHierarchy or (o > offset) and ((count = 0) or (t < count)) then
         begin
           inc(t);
           exp.addContains(c);
@@ -1602,9 +1790,9 @@ begin
   end;
 
   for c in source.includes.forEnum do
-    checkSource(c, expansion, filter);
+    checkSource(c, expansion, filter, source.url);
   for c in source.excludes.forEnum do
-    checkSource(c, expansion, filter);
+    checkSource(c, expansion, filter, source.url);
 
   for c in source.includes.forEnum do
     processCodes(false, c, source, filter, dependencies, expansion, notClosed);
@@ -1612,7 +1800,7 @@ begin
     processCodes(true, c, source, filter, dependencies, expansion, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
+procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; srcURL : String);
 var
   cm : TFhirCodeSystemConceptW;
   v : String;
@@ -1630,8 +1818,8 @@ begin
   begin
     FFactory.checkNoModifiers(cm, 'ValueSetExpander.handleDefine', 'concept');
     if filter.passes(cm.display) or filter.passes(cm.code) then
-      addDefinedCode(cs, source.systemUri, cm, imports, nil);
-    handleDefine(cs, source, cm.conceptList, filter, nil, imports);
+      addDefinedCode(cs, source.systemUri, cm, imports, nil, srcUrl);
+    handleDefine(cs, source, cm.conceptList, filter, nil, imports, srcUrl);
   end;
 end;
 
@@ -1653,24 +1841,22 @@ end;
 procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW);
 var
   cd : TFhirValueSetComposeIncludeConceptDesignationW;
-  first : boolean;
+  list : TFslList<TFHIRExtensionW>;
+  i : integer;
 begin
   if c.display <> '' then
   begin
     displays.Clear;
-    displays.baseLang := TIETFLang.create(vs.language);
+    displays.baseLang := FLanguages.parse(vs.language);
     displays.display := c.displayElement; {no .link}
   end;
-  first := true;
+  i := 0;
   for cd in c.designations.forEnum do
   begin
     // see https://chat.fhir.org/#narrow/stream/179202-terminology/topic/ValueSet.20designations.20and.20languages
-    if first then
-    begin
-      displays.Clear;
-      first := false;
-    end;
-    displays.addDesignation(cd.language, cd.valueElement); { no .link}
+    list := cd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+    displays.addDesignation(i, cd.language, cd.valueElement, list); { no .link}
+    inc(i);
   end;
 end;
 
@@ -1689,12 +1875,12 @@ begin
   end;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited create(factory, getVS, getCS, getVersions, getExpansion, txResources, languages);
+  inherited create(factory, getVS, getCS, getVersions, getExpansion, txResources, languages, i18n);
 end;
 
-procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
+procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcURL : String);
 var
   i : integer;
   cds : TConceptDesignations;
@@ -1702,17 +1888,17 @@ var
 begin
   if not FParams.excludeNotForUI or not (cs.isAbstract(c)) then
   begin
-    cds := TConceptDesignations.Create(FFactory.link);
+    cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
     try
       listDisplays(cds, c);
       n := processCode(parent, false, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c),  cds, c.definition, c.itemWeight,
-         nil, imports, c.getAllExtensionsW, nil, c.properties);
+         nil, imports, c.getAllExtensionsW, nil, c.properties, nil, srcUrl);
     finally
       cds.Free;
     end;
   end;
   for i := 0 to c.conceptList.count - 1 do
-    addDefinedCode(cs, system, c.conceptList[i], imports, n);
+    addDefinedCode(cs, system, c.conceptList[i], imports, n, srcUrl);
 end;
 
 function TFHIRValueSetExpander.canonical(system, version : String) : String;
@@ -1766,11 +1952,11 @@ end;
 
 function TFHIRValueSetExpander.processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String;
     isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
-    csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>) : TFhirValueSetExpansionContainsW;
+    csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; srcURL : string) : TFhirValueSetExpansionContainsW;
 var
   n : TFhirValueSetExpansionContainsW;
-  s, pn : String;
-  srcLang, dstLang : TIETFLang;
+  s, pn, log : String;
+  srcLang, dstLang, tl : TIETFLang;
   usedDisplay : boolean;
   tu, t : TConceptDesignation;
   ext : TFHIRExtensionW;
@@ -1781,7 +1967,12 @@ begin
       exit;
 
     if (FLimitCount > 0) and (FFullList.Count >= FLimitCount) and not doDelete then
-      raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
+    begin
+      if (FCount + FOffset > 0) and (FFullList.count > FCount + FOffset) then
+        raise EFinished.create('.')
+      else
+        raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.langCode, [srcUrl, '>'+inttostr(FLimitCount)]));
+    end;
 
     if (expansion <> nil) and (version <> '') then
     begin
@@ -1815,36 +2006,46 @@ begin
           expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#label', 'label', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-label')));
 
         if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-conceptOrder')) then
-          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-conceptOrder')));
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeInteger(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-conceptOrder')));
         if (hasExtension(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-conceptOrder')) then
-          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-conceptOrder')));
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#order', 'order', FFactory.makeInteger(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/valueset-conceptOrder')));
 
         if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')) then
-          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'itemWeight', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'weight', FFactory.makeDecimal(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
         if (hasExtension(vsExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')) then
-          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'itemWeight', FFactory.makeString(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#itemWeight', 'weight', FFactory.makeDecimal(getExtensionString(vsExtList, 'http://hl7.org/fhir/StructureDefinition/itemWeight')));
 
         if (csExtList <> nil) then
           for ext in csExtList do
             if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/coding-sctdescid', 'http://hl7.org/fhir/StructureDefinition/rendering-style',
                                   'http://hl7.org/fhir/StructureDefinition/rendering-xhtml', 'http://hl7.org/fhir/StructureDefinition/codesystem-alternate'], ext.url) then
-              n.addExtensionV(ext.url, ext.value.link);
+              n.addExtensionV(ext.element.link);
 
         if (vsExtList <> nil) then
           for ext in vsExtList do
-            if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/valueset-supplement', 'http://hl7.org/fhir/StructureDefinition/valueset-deprecated',
+            if StringArrayExists([EXT_VSSUPPLEMENT, 'http://hl7.org/fhir/StructureDefinition/valueset-deprecated',
                                 'http://hl7.org/fhir/StructureDefinition/valueset-concept-definition', 'http://hl7.org/fhir/StructureDefinition/coding-sctdescid',
                                 'http://hl7.org/fhir/StructureDefinition/rendering-style', 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml'], ext.url) then
-              n.addExtensionV(ext.url, ext.value.link);
+              n.addExtensionV(ext.element.link);
 
         // display and designations
+        log := code+': langs:';
+        for tl in FParams.DisplayLanguages do
+          log := log + ' '+tl.code;
         srcLang := displays.baseLang;
         dstLang := FParams.Language;
+
+        if (srcLang = nil) then log := log + '; srcLang: nil' else log := log + '; srcLang: '+srcLang.code;
+        if (dstLang = nil) then log := log + '; dstLang: nil' else log := log + '; dstLang: '+dstLang.code;
+        if (displays.display = nil) then log := log + '; display: nil' else log := log + '; display: "'+displays.display.asString+'"';
         usedDisplay := false;
         if (FParams.DisplayLanguages.Count > 0) then
           tu := displays.findDisplay(FParams.displayLanguages)
         else
           tu := nil;
+        if (tu = nil) then log := log + '; tu: nil' else log := log + '; tu: '+tu.language.code+':'+tu.value.asString;
+        Logging.log(log);
+
         if (tu <> nil) then
           n.Display := tu.value.asString
         else if (displays.display <> nil) and ((srcLang = nil) or (dstLang = nil) or dstLang.matches(srcLang)) then
@@ -1863,7 +2064,7 @@ begin
             n.addDesignation(srcLang.code, '', displays.display.AsString);
           for t in displays.designations do
             if (t <> tu) and (((t.Language <> nil) or (t.use <> nil)) and (t.value <> nil)) then
-              n.addDesignation(t.language, t.use, t.value);
+              n.addDesignation(t.language, t.use, t.value, t.extensions);
         end;
 
         for pn in FParams.properties do
@@ -1933,8 +2134,6 @@ begin
         end
         else
           FCanBeHierarchy := false;
-        if (itemWeight <> '') then
-          n.itemWeight := itemWeight;
         result := n;
       finally
         n.free;
@@ -1954,7 +2153,7 @@ begin
   vs := findValueSet(uri);
   try
     if vs = nil then
-      raise ETerminologyError.create('Unable to find value set "'+uri+'"');
+      raise ETerminologyError.create('Unable to find value set "'+uri+'"', itUnknown);
   finally
     vs.Free;
   end;
@@ -1971,7 +2170,7 @@ begin
     try
       dependencies.AddStrings(dep);
       if (result = nil) then
-        raise ETerminologyError.create('unable to find value set '+uri);
+        raise ETerminologyError.create('unable to find value set '+uri, itUnknown);
       if result.expansion.hasextension('http://hl7.org/fhir/params/questionnaire-extensions#closed') then
         notClosed := true;
       result.Link;
@@ -2018,7 +2217,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText);
+procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
 var
   cs : TCodeSystemProvider;
   s : string;
@@ -2036,23 +2235,17 @@ begin
   begin
     cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
     try
-      if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-        begin
-          s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-          if not cs.hasSupplement(s) then
-            raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
-        end;
 
       if cs.contentMode <> cscmComplete then
       begin
         if cs.contentMode = cscmNotPresent then
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' has no content, so this expansion cannot be performed')
+          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' has no content, so this expansion cannot be performed', itInvalid)
         else if cs.contentMode = cscmNotPresent then
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' defines a supplement, so this expansion cannot be performed')
+          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' defines a supplement, so this expansion cannot be performed', itInvalid)
         else if FParams.incompleteOK then
           exp.addParamUri(CODES_TFhirCodeSystemContentMode[cs.contentMode], cs.systemUri(nil)+'|'+cs.version(nil))
         else
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' is a '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+', so this expansion is not permitted unless the expansion parameter "incomplete-ok" has a value of "true"');
+          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' is a '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+', so this expansion is not permitted unless the expansion parameter "incomplete-ok" has a value of "true"', itInvalid);
       end;
 
       if (not cset.hasConcepts) and (not cset.hasFilters) then
@@ -2071,8 +2264,8 @@ begin
             else
               raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
 
-          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
-            raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
+          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) and (FOffset+FCount = 0) then
+            raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.langCode, [srcUrl, '>'+inttostr(FLimitCount)]));
         end
       end;
 
@@ -2151,6 +2344,7 @@ begin
       try
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
         try
+          checkSupplements(cs, cset);
           for s in cset.valueSets do
           begin
             f := nil;
@@ -2168,12 +2362,6 @@ begin
             finally
               vs.Free;
             end;
-          end;
-          if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-          begin
-            s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-            if not cs.hasSupplement(s) then
-              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
           end;
 
           if (not cset.hasConcepts) and (not cset.hasFilters) then
@@ -2204,13 +2392,13 @@ begin
 
               iter := cs.getIterator(nil);
               try
-                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete then
-                  raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimitCount)+') (A text filter may reduce the number of codes in the expansion)');
+                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete and (FOffset + Fcount = 0) then
+                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.langCode, [vsSrc.url, '>'+inttostr(FLimitCount)]));
                 while iter.more do
                 begin
                   c := cs.getNextContext(iter);
                   if passesFilters(c, 0) then
-                    processCodeAndDescendants(doDelete, cs, c, expansion, valueSets, nil);
+                    processCodeAndDescendants(doDelete, cs, c, expansion, valueSets, nil, vsSrc.url);
                 end;
               finally
                 iter.Free;
@@ -2230,11 +2418,11 @@ begin
                     c := cs.FilterConcept(ctxt);
                     if passesFilters(c, 0) then
                     begin
-                      cds := TConceptDesignations.Create(FFactory.link);
+                      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                       try
                         listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
                         processCode(nil, doDelete, cs.systemUri(c), cs.version(c), cs.code(c),  cs.isAbstract(c), cs.isInactive(c), cs.deprecated(c),
-                        cds, cs.definition(c), cs.itemWeight(c), expansion, valueSets, cs.getExtensions(c), nil, cs.getProperties(c));
+                        cds, cs.definition(c), cs.itemWeight(c), expansion, valueSets, cs.getExtensions(c), nil, cs.getProperties(c), nil, vsSrc.url);
                       finally
                         cds.free;
                       end;
@@ -2249,7 +2437,7 @@ begin
             end;
           end;
 
-          cds := TConceptDesignations.Create(FFactory.link);
+          cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
           try
             for cc in cset.concepts.forEnum do
             begin
@@ -2267,7 +2455,7 @@ begin
                     if ov = '' then
                       ov := cs.itemWeight(cctxt);
                     processCode(nil, doDelete, cs.systemUri(nil), cs.version(nil), cc.code, cs.isAbstract(cctxt), cs.isInactive(cctxt), cs.deprecated(cctxt), cds,
-                         cs.Definition(cctxt), ov, expansion, valueSets, cs.getExtensions(cctxt), cc.getAllExtensionsW, cs.getProperties(cctxt));
+                         cs.Definition(cctxt), ov, expansion, valueSets, cs.getExtensions(cctxt), cc.getAllExtensionsW, cs.getProperties(cctxt), nil, vsSrc.url);
                   end;
                 end;
               finally
@@ -2304,7 +2492,7 @@ begin
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
                     if f = nil then
-                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri(nil));
+                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri(nil), itNotSupported);
                     filters.Insert(offset, f);
                     if cs.isNotClosed(filter, f) then
                       notClosed := true;
@@ -2322,7 +2510,7 @@ begin
                         inc(count);
                         if count > FOffset then
                         begin
-                          cds := TConceptDesignations.Create(FFactory.link);
+                          cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                           try
                             if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
                             begin
@@ -2335,7 +2523,7 @@ begin
                                 parent := nil;
                               end;
                               processCode(parent, doDelete, cs.systemUri(nil), cs.version(nil), cs.code(c), cs.isAbstract(c), cs.IsInactive(c),
-                                  cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c));
+                                  cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, vsSrc.url);
                             end;
                           finally
                             cds.free;
@@ -2369,7 +2557,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW);
+procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcUrl : String);
 var
   i : integer;
   vs : String;
@@ -2386,11 +2574,11 @@ begin
     end;
     if (not FParams.excludeNotForUI or not cs.IsAbstract(context)) and (not FParams.activeOnly or not cs.isInActive(context)) then
     begin
-      cds := TConceptDesignations.Create(FFactory.link);
+      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
         listDisplays(cds, cs, context);
         n := processCode(parent, doDelete, cs.systemUri(context), '', cs.Code(context), cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
-        cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context));
+        cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context), nil, srcUrl);
       finally
         cds.Free;
       end;
@@ -2398,7 +2586,7 @@ begin
     iter := cs.getIterator(context);
     try
       while iter.more do
-        processCodeAndDescendants(doDelete, cs, cs.getNextContext(iter), expansion, imports, n);
+        processCodeAndDescendants(doDelete, cs, cs.getNextContext(iter), expansion, imports, n, srcUrl);
     finally
       iter.Free;
     end;
@@ -2512,7 +2700,7 @@ begin
   result := TFHIRExpansionParams.Create;
 end;
 
-procedure TFHIRExpansionParams.loadFromLangs(langs: THTTPLanguages);
+procedure TFHIRExpansionParams.loadFromLangs(languages: TIETFLanguageDefinitions; langs: THTTPLanguages);
 var
   s : String;
 begin
@@ -2524,10 +2712,18 @@ begin
     if (s <> '') then
     begin
       if FLanguage = nil then
-        FLanguage := TIETFLang.makeLang(s);
-      FDisplayLanguages.add(TIETFLang.makeLang(s));
+        FLanguage := languages.parse(s);
+      FDisplayLanguages.add(languages.parse(s));
     end;
   end;
+end;
+
+function TFHIRExpansionParams.langCode: string;
+begin
+  if language = nil then
+    result := ''
+  else
+    result := language.language;
 end;
 
 destructor TFHIRExpansionParams.Destroy;

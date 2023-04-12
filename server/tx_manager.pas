@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
-  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang, fsl_logging,
+  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_codesystem_service, fhir_valuesets,
@@ -143,6 +143,7 @@ Type
     FFactory : TFHIRFactory;
     FStem : TFslWordStemmer;
     FCommonTerminologies : TCommonTerminologies;
+    FI18n : TI18nSupport;
 
     FLastConceptKey : integer;
     FLastClosureKey : integer;
@@ -183,13 +184,14 @@ Type
     procedure invalidateVS(id : String); virtual;
     procedure getSummary(b : TStringBuilder);
   public
-    constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies); virtual;
+    constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies; i18n : TI18nSupport); virtual;
     destructor Destroy; Override;
     Function Link : TTerminologyServerStore; overload;
 
     Property Factory : TFHIRFactory read FFactory;
     Property DB : TFDBManager read FDB;
     property CommonTerminologies : TCommonTerminologies read FCommonTerminologies;
+    property i18n : TI18nSupport read FI18n;
 
     // maintenance procedures
     procedure SeeSpecificationResource(resource : TFHIRResourceProxyV);
@@ -759,7 +761,7 @@ begin
   end;
 end;
 
-constructor TTerminologyServerStore.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
+constructor TTerminologyServerStore.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies; i18n : TI18nSupport);
 var
   conn : TFDBConnection;
 begin
@@ -767,6 +769,7 @@ begin
   FFactory := factory;
   FLock := TFslLock.Create('Terminology Server Store');
   FCommonTerminologies := common;
+  FI18n := i18n;
 
   FDB := db;
 
@@ -881,6 +884,7 @@ end;
 destructor TTerminologyServerStore.Destroy;
 begin
   FCommonTerminologies.Free;
+  FI18n.free;
   FStem.Free;
   FValueSets.Free;
   FCodeSystems.Free;

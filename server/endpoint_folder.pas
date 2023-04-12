@@ -38,7 +38,7 @@ interface
 uses
   Sysutils, Classes, IniFiles, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen, fsl_fpc, fsl_i18n,
   fdb_manager,
   fhir_objects,
   server_config, utilities, server_constants,
@@ -72,7 +72,7 @@ type
   private
     FFolderServer : TFolderWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -86,9 +86,9 @@ implementation
 { TFolderWebEndPoint }
 
 
-constructor TFolderWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings);
+constructor TFolderWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, nil, nil);
+  inherited create(config, settings, nil, nil, nil, i18n);
 end;
 
 destructor TFolderWebEndPoint.Destroy;

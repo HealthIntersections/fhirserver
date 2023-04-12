@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging, fsl_npm_cache,
+  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging, fsl_npm_cache, fsl_i18n,
   fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager, fhir_uris,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
@@ -75,8 +75,11 @@ Type
 
   TGetNamedContextEvent = function (Sender : TObject; name : String) : TFHIRServerContext of object;
 
+  { TFHIRServerContext }
+
   TFHIRServerContext = class (TFslObject)
   private
+    FI18nSupport: TI18nSupport;
     FLock: TFslLock;
     FName : string;
     FStorage : TFHIRStorageService;
@@ -110,6 +113,7 @@ Type
     FOnGetNamedContext : TGetNamedContextEvent;
     FPcm: TFHIRPackageManager;
 
+    procedure SetI18nSupport(AValue: TI18nSupport);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
@@ -146,6 +150,7 @@ Type
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
     property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
+    property i18nSupport : TI18nSupport read FI18nSupport write SetI18nSupport;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -429,6 +434,7 @@ begin
   FServerFactory.Free;
   FTerminologyServer.Free;
   FClientCacheManager.Free;
+  FI18nSupport.free;
 
   FValidatorContext.Free;
   FValidator.free;
@@ -485,6 +491,12 @@ procedure TFHIRServerContext.SetUserProvider(const Value: TFHIRUserProvider);
 begin
   FUserProvider.Free;
   FUserProvider := Value;
+end;
+
+procedure TFHIRServerContext.SetI18nSupport(AValue: TI18nSupport);
+begin
+  FI18nSupport.free;
+  FI18nSupport := AValue;
 end;
 
 procedure TFHIRServerContext.SetValidate(const Value: Boolean);

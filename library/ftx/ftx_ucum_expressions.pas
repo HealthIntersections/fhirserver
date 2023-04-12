@@ -35,7 +35,7 @@ Interface
 uses
   SysUtils, Generics.Defaults,
   fsl_base, fsl_utilities, fsl_fpc,
-  ftx_ucum_handlers, ftx_ucum_base;
+  ftx_ucum_handlers, ftx_ucum_base, ftx_service;
 
 Type
   TUcumComponent = class (TFslObject)

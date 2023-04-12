@@ -120,11 +120,10 @@ https://www.w3.org/International/articles/language-tags/index.en
 
     procedure addExtLang(s : String);
     procedure addPrivateUse(s : String);
-  public
     constructor Create(code : String);
+  public
     function Link : TIETFLang; overload;
 
-    class function makeLang(lang : String) : TIETFLang;
     property code : String read FCode;
     property language : string read Flanguage;
     property extLang : TArray<String> read FextLang;
@@ -572,15 +571,6 @@ begin
   result := TIETFLang(inherited link);
 end;
 
-class function TIETFLang.makeLang(lang: String): TIETFLang;
-begin
-  if lang = '' then
-    result := nil
-  else
-    result := TIETFLang.create(lang);
-end;
-
-
 function TIETFLang.matches(other: TIETFLang): boolean;
 begin
   if FExtension <> '' then
@@ -661,6 +651,9 @@ var
   res : TIETFLang;
   c, i, t : integer;
 begin
+  if (code = '') then
+    exit(nil);
+
   msg := '';
   res := TIETFLang.create(code);
   try
@@ -1064,13 +1057,13 @@ begin
         else if vars['Type'] = 'variant' then
           i := LoadVariant(vars, i)
         else if (vars['Type'] <> 'grandfathered') and (vars['Type'] <> 'redundant') then
-           raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
+           raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
       end;
     finally
       vars.Free;
     end;
     if i < st.count then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
+      raise EFSLException.create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
   finally
     st.Free;
   end;
@@ -1085,7 +1078,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FExtLanguages.ContainsKey(cc.code) then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
+      raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
     FExtLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -1106,7 +1099,7 @@ begin
     if (vars.ContainsKey('Scope')) then
       cc.scope := vars['Scope'];
     if FLanguages.ContainsKey(cc.code) then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate language code '+cc.code+' at line '+inttostr(i+1));
+      raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate language code '+cc.code+' at line '+inttostr(i+1));
     FLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -1123,7 +1116,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FRegions.ContainsKey(cc.code) then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+      raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FRegions.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -1140,7 +1133,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FScripts.ContainsKey(cc.code) then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
+      raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
     FScripts.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -1157,7 +1150,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FVariants.ContainsKey(cc.code) then
-      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+      raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FVariants.Add(cc.code, cc.Link);
     result := i;
   finally

@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils,
   fsl_utilities, fsl_collections, fsl_base,
-  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers;
+  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, ftx_service;
 
 Type
   TUcumValidator = class (TFslObject)

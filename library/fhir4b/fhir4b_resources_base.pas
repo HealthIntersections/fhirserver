@@ -361,6 +361,7 @@ type
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
     procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
     procedure stripExtensions(exemptUrls : TStringArray); override;
@@ -882,6 +883,11 @@ begin
   ex.value := value as TFhirDataType;
 end;
 
+procedure TFhirDomainResource.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
 procedure TFhirDomainResource.deleteExtensionV(extension: TFHIRObject);
 var
   i : integer;
@@ -905,9 +911,10 @@ var
   i : integer;
 begin
   inherited stripExtensions(exemptUrls);
-  for i := FExtensionList.count - 1 downto 0 do
-    if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
-      FExtensionList.remove(i);
+  if FExtensionList <> nil then
+    for i := FExtensionList.count - 1 downto 0 do
+      if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+        FExtensionList.remove(i);
 end;
 
 function TFhirDomainResource.extensionCount(url: String): integer;

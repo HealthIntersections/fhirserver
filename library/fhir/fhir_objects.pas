@@ -163,6 +163,7 @@ Type
   End;
 
   ETooCostly = class (EFHIRException);
+  EFinished = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
   EDefinitionExceptionTodo = Class(EDefinitionException)
@@ -396,14 +397,12 @@ type
   private
     FTags : TFslStringDictionary;
     FTag : TFslObject;
+    FTagInt: integer;
     FLocationData : TFHIRObjectLocationData;
     FCommentsStart: TFslStringList;
     FCommentsEnd: TFslStringList;
     FFormat : TFHIRFormat;
     FNoCompose: boolean;
-    FTagInt: integer;
-    FJsHandle: pointer;
-    FJsInstance: cardinal;
     function GetCommentsStart: TFslStringList;
     function GetCommentsEnd: TFslStringList;
     procedure SetTag(const Value: TFslObject);
@@ -445,7 +444,8 @@ type
     function getExtensionsV : TFslList<TFHIRObject>; virtual; overload;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual; overload;
     function getExtensionV(url : String) : TFHIRObject; virtual;
-    procedure addExtensionV(url : String; value : TFHIRObject); virtual;
+    procedure addExtensionV(url : String; value : TFHIRObject); virtual; overload;
+    procedure addExtensionV(extension : TFHIRObject); virtual; overload;
     procedure deleteExtensionV(extension : TFHIRObject); virtual;
     procedure deleteExtensionByUrl(url : String);virtual;
     procedure stripExtensions(exemptUrls : TStringArray); virtual;
@@ -481,10 +481,6 @@ type
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
     property TagInt : integer read FTagInt write FTagInt;
-
-    // javascript caching
-    property jsInstance : cardinal read FJsInstance write FJsInstance;
-    property jsHandle : pointer read FJsHandle write FJsHandle;
 
     // this is populated by the json and xml parsers if requested
     property LocationData : TFHIRObjectLocationData read GetLocationData;
@@ -583,6 +579,7 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function ToString : String; override;
     function new : TFHIRObject; reintroduce; overload; virtual;
+    procedure stripExtensions(exemptUrls : TStringArray); virtual;
 
     property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
     property HasLocationData : boolean read GetHasLocationData;
@@ -1037,6 +1034,11 @@ begin
   raise EFHIRException.create('Extensions are not supported on this object');
 end;
 
+procedure TFHIRObject.addExtensionV(extension: TFHIRObject);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
 procedure TFHIRObject.deleteExtensionV(extension: TFHIRObject);
 begin
   raise EFHIRException.create('Extensions are not supported on this object');
@@ -1055,6 +1057,7 @@ var
 begin
   list := TFHIRPropertyList.create;
   try
+    ListProperties(list, true, false);
     for p in list do
       for o in p.values do
         o.stripExtensions(exemptUrls);
@@ -1689,6 +1692,14 @@ end;
 function TFHIRObjectList.new: TFHIRObject;
 begin
   result := inherited new as TFHIRObject;
+end;
+
+procedure TFHIRObjectList.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  for i := 0 to Count -1 do
+    ObjByIndex[i].stripExtensions(exemptUrls);
 end;
 
 procedure TFHIRObjectList.SetTags(name: String; const Value: String);

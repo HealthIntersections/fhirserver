@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   fsl_testing,
   fsl_base, fsl_utilities, fsl_xml,
-  ftx_ucum_services;
+  ftx_service, ftx_ucum_services;
 
 type
   TUcumTest = class (TFslTestSuiteCase)

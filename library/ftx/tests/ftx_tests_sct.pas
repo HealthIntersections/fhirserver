@@ -37,7 +37,7 @@ uses
   IdHash, IdHashSHA,
   fsl_testing,
   fsl_base, fsl_stream, fsl_utilities,
-  ftx_sct_services, ftx_sct_expressions;
+  ftx_service, ftx_sct_services, ftx_sct_expressions;
 
 type
   TSnomedTestContext = class (TFslObject)

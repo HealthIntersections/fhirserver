@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions,
+  SysUtils, Classes, Generics.Defaults, Generics.Collections,  {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc,
   fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
@@ -186,6 +186,7 @@ type
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: TRegEx; list: TFhirCodeSystemProviderFilterContext);
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -726,11 +727,11 @@ var
 begin
   ctxt := context as TFhirCodeSystemProviderContext;
 
-  list.baseLang := TIETFLang.makeLang(FCs.FCodeSystem.language);
+  list.baseLang := FLanguages.parse(FCs.FCodeSystem.language);
   list.display := ctxt.concept.displayElement;
 
   for ccd in ctxt.concept.designations.forEnum do
-    list.designations.Add(TConceptDesignation.create(ccd));
+    list.designations.Add(TConceptDesignation.build(FLanguages, ccd));
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, ctxt.concept.code, css.propertyCode('http://hl7.org/fhir/concept-properties#synonym'));
@@ -741,7 +742,7 @@ begin
         list.addDesignation(css.language, cc.displayElement); {no .link}
       end;
       for ccd in cc.designations.forEnum do
-        list.designations.Add(TConceptDesignation.create(ccd));
+        list.designations.Add(TConceptDesignation.build(FLanguages, ccd));
     end;
   end;
 end;
@@ -811,7 +812,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itUnknown)
     else
       result := Definition(ctxt);
   finally
@@ -826,7 +827,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itUnknown)
     else
       result := Display(ctxt, lang);
   finally
@@ -1075,10 +1076,10 @@ var
 begin
   cA := LocateCode(codeA);
   if (cA = nil) then
-    raise ETerminologyError.create('Unknown Code "'+codeA+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeA+'"', itUnknown);
   cB := LocateCode(codeB);
   if (cB = nil) then
-    raise ETerminologyError.create('Unknown Code "'+codeB+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeB+'"', itUnknown);
 
   TFHIRCodeSystemEntry := CB;
   while TFHIRCodeSystemEntry <> nil do
@@ -1246,6 +1247,20 @@ begin
   end;
 end;
 
+procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: TRegEx; list: TFhirCodeSystemProviderFilterContext);
+var
+  c : TFhirCodeSystemConceptW;
+  ok : boolean;
+begin
+  for c in src do
+  begin
+    ok := regex.isMatch(c.code);
+    if ok then
+      list.Add(c.Link, 0);
+    iterateConceptsByRegex(c.conceptList, regex, list);
+  end;
+end;
+
 function TFhirCodeSystemProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
@@ -1253,13 +1268,14 @@ var
   i: Integer;
   pp : TFhirCodeSystemPropertyW;
   cc : TFhirCodeSystemConceptW;
+  regex: TRegEx;
 begin
   if (op in [foIsA]) and (prop = 'concept') then
   begin
     code := doLocate(value);
     try
       if code = nil then
-        raise ETerminologyError.Create('Unable to locate code '+value)
+        raise ETerminologyError.Create('Unable to locate code '+value, itUnknown)
       else
       begin
         result := TFhirCodeSystemProviderFilterContext.create;
@@ -1279,7 +1295,7 @@ begin
     code := doLocate(value);
     try
       if code = nil then
-        raise ETerminologyError.Create('Unable to locate code '+value)
+        raise ETerminologyError.Create('Unable to locate code '+value, itUnknown)
       else
       begin
         result := TFhirCodeSystemProviderFilterContext.create;
@@ -1307,7 +1323,7 @@ begin
           code := doLocate(value);
           try
             if code = nil then
-              raise ETerminologyError.Create('Unable to locate code '+value)
+              raise ETerminologyError.Create('Unable to locate code '+value, itUnknown)
             else
               TFhirCodeSystemProviderFilterContext(result).Add(code.concept.Link, 0);
           finally
@@ -1335,6 +1351,18 @@ begin
     finally
       result.Free;
     end;
+  end
+  else if (op = foEqual) and (prop = 'regex') then
+  begin
+    regex := TRegEx.create('^'+value+'$');
+    result := TFhirCodeSystemProviderFilterContext.create;
+    try
+      iterateConceptsByRegex(FCs.CodeSystem.conceptList, regex, result as TFhirCodeSystemProviderFilterContext);
+      result.link;
+    finally
+      result.Free;
+    end;
+
   end
   else
   begin

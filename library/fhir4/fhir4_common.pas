@@ -465,7 +465,7 @@ type
     procedure SetInactive(Value: boolean); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
-    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW); override;
+    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
     procedure addProperty(code : String; value : TFHIRObject); override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
@@ -479,8 +479,10 @@ type
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure addParamStr(name, value : String); override;
+    procedure addParamCode(name, value : String); override;
     procedure addParamUri(name, value : String); override;
     procedure addParamBool(name : String; value : boolean); override;
+    procedure addParamInt(name : String; value : integer); override;
     function hasParam(name : string) : boolean; overload; override;
     function hasParam(name, value : string) : boolean; overload; override;
     procedure copyParams(source : TFhirValueSetExpansionW); override;
@@ -578,6 +580,7 @@ type
     function includes : TFslList<TFhirValueSetComposeIncludeW>; override;
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; override;
     procedure clearDefinition; override;
+    procedure clearDefinitionExtensions(exemptUrls : TStringArray); override;
     function hasExpansion : boolean; override;
     function expansion : TFhirValueSetExpansionW; override;
     function forceExpansion : TFhirValueSetExpansionW; override;
@@ -2712,6 +2715,23 @@ begin
   vs.text := nil;
 end;
 
+procedure TFHIRValueSet4.clearDefinitionExtensions(exemptUrls: TStringArray);
+begin
+  if vs.purposeElement <> nil then
+    vs.purposeElement.stripExtensions(exemptUrls);
+  if vs.compose <> nil then
+    vs.compose.stripExtensions(exemptUrls);
+  if vs.descriptionElement <> nil then
+    vs.descriptionElement.stripExtensions(exemptUrls);
+  vs.contactList.stripExtensions(exemptUrls);
+  if vs.copyrightElement <> nil then
+    vs.copyrightElement.stripExtensions(exemptUrls);
+  if vs.publisherElement <> nil then
+    vs.publisherElement.stripExtensions(exemptUrls);
+  if vs.text <> nil then
+    vs.text.stripExtensions(exemptUrls);
+end;
+
 destructor TFHIRValueSet4.Destroy;
 begin
   FExp.Free;
@@ -3829,9 +3849,19 @@ begin
   exp.addParamBool(name, value);
 end;
 
+procedure TFhirValueSetExpansion4.addParamInt(name: String; value: integer);
+begin
+  exp.AddParamInt(name, value);
+end;
+
 procedure TFhirValueSetExpansion4.addParamStr(name, value: String);
 begin
   exp.addParamStr(name, value);
+end;
+
+procedure TFhirValueSetExpansion4.addParamCode(name, value: String);
+begin
+  exp.addParamCode(name, value);
 end;
 
 procedure TFhirValueSetExpansion4.addParamUri(name, value: String);
@@ -3974,9 +4004,10 @@ begin
   end;
 end;
 
-procedure TFhirValueSetExpansionContains4.addDesignation(lang: TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW);
+procedure TFhirValueSetExpansionContains4.addDesignation(lang: TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>);
 var
-  d : TFhirValueSetComposeIncludeConceptDesignation;
+  d : TFhirValueSetComposeIncludeConceptDesignation;              
+  ext : TFHIRExtensionW;
 begin
   d := (Element as TFhirValueSetExpansionContains).designationList.Append;
   if (lang <> nil) then
@@ -3984,7 +4015,10 @@ begin
   if (value <> nil) then
     d.valueElement := value.Element.link as TFHIRString;
   if use <> nil then
-    d.use := use.Element as TFHIRCoding;
+    d.use := use.Element as TFHIRCoding;   
+  if extensions <> nil then
+    for ext in Extensions do
+      d.addExtension(ext.element as TFHIRExtension);
 end;
 
 procedure TFhirValueSetExpansionContains4.addProperty(code: String; value: TFHIRObject);
@@ -5416,7 +5450,7 @@ begin
     req.coding.version := req.version;
   end;
   if req.coding = nil then
-    raise ETerminologyError.create('Unable to find a code to lookup (need coding or system/code)');
+    raise EFSLException.create('Unable to find a code to lookup (need coding or system/code)');
 end;
 
 function TFHIRLookupOpRequest4.propList: TArray<String>;

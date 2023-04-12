@@ -2830,7 +2830,7 @@ end;
 function TLOINCAnswersList.FindCode(sCode: String; var iIndex: Cardinal; Strings: TLoincStrings): Boolean;
 var
   L, H, I, d : integer;
-  C: Integer;
+  C : Integer;
   s : String;
   lang : byte;
 begin
@@ -2861,6 +2861,20 @@ begin
     end;
     iIndex := L;
   End;
+  if not result then
+  begin
+    for i := 0 to (Length(FMaster) div (12)) - 1 do
+    begin
+      Move(FMaster[i*12], d, 4);
+      s := Strings.GetEntry(d, lang);
+      C := AnsiCompareStr(s, sCode);
+      if (c = 0) then
+      begin
+        iIndex := i;
+        exit(true);
+      end;
+    end;
+  end;
 end;
 
 procedure TLOINCAnswersList.GetEntry(iIndex: Cardinal; var code, description, answers: Cardinal);

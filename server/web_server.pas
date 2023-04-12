@@ -337,6 +337,7 @@ begin
     txu := 'http://' + Common.Host + ':' + inttostr(Common.StatedPort);
 
   Common.Google.serverId := ini.web['googleid'].value;
+  Common.Cache.caching := false; // ini.web['caching'].readAsBool;
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -909,7 +910,7 @@ end;
 
 procedure TFhirWebServer.SetCacheStatus(status: boolean);
 begin
-  Common.cache.Caching := status;
+  Common.cache.Caching := false; // status;
 end;
 
 procedure TFhirWebServer.SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);

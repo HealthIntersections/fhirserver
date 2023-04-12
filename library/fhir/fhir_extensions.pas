@@ -38,6 +38,7 @@ uses
 const
   EXT_ORDINAL_VALUE = 'http://hl7.org/fhir/StructureDefinition/ordinalValue';
   EXT_ITEM_WEIGHT = 'http://hl7.org/fhir/StructureDefinition/itemWeight';
+  EXT_VSSUPPLEMENT = 'http://hl7.org/fhir/StructureDefinition/valueset-supplement';
 
 implementation
 

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_json,
+  fsl_base, fsl_utilities, fsl_json, fsl_lang,
   fsl_http,
   fdb_manager,
   fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities, fhir_uris,
@@ -144,7 +144,7 @@ type
     function resourceName : String; override;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; override;
   public
-    constructor Create(factory : TFhirFactory; isExport : boolean);
+    constructor Create(factory : TFhirFactory; isExport : boolean; languages : TIETFLanguageDefinitions);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
@@ -337,6 +337,8 @@ type
 
 implementation
 
+uses
+  server_context;
 
 { TFhirNativeOperationEngineR2 }
 
@@ -538,34 +540,37 @@ begin
 end;
 
 procedure TFhirNativeOperationEngineR2.registerOperations;
+var
+  sc : TFHIRServerContext;
 begin
-  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirValidationOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateDocumentOperation.create(Factory.link));
-  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, true));
-  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, false));
-  FOperations.add(TFhirEncounterEverythingOperation.create(Factory.link));
-  FOperations.add(TFhirGroupEverythingOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateQAOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateJWTOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateCodeOperation.create(Factory.link));
-  FOperations.add(TFhirHandleQAPostOperation.create(Factory.link));
-  FOperations.add(TFhirQuestionnaireGenerationOperation.create(Factory.link));
-  FOperations.add(TFhirVersionsOperation.create(Factory.link));
-  FOperations.add(TFhirProcessClaimOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateSnapshotOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateTemplateOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateNarrativeOperation.create(Factory.link));
-  FOperations.add(TFhirSuggestKeyWordsOperation.create(Factory.link));
-  FOperations.add(TFhirGetMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirAddMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirDeleteMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirDiffOperation.create(Factory.link));
-  FOperations.add(TFhirConvertOperation.create(Factory.link));
+  sc:= FServerContext as TFHIRServerContext;
+  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.Link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.Link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.Link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.Link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.Link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirValidationOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateDocumentOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, true, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, false, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirEncounterEverythingOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGroupEverythingOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateQAOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateJWTOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateCodeOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirHandleQAPostOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirQuestionnaireGenerationOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirVersionsOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirProcessClaimOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateSnapshotOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateTemplateOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGenerateNarrativeOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirSuggestKeyWordsOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirGetMetaDataOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirAddMetaDataOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirDeleteMetaDataOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirDiffOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
+  FOperations.add(TFhirConvertOperation.create(Factory.link, sc.TerminologyServer.CommonTerminologies.Languages.link));
 end;
 
 procedure TFhirNativeOperationEngineR2.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patientId : String);
@@ -2462,9 +2467,9 @@ begin
   result := ['Patient'];
 end;
 
-constructor TFhirPatientEverythingOperation.create(factory : TFhirFactory; isExport: boolean);
+constructor TFhirPatientEverythingOperation.create(factory : TFhirFactory; isExport: boolean; languages : TIETFLanguageDefinitions);
 begin
-  inherited Create(factory);
+  inherited Create(factory, languages);
   FIsExport := isExport;
 end;
 
