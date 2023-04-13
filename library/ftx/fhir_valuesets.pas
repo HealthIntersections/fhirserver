@@ -247,9 +247,9 @@ Type
 
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
-    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
+    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
-    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String) : boolean;
+    function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
     function fixedSystemFromValueSet: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
@@ -264,10 +264,10 @@ Type
 
     procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
 
-    function check(system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : boolean; overload;
-    function check(system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
-    function check(coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
-    function check(code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
+    function check(issuePath, system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : boolean; overload;
+    function check(issuePath, system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
+    function check(issuePath : String; coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
+    function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
 
     property log : String read FLog;
   end;
@@ -789,16 +789,17 @@ begin
     result := '??';
 end;
 
-function TValueSetChecker.check(system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): boolean;
+function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): boolean;
 var
   msg, ver, impliedSystem : string;
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
 begin
-  result := check(system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode, impliedSystem);
+  result := check(issuePath, system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode, impliedSystem);
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : String) : boolean;
+function TValueSetChecker.check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations;
+    var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : String) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -825,8 +826,10 @@ begin
         result := false;
         cause := itNotFound;
         FLog := 'Unknown code system';
-//        !!!! check if version is valid format then
-
+        if (version <> '') then
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
+        else
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system]));
       end
       else
       begin
@@ -839,12 +842,14 @@ begin
             result := true; // we can't say it isn't valid. Need a third status?
             cause := itNotFound;
             FLog := 'Not found in Incomplete Code System';
+            op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.langCode, [code, system]));
           end
           else
           begin
             result := false;
             cause := itCodeInvalid;
             FLog := 'Unknown code';
+            op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('Unknown_Code__in_', FParams.langCode, [code, system]));
           end;
         end
         else
@@ -852,14 +857,22 @@ begin
           ver := cs.version(nil);
           cause := itNull;
           try
-            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or (not FParams.activeOnly or not cs.isInactive(ctxt)));
-            if (not result) then
+            if not (abstractOk or not cs.IsAbstract(ctxt)) then
             begin
-              FLog := 'Inactive/abstract code';
+              result := false;
+              FLog := 'Abstract code when not allowed';
               cause := itBusinessRule;
+              op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
+            end
+            else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
+            begin
+              result := false;
+              FLog := 'Inactive code when not allowed';
+              cause := itBusinessRule;
+              op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
             end
             else
-              FLog := 'found';
+              FLog := 'found OK';
             if (displays <> nil) then
               listDisplays(displays, cs, ctxt);
           finally
@@ -880,7 +893,11 @@ begin
       begin
         result := false;
         cause := itNotFound;
-        FLog := 'Unknown code system';
+        FLog := 'Unknown code system';  
+        if (version <> '') then
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
+        else
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]));
       end
       else
       begin
@@ -888,20 +905,39 @@ begin
         ctxt := cs.locate(code);
         if (ctxt = nil) then
         begin
-          result := false;
-          cause := itCodeInvalid;
-          FLog := 'Unknown code';
+          if cs.contentMode <> cscmComplete then
+          begin
+            result := true; // we can't say it isn't valid. Need a third status?
+            cause := itNotFound;
+            FLog := 'Not found in Incomplete Code System';
+            op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.langCode, [code, system]));
+          end
+          else
+          begin
+            result := false;
+            cause := itCodeInvalid;
+            FLog := 'Unknown code';
+            op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('Unknown_Code__in_', FParams.langCode, [code, system]));
+          end;
         end
         else
         begin
           ver := cs.version(nil);
           cause := itNull;
           try
-            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FParams = nil) or (not FParams.activeOnly or not cs.isInactive(ctxt)));
-            if (not result) then
+            if not (abstractOk or not cs.IsAbstract(ctxt)) then
             begin
+              result := false;
+              FLog := 'Abstract code when not allowed';
               cause := itBusinessRule;
-              FLog := 'Inactive/abstract code';
+              op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
+            end
+            else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
+            begin
+              result := false;
+              FLog := 'Inactive code when not allowed';
+              cause := itBusinessRule;
+              op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
             end
             else
               FLog := 'found';
@@ -922,7 +958,8 @@ begin
       system := determineSystem(code);
       if (system = '') then
       begin
-        message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.langCode, [code, FValueSet.url]);
+        message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.langCode, [code, FValueSet.url]);  
+        op.addIssue(isError, itNotFound, path, message);
         exit(false);
       end
       else
@@ -962,7 +999,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
+          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -982,6 +1019,7 @@ begin
           else
           begin
             message := 'The code system "'+cc.systemUri+'" version "'+cc.version+'" in the ValueSet include is different to the one in the value ("'+version+'")';
+            op.addIssue(isError, itNotFound, path+'.version', message);
             exit(false);
           end;
           cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+v]);
@@ -989,16 +1027,20 @@ begin
             cs := findCodeSystem(system, v, FParams, true);
           if (cs = nil) then
           begin
-            if (v = '') then
-              message := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system])
-            else
-              message := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+            if (FParams.valueSetMode <> vsvmMembershipOnly) then
+            begin
+              if (v = '') then
+                message := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system])
+              else
+                message := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+              op.addIssue(isError, itNotFound, path+'.system', message);
+            end;
             exit(false);
           end;
           checkSupplements(cs, cc);
           contentMode := cs.contentMode;
 
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, FValueSet, message);
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
         end
         else
           result := false;
@@ -1006,7 +1048,7 @@ begin
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
           if checker <> nil then
-            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem)
+            result := result and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem)
           else
             raise ETerminologyError.Create('No Match for '+s, itUnknown);
         end;
@@ -1026,12 +1068,12 @@ begin
               cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+cc.version]);
             checkSupplements(cs, cc);
             contentMode := cs.contentMode;
-            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, FValueSet, message);
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
           end;
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
+            excluded := excluded and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
           end;
           if excluded then
             exit(false);
@@ -1043,22 +1085,23 @@ begin
 end;
 
 
-function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
+function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem : String;
+  message, ver, pd, impliedSystem, path : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
   dc : integer;
 begin
+  path := issuePath;
   result := FFactory.makeParameters;
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
+        if check(path, coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
@@ -1118,7 +1161,7 @@ begin
       exit(true);
 end;
 
-function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW;
+function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW;
   function Summary(code: TFhirCodeableConceptW) : String;
   begin
     if (code.codingCount = 1) then
@@ -1131,7 +1174,7 @@ var
   v : boolean;
   ok, first : boolean;
   contentMode : TFhirCodeSystemContentMode;
-  cc, codelist, message, mt, ver, pd, ws, impliedSystem: String;
+  cc, codelist, message, mt, ver, pd, ws, impliedSystem, path, m: String;
   prov, prov2 : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
@@ -1140,12 +1183,12 @@ var
   log : String;
   tl : TIETFLang;
   psys, pver, pdisp, pcode : String;
-  dc : integer;
+  dc, i : integer;
   a : TStringArray;
   procedure msg(s : String);
   begin
     if (s = '') then
-      exit;
+      exit();
     if mt = '' then
       mt := s
     else if not mt.Contains(s) then
@@ -1164,12 +1207,17 @@ begin
         ok := false;
         codelist := '';
         mt := '';
+        i := 0;
         for c in code.codings.forEnum do
         begin
+          if (issuePath = 'CodeableConcept') then
+            path := issuePath+'.coding['+inttostr(i)+']'
+          else
+            path := issuePath;;
           list.clear;
           cc := ',{'+c.systemUri+'}'+c.code;
           codelist := codelist + cc;
-          v := check(c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
+          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
           if not v and (message <> '') then
             msg(message);
           if not v then
@@ -1184,41 +1232,35 @@ begin
           if (v) then
           begin
             if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
-              msg('The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
+            begin
+              m := 'The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
+              msg(m);
+              op.addIssue(isWarning, cause, path, m);
+            end;
             if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
             begin
-               dc := list.displayCount(FParams.displayLanguages);
-               if dc = 0 then
-               begin
-                 a := ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display];
-                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode, a));
-               end
-               else if dc = 1 then
-               begin
-                 a := ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display];
-                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode, a));
-               end
-               else
-                 msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
-                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display]));
-             end;
+              dc := list.displayCount(FParams.displayLanguages);
+              if dc = 0 then
+                m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display])
+              else if dc = 1 then
+                m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display])
+              else
+                m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
+                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display]);
+              msg(m);
+              op.addIssue(isWarning, cause, path+'.display', m);
+            end;
             psys := c.systemUri;
             pcode := c.code;
             if (ver <> '') then
               pver := ver;
-
-            log := c.code+': langs:';
-            for tl in FParams.DisplayLanguages do
-              log := log + ' '+tl.code;
-
-            if (list.baseLang = nil) then log := log + '; baselang: nil' else log := log + '; baselang: '+list.baseLang.code;
-            if (list.display = nil) then log := log + '; display: nil' else log := log + '; display: "'+list.display.asString+'"';
-            Logging.log(log);
             pd := list.preferredDisplay(FParams.displayLanguages);
             if pd <> '' then
               pdisp := pd;
           end
-          else
+          else if (FParams.valueSetMode <> vsvmMembershipOnly) then
           begin
             prov := findCodeSystem(ws, c.version, FParams, true);
             try
@@ -1227,9 +1269,11 @@ begin
                prov2 := findCodeSystem(ws, '', FParams, true);
                try
                  if (prov2 = nil) then
-                   msg(FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [ws]))
+                   m := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [ws])
                  else
-                   msg(FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']))
+                   m := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']);
+                 msg(m);
+                 op.addIssue(isError, itNotFound, path+'.system', m);
                finally
                  prov2.free;
                end;
@@ -1242,9 +1286,14 @@ begin
                  if ctxt = nil then
                  begin
                    if (message <> '') then
+                   begin
                      msg(message);
-                   msg(FI18N.translate('Unknown_Code__in_', FParams.langCode, [c.code, ws]));
+                     op.addIssue(isInformation, cause, path, message);
+                   end;
+                   m := FI18N.translate('Unknown_Code__in_', FParams.langCode, [c.code, ws]);
                    cause := itInvalid;
+                   msg(m);
+                   op.addIssue(isError, itInvalid, path+'.code', m);
                  end
                  else
                  begin
@@ -1253,12 +1302,16 @@ begin
                    begin
                      dc := list.displayCount(FParams.displayLanguages);
                      if dc = 0 then
+                       m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display])
                      else if dc = 1 then
-                       msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
-                        ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]))
+                       m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display])
                      else
-                       msg(FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
-                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]));
+                       m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
+                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]);
+                     msg(m);
+                     op.addIssue(isWarning, itInvalid, path+'.display', m);
                    end;
                    result.addParamStr('version', prov.version(nil));
                  end;
@@ -1270,10 +1323,16 @@ begin
               prov.Free;
             end;
           end;
+          inc(i);
         end;
         if (not ok) then
         begin
-          msg(FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_', FParams.langCode, [FValueSet.url]));
+          if code.codingCount = 1 then
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, [FValueSet.url])
+          else
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, [FValueSet.url]);
+          msg(m);
+          op.addIssue(isError, itInvalid, issuePath, m);
           if cause = itNull then
             cause := itUnknown;
         end;
@@ -1307,7 +1366,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.check(system, version, code: String; implySystem : boolean): TFhirParametersW;
+function TValueSetChecker.check(issuePath, system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
   message, ver, pd, impliedSystem : String;
@@ -1321,7 +1380,7 @@ begin
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(system, version, code, true, implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
+        if check(issuePath, system, version, code, true, implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
           pd := list.preferredDisplay(FParams.displayLanguages);
@@ -1337,6 +1396,7 @@ begin
         begin
           result.AddParamBool('result', false);
           result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
+          op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
           if (message <> '') then
             result.AddParamStr('message', message);
           if cause <> itNull then
@@ -1370,7 +1430,7 @@ begin
     cs.Close(ctxt);
 end;
 
-function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String): boolean;
+function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilterW;
@@ -1387,9 +1447,20 @@ begin
   begin
     loc := cs.locate(code, message);
     try
-      result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-      if result then
+      result := false;
+      if loc = nil then
       begin
+        if (FParams.valueSetMode <> vsvmMembershipOnly) then
+          op.addIssue(isError, itInvalid, path+'.code', FI18n.translate('Unknown_Code__in_', FParams.langCode, [code, cs.systemUri(nil)]))
+      end
+      else if not (abstractOk or not cs.IsAbstract(loc)) then
+      begin
+        if (FParams.valueSetMode <> vsvmMembershipOnly) then
+          op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+      end
+      else
+      begin
+        result := true;
         listDisplays(displays, cs, loc);
         exit;
       end;
@@ -1406,9 +1477,17 @@ begin
       begin
         listDisplays(displays, cs, loc);
         listDisplays(displays, cc, vs);
-        result := (abstractOk or not cs.IsAbstract(loc));
-        cs.close(loc);
-        exit;
+        if not (abstractOk or not cs.IsAbstract(loc)) then
+        begin
+          if (FParams.valueSetMode <> vsvmMembershipOnly) then
+            op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+        end
+        else
+        begin
+          result := true;
+          cs.close(loc);
+          exit;
+        end;
       end;
     end;
 
@@ -1431,9 +1510,21 @@ begin
           ctxt := filters[0];
           loc := cs.filterLocate(ctxt, code);
           try
-            result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-            if result then
+            if Loc <> nil then
+            begin
               listDisplays(displays, cs, loc);
+              if not (abstractOk or not cs.IsAbstract(loc)) then
+              begin
+                if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                  op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+              end
+              else
+              begin
+                result := true;
+                cs.close(loc);
+                exit;
+              end;
+            end;
           finally
             cs.Close(loc);
           end;
@@ -1448,9 +1539,21 @@ begin
             begin
               loc := cs.locateIsA(code, fc.value, fc.Op = foDescendentOf);
               try
-                result := result and (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-                if loc <> nil then
+                if Loc <> nil then
+                begin
                   listDisplays(displays, cs, loc);
+                  if not (abstractOk or not cs.IsAbstract(loc)) then
+                  begin
+                    if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                      op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+                  end
+                  else
+                  begin
+                    result := true;
+                    cs.close(loc);
+                    exit;
+                  end;
+                end;
               finally
                 cs.Close(loc);
               end;
@@ -1463,8 +1566,21 @@ begin
                 if (result) then
                 begin
                   loc := cs.locate(code, msg);
-                  if loc <> nil then
+                  if Loc <> nil then
+                  begin
                     listDisplays(displays, cs, loc);
+                    if not (abstractOk or not cs.IsAbstract(loc)) then
+                    begin
+                      if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                        op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+                    end
+                    else
+                    begin
+                      result := true;
+                      cs.close(loc);
+                      exit;
+                    end;
+                  end;
                 end;
               finally
                 cs.Close(loc);
@@ -1477,9 +1593,21 @@ begin
               try
                 if (loc = nil) and (message = '') then
                   message := msg;
-                result := result and (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-                if loc <> nil then
+                if Loc <> nil then
+                begin
                   listDisplays(displays, cs, loc);
+                  if not (abstractOk or not cs.IsAbstract(loc)) then
+                  begin
+                    if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                      op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+                  end
+                  else
+                  begin
+                    result := true;
+                    cs.close(loc);
+                    exit;
+                  end;
+                end;
               finally
                 cs.Close(loc);
               end;

@@ -366,7 +366,8 @@ type
     function severity : TIssueSeverity; virtual; abstract;
     function code :  TFhirIssueType; virtual; abstract;
 
-    procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); virtual; abstract;
+    procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); overload; virtual; abstract;
+    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; addIfDuplicate : boolean = false); overload; virtual; abstract;
     function hasIssues : boolean; virtual; abstract;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; virtual; abstract;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; virtual; abstract;
