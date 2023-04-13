@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http,
   fdb_manager,
-  fhir_features, fhir_uris,
+  fhir_objects, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -182,7 +182,7 @@ end;
 
 function TUriServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Uri'); // Uri doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by Uri', itNotSupported); // Uri doesn't have formal subsumption property, so this is not used
 end;
 
 

@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  fsl_utilities, fsl_http, fsl_stream, fsl_collections, fsl_json,
+  fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_collections, fsl_json,
+  fhir_objects,
   ftx_sct_services, fhir_parser,
-  fsl_base,
   ftx_service;
 
 type
@@ -167,7 +167,7 @@ var
 begin
   iId := StrToUInt64Def(id, 0);
   if not FSnomed.Concept.FindConcept(iId, iIndex) then
-    raise ETerminologyError.create('not defined: '+id);
+    raise ETerminologyError.create('not defined: '+id, itInvalid);
   allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
   if (length(allDesc) = 0) then
   begin
@@ -176,7 +176,7 @@ begin
     begin
       FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
       if FSnomed.GetConceptId(iWork3) = '116680003' then
-        raise ETerminologyError.create('Concept '+id+' has no descendants but it does ');
+        raise ETerminologyError.create('Concept '+id+' has no descendants but it does!', itException);
     end;
   end;
 
@@ -772,17 +772,17 @@ begin
     if json['refset'] <> '' then
     begin
       if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), result.lang) then
-        raise ETerminologyError.create('Language refset '+json['refset']+' not found');
+        raise ETerminologyError.create('Language refset '+json['refset']+' not found', itException);
     end
   end
   else if (src = 'rel-target') then
   begin
     result.srcType := stRelTarget;
     if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), result.target) then
-      raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found');
+      raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found', itException);
   end
   else
-    raise ETerminologyError.create('Unknown column source '+src);
+    raise ETerminologyError.create('Unknown column source '+src, itException);
 end;
 
 procedure TSnomedAnalysis.processColumn(json: TJsonObject; tbl: TFslStringBuilder; det : TColumnDetail; child: cardinal);
@@ -796,7 +796,7 @@ begin
       begin
       props := getProps(child, det.target);
       if length(props) > 1 then
-        raise ETerminologyError.create('Relationship type '+json['rel-type']+': multiple relationships found for '+FSnomed.GetConceptId(child));
+        raise ETerminologyError.create('Relationship type '+json['rel-type']+': multiple relationships found for '+FSnomed.GetConceptId(child), itException);
       if length(props) = 1 then
         tbl.Append(FSnomed.GetConceptId(props[0].target));
       end;
@@ -815,7 +815,7 @@ begin
     json := TJSONParser.Parse(script);
     try
       if json['snomed-table-script-version'] <> '1.0' then
-        raise ETerminologyError.create('Script could not be understood');
+        raise ETerminologyError.create('Script could not be understood', itException);
 
       for n in json.arr['tables'] do
         processTable(parts, n as TJsonObject);
@@ -919,13 +919,13 @@ begin
   begin
     result.srcType := stSibling;
     if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
-      raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found');
+      raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found', itException);
   end
   else if (src = 'refset') then
   begin
     result.srcType := stRefset;
     if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), refset) then
-      raise ETerminologyError.create('Specified refset '+json['refset']+' not found');
+      raise ETerminologyError.create('Specified refset '+json['refset']+' not found', itException);
     refset := FSnomed.RefSetIndex.GetRefSetByConcept(refset);
     FSnomed.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
     result.members := FSnomed.RefSetMembers.GetMembers(iMembersByRef);
@@ -940,17 +940,17 @@ begin
       result.keyType := ktSiblingId;
       result.reltype := 0;
       if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
-        raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found');
+        raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found', itException);
     end
     else
-      raise ETerminologyError.create('Unknown refset key '+key);
+      raise ETerminologyError.create('Unknown refset key '+key, itException);
     names := FSnomed.Refs.GetReferences(iFieldNames);
     result.field := -1;
     for i := 0 to length(names) - 1 do
       if FSnomed.Strings.GetEntry(names[i]) = json['field'] then
         result.field := i;
     if result.field = -1 then
-      raise ETerminologyError.create('Refset lookup: unable to find field name '+json['field']);
+      raise ETerminologyError.create('Refset lookup: unable to find field name '+json['field'], itException);
     if (json['display'] = '') then
       result.display := fvString
     else if (json['display'] = 'string') then
@@ -958,10 +958,10 @@ begin
     else if (json['display'] = 'cid') then
       result.display := fvCid
     else
-      raise ETerminologyError.create('Refset lookup: unknown field display '+json['field']);
+      raise ETerminologyError.create('Refset lookup: unknown field display '+json['field'], itException);
   end
   else
-    raise ETerminologyError.create('Unknown column source '+src);
+    raise ETerminologyError.create('Unknown column source '+src, itException);
 
 end;
 
@@ -1012,7 +1012,7 @@ begin
             4 {integer} : s := inttostr(vl[det.field*2]);
             5 {string}  : s := FSnomed.Strings.GetEntry(vl[det.field*2]);
           else
-            raise ETerminologyError.create('Unknown Cell Type '+inttostr(vl[det.field*2+1]));
+            raise ETerminologyError.create('Unknown Cell Type '+inttostr(vl[det.field*2+1]), itException);
           end;
           end;
         end;
@@ -1044,12 +1044,12 @@ begin
     begin
       StringSplit(json['group-condition'], '=', l, r);
       if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondType) then
-        raise ETerminologyError.create('Specified group condition '+r+' not found');
+        raise ETerminologyError.create('Specified group condition '+r+' not found', itException);
       if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondValue) then
-        raise ETerminologyError.create('Specified group condition value '+r+' not found');
+        raise ETerminologyError.create('Specified group condition value '+r+' not found', itException);
     end
     else if not FSnomed.Concept.FindConcept(StrToInt64(json['group-condition']), grpCondType) then
-      raise ETerminologyError.create('Specified group condition '+json['group-condition']+' not found');
+      raise ETerminologyError.create('Specified group condition '+json['group-condition']+' not found', itException);
   end;
 
   tbl := TFslStringBuilder.Create;
@@ -1066,7 +1066,7 @@ begin
     tbl.Append(#10);
 
     if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), rt) then
-      raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found');
+      raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found', itException);
     for i := 0 to children.count - 1 do
     begin
       child := cardinal(children.objects[i]);
@@ -1115,7 +1115,7 @@ begin
   begin
     iId := StrToUInt64Def(ids[i], 0);
     if not FSnomed.Concept.FindConcept(iId, iIndex) then
-      raise ETerminologyError.create('not defined: '+ids[i]);
+      raise ETerminologyError.create('not defined: '+ids[i], itException);
     FRoots[i] := iIndex;
   end;
 end;

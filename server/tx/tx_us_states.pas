@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang,
-  fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -303,7 +303,7 @@ end;
 
 function TUSStateServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by USState'); // USState doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by USState', itNotSupported); // USState doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -325,7 +325,7 @@ end;
 
 function TUSStateServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
 end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

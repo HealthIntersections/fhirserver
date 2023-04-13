@@ -883,11 +883,11 @@ begin
     if (FBuilder <> nil) and (iIndex >= FLength) then
       Post;
     if (iIndex >= FLength) then
-      Raise ETerminologyError.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
+      Raise ETerminologyError.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength), itException);
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     if (iIndex + 4 + length(result) * 4 > FLength) then
-      Raise ETerminologyError.Create('Wrong length index ('+inttostr(iIndex)+', '+inttostr(length(result))+') getting Snomed list (length = '+inttostr(FLength)+')');
+      Raise ETerminologyError.Create('Wrong length index ('+inttostr(iIndex)+', '+inttostr(length(result))+') getting Snomed list (length = '+inttostr(FLength)+')', itException);
     inc(iIndex, 4);
     for i := 0 to Length(result)-1 Do
     Begin
@@ -928,7 +928,7 @@ end;
 function TSnomedReferences.Getlength(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex > FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting Snomed list');
+    Raise ETerminologyError.Create('Wrong length index getting Snomed list', itException);
   move(FMaster[iIndex], result, 4);
 end;
 
@@ -950,7 +950,7 @@ end;
 procedure TSnomedDescriptions.SetRefsets(iIndex, refsets, valueses: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details', itException);
   assert(iIndex mod DESC_SIZE = 0);
   Move(refsets, FMaster[iIndex+32], 4);
   Move(valueses, FMaster[iIndex+36], 4);
@@ -986,7 +986,7 @@ end;
 function TSnomedDescriptions.ConceptByIndex(iIndex: Cardinal): cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details', itException);
   Move(FMaster[iIndex+13], result, 4);
 end;
 
@@ -1005,7 +1005,7 @@ end;
 procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
 Begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details', itException);
   Move(FMaster[iIndex+0], iDesc, 4);
   Move(FMaster[iIndex+4], active, 1);
   Move(FMaster[iIndex+5], ID, 8);
@@ -1115,36 +1115,36 @@ end;
 Function TSnomedConceptList.getParent(iIndex : Cardinal): Cardinal;
 Begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+9], result, 4);
 End;
 
 function TSnomedConceptList.GetRefsets(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+44], result, 4);
 end;
 
 Function TSnomedConceptList.getIdentity(iIndex : Cardinal): UInt64;
 Begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+0], result, 8);
 End;
 
 procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
 Begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details (mod = '+inttostr(iIndex mod CONCEPT_SIZE)+')');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details (mod = '+inttostr(iIndex mod CONCEPT_SIZE)+')', itException);
 
   Move(FMaster[iIndex+0], Identity, 8);
   Move(FMaster[iIndex+8], Flags, 1);
@@ -1159,16 +1159,16 @@ End;
 function TSnomedConceptList.getConceptId(iIndex : Cardinal): UInt64;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed Concept Details', itException);
   Move(FMaster[iIndex+0], result, 8);
 end;
 
 procedure TSnomedConceptList.SetParents(iIndex: Cardinal; const Active, Inactive: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Active, FMaster[iIndex+9], 4);
   Move(Inactive, FMaster[iIndex+52], 4);
 end;
@@ -1176,63 +1176,63 @@ end;
 procedure TSnomedConceptList.SetRefsets(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+44], 4);
 end;
 
 procedure TSnomedConceptList.SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+13], 4);
 end;
 
 procedure TSnomedConceptList.SetFlag(iIndex: Cardinal; iFlags: Byte);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(iFlags, FMaster[iIndex+8], 1);
 end;
 
 procedure TSnomedConceptList.SetInbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+17], 4);
 end;
 
 procedure TSnomedConceptList.SetModuleId(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+36], 4);
 end;
 
 procedure TSnomedConceptList.SetNormalForm(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+48], 4);
 end;
 
 procedure TSnomedConceptList.SetOutbounds(iIndex: Cardinal; const Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+21], 4);
 end;
 
@@ -1251,126 +1251,126 @@ end;
 Function TSnomedConceptList.GetAllDesc(iIndex: Cardinal) : Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+25], result, 4);
 end;
 
 procedure TSnomedConceptList.SetAllDesc(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+25], 4);
 end;
 
 function TSnomedConceptList.GetOutbounds(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+21], result, 4);
 end;
 
 function TSnomedConceptList.GetInbounds(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+17], result, 4);
 end;
 
 function TSnomedConceptList.GetModuleId(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+36], result, 4);
 end;
 
 function TSnomedConceptList.GetNormalForm(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+48], result, 4);
 end;
 
 function TSnomedConceptList.GetDepth(iIndex: Cardinal): Byte;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+29], result, 1);
 end;
 
 procedure TSnomedConceptList.SetDate(iIndex: Cardinal; effectiveTime: TSnomedDate);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(effectiveTime, FMaster[iIndex+34], 2);
 end;
 
 procedure TSnomedConceptList.SetDepth(iIndex: Cardinal; Value: Byte);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+29], 1);
 end;
 
 function TSnomedConceptList.GetStatus(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+40], result, 4);
 end;
 
 function TSnomedConceptList.GetStems(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+30], result, 4);
 end;
 
 procedure TSnomedConceptList.SetStatus(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+40], 4);
 end;
 
 procedure TSnomedConceptList.SetStems(iIndex, Value: Cardinal);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(Value, FMaster[iIndex+30], 4);
 end;
 
 function TSnomedConceptList.GetDescriptions(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength));
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
   if (iIndex mod CONCEPT_SIZE <> 0) then
-    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details');
+    Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details', itException);
   Move(FMaster[iIndex+13], Result, 4);
 end;
 
@@ -1532,7 +1532,7 @@ begin
     try
       v := oRead.ReadString;
       if (v <> SNOMED_CACHE_VERSION_CURRENT) and (v <> SNOMED_CACHE_VERSION_UTF16) then
-        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
+        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
       s := VersionUri.split(['/']);
@@ -1586,7 +1586,7 @@ begin
         else if v = SNOMED_CACHE_VERSION_UTF16 Then
           FStrings.IsUTF16 := true
         else
-          raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
+          raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
         VersionUri := oread.ReadString;
         VersionDate := oread.ReadString;
         s := VersionUri.split(['/']);
@@ -2008,7 +2008,7 @@ begin
   End;
 
   if Length(words) = 0 then
-    Raise ETerminologyError.Create('no usable search text found');
+    Raise ETerminologyError.Create('no usable search text found', itException);
 
   if iLang <> 0 Then
     aLangMembers := loadLang(iLang);
@@ -2184,7 +2184,7 @@ begin
   checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
-    raise ETerminologyError.Create('Concept '+sTerm+' not found');
+    raise ETerminologyError.Create('Concept '+sTerm+' not found', itInvalid);
   result := GetDisplayName(iTerm, iLang);
 end;
 
@@ -2296,7 +2296,7 @@ begin
   checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
-    raise ETerminologyError.Create('Concept '+sTerm+' not found');
+    raise ETerminologyError.Create('Concept '+sTerm+' not found', itInvalid);
   ListDisplayNames(list, iTerm, iLang, flagmask);
 end;
 
@@ -2451,7 +2451,7 @@ begin
           findMatchingConcepts(result, exp.concepts[0].reference, grps);
       end;
       if result.Empty then
-        raise ETerminologyError.create('No matches found for '+exp.ToString);
+        raise ETerminologyError.create('No matches found for '+exp.ToString, itInvalid);
       result.link;
     finally
       result.Free;
@@ -2721,7 +2721,7 @@ begin
     if StringIsId(sterm, iId) And Concept.FindConcept(iId, result) Then
       result := FRefSetIndex.GetMembersByConcept(result, false);
     if result = 0 Then
-      Raise ETerminologyError.Create('Unable to resolve the language reference set '+sTerm);
+      Raise ETerminologyError.Create('Unable to resolve the language reference set '+sTerm, itInvalid);
   End
 end;
 
@@ -2975,7 +2975,7 @@ procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var identity
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed relationship Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed relationship Details', itException);
   Move(FMaster[iIndex+0], Source, 4);
   Move(FMaster[iIndex+4], Target, 4);
   Move(FMaster[iIndex+8], RelType, 4);
@@ -3028,7 +3028,7 @@ var
 begin
   l := (iIndex * 5) + 1;
   if l > FLength - 4 Then
-    raise ETerminologyError.create('invalid index');
+    raise ETerminologyError.create('invalid index', itException);
   move(FMaster[l], index, 4);
   move(FMaster[l+4], flags, 1);
 end;
@@ -3084,7 +3084,7 @@ var
 begin
   l := (iIndex * 8);
   if l > FLength - 7 Then
-    raise ETerminologyError.create('invalid index');
+    raise ETerminologyError.create('invalid index', itException);
   move(FMaster[l], index, 4);
   move(FMaster[l+4], reference, 4);
 end;
@@ -3216,7 +3216,7 @@ procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iName, 
 begin
   iIndex := iIndex * REFSET_SIZE;
   if (iIndex >= FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting snomed relationship Details');
+    Raise ETerminologyError.Create('Wrong length index getting snomed relationship Details', itException);
   Move(FMaster[iIndex+0], iDefinition, 4);
   Move(FMaster[iIndex+4], iFilename, 4);
   Move(FMaster[iIndex+8], iMembersByRef, 4);
@@ -3361,7 +3361,7 @@ begin
   Else
   Begin
     if (iIndex > FLength) then
-      Raise ETerminologyError.Create('Wrong length index getting Snomed list');
+      Raise ETerminologyError.Create('Wrong length index getting Snomed list', itException);
     move(FMaster[iIndex], result, 4);
   End;
 end;
@@ -3377,7 +3377,7 @@ begin
   Else
   Begin
     if (iIndex > FLength) then
-      Raise ETerminologyError.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength));
+      Raise ETerminologyError.Create('Wrong length index getting Snomed list. asked for '+inttostr(iIndex)+', limit is '+inttostr(FLength), itException);
     move(FMaster[iIndex], c, 4);
     SetLength(Result, c);
     inc(iIndex, 4);
@@ -3640,7 +3640,8 @@ begin
   context.next;
   SetLength(inbounds, 0);
   if (context = nil) then
-    raise ETerminologyError.create('check this code? [2]') // I don't understand why we return is_a here?
+    raise ETerminologyError.create('check this code? [2]', itException)
+    // I don't understand why we return is_a here?
     // result := TSnomedExpressionContext.create(Is_a_Index)
   else
   begin
@@ -3787,7 +3788,7 @@ begin
   checkIsLoaded;
   ctxt := context as TSnomedExpressionContext;
   if (ctxt = nil) then
-    raise ETerminologyError.create('Unable to find context in '+systemUri(nil))
+    raise ETerminologyError.create('Unable to find context in '+systemUri(nil), itInvalid)
   else if ctxt.isComplex then
     // there's only one display name - for now?
     list.addBase('', displayExpression(ctxt.FExpression).Trim)
@@ -3917,7 +3918,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itInvalid)
     else
       result := Display(ctxt, lang);
   finally
@@ -4050,7 +4051,7 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
+      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
     Setlength(res.descendants, 0);
     res.descendants[0] := index;
     result := TSnomedFilterContext(res.link);
@@ -4067,7 +4068,7 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
+      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
     if includeBase then
       res.descendants := mergeCardinals(index, GetConceptDescendants(index))
     else
@@ -4086,9 +4087,9 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
+      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
     if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
+      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set', itInvalid);
     res.members := RefSetMembers.GetMembers(members);
     result := TSnomedFilterContext(res.link);
   finally
@@ -4203,9 +4204,9 @@ var
 begin
   checkIsLoaded;
   if not Concept.FindConcept(id, index) then
-    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known');
+    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
   if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
-    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set');
+    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set', itInvalid);
   result := RefSetMembers.GetMembers(members);
 end;
 
@@ -4267,7 +4268,7 @@ begin
             4 {integer} : result := result + ' '+inttostr(vl[j*2]);
             5 {string}  : result := result + ' '+Strings.GetEntry(vl[j*2]);
           else
-            raise ETerminologyError.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
+            raise ETerminologyError.create('Unknown Cell Type '+inttostr(vl[j*2+1]), itException);
           end;
         result := result.trim;
         exit();
@@ -4598,7 +4599,7 @@ begin
     ref1 := getRef(c, grp1.refinements);
     ref2 := getRef(c, grp2.refinements);
     if (ref1 = nil) or (ref2 = nil) then
-      raise ETerminologyError.create('No match for c = '+inttostr(c));
+      raise ETerminologyError.create('No match for c = '+inttostr(c), itInvalid);
     if expressionSubsumes(ref1.value, ref2.value) then
       targets[t] := true
     else if expressionSubsumes(ref2.value, ref1.value) then
@@ -4894,7 +4895,7 @@ begin
   if FBuilding or FLoading then
     exit;
   if FLoaded = 0 then
-    raise ETerminologyError.Create('This version of SNOMED is not loaded');
+    raise ETerminologyError.Create('This version of SNOMED is not loaded', itInvalid);
 end;
 
 procedure TSnomedServices.checkLoaded;
@@ -5035,7 +5036,7 @@ begin
   else if self.Concept.FindConcept(StringToId(concept.code), iTerm) Then
     concept.reference := iTerm
   else if (concept.code <> '111115') then
-    raise ETerminologyError.Create('Concept '+concept.code+' not found in '+systemUri(nil));
+    raise ETerminologyError.Create('Concept '+concept.code+' not found in '+systemUri(nil), itInvalid);
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
@@ -5051,7 +5052,7 @@ begin
           break;
         end;
       if not ok then
-        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil)+'")');
+        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil)+'")', itInvalid);
     finally
       list.free;
     end;
@@ -5385,7 +5386,7 @@ begin
     c := verhoeff_d[c][verhoeff_p[((len-i) mod 8)][ord(s[i]) - ord('0')]];
 
   if c <> 0 then
-    raise ETerminologyError.create('Check digit error: "'+s+'" is not valid by Verhoeff algorithm');
+    raise ETerminologyError.create('Check digit error: "'+s+'" is not valid by Verhoeff algorithm', itInvalid);
 end;
 
 function readLang(s : String) : byte;
@@ -5403,7 +5404,7 @@ begin
   else if (s = 'da') then
     result := 6
   else
-    raise ETerminologyError.create('Unknown SCT Lang "'+s+'"');
+    raise ETerminologyError.create('Unknown SCT Lang "'+s+'"', itInvalid);
 end;
 
 function codeForLang(lang : byte):String;

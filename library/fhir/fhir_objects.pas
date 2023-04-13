@@ -441,13 +441,13 @@ type
     function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
-    function getExtensionsV : TFslList<TFHIRObject>; virtual; overload;
-    function getExtensionsV(url : String) : TFslList<TFHIRObject>; virtual; overload;
+    function getExtensionsV : TFslList<TFHIRObject>; overload; virtual;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; virtual;
     function getExtensionV(url : String) : TFHIRObject; virtual;
-    procedure addExtensionV(url : String; value : TFHIRObject); virtual; overload;
-    procedure addExtensionV(extension : TFHIRObject); virtual; overload;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; virtual;
+    procedure addExtensionV(extension : TFHIRObject); overload; virtual;
     procedure deleteExtensionV(extension : TFHIRObject); virtual;
-    procedure deleteExtensionByUrl(url : String);virtual;
+    procedure deleteExtensionByUrl(url : String); virtual;
     procedure stripExtensions(exemptUrls : TStringArray); virtual;
 
 

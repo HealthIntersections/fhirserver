@@ -213,7 +213,7 @@ begin
       ctxt := provider.locate(coding.code);
       try
         if ctxt = nil then
-          raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s);
+          raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s, itInvalid);
 
         if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
         begin
@@ -420,7 +420,7 @@ begin
   vs := getValueSetByUrl(uri, txResources);
   try
     if vs = nil then
-      raise ETerminologyError.create('Unable to find value set "'+uri+'"');
+      raise ETerminologyError.create('Unable to find value set "'+uri+'"', itUnknown);
     result := expandVS(vs, uri, profile, textFilter, limit, count, offset, txResources);
   finally
     vs.Free;
@@ -990,7 +990,7 @@ begin
   try
     try
       if not checkCode(op, lang, '', coding.code, coding.systemUri, coding.version, coding.display) then
-        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
 
       // check to see whether the coding is already in the target value set, and if so, just return it
       p := validate(target, coding, nil, false, false, nil, summary);
@@ -1016,7 +1016,7 @@ begin
           if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
           try
             if em.targetCount = 0 then
-              raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri);
+              raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itInvalid);
             for map in em.targets.forEnum do
             begin
               if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
@@ -1398,7 +1398,7 @@ begin
   try
     try
       if not checkCode(op, lang, '', coding.code, coding.systemUri, coding.version, coding.display) then
-        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized');
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
 
 //      // check to see whether the coding is already in the target value set, and if so, just return it
 //      p := validate(target, coding, false);
@@ -1419,7 +1419,7 @@ begin
       if isOkSource(cm, coding, g, em) then
       try
         if em.targetCount = 0 then
-          raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri);
+          raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itUnknown);
         added := false;
         for map in em.targets.forEnum do
         begin

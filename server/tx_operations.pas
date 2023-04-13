@@ -263,7 +263,7 @@ begin
               end;
             end;
             if vs = nil then
-            raise ETerminologyError.create('Unable to find value set for URL "'+url+'"');
+            raise ETerminologyError.create('Unable to find value set for URL "'+url+'"', itUnknown);
 
             cacheId := vs.url;
             if vs.version <> '' then
@@ -285,13 +285,13 @@ begin
             id := readValueSetUri(manager, id, params.str('operation'));
             vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', id, '', false, needSecure));
             if vs = nil then
-              raise ETerminologyError.create('The context '+id+' was not understood');
+              raise ETerminologyError.create('The context '+id+' was not understood', itInvalid);
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
           end
           else
-            raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)');
+            raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)', itUnknown);
 
           if vs.getId <> '' then
             result := 'Expand ValueSet '+vs.getId+' on '+vs.source

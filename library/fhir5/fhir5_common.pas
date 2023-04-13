@@ -83,6 +83,7 @@ type
   public
     function GetAsString : String; override;
     procedure SetAsString(value : String); override;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
   end;
 
   { TFHIRExtension5 }
@@ -466,6 +467,7 @@ type
     procedure addProperty(code : String; value : TFHIRObject); override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
+    function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
   end;
 
   { TFhirValueSetExpansion5 }
@@ -1316,6 +1318,11 @@ end;
 procedure TFHIRPrimitive5.SetAsString(value: String);
 begin
   (FElement as TFHIRPrimitiveType).StringValue := value;
+end;
+
+function TFHIRPrimitive5.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension5.create(extension.link);
 end;
 
 { TFhirOperationOutcome5 }
@@ -3467,7 +3474,7 @@ end;
 
 function TFhirCodeSystemConcept5.concept(ndx: integer): TFhirCodeSystemConceptW;
 begin
-  result := TFhirCodeSystemConcept5.create((element as TFhirCodeSystemConcept).conceptList[ndx].Link);
+  result := TFhirCodeSystemConcept5.create((element as TFhirCodeSystemConcept).conceptList[ndx].Link, FCodeSystem);
 end;
 
 function TFhirCodeSystemConcept5.conceptCount: integer;
@@ -3483,7 +3490,7 @@ begin
   begin
     FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (element as TFhirCodeSystemConcept).conceptList do
-      FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link));
+      FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link, FCodeSystem));
   end;
   result := FConceptList;
 end;
@@ -3525,7 +3532,7 @@ begin
   result := c.displayElement.Tags[tag];
 end;
 
-function getCodeWrapper(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemConceptW;
+function getCodeWrapper(codeSystem : TFHIRCodesystem; list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemConceptW;
 var
   cc : TFhirCodeSystemConcept;
 begin
@@ -3533,10 +3540,10 @@ begin
   for cc in list do
   begin
     if cc.code = code then
-      result := TFhirCodeSystemConcept5.Create(cc.Link);
-    if cc.hasConceptList then
+      result := TFhirCodeSystemConcept5.Create(cc.Link, codeSystem)
+    else if cc.hasConceptList then
     begin
-      result := getCodeWrapper(cc.conceptList, code);
+      result := getCodeWrapper(codeSystem, cc.conceptList, code);
       if result <> nil then
         exit;
     end;
@@ -3548,7 +3555,7 @@ begin
   if (code = c.Code) then
     result := self.link
   else
-    result := getCodeWrapper(c.conceptList, code);
+    result := getCodeWrapper(FCodeSystem, c.conceptList, code);
 end;
 
 function TFhirCodeSystemConcept5.hasConcept(c: TFhirCodeSystemConceptW): boolean;
@@ -3591,7 +3598,7 @@ end;
 
 function TFhirCodeSystem5.concept(ndx: integer): TFhirCodeSystemConceptW;
 begin
-  result := TFhirCodeSystemConcept5.create(cs.conceptList[ndx].Link);
+  result := TFhirCodeSystemConcept5.create(cs.conceptList[ndx].Link, cs);
 end;
 
 function TFhirCodeSystem5.conceptCount: integer;
@@ -3607,7 +3614,7 @@ begin
   begin
     FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (resource as TFhirCodeSystem).conceptList do
-      FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link));
+      FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link, cs));
   end;
   result := FConceptList;
 end;
@@ -3657,7 +3664,7 @@ begin
     result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
-        result.Add(TFhirCodeSystemConcept5.Create(i.Link));
+        result.Add(TFhirCodeSystemConcept5.Create(i.Link, cs));
       result.link;
     finally
       result.Free;
@@ -3669,7 +3676,7 @@ end;
 
 function TFhirCodeSystem5.getCode(code: String): TFhirCodeSystemConceptW;
 begin
-  result := getCodeWrapper(cs.conceptList, code);
+  result := getCodeWrapper(cs, cs.conceptList, code);
 end;
 
 function TFhirCodeSystem5.getContent: TFhirCodeSystemContentMode;
@@ -3693,7 +3700,7 @@ begin
     result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
-        result.Add(TFhirCodeSystemConcept5.Create(i.Link));
+        result.Add(TFhirCodeSystemConcept5.Create(i.Link, cs));
       result.link;
     finally
       result.Free;
@@ -4051,6 +4058,15 @@ end;
 function TFhirValueSetExpansionContains5.getSystem: String;
 begin
   result := (Element as TFhirValueSetExpansionContains).system;
+end;
+
+function TFhirValueSetExpansionContains5.properties: TFslList<TFhirCodeSystemConceptPropertyW>;
+var
+  item : TFhirValueSetExpansionContainsProperty;
+begin
+  result := TFslList<TFhirCodeSystemConceptPropertyW>.create;
+  for item in (Element as TFhirValueSetExpansionContains).property_List do
+    result.Add(TFhirCodeSystemConceptProperty5.Create(item.Link));
 end;
 
 procedure TFhirValueSetExpansionContains5.setCode(Value: String);

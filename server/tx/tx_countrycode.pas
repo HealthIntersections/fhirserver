@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -1033,7 +1033,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

@@ -35,6 +35,7 @@ Interface
 uses
   SysUtils, Generics.Defaults,
   fsl_base, fsl_utilities, fsl_fpc,
+  fhir_objects,
   ftx_ucum_handlers, ftx_ucum_base, ftx_service;
 
 Type
@@ -544,7 +545,7 @@ Begin
         checkAnnotation(ch) or
         checkNumber(ch) or
         checkNumberOrSymbol(ch))) Then
-      raise ETerminologyError.create('Error processing Unit_ "'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
+      raise ETerminologyError.create('Error processing Unit_ "'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart), itInvalid);
   End;
 End;
 
@@ -561,7 +562,7 @@ Begin
       ch := peekChar();
     End;
     if (Length(FToken) = 1) Then
-      raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
+      raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit', itInvalid);
     Ftype := NUMBER;
     result := true;
   End
@@ -636,9 +637,9 @@ Begin
     Begin
       ch := nextChar();
       if ord(ch) > 255 then
-        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": annotation contains non-ascii characters');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": annotation contains non-ascii characters', itInvalid);
       if (ch = #0) Then
-        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unterminated annotation');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unterminated annotation', itInvalid);
       if (ch <> '}') then
         s := s + ch;
     End;
@@ -683,7 +684,7 @@ End;
 
 Procedure TUcumLexer.error(errMsg : String);
 Begin
-  raise ETerminologyError.Create('Error processing Unit: '''+FSourceString+''': '+ errMsg +' at character '+IntToStr(FStart));
+  raise ETerminologyError.Create('Error processing Unit: '''+FSourceString+''': '+ errMsg +' at character '+IntToStr(FStart), itInvalid);
 End;
 
 Function TUcumLexer.getTokenAsInt() : Integer;
@@ -1000,7 +1001,7 @@ begin
   begin
     h := Fhandlers.HandlerByCode[unit_.code];
     if (h = nil) then
-      raise ETerminologyError.create('Not handled yet (special unit)')
+      raise ETerminologyError.create('Not handled yet (special unit)', itInvalid)
     else
        u := h.Units;
   end;

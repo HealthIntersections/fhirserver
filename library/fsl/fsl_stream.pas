@@ -5947,6 +5947,7 @@ var
   I            : integer;
   HeaderChkSum : WORD;
   Checksum     : CARDINAL;
+  path : String;
 begin
   // --- Scan until next pointer
   if FBytesToGo > 0 then
@@ -6009,8 +6010,9 @@ begin
     then FBytesToGo := 0
     else FBytesToGo := DirRec.Size;
   // zipslip prevention: .. in file names are *never* allowed anywhere
-  If DirRec.name.contains('..') then
-    raise EIOException.create('Illegal Filename in compressed archive: '+DirRec.Name);
+  path := DirRec.name;
+  If path.contains('..') then
+    raise EIOException.create('Illegal Filename in compressed archive: '+path);
 end;
 
 

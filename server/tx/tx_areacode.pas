@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream,
-  fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -513,7 +513,7 @@ end;
 
 function TAreaCodeServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by AreaCode'); // AreaCode doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by AreaCode', itNotSupported); // AreaCode doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -551,7 +551,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
 end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http, fsl_lang,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -275,7 +275,7 @@ begin
   if (i >= 0) and (op = foExists) and ((value = 'true') or (value = 'false')) then
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
   else
-    raise ETerminologyError.Create('Not a supported filter');
+    raise ETerminologyError.Create('Not a supported filter', itInvalid);
 end;
 
 function TIETFLanguageCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -314,7 +314,7 @@ end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar');
+  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;
 
 function TIETFLanguageCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

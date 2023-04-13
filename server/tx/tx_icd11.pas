@@ -82,8 +82,8 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    function ordinalValue(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
+    function itemWeight(context : TCodeSystemProviderContext) : string; override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -170,7 +170,7 @@ begin
   result := '';
 end;
 
-procedure TICD11Provider.Displays(context: TCodeSystemProviderContext; list: TConceptDesignations);
+procedure TICD11Provider.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
 end;
 
@@ -255,6 +255,11 @@ end;
 function TICD11Provider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
+end;
+
+function TICD11Provider.itemWeight(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
 end;
 
 function TICD11Provider.link: TICD11Provider;

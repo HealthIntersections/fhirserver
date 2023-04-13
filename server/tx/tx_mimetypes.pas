@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -223,7 +223,7 @@ end;
 
 function TMimeTypeCodeServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Not a supported filter');
+  raise ETerminologyError.Create('Not a supported filter', itNotSupported);
 end;
 
 function TMimeTypeCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

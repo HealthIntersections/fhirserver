@@ -136,6 +136,10 @@ const
   NULL_THREAD = {$IFDEF OSX} nil {$ELSE} 0 {$ENDIF};
 
 Type
+  {$IFDEF DELPHI}
+  TStringArray = Array of String;
+  {$ENDIF}
+
   TFslObjectClass = Class Of TFslObject;
   TFslClass = TFslObjectClass;
 

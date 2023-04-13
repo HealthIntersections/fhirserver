@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http,
-  fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -219,7 +219,7 @@ end;
 
 function TIso4217Services.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Iso4217'); // Iso4217 doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by Iso4217', itNotSupported); // Iso4217 doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -257,7 +257,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
 end;
 
 function TIso4217Services.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

@@ -774,7 +774,7 @@ end;
 
 function TUMLSServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('getNextContext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TUMLSServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -903,7 +903,7 @@ begin
         TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
-      raise ETerminologyError.create('Unknown filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'"');
+      raise ETerminologyError.create('Unknown filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'"', itInvalid);
   finally
     res.Free;
   end;
@@ -979,7 +979,7 @@ end;
 
 function TUMLSServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('Error in internal logic - filter not prepped?');
+  raise ETerminologyError.create('Error in internal logic - filter not prepped?', itException);
 end;
 
 procedure TUMLSServices.Close(ctxt: TCodeSystemProviderContext);

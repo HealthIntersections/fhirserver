@@ -329,12 +329,12 @@ begin
   if (context = nil) then
     result := TCodeSystemIteratorContext.Create(nil, TotalCount)
   else
-    raise ETerminologyError.create('Not Created Yet');
+    raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.systemUri(context : TCodeSystemProviderContext) : String;
@@ -358,7 +358,7 @@ end;
 
 function TAllCodeSystemsProvider.getDisplay(code : String; const lang : THTTPLanguages):String;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -381,17 +381,17 @@ end;
 
 function TAllCodeSystemsProvider.getDefinition(code : String):String;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 function TAllCodeSystemsProvider.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 
 function TAllCodeSystemsProvider.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -476,7 +476,7 @@ end;
 
 procedure TAllCodeSystemsProvider.Designations(context : TCodeSystemProviderContext; list : TConceptDesignations);
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;
@@ -509,7 +509,7 @@ end;
 
 function TAllCodeSystemsProvider.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
@@ -531,7 +531,7 @@ end;
 
 function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 function TAllCodeSystemsProvider.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -620,7 +620,7 @@ end;
 
 function TAllCodeSystemsProvider.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 function TAllCodeSystemsProvider.isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean;
 begin
@@ -734,7 +734,7 @@ begin
     if cc.code <> '' then
     begin
       if codes.Find(cc.code, i) then
-        raise ETerminologyError.create('Duplicate code: '+cc.code+' in value set '+url);
+        raise ETerminologyError.create('Duplicate code: '+cc.code+' in value set '+url, itInvalid);
       codes.Add(cc.code);
     end;
     checkForDuplicates(codes, cc.conceptList, url);
@@ -910,9 +910,9 @@ var
 begin
   // later, see if we can translate instead
   if (cs.url <> codeA.systemUri) then
-    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.systemUri+')');
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.systemUri+')', itNotSupported);
   if (cs.url <> codeB.systemUri) then
-    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.systemUri+')');
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.systemUri+')', itNotSupported);
   if (codeA.code = codeB.code) then
     exit('equivalent');
 
@@ -1410,7 +1410,7 @@ begin
       if (version = '') or (t.mode = fvmOverride) then
         version := t.version
       else if (version <> t.version) and (t.mode = fvmCheck) then
-        raise ETerminologyError.Create('Expansion Parameters Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
+        raise ETerminologyError.Create('Expansion Parameters Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile', itInvalid);
     end;
   exit(version);
 end;

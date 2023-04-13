@@ -538,9 +538,9 @@
         <DCCReference Include="..\library\fsl\fsl_base.pas"/>
         <DCCReference Include="..\library\fsl\fsl_collections.pas"/>
         <DCCReference Include="..\library\fsl\fsl_comparisons.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_crypto.pas"/>
+        <DCCReference Include="..\library\web\fsl_crypto.pas"/>
         <DCCReference Include="..\library\fsl\fsl_diff.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_fetcher.pas"/>
+        <DCCReference Include="..\library\web\fsl_fetcher.pas"/>
         <DCCReference Include="..\library\fsl\fsl_fpc.pas"/>
         <DCCReference Include="..\library\fsl\fsl_graphql.pas"/>
         <DCCReference Include="..\library\fsl\fsl_html.pas"/>
@@ -549,12 +549,12 @@
         <DCCReference Include="..\library\fsl\fsl_json.pas"/>
         <DCCReference Include="..\library\fsl\fsl_lang.pas"/>
         <DCCReference Include="..\library\fsl\fsl_logging.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_msxml.pas"/>
+        <DCCReference Include="..\library\web\fsl_msxml.pas"/>
         <DCCReference Include="..\library\fsl\fsl_npm.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_npm_cache.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_npm_client.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_oauth.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_openssl.pas"/>
+        <DCCReference Include="..\library\web\fsl_npm_cache.pas"/>
+        <DCCReference Include="..\library\web\fsl_npm_client.pas"/>
+        <DCCReference Include="..\library\web\fsl_oauth.pas"/>
+        <DCCReference Include="..\library\web\fsl_openssl.pas"/>
         <DCCReference Include="..\library\fsl\fsl_rdf.pas"/>
         <DCCReference Include="..\library\fsl\fsl_scim.pas"/>
         <DCCReference Include="..\library\fsl\fsl_scrypt.pas"/>
@@ -569,12 +569,12 @@
         <DCCReference Include="..\library\fsl\tests\fsl_tests_web.pas"/>
         <DCCReference Include="..\library\fsl\fsl_threads.pas"/>
         <DCCReference Include="..\library\fsl\fsl_turtle.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_twilio.pas"/>
+        <DCCReference Include="..\library\web\fsl_twilio.pas"/>
         <DCCReference Include="..\library\fsl\fsl_ucum.pas"/>
         <DCCReference Include="..\library\fsl\fsl_utilities.pas"/>
         <DCCReference Include="..\library\fsl\fsl_versions.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_websocket.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_wininet.pas"/>
+        <DCCReference Include="..\library\web\fsl_websocket.pas"/>
+        <DCCReference Include="..\library\web\fsl_wininet.pas"/>
         <DCCReference Include="..\library\fsl\fsl_xml.pas"/>
         <DCCReference Include="..\library\ftx\ftx_lang.pas"/>
         <DCCReference Include="..\library\ftx\ftx_loinc_importer.pas"/>
@@ -700,7 +700,11 @@
         <DCCReference Include="web_server.pas"/>
         <DCCReference Include="web_source.pas"/>
         <DCCReference Include="..\library\fhir\fhir_tools_settings.pas"/>
-        <DCCReference Include="..\library\fsl\fsl_zulip.pas"/>
+        <DCCReference Include="..\library\web\fsl_zulip.pas"/>
+        <DCCReference Include="..\library\web\fsl_web_stream.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_i18n.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_extensions.pas"/>
+        <DCCReference Include="..\library\web\fsl_web_init.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -768,6 +772,12 @@
             <Deployment Version="4">
                 <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput"/>
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>fhirserver.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="OSX32">

@@ -829,8 +829,8 @@ type
     property inactive : boolean read GetInactive write SetInactive;
     property itemWeight : String read GetItemWeight write SetItemWeight;
 
-    procedure addDesignation(lang, use, value : String); virtual; abstract; overload;
-    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); virtual; abstract; overload;
+    procedure addDesignation(lang, use, value : String); overload; virtual; abstract;
+    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); overload; virtual; abstract;
     procedure addProperty(code : String; value : TFHIRObject); virtual; abstract;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); virtual; abstract;
     procedure clearContains(); virtual; abstract;

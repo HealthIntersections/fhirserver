@@ -35,6 +35,7 @@ Interface
 Uses
   SysUtils, Classes, Math, fsl_threads,
   fsl_base, fsl_collections, fsl_http, fsl_htmlgen,
+  fhir_objects,
   ftx_loinc_services, ftx_service;
 
 Const
@@ -257,7 +258,7 @@ var
 begin
   index := FLoinc.findMAConcept(sCode);
   if index = 0 then
-    raise ETerminologyError.create('Unknown Malti-axial code '+sCode);
+    raise ETerminologyError.create('Unknown Malti-axial code '+sCode, itUnknown);
   FLoinc.Entries.GetEntry(index, code, text, parents, children, concepts, descendentConcepts, stems);
   stext := FLoinc.Desc.GetEntry(text, lang);
   arr := FLoinc.Refs.GetRefs(children);

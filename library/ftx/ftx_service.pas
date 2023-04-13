@@ -329,7 +329,7 @@ begin
   end;
 end;
 
-function TConceptDesignations.addDesignation(index: integer; lang: String; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW> = nil): TConceptDesignation;
+function TConceptDesignations.addDesignation(index: integer; lang: String; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>): TConceptDesignation;
 var
   ext : TFHIRExtensionW;
 begin
@@ -671,12 +671,12 @@ end;
 
 function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not implemented for '+ClassName);
+  raise ETerminologyError.create('Not implemented for '+ClassName, itException);
 end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil));
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil), itException);
 end;
 
 function TCodeSystemProvider.getExtensions(context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
@@ -913,7 +913,7 @@ end;
 
 constructor ETerminologyTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited create('Not done yet @ '+place, itException);
 end;
 
 end.

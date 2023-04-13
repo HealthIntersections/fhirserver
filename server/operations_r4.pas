@@ -661,11 +661,11 @@ end;
 
 procedure TFhirNativeOperationEngineR4.registerOperations;
 begin
-  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
-  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
-  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
-  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
-  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirValidationOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirGenerateDocumentOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, true, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));

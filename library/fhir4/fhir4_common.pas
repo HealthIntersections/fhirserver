@@ -84,6 +84,7 @@ type
   public
     function GetAsString : String; override;
     procedure SetAsString(value : String); override;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
   end;
 
   { TFHIRExtension4 }
@@ -469,6 +470,7 @@ type
     procedure addProperty(code : String; value : TFHIRObject); override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
+    function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
   end;
 
   { TFhirValueSetExpansion4 }
@@ -1307,6 +1309,11 @@ end;
 procedure TFHIRPrimitive4.SetAsString(value: String);
 begin
   (FElement as TFHIRPrimitiveType).StringValue := value;
+end;
+
+function TFHIRPrimitive4.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := TFHIRExtension4.create(extension.link);
 end;
 
 { TFhirOperationOutcome4 }
@@ -4063,6 +4070,11 @@ end;
 function TFhirValueSetExpansionContains4.getSystem: String;
 begin
   result := (Element as TFhirValueSetExpansionContains).system;
+end;
+
+function TFhirValueSetExpansionContains4.properties: TFslList<TFhirCodeSystemConceptPropertyW>;
+begin
+  result := TFslList<TFhirCodeSystemConceptPropertyW>.create;
 end;
 
 procedure TFhirValueSetExpansionContains4.setCode(Value: String);

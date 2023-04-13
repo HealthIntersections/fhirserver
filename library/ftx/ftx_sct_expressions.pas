@@ -36,6 +36,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults,
   fsl_base,
+  fhir_objects,
   ftx_service;
 
 const
@@ -998,7 +999,7 @@ end;
 procedure TSnomedExpressionParser.rule(test : boolean; message : String);
 begin
   if not test then
-    raise ETerminologyError.Create(message+' at character '+inttostr(cursor));
+    raise ETerminologyError.Create(message+' at character '+inttostr(cursor), itInvalid);
 end;
 
 function TSnomedExpressionParser.stringConstant: String;

@@ -471,9 +471,17 @@ function buildConfigFromSource(src : String) : String;
 var
   cb : TConfigurationBuilder;
   dir : String;
+  ini : TIniFile;
 begin
- if not getCommandLineParam('local', dir) then
-   dir := UserFolder;
+  if not getCommandLineParam('local', dir) then
+    dir := UserFolder;
+
+  ini := TIniFile.Create(FilePath([dir, 'fhir-server', 'cache.ini']));
+  try
+    dir := ini.ReadString('cache', 'location', dir);
+  finally
+    ini.free;
+  end;
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);
   try
