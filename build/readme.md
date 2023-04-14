@@ -55,6 +55,10 @@ users should have this installed!)
 Note that the FHIRServer is a *big* compile. You may have problems compiling in 
 resource constrained environments.
 
+The delphi compile should work without further manipulation of library paths etc if 
+you install using the build script. If you don't, then the paths require that this 
+project is in a directory called 'server', with the other dependencies detailed above 
+are in a sibling directory called 'source'.
 
 ## More about the Build scripts 
 
