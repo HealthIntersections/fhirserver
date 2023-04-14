@@ -1252,7 +1252,7 @@ begin
   result.valueSetMode := vsvmAllChecks;
   if (params.has('valueSetMode')) then
   begin
-    if (params.str('valueSetMode') = 'CHECK_MEMERSHIP_ONLY') then
+    if (params.str('valueSetMode') = 'CHECK_MEMBERSHIP_ONLY') then
       result.valueSetMode := vsvmMembershipOnly
     else if (params.str('valueSetMode') = 'NO_MEMBERSHIP_CHECK') then
       result.valueSetMode := vsvmNoMembership

@@ -1332,6 +1332,8 @@ var
 begin
   if (message = '') then
     raise EFslException.create('Attempt to create an issue with no message');
+  if (cause = itNull) then
+    raise EFslException.create('Attempt to create an issue with no cause');
 
   if not addIfDuplicate then
   begin

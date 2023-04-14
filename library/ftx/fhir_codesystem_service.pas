@@ -1352,7 +1352,7 @@ begin
       result.Free;
     end;
   end
-  else if (op = foEqual) and (prop = 'regex') then
+  else if (op = foRegex) and (prop = 'code') then
   begin
     regex := TRegEx.create('^'+value+'$');
     result := TFhirCodeSystemProviderFilterContext.create;

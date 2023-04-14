@@ -1250,7 +1250,7 @@ begin
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
                   [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display]);
               msg(m);
-              op.addIssue(isWarning, cause, path+'.display', m);
+              op.addIssue(isWarning, itInvalid, path+'.display', m);
             end;
             psys := c.systemUri;
             pcode := c.code;
@@ -1302,7 +1302,7 @@ begin
                    begin
                      dc := list.displayCount(FParams.displayLanguages);
                      if dc = 0 then
-                       m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
+                       m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
                          ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display])
                      else if dc = 1 then
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
@@ -1313,7 +1313,8 @@ begin
                      msg(m);
                      op.addIssue(isWarning, itInvalid, path+'.display', m);
                    end;
-                   result.addParamStr('version', prov.version(nil));
+                   if (prov.version(nil) <> '') then
+                     result.addParamStr('version', prov.version(nil));
                  end;
                finally
                  prov.Close(ctxt);
@@ -1340,7 +1341,7 @@ begin
         list.Free;
       end;
 
-      result.AddParamBool('result', ok);
+      result.AddParamBool('result', ok and not op.hasErrors);
       if (psys <> '') then
         result.addParamStr('system', psys)
       else if ok and (impliedSystem <> '') then
@@ -1473,21 +1474,24 @@ begin
     if (code = cc.code) then
     begin
       loc := cs.locate(code);
-      if Loc <> nil then
-      begin
-        listDisplays(displays, cs, loc);
-        listDisplays(displays, cc, vs);
-        if not (abstractOk or not cs.IsAbstract(loc)) then
+      try
+        if Loc <> nil then
         begin
-          if (FParams.valueSetMode <> vsvmMembershipOnly) then
-            op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
-        end
-        else
-        begin
-          result := true;
-          cs.close(loc);
-          exit;
+          listDisplays(displays, cs, loc);
+          listDisplays(displays, cc, vs);
+          if not (abstractOk or not cs.IsAbstract(loc)) then
+          begin
+            if (FParams.valueSetMode <> vsvmMembershipOnly) then
+              op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
+          end
+          else
+          begin
+            result := true;
+            exit;
+          end;
         end;
+      finally
+        cs.close(loc);
       end;
     end;
 
@@ -1521,7 +1525,6 @@ begin
               else
               begin
                 result := true;
-                cs.close(loc);
                 exit;
               end;
             end;
@@ -1550,10 +1553,11 @@ begin
                   else
                   begin
                     result := true;
-                    cs.close(loc);
                     exit;
                   end;
-                end;
+                end
+                else
+                  result := false;
               finally
                 cs.Close(loc);
               end;
@@ -1577,7 +1581,6 @@ begin
                     else
                     begin
                       result := true;
-                      cs.close(loc);
                       exit;
                     end;
                   end;
@@ -1589,6 +1592,7 @@ begin
             else
             begin
               ctxt := filters[i];
+              result := false;
               loc := cs.filterLocate(ctxt, code, msg);
               try
                 if (loc = nil) and (message = '') then
@@ -1604,7 +1608,6 @@ begin
                   else
                   begin
                     result := true;
-                    cs.close(loc);
                     exit;
                   end;
                 end;
