@@ -2086,7 +2086,7 @@ function TFHIRValueSetExpander.processCode(parent : TFhirValueSetExpansionContai
     csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; srcURL : string) : TFhirValueSetExpansionContainsW;
 var
   n : TFhirValueSetExpansionContainsW;
-  s, pn, log : String;
+  s, pn : String;
   srcLang, dstLang, tl : TIETFLang;
   usedDisplay : boolean;
   tu, t : TConceptDesignation;
@@ -2160,22 +2160,14 @@ begin
               n.addExtensionV(ext.element.link);
 
         // display and designations
-        log := code+': langs:';
-        for tl in FParams.DisplayLanguages do
-          log := log + ' '+tl.code;
         srcLang := displays.baseLang;
         dstLang := FParams.Language;
 
-        if (srcLang = nil) then log := log + '; srcLang: nil' else log := log + '; srcLang: '+srcLang.code;
-        if (dstLang = nil) then log := log + '; dstLang: nil' else log := log + '; dstLang: '+dstLang.code;
-        if (displays.display = nil) then log := log + '; display: nil' else log := log + '; display: "'+displays.display.asString+'"';
         usedDisplay := false;
         if (FParams.DisplayLanguages.Count > 0) then
           tu := displays.findDisplay(FParams.displayLanguages)
         else
           tu := nil;
-        if (tu = nil) then log := log + '; tu: nil' else log := log + '; tu: '+tu.language.code+':'+tu.value.asString;
-        Logging.log(log);
 
         if (tu <> nil) then
           n.Display := tu.value.asString
@@ -2713,7 +2705,9 @@ begin
       finally
         cds.Free;
       end;
-    end;
+    end
+    else
+      n := parent;
     iter := cs.getIterator(context);
     try
       while iter.more do

@@ -2145,7 +2145,7 @@ begin
       FContext.factory.setXhtml(issue.Resource, TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>' + FormatTextToXML(message, xmlText) + '</p></div>'));
       iss := FContext.factory.makeIssue(isError, code, '', message);
       try
-        iss.diagnostics := ExceptionStack(e);
+       // iss.diagnostics := ExceptionStack(e);
         issue.addIssue(iss, false);
       finally
         iss.Free;
