@@ -5162,7 +5162,10 @@ begin
   result := false;
   for p in concept.property_List do
     if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
-      exit(true);
+      exit(true);  
+  for p in concept.property_List do
+      if (p.code = 'notSelectable') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+        exit(true);
 end;
 
 function TFhirCodeSystemHelper.isInactive(concept: TFhirCodeSystemConcept): boolean;
