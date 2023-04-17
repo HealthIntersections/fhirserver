@@ -143,6 +143,7 @@ Type
     property activeOnly : boolean read FactiveOnly write SetActiveOnly;
     property language : TIETFLang read FLanguage write SetLanguage;
     function langCode : string;
+    function langSummary : String;
     property displayLanguages : TFslList<TIETFLang> read FDisplayLanguages;
     property includeCompose : boolean read FincludeCompose write SetincludeCompose;
     property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
@@ -1112,10 +1113,10 @@ begin
              if dc = 0 then
              else if dc = 1 then
                result.AddParamStr('message', FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.language.language,
-                ['', coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display]))
+                ['', coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display, FParams.langSummary]))
              else
                result.AddParamStr('message', FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.language.language,
-                [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display]));
+                [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.displayLanguages), coding.display, FParams.langSummary]));
           end;
           pd := list.preferredDisplay(FParams.displayLanguages);
           if (pd <> '') then
@@ -1242,13 +1243,13 @@ begin
               dc := list.displayCount(FParams.displayLanguages);
               if dc = 0 then
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
-                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display])
+                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
               else if dc = 1 then
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
-                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display])
+                  ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
               else
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
-                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display]);
+                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary]);
               msg(m);
               op.addIssue(isWarning, itInvalid, path+'.display', m);
             end;
@@ -1303,13 +1304,13 @@ begin
                      dc := list.displayCount(FParams.displayLanguages);
                      if dc = 0 then
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
-                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display])
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
                      else if dc = 1 then
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
-                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display])
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
                      else
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
-                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display]);
+                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary]);
                      msg(m);
                      op.addIssue(isWarning, itInvalid, path+'.display', m);
                    end;
@@ -2849,6 +2850,20 @@ begin
     result := ''
   else
     result := language.language;
+end;
+
+function TFHIRExpansionParams.langSummary: String;
+var
+    i : integer;
+begin
+  if FDisplayLanguages.Count = 0 then
+    result := '--'
+  else
+  begin
+    result := FDisplayLanguages[0].language;
+    for i := 1 to FDisplayLanguages.Count - 1 do
+      result := result + '|' + FDisplayLanguages[i].language;
+  end;
 end;
 
 destructor TFHIRExpansionParams.Destroy;
