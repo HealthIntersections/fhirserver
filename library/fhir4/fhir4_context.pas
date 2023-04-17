@@ -198,7 +198,7 @@ end;
 constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
   worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited create(fhirVersionRelease4, pi.resourceType, pi.id, pi.url, pi.version);
+  inherited create(fhirVersionRelease4, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;

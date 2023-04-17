@@ -1443,9 +1443,11 @@ type
 
   TFHIRResourceProxyV = class abstract (TFslObject)
   private
+    FContent: String;
     FFhirObjectVersion : TFHIRVersion;
     FFhirType : String;
     FId  : String;
+    FSupplements: String;
     FUrl : String;
     FVersion : String;
     FResourceW : TFHIRXVersionResourceWrapper;
@@ -1457,7 +1459,7 @@ type
     function wrapResource : TFHIRXVersionResourceWrapper; virtual; abstract;
     procedure SetResourceV(value : TFHIRResourceV);
   public
-    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version : String); overload;
+    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content : String); overload;
     constructor Create(resource : TFHIRResourceV; url, version : String); overload;
     destructor Destroy; override;
     function link : TFHIRResourceProxyV; overload;
@@ -1467,6 +1469,8 @@ type
     property id  : String read FId write FId;
     property url : String read FUrl;
     property version : String read FVersion;
+    property supplements : String read FSupplements;
+    property content : String read FContent;
 
     property resourceV : TFHIRResourceV read GetResourceV;
     property resourceW : TFHIRXVersionResourceWrapper read getResourceW;
@@ -2944,7 +2948,7 @@ end;
 
 { TFHIRResourceProxyV }
 
-constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version : String);
+constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content : String);
 begin
   inherited Create;
   FFhirObjectVersion := fhirObjectVersion;
@@ -2952,6 +2956,8 @@ begin
   FId := id;
   FUrl := url;
   FVersion := version;
+  FSupplements := supplements;
+  FContent := content;
 end;
 
 constructor TFHIRResourceProxyV.Create(resource : TFHIRResourceV; url, version : String);

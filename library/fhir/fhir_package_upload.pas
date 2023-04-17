@@ -139,7 +139,7 @@ begin
   if byId then
     exists := checkResourceById(r.ResourceType, r.Id)
   else
-    exists := checkResourceByUrl(r.ResourceType, r.Url, r.Version);
+    exists := checkResourceByUrl(r.ResourceType, r.Url, r.version);
 
   if exists then
   begin
@@ -205,10 +205,10 @@ function TFHIRPackageUploader.describe(r : TNpmPackageResource) : String;
 begin
   if r.URL = '' then
     result := r.ResourceType+'/'+r.Id
-  else if r.Version = '' then
+  else if r.version = '' then
     result := r.ResourceType+'/'+r.Id+' ('+r.url+')'
   else
-    result := r.ResourceType+'/'+r.Id+' ('+r.url+'|'+r.Version+')';
+    result := r.ResourceType+'/'+r.Id+' ('+r.url+'|'+r.version+')';
 end;
 
 function TFHIRPackageUploader.resourceInScope(name : String) : boolean;

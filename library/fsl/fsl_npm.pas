@@ -64,9 +64,11 @@ Type
 
   TNpmPackageResource = class (TNpmPackageObject)
   private
+    FContent: String;
     FFilename: String;
     FFolder : TNpmPackageFolder;
     FName : String;
+    FSupplements: String;
     FType : String;
     FId : String;
     FURL : String;
@@ -86,8 +88,11 @@ Type
     property Kind : String read FKind write FKind;
     property URL : String read FURL write FURL;
     property Version : String read FVersion write FVersion;
+    property Supplements : String read FSupplements write FSupplements;
+    property Content : String read FContent write FContent;
     property size : Integer read FSize write FSize;
     property filename : String read FFilename write FFilename;
+
 
     function matches(text : String) : boolean;
   end;
@@ -291,6 +296,10 @@ begin
             fi.str['kind'] := json.str['kind'];
           if (json.has('type') and (json.node['type'].kind = jnkString)) then
             fi.str['type'] := json.str['type'];
+          if (json.has('supplements') and (json.node['supplements'].kind = jnkString)) then
+            fi.str['supplements'] := json.str['supplements'];
+          if (json.has('content') and (json.node['content'].kind = jnkString)) then
+            fi.str['content'] := json.str['content'];
         end;
       finally
         json.free;
@@ -422,6 +431,8 @@ begin
     r.Kind := f.str['kind'];
     r.URL := f.str['url'];
     r.Version := f.str['version'];
+    r.Supplements := f.str['supplements'];
+    r.Content := f.str['content'];
     r.FFilename := FilePath([FFolder, f.str['filename']]);
     if FFolder <> '' then
       r.size := FileSize(FilePath([FFolder, r.name]));

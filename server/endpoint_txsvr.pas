@@ -1089,18 +1089,16 @@ begin
 end;
 
 procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
-var
-  cs : TFhirCodeSystemW;
 begin
   if res.fhirType = 'CodeSystem' then
   begin
-    cs := res.resourceW as TFhirCodeSystemW;
-    if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
+    if (not ignoreEmptyCodeSystems or StringArrayExists(['fragment', 'complete', 'supplement'], res.content)) then
     begin
       if FData.FCodeSystems.ContainsKey(res.id) then
         res.id := inttostr(FData.FCodeSystems.Count+1);
       FData.FCodeSystems.Add(res.id, res.link);
       FServerContext.ValidatorContext.seeResource(res);
+      // todo; index supplements
     end;
   end
   else if res.fhirType = 'ConceptMap' then
