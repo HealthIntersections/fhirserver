@@ -518,7 +518,7 @@ begin
         end;
       end;
       work(100, false, 'Installing');
-      StringToFile(indexer.build, FilePath([FFolder, '.index.json']), TEncoding.UTF8);
+      StringToFile(indexer.build, FilePath([FFolder, id+'#'+ver, 'package', '.index.json']), TEncoding.UTF8);
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
       work(100, true, 'Installing');
