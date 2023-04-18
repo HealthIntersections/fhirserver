@@ -186,7 +186,7 @@ type
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
-    procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: TRegEx; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1247,14 +1247,21 @@ begin
   end;
 end;
 
-procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: TRegEx; list: TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
 var
   c : TFhirCodeSystemConceptW;
   ok : boolean;
+  rx: TRegEx;
 begin
   for c in src do
   begin
-    ok := regex.isMatch(c.code);
+    rx := TRegEx.create('^'+regex+'$');
+    try
+      ok := rx.isMatch(c.code);
+    finally
+      rx.free;
+    end;
+    //ok := c.code.length = 5;
     if ok then
       list.Add(c.Link, 0);
     iterateConceptsByRegex(c.conceptList, regex, list);
@@ -1268,7 +1275,6 @@ var
   i: Integer;
   pp : TFhirCodeSystemPropertyW;
   cc : TFhirCodeSystemConceptW;
-  regex: TRegEx;
 begin
   if (op in [foIsA]) and (prop = 'concept') then
   begin
@@ -1354,10 +1360,9 @@ begin
   end
   else if (op = foRegex) and (prop = 'code') then
   begin
-    regex := TRegEx.create('^'+value+'$');
     result := TFhirCodeSystemProviderFilterContext.create;
     try
-      iterateConceptsByRegex(FCs.CodeSystem.conceptList, regex, result as TFhirCodeSystemProviderFilterContext);
+      iterateConceptsByRegex(FCs.CodeSystem.conceptList, value, result as TFhirCodeSystemProviderFilterContext);
       result.link;
     finally
       result.Free;
