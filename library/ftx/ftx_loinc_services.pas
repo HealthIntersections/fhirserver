@@ -500,7 +500,7 @@ Implementation
 
 function pct(i, t : integer) : String;
 begin
-  result := FloatToStrF((i * 100) / t, ffFixed, 1, 1)+'%';
+  result := FloatToStrF((i * 100.0) / (t * 1.0), ffFixed, 1, 1)+'%';
 end;
 
 // the bytes contain UTF16
