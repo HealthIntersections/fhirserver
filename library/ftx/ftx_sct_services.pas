@@ -836,13 +836,18 @@ end;
 function TSnomedStrings.AddString(const s: String): Cardinal;
 var
   i : word;
+  b : TArray<Byte>;
 begin
   if Length(s) > 65535 Then
     raise ETerminologySetup.Create('Snomed Description too long: '+String(s));
   result := FBuilder.Length;
-  i := length(s);
+  if FIsUTF16 then
+    b := TEncoding.BigEndianUnicode.GetBytes(s)
+  else
+    b := TEncoding.UTF8.GetBytes(s);
+  i := length(b);
   FBuilder.AddWord(i);
-  FBuilder.AddString1Byte(s);
+  FBuilder.Append(b);
 end;
 
 procedure TSnomedStrings.clear;
