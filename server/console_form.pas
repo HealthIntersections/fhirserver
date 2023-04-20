@@ -3116,7 +3116,7 @@ begin
     8 { Sweden } : result := '45991000052106';
     9 { Switzerland } : result := '2011000195101';
     10 { UK } : result := '83821000000107';
-    11 { IPS } : result := '827022005';
+    11 { IPS Terminology } : result := '827022005';
     12 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
