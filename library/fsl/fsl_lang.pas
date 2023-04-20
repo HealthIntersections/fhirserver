@@ -178,6 +178,8 @@ https://www.w3.org/International/articles/language-tags/index.en
     function Link : TIETFLanguageVariant; overload;
   end;
 
+  { TIETFLanguageDefinitions }
+
   TIETFLanguageDefinitions = class (TFslObject)
   private
     FLanguages : TFslMap<TIETFLanguageLanguage>;
@@ -195,6 +197,7 @@ https://www.w3.org/International/articles/language-tags/index.en
   public
     constructor Create(source : String);
     destructor Destroy; override;
+    procedure clear;
 
     function link : TIETFLanguageDefinitions; overload;
 
@@ -617,6 +620,15 @@ begin
   FRegions.Free;
   FLanguages.Free;
   inherited;
+end;
+
+procedure TIETFLanguageDefinitions.clear;
+begin
+  FLanguages.Clear;
+  FExtLanguages.Clear;
+  FScripts.Clear;
+  FRegions.Clear;
+  FVariants.Clear;
 end;
 
 class function TIETFLanguageDefinitions.checkSource(source: String): String;

@@ -44,6 +44,9 @@ Uses
   tx_server;
 
 type
+
+  { TFHIRServerWorkerContextR4 }
+
   TFHIRServerWorkerContextR4 = class (TBaseWorkerContextR4)
   private
     FTerminologyServer : TTerminologyServer;
@@ -62,6 +65,7 @@ type
     destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR4; overload;
+    procedure Unload; override;
 
     procedure SeeResourceProxy(r : TFhirResourceProxy); override;
     procedure checkResource(r : TFhirResource);
@@ -125,6 +129,12 @@ end;
 function TFHIRServerWorkerContextR4.Link: TFHIRServerWorkerContextR4;
 begin
   result := TFHIRServerWorkerContextR4(inherited Link);
+end;
+
+procedure TFHIRServerWorkerContextR4.Unload;
+begin
+  inherited Unload;
+  FQuestionnaires.clear;
 end;
 
 procedure TFHIRServerWorkerContextR4.LoadingFinished;

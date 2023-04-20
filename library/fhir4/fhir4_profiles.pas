@@ -47,6 +47,9 @@ Const
 
 
 Type
+
+  { TProfileManager }
+
   TProfileManager = class (TFslObject)
   private
     lock : TFslLock;
@@ -63,6 +66,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     function Link : TProfileManager; overload;
+    procedure Unload;
 
     procedure SeeProfile(key : Integer; profile : TFHirStructureDefinition);
     procedure DropProfile(aType: TFhirResourceType; id : String);
@@ -128,6 +132,7 @@ Type
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR4; overload;
+    procedure Unload; override;
 
     property Profiles : TProfileManager read FProfiles;
     procedure seeResourceProxy(r : TFhirResourceProxy); overload; virtual;
@@ -1731,6 +1736,14 @@ begin
   result := TBaseWorkerContextR4(inherited Link);
 end;
 
+procedure TBaseWorkerContextR4.Unload;
+begin
+  inherited Unload;
+  FProfiles.Unload;
+  FCustomResources.clear;
+  FNamingSystems.Clear;
+end;
+
 procedure TBaseWorkerContextR4.LoadFromDefinitions(filename: string);
 var
   b : TFslBuffer;
@@ -2106,6 +2119,17 @@ end;
 function TProfileManager.Link: TProfileManager;
 begin
   result := TProfileManager(inherited Link);
+end;
+
+procedure TProfileManager.Unload;
+begin
+  lock.Lock;
+  try
+    FProfilesById.Clear;
+    FProfilesByURL.Clear;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 procedure TProfileManager.loadFromFeed(feed: TFHIRBundle);

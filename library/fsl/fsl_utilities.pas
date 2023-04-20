@@ -16841,6 +16841,7 @@ End;
 
 procedure init;
 begin
+  GDumpFile := FilePath(['[tmp]', ExtractFileName(paramstr(0))+'.leaks.txt']);
   SetLength(UnicodeWhitespaceArray, 26);
 
   UnicodeWhitespaceArray[0] := #$0009; //

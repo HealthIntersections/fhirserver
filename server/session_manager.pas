@@ -43,6 +43,9 @@ Const
   IMPL_COOKIE_PREFIX = 'implicit-';
 
 Type
+
+  { TFHIRSessionManager }
+
   TFHIRSessionManager = class (TFHIRServerWorker)
   private
     FLock: TFslLock;
@@ -73,6 +76,7 @@ Type
     function DumpSessions : String;
     procedure EndAllSessions(cookie, ip : String);
     function buildTable : String;
+    procedure Clear;
   end;
 
 implementation
@@ -118,6 +122,17 @@ begin
   finally
     b.free;
   end;
+end;
+
+procedure TFHIRSessionManager.Clear;
+begin
+  FLock.Lock;
+  try
+    FSessions.Clear;
+  finally
+    FLock.Unlock;
+  end;
+
 end;
 
 procedure TFHIRSessionManager.CloseAll;
@@ -209,7 +224,7 @@ begin
   end;
 end;
 
-procedure TFHIRSessionManager.EndSession(session : TFhirSession; ip: String);
+procedure TFHIRSessionManager.EndSession(session: TFHIRSession; ip: String);
 var
   se: TFhirAuditEventW;
   key: integer;

@@ -77,6 +77,8 @@ type
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
+  { TTerminologyServerData }
+
   TTerminologyServerData = class (TFslObject)
   private
     FPackages : TStringList;
@@ -90,6 +92,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TTerminologyServerData; overload;
+    procedure clear;
     property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
     property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
     property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
@@ -134,6 +137,8 @@ type
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   end;
 
+  { TTerminologyFhirServerStorage }
+
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
     FLock : TFslLock;
@@ -151,6 +156,7 @@ type
     destructor Destroy; override;
 
     function link : TTerminologyFhirServerStorage; overload;
+    procedure UnLoad; override;
 
     // no OAuth Support
     // server total counts:
@@ -362,6 +368,14 @@ end;
 function TTerminologyServerData.link: TTerminologyServerData;
 begin
   result := TTerminologyServerData(inherited link);
+end;
+
+procedure TTerminologyServerData.clear;
+begin
+  FCodeSystems.clear;
+  FValueSets.clear;
+  FNamingSystems.clear;
+  FConceptMaps.clear;
 end;
 
 function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
@@ -1088,6 +1102,12 @@ begin
   result := TTerminologyFhirServerStorage(inherited link);
 end;
 
+procedure TTerminologyFhirServerStorage.UnLoad;
+begin
+  inherited UnLoad;
+  FData.clear;
+end;
+
 procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
 begin
   if res.fhirType = 'CodeSystem' then
@@ -1140,20 +1160,28 @@ begin
     Logging.start('Load package '+npm.name+'#'+npm.version);
     try
       FData.FPackages.Add(npm.name+'#'+npm.version);
-      for pi in npm.listResourceInfo('package') do
-      begin
-        if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
+      list := npm.listResourceInfo('package');
+      try
+        if (list <> nil) then
         begin
-          inc(i);
-          if (i mod 100 = 0) then
-            Logging.continue('.');
-          res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
-          try
-            loadResource(res, ignoreEmptyCodeSystems);
-          finally
-            res.Free;
+          for pi in list do
+          begin
+            if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
+            begin
+              inc(i);
+              if (i mod 100 = 0) then
+                Logging.continue('.');
+              res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+              try
+                loadResource(res, ignoreEmptyCodeSystems);
+              finally
+                res.Free;
+              end;
+            end;
           end;
         end;
+      finally
+        list.free;
       end;
     finally
       Logging.finish(' '+inttostr(i)+' resources');
@@ -1349,7 +1377,7 @@ begin
   // nothing in this server
 end;
 
-procedure TTerminologyFhirServerStorage.SetupRecording(session: TFhirSession);
+procedure TTerminologyFhirServerStorage.SetUpRecording(session: TFhirSession);
 begin
 end;
 
@@ -1445,6 +1473,7 @@ end;
 constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited Create(config, settings, db, common, pcm, i18n);
+  pcm.Caching := false;
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
@@ -1526,6 +1555,7 @@ end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
+  FServerContext.Unload;
   FServerContext.Free;
   FServerContext := nil;
   FStore.Free;

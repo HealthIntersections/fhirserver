@@ -642,6 +642,7 @@ type
     destructor Destroy; override;
     function link : TFHIRParametersW; overload;
 
+    function names : String; virtual; abstract;
     function has(name : String) : boolean; virtual; abstract;
     function bool(name : String) : boolean; virtual; abstract;
     function str(name : String) : String; virtual; abstract;
@@ -859,7 +860,7 @@ type
     procedure setTotal(value : integer) ; virtual; abstract;
 
     property total : integer read getTotal write setTotal;
-    procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject); virtual; abstract;
+    procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject {link if needed}); virtual; abstract;
   end;
 
   TFhirValueSetComposeIncludeFilterW = class (TFHIRXVersionElementWrapper)

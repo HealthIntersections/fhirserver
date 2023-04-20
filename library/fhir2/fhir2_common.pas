@@ -438,6 +438,7 @@ type
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
     function getParameter(name: String): TFhirParametersParameterW;  override;
+    function names : String; override;
   end;
 
   { TFhirValueSetExpansionContains2 }
@@ -2125,6 +2126,27 @@ begin
       exit(t);
 end;
 
+function TFHIRParameters2.names: String;
+var
+  ts : TStringList;
+  t : TFhirParametersParameterW;
+begin
+  if FList = nil then
+    populateList;
+  ts := TStringList.create;
+  try
+    ts.sorted := true;
+    ts.duplicates := dupIgnore;
+    for t in FList do
+      if (t.value = nil) then
+        ts.add(t.name+':nil')
+      else
+        ts.add(t.name+':'+t.value.fhirType);
+    result := ts.commaText;
+  finally
+    ts.free;
+  end; end;
+
 function TFHIRParameters2.has(name: String): boolean;
 begin
   result := parameter.hasParameter(name);
@@ -3755,8 +3777,7 @@ begin
   exp.total := inttostr(value);
 end;
 
-procedure TFhirValueSetExpansion2.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject
-  );
+procedure TFhirValueSetExpansion2.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject);
 begin
   // nothing
 end;

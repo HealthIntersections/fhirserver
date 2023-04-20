@@ -173,6 +173,7 @@ Type
     procedure clearCache;
     procedure SetCacheStatus(status : boolean);
     procedure getCacheInfo(ci: TCacheInformation);
+    procedure UnLoad;
 
     property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
   end;
@@ -455,6 +456,23 @@ begin
   inherited;
   ci.Add('FQuestionnaireCache', FQuestionnaireCache.sizeInBytes(ci.magic));
   ci.Add('FClientCacheManager', FClientCacheManager.sizeInBytes(ci.magic));
+end;
+
+procedure TFHIRServerContext.UnLoad;
+begin
+  FStorage.UnLoad;
+  FQuestionnaireCache.clearCache;
+  FValidatorContext.UnLoad;
+  FValidator.Unload;
+  FTerminologyServer.UnLoad;
+  if FSubscriptionManager <> nil then
+    FSubscriptionManager.UnLoad;
+  FSessionManager.Clear;
+  FNamingSystems.Clear;
+  FMaps.Clear;
+  FConsentEngine.UnLoad;
+  FClientCacheManager.clearCache;
+  FPcm.UnLoad;
 end;
 
 function TFHIRServerContext.GetFactory: TFHIRFactory;

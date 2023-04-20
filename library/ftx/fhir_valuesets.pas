@@ -369,7 +369,7 @@ var
   ext : TFHIRExtensionW;
   i : integer;
 begin
-  for ext in src.getExtensionsW(EXT_VSSUPPLEMENT) do
+  for ext in src.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
     if not cs.hasSupplement(ext.valueAsString) then
       raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri(nil)+' that is not known', itBusinessRule);
   for i := FRequiredSupplements.count - 1 downto 0 do
@@ -1023,7 +1023,10 @@ begin
             op.addIssue(isError, itNotFound, path+'.version', message);
             exit(false);
           end;
-          cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+v]);
+          if (v = '') then
+            cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]).link
+          else
+            cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+v]).link;
           if (cs = nil) then
             cs := findCodeSystem(system, v, FParams, true);
           if (cs = nil) then
@@ -1038,10 +1041,14 @@ begin
             end;
             exit(false);
           end;
-          checkSupplements(cs, cc);
-          contentMode := cs.contentMode;
+          try
+            checkSupplements(cs, cc);
+            contentMode := cs.contentMode;
 
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
+            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
+          finally
+            cs.free;
+          end;
         end
         else
           result := false;
@@ -1440,7 +1447,7 @@ var
   loc :  TCodeSystemProviderContext;
   prep : TCodeSystemProviderFilterPreparationContext;
   filters : Array of TCodeSystemProviderFilterContext;
-  msg : String;
+  msg, c : String;
   cc : TFhirValueSetComposeIncludeConceptW;
   cfl : TFslList<TFhirValueSetComposeIncludeFilterW>;
 begin
@@ -1472,7 +1479,9 @@ begin
   end;
 
   for cc in cset.concepts.forEnum do
-    if (code = cc.code) then
+  begin
+    c := cc.code;
+    if (code = c) then
     begin
       loc := cs.locate(code);
       try
@@ -1495,6 +1504,7 @@ begin
         cs.close(loc);
       end;
     end;
+  end;
 
   if cset.hasFilters then
   begin
@@ -1668,6 +1678,7 @@ begin
   FParams := params.Link;
 
   result := Ffactory.wrapValueSet(source.Resource.Clone as TFHIRResourceV);
+  result.id := '';
   table := nil;
   div_ := nil;
   if not FParams.includeCompose then
@@ -1676,7 +1687,7 @@ begin
     result.clearDefinitionExtensions([]);
 
   FRequiredSupplements.clear;
-  for ext in source.getExtensionsW(EXT_VSSUPPLEMENT) do
+  for ext in source.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
     FRequiredSupplements.add(ext.valueAsString);
 
   if (result.hasExpansion) then
@@ -1802,6 +1813,9 @@ begin
     if notClosed then
     begin
       exp.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
+      list := FFullList;
+      for c in FFullList do
+        c.clearContains();
       if (table <> nil) then
         div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
     end
@@ -1987,8 +2001,12 @@ begin
   begin
     // see https://chat.fhir.org/#narrow/stream/179202-terminology/topic/ValueSet.20designations.20and.20languages
     list := cd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    displays.addDesignation(i, cd.language, cd.valueElement, list); { no .link}
-    inc(i);
+    try
+      displays.addDesignation(i, cd.language, cd.valueElement, list); { no .link}
+      inc(i);
+    finally
+      list.free;
+    end;
   end;
 end;
 
@@ -2197,7 +2215,7 @@ begin
             for cp in csprops do
             begin
               if cp.code = pn then
-                n.addProperty(pn, cp.value.link);
+                n.addProperty(pn, cp.value);
             end;
         end;
 
@@ -2702,7 +2720,7 @@ begin
       try
         listDisplays(cds, cs, context);
         n := processCode(parent, doDelete, cs.systemUri(context), '', cs.Code(context), cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
-        cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context), nil, srcUrl);
+             cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context), nil, srcUrl);
       finally
         cds.Free;
       end;
@@ -2831,7 +2849,7 @@ var
   s : String;
 begin
   FDisplayLanguages.clear;
-  FLanguage := nil;
+  Language := nil;
 
   for s in langs.codes do
   begin

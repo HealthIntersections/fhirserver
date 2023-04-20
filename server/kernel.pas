@@ -165,6 +165,7 @@ end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FI18n.free;
   FPcm.Free;
   Logging.removeListener(FTelnet);
   FEndPoints.Free;

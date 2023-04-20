@@ -484,7 +484,7 @@ begin
               implySystem := params.str('implySystem') = 'true';
 
               if (coded = nil) then
-                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code', itNotFound);
+                raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
 
               if vs <> nil then
               begin
@@ -704,7 +704,7 @@ begin
               coding.display := params.str['display'];
             end
             else
-              raise ETerminologyError.create('Unable to find code to translate (coding | codeableConcept | code');
+              raise ETerminologyError.create('Unable to find code to translate (looked for coding | codeableConcept | code in parameters ='+params.names+')');
               *)
             try
               coding := coded.codings;
@@ -1372,13 +1372,13 @@ begin
         end;
       end
       else
-        raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code', itNotFound);
+        raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
     finally
       params.free;
     end;
   end
   else
-    raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code', itNotFound);
+    raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
 end;
 
 end.

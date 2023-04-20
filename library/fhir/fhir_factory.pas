@@ -85,6 +85,8 @@ type
 
   TValidatorProgressEvent = procedure (sender : TObject; message : String) of object;
 
+  { TFHIRValidatorV }
+
   TFHIRValidatorV = class abstract(TFslObject)
   private
     FOnProgress : TValidatorProgressEvent;
@@ -94,6 +96,7 @@ type
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); virtual;
     destructor Destroy; override;
+    procedure Unload; virtual;
 
     property Context : TFHIRWorkerContextWithFactory read FContext;
 
@@ -256,6 +259,8 @@ type
   TExpansionOperationOption = (expOptLimited);
   TExpansionOperationOptionSet = set of TExpansionOperationOption;
 
+  { TFHIRWorkerContextWithFactory }
+
   TFHIRWorkerContextWithFactory = class (TFHIRWorkerContextV)
   private
     FFactory : TFHIRFactory;
@@ -268,6 +273,7 @@ type
     destructor Destroy; override;
 
     function link : TFHIRWorkerContextWithFactory;
+    procedure Unload; override;
 
     property Factory : TFHIRFactory read FFactory;
     property pcm : TFHIRPackageManager read FPcm;
@@ -514,12 +520,19 @@ begin
   result := TFHIRWorkerContextWithFactory(inherited link);
 end;
 
+procedure TFHIRWorkerContextWithFactory.Unload;
+begin
+  inherited Unload;
+  FPcm.Unload;
+end;
+
 procedure TFHIRWorkerContextWithFactory.LoadingFinished;
 begin
   // nothing here
 end;
 
-procedure TFHIRWorkerContextWithFactory.loadResourceJson(rtype, id: String; json: TStream);
+procedure TFHIRWorkerContextWithFactory.loadResourceJson(rType, id: String;
+  json: TStream);
 var
   p : TFHIRParser;
 begin
@@ -583,6 +596,11 @@ destructor TFHIRValidatorV.Destroy;
 begin
   FContext.Free;
   inherited;
+end;
+
+procedure TFHIRValidatorV.Unload;
+begin
+  // nothing
 end;
 
 procedure TFHIRValidatorV.doProgress(path: String);

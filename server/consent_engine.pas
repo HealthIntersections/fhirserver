@@ -68,12 +68,16 @@ type
     procedure addToAudit(event : TFHIRResourceV); virtual; abstract;
   end;
 
+  { TFHIRConsentEngine }
+
   TFHIRConsentEngine = class abstract (TFslObject)
   protected
     FFactory : TFHIRFactory;
   public
     Constructor Create(factory : TFHIRFactory); virtual;
     Destructor Destroy; override;
+
+    procedure UnLoad;
 
     // initialises the engine, and provides it with a FHIR API Access to a data store
     // that includes patient consent statements. The engine is trusted to access the
@@ -177,6 +181,11 @@ destructor TFHIRConsentEngine.Destroy;
 begin
   FFactory.Free;
   inherited;
+end;
+
+procedure TFHIRConsentEngine.UnLoad;
+begin
+
 end;
 
 end.

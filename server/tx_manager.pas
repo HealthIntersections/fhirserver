@@ -47,6 +47,9 @@ const
   URI_VERSION_BREAK = '#';
 
 Type
+
+  { TCommonTerminologies }
+
   TCommonTerminologies = class (TFslObject)
   private
     FSettings : TFHIRServerSettings;
@@ -76,6 +79,7 @@ Type
     constructor Create(settings : TFHIRServerSettings);
     destructor Destroy; Override;
     function link: TCommonTerminologies; overload;
+    procedure Unload;
 
     function add(p : TCodeSystemProvider) : TCodeSystemProvider; overload;
     procedure add(p : TCodeSystemProvider; defVer : boolean); overload;
@@ -233,6 +237,8 @@ Type
     function NextValueSetMemberKey : integer;
 
     function cacheSize(magic : integer) : UInt64; virtual;
+    procedure Unload; virtual;
+
     procedure clearCache; virtual;
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
@@ -722,6 +728,21 @@ end;
 function TTerminologyServerStore.cacheSize(magic : integer): UInt64;
 begin
   result := 0;
+end;
+
+procedure TTerminologyServerStore.Unload;
+begin
+  clearCache;
+  FCommonTerminologies.Unload;
+  FValueSets.clear;
+  FCodeSystems.clear;
+  FCodeSystemsByVsUrl.clear;
+  FSupplementsById.clear;
+  FBaseValueSets.clear;
+  FBaseCodeSystems.clear;
+  FBaseConceptMaps.clear;
+  FConceptMapsById.clear;
+  FConceptMapsByURL.clear;
 end;
 
 procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFhirCodeSystemConceptListW; url : String);
@@ -1862,20 +1883,10 @@ begin
 end;
 
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
-var
-  p : TCodeSystemProvider;
 begin
   inherited Create;
   FSettings := settings;
   FSnomed := TFslList<TSnomedServices>.create;
-  p := TUriServices.Create(FLanguages.link);
-  try
-    FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
-    FProviderClasses.Add(p.systemUri(nil), p.link);
-    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
-  finally
-    p.free;
-  end;
 end;
 
 procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -1981,6 +1992,11 @@ begin
   result := TCommonTerminologies(inherited Link);
 end;
 
+procedure TCommonTerminologies.Unload;
+begin
+  FLanguages.clear;
+  FProviderClasses.clear;
+end;
 
 procedure TCommonTerminologies.listVersions(url: String; list: TStringList);
 var
@@ -1998,6 +2014,7 @@ var
   s : string;
   sn: TSnomedServices;
 //  def : boolean;
+  p : TUriServices;
   function fixFile(name, fn : String) : String;
   begin
     if FileExists(fn) then
@@ -2017,6 +2034,15 @@ begin
   if not FileExists(s) then
     raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
   FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
+  p := TUriServices.Create(FLanguages.link);
+  try
+    FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
+    FProviderClasses.Add(p.systemUri(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  finally
+    p.free;
+  end;
+
   add(TIETFLanguageCodeServices.Create(FLanguages.link)).free;
   add(TACIRServices.Create(FLanguages.link)).free;
   add(TAreaCodeServices.Create(FLanguages.link)).free;
@@ -2160,7 +2186,8 @@ begin
   end;
 end;
 
-procedure TCommonTerminologies.sweepSnomed;
+procedure TCommonTerminologies.sweepSnomed(
+  callback: TFhirServerMaintenanceThreadTaskCallBack);
 var
   ss : TSnomedServices;
 begin

@@ -1004,7 +1004,7 @@ begin
         for ccd in cc.designations.forEnum do
         Begin
           d := resp.addDesignation(ccd.language, ccd.value);
-          d.use := ccd.use.link;
+          d.use := ccd.use;
         End;
       end;
 

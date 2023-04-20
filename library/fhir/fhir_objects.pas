@@ -617,6 +617,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRWorkerContextV; overload;
+    procedure Unload; virtual;
 
     property Packages : TStringList read FPackages;
 
@@ -2381,6 +2382,11 @@ end;
 function TFHIRWorkerContextV.link: TFHIRWorkerContextV;
 begin
   result := TFHIRWorkerContextV(inherited Link);
+end;
+
+procedure TFHIRWorkerContextV.Unload;
+begin
+  // nothing?
 end;
 
 function TFHIRWorkerContextV.versionString: String;

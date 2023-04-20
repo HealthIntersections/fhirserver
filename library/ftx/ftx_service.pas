@@ -280,8 +280,8 @@ end;
 
 procedure TConceptDesignations.clear;
 begin
-  FBaseLang := nil;
-  FDisplay := nil;
+  BaseLang := nil;
+  Display := nil;
   FDesignations.clear;
 end;
 
@@ -502,11 +502,15 @@ begin
   result := TConceptDesignation.create;
   try
     result.Language := languages.parse(ccd.language);
-    result.Use := ccd.use.link;
+    result.Use := ccd.use;
     result.Value := ccd.valueElement; {no .link}
     list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    if (list.count > 0) then
-      result.extensions.addAll(list);
+    try
+      if (list.count > 0) then
+        result.extensions.addAll(list);
+    finally
+      list.free;
+    end;
     result.link;
   finally
     result.free;

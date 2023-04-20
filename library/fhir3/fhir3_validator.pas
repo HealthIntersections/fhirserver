@@ -216,6 +216,7 @@ Type
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
+    procedure Unload; override;
 
     Property Context : TFHIRWorkerContext read GetContext;
     Property ValContext : TFHIRWorkerContext read GetContext;
@@ -465,6 +466,11 @@ destructor TFHIRValidator3.Destroy;
 begin
   FPathEngine.Free;
   inherited;
+end;
+
+procedure TFHIRValidator3.Unload;
+begin
+  inherited unload;
 end;
 
 function TFHIRValidator3.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;

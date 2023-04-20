@@ -301,6 +301,8 @@ type
     procedure terminate; override;
   end;
 
+  { TFHIRStorageService }
+
   TFHIRStorageService = class (TFslObject)
   protected
     FFactory : TFHIRFactory;
@@ -319,6 +321,7 @@ type
     property Features : TFHIRFeatureEngine read FFeatures;
 
     procedure Initialise(); virtual;
+    procedure UnLoad; virtual;
 
     // OAuth Support
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); virtual;
@@ -429,7 +432,9 @@ begin
 end;
 
 
-function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
+function TFHIRStorageService.FetchAuthorization(hash: String;
+  var PatientId: String; var ConsentKey, SessionKey: Integer;
+  var Expiry: TDateTime; var jwt: String): boolean;
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
@@ -474,6 +479,11 @@ begin
   defineFeatures;
 end;
 
+procedure TFHIRStorageService.UnLoad;
+begin
+  // nothing
+end;
+
 function TFHIRStorageService.Link: TFHIRStorageService;
 begin
   result := TFHIRStorageService(inherited Link);
@@ -499,7 +509,8 @@ begin
   raise EFHIRException.create('This server does not support Async tasks');
 end;
 
-procedure TFHIRStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
+procedure TFHIRStorageService.recordOAuthChoice(id: String; scopes, jwt,
+  patient: String);
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;

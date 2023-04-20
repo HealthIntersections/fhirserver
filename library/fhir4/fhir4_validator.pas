@@ -151,6 +151,8 @@ Type
     function canonicalUrls : TArray<String>;
   end;
 
+  { TFHIRValidator4 }
+
   TFHIRValidator4 = class(TFHIRValidatorV)
   private
     // configuration items
@@ -255,6 +257,7 @@ Type
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
+    procedure Unload; override;
 
     Property Context : TFHIRWorkerContext read GetContext;
     Property ValContext : TFHIRWorkerContext read GetContext;
@@ -507,11 +510,16 @@ end;
 destructor TFHIRValidator4.Destroy;
 begin
   FPathEngine.Free;
-  // FContext don't free- just a copy of what parent owns
   inherited;
 end;
 
-function TFHIRValidator4.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;
+procedure TFHIRValidator4.Unload;
+begin
+  inherited Unload;
+end;
+
+function TFHIRValidator4.resolveInBundle(bundle: TFHIRObject; url: String
+  ): TFHIRObject;
 var
   propE, propFU, propR : TFHIRProperty;
   item : TFHIRObject;
@@ -1325,7 +1333,8 @@ begin
   end;
 end;
 
-Function TFHIRValidator4.resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
+function TFHIRValidator4.resolveInBundle(entries: TFslList<TFHIRMMElement>;
+  ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
   entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
@@ -2540,7 +2549,9 @@ begin
   result := fmt.contains('T');
 end;
 
-procedure TFHIRValidator4.checkPrimitive(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement; profile : TFhirStructureDefinition);
+procedure TFHIRValidator4.checkPrimitive(ctxt: TFHIRValidatorContext; path,
+  ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement;
+  profile: TFhirStructureDefinition);
 var
   regex: TRegEx;
   xhtml : TFhirXHtmlNode;

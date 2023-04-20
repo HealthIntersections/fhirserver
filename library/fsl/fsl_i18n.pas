@@ -48,7 +48,7 @@ type
     function chooseForLang(lang : String) : TFslStringMap;
   public
     constructor Create(languages : TIETFLanguageDefinitions);
-    destructor Destroy;
+    destructor Destroy; override;
 
     function Link : TI18nSupport; overload;
 

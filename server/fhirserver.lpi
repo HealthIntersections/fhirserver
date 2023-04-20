@@ -753,7 +753,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="33">
+    <Exceptions Count="34">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -872,6 +872,9 @@
       <Item33>
         <Name Value="0000000eEFHIRException"/>
       </Item33>
+      <Item34>
+        <Name Value="00000011ETerminologySetup"/>
+      </Item34>
     </Exceptions>
   </Debugging>
 </CONFIG>

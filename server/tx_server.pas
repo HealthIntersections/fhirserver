@@ -50,6 +50,9 @@ uses
   tx_manager, ftx_sct_expressions;
 
 Type
+
+  { TTerminologyServer }
+
   TTerminologyServer = class (TTerminologyServerStore)
   private
     FExpansions : TFslStringObjectMatch;
@@ -122,6 +125,7 @@ Type
     // database maintenance
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
+    procedure Unload; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SetCacheStatus(status : boolean); override;
@@ -373,7 +377,8 @@ begin
 end;
 
 
-function TTerminologyServer.findCanonicalResources(bundle: TFHIRBundleBuilder; rType: string; url, version: String): boolean;
+function TTerminologyServer.findCanonicalResources(bundle: TFHIRBundleBuilder;
+  rType: String; url, version: String): boolean;
 var
   vs : TFhirValueSetW;
   be : TFHIRBundleEntryW;
@@ -1381,6 +1386,11 @@ begin
   finally
     b.Free;
   end;
+end;
+
+procedure TTerminologyServer.Unload;
+begin
+  inherited Unload;
 end;
 
 function TTerminologyServer.translate(const lang : THTTPLanguages; cm: TLoadedConceptMap; coding: TFHIRCodingW): TFhirParametersW;

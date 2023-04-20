@@ -1447,7 +1447,7 @@ Begin
       end;
       on e: ETerminologyError do
       begin
-        result := result + ' (Auth needed)';
+        //result := result + ' (Auth needed)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else if e.IssueType = itNull then

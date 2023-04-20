@@ -445,6 +445,7 @@ type
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
     function getParameter(name: String): TFhirParametersParameterW;  override;
+    function names : String; override;
   end;
 
   { TFHIRExpansionProfile3 }
@@ -2246,6 +2247,27 @@ begin
     if t.name = name then
       exit(t);
 end;
+
+function TFHIRParameters3.names: String;
+var
+  ts : TStringList;
+  t : TFhirParametersParameterW;
+begin
+  if FList = nil then
+    populateList;
+  ts := TStringList.create;
+  try
+    ts.sorted := true;
+    ts.duplicates := dupIgnore;
+    for t in FList do
+      if (t.value = nil) then
+        ts.add(t.name+':nil')
+      else
+        ts.add(t.name+':'+t.value.fhirType);
+    result := ts.commaText;
+  finally
+    ts.free;
+  end; end;
 
 function TFHIRParameters3.has(name: String): boolean;
 begin
@@ -4189,50 +4211,54 @@ procedure TFhirValueSetExpansion3.defineProperty(focus: TFhirValueSetExpansionCo
 var
   pd, ext : TFhirExtension;
 begin
-  pd := nil;
-  for ext in exp.extensionList do
-  begin
-    if (ext.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property') and
-      ((ext.getExtensionString('uri') = url) or (ext.getExtensionString('code') = code)) then
+  try
+    pd := nil;
+    for ext in exp.extensionList do
     begin
-      pd := ext;
-      break;
+      if (ext.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property') and
+        ((ext.getExtensionString('uri') = url) or (ext.getExtensionString('code') = code)) then
+      begin
+        pd := ext;
+        break;
+      end;
     end;
-  end;
-  if (pd = nil) then
-  begin
-    pd := TFHIRExtension.create;
-    exp.extensionList.add(pd);
-    pd.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property';
-    pd.setExtensionUri('uri', url);
-    pd.setExtensionCode('code',code);
-  end
-  else if (pd.getExtensionString('uri') = '') then
-    pd.setExtensionUri('uri', url)
-  else if (pd.getExtensionString('uri') <> url) then
-    raise EFHIRException.create('URL mismatch on expansion: '+pd.getExtensionString('uri')+' vs '+url+' for code '+code);
-  code := pd.getExtensionString('code');
+    if (pd = nil) then
+    begin
+      pd := TFHIRExtension.create;
+      exp.extensionList.add(pd);
+      pd.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property';
+      pd.setExtensionUri('uri', url);
+      pd.setExtensionCode('code',code);
+    end
+    else if (pd.getExtensionString('uri') = '') then
+      pd.setExtensionUri('uri', url)
+    else if (pd.getExtensionString('uri') <> url) then
+      raise EFHIRException.create('URL mismatch on expansion: '+pd.getExtensionString('uri')+' vs '+url+' for code '+code);
+    code := pd.getExtensionString('code');
 
-  pd := nil;
-  for ext in ((focus as TFhirValueSetExpansionContains3).element as TFhirValueSetExpansionContains).extensionList do
-  begin
-    if (ext.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property') and
-      (ext.getExtensionString('code') = code) then
+    pd := nil;
+    for ext in ((focus as TFhirValueSetExpansionContains3).element as TFhirValueSetExpansionContains).extensionList do
     begin
-      pd := ext;
-      break;
+      if (ext.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property') and
+        (ext.getExtensionString('code') = code) then
+      begin
+        pd := ext;
+        break;
+      end;
     end;
+    if (pd = nil) then
+    begin
+      pd := TFHIRExtension.create;
+      ((focus as TFhirValueSetExpansionContains3).element as TFhirValueSetExpansionContains).extensionList.add(pd);
+      pd.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property';
+      pd.setExtensionCode('code',code);
+      pd.setExtension('value',value as TFHIRType);
+    end
+    else
+      pd.setExtension('value',value as TFHIRType);
+  finally
+    value.free;
   end;
-  if (pd = nil) then
-  begin
-    pd := TFHIRExtension.create;
-    ((focus as TFhirValueSetExpansionContains3).element as TFhirValueSetExpansionContains).extensionList.add(pd);
-    pd.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property';
-    pd.setExtensionCode('code',code);
-    pd.setExtension('value',value as TFHIRType);
-  end
-  else
-    pd.setExtension('value',value as TFHIRType);
 end;
 
 procedure TFhirValueSetExpansion3.copyParams(source: TFhirValueSetExpansionW);
@@ -4311,10 +4337,10 @@ begin
   if (value <> nil) then
     d.valueElement := value.Element.link as TFHIRString;
   if use <> nil then
-    d.use := use.Element as TFHIRCoding;
+    d.use := use.Element.link as TFHIRCoding;
   if extensions <> nil then
     for ext in Extensions do
-      d.addExtension(ext.element as TFHIRExtension);
+      d.addExtension(ext.element.link as TFHIRExtension);
 end;
 
 procedure TFhirValueSetExpansionContains3.addProperty(code: String; value: TFHIRObject);

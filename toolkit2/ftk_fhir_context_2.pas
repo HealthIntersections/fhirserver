@@ -66,6 +66,7 @@ Type
     destructor Destroy; Override;
 
     Function Link : TToolkitValidatorContextR2; overload;
+    procedure Unload; override;
 
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
 

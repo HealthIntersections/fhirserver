@@ -212,6 +212,7 @@ Type
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
+    procedure Unload; override;
 
     Property Context : TFHIRWorkerContext read GetContext;
     Property ValContext : TFHIRWorkerContext read GetContext;
@@ -452,6 +453,10 @@ begin
   inherited;
 end;
 
+procedure TFHIRValidator.Unload;
+begin
+  inherited unload;
+end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement);
 var

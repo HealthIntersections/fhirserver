@@ -8,7 +8,7 @@
       <SearchPaths>
         <IncludeFiles Value="../library"/>
         <OtherUnitFiles Value="../library/web"/>
-        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib/fhir_web/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>

@@ -443,6 +443,7 @@ type
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
     function getParameter(name: String): TFhirParametersParameterW;  override;
+    function names : String; override;
   end;
 
   { TFhirValueSetExpansionContains5 }
@@ -2221,6 +2222,28 @@ begin
       exit(t);
 end;
 
+function TFHIRParameters5.names: String;
+var
+  ts : TStringList;
+  t : TFhirParametersParameterW;
+begin
+  if FList = nil then
+    populateList;
+  ts := TStringList.create;
+  try
+    ts.sorted := true;
+    ts.duplicates := dupIgnore;
+    for t in FList do
+      if (t.value = nil) then
+        ts.add(t.name+':nil')
+      else
+        ts.add(t.name+':'+t.value.fhirType);
+    result := ts.commaText;
+  finally
+    ts.free;
+  end;
+end;
+
 function TFHIRParameters5.has(name: String): boolean;
 begin
   result := parameter.hasParameter(name);
@@ -3915,44 +3938,48 @@ var
   pdef, t1 : TFhirValueSetExpansionProperty;
   pdv, t2 : TFhirValueSetExpansionContainsProperty;
 begin
-  pdef := nil;
-  for t1 in exp.property_List do
-  begin
-    if ((t1.uri = url) or (t1.code = code)) then
+  try
+    pdef := nil;
+    for t1 in exp.property_List do
     begin
-      pdef := t1;
-      break;
+      if ((t1.uri = url) or (t1.code = code)) then
+      begin
+        pdef := t1;
+        break;
+      end;
     end;
-  end;
-  if (pdef = nil) then
-  begin
-    pdef := exp.property_List.append;
-    pdef.uri := url;
-    pdef.code := code;
-  end
-  else if (pdef.uri = '') then
-    pdef.uri := url
-  else if (pdef.uri <> url) then
-    raise EFHIRException.create('URL mismatch on expansion: '+pdef.uri+' vs '+url+' for code '+code);
-  code := pdef.code;
+    if (pdef = nil) then
+    begin
+      pdef := exp.property_List.append;
+      pdef.uri := url;
+      pdef.code := code;
+    end
+    else if (pdef.uri = '') then
+      pdef.uri := url
+    else if (pdef.uri <> url) then
+      raise EFHIRException.create('URL mismatch on expansion: '+pdef.uri+' vs '+url+' for code '+code);
+    code := pdef.code;
 
-  pdv := nil;
-  for t2 in ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list do
-  begin
-    if (t2.code = code) then
+    pdv := nil;
+    for t2 in ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list do
     begin
-      pdv := t2;
-      break;
+      if (t2.code = code) then
+      begin
+        pdv := t2;
+        break;
+      end;
     end;
+    if (pdv = nil) then
+    begin
+      pdv := ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list.append;
+      pdv.code := code;
+      pdv.value := value as TFHIRDataType;
+    end
+    else
+      pdv.value := value as TFHIRDataType;
+  finally
+    value.free;
   end;
-  if (pdv = nil) then
-  begin
-    pdv := ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list.append;
-    pdv.code := code;
-    pdv.value := value as TFHIRDataType;
-  end
-  else
-    pdv.value := value as TFHIRDataType;
 end;
 
 procedure TFhirValueSetExpansion5.copyParams(source: TFhirValueSetExpansionW);
@@ -4031,10 +4058,10 @@ begin
   if (value <> nil) then
     d.valueElement := value.Element.link as TFHIRString;
   if use <> nil then
-    d.use := use.Element as TFHIRCoding;
+    d.use := use.Element.link as TFHIRCoding;
   if extensions <> nil then
     for ext in Extensions do
-      d.addExtension(ext.element as TFHIRExtension);
+      d.addExtension(ext.element.link as TFHIRExtension);
 end;
 
 procedure TFhirValueSetExpansionContains5.addProperty(code: String; value: TFHIRObject);

@@ -46,6 +46,9 @@ Const
 
 
 Type
+
+  { TProfileManager }
+
   TProfileManager = class (TFslObject)
   private
     lock : TFslLock;
@@ -61,6 +64,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     function Link : TProfileManager; overload;
+    procedure Unload;
 
     procedure SeeProfile(key : Integer; profile : TFHirStructureDefinition);
     procedure DropProfile(aType: TFhirResourceType; id : String);
@@ -107,6 +111,8 @@ Type
   end;
 
 
+  { TBaseWorkerContextR2 }
+
   TBaseWorkerContextR2 = class abstract (TFHIRWorkerContext)
   private
 
@@ -123,6 +129,7 @@ Type
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR2; overload;
+    procedure Unload; override;
 
     property Profiles : TProfileManager read FProfiles;
     procedure seeResourceProxy(r : TFhirResourceProxy); overload; virtual;
@@ -1697,6 +1704,14 @@ begin
   result := TBaseWorkerContextR2(inherited Link);
 end;
 
+procedure TBaseWorkerContextR2.Unload;
+begin
+  inherited Unload;
+  FProfiles.Unload;
+  FCustomResources.clear;
+  FNamingSystems.Clear;
+end;
+
 procedure TBaseWorkerContextR2.LoadFromDefinitions(filename: string);
 var
   b : TFslBuffer;
@@ -1833,7 +1848,7 @@ begin
   seeResourceProxy(res as TFHIRResourceProxy)
 end;
 
-procedure TBaseWorkerContextR2.SeeResource(res: TFHIRResourceV);
+procedure TBaseWorkerContextR2.seeResource(res: TFHIRResourceV);
 var
   proxy : TFHIRResourceProxy;
 begin
@@ -1857,7 +1872,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR2.SeeResourceProxy(r: TFhirResourceProxy);
+procedure TBaseWorkerContextR2.seeResourceProxy(r: TFhirResourceProxy);
 var
   p : TFhirStructureDefinition;
 begin
@@ -2051,6 +2066,17 @@ end;
 function TProfileManager.Link: TProfileManager;
 begin
   result := TProfileManager(inherited Link);
+end;
+
+procedure TProfileManager.Unload;
+begin
+  lock.Lock;
+  try
+    FProfilesById.Clear;
+    FProfilesByURL.Clear;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 procedure TProfileManager.loadFromFeed(feed: TFHIRBundle);

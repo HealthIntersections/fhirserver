@@ -4104,18 +4104,27 @@ end;
 
 function TFhirValueSetHelper.source: string;
 var
-  b : TFslStringBuilder;
+  ts : TStringList;
   comp : TFhirValueSetComposeInclude;
 begin
-  b := TFslStringBuilder.Create;
+  ts := TStringList.create;
   try
+    ts.sorted := true;
+
     if (compose <> nil) then
       for comp in compose.includeList do
+      begin
         if comp.system <> '' then
-          b.Append(csName(comp.system));
-    result := b.AsString;
+        begin
+          if ts.IndexOf(comp.system) = -1 then
+          begin
+            ts.add(csName(comp.system));
+          end;
+        end;
+      end;
+    result := ts.commaText;
   finally
-    b.Free;
+    ts.free;
   end;
 end;
 

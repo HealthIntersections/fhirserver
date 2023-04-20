@@ -83,6 +83,8 @@ type
     procedure load(id, ver: String);
   end;
 
+  { TFHIRPackageManager }
+
   TFHIRPackageManager = class (TFslObject)
   private
     FUser : boolean;
@@ -93,6 +95,7 @@ type
     FLock : TFslLock;
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
+    FCaching : boolean;
     function PathForPackage(id, ver : String) : String;
 
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
@@ -120,6 +123,7 @@ type
     property Folder : String read FFolder;
     property UserMode : boolean read FUser;
     function description : String;
+    property Caching : boolean read FCaching write FCaching;
 
     procedure listAllKnownPackages(list: TFslList<TFHIRPackageInfo>; ver : String);
     procedure ListPackageIds(list : TStrings);
@@ -138,6 +142,7 @@ type
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation); overload;
 
     procedure clear;
+    procedure UnLoad;
 
     function import(content : TBytes) : TNpmPackage; overload;
     function install(url : String) : boolean;
@@ -694,6 +699,11 @@ begin
       FolderDelete(s);
 end;
 
+procedure TFHIRPackageManager.UnLoad;
+begin
+  FCache.Clear;
+end;
+
 procedure TFHIRPackageManager.ListPackages(list: TStrings);
 var
   s : String;
@@ -756,7 +766,8 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadInfo : TPackageLoadingInformation);
+procedure TFHIRPackageManager.loadPackage(id, ver: String;
+  resources: array of String; loadInfo: TPackageLoadingInformation);
 var
   fsl : TFslStringSet;
 begin
@@ -881,11 +892,14 @@ begin
     if not FileExists(FilePath([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
     result := TNpmPackage.fromFolder(folder);
-    FLock.Lock;
-    try
-      FCache.add(folder, result.Link);
-    finally
-      FLock.Unlock;
+    if FCaching then
+    begin
+      FLock.Lock;
+      try
+        FCache.add(folder, result.Link);
+      finally
+        FLock.Unlock;
+      end;
     end;
   end;
 end;
