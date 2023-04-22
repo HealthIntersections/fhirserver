@@ -340,7 +340,7 @@ begin
   if (p = nil) then
     result := nil
   else
-    result := TFHIRPrimitive3.create(p.link);
+    result := TFHIRPrimitive3.create(p);
 end;
 
 function TFHIRFactoryR3.makeElementModelManager: TFHIRBaseMMManager;

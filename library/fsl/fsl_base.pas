@@ -48,7 +48,8 @@ const
 
 {$IFDEF TRACK_CLASSES}
 const
-  CLASS_NAME_OF_INTEREST = 'TFhirCoding';
+  CLASS_NAME_OF_INTEREST = 'TFhirString';
+  ID_OF_INTEREST = -1;
 {$ENDIF}
 
 threadvar
@@ -904,7 +905,7 @@ var
 begin
   result := '';
   {$IFDEF OBJECT_TRACKING}
-  if (count > 0) and (count <= 40) then
+  if (count > 0) and (count <= 80) then
   begin
     result := first.dumpSummary;
     t := first.FNext;
@@ -995,6 +996,10 @@ Begin
     inc(t.dcount);
     inc(t.serial);
     FSerial := t.serial;
+    {$IFDEF TRACK_CLASSES}
+    if (t.serial = ID_OF_INTEREST) and (className = CLASS_NAME_OF_INTEREST) then
+      NamedInstance := '!';
+    {$ENDIF}
     if t.first = nil then
     begin
       t.first := self;
