@@ -320,7 +320,7 @@ begin
   if (p = nil) then
     result := nil
   else
-    result := TFHIRPrimitive2.create(p.link);
+    result := TFHIRPrimitive2.create(p);
 end;
 
 function TFHIRFactoryR2.makeDecimal(s: string): TFHIRObject;

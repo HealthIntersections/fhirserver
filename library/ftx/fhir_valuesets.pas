@@ -64,6 +64,8 @@ Type
   TFhirExpansionParamsFixedVersionMode = (fvmDefault, fvmCheck, fvmOverride);
   TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
 
+  { TFhirExpansionParamsFixedVersion }
+
   TFhirExpansionParamsFixedVersion = class (TFslObject)
   private
     Fsystem : String;
@@ -78,6 +80,8 @@ Type
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property mode : TFhirExpansionParamsFixedVersionMode read FMode write FMode;
+
+    function asString : String;
   end;
 
   { TFHIRExpansionParams }
@@ -2895,21 +2899,29 @@ end;
 
 function TFHIRExpansionParams.hash: String;
 var
-  s, lc : String;
+  s : String;
+  l : TIETFLang;
+  t : TFhirExpansionParamsFixedVersion;
   function b(v : boolean):string;
   begin
     if v then
-      result := '1'
+      result := '1|'
     else
-      result := '0';
+      result := '0|';
   end;
 begin
-  if FLanguage = nil then
-    lc := '?'
-  else
-    lc := FLanguage.code;
-  s := FFixedVersions.ToString +'|' +b(activeOnly)+'|'+lc+'|'+fDisplayLanguages.toString+'|'+ b(includeDefinition) +'|'+   b(limitedExpansion) +'|'+  b(includeDesignations) +'|'+
-    b(excludeNested) +'|'+ b(excludeNotForUI) +'|'+ b(excludePostCoordinated) +'|'+uid+'|'+inttostr(ord(FValueSetMode))+'|'+ b(defaultToLatestVersion)+'|'+FProperties.CommaText;
+  s := FUid+'|'+ inttostr(ord(FValueSetMode)) + '|' + FProperties.CommaText+'|'+
+    b(FactiveOnly)+b(FIncompleteOK)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
+    b(FincludeDesignations)+b(FincludeCompose)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
+    b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+b(FHasIncludeCompose)+
+    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasexcludeNotForUI)+b(FHasValueSetMode)+b(FDefaultToLatestVersion);
+
+  if FLanguage <> nil then
+    s := s + FLanguage.Language+'|';
+  for l in FDisplayLanguages do
+    s := s + l.Language+'|';
+  for t in FFixedVersions do
+  s := s + t.asString+'|';
   result := inttostr(HashStringToCode32(s));
 end;
 
@@ -2927,6 +2939,11 @@ begin
   FSystem := system;
   FVersion := version;
   FMode := mode;
+end;
+
+function TFhirExpansionParamsFixedVersion.asString: String;
+begin
+  result := Fsystem+'#'+Fversion+'/'+inttostr(ord(FMode));
 end;
 
 constructor TFhirExpansionParamsFixedVersion.Create(system, version: String);

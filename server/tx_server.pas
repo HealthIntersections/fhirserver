@@ -318,21 +318,33 @@ begin
 end;
 
 
+function hashTx(list : TFslMetadataResourceList) : String;
+var
+  t : TFHIRMetadataResourceW;
+  s : String;
+begin
+  s := '';
+  for t in list do
+    s := s + t.Url+'|'+t.version+#1;
+  result := inttostr(HashStringToCode32(s));
+end;
+
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList;
     limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
-  s, d : String;
+  s, d, key: String;
   p : TArray<String>;
   exp : TFHIRValueSetExpander;
 begin
   result := nil;
-  if cacheId <> '' then
+  if (dependencies.Count > 0) and FCaching then
   begin
+    key := cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)+#1+inttostr(offset)+#1+hashTx(txResources);
     FLock.Lock('expandVS.1');
     try
-      if FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
+      if FExpansions.ExistsByKey(key) then
       begin
-        result := (FExpansions.matches[cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)] as TFhirValueSetW).link;
+        result := (FExpansions.matches[key] as TFhirValueSetW).link;
         p := result.Tags['cache'].Split([#1]);
         for s in p do
           if (s <> '') then
@@ -347,15 +359,15 @@ begin
     exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
-      if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
+      if (dependencies.Count > 0) and FCaching then
       begin
         if FCaching then
         begin
           FLock.Lock('expandVS.2');
           try
-            if not FExpansions.ExistsByKey(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)) then
+            if not FExpansions.ExistsByKey(key) then
             begin
-              FExpansions.Add(cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset), result.Link);
+              FExpansions.Add(key, result.Link);
               // in addition, we trace the dependencies so we can expire the cache
               d := '';
               for s in dependencies do
@@ -1370,7 +1382,7 @@ end;
 procedure TTerminologyServer.SetCacheStatus(status: boolean);
 begin
   inherited;
-  FCaching := false;
+  FCaching := status;
 end;
 
 function TTerminologyServer.Summary: String;

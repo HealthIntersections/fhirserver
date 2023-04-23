@@ -418,7 +418,7 @@ begin
   if (p = nil) then
     result := nil
   else
-    result := TFHIRPrimitive5.create(p.link);
+    result := TFHIRPrimitive5.create(p);
 end;
 
 function TFHIRFactoryR5.makeParamsFromForm(s: TStream): TFHIRResourceV;
