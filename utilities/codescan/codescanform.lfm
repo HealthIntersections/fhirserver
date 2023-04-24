@@ -1,0 +1,47 @@
+object CodeScannerForm: TCodeScannerForm
+  Left = 636
+  Height = 442
+  Top = 369
+  Width = 935
+  Caption = 'Code Scanner'
+  ClientHeight = 442
+  ClientWidth = 935
+  Position = poScreenCenter
+  LCLVersion = '2.2.5.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 935
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 50
+    ClientWidth = 935
+    TabOrder = 0
+    object Button1: TButton
+      Left = 8
+      Height = 40
+      Top = 8
+      Width = 107
+      Caption = 'Go'
+      TabOrder = 0
+    end
+    object Button2: TButton
+      Left = 127
+      Height = 43
+      Top = 5
+      Width = 99
+      Caption = 'Close'
+      ModalResult = 11
+      TabOrder = 1
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 392
+    Top = 50
+    Width = 935
+    Align = alClient
+    TabOrder = 1
+  end
+end

@@ -36,9 +36,10 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
+  Forms, Interfaces,
   Classes, SysUtils,
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
-  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions;
+  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions, codeScanForm;
 
 
 type
@@ -60,6 +61,10 @@ type
     FSourceDir : String;
     FProjectDir : String;
 
+    FOnLog : TLogEvent;
+
+    procedure output(msg : String = ''; ack : boolean = false);
+
     procedure check(n, m: String);
     procedure reportError(filename : String; line : integer; msg : String);
 
@@ -79,6 +84,7 @@ type
     procedure setSourceVersion(v: String);
     procedure setProjectVersion(p, v: String; d : boolean);
     procedure setNextSourceVersion(v : String);
+    procedure go(sender : TObject);
   public
     constructor Create;
     destructor Destroy; override;
@@ -463,6 +469,23 @@ begin
   FAllOk := true;
 end;
 
+procedure TCodeScanner.go(sender: TObject);
+begin
+  Run;
+end;
+
+procedure TCodeScanner.output(msg: String = ''; ack : boolean = false);
+begin
+  if (assigned(FOnLog)) then
+    FOnLog(msg, ack)
+  else
+  begin
+    writeln(msg);
+    if (ack) then
+      readln;
+  end;
+end;
+
 procedure TCodeScanner.check(n, m : String);
 var
   ne : boolean;
@@ -474,12 +497,12 @@ begin
   if ne then
   begin
     if FileExists(n) then
-      writeln('Error: '+m)
+      output('Error: '+m)
     else
       FAllOk := true;
   end
   else if not FileExists(n) then
-    writeln('Error: '+m)
+    output('Error: '+m)
   else
     FAllOk := true;
 end;
@@ -526,7 +549,7 @@ begin
   p := '';
   d := '';
 
-  //writeln(commandLineAsString);
+  //output(commandLineAsString);
   try
     FProjectDir := paramstr(0);
     FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);
@@ -543,22 +566,22 @@ begin
     else
     begin
       FSourceDir := FilePath([ParamStr(1), 'source']);
-      Writeln('Running FHIR Code scanner');
-      Writeln('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
-      Writeln('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
+      output('Running FHIR Code scanner');
+      output('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
+      output('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
       FAllOk := true;
-      writeln(FSourceDir+' [unicode]');
+      output(FSourceDir+' [unicode]');
       scanFolder(FSourceDir, [sscUnicode], FProjectDir);
-      writeln;
-      writeln(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
+      output('');
+      output(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
       scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'delphi-markdown']));
-      writeln;
-      writeln(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
+      output('');
+      output(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
       scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
-      writeln;
-      writeln(FProjectDir+' [license, eoln, exceptions, full-parse]');
+      output('');
+      output(FProjectDir+' [license, eoln, exceptions, full-parse]');
       scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
-      writeln;
+      output('');
     end;
   except
     on e : Exception do
@@ -575,16 +598,15 @@ begin
   end
   else if not FAllOk then
   begin
-    writeln('Errors found - code fails checks');
+    output('Errors found - code fails checks', true);
     ExitCode := 1;
-    readln;
   end
   else
   begin
-    writeln('All OK');
-    readln;
+    output('All OK', true);
   end;
 end;
+
 constructor TCodeScanner.Create;
 begin
   inherited Create;
@@ -596,13 +618,28 @@ begin
 end;
 
 var
-  Application: TCodeScanner;
-
-{$R *.res}
+  CodeApp: TCodeScanner;
 
 begin
-  Application := TCodeScanner.Create;
-  Application.Run;
-  Application.Free;
+  CodeApp := TCodeScanner.Create;
+  try
+    if paramstr(1) = 'gui' then
+    begin
+      //Application.Title:='FHIRToolkit';
+      //Application.Scaled:=True;
+      Application.Initialize;
+      Application.CreateForm(TCodeScannerForm, CodeScannerForm);
+      CodeApp.FOnLog := CodeScannerForm.Log;
+      CodeScannerForm.OnExecute := CodeApp.Go;
+      Application.Run;
+    end
+    else
+      CodeApp.run;
+  finally
+    CodeApp.Free;
+  end;
 end.
+
+
+
 

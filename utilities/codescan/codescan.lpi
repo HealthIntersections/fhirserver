@@ -81,6 +81,18 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fui"/>
+      </Item>
+      <Item>
+        <PackageName Value="aggpaslcl"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCLBase"/>
+      </Item>
+      <Item>
         <PackageName Value="PascalAST"/>
       </Item>
       <Item>
@@ -95,6 +107,14 @@
       <Unit>
         <Filename Value="..\..\library\fsl\fsl_versions.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="codescanform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CodeScannerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="codeScanForm"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -118,7 +138,18 @@
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
+    <Other>
+      <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>

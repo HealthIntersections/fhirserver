@@ -252,7 +252,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf3"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
               <TrashVariables Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -765,7 +765,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="34">
+    <Exceptions Count="35">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -887,6 +887,9 @@
       <Item34>
         <Name Value="00000011ETerminologySetup"/>
       </Item34>
+      <Item35>
+        <Name Value="0000000eEIdReadTimeout"/>
+      </Item35>
     </Exceptions>
   </Debugging>
 </CONFIG>
