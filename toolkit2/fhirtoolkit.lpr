@@ -53,7 +53,6 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TServerPackageUploadForm, ServerPackageUploadForm);
   Application.CreateForm(TTxServerPropertiesDialog, TxServerPropertiesDialog);
-  Application.CreateForm(TPronounsDialog, PronounsDialog);
   Application.Run;
 end.
 

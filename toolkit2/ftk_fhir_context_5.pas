@@ -203,6 +203,11 @@ begin
   result := TToolkitValidatorContextR5(inherited Link);
 end;
 
+procedure TToolkitValidatorContextR5.Unload;
+begin
+  inherited Unload;
+end;
+
 procedure TToolkitValidatorContextR5.SeeResourceProxy(r: TFhirResourceProxy);
 var
   vs : TFhirValueset;
@@ -330,12 +335,12 @@ begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '');
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
       try
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
-          p := validator.check(system, version, code, false);
+          p := validator.check('code', system, version, code, false);
           try
             res := TValidationResult.create;
             if p.bool('result') then

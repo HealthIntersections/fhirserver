@@ -413,6 +413,7 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -431,6 +432,7 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
     function bool(name : String) : boolean; override;
@@ -458,6 +460,8 @@ type
     function GetInactive : boolean; override;
     procedure SetAbstract(Value: boolean); override;
     procedure SetInactive(Value: boolean); override;
+    function getVersion : String; override;
+    procedure setVersion(Value: String); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
@@ -649,6 +653,7 @@ type
     function getName : String; override;
     function getURL : String; override;
     function checkCompose(place, role : String) : boolean; override;
+    function checkExpansion(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
     function inlineCS : TFHIRValueSetCodeSystemW; override;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; override;
@@ -674,6 +679,7 @@ type
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
     function source : String; override;
+    function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
   end;
 
   { TFHIRLookupOpRequest2 }
@@ -1975,6 +1981,11 @@ begin
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
 end;
 
+procedure TFhirParametersParameter2.addParamUri(name: String; value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRUri.Create(value);
+end;
+
 procedure TFhirParametersParameter2.addParamStr(name: String; value: string);
 begin
   parameter.AddParameter(name).value := TFHIRString.Create(value);
@@ -2097,6 +2108,11 @@ end;
 procedure TFHIRParameters2.addParamCode(name: String; value: string);
 begin
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
+end;
+
+procedure TFHIRParameters2.addParamUri(name: String; value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 procedure TFHIRParameters2.addParamStr(name: String; value: string);
@@ -2655,6 +2671,13 @@ begin
     vs.compose.checkNoModifiers(place, role, []);
 end;
 
+function TFHIRValueSet2.checkExpansion(place, role: String): boolean;
+begin
+  result := vs.expansion <> nil;
+  if result then
+    vs.expansion.checkNoModifiers(place, role, []);
+end;
+
 procedure TFHIRValueSet2.clearDefinition;
 begin
   vs.codeSystem := nil;
@@ -2834,6 +2857,17 @@ end;
 function TFHIRValueSet2.source: String;
 begin
   result := vs.source;
+end;
+
+function TFHIRValueSet2.findContains(systemUri, version, code: String): TFhirValueSetExpansionContainsW;
+var
+  cc : TFhirValueSetExpansionContains;
+begin
+  cc := vs.findContains(systemuri, version, code);
+  if (cc) = nil then
+    result := nil
+  else
+    result := TFhirValueSetExpansionContains2.create(cc.link);
 end;
 
 function TFHIRValueSet2.getName: String;
@@ -3931,6 +3965,16 @@ end;
 procedure TFhirValueSetExpansionContains2.SetInactive(Value: boolean);
 begin
   // nothing
+end;
+
+function TFhirValueSetExpansionContains2.getVersion: String;
+begin
+  result := (Element as TFhirValueSetExpansionContains).version;
+end;
+
+procedure TFhirValueSetExpansionContains2.setVersion(Value: String);
+begin
+  (Element as TFhirValueSetExpansionContains).version := value
 end;
 
 { TFhirConceptMap2 }

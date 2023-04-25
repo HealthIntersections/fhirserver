@@ -630,6 +630,7 @@ type
     procedure addParam(name : String; value : TFHIRObject); overload; virtual; abstract;
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
+    procedure addParamUri(name : String; value : string); virtual; abstract;
   end;
 
   TFHIRParametersW = class (TFHIRXVersionResourceWrapper)
@@ -654,6 +655,7 @@ type
     procedure addParam(name : String; value : TFHIRObject); overload; virtual; abstract;
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
+    procedure addParamUri(name : String; value : string); virtual; abstract;
 
     function parameterList : TFslList<TFhirParametersParameterW>;
   end;
@@ -812,6 +814,7 @@ type
   public
     function link : TFhirValueSetExpansionContainsW; overload;
     function getSystem : String; virtual; abstract;
+    function getVersion: String; virtual; abstract;
     function getCode : String; virtual; abstract;
     function getDisplay : String; virtual; abstract;
     function GetItemWeight : String; virtual; abstract;
@@ -820,11 +823,13 @@ type
     procedure setCode(Value: String); virtual; abstract;
     procedure setDisplay(Value: String); virtual; abstract;
     procedure setSystem(Value: String); virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
     procedure SetItemWeight(Value: String); virtual; abstract;
     procedure SetAbstract(Value: boolean); virtual; abstract;
     procedure SetInactive(Value: boolean); virtual; abstract;
 
     property systemUri : String read GetSystem write SetSystem;
+    property version : String read GetVersion write SetVersion;
     property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
     property abstract_ : boolean read GetAbstract write SetAbstract;
@@ -939,6 +944,7 @@ type
     function source : String; virtual; abstract;
 
     function checkCompose(place, role : String) : boolean; virtual; abstract;
+    function checkExpansion(place, role : String) : boolean; virtual; abstract;
     function imports : TArray<String>; virtual; abstract; // only in R2
     function hasInlineCS : boolean; virtual; abstract;
     function inlineCS : TFHIRValueSetCodeSystemW; virtual; abstract;
@@ -951,6 +957,7 @@ type
     function hasExpansion : boolean; virtual; abstract;
     function expansion : TFhirValueSetExpansionW; virtual; abstract;
     function forceExpansion : TFhirValueSetExpansionW; virtual; abstract;
+    function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; virtual; abstract;
   end;
 
   TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);

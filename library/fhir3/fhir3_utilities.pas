@@ -464,6 +464,7 @@ type
   public
     function context : string;
     function source : string;
+    function findContains(systemUri, version, code : String) : TFHIRValueSetExpansionContains;
   end;
 
   { TFhirValueSetExpansionHelper }
@@ -2988,7 +2989,7 @@ end;
 
 procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = nil);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
@@ -4055,7 +4056,32 @@ begin
   end;
 end;
 
+function findContainsInList(list : TFhirValueSetExpansionContainsList; systemUri, version, code: String): TFHIRValueSetExpansionContains;
+var
+  cc, t : TFhirValueSetExpansionContains;
+begin
+  for cc in list do
+  begin
+    if (systemUri = cc.system) and (code = cc.code) and ((version = '') or (version = cc.version)) then
+      exit(cc);
+    if (cc.hasContainsList) then
+    begin
+      t := findContainsInList(cc.containsList, systemUri, version, code);
+      if (t <> nil) then
+        exit(t);
+    end;
+  end;
+  result := nil;
+end;
 
+function TFhirValueSetHelper.findContains(systemUri, version, code: String): TFHIRValueSetExpansionContains;
+begin
+  if Expansion = nil then
+    result := nil
+  else
+    result := findContainsInList(Expansion.containsList, systemUri, version, code);
+
+end;
 function gen(t : TFhirType):String;
 begin
   if (t = nil) then
@@ -4957,19 +4983,20 @@ procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exemp
 var
   ext : TFHIRExtension;
 begin
-  if length(exempt) > 0 then
-  begin
-    for ext in modifierExtensionList do
-      if not StringArrayExistsInsensitive(exempt, ext.url) then
-        raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
-  end
-  else if modifierExtensionList.Count > 0 then
-    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+  if hasModifierExtensionList then
+    if length(exempt) > 0 then
+    begin
+      for ext in modifierExtensionList do
+        if not StringArrayExistsInsensitive(exempt, ext.url) then
+          raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+    end
+    else
+      raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
 procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
