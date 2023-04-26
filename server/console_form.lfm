@@ -3127,11 +3127,13 @@ object MainConsoleForm: TMainConsoleForm
                   'Australia'
                   'Belgium'
                   'Canada'
-                  'Spanish'
+                  'Spain'
                   'Denmark'
                   'Netherlands'
                   'Sweden'
+                  'Switzerland'
                   'UK'
+                  'IPS Terminology'
                   'Custom Combined'
                 )
                 OnChange = cbxEditionChange

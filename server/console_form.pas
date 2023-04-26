@@ -3110,12 +3110,14 @@ begin
     2 { Australia } : result := '32506021000036107';
     3 { Belgium } : result := '11000172109';
     4 { Canada } : result := '20611000087101';
-    5 { Spanish } : result := '449081005';
+    5 { Spain } : result := '449081005';
     6 { Denmark } : result := '554471000005108';
     7 { Netherlands } : result := '11000146104';
     8 { Sweden } : result := '45991000052106';
-    9 { UK } : result := '999000041000000102';
-    10 { } : result := inttostr(COMBINED_MODULE_ID);
+    9 { Switzerland } : result := '2011000195101';
+    10 { UK } : result := '83821000000107';
+    11 { IPS Terminology } : result := '827022005';
+    12 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
 

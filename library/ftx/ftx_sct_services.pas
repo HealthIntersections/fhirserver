@@ -31,17 +31,18 @@ POSSIBILITY OF SUCH DAMAGE.
 {$I fhir.inc}
 
 // URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
-//  intl: 900000000000207008
-//  us:  731000124108
-//  AU: 32506021000036107
-//  Spanish: 449081005
-//  Danish: 554471000005108
-//  Dutch: 11000146104
-//  Swedish: 45991000052106
-//  UK: 999000041000000102
-//  CA: 20611000087101
-//  BE: 11000172109
-
+//  International: 900000000000207008
+//  US:  731000124108
+//  Australia: 32506021000036107
+//  Belgium: 11000172109
+//  Canada: 20611000087101
+//  Spain: 449081005
+//  Denmark: 554471000005108
+//  Netherlands: 11000146104
+//  Sweden: 45991000052106
+//  Switzerland: 2011000195101
+//  UK: 83821000000107
+//  IPS: 827022005
 
 // my combination
 
@@ -835,13 +836,18 @@ end;
 function TSnomedStrings.AddString(const s: String): Cardinal;
 var
   i : word;
+  b : TArray<Byte>;
 begin
   if Length(s) > 65535 Then
     raise ETerminologySetup.Create('Snomed Description too long: '+String(s));
   result := FBuilder.Length;
-  i := length(s);
+  if FIsUTF16 then
+    b := TEncoding.BigEndianUnicode.GetBytes(s)
+  else
+    b := TEncoding.UTF8.GetBytes(s);
+  i := length(b);
   FBuilder.AddWord(i);
-  FBuilder.AddString1Byte(s);
+  FBuilder.Append(b);
 end;
 
 procedure TSnomedStrings.clear;
@@ -2212,15 +2218,21 @@ begin
   else if FEditionId = '20611000087101' then
     result := 'SNOMED CT Canada'
   else if FEditionId = '449081005' then
-    result := 'Spanish SNOMED CT '
+    result := 'SNOMED CT Spain'
   else if FEditionId = '554471000005108' then
     result := 'SNOMED CT Denmark'
   else if FEditionId = '11000146104' then
     result := 'SNOMED CT Netherlands'
   else if FEditionId = '45991000052106' then
     result := 'SNOMED CT Sweden'
-  else if FEditionId = '999000041000000102' then
+  else if FEditionId = '83821000000107' then
     result := 'SNOMED CT UK'
+  else if FEditionId = '2011000195101' then
+    result := 'SNOMED CT Switzerland'
+  else if FEditionId = '11000172109' then
+    result := 'SNOMED CT Belgium'
+  else if FEditionId = '827022005' then
+    result := 'SNOMED CT IPS Terminology'
   else if FEditionId = inttostr(COMBINED_MODULE_ID) then
     result := 'Combined View';
   FEditionName := result;
@@ -5403,6 +5415,10 @@ begin
     result := 5
   else if (s = 'da') then
     result := 6
+  else if (s = 'de') then
+    result := 7
+  else if (s = 'it') then
+    result := 8
   else
     raise ETerminologyError.create('Unknown SCT Lang "'+s+'"', itInvalid);
 end;
@@ -5416,6 +5432,8 @@ begin
     4 : result := 'es';
     5 : result := 'sv';
     6 : result := 'da';
+    7 : result := 'de';
+    8 : result := 'it';
   else
     result := '??';
   end;
