@@ -957,7 +957,10 @@ begin
               op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
             end
             else
+            begin
               FLog := 'found';
+              result := true;
+            end;
             listDisplays(displays, cs, ctxt);
           finally
             cs.Close(ctxt);
@@ -1292,6 +1295,8 @@ begin
             cc := c.systemUri+'#'+c.code
           else
             cc := c.systemUri+'|'+c.version+'#'+c.code;
+          if (c.code = '55751-2') then
+            cc := cc + '!';
           CommaAdd(codelist, cc);
           v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
           if not v and (message <> '') then
