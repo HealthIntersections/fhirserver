@@ -821,7 +821,7 @@ begin
   else
     result := passes(cds.display.AsString);
   for cd in cds.designations do
-    if passes(cd.value.AsString) then
+    if (cd.value <> nil) and passes(cd.value.AsString) then
       exit(true);
 end;
 

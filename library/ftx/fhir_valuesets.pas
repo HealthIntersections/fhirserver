@@ -1288,8 +1288,11 @@ begin
           else
             path := issuePath;;
           list.clear;
-          cc := ',{'+c.systemUri+'}'+c.code;
-          codelist := codelist + cc;
+          if (c.version = '') then
+            cc := c.systemUri+'#'+c.code
+          else
+            cc := c.systemUri+'|'+c.version+'#'+c.code;
+          CommaAdd(codelist, cc);
           v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
           if not v and (message <> '') then
             msg(message);
@@ -1308,8 +1311,9 @@ begin
             begin
               m := 'The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
               msg(m);
-              op.addIssue(isWarning, cause, path, m);
-            end;
+              op.addIssue(isWarning, itNotFound, path, m);
+            end
+            else
             if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
             begin
               dc := list.displayCount(FParams.displayLanguages);
@@ -1402,9 +1406,9 @@ begin
         if (not ok) then
         begin
           if code.codingCount = 1 then
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, [FValueSet.url])
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, [FValueSet.url, codelist])
           else
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, [FValueSet.url]);
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, [FValueSet.url, codelist]);
           msg(m);
           op.addIssue(isError, itInvalid, issuePath, m);
           if cause = itNull then

@@ -122,6 +122,7 @@ begin
   inherited Create(languages);
   FList := TFslList<TACIRConcept>.create;
   FMap := TFslMap<TACIRConcept>.create('tx.acir');
+  FMap.defaultValue := nil;
 
   Load;
 end;
