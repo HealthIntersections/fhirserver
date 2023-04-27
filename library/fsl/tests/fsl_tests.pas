@@ -66,6 +66,7 @@ Type
   published
     procedure testSemVer;
     procedure testUnicode;
+    procedure testStringSorting;
   end;
 
   TFslGenericsTests = class (TFslTestCase)
@@ -724,6 +725,21 @@ begin
 
   s := TEncoding.UTF8.GetString(bu1);
   AssertTrue(s = '背景 发现是一个原子型临床观察指标');
+end;
+
+procedure TFslUtilitiesTestCases.testStringSorting;
+var
+  s : String;
+  i, j : integer;
+begin
+  s := ' "#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  for i := 2 to length(s) do
+    for j := 1 to i - 1 do
+      AssertTrue(AnsiCompareStr(s[j], s[i]) = -1, s[j]+' < '+s[i]);
+  s := ' "#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~';
+  for i := 2 to length(s) do
+    for j := 1 to i - 1 do
+      AssertTrue(CompareText(s[j], s[i]) = -1, s[j]+' < '+s[i]);
 end;
 
 { TXmlParserTest2 }
