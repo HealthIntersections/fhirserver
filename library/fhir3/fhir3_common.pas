@@ -420,6 +420,7 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -464,12 +465,14 @@ type
     procedure addParamStr(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
     function bool(name : String) : boolean; override;
     function str(name : String) : String; override;
     function has(name : String) : boolean; override;
     function obj(name : String) : TFHIRObject; override;
     function getParameter(name: String): TFhirParametersParameterW;  override;
+    function names : String; override;
   end;
 
   { TFhirExpansionProfileFixedVersion3 }
@@ -495,6 +498,7 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -2107,6 +2111,11 @@ begin
   parameter.AddParameter(name).value := TFHIRString.Create(value);
 end;
 
+procedure TFhirParametersParameter3.addParamUri(name, value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRUri.Create(value);
+end;
+
 function TFhirParametersParameter3.getParameterParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
@@ -2277,7 +2286,8 @@ begin
     result := ts.commaText;
   finally
     ts.free;
-  end; end;
+  end;
+end;
 
 function TFHIRParameters3.has(name: String): boolean;
 begin
@@ -2352,6 +2362,11 @@ begin
 end;
 
 procedure TFHIRExpansionProfile3.addParamStr(name: String; value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFHIRExpansionProfile3.addParamUri(name, value: string);
 begin
   raise EFHIRException.create('Expansion Profile is read only');
 end;
@@ -2436,6 +2451,28 @@ begin
     result := false;
 end;
 
+function TFHIRExpansionProfile3.names: String;
+var
+  ts : TStringList;
+  t : TFhirParametersParameterW;
+begin
+  if FList = nil then
+    populateList;
+  ts := TStringList.create;
+  try
+    ts.sorted := true;
+    ts.duplicates := dupIgnore;
+    for t in FList do
+      if (t.value = nil) then
+        ts.add(t.name+':nil')
+      else
+        ts.add(t.name+':'+t.value.fhirType);
+    result := ts.commaText;
+  finally
+    ts.free;
+  end;
+end;
+
 function TFHIRExpansionProfile3.obj(name: String): TFHIRObject;
 begin
 //  if has(name) then
@@ -2512,6 +2549,11 @@ begin
 end;
 
 procedure TFhirExpansionProfileFixedVersion3.addParamStr(name: String; value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParamUri(name, value: string);
 begin
   raise EFHIRException.create('Expansion Profile is read only');
 end;

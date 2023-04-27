@@ -421,6 +421,7 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    procedure addParamUri(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -2081,6 +2082,11 @@ end;
 procedure TFhirParametersParameter4.addParamStr(name: String; value: string);
 begin
   parameter.AddParameter(name).value := TFHIRString.Create(value);
+end;
+
+procedure TFhirParametersParameter4.addParamUri(name, value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 function TFhirParametersParameter4.getParameterParameter(name: String): TFhirParametersParameterW;
