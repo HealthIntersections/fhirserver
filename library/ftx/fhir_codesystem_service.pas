@@ -1259,7 +1259,9 @@ begin
     try
       ok := rx.isMatch(c.code);
     finally
+      {$IFDEF FPC}
       rx.free;
+      {$ENDIF}
     end;
     //ok := c.code.length = 5;
     if ok then
