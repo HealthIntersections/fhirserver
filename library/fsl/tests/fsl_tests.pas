@@ -178,6 +178,13 @@ Type
     constructor Create; override;
   end;
 
+  { TCSVParserTests }
+
+  TCSVParserTests  = class (TFslTestCase)
+  published
+    procedure testCSV;
+  end;
+
   { TXmlParserTest2 }
 
   TXmlParserTest2 = Class (TFslTestCase)
@@ -700,6 +707,38 @@ procedure registerTests;
 
 implementation
 
+{ TCSVParserTests }
+
+procedure TCSVParserTests.testCSV;
+var
+  csv : TFslCSVExtractor;
+  items : TFslStringList;
+begin
+  csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead));
+  try
+    csv.IgnoreWhitespace := true;
+    items := TFslStringList.create;
+    try
+      csv.consumeEntries(items);
+      AssertEqual(items[0], 'Column 1', items[0]+' = Column 1');
+      AssertEqual(items[1], 'Column 2', items[1]+' = Column 2');
+      AssertEqual(items[2], 'Column 3', items[2]+' = Column 3');
+      csv.consumeEntries(items);
+      AssertEqual(items[0], 'Cell 1', items[0]+' = Cell 1');
+      AssertEqual(items[1], '', items[1]+' = ''''');
+      AssertEqual(items[2], 'Column 3', items[2]+' = Column 3');
+      csv.consumeEntries(items);
+      AssertEqual(items[0], 'Cell 2" part 1', items[0]+' = Cell 2" part 1');
+      AssertEqual(items[1], '', items[1]+' = ''''');
+      AssertEqual(items[2], '血流速度.收缩期.最大值', items[2]+' = 血流速度.收缩期.最大值');
+    finally
+      items.free;
+    end;
+  finally
+    csv.free;
+  end;
+end;
+
 { TFslUtilitiesTestCases }
 
 procedure TFslUtilitiesTestCases.testSemVer;
@@ -727,19 +766,67 @@ begin
   AssertTrue(s = '背景 发现是一个原子型临床观察指标');
 end;
 
-procedure TFslUtilitiesTestCases.testStringSorting;
+
+procedure injectA(ch : char; var s : String);
 var
-  s : String;
-  i, j : integer;
+  i, c : integer;
 begin
-  s := ' "#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-  for i := 2 to length(s) do
-    for j := 1 to i - 1 do
-      AssertTrue(AnsiCompareStr(s[j], s[i]) = -1, s[j]+' < '+s[i]);
-  s := ' "#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~';
-  for i := 2 to length(s) do
-    for j := 1 to i - 1 do
-      AssertTrue(CompareText(s[j], s[i]) = -1, s[j]+' < '+s[i]);
+  for i := 1 to length(s) do
+  begin
+    c := AnsiCompareStr(ch, s[i]);
+    if (c = 0) then
+      exit
+    else if (c = -1) then
+    begin
+      s.Insert(i, ch);
+      exit;
+    end;
+  end;
+  s := s + ch;
+end;
+
+procedure injectPI(caseSensitive : boolean; ch : char; var s : String);
+var
+  i, c : integer;
+begin
+  for i := 1 to length(s) do
+  begin
+    c := PISortCompare(ch, s[i], caseSensitive);
+    if (c = 0) then
+      exit
+    else if (c = -1) then
+    begin
+      s.Insert(i, ch);
+      exit;
+    end;
+  end;
+  s := s + ch;
+end;
+
+function buildPI(caseSensitive : boolean) : String;
+var
+  i : integer;
+begin
+  result := '';
+  for i := 32 to 126 do
+    injectPI(caseSensitive, chr(i), result);
+end;
+
+procedure TFslUtilitiesTestCases.testStringSorting;
+begin
+  AssertTrue(PISortCompare('ss', 'tt') = -1, 'PISortCompare(ss, tt) = -1');
+  AssertTrue(PISortCompare('tt', 'ss') = 1, 'PISortCompare(tt, ss) = 1');
+  AssertTrue(PISortCompare('tt', 'tt') = 0, 'PISortCompare(tt, tt) = 0');
+  AssertTrue(PISortCompare('tta', 'tt') = 1, 'PISortCompare(tta, tt) = 1');
+  AssertTrue(PISortCompare('tt', 'tt:') = -1, 'PISortCompare(tt, tt) = -1');
+  AssertTrue(PISortCompare('TT', 'tt') = -1, 'PISortCompare(TT, tt) = -1');
+  AssertTrue(PISortCompare('tt', 'TT') = 1, 'PISortCompare(tt, TT) = 1');
+  AssertTrue(PISortCompare('TT', 'TT') = 0, 'PISortCompare(TT, TT) = 0');
+  AssertTrue(PISortCompare('TT', 'tt', true) = 0, 'PISortCompare(TT, tt, true) = 0');
+  AssertTrue(PISortCompare('tt', 'TT', true) = 0, 'PISortCompare(tt, TT, true) = 0');
+  AssertTrue(PISortCompare('tt', 'tt', true) = 0, 'PISortCompare(tt, tt, true) = 0');
+  AssertEquals('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
+  AssertEquals('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
 end;
 
 { TXmlParserTest2 }
@@ -4896,6 +4983,7 @@ begin
   {$ENDIF}
 
   RegisterTest('Formats.XML Tests', TXmlParserTests.create);
+  RegisterTest('Formats.CSV Tests', TCSVParserTests.suite);
   RegisterTest('Formats.XML Tests', TXmlParserTest2.Suite);
   RegisterTest('Formats.XML Utility Tests', TXmlUtilsTest.Suite);
   RegisterTest('Formats.XPath Tests', TXPathParserTests.create);

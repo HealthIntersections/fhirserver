@@ -41,9 +41,9 @@ Const
   FLAG_LONG_COMMON = 1;
   FLAG_LONG_RELATED = 2;
   STEP_COUNT = 100;
-  ESTIMATED_CONCEPTS = 83000;
-  ESTIMATED_HEIRACHY = 85000;
-  ESTIMATED_ANSWERS = 47000;
+  ESTIMATED_CONCEPTS = 100000;
+  ESTIMATED_HEIRACHY = 100000;
+  ESTIMATED_ANSWERS = 50000;
 
 
 Type
@@ -259,7 +259,6 @@ Type
     FLangs : TLoincLanguages;
 
     FStrings : TStringList;
-    FUnits : TStringList;
     FVersion: String;
     FWordList : TStringList;
     FStemList : TStringList;
@@ -342,7 +341,7 @@ end;
 
 function TCode.Compare(pA, pB: Pointer): Integer;
 begin
-  result := CompareStr(TCode(pA).Code, TCode(pB).Code);
+  result := PISortCompare(TCode(pA).Code, TCode(pB).Code);
 End;
 
 Function MakeSafeFileName(sName : String; newkey : Integer):String;
@@ -455,20 +454,20 @@ Const
   FLD_SURVEY_QUEST_TEXT =                     FLD_EXMPL_ANSWERS + 1;
   FLD_SURVEY_QUEST_SRC =                      FLD_SURVEY_QUEST_TEXT + 1;
   FLD_UNITSREQUIRED =                         FLD_SURVEY_QUEST_SRC + 1;
-  FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
-  FLD_RELATEDNAMES2 =                         FLD_SUBMITTED_UNITS + 1;
+  //FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
+  FLD_RELATEDNAMES2 =                         FLD_UNITSREQUIRED + 1;
   FLD_SHORTNAME =                             FLD_RELATEDNAMES2 + 1;
   FLD_ORDER_OBS =                             FLD_SHORTNAME + 1;
-  FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
-  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_CDISC_COMMON_TESTS + 1;
+  //FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
+  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_ORDER_OBS + 1;
   FLD_EXTERNAL_COPYRIGHT_NOTICE =             FLD_HL7_FIELD_SUBFIELD_ID + 1;
   FLD_EXAMPLE_UNITS =                         FLD_EXTERNAL_COPYRIGHT_NOTICE + 1;
   FLD_LONG_COMMON_NAME =                      FLD_EXAMPLE_UNITS + 1;
-  FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
+  //FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
 //  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
-  FLD_EXAMPLE_UCUM_UNITS =                    FLD_UnitsAndRange + 1;
-  FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
-  FLD_STATUS_REASON =                         FLD_EXAMPLE_SI_UCUM_UNITS + 1;
+  FLD_EXAMPLE_UCUM_UNITS =                    FLD_LONG_COMMON_NAME + 1;
+  //FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
+  FLD_STATUS_REASON =                         FLD_EXAMPLE_UCUM_UNITS + 1;
   FLD_STATUS_TEXT =                           FLD_STATUS_REASON + 1;
   FLD_CHANGE_REASON_PUBLIC =                  FLD_STATUS_TEXT + 1;
   FLD_COMMON_TEST_RANK =                      FLD_CHANGE_REASON_PUBLIC + 1;
@@ -536,13 +535,13 @@ begin
   FAnswerMap := TFslMap<TAnswer>.create('loinc.answers2');
   oHeirarchy := THeirarchyEntryList.Create;
   Try
-    oComps.SortedByName;
-    oProps.sortedByName;
-    oTime.sortedByName;
-    oSystem.sortedByName;
-    oScale.sortedByName;
-    oMethod.sortedByName;
-    oClass.sortedByName;
+    oComps.SortedByNamePI;
+    oProps.SortedByNamePI;
+    oTime.SortedByNamePI;
+    oSystem.SortedByNamePI;
+    oScale.SortedByNamePI;
+    oMethod.SortedByNamePI;
+    oClass.SortedByNamePI;
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
     begin
       oSubsets[a] := TCodeList.create;
@@ -565,7 +564,6 @@ begin
 
         while csv.More do
         begin
-          items.Clear;
           csv.ConsumeEntries(items);
           if items.count > 0 then
           begin
@@ -1012,7 +1010,6 @@ begin
       i := 0;
       while csv.More do
       begin
-        items.Clear;
         csv.ConsumeEntries(items);
         if items.count > 0 then
         begin
@@ -1039,12 +1036,9 @@ Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roo
 Begin
   FStrings := TStringList.Create;
   FStrings.Sorted := True;
-  FUnits := TStringList.Create;
-  FUnits.Sorted := true;
   try
     result := LoadLOINCFiles(folder, props, roots, subsets);
   Finally
-    FUnits.Free;
     FStrings.Free;
   End;
 End;
@@ -1107,7 +1101,7 @@ begin
     begin
       FAnswers.GetEntry(i, code, desc, refs);
       s := FDesc.GetEntry(code, lang);
-      if not((ls = '') or (AnsiCompareText(ls, s) < 0)) then
+      if not((ls = '') or (PISortCompare(ls, s) < 0)) then
         raise ETerminologySetup.create('out of order');
       ls := s;
     end;
@@ -1363,22 +1357,26 @@ var
   csv : TFslCSVExtractor;
   code : TLoincLanguageCodes;
   s, p : String;
-  j : integer;
+  j, fp, fs : integer;
+
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
   items := TFslStringList.create;
   f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead);
   try
-    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
+    fs := f.size;
+    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, fs);
     Try
       csv.ConsumeEntries(items);
       j := 0;
       while csv.More do
       begin
         inc(j);
-        if j mod 100 = 0 then
-          Progress(i, f.Position / f.Size, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(f.Position, f.Size));
-        items.Clear;
+        if j mod 1000 = 0 then
+        begin
+          fp := csv.progress;
+          Progress(i, fp / fs, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(fp, fs));
+        end;
         csv.ConsumeEntries(items);
         if items.count > 0 then
         begin
@@ -1543,12 +1541,12 @@ end;
 
 function THeirarchyEntryList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
+  Result := PISortCompare(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
 end;
 
 function THeirarchyEntryList.CompareByText(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
+  Result := PISortCompare(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
 end;
 
 function THeirarchyEntryList.FindByCode(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
@@ -1634,7 +1632,7 @@ end;
 
 function TCodeList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(TCode(pA).Code, TCode(pB).Code);
+  Result := PISortCompare(TCode(pA).Code, TCode(pB).Code);
 end;
 
 function TCodeList.FindByCode(entry: TCode; out iIndex: Integer): Boolean;

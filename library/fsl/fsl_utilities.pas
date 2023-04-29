@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$I fhir.inc}
 
 Interface
@@ -231,6 +230,10 @@ Function StringCompareInsensitive(Const sA, sB : String) : Integer; Overload;
 Function StringCompareSensitive(Const sA, sB : String) : Integer; Overload;
 Function StringCompareInsensitive(Const sA, sB : String; Const iLength : Integer) : Integer; Overload;
 Function StringCompareSensitive(Const sA, sB : String; Const iLength : Integer) : Integer; Overload;
+
+// All the other string comparison routines have variable behavior depending on the platform.
+// This string comparison routine is consistent across all platforms - suitable for sorting persistent/shared content
+Function PISortCompare(const sA, sB : String; caseInsensitive : boolean = false) : integer;
 
 Function StringEquals(Const sA, sB : String) : Boolean; Overload;
 Function StringEquals(Const sA, sB : String; Const iLength : Integer) : Boolean; Overload;
@@ -3159,7 +3162,7 @@ End;
 
 Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString; overload;
 Begin
-  SetString(Result, PAnsiChar(Integer(pData) + iPosition), iLength - iPosition);
+  SetString(Result, PAnsiChar(NativeUInt(pData) + iPosition), iLength - iPosition);
 End;
 
 
@@ -4553,6 +4556,35 @@ Function StringEqualsInsensitive(Const sA, sB : String) : Boolean;
 Begin
   Result := StringCompareInsensitive(sA, sB) = 0;
 End;
+
+function PISortCompare(const sA, sB: String; caseInsensitive: boolean): integer;
+var
+  i : integer;
+  c1, c2 : char;
+  function cmp(a, b : integer) : integer;
+  begin
+    if (a = b) then
+      result := 0
+    else if (a < b) then
+      result := -1
+    else
+      result := 1;
+  end;
+begin
+  for i := 1 to IntegerMin(length(sA), length(sB)) do
+  begin
+    c1 := sA[i];
+    c2 := sB[i];
+    if (caseInsensitive) then
+    begin
+      c1 := upcase(c1);
+      c2 := upcase(c2);
+    end;
+    if (c1 <> c2) then
+      exit(cmp(ord(c1), ord(c2)));
+  end;
+  result := cmp(length(sA), length(sB));
+end;
 
 Function StringEquals(Const sA, sB : String) : Boolean;
 Begin

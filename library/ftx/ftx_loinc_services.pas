@@ -92,7 +92,6 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-
     procedure GetEntry(iIndex : byte; var lang, country : String);
     function count : integer;
 
@@ -139,38 +138,38 @@ const
 Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
   TLoincWords = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
   protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-    Public
-      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
-      Function Count : Integer;
-      Function GetString(iIndex : Cardinal) : Cardinal;
+   function sizeInBytesV(magic : integer) : cardinal; override;
+  Public
+    Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
+    Function Count : Integer;
+    Function GetString(iIndex : Cardinal) : Cardinal;
 
-      Procedure StartBuild;
-      Procedure AddWord(index : Cardinal; Flags : Byte);
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Procedure AddWord(index : Cardinal; Flags : Byte);
+    Procedure DoneBuild;
   End;
 
   // stem word index. Every word is 4 bytes - a 4 byte index into the strings
   TLoincStems = class (TFslObject)
-    Private
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
+  Private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
-   Public
-      Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
-      Function Count : Integer;
-      Function GetString(iIndex : Cardinal) : Cardinal;
+  Public
+    Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
+    Function Count : Integer;
+    Function GetString(iIndex : Cardinal) : Cardinal;
 
-      Procedure StartBuild;
-      Procedure AddStem(index : Cardinal);
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Procedure AddStem(index : Cardinal);
+    Procedure DoneBuild;
   End;
 
 
@@ -193,21 +192,21 @@ Type
 
   // 3. a list of concepts
   TLOINCConcepts = class (TFslObject)
-    Private
-      FRefs:TLOINCReferences; // no own
-      FMaster : TBytes;
-      FLength : Cardinal;
-      FBuilder : TFslBytesBuilder;
-      function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
+  Private
+    FRefs:TLOINCReferences; // no own
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TFslBytesBuilder;
+    function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
-    Public
-      constructor Create(refs : TLOINCReferences);
-      Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
+  Public
+    constructor Create(refs : TLOINCReferences);
+    Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
-      Procedure StartBuild;
-      Function AddConcept(iName : Cardinal; childByLang : boolean; iChildren : Cardinal; iConcepts : Cardinal) : Cardinal;
-      Procedure DoneBuild;
+    Procedure StartBuild;
+    Function AddConcept(iName : Cardinal; childByLang : boolean; iChildren : Cardinal; iConcepts : Cardinal) : Cardinal;
+    Procedure DoneBuild;
 
   End;
 
@@ -837,7 +836,7 @@ begin
     begin
       I := (L + H) shr 1;
       sF := memU8toString(FMaster, i*FReclength, FCodeLength);
-      C := CompareStr(sF, s);
+      C := PISortCompare(sF, s);
       if C < 0 then L := I + 1 else
       begin
         H := I - 1;
@@ -1873,7 +1872,7 @@ begin
   while L <= H do
   begin
     I := (L + H) shr 1;
-    C := CompareStr(FDesc.GetEntry(FStems.GetString(i), lang), s);
+    C := PISortCompare(FDesc.GetEntry(FStems.GetString(i), lang), s);
     if C < 0 then L := I + 1 else
     begin
       H := I - 1;
@@ -2765,7 +2764,7 @@ begin
       I := (L + H) shr 1;
       Move(FMaster[i*28], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := CompareStr(s, sCode);
+      C := PISortCompare(s, sCode);
       if C < 0 then
         L := I + 1 
       else
@@ -2848,7 +2847,7 @@ begin
         writeln('err');
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := AnsiCompareStr(s, sCode);
+      C := PISortCompare(s, sCode);
       if C < 0 then L := I + 1 else
       begin
         H := I - 1;
@@ -2867,7 +2866,7 @@ begin
     begin
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := AnsiCompareStr(s, sCode);
+      C := PISortCompare(s, sCode);
       if (c = 0) then
       begin
         iIndex := i;

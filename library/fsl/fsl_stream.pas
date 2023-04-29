@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$I fhir.inc}
 
 Interface
@@ -831,6 +830,8 @@ Type
     procedure Close; override;
   end;
 
+  { TFslStreamReader }
+
   TFslStreamReader = class(TFslTextReader)
   private
     FBufferedData: TCharArray;
@@ -873,6 +874,7 @@ Type
     property CurrentEncoding: TEncoding read FEncoding;
     property EndOfStream: Boolean read GetEndOfStream;
     function percent : integer;
+    function progress : integer;
   end;
 
   TFslFormatter = Class(TFslStreamAdapter)
@@ -951,6 +953,8 @@ Type
 
   TFslTextFormatterClass = Class Of TFslTextFormatter;
 
+  { TFslTextExtractor }
+
   TFslTextExtractor = Class(TFslStreamReader)
     Private
       FLine : Integer;
@@ -1008,19 +1012,35 @@ Type
   EFslTextExtractor = Class(EFslExtractor);
 
 
-  TFslCSVExtractor = Class(TFslTextExtractor)
+  { TFslCSVExtractor }
+
+  TFslCSVExtractor = Class(TFslStreamReader)
   Private
     FSeparator : Char;
     FQuote : Char;
     FHasQuote : Boolean;
     FIgnoreWhitespace: boolean;
+
+    FEntry : TStringBuilder;
+    FCache : Char;
+    FReadBuffer: SysUtils.TCharArray;
+
+    procedure SkipCharacterSet(Const aTokenSet : TCharSet);
+    Function NextCharacter : Char;
+    Function ConsumeCharacter : Char; Overload; Virtual;
+    Function ConsumeCharacter(Const cToken : Char) : Char; Overload;
+
+    Function ConsumeUntilCharacterSet(Const aTokenSet : TCharSet) : String;
+
   Public
     constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure ConsumeEntries(oEntries : TFslStringList); Overload;
     Procedure ConsumeEntries; Overload;
     Function ConsumeEntry : String;
     Function MoreEntries : Boolean;
+    function More : boolean;
 
     Property Separator : Char Read FSeparator Write FSeparator;
     Property Quote : Char Read FQuote Write FQuote;
@@ -3560,18 +3580,82 @@ End;  { Constructor TAfsResourceManager.Create }
 
 {$ENDIF}
 
-
-Constructor TFslCSVExtractor.Create;
+constructor TFslCSVExtractor.Create;
 Begin
   Inherited;
-
+  FEntry := TStringBuilder.create(2048);
   FSeparator := ',';
   FQuote := '"';
   FHasQuote := True;
+  SetLength(FReadBuffer, 1);
 End;
 
 
-Procedure TFslCSVExtractor.ConsumeEntries(oEntries : TFslStringList);
+destructor TFslCSVExtractor.Destroy;
+Begin
+  FEntry.Free;
+  Inherited;
+End;
+
+procedure TFslCSVExtractor.SkipCharacterSet(const aTokenSet: TCharSet);
+begin
+  While More And CharInSet(NextCharacter, aTokenSet) Do
+    ConsumeCharacter;
+end;
+
+function TFslCSVExtractor.More: boolean;
+begin
+  Result := Not Inherited EndOfStream Or (FCache <> #0);
+end;
+
+function TFslCSVExtractor.NextCharacter: Char;
+Begin
+  If FCache = #0 Then
+  Begin
+    if Read(FReadBuffer, 0, 1) = 1 Then
+      result := FReadBuffer[0]
+    Else
+      result := #0;
+    FCache := Result;
+  End
+  Else
+  Begin
+    Result := FCache;
+  End;
+end;
+
+function TFslCSVExtractor.ConsumeCharacter: Char;
+begin
+  Result := NextCharacter;
+  FCache := #0;
+//  CacheRemove(Result);
+end;
+
+function TFslCSVExtractor.ConsumeCharacter(const cToken: Char): Char;
+  Function ToCharacter(Const cChar : Char) : String;
+  Begin
+    If (cChar >= ' ') And (cChar <= #127) Then
+      Result := cChar
+    Else
+      Result := '$' + inttohex(Word(cChar), 4);
+  End;
+
+Begin
+  If Not StringEquals(cToken, NextCharacter) Then
+    RaiseError('Consume(Char)', StringFormat('Expected token ''%s'' but found token ''%s''', [ToCharacter(cToken), ToCharacter(NextCharacter)]));
+
+  Result := ConsumeCharacter;
+end;
+
+function TFslCSVExtractor.ConsumeUntilCharacterSet(const aTokenSet: TCharSet): String;
+begin
+  FEntry.Clear;
+  While More And Not CharInSet(NextCharacter, aTokenSet) Do
+    FEntry.Append(ConsumeCharacter);
+  Result := FEntry.ToString;
+end;
+
+procedure TFslCSVExtractor.ConsumeEntries(oEntries: TFslStringList);
 Var
   sEntry : String;
 Begin
@@ -3580,9 +3664,9 @@ Begin
 
   // Consume all preceeding whitespace.
   if IgnoreWhitespace then
-    ConsumeWhileCharacterSet(setControls + setVertical + setHorizontal)
+    skipCharacterSet(setControls + setVertical + setHorizontal)
   else
-    ConsumeWhileCharacterSet(setVertical);
+    skipCharacterSet(setVertical);
 
   While MoreEntries Do
   Begin
@@ -3594,13 +3678,13 @@ Begin
 End;
 
 
-Function TFslCSVExtractor.ConsumeEntry : String;
+function TFslCSVExtractor.ConsumeEntry: String;
 Var
   bMore : Boolean;
 Begin
   // strip all leading whitespace.
   if IgnoreWhitespace then
-    ConsumeWhileCharacterSet(setControls + setHorizontal);
+    skipCharacterSet(setControls + setHorizontal);
 
   If More Then
   Begin
@@ -3617,7 +3701,7 @@ Begin
 
       ConsumeCharacter(FQuote);
 
-      Result := '';
+      FEntry.clear;
       bMore := True;
       While bMore And More Do
       Begin
@@ -3628,17 +3712,16 @@ Begin
           bMore := More And (NextCharacter = FQuote);
 
           If bMore Then
-            Result := Result + ConsumeCharacter
-          Else
-            ProduceString(FQuote);
+            FEntry.append(ConsumeCharacter);
         End
         Else
         Begin
-          Result := Result + ConsumeCharacter;
+          FEntry.append(ConsumeCharacter);
         End;
       End;
+      Result := FEntry.ToString;
 
-      If More Then
+      If bMore and More Then
         ConsumeCharacter(FQuote);
     End;
 
@@ -3646,7 +3729,7 @@ Begin
     Begin
       // strip trailing whitespace.
       if IgnoreWhitespace then
-        ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
+        skipCharacterSet(setControls + setHorizontal - setVertical);
 
       If More And (NextCharacter = FSeparator) Then
       Begin
@@ -3655,7 +3738,7 @@ Begin
 
         // strip trailing non-newline whitespace after separator.
       if IgnoreWhitespace then
-        ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
+        skipCharacterSet(setControls + setHorizontal - setVertical);
       End;
     End;
   End
@@ -3666,13 +3749,13 @@ Begin
 End;
 
 
-Procedure TFslCSVExtractor.ConsumeEntries;
+procedure TFslCSVExtractor.ConsumeEntries;
 Begin
   ConsumeEntries(Nil);
 End;
 
 
-Function TFslCSVExtractor.MoreEntries : Boolean;
+function TFslCSVExtractor.MoreEntries: Boolean;
 Begin
   Result := More And Not CharInSet(NextCharacter, setVertical);
 End;
@@ -4315,7 +4398,8 @@ begin
   end;
 end;
 
-function TFslStreamReader.doDetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
+function TFslStreamReader.DoDetectBOM(var Encoding: TEncoding; Buffer: TBytes
+  ): Integer;
 var
   LEncoding: TEncoding;
 begin
@@ -4433,6 +4517,11 @@ end;
 function TFslStreamReader.percent: integer;
 begin
   result := FStream.percent;
+end;
+
+function TFslStreamReader.progress: integer;
+begin
+  result := FCursor - FBufferEnd + FBufferStart;
 end;
 
 function TFslStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
@@ -4624,16 +4713,19 @@ end;
 
 function TFslStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
+  result := 0;
   raise ETodo.create('TFslStringReader.Read');
 end;
 
 function TFslStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
+  result := 0;
   raise ETodo.create('TFslStringReader.ReadBlock');
 end;
 
 function TFslStringReader.ReadLine: string;
 begin
+  result := '';
   raise ETodo.create('TFslStringReader.ReadLine');
 end;
 
