@@ -65,7 +65,7 @@ Type
 
   TConceptArray = Array of TConcept;
 
-  TConceptManager = class (TFslNameList)
+  TConceptManager = class (TFslMap<TConcept>)
   public
     Function See(lang: byte; sName : String; oCode : TObject) : TConcept;
     Function Store(langCount, lang: byte; sName : String; oImp : TLOINCImporter) : Cardinal;
@@ -341,7 +341,7 @@ end;
 
 function TCode.Compare(pA, pB: Pointer): Integer;
 begin
-  result := PISortCompare(TCode(pA).Code, TCode(pB).Code);
+  result := CompareStr(TCode(pA).Code, TCode(pB).Code);
 End;
 
 Function MakeSafeFileName(sName : String; newkey : Integer):String;
@@ -535,13 +535,6 @@ begin
   FAnswerMap := TFslMap<TAnswer>.create('loinc.answers2');
   oHeirarchy := THeirarchyEntryList.Create;
   Try
-    oComps.SortedByNamePI;
-    oProps.SortedByNamePI;
-    oTime.SortedByNamePI;
-    oSystem.SortedByNamePI;
-    oScale.SortedByNamePI;
-    oMethod.SortedByNamePI;
-    oClass.SortedByNamePI;
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
     begin
       oSubsets[a] := TCodeList.create;
@@ -1101,7 +1094,7 @@ begin
     begin
       FAnswers.GetEntry(i, code, desc, refs);
       s := FDesc.GetEntry(code, lang);
-      if not((ls = '') or (PISortCompare(ls, s) < 0)) then
+      if not((ls = '') or (CompareStr(ls, s) < 0)) then
         raise ETerminologySetup.create('out of order');
       ls := s;
     end;
@@ -1431,22 +1424,26 @@ end;
 function TConceptManager.See(lang: byte; sName: String; oCode: TObject): TConcept;
 var
   i : Integer;
+  key : String;
 begin
   if sname = '' Then
     result := nil
   else
   begin
-    i := IndexByName(char(lang+1)+sName);
-    if existsByIndex(i) Then
-      result := TConcept(ObjectByIndex[i])
-    Else
+    key := char(lang+1)+sName;
+    if not tryGetValue(key, result) then
     Begin
       result := TConcept.Create(lang);
       result.Name := char(lang+1)+sName;
-      Add(result);
+      Add(key, result);
     End;
     result.Codes.Add(oCode);
   End;
+end;
+
+function nameSort(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  result := CompareStr(list[Index1], list[index2]);
 end;
 
 function TConceptManager.Store(langCount, lang: byte; sName : String; oImp : TLoincImporter): Cardinal;
@@ -1458,6 +1455,8 @@ var
   aConcepts : TCardinalArray;
   oConcept : TConcept;
   byLang : boolean;
+  ts : TStringList;
+  s : String;
 begin
   SetLength(aChildren, langCount);
   SetLength(counter, langCount);
@@ -1468,16 +1467,25 @@ begin
     SetLength(aChildren[i], Count);
   end;
 
-  For i := 0 to Count - 1 Do
-  Begin
-    oConcept := TConcept(ObjectByIndex[i]);
-    SetLength(aConcepts, oConcept.Codes.Count);
-    For j := 0 to oConcept.Codes.Count - 1 do
-      aConcepts[j] := TCode(oConcept.Codes[j]).Index;
-    oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
-    aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
-    inc(counter[oConcept.Flang]);
-  End;
+  ts := TStringList.create;
+  try
+    for s in keys do
+      ts.add(s);
+    ts.CustomSort(nameSort);
+    for s in ts do
+    begin
+      oConcept := Items[s];
+      SetLength(aConcepts, oConcept.Codes.Count);
+      For j := 0 to oConcept.Codes.Count - 1 do
+        aConcepts[j] := TCode(oConcept.Codes[j]).Index;
+      oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
+      aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
+      inc(counter[oConcept.Flang]);
+    End;
+  finally
+    ts.free;
+  end;
+
   byLang := false;
   for i := 1 to langCount - 1 do
     if counter[i] > 0 then
@@ -1541,12 +1549,12 @@ end;
 
 function THeirarchyEntryList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := PISortCompare(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
+  Result := CompareStr(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
 end;
 
 function THeirarchyEntryList.CompareByText(pA, pB: Pointer): Integer;
 begin
-  Result := PISortCompare(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
+  Result := CompareStr(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
 end;
 
 function THeirarchyEntryList.FindByCode(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
@@ -1632,7 +1640,7 @@ end;
 
 function TCodeList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := PISortCompare(TCode(pA).Code, TCode(pB).Code);
+  Result := CompareStr(TCode(pA).Code, TCode(pB).Code);
 end;
 
 function TCodeList.FindByCode(entry: TCode; out iIndex: Integer): Boolean;

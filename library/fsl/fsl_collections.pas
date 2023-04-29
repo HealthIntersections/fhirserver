@@ -7707,7 +7707,7 @@ End;
 
 function TFslNameList.CompareByNamePI(pA, pB: Pointer): Integer;
 begin
-  Result := PISortCompare(TFslName(pA).Name, TFslName(pB).Name);
+  Result := CompareStr(TFslName(pA).Name, TFslName(pB).Name);
 end;
 
 function TFslNameList.FindByName(oName: TFslName; out iIndex: Integer): Boolean;

@@ -836,7 +836,7 @@ begin
     begin
       I := (L + H) shr 1;
       sF := memU8toString(FMaster, i*FReclength, FCodeLength);
-      C := PISortCompare(sF, s);
+      C := CompareStr(sF, s);
       if C < 0 then L := I + 1 else
       begin
         H := I - 1;
@@ -1872,7 +1872,7 @@ begin
   while L <= H do
   begin
     I := (L + H) shr 1;
-    C := PISortCompare(FDesc.GetEntry(FStems.GetString(i), lang), s);
+    C := CompareStr(FDesc.GetEntry(FStems.GetString(i), lang), s);
     if C < 0 then L := I + 1 else
     begin
       H := I - 1;
@@ -2764,7 +2764,7 @@ begin
       I := (L + H) shr 1;
       Move(FMaster[i*28], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := PISortCompare(s, sCode);
+      C := CompareStr(s, sCode);
       if C < 0 then
         L := I + 1 
       else
@@ -2847,7 +2847,7 @@ begin
         writeln('err');
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := PISortCompare(s, sCode);
+      C := CompareStr(s, sCode);
       if C < 0 then L := I + 1 else
       begin
         H := I - 1;
@@ -2866,7 +2866,7 @@ begin
     begin
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d, lang);
-      C := PISortCompare(s, sCode);
+      C := CompareStr(s, sCode);
       if (c = 0) then
       begin
         iIndex := i;

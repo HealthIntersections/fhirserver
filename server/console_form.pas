@@ -572,6 +572,8 @@ type
     procedure rbRXNSQLiteClick(Sender: TObject);
     procedure rbUNIISQLiteClick(Sender: TObject);
     procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure tbLoincContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
@@ -1442,6 +1444,12 @@ begin
 end;
 
 procedure TMainConsoleForm.tbConsoleContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+
+end;
+
+procedure TMainConsoleForm.tbLoincContextPopup(Sender: TObject;
   MousePos: TPoint; var Handled: Boolean);
 begin
 
