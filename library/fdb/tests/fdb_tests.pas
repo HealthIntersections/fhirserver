@@ -50,7 +50,11 @@ Type
   Published
     procedure TestSemaphore;
 //    procedure TestODBC;
+
+    {$IFDEF DELPHI}
     procedure TestMSSQL;
+    {$ENDIF}
+
     procedure TestMySQL;
     // procedure TestMySQLMaria;
     procedure TestSQLite;
@@ -253,6 +257,7 @@ end;
 
 // docker run -d --name mssql-server --platform linux/arm64/v8 -e ACCEPT_EULA=Y -e SA_PASSWORD={pwd} -p 1433:1433 mcr.microsoft.com/azure-sql-edge
 
+{$IFDEF DELPHI}
 procedure TFDBTests.TestMSSQL;
 var
   db: TFDBManager;
@@ -279,6 +284,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TFDBTests.TestMySQL;
 var
