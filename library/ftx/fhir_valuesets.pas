@@ -841,9 +841,9 @@ begin
         cause := itNotFound;
         FLog := 'Unknown code system';
         if (version <> '') then
-          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
         else
-          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system]));
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]));
       end
       else
       begin
@@ -1053,9 +1053,9 @@ begin
             if (FParams.valueSetMode <> vsvmMembershipOnly) then
             begin
               if (v = '') then
-                message := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system])
+                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system])
               else
-                message := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+                message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
               op.addIssue(isError, itNotFound, path+'.system', message);
             end;
             exit(false);
@@ -1137,9 +1137,9 @@ begin
             if (FParams.valueSetMode <> vsvmMembershipOnly) then
             begin
               if (v = '') then
-                message := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [system])
+                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system])
               else
-                message := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+                message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
               op.addIssue(isError, itNotFound, path+'.system', message);
             end;
             exit(false);
@@ -1291,13 +1291,6 @@ begin
           else
             path := issuePath;;
           list.clear;
-          if (c.version = '') then
-            cc := c.systemUri+'#'+c.code
-          else
-            cc := c.systemUri+'|'+c.version+'#'+c.code;
-          if (c.code = '55751-2') then
-            cc := cc + '!';
-          CommaAdd(codelist, cc);
           v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
           if not v and (message <> '') then
             msg(message);
@@ -1307,6 +1300,12 @@ begin
             ws := impliedSystem
           else
             ws := c.systemUri;
+          if (c.version = '') then
+            cc := ws+'#'+c.code
+          else
+            cc := ws+'|'+c.version+'#'+c.code;
+          CommaAdd(codelist, cc);
+
           ok := ok or v;
           message := '';
 
@@ -1351,9 +1350,9 @@ begin
                prov2 := findCodeSystem(ws, '', FParams, true);
                try
                  if (prov2 = nil) then
-                   m := FI18n.translate('UKNOWN_CODESYSTEM', FParams.langCode, [ws])
+                   m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [ws])
                  else
-                   m := FI18n.translate('UKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']);
+                   m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']);
                  msg(m);
                  op.addIssue(isError, itNotFound, path+'.system', m);
                finally
@@ -1411,9 +1410,9 @@ begin
         if (not ok) then
         begin
           if code.codingCount = 1 then
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, [FValueSet.url, codelist])
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, ['', FValueSet.url, codelist])
           else
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, [FValueSet.url, codelist]);
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, ['', FValueSet.url, codelist]);
           msg(m);
           op.addIssue(isError, itInvalid, issuePath, m);
           if cause = itNull then
