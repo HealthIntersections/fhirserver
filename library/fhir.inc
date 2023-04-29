@@ -30,6 +30,19 @@
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
+  {$warn 04122 error} // creating an abstract class
+  {.$.warn 04046 error} // creating a class with an abstract method
+  {$warn 05093 off}   // function result variable of a managed type does not seem to be initialized
+  {$warn 05071 off}   // Note: Private type X never used
+  {$WARN 3057 off : An inherited method is hidden by "$1"}
+  {$WARN 6058 off : Marked as inline is not inlined}       
+  {$WARN 4105 off : Implicit string type conversion with potential data loss from "$1" to "$2"} 
+  {$WARN 3018 off : Constructor should be public}   
+  {$WARN 4104 off : Implicit string type conversion from "$1" to "$2"}
+  {$WARN 4056 off : Conversion between ordinals and pointers is not portable}  
+  {$WARN 5089 off : Local variable "$1" of a managed type does not seem to be initialized} 
+  {$WARN 4104 off : Implicit string type conversion from "$1" to "$2"}  
+  {$WARN 5033 off : Function result does not seem to be set}
 {$ELSE}
   {$IFNDEF MSWINDOWS}
     only windows is supported under delphi
@@ -50,7 +63,7 @@ Doing so it useful for leak hunting in production, but is also
 costly. Enable it with this define
 }
 {$IFOPT D+}
-{$DEFINE OBJECT_TRACKING}
+{.$.DEFINE OBJECT_TRACKING}
 {$ENDIF}
 
 {
