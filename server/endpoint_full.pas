@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$i fhir.inc}
 
 interface
@@ -1504,6 +1503,7 @@ function TFullServerWebEndPoint.HandleWebCreate(request: TFHIRRequest; response:
 //  questionnaire: TFHIRQuestionnaire;
 //  s, id, fid: String;
 begin
+  result := 0;
 //  // get the right questionnaire
 //  if request.Parameters['profile').StartsWith('Profile/') then
 //  begin
@@ -1570,6 +1570,7 @@ function TFullServerWebEndPoint.HandleWebEdit(request: TFHIRRequest; response: T
 //  s: String;
 //  comp: TFHIRComposer;
 begin
+  result := 0;
   raise ETodo.create('TFullServerWebEndPoint.HandleWebEdit');
 //  result := 0;
 //

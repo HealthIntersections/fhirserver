@@ -1,7 +1,7 @@
 object GenderIdentityDialog: TGenderIdentityDialog
   Left = 901
   Height = 212
-  Top = 765
+  Top = 516
   Width = 480
   Caption = 'Gender Identity'
   ClientHeight = 212
@@ -74,7 +74,7 @@ object GenderIdentityDialog: TGenderIdentityDialog
     end
     object edtOther: TEdit
       Left = 80
-      Height = 21
+      Height = 22
       Top = 40
       Width = 390
       Anchors = [akTop, akLeft, akRight]
@@ -121,7 +121,7 @@ object GenderIdentityDialog: TGenderIdentityDialog
     end
     object dtStart: TDateEdit
       Left = 80
-      Height = 21
+      Height = 22
       Top = 8
       Width = 390
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
@@ -137,7 +137,7 @@ object GenderIdentityDialog: TGenderIdentityDialog
     end
     object dtEnd: TDateEdit
       Left = 80
-      Height = 21
+      Height = 22
       Top = 35
       Width = 390
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
@@ -171,7 +171,7 @@ object GenderIdentityDialog: TGenderIdentityDialog
     end
     object edtComment: TEdit
       Left = 80
-      Height = 21
+      Height = 22
       Top = 6
       Width = 390
       Anchors = [akTop, akLeft, akRight]

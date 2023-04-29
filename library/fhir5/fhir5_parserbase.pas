@@ -136,6 +136,7 @@ end;
 
 function TFHIRXmlParserBase5.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
@@ -146,6 +147,7 @@ end;
 
 function TFHIRXmlParserBase5.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
@@ -170,11 +172,13 @@ end;
 
 function TFHIRJsonParserBase5.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass): TFHIRDataType;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 function TFHIRJsonParserBase5.ParseResource(jsn: TJsonObject): TFhirResource;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use TFHIRJsonParserBase5 directly - use TFHIRXmlComposer');
 end;
 
@@ -214,6 +218,7 @@ end;
 
 function TFHIRTurtleParserBase5.ParseDataType(obj: TTurtleComplex; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use TFHIRTurtleParserBase5 directly - use TFHIRXmlParser');
 end;
 
@@ -241,6 +246,7 @@ end;
 
 function TFHIRTurtleParserBase5.ParseResource(obj: TTurtleComplex): TFhirResource;
 begin
+  result := nil;
   raise ERdfException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 

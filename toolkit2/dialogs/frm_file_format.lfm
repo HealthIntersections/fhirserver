@@ -1,7 +1,7 @@
 object FileFormatChooser: TFileFormatChooser
   Left = 600
   Height = 449
-  Top = 350
+  Top = 101
   Width = 549
   BorderIcons = [biSystemMenu]
   Caption = 'Choose File Format'
@@ -10,7 +10,7 @@ object FileFormatChooser: TFileFormatChooser
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object Panel1: TPanel
     Left = 0
     Height = 46
@@ -62,36 +62,36 @@ object FileFormatChooser: TFileFormatChooser
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 395
-      ClientWidth = 541
+      ClientHeight = 403
+      ClientWidth = 549
       ParentFont = False
       object Panel2: TPanel
         Left = 0
-        Height = 395
+        Height = 403
         Top = 0
-        Width = 541
+        Width = 549
         Align = alClient
         BorderWidth = 6
-        ClientHeight = 395
-        ClientWidth = 541
+        ClientHeight = 403
+        ClientWidth = 549
         ParentFont = False
         TabOrder = 0
         object lvFormats: TListView
           Left = 7
-          Height = 381
+          Height = 389
           Top = 7
-          Width = 527
+          Width = 535
           Align = alClient
           Columns = <          
             item
               AutoSize = True
               Caption = 'Type'
-              Width = 10
+              Width = 100
             end          
             item
               AutoSize = True
               Caption = 'Information'
-              Width = 10
+              Width = 100
             end>
           ReadOnly = True
           RowSelect = True
@@ -102,36 +102,38 @@ object FileFormatChooser: TFileFormatChooser
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
-      ClientHeight = 395
-      ClientWidth = 541
+      ClientHeight = 403
+      ClientWidth = 549
       ParentFont = False
       object Panel3: TPanel
         Left = 0
         Height = 41
         Top = 0
-        Width = 541
+        Width = 549
         Align = alTop
         ClientHeight = 41
-        ClientWidth = 541
+        ClientWidth = 549
         ParentFont = False
         TabOrder = 0
         object Label1: TLabel
           Left = 9
-          Height = 15
+          Height = 16
           Top = 9
-          Width = 69
+          Width = 81
           Caption = 'FHIR Version:'
+          ParentColor = False
           ParentFont = False
         end
         object ComboBox1: TComboBox
           Left = 91
-          Height = 23
+          Height = 20
           Top = 9
           Width = 141
-          ItemHeight = 15
+          ItemHeight = 26
           ParentFont = False
           Style = csDropDownList
           TabOrder = 0
+          Text = '0'
         end
       end
     end

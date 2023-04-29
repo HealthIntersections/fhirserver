@@ -142,7 +142,7 @@ type
     FOnProgress: TNotifyEvent;
     FZStream: TZStreamRec;
     FBuffer: TBytes;
-  protected
+  public
     constructor Create(stream: TStream);
     procedure DoProgress; dynamic;
     property OnProgress: TNotifyEvent read FOnProgress write FOnProgress;

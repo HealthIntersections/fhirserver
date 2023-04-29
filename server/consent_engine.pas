@@ -105,13 +105,13 @@ type
     function startOperation(request : TFHIRRequest; client : TFHIRClientV) : TFHIRConsentEngineOperation; virtual; abstract;
   end;
 
-  TFHIRNullConsentEngineOperation = class abstract (TFHIRConsentEngineOperation)
+  TFHIRNullConsentEngineOperation = class (TFHIRConsentEngineOperation)
   public
     function addResource(resource : TFHIRResourceV) : TFHIRResourceV; override;
     procedure addToAudit(event : TFHIRResourceV); override;
   end;
 
-  TFHIRNullConsentEngine = class abstract (TFHIRConsentEngine)
+  TFHIRNullConsentEngine = class (TFHIRConsentEngine)
   public
     procedure initialise(client : TFhirClientV); override;
     procedure seeResource(resource : TFHIRResourceV); override;

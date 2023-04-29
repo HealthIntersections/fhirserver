@@ -5584,8 +5584,6 @@ end;
 procedure TFHIRTurtleComposer.ComposeQuantity(parent :  TTurtleComplex; parentType, name : String; value : TFhirQuantity; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
-var
-  cb, c : TTurtleComplex;
 begin
   if (value = nil) then
     exit;

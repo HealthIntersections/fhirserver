@@ -119,6 +119,7 @@ end;
 
 function TFHIRXmlParserBase2.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
+  result := nil;
   raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
