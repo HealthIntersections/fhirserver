@@ -791,7 +791,10 @@ var
 begin
   for i := 1 to length(s) do
   begin
-    c := PISortCompare(ch, s[i], caseSensitive);
+    if caseSensitive then
+      c := CompareText(ch, s[i])
+    else
+      c := CompareStr(ch, s[i]);
     if (c = 0) then
       exit
     else if (c = -1) then
@@ -814,17 +817,17 @@ end;
 
 procedure TFslUtilitiesTestCases.testStringSorting;
 begin
-  AssertTrue(PISortCompare('ss', 'tt') = -1, 'PISortCompare(ss, tt) = -1');
-  AssertTrue(PISortCompare('tt', 'ss') = 1, 'PISortCompare(tt, ss) = 1');
-  AssertTrue(PISortCompare('tt', 'tt') = 0, 'PISortCompare(tt, tt) = 0');
-  AssertTrue(PISortCompare('tta', 'tt') = 1, 'PISortCompare(tta, tt) = 1');
-  AssertTrue(PISortCompare('tt', 'tt:') = -1, 'PISortCompare(tt, tt) = -1');
-  AssertTrue(PISortCompare('TT', 'tt') = -1, 'PISortCompare(TT, tt) = -1');
-  AssertTrue(PISortCompare('tt', 'TT') = 1, 'PISortCompare(tt, TT) = 1');
-  AssertTrue(PISortCompare('TT', 'TT') = 0, 'PISortCompare(TT, TT) = 0');
-  AssertTrue(PISortCompare('TT', 'tt', true) = 0, 'PISortCompare(TT, tt, true) = 0');
-  AssertTrue(PISortCompare('tt', 'TT', true) = 0, 'PISortCompare(tt, TT, true) = 0');
-  AssertTrue(PISortCompare('tt', 'tt', true) = 0, 'PISortCompare(tt, tt, true) = 0');
+  AssertEquals('CompareStr(ss, tt) = -1', CompareStr('ss', 'tt'), -1);
+  AssertEquals('CompareStr(tt, ss) = 1', CompareStr('tt', 'ss'), 1);
+  AssertEquals('CompareStr(tt, tt) = 0', CompareStr('tt', 'tt'), 0);
+  AssertEquals('CompareStr(tt, tt) = 0', CompareStr('tta', 'tt'), 1);
+  AssertEquals('CompareStr(tt, tt) = -1', CompareStr('tt', 'tt:'), -1);
+  AssertEquals('CompareStr(TT, tt) = -1', CompareStr('TT', 'tt'), -1);
+  AssertEquals('CompareStr(tt, TT) = 1', CompareStr('tt', 'TT'), 1);
+  AssertEquals('CompareStr(TT, TT) = 0', CompareStr('TT', 'TT'), 0);
+  AssertEquals('CompareText(TT, tt, true) = 0', CompareText('TT', 'tt'), 0);
+  AssertEquals('CompareText(tt, TT, true) = 0', CompareText('tt', 'TT'), 0);
+  AssertEquals('CompareText(tt, tt, true) = 0', CompareText('tt', 'tt'), 0);
   AssertEquals('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
   AssertEquals('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
 end;
