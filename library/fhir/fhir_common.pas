@@ -631,6 +631,7 @@ type
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
     procedure addParamUri(name : String; value : string); virtual; abstract;
+    procedure addParamCanonical(name : String; value : string); virtual; abstract;
   end;
 
   TFHIRParametersW = class (TFHIRXVersionResourceWrapper)
@@ -656,6 +657,7 @@ type
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
     procedure addParamUri(name : String; value : string); virtual; abstract;
+    procedure addParamCanonical(name : String; value : string); virtual; abstract;
 
     function parameterList : TFslList<TFhirParametersParameterW>;
   end;
@@ -848,11 +850,13 @@ type
   TFhirValueSetExpansionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionW; overload;
+    // todo: decimal and datetime
     procedure addParamStr(name, value : String); overload; virtual; abstract;
     procedure addParamCode(name, value : String); overload; virtual; abstract;
     procedure addParamUri(name, value : String); overload; virtual; abstract;
     procedure addParamBool(name : String; value : boolean); overload; virtual; abstract;
     procedure addParamInt(name : String; value : integer); overload; virtual; abstract;
+
     function hasParam(name : string) : boolean; overload; virtual; abstract;
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
@@ -1561,6 +1565,12 @@ type
 
   end;
 
+  TFHIRPrimitiveX = class (TFHIRPrimitiveW)
+   public
+     function GetAsString : String; override;
+     procedure SetAsString(value : String); override;
+     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
+   end;
 
 implementation
 
@@ -3009,4 +3019,23 @@ begin
   FResourceV := value;
 end;
 
+{ TFHIRPrimitiveX }
+
+function TFHIRPrimitiveX.GetAsString: String;
+begin
+  result := FElement.primitiveValue;
+end;
+
+procedure TFHIRPrimitiveX.SetAsString(value: String);
+begin
+  raise EFSLException.create('SetAsString is not supported in a version-less context');
+end;
+
+function TFHIRPrimitiveX.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  raise EFSLException.create('Extensions are not supported in a version-less context');
+end;
+
 end.
+
+

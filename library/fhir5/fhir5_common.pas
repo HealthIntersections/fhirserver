@@ -419,6 +419,7 @@ type
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -439,6 +440,7 @@ type
     procedure addParam(name : String; value : TFHIRObject); overload; override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     function addParam(name : String) : TFhirParametersParameterW; overload; override;
     function bool(name : String) : boolean; override;
     function str(name : String) : String; override;
@@ -2087,6 +2089,11 @@ begin
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
+procedure TFhirParametersParameter5.addParamCanonical(name, value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRCanonical.Create(value);
+end;
+
 function TFhirParametersParameter5.getParameterParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
@@ -2209,6 +2216,11 @@ end;
 procedure TFHIRParameters5.addParamUri(name: String; value: string);
 begin
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
+end;
+
+procedure TFHIRParameters5.addParamCanonical(name: String; value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRCanonical.Create(value);
 end;
 
 procedure TFHIRParameters5.addParamStr(name: String; value: string);

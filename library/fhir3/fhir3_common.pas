@@ -422,6 +422,7 @@ type
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -442,6 +443,7 @@ type
     procedure addParam(name : String; value : TFHIRObject); override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
     function bool(name : String) : boolean; override;
     function str(name : String) : String; override;
@@ -467,6 +469,7 @@ type
     procedure addParam(name : String; value : TFHIRObject); override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
     function bool(name : String) : boolean; override;
     function str(name : String) : String; override;
@@ -500,6 +503,7 @@ type
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
     procedure addParamUri(name : String; value : string); override;
+    procedure addParamCanonical(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); override;
     function addParam(name : String) : TFhirParametersParameterW; override;
   end;
@@ -2117,6 +2121,11 @@ begin
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
+procedure TFhirParametersParameter3.addParamCanonical(name, value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRCanonical.Create(value);
+end;
+
 function TFhirParametersParameter3.getParameterParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
@@ -2239,6 +2248,11 @@ end;
 procedure TFHIRParameters3.addParamUri(name: String; value: string);
 begin
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
+end;
+
+procedure TFHIRParameters3.addParamCanonical(name: String; value: string);
+begin
+  parameter.AddParameter(name).value := TFHIRCanonical.Create(value);
 end;
 
 procedure TFHIRParameters3.addParamStr(name: String; value: string);
@@ -2368,6 +2382,11 @@ begin
 end;
 
 procedure TFHIRExpansionProfile3.addParamUri(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+                                   
+procedure TFHIRExpansionProfile3.addParamCanonical(name, value: string);
 begin
   raise EFHIRException.create('Expansion Profile is read only');
 end;
@@ -2555,6 +2574,11 @@ begin
 end;
 
 procedure TFhirExpansionProfileFixedVersion3.addParamUri(name, value: string);
+begin
+  raise EFHIRException.create('Expansion Profile is read only');
+end;
+
+procedure TFhirExpansionProfileFixedVersion3.addParamCanonical(name, value: string);
 begin
   raise EFHIRException.create('Expansion Profile is read only');
 end;

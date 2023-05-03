@@ -515,6 +515,7 @@ type
   public
     procedure addParamStr(name, value : String); overload;
     procedure addParamUri(name, value : String); overload;
+    procedure addParamCanonical(name, value : String); overload;
     procedure addParamBool(name : String; value : boolean); overload;
     procedure addParamCode(name, value : String); overload;
     procedure addParamInt(name : String; value : integer); overload;
@@ -5518,6 +5519,15 @@ begin
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirUri.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamCanonical(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirCanonical.Create(value);
 end;
 
 procedure TFhirValueSetExpansionHelper.addParamBool(name: String; value: boolean);
