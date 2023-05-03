@@ -259,7 +259,7 @@ begin
                   vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
                 if vs = nil then
                   if not FServer.isKnownValueSet(url, vs) then
-                    vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['version'], false, needSecure));
+                    vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['valueSetVersion'], false, needSecure));
               end;
             end;
             if vs = nil then
@@ -1187,7 +1187,6 @@ end;
 procedure TFhirTerminologyOperation.processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW; result : TFHIRExpansionParams);
 var
   p : TFhirParametersParameterW;
-  sl : TArray<String>;
   obj : TFHIRObject;
   pp : TFHIRParametersW;
 begin
@@ -1222,15 +1221,11 @@ begin
   for p in params.parameterList do
   begin
     if (p.name = 'system-version') then
-    begin
-      sl := p.valueString.split(['|']);
-      if (Length(sl) = 2) then
-        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], fvmDefault))
-      else if (Length(sl) = 3) and StringArrayExistsInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]) then
-        result.fixedVersions.Add(TFhirExpansionParamsFixedVersion.Create(sl[0], sl[1], TFhirExpansionParamsFixedVersionMode(StringArrayIndexOfInsensitive(CODES_TFhirExpansionParamsFixedVersionMode, sl[2]))))
-      else
-        raise ETerminologyError.Create('Unable to understand fixed system version "'+p.valueString+'"', itInvalid);
-    end
+      result.seeVersionRule(p.valueString, fvmDefault)
+    else if (p.name = 'check-system-version') then
+      result.seeVersionRule(p.valueString, fvmCheck)
+    else  if (p.name = 'force-system-version') then
+      result.seeVersionRule(p.valueString, fvmOverride)
     else if (p.name = 'displayLanguage') then
       result.displayLanguages.add(FLanguages.parse(p.valueString))
     else if (p.name = 'property') then
@@ -1239,7 +1234,7 @@ begin
   if params.has('profile') then
   begin
     obj := params.obj('profile');
-    if (obj.fhirType = 'Parameters') or (obj.fhirType = 'ExpansionProfile') then
+    if (obj <> nil) and ((obj.fhirType = 'Parameters') or (obj.fhirType = 'ExpansionProfile')) then
     begin
       pp := FFactory.wrapParams(obj.link as TFHIRResourceV);
       try
@@ -1311,7 +1306,9 @@ begin
     coding := result.addCoding;
     try
       coding.systemUri := request.Parameters['system'];
-      coding.version := request.Parameters['version'];
+      coding.version := request.Parameters['systemVersion'];
+      if (coding.version = '') then
+        coding.version := request.Parameters['version'];
       coding.code := request.Parameters['code'];
       coding.display := request.Parameters['display'];
     finally
@@ -1346,7 +1343,9 @@ begin
         try
           if params.has('system') then
             coding.systemUri := params.str('system');
-          if params.has('version') then
+          if params.has('systemVersion') then
+            coding.version := params.str('systemVersion');
+          if (coding.version = '') and params.has('version') then
             coding.version := params.str('version');
           coding.code := params.str('code');
           if params.has('display') then

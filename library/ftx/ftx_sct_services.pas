@@ -5052,13 +5052,13 @@ begin
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
-    list := TConceptDesignations.create(nil, FLanguages.link);
+    list := TConceptDesignations.create(TFHIRFactoryX.create, FLanguages.link);
     try
       ListDisplayNames(list, iTerm, 0, $FF);
-      ok := false;
       d := normalise(concept.description);
+      ok := (list.display <> nil) and (normalise(list.display.AsString) = d);
       for i := 0 to list.designations.count - 1 do
-        if (normalise(list.designations[i].value.asString) = d) then
+        if not ok and (normalise(list.designations[i].value.asString) = d) then
         begin
           ok := true;
           break;

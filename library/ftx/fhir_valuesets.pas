@@ -40,7 +40,7 @@ todo:
 }
 uses
   SysUtils, Classes,
-  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n,
+  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions,
   fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions,
   fhir_codesystem_service;
 
@@ -61,25 +61,25 @@ const
 
 Type
 
-  TFhirExpansionParamsFixedVersionMode = (fvmDefault, fvmCheck, fvmOverride);
+  TFhirExpansionParamsVersionRuleMode = (fvmDefault, fvmCheck, fvmOverride);
   TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
 
-  { TFhirExpansionParamsFixedVersion }
+  { TFhirExpansionParamsVersionRule }
 
-  TFhirExpansionParamsFixedVersion = class (TFslObject)
+  TFhirExpansionParamsVersionRule = class (TFslObject)
   private
     Fsystem : String;
     Fversion : String;
-    FMode : TFhirExpansionParamsFixedVersionMode;
+    FMode : TFhirExpansionParamsVersionRuleMode;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(system, version : String); overload;
-    constructor Create(system, version : String; mode : TFhirExpansionParamsFixedVersionMode); overload;
+    constructor Create(system, version : String; mode : TFhirExpansionParamsVersionRuleMode); overload;
 
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
-    property mode : TFhirExpansionParamsFixedVersionMode read FMode write FMode;
+    property mode : TFhirExpansionParamsVersionRuleMode read FMode write FMode;
 
     function asString : String;
   end;
@@ -88,7 +88,7 @@ Type
 
   TFHIRExpansionParams = class (TFslObject)
   private
-    FFixedVersions : TFslList<TFhirExpansionParamsFixedVersion>;
+    FVersionRules : TFslList<TFhirExpansionParamsVersionRule>;
     FactiveOnly: boolean;
     FLanguage : TIETFLang;
     FDisplayLanguages: TFslList<TIETFLang>;
@@ -98,7 +98,6 @@ Type
     FexcludeNotForUI: boolean;
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
-    FincludeCompose: boolean;
     FincludeDefinition: boolean;
     FUid: String;
     FValueSetMode: TValueSetValidationMode;
@@ -113,7 +112,6 @@ Type
     FHesExcludeNotForUI : boolean;
     FHasExcludePostCoordinated : boolean;
     FHasIncludeDesignations : boolean;
-    FHasIncludeCompose : boolean;
     FHasIncludeDefinition : boolean;
     FHasDefaultToLatestVersion : boolean;
     FHasIncompleteOK : boolean;
@@ -128,7 +126,6 @@ Type
     procedure SetExcludeNotForUI(value : boolean);
     procedure SetExcludePostCoordinated(value : boolean);
     procedure SetIncludeDesignations(value : boolean);
-    procedure SetIncludeCompose(value : boolean);
     procedure SetIncludeDefinition(value : boolean);
     procedure SetDefaultToLatestVersion(value : boolean);
     procedure SetIncompleteOK(value : boolean);
@@ -143,13 +140,16 @@ Type
     class function defaultProfile : TFHIRExpansionParams;
     procedure loadFromLangs(languages: TIETFLanguageDefinitions; langs : THTTPLanguages);
 
-    property fixedVersions : TFslList<TFhirExpansionParamsFixedVersion> read FFixedVersions;
+    property versionRules : TFslList<TFhirExpansionParamsVersionRule> read FVersionRules;
+
+    function getVersionForRule(systemURI : String; mode : TFhirExpansionParamsVersionRuleMode) : String;
+    procedure seeVersionRule(url : String; mode : TFhirExpansionParamsVersionRuleMode);
+
     property activeOnly : boolean read FactiveOnly write SetActiveOnly;
     property language : TIETFLang read FLanguage write SetLanguage;
     function langCode : string;
     function langSummary : String;
     property displayLanguages : TFslList<TIETFLang> read FDisplayLanguages;
-    property includeCompose : boolean read FincludeCompose write SetincludeCompose;
     property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
     property generateNarrative : boolean read FGenerateNarrative write SetGenerateNarrative;
     property limitedExpansion : boolean read FlimitedExpansion write SetlimitedExpansion;   // deprecated
@@ -164,7 +164,6 @@ Type
     property properties : TStringList read FProperties;
 
     property hasActiveOnly : boolean read FHasactiveOnly;
-    property hasIncludeCompose : boolean read FHasincludeCompose;
     property hasIncludeDefinition : boolean read FHasincludeDefinition;
     property hasGenerateNarrative : boolean read FHasGenerateNarrative;
     property hasLimitedExpansion : boolean read FHaslimitedExpansion;
@@ -226,6 +225,7 @@ Type
     FRequiredSupplements : TStringList;
     FI18n : TI18nSupport;
 
+    function findInAdditionalResources(url, version, resourceType : String) : TFHIRMetadataResourceW;
     function findValueSet(url : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
@@ -252,6 +252,7 @@ Type
 
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
+    function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
     function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
@@ -319,7 +320,7 @@ Type
   end;
 
 const
-   CODES_TFhirExpansionParamsFixedVersionMode : array [TFhirExpansionParamsFixedVersionMode] of String = ('Default', 'Check', 'Override');
+   CODES_TFhirExpansionParamsVersionRuleMode : array [TFhirExpansionParamsVersionRuleMode] of String = ('Default', 'Check', 'Override');
 
 implementation
 
@@ -398,6 +399,49 @@ begin
   end;
 end;
 
+function isLaterVersion(test, base : String) : boolean;
+begin
+  if TSemanticVersion.isValid(test) and TSemanticVersion.isValid(base) then
+    result := TSemanticVersion.isMoreRecent(test, base)
+  else
+    result := StringCompare(test, base) > 0;
+end;
+
+function TValueSetWorker.findInAdditionalResources(url, version, resourceType : String) : TFHIRMetadataResourceW;
+var
+  r : TFHIRMetadataResourceW;
+  matches : TFslMetadataResourceList;
+  i, t : integer;
+begin
+  if FAdditionalResources = nil then
+     exit(nil);
+
+  matches := TFslMetadataResourceList.create;
+  try
+    for r in FAdditionalResources do
+    begin
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (version = r.version)) then
+      begin
+        if r.fhirType <> resourceType then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a '+resourceType+' when it''s a '+r.fhirType);
+        matches.add(r.link);
+        end;
+      end;
+    if matches.Count = 0 then
+      exit(nil)
+    else
+    begin
+      t := 0;
+      for i := 1 to matches.count - 1 do
+        if isLaterVersion(matches[i].version, matches[t].version) then
+          t := i;
+      exit(matches[t]);
+    end;
+  finally
+    matches.free;
+  end;
+end;
+
 function TValueSetWorker.findCodeSystem(url, version: String; params: TFHIRExpansionParams; nullOk: boolean): TCodeSystemProvider;
 var
   r, r2 : TFHIRMetadataResourceW;
@@ -410,52 +454,33 @@ begin
 
 //  result := nil;
 
-  if FAdditionalResources <> nil then
+  cs := findInAdditionalResources(url, version, 'CodeSystem') as TFhirCodeSystemW;
+  if (cs <> nil) and (cs.content = cscmComplete) then
   begin
-    for r in FAdditionalResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (version = r.version)) then
-      begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
-        cs := r as TFhirCodeSystemW;
-        if (cs.content = cscmComplete) then
-        begin
-          cse := TFHIRCodeSystemEntry.Create(cs.link);
-          try
-            loadSupplements(cse, url);
-            exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
-          finally
-            cse.free;
-          end;
-        end;
-      end;
+    cse := TFHIRCodeSystemEntry.Create(cs.link);
+    try
+      loadSupplements(cse, url);
+      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
+    finally
+      cse.free;
+    end;
   end;
+
   result := FOnGetCSProvider(self, url, version, FParams, true);
 
   if (result <> nil) then
     exit(result);
 
-  if FAdditionalResources <> nil then
+  if (cs <> nil) and (cs.content = cscmFragment) then
   begin
-    for r in FAdditionalResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
-      begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
-        cs := r as TFhirCodeSystemW;
-        if (cs.content = cscmFragment) then
-        begin
-          cse := TFHIRCodeSystemEntry.Create(cs.link);
-          try
-            loadSupplements(cse, url);
-            exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
-          finally
-            cse.free;
-          end;
-        end;
-      end;
+    cse := TFHIRCodeSystemEntry.Create(cs.link);
+    try
+      loadSupplements(cse, url);
+      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FFactory.link, cse.link));
+    finally
+      cse.free;
+    end;
   end;
-
 
   if not nullok then
     if version = '' then
@@ -483,16 +508,10 @@ begin
   if (url = '') then
     exit(nil);
 
-  if FAdditionalResources <> nil then
-  begin
-    for r in FAdditionalResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
-      begin
-        if not (r is TFHIRValueSetW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
-        exit(r.link as TFHIRValueSetW);
-      end;
-  end;
+  r := findInAdditionalResources(url, '', 'ValueSet');
+  if (r <> nil) then
+    exit(r.link as TFHIRValueSetW);
+
   result := FOnGetValueSet(self, url);
 end;
 
@@ -651,6 +670,33 @@ begin
       end;
     end;
   end;
+end;
+
+function TValueSetChecker.determineVersion(path, systemURI, versionVS, versionCoding: String; op : TFhirOperationOutcomeW; var message : String): string;
+var
+  v : string;
+begin
+  // version might come from multiple places
+  v := FParams.getVersionForRule(systemURI, fvmOverride);
+  if (v <> '') then
+    exit(v);
+
+  // we have two possible versions - the value set reference, and the coding reference
+  // it's an error if they don't agree
+  if (versionVS = '') and (versionCoding = '') then
+    result := FParams.getVersionForRule(systemUri, fvmDefault)
+  else if (versionVS = '') then
+    result := versionCoding
+  else if (versionCoding = '') or (versionCoding = versionVS) then
+    result := versionVS
+  else
+  begin
+    message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
+    op.addIssue(isError, itNotFound, path+'.version', message);
+    exit('');
+  end;
+  if result = '' then
+    result := FParams.getVersionForRule(systemURI, fvmDefault);
 end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
@@ -847,6 +893,7 @@ begin
       end
       else
       begin
+        ver := cs.version(nil);
         contentMode := cs.contentMode;
         ctxt := cs.locate(code, message);
         if (ctxt = nil) then
@@ -868,7 +915,6 @@ begin
         end
         else
         begin
-          ver := cs.version(nil);
           cause := itNull;
           try
             if not (abstractOk or not cs.IsAbstract(ctxt)) then
@@ -918,6 +964,7 @@ begin
       end
       else
       begin
+        ver := cs.version(nil);
         contentMode := cs.contentMode;
         ctxt := cs.locate(code);
         if (ctxt = nil) then
@@ -939,7 +986,6 @@ begin
         end
         else
         begin
-          ver := cs.version(nil);
           cause := itNull;
           try
             if not (abstractOk or not cs.IsAbstract(ctxt)) then
@@ -1028,20 +1074,7 @@ begin
           result := true
         else if (cc.systemUri = system) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
-          // we have two possible versions - the value set reference, and the coding reference
-          // it's an error if they don't agree
-          if (cc.version = '') and (version = '') then
-            v := ''
-          else if (cc.version = '') then
-            v := version
-          else if (version = '') or (version = cc.version) then
-            v := cc.version
-          else
-          begin
-            message := 'The code system "'+cc.systemUri+'" version "'+cc.version+'" in the ValueSet include is different to the one in the value ("'+version+'")';
-            op.addIssue(isError, itNotFound, path+'.version', message);
-            exit(false);
-          end;
+          v := determineVersion(path, cc.systemUri, cc.version, version, op, message);
           if (v = '') then
             cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]).link
           else
@@ -1061,6 +1094,7 @@ begin
             exit(false);
           end;
           try
+            ver := cs.version(nil);
             checkSupplements(cs, cc);
             contentMode := cs.contentMode;
 
@@ -1094,6 +1128,7 @@ begin
             else
               cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+cc.version]);
             checkSupplements(cs, cc);
+            ver := cs.version(nil);
             contentMode := cs.contentMode;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
           end;
@@ -1145,6 +1180,7 @@ begin
             exit(false);
           end;
           try
+            ver := cs.version(nil);
             contentMode := cs.contentMode;
             result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkExpansion(path, cs, ccc, code, abstractOk, displays, FValueSet, message, op);
           finally
@@ -1784,7 +1820,7 @@ begin
   result.id := '';
   table := nil;
   div_ := nil;
-  if not FParams.includeCompose then
+  if not FParams.includeDefinition then
     result.clearDefinition
   else
     result.clearDefinitionExtensions([]);
@@ -2116,11 +2152,21 @@ end;
 function TValueSetWorker.listVersions(url: String): String;
 var
   ts : TStringList;
+  matches : TFslMetadataResourceList;
+  r : TFHIRMetadataResourceW;
 begin
   ts := TStringList.Create;
   try
     ts.Sorted := true;
     ts.Duplicates := Classes.dupIgnore;
+    if FAdditionalResources <> nil then
+    begin
+      for r in FAdditionalResources do
+      begin
+        if (r.url = url) then
+          ts.Add(r.version);
+      end;
+    end;
     FOnListCodeSystemVersions(self, url, ts);
     result := ts.CommaText;
   finally
@@ -2847,12 +2893,11 @@ end;
 constructor TFHIRExpansionParams.Create;
 begin
   inherited;
-  FFixedVersions := TFslList<TFhirExpansionParamsFixedVersion>.create;
+  FVersionRules := TFslList<TFhirExpansionParamsVersionRule>.create;
   FDisplayLanguages := TFslList<TIETFLang>.create;
   FProperties := TStringList.create;
 
   FGenerateNarrative := true;
-  FincludeCompose := true;
 end;
 
 procedure TFHIRExpansionParams.SetLanguage(value: TIETFLang);
@@ -2903,12 +2948,6 @@ begin
   FHasIncludeDesignations := true;
 end;
 
-procedure TFHIRExpansionParams.SetIncludeCompose(value : boolean);
-begin
-  FIncludeCompose := value;
-  FHasIncludeCompose := true;
-end;
-
 procedure TFHIRExpansionParams.SetIncludeDefinition(value : boolean);
 begin
   FIncludeDefinition := value;
@@ -2936,7 +2975,7 @@ end;
 function TFHIRExpansionParams.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, FFixedVersions.sizeInBytes(magic));
+  inc(result, FVersionRules.sizeInBytes(magic));
   inc(result, FDisplayLanguages.sizeInBytes(magic));
   inc(result, FLanguage.sizeInBytes(magic));
   inc(result, (FUid.length * sizeof(char)) + 12);
@@ -2965,6 +3004,27 @@ begin
   end;
 end;
 
+function TFHIRExpansionParams.getVersionForRule(systemURI: String; mode: TFhirExpansionParamsVersionRuleMode): String;
+var
+  rule : TFhirExpansionParamsVersionRule;
+begin
+  for rule in FVersionRules do
+    if (rule.system = systemUri) and (rule.mode = mode) then
+      exit(rule.version);
+  result := '';
+end;
+
+procedure TFHIRExpansionParams.seeVersionRule(url: String; mode: TFhirExpansionParamsVersionRuleMode);
+var
+  sl : TArray<String>;
+begin
+  sl := url.split(['|']);
+  if (Length(sl) = 2) then
+    versionRules.Add(TFhirExpansionParamsVersionRule.Create(sl[0], sl[1], mode))
+  else
+    raise ETerminologyError.Create('Unable to understand '+CODES_TFhirExpansionParamsVersionRuleMode[mode]+' system version "'+url+'"', itInvalid);
+end;
+
 function TFHIRExpansionParams.langCode: string;
 begin
   if language = nil then
@@ -2989,7 +3049,7 @@ end;
 
 destructor TFHIRExpansionParams.Destroy;
 begin
-  FFixedVersions.Free;
+  FVersionRules.Free;
   FDisplayLanguages.Free;
   FLanguage.Free;
   FProperties.free;
@@ -3000,7 +3060,7 @@ function TFHIRExpansionParams.hash: String;
 var
   s : String;
   l : TIETFLang;
-  t : TFhirExpansionParamsFixedVersion;
+  t : TFhirExpansionParamsVersionRule;
   function b(v : boolean):string;
   begin
     if v then
@@ -3011,15 +3071,15 @@ var
 begin
   s := FUid+'|'+ inttostr(ord(FValueSetMode)) + '|' + FProperties.CommaText+'|'+
     b(FactiveOnly)+b(FIncompleteOK)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
-    b(FincludeDesignations)+b(FincludeCompose)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
-    b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+b(FHasIncludeCompose)+
+    b(FincludeDesignations)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
+    b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+
     b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasexcludeNotForUI)+b(FHasValueSetMode)+b(FDefaultToLatestVersion);
 
   if FLanguage <> nil then
     s := s + FLanguage.Language+'|';
   for l in FDisplayLanguages do
     s := s + l.Language+'|';
-  for t in FFixedVersions do
+  for t in FVersionRules do
   s := s + t.asString+'|';
   result := inttostr(HashStringToCode32(s));
 end;
@@ -3030,9 +3090,9 @@ begin
 end;
 
 
-{ TFhirExpansionParamsFixedVersion }
+{ TFhirExpansionParamsVersionRule }
 
-constructor TFhirExpansionParamsFixedVersion.Create(system, version: String; mode: TFhirExpansionParamsFixedVersionMode);
+constructor TFhirExpansionParamsVersionRule.Create(system, version: String; mode: TFhirExpansionParamsVersionRuleMode);
 begin
   inherited Create;
   FSystem := system;
@@ -3040,19 +3100,19 @@ begin
   FMode := mode;
 end;
 
-function TFhirExpansionParamsFixedVersion.asString: String;
+function TFhirExpansionParamsVersionRule.asString: String;
 begin
   result := Fsystem+'#'+Fversion+'/'+inttostr(ord(FMode));
 end;
 
-constructor TFhirExpansionParamsFixedVersion.Create(system, version: String);
+constructor TFhirExpansionParamsVersionRule.Create(system, version: String);
 begin
   inherited Create;
   FSystem := system;
   FVersion := version;
 end;
 
-function TFhirExpansionParamsFixedVersion.sizeInBytesV(magic : integer) : cardinal;
+function TFhirExpansionParamsVersionRule.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, (Fsystem.length * sizeof(char)) + 12);

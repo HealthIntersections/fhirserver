@@ -1420,12 +1420,12 @@ end;
 
 function TTerminologyServerStore.checkVersion(system, version : String; profile : TFHIRExpansionParams) : String;
 var
-  t : TFhirExpansionParamsFixedVersion;
+  t : TFhirExpansionParamsVersionRule;
 begin
   if (profile = nil) then
     exit(version);
 
-  for t in profile.fixedVersions do
+  for t in profile.versionRules do
     if (t.system = system) and (t.version <> '') then
     begin
       if (version = '') or (t.mode = fvmOverride) then

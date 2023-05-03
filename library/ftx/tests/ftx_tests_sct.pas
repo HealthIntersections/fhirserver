@@ -120,7 +120,8 @@ procedure TSnomedTests.Parse;
 begin
   p('116680003');
   p('128045006:{363698007=56459004}');
-  p('128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|foot structure|}');
+  p('128045006|Cellulitis (disorder)|:{363698007|finding site|=56459004|foot structure|}');
+
   p('31978002: 272741003=7771000');
   p('31978002|fracture of tibia|: 272741003|laterality|=7771000|left|');
   p('64572001|disease|:{116676008|associated morphology|=72704001|fracture|,363698007|finding site|=(12611008|bone structure of  tibia|:272741003|laterality|=7771000|left|)}');
