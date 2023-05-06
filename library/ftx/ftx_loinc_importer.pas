@@ -719,11 +719,11 @@ begin
     oCodes.SortedByCode;
 
     // now, process the multi-axial file
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv') then
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv') then
     begin
       Progress(3,0,'Loading Multi-Axial Source');
       oHeirarchy.SortedByCode;
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv');
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv');
       Reset(ma);
       Readln(ma, ln); // skip header
 

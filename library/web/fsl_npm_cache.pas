@@ -329,9 +329,9 @@ begin
   {$IFDEF WINDOWS}
   case FMode of
     npmModeNone: raise EFslException.create('Error- must provide a NPM Cache mode');
-    npmModeUser: FFolder := FilePath([UserFolder, '.fhir', 'packages'])
+    npmModeUser: FFolder := FilePath([UserFolder, '.fhir', 'packages']);
     npmModeSystem: FFolder := FilePath([ProgData, '.fhir', 'packages']);
-    npmModeTesting: FFolder := FilePath([['[tmp]', '.fhir', 'packages']);
+    npmModeTesting: FFolder := FilePath(['[tmp]', '.fhir', 'packages']);
   end;
   {$ELSE}
   case FMode of

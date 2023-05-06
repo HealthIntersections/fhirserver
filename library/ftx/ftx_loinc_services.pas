@@ -1586,7 +1586,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
 var
   iCount : Integer;
   words : TSearchWordArray;
-  i : cardinal;
+  i : integer;
   index : integer;
   oStemmer : TFslWordStemmer;
   s : String;
@@ -2785,7 +2785,7 @@ end;
 
 procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parents, children, concepts, descendentConcepts, stems: Cardinal);
 begin
-  if iIndex > (Length(FMaster) div 28) Then
+  if iIndex >= (Length(FMaster) div 28) Then
     raise ETerminologyError.create('Attempt to access invalid LOINC Entry index', itException);
   Move(FMaster[(iIndex*28)+0], code, 4);
   Move(FMaster[(iIndex*28)+4], text, 4);
