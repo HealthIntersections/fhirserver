@@ -32,6 +32,9 @@
   {$ENDIF}
   {$warn 04122 error} // creating an abstract class
   {.$.warn 04046 error} // creating a class with an abstract method
+
+  // mostly these are because of generics
+  {$WARN 5033 off : Function result does not seem to be set}
   {$warn 05093 off}   // function result variable of a managed type does not seem to be initialized
   {$warn 05071 off}   // Note: Private type X never used
   {$WARN 3057 off : An inherited method is hidden by "$1"}
@@ -40,9 +43,9 @@
   {$WARN 3018 off : Constructor should be public}   
   {$WARN 4104 off : Implicit string type conversion from "$1" to "$2"}
   {$WARN 4056 off : Conversion between ordinals and pointers is not portable}  
-  {$WARN 5089 off : Local variable "$1" of a managed type does not seem to be initialized} 
-  {$WARN 4104 off : Implicit string type conversion from "$1" to "$2"}  
-  {$WARN 5033 off : Function result does not seem to be set}
+  {$WARN 5089 off : Local variable "$1" of a managed type does not seem to be initialized}
+  {$WARN 5093 off : fsl_base.pas(2354,19) Warning: function result variable of a managed type does not seem to be initialized}
+  {$WARN 4104 off : Implicit string type conversion from "$1" to "$2"}
 {$ELSE}
   {$IFNDEF MSWINDOWS}
     only windows is supported under delphi
@@ -59,11 +62,11 @@
 
 {
 The base class TFslObject can track all instantiated objects.
-Doing so it useful for leak hunting in production, but is also
-costly. Enable it with this define
+Doing so is useful for leak hunting in production, but is also a little costly.
+Enable it with this define
 }
 {$IFOPT D+}
-{.$.DEFINE OBJECT_TRACKING}
+{$DEFINE OBJECT_TRACKING}
 {$ENDIF}
 
 {

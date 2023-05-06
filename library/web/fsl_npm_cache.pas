@@ -83,11 +83,13 @@ type
     procedure load(id, ver: String);
   end;
 
+  TFHIRPackageManagerMode = (npmModeNone, npmModeUser, npmModeSystem, npmModeTesting);
+
   { TFHIRPackageManager }
 
   TFHIRPackageManager = class (TFslObject)
   private
-    FUser : boolean;
+    FMode : TFHIRPackageManagerMode;
     FFolder : String;
     FIni : TIniFile;
     FOnWork : TWorkProgressEvent;
@@ -112,7 +114,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(user : boolean); overload;
+    constructor Create(mode : TFHIRPackageManagerMode); overload;
     constructor Create(dir : String); overload;
     destructor Destroy; override;
     function Link : TFHIRPackageManager;
@@ -121,7 +123,7 @@ type
     property OnCheck : TCheckEvent read FOnCheck write FOnCheck;
 
     property Folder : String read FFolder;
-    property UserMode : boolean read FUser;
+    property Mode : TFHIRPackageManagerMode read FMode;
     function description : String;
     property Caching : boolean read FCaching write FCaching;
 
@@ -205,7 +207,7 @@ const
 
 
 var
-  MustBeUserMode : boolean = false;
+  ForcedNpmCacheMode : TFHIRPackageManagerMode = npmModeNone;
   GPackageLoaderTaskId : integer;
 
 
@@ -317,20 +319,27 @@ end;
 
 { TFHIRPackageManager }
 
-constructor TFHIRPackageManager.Create(user : boolean);
+constructor TFHIRPackageManager.Create(mode : TFHIRPackageManagerMode);
 begin
   inherited Create;
-  FUser := user or MustBeUserMode;
+  if ForcedNpmCacheMode <> npmModeNone then
+    FMode := ForcedNpmCacheMode
+  else
+    FMode := mode;
   {$IFDEF WINDOWS}
-  if FUser then
-    FFolder := FilePath([UserFolder, '.fhir', 'packages'])
-  else
-    FFolder := FilePath([ProgData, '.fhir', 'packages']);
+  case FMode of
+    npmModeNone: raise EFslException.create('Error- must provide a NPM Cache mode');
+    npmModeUser: FFolder := FilePath([UserFolder, '.fhir', 'packages'])
+    npmModeSystem: FFolder := FilePath([ProgData, '.fhir', 'packages']);
+    npmModeTesting: FFolder := FilePath([['[tmp]', '.fhir', 'packages']);
+  end;
   {$ELSE}
-  if FUser then
-    FFolder := ExpandFileNameUTF8('~/.fhir/packages')
-  else
-    FFolder := '/var/lib/.fhir/packages';
+  case FMode of
+    npmModeNone: raise EFslException.create('Error- must provide a NPM Cache mode');
+    npmModeUser: FFolder := ExpandFileNameUTF8('~/.fhir/packages');
+    npmModeSystem: FFolder := '/var/lib/.fhir/packages';
+    npmModeTesting: FFolder := FilePath(['[tmp]', '.fhir', 'packages']);
+  end;
   {$ENDIF}
   init;
 end;
@@ -338,7 +347,7 @@ end;
 constructor TFHIRPackageManager.Create(dir: String);
 begin
   inherited Create;
-  if (MustBeUserMode) then
+  if (ForcedNpmCacheMode <> npmModeNone) then
     raise EFslException.Create('Unable to create PackageManager for a specific directory');
   FFolder := dir;
   init;
@@ -437,10 +446,12 @@ end;
 
 function TFHIRPackageManager.description: String;
 begin
-  if FUser then
-    result := 'User Cache'
-  else
-    result := 'System Cache';
+  case FMode of
+    npmModeNone:result := 'Unknown Mode Cache'; // can't happen
+    npmModeUser:result := 'User Cache';
+    npmModeSystem:result := 'System Cache';
+    npmModeTesting:result := 'Testing Cache';
+  end;
 end;
 
 function TFHIRPackageManager.getId(url: String): String;

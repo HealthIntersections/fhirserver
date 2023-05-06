@@ -1060,7 +1060,7 @@ begin
     defn := element.prop.Structure;
     if (defn = nil) then
     begin
-      defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+      defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
       ctxt.owned.Add(defn);
     end;
     rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
@@ -1068,7 +1068,7 @@ begin
   if (profiles <> nil) then
     for p in profiles.FCanonical do
     begin
-      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p));
+      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p, ''));
       try
         if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
           if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
@@ -1162,7 +1162,7 @@ begin
         p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
         if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
-          sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref));
+          sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref, ''));
           try
             if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
               if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
@@ -1357,7 +1357,7 @@ end;
 
 function TFHIRValidator3.getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
 begin
-  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_));
+  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_, ''));
   ctxt.Owned.add(result);
 end;
 
@@ -1434,7 +1434,7 @@ var
   sd: TFHIRStructureDefinition;
 begin
   url := 'http://hl7.org/fhir/StructureDefinition/' + t;
-  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   ctxt.Owned.add(sd);
   if (sd = nil) or (sd.Snapshot = nil) then
     result := nil
@@ -1535,7 +1535,7 @@ begin
     begin
       if (actualType = '') then
         exit; // there'll be an error elsewhere in this case, and we're going to stop.
-      dt := TFHIRStructureDefinition(self.context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + actualType));
+      dt := TFHIRStructureDefinition(self.context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + actualType, ''));
       try
         if (dt = nil) then
           raise EDefinitionException.create('Unable to resolve actual type ' + actualType);
@@ -1971,10 +1971,10 @@ begin
         // need to do some special processing for reference here...
         if (ed.Type_List[0].code = 'Reference') then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profile));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profile, ''));
       end
       else
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code, ''));
       ctxt.Owned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
@@ -2008,7 +2008,7 @@ function TFHIRValidator3.checkResourceType(ctxt : TFHIRValidatorContext; ty: Str
 var
   t : TFHIRResource;
 begin
-  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty));
+  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty, ''));
   ctxt.Owned.add(t);
   if (t <> nil) then
     result := ty
@@ -2237,7 +2237,7 @@ begin
   end
   else
   begin
-    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr));
+    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr, ''));
     ctxt.owned.add(result);
   end;
 end;
@@ -2252,7 +2252,7 @@ begin
   url := element.getNamedChildValue('url');
   isModifier := element.name = 'modifierExtension';
 
-  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   if (ex = nil) then
   begin
     if (not rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path, allowUnknownExtension(ctxt, url), 'The extension ' + url + ' is unknown, and not allowed here'))
@@ -2447,7 +2447,7 @@ var
   profile: TFHIRStructureDefinition;
 begin
   resourceName := element.Type_;
-  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
   ctxt.owned.add(profile);
   if (element.Special in [fsecBUNDLE_ENTRY, fsecBUNDLE_OUTCOME, fsecPARAMETER]) then
     resource := element;
@@ -2761,7 +2761,7 @@ var
   c : TFHIRResource;
 begin
   if (reference is TFHIRUri) then
-    result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, TFHIRUri(reference).value))
+    result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, TFHIRUri(reference).value, ''))
   else if (reference is TFHIRReference) then
   begin
     s := TFHIRReference(reference).reference;
@@ -2774,7 +2774,7 @@ begin
     end
     else
     begin
-      result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, s));
+      result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, s, ''));
       if result <> nil then
         ctxt.owned.add(result);
     end;

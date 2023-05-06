@@ -149,7 +149,7 @@ Type
     function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; override;
 
     function getResourceNames : TFslStringSet; override;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); override;
@@ -1582,7 +1582,7 @@ begin
     Profiles.DropProfile(frtStructureDefinition, id);
 end;
 
-function TBaseWorkerContextR4.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TBaseWorkerContextR4.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 var
   r : TFHIRResourceProxy;
 begin

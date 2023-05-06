@@ -112,6 +112,7 @@ type
     procedure SetIni(AValue: TIniFile);
     function GetCache: TFHIRPackageManager;
     procedure SetCache(const Value: TFHIRPackageManager);
+    function npmMode : TFHIRPackageManagerMode;
   public
     property Ini : TIniFile read FIni write SetIni;
     property Cache : TFHIRPackageManager read GetCache write SetCache;
@@ -316,17 +317,25 @@ begin
   width := ini.readInteger('package-manager-view', 'width', width);
   height := ini.readInteger('package-manager-view', 'height', height);
   if FManager.FCache = nil then
-    FManager.FCache := TFHIRPackageManager.create(rbUserMode.checked);
+    FManager.FCache := TFHIRPackageManager.create(npmMode);
 
   if not FManager.doLoad then
     Close;
+end;
+
+function TPackageCacheForm.npmMode : TFHIRPackageManagerMode;
+begin
+  if rbUserMode.checked then
+    result := npmModeUser
+  else
+    result := npmModeSystem;
 end;
 
 function TPackageCacheForm.GetCache: TFHIRPackageManager;
 begin
   if FManager.FCache = nil then
   begin
-    FManager.FCache := TFHIRPackageManager.create(rbUserMode.checked);
+    FManager.FCache := TFHIRPackageManager.create(npmMode);
     FManager.doLoad;
   end;
   result := FManager.FCache;
@@ -334,20 +343,20 @@ end;
 
 procedure TPackageCacheForm.rbSystemChange(Sender: TObject);
 begin
-  if FManager.FCache.UserMode then
+  if FManager.FCache.Mode <> npmMode then
   begin
     FManager.FCache.Free;
-    FManager.FCache := TFHIRPackageManager.create(false);
+    FManager.FCache := TFHIRPackageManager.create(npmMode);
     FManager.doLoad;
   end;
 end;
 
 procedure TPackageCacheForm.rbUserModeChange(Sender: TObject);
 begin
-  if not FManager.FCache.UserMode then
+  if FManager.FCache.Mode <> npmMode then
   begin
     FManager.FCache.Free;
-    FManager.FCache := TFHIRPackageManager.create(true);
+    FManager.FCache := TFHIRPackageManager.create(npmMode);
     FManager.doLoad;
   end;
 end;

@@ -615,8 +615,9 @@ end;
 
 function TZCompressionStream.Read(var buffer; count: Longint): Longint;
 begin
+  result := 0;
   raise EIOException.Create('Cannot read from a compression stream');
-    end;
+end;
 
 function TZCompressionStream.Write(const buffer; count: Longint): Longint;
 begin
@@ -738,6 +739,7 @@ end;
 
 function TZDecompressionStream.Write(const buffer; count: Longint): Longint;
 begin
+  result := 0;
   raise EIOException.Create('Invalid Operation');
 end;
 

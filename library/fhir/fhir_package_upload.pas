@@ -102,7 +102,7 @@ constructor TFHIRPackageUploader.Create;
 begin
   inherited Create;
   FLoadedPackages := TStringList.create;
-  FCache := TFHIRPackageManager.create(true);
+  FCache := TFHIRPackageManager.create(npmModeUser);
 end;
 
 destructor TFHIRPackageUploader.Destroy;

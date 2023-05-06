@@ -847,6 +847,7 @@ end;
 
 function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRMMElement.createPropertyValue');
 end;
 
@@ -880,6 +881,7 @@ end;
 
 function TFHIRMMElement.getTypesForProperty(propName : string): String;
 begin
+  result := '';
   raise EFHIRTodo.create('TFHIRMMElement.getTypesForProperty');
 end;
 
@@ -1071,6 +1073,7 @@ end;
 
 function TFHIRMMElement.getId: String;
 begin
+  result := '';
   raise EFHIRTodo.create('TFHIRMMElement.getId:');
 end;
 
@@ -1211,6 +1214,7 @@ end;
 
 function TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRMMElement.setProperty');
 end;
 
@@ -2786,11 +2790,13 @@ end;
 
 function TFHIRCustomResource.Clone: TFHIRCustomResource;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRCustomResource.Clone:');
 end;
 
 function TFHIRCustomResource.equals(other : TObject): boolean;
 begin
+  result := false;
   raise EFHIRTodo.create('TFHIRCustomResource.equalsDeep');
 end;
 
@@ -2806,6 +2812,7 @@ end;
 
 function TFHIRCustomResource.getid: string;
 begin
+  result := '';
   raise EFHIRTodo.create('TFHIRCustomResource.getId');
 end;
 
@@ -2821,6 +2828,7 @@ end;
 
 function TFHIRCustomResource.getTypesForProperty(propName : string): String;
 begin
+  result := '';
   raise EFHIRTodo.create('TFHIRCustomResource.getTypesForProperty');
 end;
 
@@ -2831,6 +2839,7 @@ end;
 
 function TFHIRCustomResource.isMetaDataBased: boolean;
 begin
+  result := false;
   raise EFHIRTodo.create('TFHIRCustomResource.isMetaDataBased:');
 end;
 
@@ -2841,11 +2850,13 @@ end;
 
 function TFHIRCustomResource.createPropertyValue(propName: string): TFHIRObject;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRCustomResource.makeProperty');
 end;
 
 function TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRCustomResource.setProperty');
 end;
 

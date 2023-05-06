@@ -56,7 +56,7 @@ Type
     procedure checkClient;
     function findCode(list : TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: TFHIRValueSet; var res : TValidationResult) : boolean;
-    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetVs(sender : TObject; url, version : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
@@ -68,7 +68,7 @@ Type
     Function Link : TToolkitValidatorContextR4; overload;
     procedure Unload; override;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -134,7 +134,7 @@ begin
   // todo
 end;
 
-function TToolkitValidatorContextR4.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+function TToolkitValidatorContextR4.doGetVs(sender: TObject; url, version: String): TFHIRValueSetW;
 var
   vs : TFhirValueSet;
 begin
@@ -160,12 +160,12 @@ begin
   end;
 end;
 
-function TToolkitValidatorContextR4.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TToolkitValidatorContextR4.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 begin
   if (t = frtValueSet) then
     result := FValueSets.get(url).link
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TToolkitValidatorContextR4.findCode(list: TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirCodeSystemConcept;

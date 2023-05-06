@@ -1396,7 +1396,7 @@ var
   ctxt : TNDCFilterPreparationContext;
 begin
   ctxt := prep as TNDCFilterPreparationContext;
-  result := true;
+  result := false;
 end;
 
 function TNDCServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;

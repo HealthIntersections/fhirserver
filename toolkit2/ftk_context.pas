@@ -1031,7 +1031,7 @@ begin
   Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
-  FPcm := TFHIRPackageManager.create(true);
+  FPcm := TFHIRPackageManager.create(npmModeUser);
   FTxServers := TToolkitContextTerminologyServers.create;
 end;
 

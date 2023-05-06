@@ -310,7 +310,7 @@ end;
 function TUSStateServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TUSStateServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;

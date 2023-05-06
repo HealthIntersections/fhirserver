@@ -1524,8 +1524,6 @@ Type
 
       Procedure SortedByName;
       Function IsSortedByName : Boolean;
-      Procedure SortedByNamePI;
-      Function IsSortedByNamePI : Boolean;
 
       Function IndexByName(Const sName : String) : Integer; Overload;
       Function IndexByName(Const oName : TFslName) : Integer; Overload;
@@ -7836,17 +7834,6 @@ function TFslNameList.IsSortedByName: Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
-
-procedure TFslNameList.SortedByNamePI;
-begin
-
-end;
-
-function TFslNameList.IsSortedByNamePI: Boolean;
-begin
-
-end;
-
 
 procedure TFslNameList.SortedByName;
 Begin

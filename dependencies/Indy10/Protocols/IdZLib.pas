@@ -985,6 +985,7 @@ end;
 
 function TCompressionStream.IdRead(var VBuffer: TIdBytes; AOffset, ACount: Longint): Longint;
 begin
+  result := 0;
   raise ECompressionError.Create(sInvalidStreamOp);
 end;
 
@@ -1104,6 +1105,7 @@ end;
 
 function TDecompressionStream.IdWrite(const ABuffer: TIdBytes; AOffset, ACount: Longint): Longint;
 begin
+  result := 0;
   raise EDecompressionError.Create(sInvalidStreamOp);
 end;
 

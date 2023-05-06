@@ -5873,7 +5873,7 @@ begin
         result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
       else
       begin
-        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref);
+        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref, '');
         if vs = nil then
           vs := ServerContext.TerminologyServer.getValueSetByid(ref);
         if vs = nil then

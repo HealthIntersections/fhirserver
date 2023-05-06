@@ -72,7 +72,7 @@ type
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -267,13 +267,13 @@ begin
   FTerminologyServer := Value;
 end;
 
-function TFHIRServerWorkerContextR4.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+function TFHIRServerWorkerContextR4.fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource;
 var
   vsw : TFHIRValueSetW;
 begin
   if t = frtValueSet then
   begin
-    vsw := FTerminologyServer.getValueSetByUrl(url);
+    vsw := FTerminologyServer.getValueSetByUrl(url, version);
     if vsw <> nil then
     begin
       try
@@ -288,7 +288,7 @@ begin
   else if t = frtQuestionnaire then
     result := getQuestionnaire(url)
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TFHIRServerWorkerContextR4.getQuestionnaire(url: string): TFhirQuestionnaire;

@@ -145,7 +145,7 @@ Type
     function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
 
     function getResourceNames : TFslStringSet; override;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); override;
@@ -371,7 +371,7 @@ begin
         if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> 'Reference') then
         begin
           p := diffMatches[0].type_List[0].profileList[0].value;
-          sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
+          sd := context.fetchResource(frtStructureDefinition, p, '') as TFhirStructureDefinition;
           try
             if (sd <> nil) then
             begin
@@ -713,7 +713,7 @@ begin
     result := nil
   else
   begin
-    vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+    vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference, '') as TFhirValueSet;
     try
         vs1 := context.expand(vs);
         try
@@ -863,9 +863,9 @@ function TProfileUtilities.getProfileForDataType(type_ : TFhirElementDefinitionT
 begin
   result := nil;
   if (type_.profileList.Count > 0) then
-    result := context.fetchResource(frtStructureDefinition, type_.profileList[0].StringValue) as TFhirStructureDefinition;
+    result := context.fetchResource(frtStructureDefinition, type_.profileList[0].StringValue, '') as TFhirStructureDefinition;
   if (result = nil) then
-    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
+    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code, '') as TFhirStructureDefinition;
   if DebugConsoleMessages and (result = nil) then
     writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
 end;
@@ -1357,8 +1357,8 @@ begin
           try
             if (base.binding.valueSet is TFHIrReference) and (derived.binding.valueSet is TFHIrReference) then
             begin
-              vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
-              vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+              vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference, '') as TFhirValueSet;
+              vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference, '') as TFhirValueSet;
               if (vsBase <> nil) and (vsDerived <> nil) then
               begin
                 expBase := context.expand(vsBase);
@@ -1559,7 +1559,7 @@ begin
     Profiles.DropProfile(frtStructureDefinition, id);
 end;
 
-function TBaseWorkerContextR2.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TBaseWorkerContextR2.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 var
   r : TFHIRResourceProxy;
 begin
@@ -1696,7 +1696,7 @@ end;
 
 function TBaseWorkerContextR2.getStructure(url: String): TFHIRStructureDefinition;
 begin
-  result := fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition
+  result := fetchResource(frtStructureDefinition, url, '') as TFhirStructureDefinition
 end;
 
 function TBaseWorkerContextR2.link: TBaseWorkerContextR2;

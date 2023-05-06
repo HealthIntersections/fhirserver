@@ -165,7 +165,7 @@ end;
 
 function TIdSASL.ContinueAuthenticate(const ALastResponse, AHost, AProtocolName : string): string;
 begin
-  // intentionally empty
+  result := ''; // intentionally empty
 end;
 
 procedure TIdSASL.FinishAuthenticate;

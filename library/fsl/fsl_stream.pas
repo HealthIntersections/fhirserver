@@ -4564,6 +4564,7 @@ function TFslStreamReader.ReadLine: string;
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;}
 begin
+  result := '';
   raise ELibraryException.create('This needs debugging for buffer changes');
 {  Result := '';
   if FClosed then
@@ -4731,6 +4732,7 @@ end;
 
 function TFslStringReader.ReadToEnd: string;
 begin
+  result := '';
   raise ETodo.create('TFslStringReader.ReadToEnd');
 end;
 
@@ -5286,6 +5288,7 @@ End;
 
 Function TPointerMemoryStream.Write(Const Buffer; Count: LongInt): LongInt;
 Begin
+  result := 0;
   Raise EFslException.Create('Should never be called');
 End;
 
@@ -5740,6 +5743,7 @@ end;
 {$ENDIF}
 {$IFDEF OSX}
 begin
+  result := 0;
   raise EFslException.Create('To do');
 end;
 {$ENDIF}

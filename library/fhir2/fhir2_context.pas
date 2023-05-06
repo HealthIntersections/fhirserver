@@ -117,7 +117,7 @@ type
     function link : TFHIRWorkerContext; overload;
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; overload; virtual; abstract;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
@@ -129,7 +129,7 @@ type
     function hasCustomResource(name : String) : boolean; virtual; abstract;
 
     // override version independent variants:
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
@@ -245,12 +245,12 @@ begin
   result := validateCode(systemUri, version, code, vs.Resource as TFHIRValueSet);
 end;
 
-function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+function TFHIRWorkerContext.fetchResource(rType, url, version: String): TFhirResourceV;
 var
   t : TFhirResourceType;
 begin
   if RecogniseFHIRResourceName(rType, t) then
-    result := fetchResource(t, url)
+    result := fetchResource(t, url, version)
   else
     raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;

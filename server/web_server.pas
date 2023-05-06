@@ -156,6 +156,7 @@ Type
     FSSLPassword: String;
     FInLog : TLogger;
     FOutLog : TLogger;
+    FLogFolder : String;
 
     // operational fields
     FUsageServer : TUsageStatsServer;
@@ -278,6 +279,7 @@ var
   fn: String;
   txu: String;
 begin
+  FLogFolder := ini.admin['log-folder'].value;
   fn := ini.admin['logging-in'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
@@ -937,7 +939,7 @@ var
   package : TFslBytesBuilder;
   b : TBytes;
 begin
-  if FInLog = nil then
+  if (FInLog = nil) and (FLogFolder = '') then
     exit;
 
   package := TFslBytesBuilder.Create;
@@ -971,7 +973,10 @@ begin
       package.addStringUtf8(#13#10);
     end;
 
-    FInLog.WriteToLog(package.AsBytes);
+    if FInLog <> nil then
+      FInLog.WriteToLog(package.AsBytes);
+    if FLogFolder <> '' then
+      BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
   finally
     package.Free;
   end;
@@ -1015,13 +1020,22 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
         package.addStringUtf8(#13#10);
       end;
 
-      FOutLog.WriteToLog(package.AsBytes);
+      b := package.AsBytes;
+      if FOutLog <> nil then
+        FOutLog.WriteToLog(b);
+      if FLogFolder <> '' then
+      begin
+        package.Clear;
+        package.Append(FileToBytes(FilePath([FLogFolder, id+'.log'])));
+        package.append(b);
+        BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
+      end;
     finally
       package.Free;
     end;
   end;
 begin
-  if FOutLog = nil then
+  if (FOutLog = nil) and (FLogFolder = '') then
     exit;
 
   try

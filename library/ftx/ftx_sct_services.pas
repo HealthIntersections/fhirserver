@@ -4161,10 +4161,30 @@ begin
 end;
 
 function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
+var
+  c : TSnomedFilterContext;
+  index : integer;
+  concept : TCodeSystemProviderContext;
+  ok : boolean;
 begin
   checkIsLoaded;
-//  result := TSnomedFilterContext(ctxt).Members[;
-  result := nil;
+  c := TSnomedFilterContext(ctxt);
+  concept := locate(code, message);
+  try
+    message := '';
+    if concept = nil then
+      ok := false
+    else if Length(TSnomedFilterContext(ctxt).members) > 0 then
+      ok := FindMember(TSnomedFilterContext(ctxt).Members, TSnomedExpressionContext(concept).reference, index)
+    else
+      ok := FindCardinalInArray(TSnomedFilterContext(ctxt).descendants, TSnomedExpressionContext(concept).reference, index);
+    if (ok) then
+      result := concept.link
+    else
+      result := nil;
+  finally
+    concept.free;
+  end;
 end;
 
 function TSnomedServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;

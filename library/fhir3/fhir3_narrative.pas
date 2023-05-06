@@ -500,11 +500,11 @@ begin
       if (r.Meta <> nil) then
         for pu in r.Meta.profileList do
           if (p = nil) then
-            p := context.fetchResource(frtStructureDefinition, pu.value) as TFHIRStructureDefinition;
+            p := context.fetchResource(frtStructureDefinition, pu.value, '') as TFHIRStructureDefinition;
       if (p = nil) then
-        p := context.fetchResource(frtStructureDefinition, CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
+        p := context.fetchResource(frtStructureDefinition, CODES_TFHIRREsourceType[r.ResourceType], '') as TFHIRStructureDefinition;
       if (p = nil) then
-        p := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFHIRREsourceType[r.ResourceType]) as TFHIRStructureDefinition;
+        p := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFHIRREsourceType[r.ResourceType], '') as TFHIRStructureDefinition;
       if (p <> nil) then
         generateByProfile(r, p, true);
     finally
@@ -845,7 +845,7 @@ begin
             begin
               ex := TFHIRExtension(v.getBase());
               url := ex.url;
-              ed := context.fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+              ed := context.fetchResource(frtStructureDefinition, url, '') as TFHIRStructureDefinition;
               try
                 if (p.getName() = 'modifierExtension') and (ed = nil) then
                   raise EFHIRNarrativeException.create('Unknown modifier extension ' + url);
@@ -1347,7 +1347,7 @@ begin
     x.addText('Generated Summary: ');
   end;
   path := res.getName();
-  profile := context.fetchResource(frtStructureDefinition, path) as TFHIRStructureDefinition;
+  profile := context.fetchResource(frtStructureDefinition, path, '') as TFHIRStructureDefinition;
   try
     if (profile = nil) then
       x.addText('unknown resource ' + path)
@@ -1443,7 +1443,7 @@ begin
     end;
   end;
 
-  ae := context.fetchResource(frtNull, url);
+  ae := context.fetchResource(frtNull, url, '');
   try
     if (ae <> nil) then
     begin

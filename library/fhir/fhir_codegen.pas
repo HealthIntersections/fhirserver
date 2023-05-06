@@ -348,7 +348,7 @@ begin
   imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType+'.*');
   vars.Values['res'] := resource.fhirType;
   line(4, resource.fhirType + ' res = new '+resource.fhirType+'();');
-  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType, ''));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], ' res'));
   finally
@@ -421,7 +421,7 @@ begin
   begin
     vs := nil;
     if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
-      vs := FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
+      vs := FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet, ''));
     try
       if (vs <> nil) then
         line(indent, an+'('+vs.name+'.'+enumify(value.primitiveValue).ToUpper+');')
@@ -444,7 +444,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType, ''));
     if (tsd <> nil) then
     begin
       try
@@ -660,7 +660,7 @@ begin
   begin
     vs := nil;
     if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
-      vs :=  FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
+      vs :=  FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet, ''));
     try
       if (vs <> nil) then
         line(indent, an+' := '+vs.name+capitalize(enumify(value.primitiveValue))+';')
@@ -680,7 +680,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType, ''));
     if (tsd <> nil) then
     begin
       try
@@ -767,7 +767,7 @@ begin
   vars.Values['res'] := 'TFHIR'+resource.fhirType;
   line(2, 'res := TFHIR'+resource.fhirType+'.create;');
   line(2, 'try');
-  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType, ''));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], 'res'));
   finally

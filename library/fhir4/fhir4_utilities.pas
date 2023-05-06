@@ -4359,6 +4359,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
+  result := false;
   raise EFHIRTodo.create('compareValues');
 end;
 

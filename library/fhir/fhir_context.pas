@@ -208,7 +208,7 @@ begin
   doProgress('Loading Package ' +id, 0, 1);
 
   if (FNpm = nil) then
-    FNpm := TFHIRPackageManager.Create(user);
+    FNpm := TFHIRPackageManager.Create(npmModeUser);
   i := 0;
 
   p := context.factory.makeParser(context.Link, ffJson, defLang);

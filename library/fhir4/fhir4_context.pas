@@ -123,7 +123,7 @@ type
     function link : TFHIRWorkerContext; overload;
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; overload; virtual; abstract;
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
@@ -143,7 +143,7 @@ type
     function hasCustomResource(name : String) : boolean; virtual; abstract;
 
     // override version independent variants:
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
@@ -294,41 +294,42 @@ end;
 
 function TFHIRWorkerContext.fetchCodeSystem(url: String): TFhirCodeSystem;
 begin
-  result := fetchResource(frtCodeSystem, url) as TFHIRCodeSystem;
+  result := fetchResource(frtCodeSystem, url, '') as TFHIRCodeSystem;
 end;
 
 function TFHIRWorkerContext.fetchConceptMap(url: String): TFhirConceptMap;
 begin
-  result := fetchResource(frtConceptMap, url) as TFHIRConceptMap;
+  result := fetchResource(frtConceptMap, url, '') as TFHIRConceptMap;
 end;
 
-function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+function TFHIRWorkerContext.fetchResource(rType, url, version: String): TFhirResourceV;
 var
   t : TFhirResourceType;
 begin
   if RecogniseFHIRResourceName(rType, t) then
-    result := fetchResource(t, url)
+    result := fetchResource(t, url, version)
   else
     raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;
 
 function TFHIRWorkerContext.fetchStructureDefinition(url: String): TFhirStructureDefinition;
 begin
-  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+  result := fetchResource(frtStructureDefinition, url, '') as TFHIRStructureDefinition;
 end;
 
 function TFHIRWorkerContext.fetchStructureMap(url: String): TFhirStructureMap;
 begin
-  result := fetchResource(frtStructureMap, url) as TFHIRStructureMap;
+  result := fetchResource(frtStructureMap, url, '') as TFHIRStructureMap;
 end;
 
 function TFHIRWorkerContext.fetchValueSet(url: String): TFhirValueSet;
 begin
-  result := fetchResource(frtValueSet, url) as TFHIRValueSet;
+  result := fetchResource(frtValueSet, url, '') as TFHIRValueSet;
 end;
 
 function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
+  result := nil;
   raise EFslException.Create('Error Message');
 end;
 

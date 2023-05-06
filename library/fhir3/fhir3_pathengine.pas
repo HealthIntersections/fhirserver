@@ -2491,9 +2491,10 @@ end;
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   current, added, pc, work : TFHIRSelectionList;
-  item : TFHIRSelection;
+  item, b : TFHIRSelection;
   ctxt : TFHIRPathExecutionContext;
   more : boolean;
+  new : boolean;
 begin
   result := TFHIRSelectionList.Create;
   current := TFHIRSelectionList.Create;
@@ -2526,9 +2527,18 @@ begin
         pc.free;
       end;
       more := added.Count > 0;
-      result.addAll(added);
       current.clear();
-      current.addAll(added);
+      for b in added do
+      begin
+        new := true;
+        for item in result do
+          new := new and not objectsEqual(b.value, item.value);
+        if new then
+        begin
+          result.add(b.link);
+          current.add(b.link);
+        end;
+      end;
     end;
     result.Link;
   finally
@@ -5813,11 +5823,11 @@ begin
         if (not pt.hasType(context, a.uri)) then
         begin
           ok := false;
-          sd := context.fetchResource(frtStructureDefinition, a.uri) as TFhirStructureDefinition;
+          sd := context.fetchResource(frtStructureDefinition, a.uri, '') as TFhirStructureDefinition;
           while not ok and (sd <> nil) do
           begin
             ok := pt.hasType(context, sd.type_);
-            sd := context.fetchResource(frtStructureDefinition, sd.baseDefinition) as TFhirStructureDefinition;
+            sd := context.fetchResource(frtStructureDefinition, sd.baseDefinition, '') as TFhirStructureDefinition;
           end;
           if (not ok) then
           raise EFHIRPath.create('The parameter type "'+a.uri+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
@@ -6427,7 +6437,7 @@ begin
         url := TFHIRProfiledType.ns(type_);
     end;
 
-    sd := worker.fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition;
+    sd := worker.fetchResource(frtStructureDefinition, url, '') as TFhirStructureDefinition;
     if (sd = nil) then
       raise EFHIRPath.create('Unknown type '+type_); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
     m := nil;
@@ -6439,7 +6449,7 @@ begin
       begin
         if specifiedType <> '' then
         begin
-          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+specifiedType) as TFhirStructureDefinition;
+          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+specifiedType, '') as TFhirStructureDefinition;
           if (dt = nil) then
             raise EFHIRPath.create('unknown data type '+specifiedType);
           sdl.add(dt);
@@ -6447,7 +6457,7 @@ begin
         else
           for t in m.type_List do
           begin
-            dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
+            dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code, '') as TFhirStructureDefinition;
             if (dt = nil) then
               raise EFHIRPath.create('unknown data type '+t.code);
             sdl.add(dt);

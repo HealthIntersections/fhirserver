@@ -205,9 +205,9 @@ Type
     property valueSet : TFHIRValueSetW read FValueSet write SetValueSet;
   end;
 
-  TGetValueSetEvent = function (sender : TObject; url : String) : TFHIRValueSetW of object;
+  TGetValueSetEvent = function (sender : TObject; url, version : String) : TFHIRValueSetW of object;
   TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider of object;
-  TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW of object;
+  TGetExpansionEvent = function (sender : TObject; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW of object;
   TGetSystemVersionsEvent = procedure (sender : TObject; url : String; list : TStringlist) of object;
 
   { TValueSetWorker }
@@ -226,7 +226,7 @@ Type
     FI18n : TI18nSupport;
 
     function findInAdditionalResources(url, version, resourceType : String) : TFHIRMetadataResourceW;
-    function findValueSet(url : String) : TFHIRValueSetW;
+    function findValueSet(url, version : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
     procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
@@ -309,10 +309,10 @@ Type
     procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcURL : String);
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContainsW) : string;  overload;
-    function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
+    function expandValueSet(uri, version, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
     procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
-    procedure checkCanExpandValueset(uri: String);
+    procedure checkCanExpandValueset(uri, version: String);
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
 
@@ -501,7 +501,7 @@ begin
     end;
 end;
 
-function TValueSetWorker.findValueSet(url: String): TFHIRValueSetW;
+function TValueSetWorker.findValueSet(url, version: String): TFHIRValueSetW;
 var
   r : TFHIRMetadataResourceW;
 begin
@@ -512,7 +512,7 @@ begin
   if (r <> nil) then
     exit(r.link as TFHIRValueSetW);
 
-  result := FOnGetValueSet(self, url);
+  result := FOnGetValueSet(self, url, version);
 end;
 
 function TValueSetWorker.sizeInBytesV(magic : integer) : cardinal;
@@ -738,7 +738,7 @@ begin
       // not r2:
       for s in FValueSet.imports do
       begin
-        other := findValueSet(s);
+        other := findValueSet(s, '');
         try
           if other = nil then
             raise ETerminologyError.create('Unable to find value set '+s, itUnknown);
@@ -775,7 +775,7 @@ begin
   begin
     if not FOthers.ExistsByKey(s) then
     begin
-      other := findValueSet(s);
+      other := findValueSet(s, '');
       try
         if other = nil then
           raise ETerminologyError.create('Unable to find value set ' + s, itUnknown);
@@ -2066,7 +2066,7 @@ var
 begin
   for s in source.imports do
   begin
-    vs := expandValueSet(s, filter.filter, dependencies, notClosed);
+    vs := expandValueSet(s, '', filter.filter, dependencies, notClosed);
     try
       importValueSet(vs, expansion, nil, 0);
     finally
@@ -2437,11 +2437,11 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.checkCanExpandValueset(uri: String);
+procedure TFHIRValueSetExpander.checkCanExpandValueset(uri, version: String);
 var
   vs : TFHIRValueSetW;
 begin
-  vs := findValueSet(uri);
+  vs := findValueSet(uri, version);
   try
     if vs = nil then
       raise ETerminologyError.create('Unable to find value set "'+uri+'"', itUnknown);
@@ -2450,14 +2450,14 @@ begin
   end;
 end;
 
-function TFHIRValueSetExpander.expandValueSet(uri: String; filter : String; dependencies : TStringList;  var notClosed : boolean) : TFHIRValueSetW;
+function TFHIRValueSetExpander.expandValueSet(uri, version: String; filter : String; dependencies : TStringList;  var notClosed : boolean) : TFHIRValueSetW;
 var
   dep : TStringList;
   exp : TFhirValueSetExpansionW;
 begin
   dep := TStringList.Create;
   try
-    result := FOnGetExpansion(self, uri, filter, FParams, dep, FAdditionalResources , -1);
+    result := FOnGetExpansion(self, uri, version, filter, FParams, dep, FAdditionalResources , -1);
     try
       dependencies.AddStrings(dep);
       if (result = nil) then
@@ -2518,7 +2518,7 @@ begin
   imp := false;
   for s in cset.valueSets do
   begin
-    checkCanExpandValueset(s);
+    checkCanExpandValueset(s, '');
     imp := true;
   end;
 
@@ -2543,7 +2543,7 @@ begin
       begin
         if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion then
         begin
-          checkCanExpandValueSet(cs.SpecialEnumeration);
+          checkCanExpandValueSet(cs.SpecialEnumeration, '');
         end
         else if filter.Null then // special case - add all the code system
         begin
@@ -2623,7 +2623,7 @@ begin
     if cset.systemUri = '' then
     begin
       for s in cset.valueSets do
-        valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
+        valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed)));
       if doDelete then
         excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1)
       else
@@ -2642,14 +2642,14 @@ begin
             // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
             // this saves lots of overhead we don't need. But it does require simple cases (though they are common). So we have a look
             // at the value set, and see whether we can short cut it. If we can, it's just another filter (though we can't iterate on it)
-            vs := FOnGetValueSet(self, s);
+            vs := FOnGetValueSet(self, s, '');
             try
               if (vs <> nil) then
                 f := makeFilterForValueSet(cs, vs);
               if (f <> nil) then
                 filters.add(f)
               else
-                valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
+                valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed)));
             finally
               vs.Free;
             end;
@@ -2659,7 +2659,7 @@ begin
           begin
             if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
             begin
-              base := expandValueSet(cs.SpecialEnumeration, filter.filter, dependencies, notClosed);
+              base := expandValueSet(cs.SpecialEnumeration, '', filter.filter, dependencies, notClosed);
               try
                 expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                 if doDelete then
@@ -2789,7 +2789,7 @@ begin
                       notClosed := true;
                   end;
 
-                  inner := not cs.prepare(prep);
+                  inner := cs.prepare(prep);
                   count := 0;
                   While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
                   begin

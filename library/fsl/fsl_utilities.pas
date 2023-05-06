@@ -6035,7 +6035,15 @@ Begin
   {$IFNDEF FPC}
   regex := TRegEx.Create(UUID_REGEX, [roCompiled]);
   result := regex.IsMatch(oid);
+  {$ELSE}
+  regex := TRegEx.create(UUID_REGEX, [roCOmpiled]);
+  try
+    result := regex.isMatch(oid);
+  finally
+    regex.free;
+  end;
   {$ENDIF}
+
 End;
 
 
@@ -16999,6 +17007,7 @@ end;
 function ZCompressBytes(const s: TBytes): TBytes;
 begin
   {$IFDEF FPC}
+  result := nil;
   raise ETodo.create('Not done yet');
   {$ELSE}
   ZCompress(s, result);

@@ -208,7 +208,7 @@ function TFhirExpandValueSetOperation.Execute(context : TOperationContext; manag
 var
   vs, dst : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  url, cacheId, filter, id : String;
+  url, cacheId, filter, id, version : String;
   profile : TFHIRExpansionParams;
   limit, count, offset : integer;
   params : TFhirParametersW;
@@ -239,6 +239,7 @@ begin
           else if params.has('url') then
           begin
             url := params.str('url');
+            version := request.Parameters['valueSetVersion'];
             txResources := processAdditionalResources(context, manager, nil, params);
             for mr in txResources do
               if (mr.url = url) and (mr is TFHIRValueSetW) then
@@ -254,12 +255,12 @@ begin
                 vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9+request.baseURL.Length), request.baseUrl, needSecure))
               else
               begin
-                vs := FServer.getValueSetByUrl(url);
+                vs := FServer.getValueSetByUrl(url, version);
                 if vs = nil then
                   vs := FFactory.wrapValueSet(manager.getResourceByUrl('ValueSet', url, '', true, needSecure));
                 if vs = nil then
                   if not FServer.isKnownValueSet(url, vs) then
-                    vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['valueSetVersion'], false, needSecure));
+                    vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
               end;
             end;
             if vs = nil then
@@ -382,29 +383,30 @@ begin
   result := nil;
 end;
 
-function canonicalMatches(mr : TFHIRMetadataResourceW; canonical : String) : boolean;
+function canonicalMatches(mr : TFHIRMetadataResourceW; canonical, version : String) : boolean;
 var
   l, r : String;
 begin
-  if mr.url = canonical then
-    result := true
-  else if not canonical.Contains('|') then
-    result := false
-  else
+  if canonical.Contains('|') then
   begin
     StringSplit(canonical, '|', l, r);
-    if (l <> mr.url) then
-      result := false
-    else
-      result := (r = '') or (r = mr.version);
+    if (version <> '') and (l <> version) then
+      exit(false);
+  end
+  else
+  begin
+    l := canonical;
+    r := version;
   end;
+
+  result := (mr.url = l) and ((r = '') or (r = mr.version));
 end;
 
 function TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId, url, summary, issuePath : String;
+  cacheId, url, summary, issuePath, version : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
@@ -445,22 +447,26 @@ begin
                 else if params.has('url')  then
                 begin
                   url := params.str('url');
-                  result := result+' in vs '+url+' (ref)';
+                  version := params.str('valueSetVersion');
+                  if (version = '') then
+                    result := result+' in vs '+url+'|'+version+' (ref)'
+                  else
+                    result := result+' in vs '+url+' (ref)';
                   txResources := processAdditionalResources(context, manager, nil, params);
                   for mr in txResources do
-                    if (canonicalMatches(mr, url)) and (mr is TFHIRValueSetW) then
+                    if (canonicalMatches(mr, url, version)) and (mr is TFHIRValueSetW) then
                     begin
                       vs := (mr as TFHIRValueSetW).link;
                       break;
                     end;
                   if vs = nil then
-                    vs := FServer.getValueSetByUrl(url);
+                    vs := FServer.getValueSetByUrl(url, version);
                   if vs = nil then
                     if not FServer.isKnownValueSet(url, vs) then
-                      vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, params.str('version'), false, needSecure));
+                      vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
                   if vs = nil then
                     raise ETerminologySetup.Create('Unable to resolve value set "'+url+'"');
-                  cacheId := vs.url;
+                  cacheId := vs.vurl;
                 end
                 else if params.has('valueSet') then
                 begin

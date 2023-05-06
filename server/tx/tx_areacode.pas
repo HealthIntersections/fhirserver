@@ -520,7 +520,7 @@ end;
 function TAreaCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TAreaCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;

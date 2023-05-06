@@ -2515,9 +2515,10 @@ end;
 function TFHIRPathEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   current, added, pc, work : TFHIRSelectionList;
-  item : TFHIRSelection;
+  item, b : TFHIRSelection;
   ctxt : TFHIRPathExecutionContext;
   more : boolean;
+  new : boolean;
 begin
   result := TFHIRSelectionList.Create;
   current := TFHIRSelectionList.Create;
@@ -2550,9 +2551,18 @@ begin
         pc.free;
       end;
       more := added.Count > 0;
-      result.addAll(added);
       current.clear();
-      current.addAll(added);
+      for b in added do
+      begin
+        new := true;
+        for item in result do
+          new := new and not objectsEqual(b.value, item.value);
+        if new then
+        begin
+          result.add(b.link);
+          current.add(b.link);
+        end;
+      end;
     end;
     result.Link;
   finally

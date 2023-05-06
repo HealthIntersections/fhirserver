@@ -226,7 +226,7 @@ end;
 function TIso4217Services.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TIso4217Services.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;

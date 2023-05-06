@@ -287,7 +287,7 @@ type
     procedure setNonSecureTypes(names : Array of String); virtual; abstract;
 
     function getResourceNames : TFslStringSet; virtual; abstract;
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; virtual; abstract;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; virtual; abstract;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; virtual; abstract;
     function supportsSystem(systemUri, version : string) : boolean; overload; virtual; abstract;
     function validateCode(systemUri, version, code, display : String) : TValidationResult; overload; virtual; abstract;

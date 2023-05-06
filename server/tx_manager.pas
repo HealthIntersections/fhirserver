@@ -205,7 +205,7 @@ Type
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider; overload;
     Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRExpansionParams) : TCodeSystemProvider; overload;
-    function getValueSetByUrl(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+    function getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
     function getValueSetById(id : String) : TFHIRValueSetW;
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
@@ -340,6 +340,7 @@ end;
 
 function TAllCodeSystemsProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
+  result := nil;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
@@ -364,6 +365,7 @@ end;
 
 function TAllCodeSystemsProvider.getDisplay(code : String; const lang : THTTPLanguages):String;
 begin
+  result := '';
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
@@ -387,16 +389,20 @@ end;
 
 function TAllCodeSystemsProvider.getDefinition(code : String):String;
 begin
+  result := '';
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
+
 function TAllCodeSystemsProvider.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
+  result := nil;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
 
 function TAllCodeSystemsProvider.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
+  result := nil;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
@@ -515,6 +521,7 @@ end;
 
 function TAllCodeSystemsProvider.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
+  result := nil;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
@@ -537,6 +544,7 @@ end;
 
 function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
+  result := nil;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
 
@@ -626,8 +634,10 @@ end;
 
 function TAllCodeSystemsProvider.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
+  result := false;
   raise ETerminologyError.create('Not Created Yet', itNotSupported);
 end;
+
 function TAllCodeSystemsProvider.isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean;
 begin
   result := true;
@@ -1078,8 +1088,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
-        cm.Source := getValueSetByUrl(cm.Resource.source);
-        cm.Target := getValueSetByUrl(cm.Resource.target);
+        cm.Source := getValueSetByUrl(cm.Resource.source, '');
+        cm.Target := getValueSetByUrl(cm.Resource.target, '');
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
         FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
         FBaseConceptMaps.AddOrSetValue(cm.Resource.url, cm.Link);
@@ -1132,8 +1142,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
-        cm.Source := getValueSetByUrl(cm.Resource.source);
-        cm.Target := getValueSetByUrl(cm.Resource.target);
+        cm.Source := getValueSetByUrl(cm.Resource.source, '');
+        cm.Target := getValueSetByUrl(cm.Resource.target, '');
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
         FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
       finally
@@ -1232,7 +1242,7 @@ begin
       cm.source := nil
     else
     begin
-      cm.Source := getValueSetByUrl(cm.Resource.source);
+      cm.Source := getValueSetByUrl(cm.Resource.source, '');
       if (cm.Source = nil) then
         cm.Source := getValueSetById(cm.Resource.source);
     end;
@@ -1240,7 +1250,7 @@ begin
       cm.Target := nil
     else
     begin
-      cm.Target := getValueSetByUrl(cm.Resource.target);
+      cm.Target := getValueSetByUrl(cm.Resource.target, '');
       if (cm.Target = nil) then
         cm.Target := getValueSetById(cm.Resource.target);
     end;
@@ -1559,7 +1569,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getValueSetByUrl(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+function TTerminologyServerStore.getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
 var
   p :  TArray<String>;
   r : TFHIRMetadataResourceW;
@@ -1567,7 +1577,7 @@ begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (r.version = version)) then
       begin
         if not (r is TFHIRValueSetW) then
           raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
@@ -1594,7 +1604,9 @@ begin
     end
     else
     begin
-      if FValueSets.has(url, result) then
+      if (version <> '') and FValueSets.has(url, version, result) then
+        result.Link
+      else if FValueSets.has(url, result) then
         result.Link
       else
         result := nil;

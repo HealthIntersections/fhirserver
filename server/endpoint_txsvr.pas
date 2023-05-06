@@ -297,11 +297,13 @@ end;
 
 function TTerminologyServerFactory.makeIndexer: TFHIRIndexManager;
 begin
+  result := nil;
   raise EFslException.Create('Not supported in this server');
 end;
 
 function TTerminologyServerFactory.makeSubscriptionManager(ServerContext: TFslObject): TSubscriptionManager;
 begin
+  result := nil;
   raise EFslException.Create('Not supported in this server');
 end;
 
@@ -462,6 +464,7 @@ end;
 
 function TTerminologyServerOperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
+  result := nil;
   raise ETodo.Create('Not done yet');
 end;
 
@@ -1021,6 +1024,7 @@ end;
 
 function TTerminologyFhirServerStorage.fetchLoadedPackage(id: String): TBytes;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1061,6 +1065,7 @@ end;
 
 function TTerminologyFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1079,11 +1084,13 @@ end;
 
 function TTerminologyFhirServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
 function TTerminologyFhirServerStorage.getClientName(id: String): string;
 begin
+  result := '';
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1094,6 +1101,7 @@ end;
 
 function TTerminologyFhirServerStorage.issueHealthCardKey: integer;
 begin
+  result := 0;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1193,6 +1201,7 @@ end;
 
 function TTerminologyFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1369,6 +1378,7 @@ end;
 
 function TTerminologyFhirServerStorage.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
 begin
+  result := false;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1383,6 +1393,7 @@ end;
 
 function TTerminologyFhirServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
 begin
+  result := '';
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1679,6 +1690,7 @@ end;
 
 function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
+  result := '';
   raise EFslException.Create('Authentication is not supported for the terminology server');
 end;
 
@@ -1773,6 +1785,7 @@ end;
 
 function TTerminologyServerWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
+  result := '';
   raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 
@@ -1788,6 +1801,7 @@ end;
 
 function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
 begin
+  result := nil;
   raise EFslException.Create('Not done yet');
 end;
 
@@ -1804,11 +1818,13 @@ end;
 
 function TTerminologyServerWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 begin
+  result := 0;
   raise EFslException.Create('The WebUI is not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
+  result := nil;
   raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 

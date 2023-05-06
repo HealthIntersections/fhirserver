@@ -56,7 +56,7 @@ Type
     procedure checkClient;
     function  findCode(list : TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirValueSetCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: TFHIRValueSet; var res : TValidationResult) : boolean;
-    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetVs(sender : TObject; url, version : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
@@ -68,7 +68,7 @@ Type
     Function Link : TToolkitValidatorContextR2; overload;
     procedure Unload; override;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -133,7 +133,7 @@ begin
   // todo...
 end;
 
-function TToolkitValidatorContextR2.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+function TToolkitValidatorContextR2.doGetVs(sender: TObject; url, version: String): TFHIRValueSetW;
 var
   vs : TFhirValueSet;
 begin
@@ -159,12 +159,12 @@ begin
   end;
 end;
 
-function TToolkitValidatorContextR2.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TToolkitValidatorContextR2.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 begin
   if (t = frtValueSet) then
     result := FValueSets[url].link
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TToolkitValidatorContextR2.findCode(list: TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirValueSetCodeSystemConcept;

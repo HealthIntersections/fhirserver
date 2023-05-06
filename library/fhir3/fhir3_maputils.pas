@@ -1532,7 +1532,7 @@ begin
         end;
       end
       else
-        cmap := TFhirConceptMap(FWorker.fetchResource(frtConceptMap, conceptMapUrl));
+        cmap := TFhirConceptMap(FWorker.fetchResource(frtConceptMap, conceptMapUrl, ''));
       outcome := nil;
       try
         done := false;

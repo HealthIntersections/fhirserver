@@ -585,7 +585,7 @@ begin
       profile := profiles.FDefinitions[0]
     else if profiles.FCanonical.count > 0 then
     begin
-      profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, profiles.FCanonical[0]));
+      profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, profiles.FCanonical[0], ''));
       ctxt.Owned.add(profile);
       if (profile = nil) then
         raise EFHIRException.create('StructureDefinition "' + profiles.FCanonical[0] + '" not found');
@@ -1011,7 +1011,7 @@ begin
     resourceName := element.type_;
     if (profile = nil) then
     begin
-      profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+      profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
       ctxt.Owned.add(profile);
       rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for resource type "' + resourceName + '"');
     end;
@@ -1102,7 +1102,7 @@ begin
         p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
         if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
-          pr := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ref));
+          pr := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ref, ''));
           ctxt.Owned.add(pr);
           if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, p, pr <> nil, 'StructureDefinition reference could not be resolved')) then
           begin
@@ -1299,7 +1299,7 @@ end;
 
 function TFHIRValidator.getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
 begin
-  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_));
+  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_, ''));
   ctxt.Owned.add(result);
 end;
 
@@ -1376,7 +1376,7 @@ var
   sd: TFHIRStructureDefinition;
 begin
   url := 'http://hl7.org/fhir/StructureDefinition/' + t;
-  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   ctxt.Owned.add(sd);
   if (sd = nil) or (sd.Snapshot = nil) then
     result := nil
@@ -1846,10 +1846,10 @@ begin
         // need to do some special processing for reference here...
         if (ed.Type_List[0].code = 'Reference') then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value, ''));
       end
       else
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code, ''));
       ctxt.Owned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
@@ -1883,7 +1883,7 @@ function TFHIRValidator.checkResourceType(ctxt : TFHIRValidatorContext; ty: Stri
 var
   t : TFHIRResource;
 begin
-  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty));
+  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty, ''));
   ctxt.Owned.add(t);
   if (t <> nil) then
     result := ty
@@ -2112,7 +2112,7 @@ begin
   end
   else
   begin
-    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr));
+    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr, ''));
     ctxt.Owned.add(result);
   end;
 end;
@@ -2127,7 +2127,7 @@ begin
   url := element.getNamedChildValue('url');
   isModifier := element.name = 'modifierExtension';
 
-  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   if (ex = nil) then
   begin
     if (not rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path, allowUnknownExtension(ctxt, url), 'The extension ' + url + ' is unknown, and not allowed here'))
@@ -2322,7 +2322,7 @@ var
   profile: TFHIRStructureDefinition;
 begin
   resourceName := element.Type_;
-  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
   ctxt.Owned.add(profile);
   if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), profile <> nil,
     'No profile found for contained resource of type "' + resourceName + '"')) then
@@ -2636,7 +2636,7 @@ var
   c : TFHIRResource;
 begin
   if (reference is TFHIRUri) then
-    result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, TFHIRUri(reference).value))
+    result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, TFHIRUri(reference).value, ''))
   else if (reference is TFHIRReference) then
   begin
     s := TFHIRReference(reference).reference;
@@ -2649,7 +2649,7 @@ begin
     end
     else
     begin
-      result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, s));
+      result := TFHIRValueSet(ValContext.fetchResource(frtValueSet, s, ''));
       ctxt.Owned.add(result);
     end;
   end

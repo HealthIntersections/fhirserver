@@ -113,7 +113,7 @@ begin
   FMessages := TStringList.create;
   Logging.addListener(self);
   Logging.LogToConsole := false;
-  MustBeUserMode := true;
+  ForcedNpmCacheMode := npmModeUser;
 end;
 
 destructor TFHIRServerController.Destroy;

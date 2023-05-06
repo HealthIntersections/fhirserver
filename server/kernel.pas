@@ -156,7 +156,7 @@ begin
   if FSettings.Ini.service['package-cache'].value <> '' then
     FPcm := TFHIRPackageManager.Create(FSettings.Ini.service['package-cache'].value)
   else
-    FPcm := TFHIRPackageManager.Create(false);
+    FPcm := TFHIRPackageManager.Create(npmModeSystem);
 
   FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
@@ -665,7 +665,7 @@ begin
   os := 'OSX';
   {$ENDIF}
   {$IFDEF CPU64}
-  cpu := '-64';
+  cpu := ''; //'-64';
   {$ELSE}
   cpu := '-32';
   {$ENDIF}
@@ -681,6 +681,10 @@ begin
 
   {$IFOPT O+}
   s := s + ' +Optimizations';
+  {$ENDIF}
+
+  {$IFDEF OBJECT_TRACKING}
+  s := s + '+ObjectTracking';
   {$ENDIF}
 
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);

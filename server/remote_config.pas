@@ -216,6 +216,7 @@ begin
       cfg.web['telnet-password'].value := ini.ReadString('admin', 'telnet-pword', NewGuidId);
       cfg.admin['email'].value := ini.ReadString('admin', 'email', 'noone@fhir.org');
       cfg.admin['ownername'].value := ini.ReadString('admin', 'user', 'Local User');
+      cfg.admin['log-folder'].value := ini.ReadString('web', 'logFolder', '');
     finally
       ini.Free;
     end;
