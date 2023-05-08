@@ -47,7 +47,7 @@ type
 
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
-    function loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string) : TFhirCodeableConceptW;
+    function loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var addCodeable : boolean) : TFhirCodeableConceptW;
     function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer; languages : TIETFLanguageDefinitions);
@@ -411,7 +411,7 @@ var
 //  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
   params, pout : TFhirParametersW;
-  needSecure, isValueSet : boolean;
+  needSecure, isValueSet, addCodeable : boolean;
   profile : TFhirExpansionParams;
   txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
@@ -432,7 +432,7 @@ begin
           txResources := nil;
           profile := nil;
           try
-            coded := loadCoded(request, isValueSet, issuePath);
+            coded := loadCoded(request, isValueSet, issuePath, addCodeable);
             try
               result := 'Validate Code '+coded.renderText;
               if isValueSet then
@@ -501,7 +501,7 @@ begin
                 txResources := processAdditionalResources(context, manager, nil, params);
 
               profile := buildExpansionParams(request, manager, params);
-              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, implySystem, txResources, summary);
+              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, implySystem, addCodeable, txResources, summary);
               try
                 if summary <> '' then
                   result := result + ': '+summary;
@@ -671,7 +671,7 @@ var
 //  resourceKey : integer;
   coded : TFhirCodeableConceptW;
   coding : TFslList<TFhirCodingW>;
-//  abstractOk : boolean;
+  dummy : boolean;
   params, pOut : TFhirParametersW;
   issuePath : String;
 begin
@@ -692,7 +692,7 @@ begin
             raise ETerminologyError.create('Unable to find concept map to use', itNotFound);
           try
             // ok, now we need to find the source code to validate
-            coded := loadCoded(request, true, issuePath);
+            coded := loadCoded(request, true, issuePath, dummy);
 (*            if params.has('coding') then
             begin
               coded := TFhirCodeableConcept.Create;
@@ -1283,11 +1283,13 @@ begin
   inherited;
 end;
 
-function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string): TFhirCodeableConceptW;
+function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var addCodeable : boolean): TFhirCodeableConceptW;
 var
   coding : TFhirCodingW;
   params : TFhirParametersW;
 begin
+  addCodeable := false;
+
   // ok, now we need to find the source code to validate
   if (request.form <> nil) and request.form.hasParam('coding') then
   begin
@@ -1302,6 +1304,7 @@ begin
   end
   else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
   begin
+    addCodeable := true;
     result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW;
     issuePath := 'CodeableConcept';
   end
@@ -1338,6 +1341,7 @@ begin
       end
       else if params.has('codeableConcept') then
       begin
+        addCodeable := true;
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link);
         issuePath := 'CodeableConcept';
       end

@@ -419,7 +419,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, nil, summary);
+        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, false, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then

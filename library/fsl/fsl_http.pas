@@ -130,6 +130,7 @@ type
 
     property codes : TArray<String> read GetCodes; // in order...
     property header : String read FSource;
+    procedure addCode(s : String);
 
     function matches(code: String): boolean;
     function prefLang : String;
@@ -622,7 +623,6 @@ begin
     for s in hdr.Split([',']) do
       if (s.trim() <> '') then
       begin
-
         if s.Contains(';') then
         begin
           StringSplit(s, ';', l, r);
@@ -641,6 +641,12 @@ begin
   finally
     list.Free;
   end;
+end;
+
+procedure THTTPLanguages.addCode(s: String);
+begin
+  SetLength(FCodes, length(FCodes)+1);
+  FCodes[length(FCodes) - 1] := s;
 end;
 
 function defLang : THTTPLanguages;

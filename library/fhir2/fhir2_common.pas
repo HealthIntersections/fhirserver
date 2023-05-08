@@ -136,6 +136,7 @@ type
     function codings : TFslList<TFhirCodingW>; override;
     procedure addCoding(coding : TFHIRCodingW); override;
     function addCoding : TFHIRCodingW; override;
+    procedure removeCoding(systemUri, version, code : String); override;
     function summary : String; override;
     function fromSystem(System : String; required : boolean = false) : String; overload; override;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; override;
@@ -5316,6 +5317,21 @@ end;
 function TFhirCodeableConcept2.addCoding: TFHIRCodingW;
 begin
   result := TFHIRCoding2.create((Element as TFhirCodeableConcept).codingList.Append.link);
+end;
+
+procedure TFhirCodeableConcept2.removeCoding(systemUri, version, code: String);
+var
+  i : integer;
+  c : TFHIRCoding;
+begin
+  for i := (Element as TFhirCodeableConcept).codingList.count - 1 downto 0 do
+  begin
+    c := (Element as TFhirCodeableConcept).codingList[i];
+    if ((systemUri = '') or (systemUri = c.system)) and
+        ((version = '') or (version = c.system)) and
+        ((code = '') or (code = c.system)) then
+      (Element as TFhirCodeableConcept).codingList.remove(i);
+  end;
 end;
 
 function TFhirCodeableConcept2.codingCount: integer;

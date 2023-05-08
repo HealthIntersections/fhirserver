@@ -253,9 +253,9 @@ Type
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
-    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
+    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
-    function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
+    function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
     function fixedSystemFromValueSet: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
@@ -274,7 +274,7 @@ Type
     function check(issuePath, system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : boolean; overload;
     function check(issuePath, system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
     function check(issuePath : String; coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
-    function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
+    function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem, addCodeable : boolean) : TFhirParametersW; overload;
 
     property log : String read FLog;
   end;
@@ -851,14 +851,12 @@ var
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
 begin
-  result := check(issuePath, system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, contentMode, impliedSystem);
+  result := check(issuePath, system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, nil, contentMode, impliedSystem);
 end;
 
-function TValueSetChecker.check(path, system, version, code: String;
-  abstractOk, implySystem: boolean; displays: TConceptDesignations;
-  var message, ver: String; var cause: TFhirIssueType;
-  op: TFhirOperationOutcomeW; var contentMode: TFhirCodeSystemContentMode;
-  var impliedSystem: string): boolean;
+function TValueSetChecker.check(path, system, version, code: String; abstractOk, implySystem: boolean; displays: TConceptDesignations;
+  var message, ver: String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
+  vcc : TFHIRCodeableConceptW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -915,6 +913,8 @@ begin
         end
         else
         begin
+          if vcc <> nil then
+            vcc.addCoding(cs.systemUri(ctxt), cs.version(ctxt), cs.code(ctxt), cs.display(ctxt, FParams.displayLanguages));
           cause := itNull;
           try
             if not (abstractOk or not cs.IsAbstract(ctxt)) then
@@ -1065,7 +1065,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
+          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -1098,7 +1098,7 @@ begin
             checkSupplements(cs, cc);
             contentMode := cs.contentMode;
 
-            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
+            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op, vcc);
           finally
             cs.free;
           end;
@@ -1109,7 +1109,7 @@ begin
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
           if checker <> nil then
-            result := result and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem)
+            result := result and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem)
           else
             raise ETerminologyError.Create('No Match for '+s, itUnknown);
         end;
@@ -1130,12 +1130,12 @@ begin
             checkSupplements(cs, cc);
             ver := cs.version(nil);
             contentMode := cs.contentMode;
-            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op);
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op, vcc);
           end;
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, contentMode, impliedSystem);
+            excluded := excluded and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem);
           end;
           if excluded then
             exit(false);
@@ -1213,7 +1213,7 @@ begin
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(path, coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
+        if check(path, coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, nil, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
@@ -1273,7 +1273,7 @@ begin
       exit(true);
 end;
 
-function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW;
+function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem, addCodeable : boolean) : TFhirParametersW;
   function Summary(code: TFhirCodeableConceptW) : String;
   begin
     if (code.codingCount = 1) then
@@ -1297,6 +1297,7 @@ var
   psys, pver, pdisp, pcode : String;
   dc, i : integer;
   a : TStringArray;
+  vcc : TFHIRCodeableConceptW;
   procedure msg(s : String);
   begin
     if (s = '') then
@@ -1310,6 +1311,7 @@ begin
   cause := itNull;
   if FValueSet = nil then
     raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset', itInvalid);
+  vcc := FFactory.wrapCodeableConcept(FFactory.makeCodeableConcept);
   result := FFactory.makeParameters;
   try
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
@@ -1327,7 +1329,7 @@ begin
           else
             path := issuePath;;
           list.clear;
-          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, contentMode, impliedSystem);
+          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, vcc, contentMode, impliedSystem);
           if not v and (message <> '') then
             msg(message);
           if not v then
@@ -1410,6 +1412,7 @@ begin
                    m := FI18N.translate('Unknown_Code__in_', FParams.langCode, [c.code, ws]);
                    cause := itInvalid;
                    msg(m);
+                   vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
                    op.addIssue(isError, itInvalid, path+'.code', m);
                  end
                  else
@@ -1471,6 +1474,8 @@ begin
         result.AddParamStr('display', pdisp);
       if mt <> '' then
         result.AddParamStr('message', mt);
+      if (addCodeable and (vcc.codingCount > 0)) then
+        result.addParam('codeableConcept', vcc.Element.link);
       //if not (cause in [itNull]) then
       //  result.addParamCode('issue-type', CODES_TFhirIssueType[cause]);
       if (op.hasIssues) then
@@ -1481,6 +1486,7 @@ begin
     result.Link;
   finally
     result.free;
+    vcc.free;
   end;
 end;
 
@@ -1498,7 +1504,7 @@ begin
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(issuePath, system, version, code, true, implySystem, list, message, ver, cause, op, contentMode, impliedSystem) then
+        if check(issuePath, system, version, code, true, implySystem, list, message, ver, cause, op, nil, contentMode, impliedSystem) then
         begin
           result.AddParamBool('result', true);
           pd := list.preferredDisplay(FParams.displayLanguages);
@@ -1548,7 +1554,7 @@ begin
     cs.Close(ctxt);
 end;
 
-function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW): boolean;
+function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilterW;
@@ -1580,6 +1586,8 @@ begin
       begin
         result := true;
         listDisplays(displays, cs, loc);
+        if vcc <> nil then
+          vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
         exit;
       end;
     finally
@@ -1605,6 +1613,8 @@ begin
           end
           else
           begin
+            if vcc <> nil then
+              vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
             result := true;
             exit;
           end;
@@ -1643,7 +1653,9 @@ begin
                   op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
               end
               else
-              begin
+              begin  
+                if vcc <> nil then
+                  vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
                 result := true;
                 exit;
               end;
@@ -1671,7 +1683,9 @@ begin
                       op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
                   end
                   else
-                  begin
+                  begin    
+                    if vcc <> nil then
+                      vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
                     result := true;
                     exit;
                   end;
@@ -1699,7 +1713,9 @@ begin
                         op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
                     end
                     else
-                    begin
+                    begin   
+                      if vcc <> nil then
+                        vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
                       result := true;
                       exit;
                     end;
@@ -1726,7 +1742,9 @@ begin
                       op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [cs.systemUri(nil), code]))
                   end
                   else
-                  begin
+                  begin       
+                    if vcc <> nil then
+                      vcc.addCoding(cs.systemUri(loc), cs.version(loc), cs.code(loc), displays.preferredDisplay(FParams.displayLanguages));
                     result := true;
                     exit;
                   end;

@@ -221,7 +221,8 @@ Type
     function deprecated(context : TCodeSystemProviderContext) : boolean; overload; virtual;
     function IsInactive(code : String) : boolean; overload; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract; overload;
+    function Display(context : TCodeSystemProviderContext; lang : TFslList<TIETFLang>) : string; overload;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function itemWeight(context : TCodeSystemProviderContext) : string; virtual;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; virtual; abstract;  // get all displays for all languages
@@ -614,6 +615,16 @@ begin
   finally
     Close(ctxt);
   end;
+end;
+
+function TCodeSystemProvider.Display(context: TCodeSystemProviderContext; lang: TFslList<TIETFLang>): string;
+var
+  hl : THTTPLanguages;
+  l : TIETFLang;
+begin
+  for l in lang do
+    hl.AddCode(l.code);
+  result := display(context, hl);
 end;
 
 function TCodeSystemProvider.itemWeight(context: TCodeSystemProviderContext): string;

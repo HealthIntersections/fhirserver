@@ -136,6 +136,7 @@ type
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
+    function makeCodeableConcept(coding : TFHIRCodingW) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
@@ -311,6 +312,13 @@ begin
     TFHIRCoding(result).version := version;
   if display <> '' then
     TFHIRCoding(result).version := display;
+end;
+
+function TFHIRFactoryR4B.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
+begin
+  result := TFHIRCodeableConcept.create;
+  if (coding <> nil) then
+    TFHIRCodeableConcept(result).codingList.add(coding.element.link);
 end;
 
 function TFHIRFactoryR4B.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;

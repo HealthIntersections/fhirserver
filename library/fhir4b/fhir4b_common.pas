@@ -137,6 +137,7 @@ type
     function codings : TFslList<TFhirCodingW>; override;
     procedure addCoding(coding : TFHIRCodingW); override;
     function addCoding : TFHIRCodingW; override;
+    procedure removeCoding(systemUri, version, code : String); override;
     function summary : String; override;
     function fromSystem(System : String; required : boolean = false) : String; overload; override;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload; override;
@@ -5681,6 +5682,21 @@ begin
   result := TFHIRCoding4B.create((Element as TFhirCodeableConcept).codingList.Append.link);
 end;
 
+procedure TFhirCodeableConcept4B.removeCoding(systemUri, version, code: String);
+var
+  i : integer;
+  c : TFHIRCoding;
+begin
+  for i := (Element as TFhirCodeableConcept).codingList.count - 1 downto 0 do
+  begin
+    c := (Element as TFhirCodeableConcept).codingList[i];
+    if ((systemUri = '') or (systemUri = c.system)) and
+        ((version = '') or (version = c.system)) and
+        ((code = '') or (code = c.system)) then
+      (Element as TFhirCodeableConcept).codingList.remove(i);
+  end;
+end;
+
 function TFhirCodeableConcept4B.codingCount: integer;
 begin
   result := (Element as TFhirCodeableConcept).codingList.Count;
@@ -5745,7 +5761,8 @@ begin
   (Element as TFhirCodeableConcept).codingList.Clear;
 end;
 
-procedure TFhirCodeableConcept4B.addCoding(systemUri, version, code, display : string);
+procedure TFhirCodeableConcept4B.addCoding(systemUri, version, code,
+  display: String);
 begin
   (Element as TFhirCodeableConcept).addCoding(systemUri, version, code, display);
 end;

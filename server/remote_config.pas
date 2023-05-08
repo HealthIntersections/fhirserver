@@ -389,7 +389,7 @@ begin
   if (src.StartsWith('file:')) then
     FJson := TJSONParser.ParseFile(src.Substring(5))
   else
-    FJson := TInternetFetcher.fetchJson(src);
+    FJson := TInternetFetcher.fetchJson(src+'?timestamp='+TFslDateTime.makeUTC.toHL7);
   f := TFileStream.Create(FilePath([FFolder, 'config.json']), fmCreate);
   try
     TJSONWriter.writeObject(f, FJson, true);

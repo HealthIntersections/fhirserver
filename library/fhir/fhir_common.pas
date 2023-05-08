@@ -297,6 +297,7 @@ type
     procedure addCoding(coding : TFHIRCodingW); overload; virtual; abstract;
     function addCoding : TFHIRCodingW; overload; virtual; abstract;
     procedure addCoding(systemUri, version, code, display : String); overload; virtual; abstract;
+    procedure removeCoding(systemUri, version, code : String); virtual; abstract;
     function summary : String; virtual; abstract;
     function hasCode(systemUri, code : String) : boolean; overload; virtual; abstract;
     function hasCode(systemUri, version, code : String) : boolean; overload; virtual; abstract;
