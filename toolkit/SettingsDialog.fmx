@@ -1,0 +1,272 @@
+object SettingsForm: TSettingsForm
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = Single
+  Caption = 'FHIR Toolkit Settings'
+  ClientHeight = 243
+  ClientWidth = 449
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 203.000000000000000000
+    Size.Width = 449.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      ModalResult = 1
+      Position.X = 272.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 360.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object TabControl1: TTabControl
+    Align = Client
+    Size.Width = 449.000000000000000000
+    Size.Height = 203.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 2
+    TabOrder = 1
+    TabPosition = PlatformDefault
+    Sizes = (
+      449s
+      177s
+      449s
+      177s
+      449s
+      177s)
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 107.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'General Settings'
+      ExplicitSize.cx = 107.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object cbCheckUpgrades: TCheckBox
+        Position.X = 24.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 385.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Check for Upgrades when Starting'
+      end
+      object Label5: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 24.000000000000000000
+        Position.Y = 54.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Login for registry.fhir.org '
+        TabOrder = 1
+      end
+      object Label6: TLabel
+        Position.X = 48.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Username:'
+        TabOrder = 2
+      end
+      object Label7: TLabel
+        Position.X = 48.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Password'
+        TabOrder = 3
+      end
+      object Label8: TLabel
+        Position.X = 24.000000000000000000
+        Position.Y = 150.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Login is only required for writing to the registry'
+        TabOrder = 4
+      end
+      object edtUsername: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 5
+        Position.X = 120.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtPassword: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 6
+        Password = True
+        Position.X = 120.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 94.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'HTTP Settings'
+      ExplicitSize.cx = 94.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Label1: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 89.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'HTTP Proxy:'
+        TabOrder = 0
+      end
+      object Label2: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 70.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Timeout:'
+        TabOrder = 1
+      end
+      object edtProxy: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 2
+        Position.X = 96.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 337.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtTimeout: TSpinBox
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 3
+        Cursor = crIBeam
+        Min = 5.000000000000000000
+        Max = 60.000000000000000000
+        Value = 5.000000000000000000
+        Position.X = 96.000000000000000000
+        Position.Y = 70.000000000000000000
+      end
+      object Label3: TLabel
+        Position.X = 208.000000000000000000
+        Position.Y = 70.000000000000000000
+        Size.Width = 41.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = '(Sec)'
+        TabOrder = 4
+      end
+      object Label4: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 417.000000000000000000
+        Size.Height = 43.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'These settings only apply to new Server Connections'
+        TabOrder = 5
+      end
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 127.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Terminology Servers'
+      ExplicitSize.cx = 127.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object btnAdd: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 0
+        Text = 'Add'
+        OnClick = btnAddClick
+      end
+      object btnUp: TButton
+        Position.X = 184.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 2
+        Text = 'Up'
+        OnClick = btnUpClick
+      end
+      object btnDown: TButton
+        Position.X = 272.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 3
+        Text = 'Down'
+        OnClick = btnDownClick
+      end
+      object btnDelete: TButton
+        Position.X = 360.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 4
+        Text = 'Delete'
+        OnClick = btnDeleteClick
+      end
+      object lbServers: TListBox
+        Position.X = 8.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 433.000000000000000000
+        Size.Height = 121.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        OnClick = lbServersClick
+        OnDblClick = btnEditClick
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 429.000000000000000000
+        Viewport.Height = 117.000000000000000000
+      end
+      object btnEdit: TButton
+        Position.X = 96.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 1
+        Text = 'Edit'
+        OnClick = btnEditClick
+      end
+    end
+  end
+end

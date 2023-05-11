@@ -37,9 +37,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms,
-  SystemSupport,
-  FHIRResources, FHIRUtilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, TextUtilities;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, clipbrd, Vcl.OleCtrls,
+  SHDocVw, ActiveX,
+  VirtualTrees, FHIR.Npp.Form, FHIR.Npp.Base,
+  fsl_utilities, fsl_stream, fsl_base,
+  fhir_objects, fhir_common, fhir_factory, fhir_narrative;
 
 const
   MIN_COL_WIDTH = 260;
@@ -67,7 +69,7 @@ type
 var
   ValidationOutcomeForm: TValidationOutcomeForm;
 
-function ValidationSummary(owner : TNppPlugin; outcome : TFHIROperationOutcome) : boolean;
+function ValidationSummary(owner : TNppPlugin; Context : TFHIRWorkerContextWithFactory; outcome : TFslList<TFHIROperationOutcomeIssueW>) : boolean;
 function ValidationError(owner : TNppPlugin; message : String) : boolean;
 
 implementation
@@ -75,20 +77,38 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings;
+  FHIR.Npp.Settings;
 
-function ValidationSummary(owner : TNppPlugin; outcome : TFHIROperationOutcome) : boolean;
+function ValidationSummary(owner : TNppPlugin; Context : TFHIRWorkerContextWithFactory; outcome : TFslList<TFHIROperationOutcomeIssueW>) : boolean;
+var
+  op : TFHIROperationOutcomeW;
+  iss : TFhirOperationOutcomeIssueW;
+  gen : TFHIRNarrativeGeneratorBase;
 begin
-  result := not Settings.NoValidationSummary;
-  if result then
-  begin
-    ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
+  op := context.Factory.wrapOperationOutcome(context.Factory.makeByName('OperationOutcome') as TFHIRResourceV);
+  try
+    for iss in outcome do
+      op.addIssue(iss, false);
+    gen := context.Factory.makeGenerator(context.link);
     try
-      ValidationOutcomeForm.loadHtml(outcome.narrativeAsWebPage);
-      ValidationOutcomeForm.ShowModal;
+      gen.description := 'Validation Outcomes';
+      gen.generate(op.Resource);
     finally
-      FreeAndNil(ValidationOutcomeForm);
+      gen.Free;
     end;
+    result := not Settings.NoValidationSummary;
+    if result then
+    begin
+      ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
+      try
+        ValidationOutcomeForm.loadHtml(context.Factory.getXhtml(op.Resource).AsHtmlPage);
+        ValidationOutcomeForm.ShowModal;
+      finally
+        FreeAndNil(ValidationOutcomeForm);
+      end;
+    end;
+  finally
+    op.Free;
   end;
 end;
 
@@ -127,7 +147,7 @@ procedure TValidationOutcomeForm.loadHtml(s: String);
 var
   fn : String;
 begin
-  fn := IncludeTrailingBackslash(SystemTemp)+'validation-outcomes-npp-fhir.html';
+  fn := IncludeTrailingPathDelimiter(SystemTemp)+'validation-outcomes-npp-fhir.html';
   StringToFile(s, fn, TEncoding.UTF8);
   WebBrowser1.Navigate('file://'+fn);
   html := s;

@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppPlugin;
+  Vcl.Dialogs, FHIR.Npp.Base;
 
 type
   TNppForm = class(TForm)
@@ -37,8 +37,8 @@ type
     { Public declarations }
     Npp: TNppPlugin;
     DefaultCloseAction: TCloseAction;
-    constructor Create(NppParent: TNppPlugin); overload;
-    constructor Create(AOwner: TNppForm); overload;
+    constructor Create(NppParent: TNppPlugin); reintroduce; overload;
+    constructor Create(AOwner: TNppForm); reintroduce; overload;
     destructor Destroy; override;
 //    procedure Show;
     function WantChildKey(Child: TControl; var Message: TMessage): Boolean; override;
@@ -84,7 +84,7 @@ procedure TNppForm.RegisterForm();
 var
   r: Integer;
 begin
-  r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGADD, self.Handle);
+  r := SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGADD, self.Handle);
 {
   if (r = 0) then
   begin
@@ -99,7 +99,7 @@ var
   r: Integer;
 begin
   if (not self.HandleAllocated) then exit;
-  r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, self.Handle);
+  r := SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, self.Handle);
 {
   if (r = 0) then
   begin

@@ -1,0 +1,66 @@
+object OAuthForm: TOAuthForm
+  Left = 1067
+  Height = 88
+  Top = 67
+  Width = 397
+  BorderIcons = []
+  BorderStyle = bsSingle
+  Caption = 'OAuth in Progress'
+  ClientHeight = 88
+  ClientWidth = 397
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 48
+    Top = 0
+    Width = 397
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 10
+    ClientHeight = 48
+    ClientWidth = 397
+    TabOrder = 0
+    object lblProgress: TLabel
+      Left = 10
+      Height = 28
+      Top = 10
+      Width = 377
+      Align = alClient
+      AutoSize = False
+      Caption = 'Initializing...'
+      WordWrap = True
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 40
+    Top = 48
+    Width = 397
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 397
+    TabOrder = 1
+    object btnCancel: TButton
+      Left = 312
+      Height = 25
+      Top = 6
+      Width = 75
+      Cancel = True
+      Caption = 'Cancel'
+      OnClick = btnCancelClick
+      TabOrder = 0
+    end
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 20
+    Top = 35
+  end
+end

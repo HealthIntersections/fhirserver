@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{3A344997-1225-42BC-9171-2F750F7E6120}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="FHIRComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="test_ui\FHIRComponentTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ui_creator\UI_Creator.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="FHIRComponents">
+        <MSBuild Projects="FHIRComponents.dproj"/>
+    </Target>
+    <Target Name="FHIRComponents:Clean">
+        <MSBuild Projects="FHIRComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRComponents:Make">
+        <MSBuild Projects="FHIRComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRComponentTest">
+        <MSBuild Projects="test_ui\FHIRComponentTest.dproj"/>
+    </Target>
+    <Target Name="FHIRComponentTest:Clean">
+        <MSBuild Projects="test_ui\FHIRComponentTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRComponentTest:Make">
+        <MSBuild Projects="test_ui\FHIRComponentTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UI_Creator">
+        <MSBuild Projects="ui_creator\UI_Creator.dproj"/>
+    </Target>
+    <Target Name="UI_Creator:Clean">
+        <MSBuild Projects="ui_creator\UI_Creator.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UI_Creator:Make">
+        <MSBuild Projects="ui_creator\UI_Creator.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="FHIRComponents;FHIRComponentTest;UI_Creator"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="FHIRComponents:Clean;FHIRComponentTest:Clean;UI_Creator:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="FHIRComponents:Make;FHIRComponentTest:Make;UI_Creator:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

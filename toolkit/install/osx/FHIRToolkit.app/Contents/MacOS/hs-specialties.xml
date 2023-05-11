@@ -1,0 +1,1102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ValueSet xmlns="http://hl7.org/fhir">
+  <id value="valueset-snomed-healthcareservice-role"/>
+  <meta>
+    <versionId value="1"/>
+    <lastUpdated value="2017-02-21T10:54:35.273+11:00"/>
+  </meta>
+  <text>
+    <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h2>Healthcare Service Specialties</h2>
+      <div>
+        <p>Healthcare service specialties</p>
+
+      </div>
+      <p>This value set includes codes from the following code systems:</p>
+      <ul>
+        <li>Include codes from 
+          <a href="http://www.snomed.org/">
+            <code>http://snomed.info/sct</code>
+          </a> where concept  is-a  224891009 (Healthcare services)
+        </li>
+      </ul>
+    </div>
+  </text>
+  <url value="http://hl7.org.au/fhir/ValueSet/valueset-snomed-healthcareservice-role"/>
+  <name value="Healthcare Service Specialties"/>
+  <status value="draft"/>
+  <date value="2017-12-05T12:07:25+11:00"/>
+  <publisher value="Health Level Seven Australia"/>
+  <contact>
+    <name value="hl7.org.au"/>
+  </contact>
+  <description value="Healthcare service specialties"/>
+  <compose>
+    <include>
+      <system value="http://snomed.info/sct"/>
+      <filter>
+        <property value="concept"/>
+        <op value="is-a"/>
+        <value value="224891009"/>
+      </filter>
+    </include>
+  </compose>
+  <expansion>
+    <identifier value="urn:uuid:419fc9e0-bee3-4ae6-9e10-fd55ddce6bd6"/>
+    <timestamp value="2017-12-05T12:07:53+11:00"/>
+    <total value="207"/>
+    <parameter>
+      <name value="profile"/>
+      <valueUri value="http://hl7.org/fhir/ExpansionProfile/dc8fd4bc-091a-424a-8a3b-6198ef146891"/>
+    </parameter>
+    <parameter>
+      <name value="expansion-profile"/>
+      <valueString value="http://hl7.org/fhir/ExpansionProfile/dc8fd4bc-091a-424a-8a3b-6198ef146891"/>
+    </parameter>
+    <parameter>
+      <name value="limitedExpansion"/>
+      <valueBoolean value="true"/>
+    </parameter>
+    <parameter>
+      <name value="version"/>
+      <valueUri value="http://snomed.info/sct?version=http://snomed.info/sct/32506021000036107/version/20161031"/>
+    </parameter>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="278032008"/>
+      <display value="Preventive service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310000008"/>
+      <display value="Accident and Emergency service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310001007"/>
+      <display value="Anaesthetic service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310002000"/>
+      <display value="Assessment service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310003005"/>
+      <display value="Child assessment service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310004004"/>
+      <display value="Audiological service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310005003"/>
+      <display value="Diagnostic audiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310006002"/>
+      <display value="Adult diagnostic audiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310007006"/>
+      <display value="Paediatric diagnostic audiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310008001"/>
+      <display value="Audiological screening service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310009009"/>
+      <display value="Neonatal audiological screening service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310010004"/>
+      <display value="Distraction test audiological screening service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310011000"/>
+      <display value="Aural rehabilitation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310012007"/>
+      <display value="Cochlear implant service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310013002"/>
+      <display value="Adult cochlear implant service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310014008"/>
+      <display value="Paediatric cochlear implant service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310015009"/>
+      <display value="Hearing aid service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310016005"/>
+      <display value="Adult hearing aid service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310017001"/>
+      <display value="Paediatric hearing aid service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310018006"/>
+      <display value="Speech-reading training service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310019003"/>
+      <display value="Tinnitus management service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310020009"/>
+      <display value="Hearing therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310021008"/>
+      <display value="Assistive listening device service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310022001"/>
+      <display value="Clinical oncology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310023006"/>
+      <display value="Radiotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310024000"/>
+      <display value="Colposcopy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310025004"/>
+      <display value="Complementary therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310026003"/>
+      <display value="Counselling service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310027007"/>
+      <display value="Mental health counselling service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310028002"/>
+      <display value="Diagnostic investigation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310029005"/>
+      <display value="Domiciliary visit service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310030000"/>
+      <display value="Endoscopy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310031001"/>
+      <display value="Family planning service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310032008"/>
+      <display value="Intensive care service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310033003"/>
+      <display value="Adult ITU service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310034009"/>
+      <display value="Paediatric intensive care service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310060005"/>
+      <display value="Obstetrics and gynaecology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310061009"/>
+      <display value="Gynaecology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310062002"/>
+      <display value="Pregnancy termination service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310063007"/>
+      <display value="Obstetrics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310064001"/>
+      <display value="Occupational health service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310065000"/>
+      <display value="Open access service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310066004"/>
+      <display value="Paediatric service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310067008"/>
+      <display value="Community paediatric service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310068003"/>
+      <display value="Paediatric neurology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310069006"/>
+      <display value="Paediatric oncology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310070007"/>
+      <display value="Neonatal service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310071006"/>
+      <display value="Pain management service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310072004"/>
+      <display value="Acute pain service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310073009"/>
+      <display value="Palliative care service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310074003"/>
+      <display value="Pathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310076001"/>
+      <display value="Chemical pathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310078000"/>
+      <display value="Medical microbiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310079008"/>
+      <display value="Neuropathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310080006"/>
+      <display value="Pharmacy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310081005"/>
+      <display value="Professional allied to medicine service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310082003"/>
+      <display value="Arts therapy services"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310083008"/>
+      <display value="Art therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310084002"/>
+      <display value="Dance therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310085001"/>
+      <display value="Drama therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310086000"/>
+      <display value="Music therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310087009"/>
+      <display value="Podiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310088004"/>
+      <display value="Community podiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310089007"/>
+      <display value="Hospital-based podiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310090003"/>
+      <display value="Dietetics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310091004"/>
+      <display value="Community-based dietetics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310092006"/>
+      <display value="Hospital dietetics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310093001"/>
+      <display value="Occupational therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310094007"/>
+      <display value="Community-based occupational therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310095008"/>
+      <display value="Social services occupational therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310096009"/>
+      <display value="Hospital occupational therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310098005"/>
+      <display value="Hospital physiotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310099002"/>
+      <display value="Child physiotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310100005"/>
+      <display value="Play therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310101009"/>
+      <display value="Speech and language therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310102002"/>
+      <display value="Community-based speech and language therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310103007"/>
+      <display value="Hospital speech and language therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310104001"/>
+      <display value="Child speech and language therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310105000"/>
+      <display value="Optometry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310106004"/>
+      <display value="Orthoptics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310107008"/>
+      <display value="Hospital orthoptics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310108003"/>
+      <display value="Community orthoptics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310109006"/>
+      <display value="Orthotics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310110001"/>
+      <display value="Hospital orthotics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310111002"/>
+      <display value="Community orthotics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310112009"/>
+      <display value="Surgical fitting service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310113004"/>
+      <display value="Hospital surgical fitting service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310114005"/>
+      <display value="Community surgical fitting service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310115006"/>
+      <display value="Public health service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310116007"/>
+      <display value="Psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310117003"/>
+      <display value="Child and adolescent psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310118008"/>
+      <display value="Forensic psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310119000"/>
+      <display value="Liaison psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310120006"/>
+      <display value="Mental handicap psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310121005"/>
+      <display value="Psychogeriatric service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310122003"/>
+      <display value="Rehabilitation psychiatry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310123008"/>
+      <display value="Psychology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310124002"/>
+      <display value="Psychotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310125001"/>
+      <display value="Radiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310126000"/>
+      <display value="Breast screening service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310127009"/>
+      <display value="Magnetic resonance imaging service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310128004"/>
+      <display value="Computerised tomography service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310129007"/>
+      <display value="Rehabilitation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310130002"/>
+      <display value="Head injury rehabilitation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310131003"/>
+      <display value="Community rehabilitation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310132005"/>
+      <display value="Young disabled service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310133000"/>
+      <display value="Swallow clinic"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310137004"/>
+      <display value="Stroke service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310138009"/>
+      <display value="Surgical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310139001"/>
+      <display value="Breast surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310140004"/>
+      <display value="Cardiothoracic surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310141000"/>
+      <display value="Thoracic surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310142007"/>
+      <display value="Cardiac surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310143002"/>
+      <display value="Dental surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310144008"/>
+      <display value="General dental surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310145009"/>
+      <display value="Oral surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310146005"/>
+      <display value="Orthodontics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310147001"/>
+      <display value="Paediatric dentistry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310148006"/>
+      <display value="Restorative dentistry service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310149003"/>
+      <display value="Ear, nose and throat service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310150003"/>
+      <display value="Endocrine surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310151004"/>
+      <display value="Gastrointestinal surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310152006"/>
+      <display value="General GI surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310153001"/>
+      <display value="Upper gastrointestinal surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310155008"/>
+      <display value="Colorectal surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310156009"/>
+      <display value="General surgical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310157000"/>
+      <display value="Hand surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310158005"/>
+      <display value="Hepatobiliary surgical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310159002"/>
+      <display value="Neurosurgical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310160007"/>
+      <display value="Ophthalmology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310161006"/>
+      <display value="Orthopaedic service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310162004"/>
+      <display value="Pancreatic surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310163009"/>
+      <display value="Paediatric surgical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310164003"/>
+      <display value="Plastic surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310165002"/>
+      <display value="Transplant surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310166001"/>
+      <display value="Trauma surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310167005"/>
+      <display value="Urology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310168000"/>
+      <display value="Vascular surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310169008"/>
+      <display value="Ultrasonography service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="310200001"/>
+      <display value="Cytopathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="373654008"/>
+      <display value="Medical referral service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="395086005"/>
+      <display value="Community specialist palliative care"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="395092004"/>
+      <display value="Specialist palliative care"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="395104009"/>
+      <display value="Cancer primary healthcare multidisciplinary team"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="408451000"/>
+      <display value="Community learning disabilities team"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="408452007"/>
+      <display value="Behavioural intervention team"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="408458006"/>
+      <display value="Specialist multidisciplinary team"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="409971007"/>
+      <display value="Emergency medical services"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="413294000"/>
+      <display value="Community health services"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="413299005"/>
+      <display value="Early years services"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="444913002"/>
+      <display value="Diabetes mellitus service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="444933003"/>
+      <display value="Home hospice service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="445449000"/>
+      <display value="Acute care hospice service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="699478002"/>
+      <display value="Surgical oncology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="699650006"/>
+      <display value="Community based physiotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700221004"/>
+      <display value="Care of elderly service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700231006"/>
+      <display value="Critical care physician service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700232004"/>
+      <display value="General medical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700241009"/>
+      <display value="Dermatology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700433006"/>
+      <display value="Gastroenterology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700434000"/>
+      <display value="Endocrinology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700435004"/>
+      <display value="Clinical physiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="700436003"/>
+      <display value="Clinical pharmacology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="705150003"/>
+      <display value="Domiciliary physiotherapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="706900000"/>
+      <display value="Parasitology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="706901001"/>
+      <display value="Bacteriology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="706902008"/>
+      <display value="Mycology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="706903003"/>
+      <display value="Mycobacteriology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708168004"/>
+      <display value="Mental health service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708169007"/>
+      <display value="Respiratory therapy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708170008"/>
+      <display value="Nursing service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708171007"/>
+      <display value="Vascular ultrasound service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708172000"/>
+      <display value="Cardiac ultrasound service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708173005"/>
+      <display value="Obstetric ultrasound service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708174004"/>
+      <display value="Interventional radiology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708175003"/>
+      <display value="Diagnostic imaging service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708178001"/>
+      <display value="Cytogenetics service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708179009"/>
+      <display value="Molecular pathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708180007"/>
+      <display value="Dermatopathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708182004"/>
+      <display value="Histology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708183009"/>
+      <display value="Anatomic pathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708184003"/>
+      <display value="Laboratory service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708185002"/>
+      <display value="Virology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708187005"/>
+      <display value="Surgical pathology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708188000"/>
+      <display value="Serology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708190004"/>
+      <display value="Immunology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708191000"/>
+      <display value="Toxicology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708193002"/>
+      <display value="Coagulation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708194008"/>
+      <display value="Blood bank service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="708196005"/>
+      <display value="Haematology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="710028007"/>
+      <display value="Maxillofacial surgery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="711332004"/>
+      <display value="Allergy service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="714088003"/>
+      <display value="Midwifery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="714089006"/>
+      <display value="Community midwifery service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="2351000175106"/>
+      <display value="Sports medicine service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="2421000175108"/>
+      <display value="Acute care inpatient service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="2451000175103"/>
+      <display value="Perinatology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="2461000175101"/>
+      <display value="Pulmonary rehabilitation service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="2471000175109"/>
+      <display value="Employee health service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3531000175102"/>
+      <display value="Geriatric service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3621000175101"/>
+      <display value="Rheumatology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3751000175100"/>
+      <display value="Paediatric emergency medical service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3761000175103"/>
+      <display value="Paediatric endocrinology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3771000175106"/>
+      <display value="Paediatric gastroenterology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3781000175109"/>
+      <display value="Paediatric infectious disease service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3791000175107"/>
+      <display value="Paediatric nephrology service"/>
+    </contains>
+    <contains>
+      <system value="http://snomed.info/sct"/>
+      <code value="3801000175108"/>
+      <display value="Paediatric pulmonology service"/>
+    </contains>
+  </expansion>
+</ValueSet>

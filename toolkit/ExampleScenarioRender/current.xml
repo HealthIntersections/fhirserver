@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExampleScenario xmlns="http://hl7.org/fhir">
+  <id value="example"/>
+  <name value="Barebones Example Scenario"/>
+  <status value="draft"/>
+  <experimental value="false"/>
+  <date value="2017-07-01"/>
+  <purpose value="Show a simple workflow using a few actors, some activities and operations."/>
+  <actor>
+    <actorId value="person1"/>
+    <type value="person"/>
+    <name value="Practitioner"/>
+    <description value="A sample practitioner who triggers the workflow"/>
+  </actor>
+  <actor>
+    <actorId value="system1"/>
+    <type value="entity"/>
+    <name value="System 1"/>
+    <description value="The system where activity is requested"/>
+  </actor>
+  <actor>
+    <actorId value="system2"/>
+    <type value="entity"/>
+    <name value="System 2"/>
+    <description value="The system where activity is executed"/>
+  </actor>
+  <instance>
+    <resourceId value="request"/>
+    <resourceType value="ServiceRequest"/>
+    <name value="Request"/>
+    <description value="The request"/>
+    <version>
+      <versionId value="draft"/>
+      <description value="Request draft"/>
+    </version>
+    <version>
+      <versionId value="request"/>
+      <description value="Actionable request"/>
+    </version>
+  </instance>
+  <instance>
+    <resourceId value="results"/>
+    <resourceType value="Procedure"/>
+    <name value="Results"/>
+    <description value="The results"/>
+    <version>
+      <versionId value="draft"/>
+      <description value="Draft results"/>
+    </version>
+    <version>
+      <versionId value="results"/>
+      <description value="Results"/>
+    </version>
+  </instance>
+  <instance>
+    <resourceId value="task"/>
+    <resourceType value="Task"/>
+    <name value="Task"/>
+    <description value="The task"/>
+  </instance>
+  <process>
+    <title value="Process Title"/>
+    <description value="Long description of the scenario"/>
+    <preConditions value="Preconditions"/>
+    <step>
+      <operation>
+        <number value="1"/>
+        <type value="create"/>
+        <name value="Enter request"/>
+        <initiator value="person1"/>
+        <receiver value="system1"/>
+        <description value="take action"/>
+      </operation>
+    </step>
+    <step>
+      <operation>
+        <number value="2"/>
+        <type value="create"/>
+        <name value="Submit request"/>
+        <initiator value="system1"/>
+        <receiver value="system2"/>
+        <description value="make request"/>
+        <request>
+          <resourceId value="request"/>
+          <versionId value="request"/>
+        </request>
+      </operation>
+    </step>
+    <step>
+      <operation>
+        <number value="4"/>
+        <type value="create"/>
+        <name value="Draft results"/>
+        <initiator value="system2"/>
+        <receiver value="system1"/>
+        <description value="respond update"/>
+        <request>
+          <resourceId value="results"/>
+          <versionId value="draft"/>
+        </request>
+      </operation>
+    </step>
+    <step>
+      <operation>
+        <number value="4"/>
+        <type value="create"/>
+        <name value="Updated results"/>
+        <initiator value="system2"/>
+        <receiver value="system1"/>
+        <description value="respond update"/>
+        <request>
+          <resourceId value="results"/>
+          <versionId value="results"/>
+        </request>
+      </operation>
+    </step>
+  </process>
+</ExampleScenario>

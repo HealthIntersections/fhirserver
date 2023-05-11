@@ -1,0 +1,164 @@
+object ServerGUI: TServerGUI
+  Left = 391
+  Height = 730
+  Top = 201
+  Width = 935
+  Caption = 'FHIR Terminology Server'
+  ClientHeight = 710
+  ClientWidth = 935
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.1.0.0'
+  object Panel3: TPanel
+    Left = 0
+    Height = 73
+    Top = 0
+    Width = 935
+    Align = alTop
+    ClientHeight = 73
+    ClientWidth = 935
+    ParentFont = False
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 8
+      Height = 15
+      Top = 11
+      Width = 57
+      Caption = 'UTG Folder'
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 9
+      Height = 15
+      Top = 37
+      Width = 22
+      Caption = 'Port'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtFolder: TEdit
+      Left = 73
+      Height = 23
+      Top = 9
+      Width = 818
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtFolderChange
+      ParentFont = False
+      TabOrder = 0
+      Text = 'edtFolder'
+    end
+    object edtPort: TEdit
+      Left = 72
+      Height = 23
+      Top = 37
+      Width = 853
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtPortChange
+      ParentFont = False
+      TabOrder = 1
+      Text = 'edtPort'
+    end
+    object BitBtn1: TBitBtn
+      Left = 900
+      Height = 20
+      Top = 11
+      Width = 20
+      Anchors = [akTop, akRight]
+      Caption = '...'
+      OnClick = BitBtn1Click
+      ParentFont = False
+      TabOrder = 2
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 37
+    Top = 73
+    Width = 935
+    Align = alTop
+    ClientHeight = 37
+    ClientWidth = 935
+    ParentFont = False
+    TabOrder = 1
+    object lblStatus: TLabel
+      Left = 69
+      Height = 15
+      Top = 7
+      Width = 776
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Not Running'
+      ParentColor = False
+      ParentFont = False
+    end
+    object btnStatus: TButton
+      Left = 5
+      Height = 23
+      Top = 5
+      Width = 57
+      Caption = 'Start'
+      OnClick = btnStatusClick
+      ParentFont = False
+      TabOrder = 0
+    end
+    object btnBrowser: TButton
+      Left = 859
+      Height = 23
+      Top = 5
+      Width = 66
+      Anchors = [akTop, akRight]
+      Caption = 'Browser'
+      OnClick = btnBrowserClick
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 600
+    Top = 110
+    Width = 935
+    Align = alClient
+    BorderWidth = 4
+    Caption = 'Panel2'
+    ClientHeight = 600
+    ClientWidth = 935
+    ParentFont = False
+    TabOrder = 2
+    object mLog: TMemo
+      Left = 5
+      Height = 590
+      Top = 5
+      Width = 925
+      Align = alClient
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object MainMenu1: TMainMenu
+    Left = 23
+    Top = 119
+    object File1: TMenuItem
+      Caption = '&File'
+      object Exit1: TMenuItem
+        Caption = 'E&xit'
+      end
+    end
+    object Help1: TMenuItem
+      Caption = '&Help'
+      object Contents1: TMenuItem
+        Caption = '&Contents'
+      end
+      object About1: TMenuItem
+        Caption = '&About...'
+      end
+    end
+  end
+  object Timer1: TTimer
+    Interval = 50
+    OnTimer = Timer1Timer
+    Left = 82
+    Top = 119
+  end
+end

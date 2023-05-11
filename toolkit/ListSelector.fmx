@@ -1,0 +1,67 @@
+object ListSelectorForm: TListSelectorForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  Caption = 'Form1'
+  ClientHeight = 473
+  ClientWidth = 503
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnActivate = ListBox1ChangeCheck
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 433.000000000000000000
+    Size.Width = 503.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Enabled = False
+      ModalResult = 1
+      Position.X = 326.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 414.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+    object CheckBox1: TCheckBox
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 2
+      Text = 'Select All'
+      OnChange = CheckBox1Change
+    end
+  end
+  object ListBox1: TListBox
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 487.000000000000000000
+    Size.Height = 417.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    OnClick = ListBox1ChangeCheck
+    OnDblClick = ListBox1DblClick
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = ''
+    DefaultItemStyles.GroupHeaderStyle = ''
+    DefaultItemStyles.GroupFooterStyle = ''
+    ShowCheckboxes = True
+    OnChangeCheck = ListBox1ChangeCheck
+    Viewport.Width = 483.000000000000000000
+    Viewport.Height = 413.000000000000000000
+  end
+end

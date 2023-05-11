@@ -1,3 +1,3 @@
-del *.dcu /s /q /f
-del C:\work\com.healthintersections.fhir\scratch\*.dcu /s /q /f
-
+del *.dcu /s /q 1>nul
+del *.o /s /q 1>nul
+del *.ppu /s /q 1>nul

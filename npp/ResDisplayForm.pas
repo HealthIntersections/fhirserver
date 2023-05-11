@@ -33,8 +33,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, TextUtilities, NppForms, NppPlugin,
-  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, FileSupport, SystemSupport;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, fsl_stream, FHIR.Npp.Form, FHIR.Npp.Base,
+  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, fsl_utilities;
 
 type
   TResourceDisplayForm = class(TNppForm)
@@ -84,7 +84,7 @@ begin
   try
     ResourceDisplayForm.Caption := caption;
     ResourceDisplayForm.Memo1.Text := Content;
-    fn := IncludeTrailingBackslash(SystemTemp)+ 'npp-text.html';
+    fn := IncludeTrailingPathDelimiter(SystemTemp)+ 'npp-text.html';
     StringToFile(html, fn, TEncoding.UTF8);
     ResourceDisplayForm.WebBrowser1.Navigate('file:'+fn);
     ResourceDisplayForm.ShowModal;

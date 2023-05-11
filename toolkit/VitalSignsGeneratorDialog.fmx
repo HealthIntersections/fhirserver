@@ -1,0 +1,102 @@
+object VitalSignsGeneratorForm: TVitalSignsGeneratorForm
+  Left = 0
+  Top = 0
+  Caption = 'Vital Signs Data Generator'
+  ClientHeight = 186
+  ClientWidth = 392
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 1
+  object Label1: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 24.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Patient ID:'
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 56.000000000000000000
+    Text = 'Length of Course'
+    TabOrder = 1
+  end
+  object Label3: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 88.000000000000000000
+    Text = 'Frequency (sec)'
+    TabOrder = 2
+  end
+  object edtPatientId: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 128.000000000000000000
+    Position.Y = 24.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtSourceLength: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 4
+    Position.X = 128.000000000000000000
+    Position.Y = 56.000000000000000000
+    Size.Width = 89.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtFrequency: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 5
+    Position.X = 128.000000000000000000
+    Position.Y = 88.000000000000000000
+    Size.Width = 89.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Label4: TLabel
+    Position.X = 232.000000000000000000
+    Position.Y = 56.000000000000000000
+    Text = '(min)'
+    TabOrder = 7
+  end
+  object Label5: TLabel
+    Position.X = 232.000000000000000000
+    Position.Y = 88.000000000000000000
+    Text = '(sec)'
+    TabOrder = 6
+  end
+  object chkRealTime: TCheckBox
+    Position.X = 16.000000000000000000
+    Position.Y = 120.000000000000000000
+    TabOrder = 8
+    Text = 'In Real Time'
+  end
+  object Button1: TButton
+    Default = True
+    Position.X = 200.000000000000000000
+    Position.Y = 152.000000000000000000
+    TabOrder = 9
+    Text = 'Go'
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Cancel = True
+    ModalResult = 2
+    Position.X = 296.000000000000000000
+    Position.Y = 152.000000000000000000
+    TabOrder = 10
+    Text = 'Cancel'
+  end
+  object ProgressBar1: TProgressBar
+    Orientation = Horizontal
+    Position.X = 128.000000000000000000
+    Position.Y = 124.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 8.000000000000000000
+    Size.PlatformDefault = False
+  end
+end

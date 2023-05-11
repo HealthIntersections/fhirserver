@@ -1,0 +1,56 @@
+package dclFHIRPackage;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE FHIR4}
+{$ENDIF IMPLICITBUILDING}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  designide,
+  fmx;
+
+contains
+  FHIRPackageRegister in 'FHIRPackageRegister.pas';
+{
+  FHIR.Base.Objects in '..\..\base\FHIR.Base.Objects.pas',
+  FHIR.Tools.XhtmlComp in '..\..\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Base.Xhtml in '..\..\base\FHIR.Base.Xhtml.pas',
+  FHIR.Base.Lang in '..\..\base\FHIR.Base.Lang.pas',
+  FHIR.XVersion.Resources in '..\..\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Tools.Session in '..\..\tools\FHIR.Tools.Session.pas',
+  FHIR.Base.Scim in '..\..\base\FHIR.Base.Scim.pas',
+  FHIR.Tools.Indexing in '..\..\tools\FHIR.Tools.Indexing.pas',
+  FHIR.Base.Factory in '..\..\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Parser in '..\..\base\FHIR.Base.Parser.pas',
+  FHIR.Base.Validator in '..\..\base\FHIR.Base.Validator.pas',
+  FHIR.Base.Narrative in '..\..\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\..\base\FHIR.Base.PathEngine.pas',
+  FHIR.Tools.Security in '..\..\tools\FHIR.Tools.Security.pas',
+  FHIR.Tools.Parser in '..\..\tools\FHIR.Tools.Parser.pas',
+  FHIRStringEdit in 'FHIRStringEdit.pas';
+}
+end.

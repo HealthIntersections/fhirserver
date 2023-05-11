@@ -34,7 +34,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.OleCtrls, SHDocVw,
-  Vcl.ExtCtrls, NppForms;
+  Vcl.ExtCtrls, FHIR.Npp.Form;
 
 type
   TCDSBrowser = class(TNppForm)

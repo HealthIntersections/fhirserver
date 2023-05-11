@@ -1,0 +1,1 @@
+    FDisallowExtensions: boolean;

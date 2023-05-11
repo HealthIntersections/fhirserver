@@ -1,0 +1,76 @@
+object QuestionnaireContextForm: TQuestionnaireContextForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 327
+  ClientWidth = 408
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object Label1: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 16.000000000000000000
+    Text = 'Name'
+    TabOrder = 1
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 48.000000000000000000
+    Text = 'Type'
+    TabOrder = 2
+  end
+  object Label3: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 80.000000000000000000
+    Text = 'Documentation'
+    TabOrder = 3
+  end
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 4
+    Position.X = 72.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 321.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Edit2: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 5
+    Position.X = 72.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 321.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 16.000000000000000000
+    Position.Y = 104.000000000000000000
+    Size.Width = 377.000000000000000000
+    Size.Height = 169.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Viewport.Width = 373.000000000000000000
+    Viewport.Height = 165.000000000000000000
+  end
+  object Button1: TButton
+    Default = True
+    ModalResult = 1
+    Position.X = 216.000000000000000000
+    Position.Y = 288.000000000000000000
+    TabOrder = 7
+    Text = 'OK'
+  end
+  object Button2: TButton
+    Cancel = True
+    ModalResult = 2
+    Position.X = 312.000000000000000000
+    Position.Y = 288.000000000000000000
+    TabOrder = 8
+    Text = 'Cancel'
+  end
+end

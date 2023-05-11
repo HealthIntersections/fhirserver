@@ -1,0 +1,558 @@
+object ToolkitSettingsForm: TToolkitSettingsForm
+  Left = 409
+  Height = 479
+  Top = 194
+  Width = 519
+  BorderIcons = [biSystemMenu]
+  Caption = 'FHIRToolkit Settings'
+  ClientHeight = 479
+  ClientWidth = 519
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '2.2.5.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 40
+    Top = 439
+    Width = 519
+    Align = alBottom
+    ClientHeight = 40
+    ClientWidth = 519
+    ParentFont = False
+    TabOrder = 1
+    object btnOk: TButton
+      Left = 351
+      Height = 25
+      Top = 5
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'OK'
+      Default = True
+      ModalResult = 1
+      ParentFont = False
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 431
+      Height = 25
+      Top = 5
+      Width = 75
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 439
+    Top = 0
+    Width = 519
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 10
+    ParentFont = False
+    TabOrder = 0
+  end
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 439
+    Top = 0
+    Width = 519
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 2
+    object TabSheet1: TTabSheet
+      Caption = 'Appearance'
+      ClientHeight = 409
+      ClientWidth = 513
+      object GroupBox2: TGroupBox
+        Left = 0
+        Height = 152
+        Top = 0
+        Width = 513
+        Align = alTop
+        Caption = '  Fonts  '
+        ClientHeight = 133
+        ClientWidth = 503
+        ParentFont = False
+        TabOrder = 0
+        object Panel3: TPanel
+          Left = 0
+          Height = 40
+          Top = 0
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 0
+          object lblEditorFont: TLabel
+            Left = 70
+            Height = 16
+            Top = 8
+            Width = 649
+            Anchors = [akTop, akLeft, akRight]
+            Caption = 'lblEditorFont'
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label11: TLabel
+            Left = 10
+            Height = 16
+            Top = 8
+            Width = 43
+            Caption = 'Editor: '
+            ParentColor = False
+            ParentFont = False
+          end
+          object btnEditorFont: TButton
+            Left = 438
+            Height = 25
+            Top = 8
+            Width = 60
+            Anchors = [akTop, akRight]
+            Caption = 'Change'
+            OnClick = btnEditorFontClick
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object Panel4: TPanel
+          Left = 0
+          Height = 40
+          Top = 40
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 1
+          object lblLogFont: TLabel
+            Left = 70
+            Height = 16
+            Top = 8
+            Width = 649
+            Anchors = [akTop, akLeft, akRight]
+            Caption = 'lblLogFont'
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label12: TLabel
+            Left = 10
+            Height = 16
+            Top = 8
+            Width = 26
+            Caption = 'Log:'
+            ParentColor = False
+            ParentFont = False
+          end
+          object btnLogFont: TButton
+            Left = 438
+            Height = 25
+            Top = 8
+            Width = 60
+            Anchors = [akTop, akRight]
+            Caption = 'Change'
+            OnClick = btnLogFontClick
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object Panel5: TPanel
+          Left = 0
+          Height = 40
+          Top = 80
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 2
+          object Label13: TLabel
+            Left = 10
+            Height = 16
+            Top = 8
+            Width = 39
+            Caption = 'Views:'
+            ParentColor = False
+            ParentFont = False
+          end
+          object btnViewFont: TButton
+            Left = 438
+            Height = 25
+            Top = 8
+            Width = 60
+            Anchors = [akTop, akRight]
+            Caption = 'Change'
+            OnClick = btnViewFontClick
+            ParentFont = False
+            TabOrder = 0
+          end
+          object lblViewFont: TLabel
+            Left = 70
+            Height = 16
+            Top = 8
+            Width = 665
+            Anchors = [akTop, akLeft, akRight]
+            Caption = 'lblViewFont'
+            ParentColor = False
+            ParentFont = False
+          end
+        end
+      end
+      object GroupBox1: TGroupBox
+        Left = 0
+        Height = 104
+        Top = 152
+        Width = 513
+        Align = alTop
+        Caption = '  Visual Design'
+        ClientHeight = 85
+        ClientWidth = 503
+        TabOrder = 1
+        object Panel8: TPanel
+          Left = 0
+          Height = 40
+          Top = 0
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 0
+          object chkSideBySide: TCheckBox
+            Left = 16
+            Height = 18
+            Top = 10
+            Width = 212
+            Caption = 'Side By Side (Designer and Text)'
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object Panel9: TPanel
+          Left = 0
+          Height = 40
+          Top = 40
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 1
+          object chkToolbarCaptions: TCheckBox
+            Left = 16
+            Height = 18
+            Top = 10
+            Width = 187
+            Caption = 'Captions on Toolbar Buttons'
+            TabOrder = 0
+          end
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Terminology Server'
+      ClientHeight = 409
+      ClientWidth = 513
+      object GroupBox4: TGroupBox
+        Left = 0
+        Height = 298
+        Top = 0
+        Width = 513
+        Align = alTop
+        Caption = ' Servers '
+        ClientHeight = 279
+        ClientWidth = 503
+        TabOrder = 0
+        object lvServers: TListView
+          Left = 0
+          Height = 247
+          Top = 32
+          Width = 503
+          Align = alClient
+          Columns = <          
+            item
+              Caption = 'Name'
+              Width = 100
+            end          
+            item
+              AutoSize = True
+              Caption = 'Address'
+              Width = 100
+            end          
+            item
+              Caption = 'Default'
+            end          
+            item
+              Caption = 'Versions'
+              Width = 80
+            end>
+          TabOrder = 0
+          OnResize = lvServersResize
+        end
+        object Panel7: TPanel
+          Left = 0
+          Height = 32
+          Top = 0
+          Width = 503
+          Align = alTop
+          ClientHeight = 32
+          ClientWidth = 503
+          TabOrder = 1
+          object btnAddServer: TBitBtn
+            Left = 0
+            Height = 30
+            Top = 0
+            Width = 75
+            Caption = 'Add'
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000000000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE4F0E69FC8A5559C5E3F
+              8E483B8C454C955397C19BE1EDE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFC3DDC857A0634199507DC28F96D0A696CFA678BE89368D42408D47B9D5
+              BBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC6DFCB54A06364B478A8DBB587CC9866
+              BC7D64BA7C86CB98A5D9B458AA6B35863CB9D5BBFFFFFFFFFFFFFFFFFFE8F3EB
+              67AC756AB97DA8DBB260BC775CBA7359B87059B56F58B56F5BB774A5D9B35AAA
+              6C418E48E2EDE3FFFFFFFFFFFFAED4B853AB68AADDB464C1795FBE7160BC77FF
+              FFFFFFFFFF59B87058B56E5CB774A6DAB4388F4396C19AFFFFFFFFFFFF77B788
+              8ACC9889D3966BC67A63C17055AB65FFFFFFFFFFFF59B87059B8705BB97285CC
+              977BBE8D4D9654FFFFFFFFFFFF6AB17EA9DDB37DCF8A75CC81FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFF59B87067BE7D9CD4AB3B8C43FFFFFFFFFFFF6EB482
+              B6E2BE8BD5977AC986FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF59B87069C1
+              7E9DD4AA3F8F48FFFFFFFFFFFF81BF94ACDDB6A6DFAF81CB8C7CC9866EBD79FF
+              FFFFFFFFFF5BAC6A60BC775CBA738BD19980C592579D60FFFFFFFFFFFFB8DBC3
+              85C797D2EED795D9A08AD3947FC889FFFFFFFFFFFF79CD856BC37C6FC77EACDF
+              B5459E57A0C8A6FFFFFFFFFFFFECF5EF7EBF93AADAB7D8F1DC92D89D88CD9384
+              CC8E8BD4968AD49583D28EAFE0B76BB97D5AA267E6F0E7FFFFFFFFFFFFFFFFFF
+              D1E8D976BB8CAFDCBBDCF2E0B6E4BD9BDBA596D9A0A5DFAFC0E8C579C28A57A2
+              65C4DEC9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD1E8D97EBE9294CEA4C3E6CBCF
+              EBD4C9E9CEAFDDB86DB97F68AD77C7E0CCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFEBF5EFB9DCC482C09571B6856EB48279B98AB1D5BAE8F3EBFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            }
+            TabOrder = 0
+          end
+          object btnEditServer: TBitBtn
+            Left = 84
+            Height = 30
+            Top = 0
+            Width = 75
+            Caption = 'Edit'
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000905B3114905B
+              3184905B31A3905B31B6143E54FD295F86FE4A87BBFF55819BFE876449FF9A69
+              41FFA3744FFFAD825FFF905B31D9905B3134FFFFFF00FFFFFF00945F3368B890
+              6DFFD6BAA3FFDFC6B3FF2E6784FF94C7F9FF91C9F9FF4185C9FF276BAEFFD8E5
+              F0FFFBEBDFFFFBEFE6FFC19D80FF945F336FFFFFFF00FFFFFF0099643689C7A4
+              85FFFFFFFFFFFFFFFFFF4389AAFFE0F2FFFF549AD8FF1A7ABEFF4998C5FF498E
+              C6FFC6A793FFFAE8DBFFCEAF95FF9964368BFFFFFF00FFFFFF009E6939579E69
+              39F6B48559FFD9A57BFF8F8980FF7AB6D5FF90B7D1FF55C9E4FF5BDFF5FF78D0
+              EDFF4F95D0FFE0D8D2FFD8BBA2FF9E69399EFFFFFF00FFFFFF00A46F3C14A46F
+              3CABD5AE8CFFFDF0E5FFF7C7A2FFAFB6B0FF76B9D5FFC2F6FDFF63DFF7FF5DE2
+              F8FF79D3F0FF4A98DCFFCDC6BEFFA46F3CB3FFFFFF00FFFFFF00FFFFFF00AA75
+              4028B78656FFFEFEFDFFFADEC2FFFADCBFFFADBEBDFF77CBE7FFC7F7FDFF5EDC
+              F5FF5AE1F7FF7BD4F1FF4B99DBFF8E7B65D5FFFFFF00FFFFFF00FFFFFF00B17B
+              431EB98652FFFEFCF9FFF9DCBFFFF8DBBFFFF8DCC0FFBBCEC9FF79D3EEFFC7F7
+              FDFF5FDCF5FF5BE2F7FF7AD6F2FF4997D2FD448DCD30FFFFFF00FFFFFF00B782
+              4709B9854BFFFEFBF7FFF9DCC1FFF8DCBFFFF8DCBFFFF8DBC0FFBDD2CAFF7DD4
+              EEFFC4F6FDFF6CDDF6FF6DCAEDFF63A3D7FF5D9BD2EC5192CA26FFFFFF00FFFF
+              FF00BD884BF9FCF6F0FFF9DFC7FFF9DCBDFFFADCBFFFFADBC1FFFADDC3FFB2D0
+              CDFF81D5EDFFB2E3F9FF8BC0E7FFAED3F6FFC4E0FCFF669FD3F7FFFFFF00FFFF
+              FF00C48E4EDAF5E7D8FFFAE5D2FFF9DABCFFF9DBBCFFFADBBFFFFADDC1FFFADD
+              C1FFADD0CFFF77BEE7FFB4D2F0FFE5F3FFFFACD2EFFF488CC7E8FFFFFF00FFFF
+              FF00CA9452BBF0D9C1FFFBEDE1FFF9DAC0FFF9DCC2FFF9DEC5FFFAE0C7FFFAE2
+              CAFFFAE2CDFFB9D4D5FF58A5D8FF85B1DBFF469DD0FF5E95A98AFFFFFF00FFFF
+              FF00D09A55A4EDD0B2FFFFF6F0FFFAE1CAFFFBE3CCFFFBE3D0FFFBE6D3FFFBE9
+              D5FFFCE9D8FFFCEADBFFFFFFFDFFD29D71FFEED9C1FFD09A55E5FFFFFF00FFFF
+              FF00D59F5892EBCAA5FFFFFDFBFFFDE9D5FFFDEBD8FFFDEADBFFFDEDDFFFFDF0
+              E2FFFDF1E4FFFCF0E4FFFFFFFFFFE0A070FFFFFBF9FFDFB887FFFFFFFF00FFFF
+              FF00DAA45B84EBC69AFFFFFFFFFFFCEFE2FFFDF0E7FFFDF1EBFFFDF5EEFFFDF8
+              F1FFFDFAF7FFFFFCFAFFFFFFFFFFFEFBF7FFF4DAC0FFDAA45BEAFFFFFF00FFFF
+              FF00DEA85D6DEAC08CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDF9F4FFFBF3
+              EAFFF8EBD9FFF8E6D3FFF5DFC6FFE9CBA6FFDEA85DEDDEA85D5DFFFFFF00FFFF
+              FF00E2AC5F36E2AC5FC6EABC81FFE8B777FFE6B26DFFE4B068FFE2AC5FF0E2AC
+              5FE3E2AC5FCFE2AC5FCCE2AC5FBBE2AC5FA8E2AC5F4BE2AC5F05
+            }
+            TabOrder = 1
+          end
+          object btnDeleteServer: TBitBtn
+            Left = 168
+            Height = 30
+            Top = 0
+            Width = 75
+            Caption = 'Delete'
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF003F54C3233A50C27D3853BEDB3551BDF3304BBCF32E4E
+              B8DB2B4CB77D2748B523FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF004658C8534255C6E63C52CCFF757AE8FF8F92EEFF8F92EEFF7178
+              E4FF334DC1FF2B4AB7E6294BB553FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF004D5ACD534959CBF45C65E0FFA1A6F5FF7E86EFFF5B63E9FF595DE7FF7D84
+              EEFF9EA0F4FF515DD7FF2B4AB7F4294BB553FFFFFF00FFFFFF00FFFFFF00545F
+              D2225361CFE5616BE3FFA1ACF5FF545FECFF505CEAFF4D59E9FF4E59E6FF4C56
+              E6FF5056E6FF9EA2F4FF5460D6FF2A4AB8E5294BB522FFFFFF00FFFFFF005860
+              D47E4B56DBFFA2ABF6FF5664F0FF5266EEFF4D59E9FF4D59E9FF4D59E9FF4D59
+              E9FF4C58E6FF525AE6FF9FA3F5FF3450C4FF2A4AB87EFFFFFF00FFFFFF005C62
+              D7DB818CEEFF7E91F7FF5D73F3FF4D59E9FF4D59E9FF4D59E9FF4D59E9FF4D59
+              E9FF4D59E9FF4F5BE9FF7B83F0FF757BE2FF2E4BBADBFFFFFF00FFFFFF005F63
+              DAF6A1ABF7FF7086F8FF6882F6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFF4D59E9FF5C66EAFF969CF1FF3250BCF6FFFFFF00FFFFFF006469
+              DBF6AFB9F9FF7F93FAFF7085F0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFF4D59E9FF5E6AEEFF969DF1FF364FBEF6FFFFFF00FFFFFF00676A
+              DEDBA5AFF5FF9DABFAFF778CF0FF545FECFF545FECFF545FECFF545FECFF545F
+              ECFF545FECFF6377F2FF818EF4FF787FE9FF3A53C0DBFFFFFF00FFFFFF006A69
+              E07E7D83EAFFCDD4FCFF8B9DFAFF7E93F7FF758AEEFF6C84F6FF6C84F6FF6C84
+              F6FF6C84F6FF6379F3FFA4AFF8FF3E4FD0FF3E54C27EFFFFFF00FFFFFF006C6C
+              E1226A69E0E5A3A7F3FFD4DBFDFF879AFAFF7F91F0FF7A8EF1FF7F94F8FF7E92
+              F9FF768CF8FFA8B6F8FF636EE3FF4557C7E54156C522FFFFFF00FFFFFF00FFFF
+              FF006D6CE3536A69E0F4AAADF2FFD8DCFDFFAEBAFAFF91A3FAFF8B9DFAFF9CA9
+              FBFFBAC7FCFF707BE9FF4C5BCCF44858CA53FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF006D6CE3536A6ADFE68E93EDFFBEC3F8FFCCD3F9FFC4CBF9FFAAB4
+              F4FF6670E2FF535ED1E6505DCE53FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF006D6DE2236B6AE17D686ADDDB6364DCF36164DAF35D63
+              D9DB5B63D67D5862D423FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+            }
+            TabOrder = 2
+          end
+        end
+      end
+      object GroupBox5: TGroupBox
+        Left = 0
+        Height = 94
+        Top = 298
+        Width = 513
+        Align = alTop
+        Caption = '  Settings'
+        ClientHeight = 75
+        ClientWidth = 503
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 10
+          Height = 16
+          Top = 8
+          Width = 51
+          Caption = 'Log File:'
+          ParentColor = False
+        end
+        object edtTxLog: TEdit
+          Left = 65
+          Height = 21
+          Top = 7
+          Width = 423
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+          Text = 'edtTxLog'
+        end
+        object btnClearCache: TButton
+          Left = 416
+          Height = 25
+          Top = 36
+          Width = 75
+          Anchors = [akTop, akRight]
+          Caption = 'Clear'
+          OnClick = btnClearCacheClick
+          TabOrder = 1
+        end
+        object Label7: TLabel
+          Left = 10
+          Height = 16
+          Top = 40
+          Width = 42
+          Caption = 'Cache:'
+          ParentColor = False
+        end
+        object edtCache: TEdit
+          Left = 65
+          Height = 21
+          Top = 40
+          Width = 335
+          Anchors = [akTop, akLeft, akRight]
+          ReadOnly = True
+          TabOrder = 2
+          Text = 'edtCache'
+        end
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Tools'
+      ClientHeight = 409
+      ClientWidth = 513
+      object GroupBox3: TGroupBox
+        Left = 0
+        Height = 62
+        Top = 0
+        Width = 513
+        Align = alTop
+        Caption = '  External Tools  '
+        ClientHeight = 43
+        ClientWidth = 503
+        ParentFont = False
+        TabOrder = 0
+        object Panel6: TPanel
+          Left = 0
+          Height = 40
+          Top = 0
+          Width = 503
+          Align = alTop
+          ClientHeight = 40
+          ClientWidth = 503
+          TabOrder = 0
+          object Label3: TLabel
+            Left = 10
+            Height = 16
+            Top = 8
+            Width = 54
+            Caption = 'Diff Tool:'
+            ParentColor = False
+            ParentFont = False
+          end
+          object lblDiff: TLabel
+            Left = 80
+            Height = 15
+            Top = 8
+            Width = 641
+            Anchors = [akTop, akLeft, akRight]
+            AutoSize = False
+            Caption = 'lblDiff'
+            ParentColor = False
+            ParentFont = False
+          end
+          object Button6: TButton
+            Left = 433
+            Height = 25
+            Top = 6
+            Width = 60
+            Anchors = [akTop, akRight]
+            Caption = 'Change'
+            OnClick = Button6Click
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+      end
+    end
+  end
+  object dlgFont: TFontDialog
+    Title = 'Choose Font Details'
+    MinFontSize = 0
+    MaxFontSize = 0
+    Options = []
+    Left = 432
+  end
+  object dlgExe: TOpenDialog
+    Title = 'Choose Diff Tool'
+    Filter = 'Executables|*.exe|All Files|*.*'
+    Left = 464
+  end
+end

@@ -1,0 +1,1 @@
+    function hasExtensions : boolean; override;

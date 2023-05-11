@@ -1,0 +1,29 @@
+[locations]
+fhirserver=${FHIRSERVER_LOCATIONS_CLONE_PATH}
+fhir-test-cases=${FHIRSERVER_LOCATIONS_TEST_CASES_CLONE_PATH}
+markdown=${FHIRSERVER_LOCATIONS_MARKDOWN_CLONE_PATH}
+snomed=${FHIRSERVER_LOCATIONS_SNOMED_CACHE_PATH}
+
+[mssql-not]
+driver=SQL Server
+server=(local)
+database=test
+
+[mysql]
+driver=MySQL ODBC 8.0
+server=${FHIRSERVER_MYSQL_SERVER}
+database=test
+username=test
+password=test
+
+[email]
+; Sender MUST be a GMail aaccount; servers are hardcoded
+sender=${FHIRSERVER_EMAIL_SENDER}
+password=${FHIRSERVER_EMAIL_PASSWORD}
+destination=${FHIRSERVER_EMAIL_DESTINATION}
+
+[ssl]
+cert=${FHIRSERVER_SSL_CERT_PATH}
+key=${FHIRSERVER_SSL_KEY_PATH}
+cacert=${FHIRSERVER_SSL_CACERT_PATH}
+password=${FHIRSERVER_SSL_PASSWORD}

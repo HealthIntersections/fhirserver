@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir_wp"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\wp"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\wp\wp_types.pas"/>
+        <UnitName Value="wp_types"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_graphics.pas"/>
+        <UnitName Value="wp_graphics"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_printing_base.pas"/>
+        <UnitName Value="wp_printing_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_document.pas"/>
+        <UnitName Value="wp_document"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_working.pas"/>
+        <UnitName Value="wp_working"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_text.pas"/>
+        <UnitName Value="wp_text"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\wp\wp_format.pas"/>
+        <UnitName Value="wp_format"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_fui"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <IncludePath Value="C:\work\fhirserver\library"/>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

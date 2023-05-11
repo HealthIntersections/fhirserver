@@ -1,0 +1,60 @@
+object DownloadForm: TDownloadForm
+  Left = 0
+  Top = 0
+  Caption = 'Download'
+  ClientHeight = 109
+  ClientWidth = 592
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object ProgressBar1: TProgressBar
+    Anchors = [akLeft, akTop, akRight]
+    Orientation = Horizontal
+    Position.X = 8.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 577.000000000000000000
+    Size.Height = 20.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button1: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 201.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Text = 'Downloading'
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Position.X = 424.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 161.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Text = 'Cancel'
+    OnClick = Button2Click
+  end
+  object Label1: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 16.000000000000000000
+    Text = ' '
+    TabOrder = 2
+  end
+  object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
+    MaxLineAction = maException
+    Port = 0
+    DefaultPort = 0
+    SSLOptions.Method = sslvSSLv23
+    SSLOptions.SSLVersions = [sslvTLSv1_1, sslvTLSv1_2]
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 280
+    Top = 8
+  end
+end

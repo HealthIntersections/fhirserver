@@ -1,0 +1,99 @@
+object ESPublishForm: TESPublishForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 377
+  ClientWidth = 861
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Label1: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 12.000000000000000000
+    Size.Width = 233.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'ExampleScenario rendering location'
+    TabOrder = 9
+    TabStop = False
+  end
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 5
+    Position.X = 8.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 305.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button1: TButton
+    Position.X = 320.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 41.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 14
+    Text = '...'
+    OnClick = Button1Click
+  end
+  object Button5: TButton
+    Position.X = 653.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 132.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 22
+    Text = 'Download'
+    OnClick = Button5Click
+  end
+  object Button10: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 13.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 49.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 27
+    Text = 'Render'
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    OnClick = Button10Click
+  end
+  object ComboBox1: TComboBox
+    Anchors = [akLeft, akTop, akRight]
+    Items.Strings = (
+      
+        'https://github.com/costateixeira/ESPublish/raw/master/ESPublish.' +
+        'zip')
+    ItemIndex = 0
+    Position.X = 400.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 385.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 26
+  end
+  object Label3: TLabel
+    Position.X = 400.000000000000000000
+    Position.Y = 12.000000000000000000
+    Size.Width = 193.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Get Template from..'
+    TabOrder = 6
+    TabStop = False
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Anchors = [akLeft, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 841.000000000000000000
+    Size.Height = 225.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 28
+    Viewport.Width = 841.000000000000000000
+    Viewport.Height = 225.000000000000000000
+  end
+end

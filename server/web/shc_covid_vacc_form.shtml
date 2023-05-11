@@ -1,0 +1,58 @@
+<form method="POST" style="font-family: Helvetica, Arial, Sans-Serif; font-size: 12">
+
+<h2>Patient Details</h2>
+<table>
+ <tr><td>Family Name:</td><td><input name="family" type="text" size="40"/></td></tr>
+ <tr><td>Given Name(s):</td><td><input name="given" type="text" size="40"/></td></tr>
+ <tr><td>DoB:</td><td><input name="dob" type="text" size="10"/> (format: yyyy-mm-dd or dd-mm-yyyy)</td></tr>
+ <tr><td>IHI:</td><td><input name="ihi" type="text" size="10"/> (Only if you are Australian)</td></tr>
+</table>
+
+<h2>Vaccinations</h2>
+
+<table style="border: 1px solid #cfc9c9; border-collapse: collapse;" cellpadding="3">
+ <tr style="border: 1px solid #cfc9c9; border-collapse: collapse">
+  <th style="border: 1px solid #cfc9c9; border-collapse: collapse">Event</th>
+  <th style="border: 1px solid #cfc9c9; border-collapse: collapse">Date</th>
+  <th style="border: 1px solid #cfc9c9; border-collapse: collapse">Vaccine</th>
+  <th style="border: 1px solid #cfc9c9; border-collapse: collapse">Lot Number</th>
+  <th style="border: 1px solid #cfc9c9; border-collapse: collapse">Source</th>
+ </tr>
+ <tr style="border: 1px solid #cfc9c9; border-collapse: collapse; background-color: #fcfcfc; font-size: 11">
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">yyyy-mm-dd<br/> or dd-mm-yyyy</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">Vaccine Given</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">From vial (optional)</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">Text description e.g. General Practitioner, or State Health Vaccination Center</td>
+ </tr>
+ <tr style="border: 1px solid #cfc9c9; border-collapse: collapse">
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">Dose #1</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vdate1" type="text" size="10"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><select name="vacc1"><option value="208">Pfizer</option><option value="210">AstraZeneca</option><option value="207">Moderna</option></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vlot1" type="text" size="20"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vpr1" type="text" size="40"/></td>
+ </tr>
+ <tr style="border: 1px solid #cfc9c9; border-collapse: collapse">
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">Dose #2</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vdate2" type="text" size="10"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><select name="vacc2"><option value="208">Pfizer</option><option value="210">AstraZeneca</option><option value="207">Moderna</option></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vlot2" type="text" size="20"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vpr2" type="text" size="40"/></td>
+ </tr>
+ <tr style="border: 1px solid #cfc9c9; border-collapse: collapse">
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse">Dose #2</td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vdate3" type="text" size="10"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><select name="vacc3"><option value="208">Pfizer</option><option value="210">AstraZeneca</option><option value="207">Moderna</option></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vlot3" type="text" size="20"/></td>
+  <td style="border: 1px solid #cfc9c9; border-collapse: collapse"><input name="vpr3" type="text" size="40"/></td>
+ </tr>
+</table>
+
+<p>
+Card Id: <input name="id" type="text" size="20"/> (Optional, used for revocation)
+</p>
+<p>
+Expiry: <input name="exp" type="text" size="10"/> (Optional, used for advisory on expiry)
+</p>
+<input type="submit" value="Generate"/>
+</form>

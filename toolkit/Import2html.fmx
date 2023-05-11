@@ -1,0 +1,70 @@
+object ContentImport: TContentImport
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 0
+    Position.X = 24.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 281.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button7: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 97.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 13
+    Text = 'Import Doc...'
+    OnClick = Button7Click
+  end
+  object OpenDialog2: TOpenDialog
+    Left = 49
+    Top = 280
+  end
+  object Button1: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 113.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 16
+    Text = 'Cancel'
+  end
+  object Button2: TButton
+    ModalResult = 1
+    Position.X = 344.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 120.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 15
+    Text = 'Save Page'
+    OnClick = Button2Click
+  end
+  object WebBrowser1: TWebBrowser
+    Size.Width = 593.000000000000000000
+    Size.Height = 321.000000000000000000
+    Size.PlatformDefault = False
+    Position.X = 24.000000000000000000
+    Position.Y = 128.000000000000000000
+  end
+  object Button3: TButton
+    Position.X = 328.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 97.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 12
+    Text = 'Load...'
+  end
+end

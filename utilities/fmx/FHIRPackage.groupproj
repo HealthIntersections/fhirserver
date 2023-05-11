@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7EC2118A-7BFD-441B-94E7-DB789040D9BF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="dclFHIRPackage.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="rtFHIRPackage.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="dclFHIRPackage">
+        <MSBuild Projects="dclFHIRPackage.dproj"/>
+    </Target>
+    <Target Name="dclFHIRPackage:Clean">
+        <MSBuild Projects="dclFHIRPackage.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclFHIRPackage:Make">
+        <MSBuild Projects="dclFHIRPackage.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="rtFHIRPackage">
+        <MSBuild Projects="rtFHIRPackage.dproj"/>
+    </Target>
+    <Target Name="rtFHIRPackage:Clean">
+        <MSBuild Projects="rtFHIRPackage.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="rtFHIRPackage:Make">
+        <MSBuild Projects="rtFHIRPackage.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="dclFHIRPackage;rtFHIRPackage"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="dclFHIRPackage:Clean;rtFHIRPackage:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="dclFHIRPackage:Make;rtFHIRPackage:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

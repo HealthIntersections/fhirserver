@@ -1,0 +1,76 @@
+object UpgradeNeededForm: TUpgradeNeededForm
+  Left = 0
+  Top = 0
+  Caption = 'FHIR Toolkit Upgrade'
+  ClientHeight = 151
+  ClientWidth = 471
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object lblVersion: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 417.000000000000000000
+    Size.Height = 49.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'lblVersion'
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    Cursor = crHandPoint
+    StyledSettings = [Family, Size]
+    HitTest = True
+    Position.X = 16.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 177.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {04040000000000000004000000}
+    TextSettings.FontColor = claNavy
+    Text = 'See the version history'
+    TabOrder = 1
+    OnClick = Label2Click
+  end
+  object Button1: TButton
+    ModalResult = 11
+    Position.X = 16.000000000000000000
+    Position.Y = 96.000000000000000000
+    Size.Width = 161.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Upgrade when closing'
+  end
+  object Button2: TButton
+    ModalResult = 6
+    Position.X = 184.000000000000000000
+    Position.Y = 96.000000000000000000
+    Size.Width = 145.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'Upgrade Now'
+  end
+  object Button3: TButton
+    ModalResult = 5
+    Position.X = 336.000000000000000000
+    Position.Y = 96.000000000000000000
+    Size.Width = 97.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Ignore'
+  end
+  object CheckBox1: TCheckBox
+    Position.X = 200.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 265.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Check for Upgrades when starting'
+  end
+end

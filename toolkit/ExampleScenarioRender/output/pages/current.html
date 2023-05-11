@@ -1,0 +1,365 @@
+<head xmlns:fhir="http://hl7.org/fhir">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <meta content="text/html;charset=utf-8" http-equiv="Content Type">
+   <title>current-</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="author" content="http://hl7.org/fhir">
+   <link href="fhir.css" rel="stylesheet">
+   <link href="assets/css/bootstrap.css" rel="stylesheet">
+   <link href="assets/css/bootstrap-fhir.css" rel="stylesheet">
+   <link href="assets/css/project.css" rel="stylesheet">
+   <link href="assets/css/pygments-manni.css" rel="stylesheet">
+   <link href="assets/css/jquery-ui.css" rel="stylesheet">
+   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+   <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+   <link rel="shortcut icon" href="assets/ico/favicon.png"><script src="./assets/js/jquery.js"></script><script src="./assets/js/jquery-ui.min.js"></script><script src="./assets/js/bootstrap.min.js"></script><script type="text/javascript">//
+$(window).load(function(){
+$("[data-tab]").on('click', function() {
+    var tab = $(this).attr('data-tab'),
+        target = $(this).attr('href');
+    $('ul.nav a[href="' + tab + '"]').tab('show');
+    $('html, body').animate({
+        scrollTop: $(target).offset().top
+    }, 10);    
+});
+});//</script></head>
+<body xmlns:fhir="http://hl7.org/fhir">
+   <div id="segment-header" class="segment">
+      <div class="container"><a id="logo" no-external="true" href="http://hl7.org/fhir"><img src="assets/images/fhir-logo.png"></a><div id="hl7-status"></div>
+         <div id="hl7-nav"><a id="hl7-logo" no-external="true" href="http://www.hl7.org"><img height="50" alt="visit the hl7 website" width="42" src="assets/images/hl7-logo.png"></a></div>
+         <div id="hl7-search"><a id="hl7-search-lnk" no-external="true" href="http://hl7.org/fhir/search.cfm"></a></div>
+      </div>
+      <div class="container"></div>
+   </div>
+   <div id="segment-navbar" class="segment">
+      <div id="stripe"></div>
+      <div class="container">
+         <nav class="navbar navbar-inverse">
+            <div class="container"><button data-target=".navbar-inverse-collapse" class="navbar-toggle" data-toggle="collapse" type="button"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand hidden" href="{site.data.fhir.path}index.html">FHIR</a><div class="nav-collapse collapse navbar-inverse-collapse"></div>
+            </div>
+         </nav>
+      </div>
+   </div>
+   <div id="segment-breadcrumb" class="segment">
+      <div class="container"></div>
+   </div>
+   <div id="segment-content" class="segment">
+      <div class="container">
+         <div class="row">
+            <div class="inner-wrapper">
+               <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir ../../../../schema/fhir-single.xsd">
+                  <div id="segment-content" class="segment">
+                     <div class="container">
+                        <div class="row">
+                           <div class="inner-wrapper">
+                              <div class="col-12">
+                                 <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#sequence">Sequence</a></li>
+                                    <li><a data-toggle="tab" href="#details">Details</a></li>
+                                    <li><a data-toggle="tab" href="#resources">Resources</a></li>
+                                 </ul>
+                                 <div class="tab-content">
+                                    <div id="sequence" class="tab-pane fade in active">
+                                       <h3><a name="description"></a>
+                                          																Description
+                                          															
+                                       </h3>
+                                       <p></p>
+                                       <h4><a name="preconditions"></a>
+                                          																Pre-Conditions
+                                          															
+                                       </h4>
+                                       <p>Preconditions</p>
+                                       <h4><a name="postconditions"></a>
+                                          																Post Conditions
+                                          															
+                                       </h4>
+                                       <p></p>
+                                       <p></p><img alt="Interaction diagram showing flow" src="../images/current-diagram.png" usemap="#diagram_map"></img><map id="diagram_map" name="diagram_map">
+<area data-tab="#resources" shape="rect" id="id1" href="#results" title="#results" alt="" coords="170,321,270,337"/>
+<area data-tab="#resources" shape="rect" id="id2" href="#results" title="#results" alt="" coords="170,257,296,274"/>
+<area data-tab="#resources" shape="rect" id="id3" href="#request" title="#request" alt="" coords="160,194,328,211"/>
+</map>
+                                    </div>
+                                    <div id="details" class="tab-pane fade">
+                                       <h2><a name="details"></a>
+                                          																Details
+                                          															
+                                       </h2>
+                                       <div>
+                                          <table class="cols">
+                                             <tr>
+                                                <td>
+                                                   																			Publisher: (link?)
+                                                   																			
+                                                </td>
+                                                <td><a href="versions.html#maturity">Status</a>
+                                                   																			:
+                                                   																			draft
+                                                </td>
+                                                <td><a href="versions.html#maturity">Experimental</a>
+                                                   																			:
+                                                   																			false
+                                                </td>
+                                                <td><a href="versions.html#maturity">Copyright</a>
+                                                   																			:
+                                                   																			
+                                                </td>
+                                             </tr>
+                                          </table>
+                                          <table class="cols">
+                                             <tr>
+                                                <td><a href="versions.html#maturity">Purpose</a>
+                                                   																			:
+                                                   																			Show a simple workflow using a few actors, some activities and operations.
+                                                </td>
+                                             </tr>
+                                          </table>
+                                          <p></p>
+                                          <p></p>
+                                       </div>
+                                       <div>
+                                          <h3><a name="Actors"></a>
+                                             																	Actors
+                                             																
+                                          </h3>
+                                          <table class="grid">
+                                             <tbody>
+                                                <tr>
+                                                   <th>Name</th>
+                                                   <th>Type</th>
+                                                   <th>Description</th>
+                                                </tr>
+                                                <tr xmlns="">
+                                                   <td><b>Practitioner</b></td>
+                                                   <td>person</td>
+                                                   <td>A sample practitioner who triggers the workflow</td>
+                                                </tr>
+                                                <tr xmlns="">
+                                                   <td><b>System 1</b></td>
+                                                   <td>entity</td>
+                                                   <td>The system where activity is requested</td>
+                                                </tr>
+                                                <tr xmlns="">
+                                                   <td><b>System 2</b></td>
+                                                   <td>entity</td>
+                                                   <td>The system where activity is executed</td>
+                                                </tr>
+                                             </tbody>
+                                          </table>
+                                          <p></p>
+                                          <p></p>
+                                       </div>
+                                       <div>
+                                          <h3><a name="flow"></a>
+                                             																	Process Flow -
+                                             																	Long description of the scenario
+                                          </h3>
+                                          <div xmlns="" class="container">
+                                             <div>
+                                                <div>Main Flow</div>
+                                                <table class="cols">
+                                                   <tbody>
+                                                      <tr>
+                                                         <th>Step</th>
+                                                         <th>Description</th>
+                                                         <th>Operation</th>
+                                                         <th>Request</th>
+                                                         <th>Response</th>
+                                                         <th>z</th>
+                                                         <th>x</th>
+                                                         <th>x</th>
+                                                         <th>x</th>
+                                                      </tr>
+                                                      <tr><a href="#1"></a><td><a name="p2">1Enter request</a></td>
+                                                         <td>take action</td>
+                                                         <td>
+                                                            		RQ:
+                                                         </td>
+                                                         <td>
+                                                            		RP:
+                                                         </td>
+                                                      </tr>
+                                                      <tr><a href="#2"></a><td><a name="p2">2Submit request</a></td>
+                                                         <td>make request</td>
+                                                         <td>
+                                                            		RQ:<b>Request</b>
+                                                            		(
+                                                            		system2
+                                                            		-
+                                                            		system1
+                                                            		):
+                                                            		<a href="example-instances.html#request">Request</a><br></td>
+                                                         <td>
+                                                            		RP:
+                                                         </td>
+                                                      </tr>
+                                                      <tr><a href="#3"></a><td><a name="p2">4Draft results</a></td>
+                                                         <td>respond update</td>
+                                                         <td>
+                                                            		RQ:<b>Request</b>
+                                                            		(
+                                                            		system1
+                                                            		-
+                                                            		system2
+                                                            		):
+                                                            		<a href="example-instances.html#results">Results</a><br></td>
+                                                         <td>
+                                                            		RP:
+                                                         </td>
+                                                      </tr>
+                                                      <tr><a href="#4"></a><td><a name="p2">4Updated results</a></td>
+                                                         <td>respond update</td>
+                                                         <td>
+                                                            		RQ:<b>Request</b>
+                                                            		(
+                                                            		system1
+                                                            		-
+                                                            		system2
+                                                            		):
+                                                            		<a href="example-instances.html#results">Results</a><br></td>
+                                                         <td>
+                                                            		RP:
+                                                         </td>
+                                                      </tr>
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div id="resources" class="tab-pane fade">
+                                       <h3>Resources</h3>
+                                       <h2>Resources</h2>
+                                       <p xmlns=""></p>
+                                       <h3 xmlns="">ServiceRequest</h3>
+                                       <table xmlns="" class="grid">
+                                          <tbody>
+                                             <tr>
+                                                <th>Artifact</th>
+                                                <th>Version</th>
+                                                <th>Description</th>
+                                                <th>Created by step</th>
+                                                <th>Creating actor</th>
+                                             </tr>
+                                             <tr>
+                                                <td rowspan="3"><a name="" href="../fhir:examples/"><b>Request</b></a></td>
+                                                <td>
+                                                   (2)
+                                                   			
+                                                </td>
+                                                <td><b>The request</b></td>
+                                                <td colspan="3"></td>
+                                             </tr>
+                                             <tr>
+                                                <td>draft</td>
+                                                <td>Request draft</td>
+                                             </tr>
+                                             <tr>
+                                                <td>request</td>
+                                                <td>Actionable request</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                       <p xmlns=""></p>
+                                       <h3 xmlns="">Procedure</h3>
+                                       <table xmlns="" class="grid">
+                                          <tbody>
+                                             <tr>
+                                                <th>Artifact</th>
+                                                <th>Version</th>
+                                                <th>Description</th>
+                                                <th>Created by step</th>
+                                                <th>Creating actor</th>
+                                             </tr>
+                                             <tr>
+                                                <td rowspan="3"><a name="" href="../fhir:examples/"><b>Results</b></a></td>
+                                                <td>
+                                                   (2)
+                                                   			
+                                                </td>
+                                                <td><b>The results</b></td>
+                                                <td colspan="3"></td>
+                                             </tr>
+                                             <tr>
+                                                <td>draft</td>
+                                                <td>Draft results</td>
+                                             </tr>
+                                             <tr>
+                                                <td>results</td>
+                                                <td>Results</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                       <p xmlns=""></p>
+                                       <h3 xmlns="">Task</h3>
+                                       <table xmlns="" class="grid">
+                                          <tbody>
+                                             <tr>
+                                                <th>Artifact</th>
+                                                <th>Version</th>
+                                                <th>Description</th>
+                                                <th>Created by step</th>
+                                                <th>Creating actor</th>
+                                             </tr>
+                                             <tr>
+                                                <td rowspan="1"><a name="" href="../fhir:examples/"><b>Task</b></a></td>
+                                                <td>
+                                                   (0)
+                                                   			
+                                                </td>
+                                                <td><b>The task</b></td>
+                                                <td colspan="3"></td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div><script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="assets/js/jquery-ui.min.js"></script><script type="text/javascript">
+				try {
+				var currentTabIndex = sessionStorage.getItem('fhir-resource-tab-index');
+				} catch(exception) {
+				}
+
+				if (!currentTabIndex)
+				currentTabIndex = '0';
+
+				$( '#tabs' ).tabs({
+				active: currentTabIndex,
+				activate: function( event, ui ) {
+				var active = $('.selector').tabs('option', 'active');
+				currentTabIndex = ui.newTab.index();
+				document.activeElement.blur();
+				try {
+				sessionStorage.setItem('fhir-resource-tab-index', currentTabIndex);
+				} catch(exception) {
+				}
+				}
+				});
+			</script><div id="segment-footer" class="segment">
+      <div class="container">
+         <div class="inner-wrapper">
+            <p>
+               							© Based on FHIR.
+               							<br><span style="color: #FFFF77">
+                  								Links: <a style="color: #81BEF7" href="history.html">Version History</a> |
+                  								<a style="color: #81BEF7" href="toc.html">Table of Contents</a> |
+                  								<a style="color: #81BEF7" rel="license" href="{site.data.fhir.path}license.html"><img style="border-style: none;" alt="CC0" src="cc0.png"></a> |
+                  								<a style="color: #81BEF7" target="_blank" href="mailto:pharmacy@ihe.net">Propose a change <img alt="external" style="text-align: baseline" src="external.png"></a></span></p>
+         </div>
+      </div>
+   </div>
+   <div id="segment-post-footer" class="segment hidden">
+      <div class="container"></div>
+   </div><script type="text/javascript" src="assets/js/jquery.js"></script><script type="text/javascript" src="assets/js/bootstrap.min.js"></script><script type="text/javascript" src="assets/js/respond.min.js"></script><script type="text/javascript" src="assets/js/fhir.js"></script></body>

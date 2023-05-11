@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+        <CompatibilityMode Value="True"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <Title Value="FHIRConsole"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+    </General>
+    <VersionInfo>
+      <MajorVersionNr Value="2"/>
+      <RevisionNr Value="12"/>
+    </VersionInfo>
+    <BuildModes Count="7">
+      <Item1 Name="default" Default="True"/>
+      <Item2 Name="win32">
+        <MacroValues Count="1">
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="win64">
+        <MacroValues Count="1">
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="linux">
+        <MacroValues Count="1">
+          <Macro1 Name="LCLWidgetType" Value="gtk2"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="osx">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="darwin"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
+        </CompilerOptions>
+      </Item5>
+      <Item6 Name="osx-m1">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
+          </Other>
+        </CompilerOptions>
+      </Item6>
+      <Item7 Name="win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowWarn Value="False"/>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <WriteFPCLogo Value="False"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
+      <SharedMatrixOptions Count="4">
+        <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item2 ID="601568390877" Modes="osx,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item3 ID="986226565548" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
+        <Item4 ID="116515061841" Modes="win32,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+      </SharedMatrixOptions>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+    </RunParams>
+    <RequiredPackages Count="9">
+      <Item1>
+        <PackageName Value="fcomp"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="laz.virtualtreeview_package"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LazControls"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="fhir_fsl"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="fhir"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="fhir_fui"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="MarkdownEngine"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="LCL"/>
+      </Item9>
+    </RequiredPackages>
+    <Units Count="14">
+      <Unit0>
+        <Filename Value="fhirconsole.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="console_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainConsoleForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="admin\console_dest_edit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="admin\console_ep_edit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditEPForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="admin\console_id_edit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditIDForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="admin\console_managers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="admin\console_server_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServerConnectionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="admin\console_tx_edit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditTxForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="admin\server_config.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="admin\install_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EndpointInstallForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="admin\install_log.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="InstallProgressForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="installer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="admin\frm_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsoleAboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="test_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TestForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit13>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\exec\64\FHIRConsole.exe"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir);..\library"/>
+      <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+      <OtherUnitFiles Value="admin;tx"/>
+      <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <VerifyObjMethodCallValidity Value="True"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="5">
+      <Item1>
+        <Name Value="EIdSocketError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EIdConnClosedGracefully"/>
+      </Item2>
+      <Item3>
+        <Name Value="ELibraryException"/>
+      </Item3>
+      <Item4>
+        <Name Value="&lt;Unknown Class>"/>
+      </Item4>
+      <Item5>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item5>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

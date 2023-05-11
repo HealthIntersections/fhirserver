@@ -1,0 +1,146 @@
+object PackageFinderForm: TPackageFinderForm
+  Left = 0
+  Top = 0
+  Caption = 'Package Finder'
+  ClientHeight = 486
+  ClientWidth = 870
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Top
+    Size.Width = 870.000000000000000000
+    Size.Height = 36.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Label2: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 6.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Filter:'
+      TabOrder = 0
+    end
+    object edtFilter: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 1
+      Position.X = 56.000000000000000000
+      Position.Y = 6.000000000000000000
+      Size.Width = 802.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      OnChangeTracking = edtFilterChange
+    end
+  end
+  object Panel2: TPanel
+    Align = Bottom
+    Position.Y = 446.000000000000000000
+    Size.Width = 870.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 8
+      Position.X = 777.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'Close'
+    end
+    object btnInstall: TButton
+      Anchors = [akTop, akRight]
+      Enabled = False
+      Position.X = 689.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Install'
+      OnClick = btnInstallClick
+    end
+    object Label1: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Server:'
+      TabOrder = 2
+    end
+    object cbxServer: TComboBox
+      Items.Strings = (
+        'build.fhir.org')
+      ItemIndex = 0
+      Position.X = 64.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 161.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+    end
+    object ProgressBar1: TProgressBar
+      Anchors = [akLeft, akTop, akRight]
+      Orientation = Horizontal
+      Position.X = 232.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 449.000000000000000000
+      Size.Height = 20.000000000000000000
+      Size.PlatformDefault = False
+      Visible = False
+    end
+  end
+  object Panel3: TPanel
+    Align = Client
+    Padding.Left = 10.000000000000000000
+    Padding.Top = 10.000000000000000000
+    Padding.Right = 10.000000000000000000
+    Padding.Bottom = 10.000000000000000000
+    Size.Width = 870.000000000000000000
+    Size.Height = 410.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object grid: TGrid
+      Align = Client
+      CanFocus = True
+      ClipChildren = True
+      Size.Width = 850.000000000000000000
+      Size.Height = 390.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
+      OnGetValue = gridGetValue
+      OnCellClick = gridCellClick
+      Viewport.Width = 830.000000000000000000
+      Viewport.Height = 365.000000000000000000
+      object StringColumn1: TStringColumn
+        Header = 'Package Id'
+        Size.Width = 120.000000000000000000
+      end
+      object StringColumn2: TStringColumn
+        Header = 'Version'
+        Size.Width = 60.000000000000000000
+      end
+      object StringColumn3: TStringColumn
+        Header = 'Description'
+        Size.Width = 150.000000000000000000
+      end
+      object StringColumn4: TStringColumn
+        Header = 'Canonical'
+        Size.Width = 350.000000000000000000
+      end
+      object StringColumn5: TStringColumn
+        Header = 'FHIR V'
+        Size.Width = 60.000000000000000000
+      end
+      object DateColumn1: TDateColumn
+        Header = 'Date'
+        Size.Width = 80.000000000000000000
+      end
+    end
+  end
+end

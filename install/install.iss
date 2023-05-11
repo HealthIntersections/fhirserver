@@ -3,18 +3,17 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.164
+AppVerName=FHIRServer v2.0.12
 
 ; compilation control
-OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.164
+OutputDir=..\install\build
+OutputBaseFilename=fhirserver-win64-2.0.12
 Compression=lzma2/ultra64
 
 ; 64 bit
 ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
 
-; we will be creating a service so we do need this privilege
+; we might be creating a service so we do need this privilege
 PrivilegesRequired=admin
 AllowUNCPath=no
 AlwaysShowDirOnReadyPage=yes
@@ -22,164 +21,454 @@ AlwaysShowGroupOnReadyPage=yes
 ChangesAssociations=yes
 DirExistsWarning=auto
 DisableStartUpPrompt=yes
-MinVersion=0,5.0
-UninstallDisplayIcon=C:\work\fhirserver\Server\fhir.ico
+MinVersion=0,6.1
+UninstallDisplayIcon=..\Server\fhir.ico
 WizardStyle=modern
+DisableDirPage=false
 
 ; directory management
 DefaultDirName={pf}\FHIRServer
-DefaultGroupName=FHIRServer
-UninstallFilesDir={app}
+DefaultGroupName=FHIR Applications
+UninstallFilesDir={app}\uninstall
 
 ; win2000+ add/remove programs support
 AppPublisher=Health Intersections P/L
 AppPublisherURL=http://www.healthintersections.com.au
-AppVersion=0.01
+AppVersion=2.0.12
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
-AppCopyright=Copyright © Health Intersections Pty Ltd 2011+
-VersionInfoVersion=0.0.0.1
+AppCopyright=Copyright (c) Health Intersections Pty Ltd 2011+
+VersionInfoVersion=2.0.12.0
 
 ; dialog support
-LicenseFile=C:\work\fhirserver\license
-InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
+LicenseFile=..\license
+InfoBeforeFile=..\install\readme.rtf
 
-; directories
-;  {app}  - executable, ini file
-;  {app}\web - FHIR server specific web content
-;  {app}\spec - FHIR specification itself
-;
-;  {store}\data - terminology caches
+; #include <idp.iss>
 
-[Types]
-Name: "fhir4";   Description: "Install R4 Version (Current Build)"
-Name: "fhir3";   Description: "Install R3 Version"
-Name: "fhir2";   Description: "Install DSTU2 Version"
+#define use_msiproduct
+#define use_vc2015
+#define use_vc2017
+#define use_sql2008express
+#define use_mysqldb
+;#define use_mysqlodbcinstalled
+#define use_mysqlodbc
 
-[Components]
-Name: "r2";   Description: "DSTU2 Components"; Types: fhir2
-Name: "r3";   Description: "STU3 Components"; Types: fhir3
-Name: "r4";   Description: "R4 Components"; Types: fhir4
+; shared code for installing the products
+#include "scripts\products.iss"
+
+; helper functions
+#include "scripts\products\stringversion.iss"
+#include "scripts\products\winversion.iss"
+#include "scripts\products\fileversion.iss"
+#include "scripts\products\dotnetfxversion.iss"
+
+
+
+#ifdef use_msiproduct
+#include "scripts\products\msiproduct.iss"
+#endif
+#ifdef use_vc2015
+#include "scripts\products\vcredist2015.iss"
+#endif
+#ifdef use_vc2017
+#include "scripts\products\vcredist2017.iss"
+#endif
+#ifdef use_sql2008express
+#include "scripts\products\sql2008express.iss"
+#endif
+#ifdef use_mysqlodbc
+#include "scripts\products\mysqlodbc.iss"
+#endif
+#ifdef use_mysqldb
+#include "scripts\products\mysqldb.iss"
+#endif
 
 [Tasks]
 ; Core related tasks
 Name: svcInst;   Description: "Install FHIR Server as a Service"
-Name: svcInst\start;   Description: "Start FHIR Server after Installation"
 Name: firewall;  Description: "Allow FHIR Server through the Firewall"
-Name: sct; Description: "Import SNOMED CT (Requires RF2 Snapshot, ~1hr)"; Flags: unchecked
-Name: db; Description: "Initialize Data Base";                            Flags: checkablealone
-Name: db\pop; Description: "Populate Data Base (~30min)"
+Name: envPath;   Description: "Add FHIR Server to the system path"
 
 [Files]
-; installer support
-Source: "C:\work\fhirserver\install\installer.dll";               Flags: dontcopy;
+; 1. Application executables & Dlls
+Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\64\FHIRServer.debug.exe";                    DestDir: "{app}\debug"; Flags: ignoreversion
+Source: "..\exec\64\fhirconsole.exe";                         DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libsqlite3.dll";                    DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libcrypto-1_1-x64.dll";             DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libssl-1_1-x64.dll";                DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libpdf.dll";                        DestDir: "{app}";       Flags: ignoreversion
 
-; root documentation files
-Source: "C:\work\fhirserver\license";                                 DestDir: "{app}";            Flags: ignoreversion;      DestName: "license.txt";
-Source: "C:\work\fhirserver\readme.md";                               DestDir: "{app}";            Flags: ignoreversion;      DestName: "readme.txt";
-Source: "C:\work\fhirserver\install\readme.rtf";                      DestDir: "{app}";            Flags: ignoreversion;      DestName: "documentation.rtf";
-Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
+; 3. Data Files
+Source: "..\exec\pack\fhirserver.cfg";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
+Source: "..\exec\pack\fhirserver.web";                        DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\ucum.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\lang.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\tz.dat";                                DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\fhir-lang.dat";                         DestDir: "{app}";       Flags: ignoreversion 
 
-; Executable files
-Source: "C:\work\fhirserver\Exec\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
-
-Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
-Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
-Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
-
-; Web resources
-Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
-
-; Spec & IGs
-; R2
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";                DestDir: {app}\load;                                        Components: r2;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: {app}\web;         DestName: validation.json.zip;  Components: r2;   Flags: ignoreversion  
-
-; R3
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\examples-json.zip";           DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";                                DestDir: {app}\load;        DestName: us-sdcde.json.zip;    Components: r3;   Flags: ignoreversion
-
-; R4
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                                  DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
-
-
-; Load Data
-Source: "C:\work\fhirserver\sql\nucc.xml";                                      DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\tslc.xml";                                      DestDir: {app}\sql;     DestName: tslc.xml;            Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3 r4; Flags: ignoreversion
-
-; Terminology resources
-Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_261.cache";                  DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
-Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
-
-; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion
-
-[INI]
-Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
-Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc_261.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
-Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
-Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
-Filename: "{app}\fhirserver.ini"; Section: "lang";  Key: "source";  String: "{app}\sql\lang.txt"
+; 4. Documentation
+Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";
+Source: "..\readme.md";                                       DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "readme.txt";
+Source: "readme.rtf";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "installation-documentation.rtf";
 
 [Icons]
-Name: "{group}\FHIR Server (Desktop Mode)";  Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
-Name: "{group}\FHIR Server Utilities";       Filename: "{app}\FHIRServerutils.exe";                       WorkingDir: "{app}"    
-Name: "{group}\Documentation";               Filename: "{app}\documentation.rtf";         
-Name: "{group}\Ini File";                    Filename: "{app}\fhirserver.ini";         
+Name: "{group}\FHIR Server Manager";         Filename: "{app}\fhirconsole.exe";                      WorkingDir: "{app}"    
+Name: "{group}\Installation Documentation";  Filename: "{app}\doco\installation-documentation.rtf";         
+
+[Run]
+Filename: "{app}\fhirconsole.exe"; Parameters: "-installer ""{app}\fhirserver.cfg"""; Description: "Configure the server"; WorkingDir: "{app}"; Flags: postinstall shellexec skipifsilent
 
 [Code]
 const
   MB_ICONINFORMATION = $40;
 
 var
+    DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
 
-  ConnectionPage : TInputQueryWizardPage;
+  VCStatus, MYSQLStatus, MSSQLStatus,  ODBCStatus : TLabel;
+  VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
 
-  WebPage : TWizardPage;
-  webHostName : TNewEdit;
-  webOpenPort : TNewEdit;
-  webOpenPath : TNewEdit;
-  webSecurePort : TNewEdit;
-  webSecurePath : TNewEdit;
-  certFile : TNewEdit;
-  caCertFile : TNewEdit;
-  certPWord : TNewEdit;
-  webpop : boolean;
+// start up check: a jre is required   
 
-  AdminPage : TInputQueryWizardPage;
-  SctPage : TInputDirWizardPage;
-  cbxModule : TNewComboBox;
-  sctVersion : TNewEdit;
-  ConfigPage : TInputOptionWizardPage;
+function InitializeSetup(): Boolean;
+begin
+  Result := true;
+end;
 
-  SctInstallPage : TOutputProgressWizardPage;
-  LoadInstallPage : TOutputProgressWizardPage;
+// ------ Firewall management ---------------------------------------------------------------------------------
 
-// ------ Interfaces ---------------------------------------------------------------------------------
-type
-  TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
+const
+  NET_FW_SCOPE_ALL = 0;
+  NET_FW_IP_VERSION_ANY = 2;
 
-Function MyDllGetString(name : pansichar) : pansichar; external 'MyDllGetString@files:installer.dll stdcall setuponly';
-Function MyDllCheckDatabase(Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
-Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallSnomed@files:installer.dll stdcall setuponly';
-Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
 
+procedure SetFirewallException(AppName,FileName:string);
+var
+  FirewallObject: Variant;
+  FirewallManager: Variant;
+  FirewallProfile: Variant;
+begin
+  try
+    FirewallObject := CreateOleObject('HNetCfg.FwAuthorizedApplication');
+    FirewallObject.ProcessImageFileName := FileName;
+    FirewallObject.Name := AppName;
+    FirewallObject.Scope := NET_FW_SCOPE_ALL;
+    FirewallObject.IpVersion := NET_FW_IP_VERSION_ANY;
+    FirewallObject.Enabled := True;
+    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
+    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
+    FirewallProfile.AuthorizedApplications.Add(FirewallObject);
+  except
+    MsgBox('Unable to Register '+AppName+' exemption with the firewall: '+GetExceptionMessage, mbInformation, MB_OK)
+  end;
+end;
+
+
+procedure RemoveFirewallException( FileName:string );
+var
+  FirewallManager: Variant;
+  FirewallProfile: Variant;
+begin
+  try
+    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
+    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
+    FireWallProfile.AuthorizedApplications.Remove(FileName);
+  except
+  end;
+end;
+
+// ------ Wizard Pages ---------------------------------------------------------------------------------
+
+var
+  SQLSERVER_installed,VCREDIST_installed,MYSQLDB_installed,MYSQLODBC_installed:boolean;
+
+procedure InstallMySQL(Sender: TObject);
+var 
+  ResultCode:Integer;
+  localfilename:string;
+begin
+//  idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
+
+  localfilename:= MySQLPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+//  idpDownloadFile(MySQLPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+procedure InstallVCRedist(Sender: TObject);
+var 
+  ResultCode:Integer;
+  localfilename:string;
+begin
+//  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
+  localfilename:= VCPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  //idpDownloadFile(VCPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+
+procedure InstallMSSQL(Sender: TObject);
+var 
+  ResultCode:Integer;
+  localfilename:string;
+begin
+//  idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
+  localfilename:= MSSQLPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+  //idpDownloadFile(MSSQLPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+procedure InstallODBC(Sender: TObject);
+var 
+  ResultCode:Integer;
+  localfilename:string;
+begin
+// Which ODBC Depends on which Database is setup os is being setup
+//  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
+  localfilename:= ODBCPath.text;
+  StringChangeEx(localfilename, '/', '\', True);
+  localfilename := ExtractFileName(localfilename);
+  localfilename := ExpandConstant('{tmp}'+'\'+localfilename);
+//  idpDownloadFile(ODBCPath.text, localfilename);
+  if not ShellExec('', localfilename, '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+Procedure CreateDependenciesPage;
+var
+  JRElbl, JREstatus, VClbl, MYSQLlbl,  MSSQLlbl, ODBClbl :Tlabel ;
+  JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
+  ResultMsg : Boolean;
+  Versions: TArrayOfString;
+  I: Integer;
+  regRoot: Integer;
+Begin
+  DependenciesPage := CreateCustomPage(wpSelectTasks, 'Install Dependencies', 'Choose the dependencies to install');
+ 
+  VClbl := TLabel.Create(DependenciesPage);
+  with VClbl do 
+  begin
+    Caption := 'Visual C++ Redistributables (2015 or 2017)';
+    Top := ScaleX(0);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCstatus := TLabel.Create(DependenciesPage);
+  with VCstatus do 
+  begin
+    Caption := 'NOT INSTALLED';
+    font.style:=[fsBold];
+    Top := ScaleX(0);
+    Left := ScaleX(220);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCpath := TEdit.Create(DependenciesPage);
+  with VCPath do 
+  begin
+    Text := vcredist2017_url_x64;
+    Top := ScaleX(16);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCInstall := TButton.Create(DependenciesPage);
+  with VCInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(16);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallVCRedist;
+  end;
+
+
+  MYSQLlbl := TLabel.Create(DependenciesPage);
+  with MYSQLlbl do 
+  begin
+    Caption := 'MySQL (needs ODBC Driver)';
+    Top := ScaleX(40);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLstatus := TLabel.Create(DependenciesPage);
+  with MYSQLstatus do 
+  begin
+    Caption := '';
+    Left := ScaleX(80);
+    font.style:=[fsBold];
+    Top := ScaleX(100);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLpath := TEdit.Create(DependenciesPage);
+  with MYSQLpath do 
+  begin
+    Text := 'https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi';
+    Top := ScaleX(56);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLInstall := TButton.Create(DependenciesPage);
+  with MYSQLInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(56);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallMySQL;
+  end;
+
+  ODBClbl := TLabel.Create(DependenciesPage);
+  with ODBClbl do 
+  begin
+    Caption := 'MYSQL ODBC Driver (5.3+)';
+    Top := ScaleX(80);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCstatus := TLabel.Create(DependenciesPage);
+  with ODBCstatus do 
+  begin
+    Caption := '';
+    font.style:=[fsBold];
+    Top := ScaleX(80);
+    Left := ScaleX(140);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCpath := TEdit.Create(DependenciesPage);
+  with ODBCpath do 
+  begin
+    if 
+      false // this should be changed to see if DB drivers are in x32 or x64- a radiobutton or something?
+    then Text := mysqlodbc_url else   
+    Text := mysqlodbc_url_x64;   
+    Top := ScaleX(96);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCInstall := TButton.Create(DependenciesPage);
+  with ODBCInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(96);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallODBC;
+  end;
+
+
+
+  MSSQLlbl := TLabel.Create(DependenciesPage);
+  with MSSQLlbl do 
+  begin
+    Caption := 'MS SQL Server';
+    Top := ScaleX(140);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLstatus := TLabel.Create(DependenciesPage);
+  with MSSQLstatus do 
+  begin
+    font.style:=[fsBold];
+    Caption := '';
+    Top := ScaleX(140);
+    Left := ScaleX(100);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLpath := TEdit.Create(DependenciesPage);
+  with MSSQLpath do 
+  begin
+    Text := sql2008expressr2_url_x64;
+    Top := ScaleX(156);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLInstall := TButton.Create(DependenciesPage);
+  with MSSQLInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(156);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallMSSQL;
+  end;
+end;
+
+procedure configureDependenciesPage;
+var  
+  version : String;
+begin
+  // Check if Visual C++ Redist 2015 is installed - should support also 2017?
+  VCREDIST_installed := (msiproductupgrade(GetString(vcredist2015_upgradecode, vcredist2015_upgradecode_x64, ''), '15')) 
+    OR (msiproductupgrade(GetString(vcredist2017_upgradecode, vcredist2017_upgradecode_x64, ''), '15')); 
+
+  // Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
+  RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Microsoft SQL Server\SQLEXPRESS\MSSQLServer\CurrentVersion', 'CurrentVersion', version);
+  SQLSERVER_installed := not (compareversion(version, '10.5') < 0);
+
+  // Check if MYSQL ODBC is installed
+  MYSQLODBC_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL Connector/ODBC 5.3')
+
+  // Check if MYSQL is installed - this should be fixed
+  MYSQLDB_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL 5.5');
+  MYSQLDB_installed := true;
+
+  if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
+  if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
+  if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
+  if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
+end;
+
+function checkDependenciesPage : boolean;
+var 
+  Dependencies_OK : boolean;
+  ResultMsg:boolean;
+begin
+  result := true;
+  //check if there are still dependencies 
+  Dependencies_OK := (SQLSERVER_installed) OR (VCREDIST_installed AND MYSQLDB_installed AND  MYSQLODBC_installed );
+  if not Dependencies_OK then 
+  begin
+    ResultMsg := MsgBox('Not all dependencies are met (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
+    if ResultMsg = false then
+      Result := false
+  end;
+end;
+
+
+// ------ Service Installation ---------------------------------------------------------------------------------
 type
   _SERVICE_STATUS = record
     dwServiceType: Longword;
@@ -773,54 +1062,7 @@ Begin
 End;
 
 
-const
-  NET_FW_SCOPE_ALL = 0;
-  NET_FW_IP_VERSION_ANY = 2;
-
-
-procedure SetFirewallException(AppName,FileName:string);
-var
-  FirewallObject: Variant;
-  FirewallManager: Variant;
-  FirewallProfile: Variant;
-begin
-  try
-    FirewallObject := CreateOleObject('HNetCfg.FwAuthorizedApplication');
-    FirewallObject.ProcessImageFileName := FileName;
-    FirewallObject.Name := AppName;
-    FirewallObject.Scope := NET_FW_SCOPE_ALL;
-    FirewallObject.IpVersion := NET_FW_IP_VERSION_ANY;
-    FirewallObject.Enabled := True;
-    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
-    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
-    FirewallProfile.AuthorizedApplications.Add(FirewallObject);
-  except
-    MsgBox('Unable to Register '+AppName+' exemption with the firewall: '+GetExceptionMessage, mbInformation, MB_OK)
-  end;
-end;
-
-
-procedure RemoveFirewallException( FileName:string );
-var
-  FirewallManager: Variant;
-  FirewallProfile: Variant;
-begin
-  try
-    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
-    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
-    FireWallProfile.AuthorizedApplications.Remove(FileName);
-  except
-  end;
-end;
-
-
-// ------ Wizard -------------------------------------------------------------------------------------
-
-
-Procedure LookupUser(Sender : TObject);
-begin
-  MsgBox('not done yet. sorry', mbError, MB_OK);
-End;
+// ------ Service Details Page ---------------------------------------------------------------------------------
 
 const LOGON32_LOGON_INTERACTIVE = 2;
 const LOGON32_PROVIDER_DEFAULT = 0;
@@ -850,36 +1092,32 @@ Begin
   result := i > 0;
 End;
 
-
-
-
+Function DetermineStartMode : Integer;
+Begin
+  case cbxStartup.ItemIndex of
+    0: result := SERVICE_AUTO_START;
+    1: result := SERVICE_DEMAND_START;
+    2: result := SERVICE_DISABLED;
+    3: result := SERVICE_AUTO_START;
+  End;
+End;
 Procedure CreateServiceUserPage;
 var
   lbl : TLabel;
-  btn : TButton;
   version : TWindowsVersion;
 Begin
   GetWindowsVersionEx(version);
-  ServicePage := CreateInputQueryPage(wpSelectTasks, 'Service Details', 'Configure the FHIRServer Service', 'Leave Blank to run as local system, or DOMAIN\Username and password');
+  ServicePage := CreateInputQueryPage(DependenciesPage.ID, 'Service Details', 'Configure the FHIRServer Service', 'Leave Blank to run as local system, or DOMAIN\Username and password');
   ServicePage.Add('User:', False);
   ServicePage.Add('Password:', True);
 
-  btn := TButton.Create(ServicePage);
-  btn.Caption := '...';
-  btn.Top := 62;
-  btn.Left := ServicePage.SurfaceWidth - 20;
-  btn.Width := 20;
-  btn.Parent := ServicePage.Surface;
-  btn.Height := 20;
-  btn.OnClick := @LookupUser;
-
   lbl := TLabel.Create(ServicePage);
   lbl.Caption := 'Start Up Type:';
-  lbl.Top := 130;
+  lbl.Top := ScaleX(130);
   lbl.Parent := ServicePage.Surface;
 
   cbxStartup := TNewComboBox.Create(ServicePage);
-  cbxStartup.Top := 150;
+  cbxStartup.Top := ScaleX(150);
   cbxStartup.Width := ServicePage.SurfaceWidth;
   cbxStartup.Parent := ServicePage.Surface;
   cbxStartup.Style := csDropDownList;
@@ -890,587 +1128,134 @@ Begin
     cbxStartup.Items.Add('Automatic - Delayed Start');
   cbxStartup.ItemIndex := 0;
 
-  If ServiceExists('HL7Connect') Then
+  If ServiceExists('FHIRServer') Then
   Begin
     ServicePage.Values[0] := GetServiceUser('FHIRServer');
     if (ServicePage.Values[0] = 'Local System') or (ServicePage.Values[0] = 'LocalSystem') then
       ServicePage.Values[0] := '';
-    cbxStartup.ItemIndex := GetServiceStartIndex('HL7Connect');
+    cbxStartup.ItemIndex := GetServiceStartIndex('FHIRServer');
   End;
 End;
+ 
+function checkServicePageDetails : boolean;
+begin
+  // check service page entries
+  if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
+  Begin
+    if not CheckLogin Then
+      result := MsgBox('Unable to login using this account ('+SysErrorMessage(DLLGetLastError)+'). '+#13#10#13#10+'This may be because the details are wrong, or maybe the installer doesn''t have the rights to log on in service mode. Would you like to continue anyway?',
+         mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES
+    else
+      result := true;
+  End
+  Else
+    result := true;
 
+end;
 
+// ------ Wizard Events -------------------------------------------------------------------------------------
+            
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if (PageID = SctPage.Id) Then
-    result := not IsTaskSelected('sct')
-  else if (PageID = AdminPage.Id) or (PageID = ConfigPage.Id) Then
-    result := not IsTaskSelected('db')
+  if (PageID = ServicePage.Id) Then
+    result := not IsTaskSelected('svcInst')
   else
     result := false;
 end;
-
-
+                        
 function NextButtonClick(CurPageID: Integer): Boolean;
-var
-  s : String;
-  p : integer;
 begin
-  if (CurpageID = ServicePage.Id) Then
+  if (CurpageID = wpSelectTasks) Then
   Begin
-    // check service page entries
-    if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
-    Begin
-      if not CheckLogin Then
-        result := MsgBox('Unable to login using this account ('+SysErrorMessage(DLLGetLastError)+'). '+#13#10#13#10+'This may be because the details are wrong, or maybe the installer doesn''t have the rights to log on in service mode. Would you like to continue anyway?',
-           mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES
-      else
-        result := true;
-    End
-    Else
-      result := true;
-    // populate the next page
-    if (not webpop) then
-    begin
-      ConnectionPage.values[0] := GetIniString('database', 'server', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[1] := GetIniString('database', 'database', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[2] := GetIniString('database', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[3] := GetIniString('database', 'password', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webHostName.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPort.Text := GetIniString('web', 'http', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPath.Text := GetIniString('web', 'base', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webSecurePort.Text := GetIniString('web', 'https', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webSecurePath.Text := GetIniString('web', 'secure', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      certFile.Text := GetIniString('web', 'certname', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      caCertFile.Text := GetIniString('web', 'cacertname', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      certPWord.Text := GetIniString('web', 'certpword', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      AdminPage.Values[0] := GetIniString('admin', 'email', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      AdminPage.Values[1] := GetIniString('admin', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webpop := true;
-    end;
+    configureDependenciesPage;
+    Result := True;
   End
-  Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
+  Else if (DependenciesPage <> Nil) And (CurPageID = DependenciesPage.ID) then
   begin
-    if IsComponentSelected('r3') then
-      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.1')
-    else
-      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
-    result := s = '';
-    if not result then
-      if (s = 'dbi') then
-      begin
-        if (isTaskSelected('db')) then
-          result := true
-        else
-          MsgBox('The database must be initialized because the FHIRServer tables were not found. Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
-      end
-      else if (s <> '') then
-      begin
-        if (isTaskSelected('db')) then
-          result := true
-        else
-          MsgBox('The database must be reinitialized because the FHIR version has changed (is '+s+', needs to be 3.0.1). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
-      end
-      else
-        MsgBox(s, mbError, MB_OK); 
+    result := checkDependenciesPage;
   end
-  Else if (WebPage <> Nil) And (CurPageID = WebPage.ID) then
-  begin
-    result := false;
-    if (webHostName.Text = '') then
-    begin
-      MsgBox('A web host name must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (webOpenPort.Text <> '') then
-    begin
-      p := StrToIntDef(webOpenPort.Text, 0);
-      if (p <= 0) or (p > 32760) then
-      begin
-        MsgBox('Insecure Port is illegal', mbError, MB_OK);
-        exit;
-      end;
-      if (webOpenPath.Text = '') then
-      begin
-        MsgBox('Insecure Path must be provided', mbError, MB_OK);
-        exit;
-      end;
-     end
-    else if (webSecurePort.Text <> '') then
-    begin
-      p := StrToIntDef(webSecurePort.Text, 0);
-      if (p <= 0) or (p > 32760) then
-      begin
-        MsgBox('Secure Port is illegal', mbError, MB_OK);
-        exit;
-      end;
-      if (webSecurePath.Text = '') then
-      begin
-        MsgBox('Secure Path must be provided', mbError, MB_OK);
-        exit;
-      end;
-      if (certFile.Text = '') then
-      begin
-        MsgBox('A certificate file is required. If you need to generate one, you can use openSSL', mbError, MB_OK);
-        exit;
-      end;
-      if (caCertFile.Text = '') then
-      begin
-        MsgBox('A CA certificate file is required', mbError, MB_OK);
-        exit;
-      end;
-      if (certPWord.Text = '') then
-      begin
-        MsgBox('A certificate password is required', mbError, MB_OK);
-        exit;
-      end;
-    end
-    else
-    begin
-      MsgBox('Must provide either a secure or an insecure port', mbError, MB_OK);
-      exit;
-    end;
-    Result := True;
-  end
-  Else if (SctPage <> Nil) And (CurPageID = SctPage.ID) then
-  begin
-    Result := true;
-    if not DirExists(SctPage.Values[0]) then
-    begin
-      Result := false;
-      MsgBox('SNOMED CT source not found', mbError, MB_OK);
-    end;
-    if (sctVersion.Text = '') or (length(sctVersion.Text) <> 8) or (StrToIntDef(sctVersion.Text, 0) = 0) then
-    begin
-      Result := false;
-      MsgBox('SNOMED CT version required, with format YYYYMMDD', mbError, MB_OK);
-    end;
-  end
-  Else if (AdminPage <> Nil) And (CurPageID = AdminPage.ID) then
-  begin
-    result := false;
-    if (AdminPage.Values[0] = '') then
-    begin
-      MsgBox('A email address must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[1] = '') then
-    begin
-      MsgBox('A username must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[2] = '') then
-    begin
-      MsgBox('A password must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[3] = '') then
-    begin
-      MsgBox('A confirmation password must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[2] <> AdminPage.Values[3]) then
-    begin
-      MsgBox('Passwords do not match', mbError, MB_OK);
-      exit;
-    end;
-    Result := True;
-  end
+  Else if (CurpageID = ServicePage.Id) Then
+  Begin
+    result := checkServicePageDetails;
+  End
   Else
     Result := True;
 end;
 
-Function IsWindows2008 : Boolean;
-var
-  ver : TWindowsVersion;
-Begin
-  GetWindowsVersionEx(ver);
-  result := ((ver.ProductType = VER_NT_DOMAIN_CONTROLLER) or (ver.ProductType = VER_NT_SERVER)) and (ver.Major >= 6);
-End;
-
-// ----- Snomed CT Config  -------------------------------------------------------------------
-
-Procedure InstallSctPage;
-var
-  lbl : TLabel;
-begin
-  SctPage := CreateInputDirPage(wpSelectTasks, 'Load Snomed CT', 'Provide SNOMED CT Details', 'Select a directory that contains the RF2 snapshot', false, '');  
-  SctPage.Add('');
-
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Module:';
-  lbl.Top := 60;
-  lbl.Parent := SctPage.Surface;
-
-  cbxModule := TNewComboBox.Create(SctPage);
-  cbxModule.Top := 82;
-  cbxModule.Width := SctPage.SurfaceWidth;
-  cbxModule.Parent := SctPage.Surface;
-  cbxModule.Style := csDropDownList;
-  cbxModule.Items.Add('International');
-  cbxModule.Items.Add('US');
-  cbxModule.Items.Add('Australia');
-  cbxModule.Items.Add('Spanish');
-  cbxModule.Items.Add('Denmark');
-  cbxModule.Items.Add('Netherlands');
-  cbxModule.Items.Add('Sweden');
-  cbxModule.Items.Add('UK');
-  cbxModule.ItemIndex := 0;
-
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Version (YYYYMMDD):';
-  lbl.Top := 110;
-  lbl.Parent := SctPage.Surface;
-  sctVersion := TNewEdit.Create(SctPage);
-  sctVersion.Parent := SctPage.Surface;
-  sctVersion.Width := SctPage.SurfaceWidth;
-  sctVersion.Top := 132;
-  sctVersion.Left := 0;
-  sctVersion.Text := '';
-  
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Importing generally takes ~1hr. If loading fails, you can continue the install, and load SNOMED CT later. Also, you can load additional modules later.';
-  lbl.Top := 260;
-  lbl.Parent := SctPage.Surface;
-end;
-
-// ----- Web Server Config  -------------------------------------------------------------------
-
-Procedure WebServerPage;
-var
-  lbl : TLabel;
-Begin
-  WebPage := CreateCustomPage(wpSelectTasks, 'Web Server Configuration', 'Configure the web server');
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Host Name (FQDN):';
-  lbl.Top := 4;
-  lbl.Parent := WebPage.Surface;
-  webHostName := TNewEdit.Create(WebPage);
-  webHostName.Parent := WebPage.Surface;
-  webHostName.Width := WebPage.Surface.width - 100;
-  webHostName.Top := 0;
-  webHostName.Left := 100;
-  webHostName.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'HTTP (unsecure access)';
-  lbl.Top := 30;
-  lbl.Left := 0;
-  lbl.Font.Style := [fsBold];
-  lbl.Parent := WebPage.Surface;
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Port (def: 80)';
-  lbl.Top := 58;
-  lbl.Left := 10;
-  lbl.Parent := WebPage.Surface;
-  webOpenPort := TNewEdit.Create(WebPage);
-  webOpenPort.Parent := WebPage.Surface;
-  webOpenPort.Width := 60;
-  webOpenPort.Top := 54;
-  webOpenPort.Left := 90;
-  webOpenPort.Text := '80';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Path (e.g. /open)';
-  lbl.Top := 58;
-  lbl.Left := 170;
-  lbl.Parent := WebPage.Surface;
-  webOpenPath := TNewEdit.Create(WebPage);
-  webOpenPath.Parent := WebPage.Surface;
-  webOpenPath.Width := WebPage.Surface.width - 280;
-  webOpenPath.Top := 54;
-  webOpenPath.Left := 280;
-  webOpenPath.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'HTTPS (SSL access)';
-  lbl.Top := 86;
-  lbl.Left := 0;
-  lbl.Font.Style := [fsBold];
-  lbl.Parent := WebPage.Surface;
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Port (def: 443)';
-  lbl.Top := 114;
-  lbl.Left := 10;
-  lbl.Parent := WebPage.Surface;
-  webSecurePort := TNewEdit.Create(WebPage);
-  webSecurePort.Parent := WebPage.Surface;
-  webSecurePort.Width := 60;
-  webSecurePort.Top := 110;
-  webSecurePort.Left := 90;
-  webSecurePort.Text := '443';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Path (e.g. /secure)';
-  lbl.Top := 114;
-  lbl.Left := 170;
-  lbl.Parent := WebPage.Surface;
-  webSecurePath := TNewEdit.Create(WebPage);
-  webSecurePath.Parent := WebPage.Surface;
-  webSecurePath.Width := WebPage.Surface.width - 280;
-  webSecurePath.Top := 110;
-  webSecurePath.Left := 280;
-  webSecurePath.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Cert File';
-  lbl.Top := 136;
-  lbl.Left := 10;
-  lbl.Parent := WebPage.Surface;
-
-  certFile := TNewEdit.Create(WebPage);
-  certFile.Parent := WebPage.Surface;
-  certFile.Width := WebPage.Surface.width - 90;
-  certFile.Top := 132;
-  certFile.Left := 90;
-  certFile.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'CA Cert File';
-  lbl.Top := 158;
-  lbl.Left := 10;
-  lbl.Parent := WebPage.Surface;
-  caCertFile := TNewEdit.Create(WebPage);
-  caCertFile.Parent := WebPage.Surface;
-  caCertFile.Width := WebPage.Surface.width - 90;
-  caCertFile.Top := 154;
-  caCertFile.Left := 90;
-  caCertFile.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Cert Password';
-  lbl.Top := 180;
-  lbl.Left := 10;
-  lbl.Parent := WebPage.Surface;
-  certPWord := TNewEdit.Create(WebPage);
-  certPWord.Parent := WebPage.Surface;
-  certPWord.Width := WebPage.Surface.width - 90;
-  certPWord.Top := 176;
-  certPWord.Left := 90;
-  certPWord.Text := '';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Use openSSL to generate the certificates and get them counter signed'
-  lbl.Top := 210;
-  lbl.Left := 0;
-  lbl.Width := WebPage.Surface.Width;
-  lbl.Autosize := false;
-  lbl.WordWrap := true;
-  lbl.Height := 60;
-  lbl.Parent := WebPage.Surface;
-End;
-
-// ----- Database -----------------------------------------------------------------------------
-
-Procedure CreateConnectionPage;
-var
-  lbl : TLabel;
-  btn : TButton;
-  s : string;
-  sl : TStringList;
-  i : integer;
-Begin
-  ConnectionPage := CreateInputQueryPage(wpSelectTasks, 'Database Location', 'Select the location of the SQL Server database', 'Leave Username and Password blank to use Windows Authentication');
-  ConnectionPage.add('Server', false);
-  ConnectionPage.add('Database', false);
-  ConnectionPage.add('UserName', false);
-  ConnectionPage.add('Password', true);
-end;
-
-Procedure CreateAdminPage;
-Begin
-  AdminPage := CreateInputQueryPage(wpSelectTasks, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
-  AdminPage.Add('Email:', False);
-  AdminPage.Add('Username', False);
-  AdminPage.Add('Password', True);
-  AdminPage.Add('Password Confirmation', True);
-end;
-
-Procedure CreateConfigPage;
-Begin
-  ConfigPage := CreateInputOptionPage(wpSelectTasks, 'Configuration', 'Default Security Configuration', 
-    'Choose the Basic Security Profile (or leave it as ''closed'' and configure directly after install)', true, false);
-  ConfigPage.Add('Open Access (any user, including anonymous, can perform any operation)');
-  ConfigPage.Add('Closed Access (all users must be authenticated)');
-  ConfigPage.Add('Read Only (anonymous users can only read/search)');
-  ConfigPage.Add('Terminology Server (terminology resources only, any user can read)');
-  ConfigPage.values[0] := true;
-end;
-
-Procedure CreatePostInstallPage;
-Begin
-  SctInstallPage := CreateOutputProgressPage('SNOMED CT', 'Load SNOMED CT (~1hr)');
-  LoadInstallPage := CreateOutputProgressPage('Initialize Database', '');
-End;
-
-// ------ Installation Logic -------------------------------------------------------------------------
-
 procedure InitializeWizard();
 Begin
-  CreateConfigPage;
-  CreateAdminPage;
-  CreateConnectionPage;
-  InstallSctPage;
-  WebServerPage;
+  CreateDependenciesPage;
   CreateServiceUserPage;
-
-  CreatePostInstallPage;
 End;
 
-Function DetermineStartMode : Integer;
-Begin
-  case cbxStartup.ItemIndex of
-    0: result := SERVICE_AUTO_START;
-    1: result := SERVICE_DEMAND_START;
-    2: result := SERVICE_DISABLED;
-    3: result := SERVICE_AUTO_START;
-  End;
-End;
+const EnvironmentKey = 'Environment';
 
-function BoolToInt(b : Boolean):Integer;
-begin
-  if b then
-    result := 1
-  else
-    result := 0;
-end;
-
-type
-  TMyGUID = record
-    D1: LongWord;
-    D2: Word;
-    D3: Word;
-    D4: array[0..7] of Byte;
-  end;
-
-function CoCreateGuid(var Guid:TMyGuid):integer;
- external 'CoCreateGuid@ole32.dll stdcall';
-
-function inttohex(l:longword; digits:integer):string;
-var hexchars:string;
-begin
- hexchars:='0123456789ABCDEF';
- setlength(result,digits);
- while (digits>0) do begin
-  result[digits]:=hexchars[l mod 16+1];
-  l:=l div 16;
-  digits:=digits-1;
- end;
-end;
-
-function GetGuid():string;
-var Guid:TMyGuid;
-begin
-  if CoCreateGuid(Guid)=0 then begin
-  result:='{'+IntToHex(Guid.D1,8)+'-'+
-           IntToHex(Guid.D2,4)+'-'+
-           IntToHex(Guid.D3,4)+'-'+
-           IntToHex(Guid.D4[0],2)+IntToHex(Guid.D4[1],2)+'-'+
-           IntToHex(Guid.D4[2],2)+IntToHex(Guid.D4[3],2)+
-           IntToHex(Guid.D4[4],2)+IntToHex(Guid.D4[5],2)+
-           IntToHex(Guid.D4[6],2)+IntToHex(Guid.D4[7],2)+
-           '}';
-  end else
-    result:='{00000000-0000-0000-0000-000000000000}';
-end;
-
-procedure ConfigureIni;
-begin
-  if webpop then
-  begin
-    SetIniString('web', 'host', webHostName.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'http', webOpenPort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'base', webOpenPath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'https', webSecurePort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'secure', webSecurePath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'certname', certFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'cacertname', caCertFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'certpword', certPWord.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-
-    SetIniString('database', 'server',   ConnectionPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'database', ConnectionPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'username', ConnectionPage.Values[2], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'password', ConnectionPage.Values[3], ExpandConstant('{app}')+'\fhirserver.ini');
-
-    SetIniString('scim', 'salt', GetGuid, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('admin', 'email', AdminPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('admin', 'username', AdminPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
-  end;
-end;
-
+procedure EnvAddPath(instlPath: string);
 var
-  dll : longint;
-
-procedure SctCallback(IntParam: Integer; StrParam: WideString);
+    Paths: string;
 begin
-  SctInstallPage.SetProgress(intparam, 100);
-  SctInstallPage.SetText(StrParam, '');
+    { Retrieve current path (use empty string if entry not exists) }
+    if not RegQueryStringValue(HKEY_CURRENT_USER, EnvironmentKey, 'Path', Paths) then
+        Paths := '';
+
+    if Paths = '' then
+        Paths := instlPath + ';'
+    else
+    begin
+        { Skip if string already found in path }
+        if Pos(';' + Uppercase(instlPath) + ';',  ';' + Uppercase(Paths) + ';') > 0 then exit;
+        if Pos(';' + Uppercase(instlPath) + '\;', ';' + Uppercase(Paths) + ';') > 0 then exit;
+
+        { Append App Install Path to the end of the path variable }
+        Log(Format('Right(Paths, 1): [%s]', [Paths[length(Paths)]]));
+        if Paths[length(Paths)] = ';' then
+            Paths := Paths + instlPath + ';'  { don't double up ';' in env(PATH) }
+        else
+            Paths := Paths + ';' + instlPath + ';' ;
+    end;
+
+    { Overwrite (or create if missing) path environment variable }
+    if RegWriteStringValue(HKEY_CURRENT_USER, EnvironmentKey, 'Path', Paths) then 
+      Log(Format('The [%s] added to PATH: [%s]', [instlPath, Paths]))
+    else 
+      Log(Format('Error while adding the [%s] to PATH: [%s]', [instlPath, Paths]));
 end;
 
-function getSnomedModule : String;
+procedure EnvRemovePath(instlPath: string);
+var
+    Paths: string;
+    P, Offset, DelimLen: Integer;
 begin
-  case cbxModule.itemindex of 
-    0 { International } : result := '900000000000207008';
-    1 { US } :  result := '731000124108';
-    2 { Australia } : result := '32506021000036107';
-    3 { Spanish } : result := '449081005';
-    4 { Denmark } : result := '554471000005108';
-    5 { Netherlands } : result := '11000146104';
-    6 { Sweden } : result := '45991000052106';
-    7 { UK } : result := '999000041000000102';
-  end;
+    { Skip if registry entry not exists }
+    if not RegQueryStringValue(HKEY_CURRENT_USER, EnvironmentKey, 'Path', Paths) then
+        exit;
+
+    { Skip if string not found in path }
+    DelimLen := 1;     { Length(';') }
+    P := Pos(';' + Uppercase(instlPath) + ';', ';' + Uppercase(Paths) + ';');
+    if P = 0 then
+    begin
+        { perhaps instlPath lives in Paths, but terminated by '\;' }
+        DelimLen := 2; { Length('\;') }
+        P := Pos(';' + Uppercase(instlPath) + '\;', ';' + Uppercase(Paths) + ';');
+        if P = 0 then exit;
+    end;
+
+    { Decide where to start string subset in Delete() operation. }
+    if P = 1 then
+        Offset := 0
+    else
+        Offset := 1;
+    { Update path variable }
+    Delete(Paths, P - Offset, Length(instlPath) + DelimLen);
+
+    { Overwrite path environment variable }
+    if RegWriteStringValue(HKEY_CURRENT_USER, EnvironmentKey, 'Path', Paths)
+    then Log(Format('The [%s] removed from PATH: [%s]', [instlPath, Paths]))
+    else Log(Format('Error while removing the [%s] from PATH: [%s]', [instlPath, Paths]));
 end;
 
-procedure LoadSnomed;
-var 
-  module, dest, ver, msg : String;
-begin
-  module := getSnomedModule;
-  dest := ExpandConstant('{app}')+'\snomed_'+module+'_'+sctVersion.text+'.cache';
-  SctInstallPage.SetText('Loading Snomed...', '');
-  SctInstallPage.SetProgress(0, 100);
-  SctInstallPage.Show;
-  try
-    msg := MyDllInstallSnomed(ExpandConstant('{app}')+'\fhirserver.exe', SctPage.values[0], dest, 'http://snomed.info/sct/'+module+'/version/'+sctVersion.text, @SctCallback);
-    if msg <> '' then
-      MsgBox('Loading SNOMED CT failed (but the rest of the installation is not affected): '+msg, mbError, MB_OK);
-  finally
-    SctInstallPage.Hide;
-  end;
-  SetIniString('snomed', 'cache', dest, ExpandConstant('{app}')+'\fhirserver.ini');
-end;
-
-procedure InitCallback(IntParam: Integer; StrParam: WideString);
-begin
-  LoadInstallPage.SetProgress(intparam, 100);
-  LoadInstallPage.SetText(StrParam, '');
-end;
-
-procedure InitialiseDatabase(load : boolean);
-var 
-  pw, msg : String;
-  done : boolean;
-begin
-  LoadInstallPage.SetText('Creating Database...', '');
-  LoadInstallPage.SetProgress(0, 100);
-  LoadInstallPage.Show;
-  try
-    repeat
-      done := true;
-      pw := AdminPage.Values[2];
-      if (load) then
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, ExpandConstant('{app}')+'\load\load.ini', @InitCallback)
-      else
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\loader.dll', ExpandConstant('{app}')+'\fhirserver.ini', pw, '', @InitCallback);
-      if msg <> '' then
-        done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
-    until done;
-  finally
-    LoadInstallPage.Hide;
-  end;
-end;
+// ------ Installation Logic -------------------------------------------------------------------------
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var
@@ -1478,6 +1263,7 @@ var
   s : String;
   noauto : integer;
   disp : string;
+  resultcode:integer;
 Begin
   if (CurStep = ssInstall) Then
   Begin
@@ -1485,28 +1271,32 @@ Begin
       SimpleStopService('FHIRServer', true, true);
   End;
 
+  if IsTaskSelected('vcredist') Then
+    MsgBox('Install VCREDIST', mbError, MB_YESNO);
+  if IsTaskSelected('dbengine') Then
+  begin
+    MsgBox('Install DB', mbError, MB_YESNO) ;
+    ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode);
+  end;
+  if IsTaskSelected('odbc') Then
+    MsgBox('Install ODBC', mbError, MB_YESNO);
+
   if (CurStep = ssPostInstall)  Then
   Begin
+    if IsTaskSelected('envPath') then 
+      EnvAddPath(ExpandConstant('{app}'));
+
     If IsTaskSelected('firewall') Then
       SetFirewallException('Fhir Server', ExpandConstant('{app}')+'\FHIRServer.exe');
-    ConfigureIni;
-    if IsTaskSelected('sct') Then
-      LoadSnomed;
-    if IsTaskSelected('db') Then
-       InitialiseDatabase(isTaskSelected('db\pop'));                                                        
+
     if IsTaskSelected('svcInst') Then
     begin
-      if IsComponentSelected('r2') then
-        disp := 'FHIR Server DSTU2'
-      else
-        disp := 'FHIR Server STU3';
+      disp := 'FHIR Server ('+'{#SetupSetting("AppVerName")}'+')';
       if ServiceExists('FHIRServer') then
         SimpleDeleteService('FHIRServer');
         
       if not SimpleCreateService('FHIRServer', disp, ExpandConstant('{app}')+'\FHIRServer.exe', DetermineStartMode, ServicePage.Values[0], ServicePage.Values[1], false, false) then
-        MsgBox('Unable to Register FHIRServer Service', mbError, MB_OK)
-      else if IsTaskSelected('svcInst\start') Then
-        SimpleStartService('FHIRServer', false, false);
+        MsgBox('Unable to Register FHIRServer Service', mbError, MB_OK);
     end;
   End;
 End;
@@ -1522,7 +1312,7 @@ Begin
 
   if (CurUninstallStep = usUninstall) Then
   Begin
+    EnvRemovePath(ExpandConstant('{app}'));
     RemoveFirewallException(ExpandConstant('{app}')+'FHIRServer.exe');
   End;
 End;
-

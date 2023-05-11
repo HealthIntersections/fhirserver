@@ -1,0 +1,40 @@
+object BuildDialog: TBuildDialog
+  Left = 0
+  Top = 0
+  Caption = 'Build'
+  ClientHeight = 123
+  ClientWidth = 416
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Position.X = -8.000000000000000000
+    Size.Width = 633.000000000000000000
+    Size.Height = 121.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 22
+    object Button10: TButton
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 37.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 116.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 21
+      Text = 'Local build'
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
+    object Button2: TButton
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 189.000000000000000000
+      Position.Y = 23.000000000000000000
+      Size.Width = 116.000000000000000000
+      Size.Height = 58.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 22
+      Text = 'Remote build'
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
+  end
+end
