@@ -18,7 +18,7 @@ rem ---- download the installer
 
 md tools
 
-curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
+curl -L https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0q/fpclazup-x86_64-win64.exe --output tools\fpclazup.exe
 curl -L https://github.com/LongDirtyAnimAlf/fpcupdeluxe/releases/download/crosslibs_v1.3/CrossLibsLinuxx64.zip --output tools\CrossLibsLinuxx64.zip
 curl -L https://github.com/LongDirtyAnimAlf/fpcupdeluxe/releases/download/wincrossbins_v1.0/WinCrossBinsLinuxx64.zip --output tools\WinCrossBinsLinuxx64.zip
 
@@ -29,7 +29,8 @@ pause
 
 rem -- run the installer- will finish with a full install of Lazarus 
 
-tools\fpclazup --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
+tools\fpclazup --fpcVersion="stable.gitlab" --lazVersion="stable.gitlab" --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
+rem tools\fpclazup --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
 tools\fpclazup --ostarget="linux" --cputarget="x86_64" --only="FPCCleanOnly,FPCBuildOnly" --installdir=tools. --noconfirm 
 
 Rem ----  back to the fhirserver directory ----------
