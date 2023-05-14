@@ -302,7 +302,8 @@ begin
     try
 //      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       {$IFDEF FPC}
-      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
+      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
+//      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
       {$ELSE}
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
       {$ENDIF}
