@@ -15,9 +15,9 @@ mkdir tools
 echo "get fpcup"
 
 if [[ `uname -m` == 'arm64' ]]; then
-  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-aarch64-darwin -O tools/fpclazup
+  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0q/fpclazup-aarch64-darwin -O tools/fpclazup
 else 
-  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-darwin -O tools/fpclazup
+  wget -q https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0q/fpclazup-x86_64-darwin -O tools/fpclazup
 fi
 
 echo sign it
@@ -30,7 +30,7 @@ chmod +x tools/fpclazup
 
 Echo build Lazarus 
 
-./tools/fpclazup --noconfirm --fpcVersion=trunk.gitlab --lazVersion=trunk.gitlab --installdir=tools --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
+./tools/fpclazup --noconfirm --fpcVersion=stable.gitlab --lazVersion=stable.gitlab --installdir=tools --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
 
 Echo install cross compiler 
 
