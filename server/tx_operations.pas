@@ -1235,7 +1235,9 @@ begin
     else if (p.name = 'displayLanguage') then
       result.displayLanguages.add(FLanguages.parse(p.valueString))
     else if (p.name = 'property') then
-      result.properties.add(p.valueString);
+      result.properties.add(p.valueString)
+    else if (p.name = 'mode') and (p.valueString = 'lenient-display-validation') then
+      result.displayWarning := true;
   end;
   if params.has('profile') then
   begin
