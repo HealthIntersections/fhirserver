@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF} Graphics,
+  SysUtils, Classes, Generics.Collections, System.NetEncoding, Graphics,
   fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fhir_qrcode;
 
 Const
@@ -462,6 +462,7 @@ type
     // create a class that is the correct type for the named property
     function createPropertyValue(propName : string): TFHIRObject; virtual;
     function getPropertyValue(propName : string): TFHIRProperty; virtual;
+    function getPrimitiveValue(propName : String) : String;
     function getTypesForProperty(propName : string): String; virtual;
 
     // set the value of the property. For properties with cardinality > 1, append to the list, or use insertProperty
@@ -1186,6 +1187,8 @@ function TFHIRObject.fpValue: String;
 begin
   if isDateTime then
     result := '@'+primitiveValue
+  else if (fhirType = 'time') then
+    result := '@T'+primitiveValue
   else
     result := primitiveValue;
 end;
@@ -1378,6 +1381,18 @@ begin
   finally
     list.Free;
   end;
+end;
+
+function TFHIRObject.getPrimitiveValue(propName: String): String;
+var
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  result := '';
+  p := getPropertyValue(propName);
+  if (p <> nil) then
+    for o in p.Values do
+      exit(o.primitiveValue);
 end;
 
 function TFHIRObject.HasXmlCommentsStart: Boolean;

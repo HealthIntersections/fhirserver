@@ -1133,6 +1133,7 @@ var
   ctxt : TFHIRPathExecutionContext;
   more : boolean;
   new : boolean;
+  i : integer;
 begin
   result := TFHIRSelectionList.Create;
   current := TFHIRSelectionList.Create;
@@ -1145,11 +1146,12 @@ begin
       added.clear;
       pc := TFHIRSelectionList.Create;
       try
+        i := 0;
         for item in current do
         begin
           pc.clear();
           pc.add(item.link);
-          ctxt := context.changeThis(item.value);
+          ctxt := context.changeThis(item.value, i);
           try
             work := execute(ctxt, pc, exp.parameters[0], true);
             try
@@ -1160,6 +1162,7 @@ begin
           finally
             ctxt.Free;
           end;
+          inc(i);
         end;
       finally
         pc.free;

@@ -171,6 +171,7 @@ Type
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
     FNamedClass : String;
+    FDebugInfo : String;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     FTracked : boolean;
@@ -244,6 +245,8 @@ Type
     {$IFDEF OBJECT_TRACKING}
     property SerialNumber : integer read FSerial;
     {$ENDIF}
+    function debugInfo : String; virtual; // what's visible to the debugger
+    procedure updateDebugInfo;
 
     class function getReport(sep : String; full : boolean) : String;
     class function classInstanceCount(namedClass : String) : integer;
@@ -1070,6 +1073,7 @@ End;
 procedure TFslObject.AfterConstruction;
 Begin
   Inherited;
+  updateDebugInfo;
 End;
 
 procedure TFslObject.BeforeDestruction;
@@ -1375,6 +1379,16 @@ Begin
 
   Result := True;
 End;
+
+function TFslObject.debugInfo: String;
+begin
+  result := '?';
+end;
+
+procedure TFslObject.updateDebugInfo;
+begin
+  FDebugInfo := debugInfo;
+end;
 
 function TFslObject.ObjectCrossesThreads: boolean;
 var

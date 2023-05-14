@@ -39,7 +39,8 @@ uses
   {$ENDIF}
   fsl_testing,
   fsl_base, fsl_utilities, fsl_http,
-  fhir_objects, fhir4_parser, fhir4_xml,
+  fhir_parser,
+  fhir_objects, fhir4_parser, fhir4_xml, fhir4_json,
   fhir4_tests_worker, fhir4_resources, fhir4_pathengine, fhir4_types, fhir4_pathnode,
   ftx_ucum_services,
   fsl_xml, fsl_tests;
@@ -135,7 +136,7 @@ var
   ok : boolean;
   outcome : TFHIRSelectionList;
   node : TFHIRPathExpressionNode;
-  p : TFHIRXmlParser;
+  p : TFHIRParser;
   f :  TFileStream;
   expected : TFslList<TMXmlElement>;
   i, j : integer;
@@ -175,7 +176,10 @@ begin
         begin
           if not resources.TryGetValue(input, res) then
           begin
-            p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
+            if (input.endsWith('.json')) then
+              p := TFHIRJsonParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'))
+            else
+              p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
             try
               f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead);
               try
