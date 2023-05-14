@@ -35,6 +35,9 @@ jobs:
         .
     - name: Scan Code
       run: |
+        export DISPLAY=0:0
+        xhost +
+        export DISPLAY=$IP:0
         docker run --entrypoint /work/fhirserver/utilities/codescan/codescan fhirserver /work/bootstrap
     - name: Prepare ini file
       env:
