@@ -768,7 +768,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="35">
+    <Exceptions Count="37">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -893,6 +893,12 @@
       <Item35>
         <Name Value="0000000eEIdReadTimeout"/>
       </Item35>
+      <Item36>
+        <Name Value="EFHIRPath"/>
+      </Item36>
+      <Item37>
+        <Name Value="00000010EParserException"/>
+      </Item37>
     </Exceptions>
   </Debugging>
 </CONFIG>

@@ -486,7 +486,7 @@ end;
 
 function TFHIRAttribute.fhirType: String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.fhirType: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.getId: String;
@@ -496,7 +496,7 @@ end;
 
 function TFHIRAttribute.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.hasExtensions: boolean;
@@ -524,17 +524,17 @@ end;
 
 function TFHIRAttribute.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeIntValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeStringValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.makeStringValue: not sure how to implement this?');
 end;
 
 procedure TFHIRAttribute.setIdValue(id: String);
@@ -543,7 +543,7 @@ end;
 
 function TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.setProperty: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.sizeInBytesV(magic : integer) : cardinal;
@@ -810,7 +810,7 @@ end;
 
 function TFhirXHtmlNode.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFhirXHtmlNode.createPropertyValue: not sure how to implement this?');
 end;
 
 constructor TFhirXHtmlNode.Create;
@@ -920,7 +920,7 @@ end;
 
 function TFhirXHtmlNode.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.hasAttribute(name: String): boolean;
@@ -975,12 +975,12 @@ end;
 
 function TFhirXHtmlNode.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeIntValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
@@ -1034,7 +1034,7 @@ end;
 
 function TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.setProperty: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.sizeInBytesV(magic : integer) : cardinal;

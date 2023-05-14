@@ -4208,7 +4208,7 @@ begin
   else if t.isPrimitive then
     result := t.primitiveValue
   else
-    raise EFHIRException.create('Type '+t.className+' not handled yet');
+    result := 'Type '+t.fhirType+' not handled yet in gen';
 end;
 
 function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;

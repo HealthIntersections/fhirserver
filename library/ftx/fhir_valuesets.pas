@@ -104,6 +104,7 @@ Type
     FDefaultToLatestVersion : boolean;
     FIncompleteOK: boolean;
     FProperties : TStringList;
+    FDisplayWarning : boolean;
 
     FHasactiveOnly : boolean;
     FHasExcludeNested : boolean;
@@ -117,6 +118,7 @@ Type
     FHasIncompleteOK : boolean;
     FHasexcludeNotForUI : boolean;
     FHasValueSetMode : boolean;
+    FHasDisplayWarning : boolean;
 
     procedure SetLanguage(value : TIETFLang);
     procedure SetActiveOnly(value : boolean);
@@ -129,6 +131,7 @@ Type
     procedure SetIncludeDefinition(value : boolean);
     procedure SetDefaultToLatestVersion(value : boolean);
     procedure SetIncompleteOK(value : boolean);
+    procedure SetDisplayWarning(value : boolean);
     procedure SetValueSetMode(value : TValueSetValidationMode);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -161,6 +164,7 @@ Type
     property uid : String read FUid write FUid;
     property defaultToLatestVersion : boolean read FDefaultToLatestVersion write SetDefaultToLatestVersion;
     property incompleteOK : boolean read FIncompleteOK write SetIncompleteOK;
+    property displayWarning : boolean read FDisplayWarning write SetDisplayWarning;
     property properties : TStringList read FProperties;
 
     property hasActiveOnly : boolean read FHasactiveOnly;
@@ -174,6 +178,7 @@ Type
     property hasValueSetMode : boolean read FHasValueSetMode;
     property hasDefaultToLatestVersion : boolean read FHasDefaultToLatestVersion;
     property hasIncompleteOK : boolean read FHasIncompleteOK;
+    property hasDisplayWarning : boolean read FHasDisplayWarning;
 
     function hash : String;
   end;
@@ -250,6 +255,7 @@ Type
     FId: String;
     FLog : String;
 
+    function dispWarning : TIssueSeverity;
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
@@ -544,6 +550,14 @@ begin
   FValueSet.Free;
   FOthers.Free;
   inherited;
+end;
+
+function TValueSetChecker.dispWarning: TIssueSeverity;
+begin
+  if FParams.displayWarning then
+    result := isWarning
+  else
+    result := isError;
 end;
 
 function TValueSetChecker.determineSystemFromExpansion(code: String): String;
@@ -1298,6 +1312,7 @@ var
   dc, i : integer;
   a : TStringArray;
   vcc : TFHIRCodeableConceptW;
+  severity : TIssueSeverity;
   procedure msg(s : String);
   begin
     if (s = '') then
@@ -1359,9 +1374,13 @@ begin
             if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
             begin
               dc := list.displayCount(FParams.displayLanguages);
+              severity := dispWarning;
               if dc = 0 then
+              begin
+                severity := isWarning;
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
                   ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
+              end
               else if dc = 1 then
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
                   ['', c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
@@ -1369,7 +1388,7 @@ begin
                 m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
                   [inttostr(dc), c.systemUri, c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary]);
               msg(m);
-              op.addIssue(isWarning, itInvalid, path+'.display', m);
+              op.addIssue(severity, itInvalid, path+'.display', m);
             end;
             psys := c.systemUri;
             pcode := c.code;
@@ -1418,12 +1437,16 @@ begin
                  else
                  begin
                    listDisplays(list, prov, ctxt);
+                   severity := dispWarning();
                    if (c.display <> '') and (not list.hasDisplay(FParams.displayLanguages, c.display)) then
                    begin
                      dc := list.displayCount(FParams.displayLanguages);
                      if dc = 0 then
+                     begin
+                       severity := isWarning;
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
                          ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
+                     end
                      else if dc = 1 then
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_one', FParams.langCode,
                          ['', prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary])
@@ -1431,7 +1454,7 @@ begin
                        m := FI18n.translate('Display_Name_for__should_be_one_of__instead_of_other', FParams.langCode,
                         [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.displayLanguages), c.display, FParams.langSummary]);
                      msg(m);
-                     op.addIssue(isWarning, itInvalid, path+'.display', m);
+                     op.addIssue(severity, itInvalid, path+'.display', m);
                    end;
                    if (prov.version(nil) <> '') then
                      result.addParamStr('version', prov.version(nil));
@@ -2984,6 +3007,12 @@ begin
   FHasIncompleteOK := true;
 end;
 
+procedure TFHIRExpansionParams.SetDisplayWarning(value : boolean);
+begin
+  FDisplayWarning := value;
+  FHasDisplayWarning := true;
+end;
+
 procedure TFHIRExpansionParams.SetValueSetMode(value : TValueSetValidationMode);
 begin
   FValueSetMode := value;
@@ -3088,10 +3117,10 @@ var
   end;
 begin
   s := FUid+'|'+ inttostr(ord(FValueSetMode)) + '|' + FProperties.CommaText+'|'+
-    b(FactiveOnly)+b(FIncompleteOK)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
+    b(FactiveOnly)+b(FIncompleteOK)+b(FDisplayWarning)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
     b(FincludeDesignations)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
     b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+
-    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasexcludeNotForUI)+b(FHasValueSetMode)+b(FDefaultToLatestVersion);
+    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasDisplayWarning)+b(FHasexcludeNotForUI)+b(FHasValueSetMode)+b(FDefaultToLatestVersion);
 
   if FLanguage <> nil then
     s := s + FLanguage.Language+'|';

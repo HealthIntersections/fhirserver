@@ -1605,6 +1605,16 @@ Type
 end;
 
 
+function lowBoundaryForDecimal(value : String; precision : integer) : String;
+function highBoundaryForDecimal(value : String; precision : integer) : String;
+function lowBoundaryForDate(value : String; precision : integer) : String;
+function highBoundaryForDate(value : String; precision : integer) : String;
+function lowBoundaryForTime(value : String; precision : integer) : String;
+function highBoundaryForTime(value : String; precision : integer) : String;
+function getDecimalPrecision(value : String) : integer;      
+function getDatePrecision(value : String) : integer;
+function getTimePrecision(value : String) : integer;
+
 Function GUIDAsOIDWrong(Const aGUID : TGUID) : String;
 Function GUIDAsOIDRight(Const aGUID : TGUID) : String;
 
@@ -17165,6 +17175,280 @@ end;
 function pointerToString(obj : TObject) : String;
 begin
   result := IntToHex(UInt64(obj), 16);
+end;
+
+function isZero(value : String) : boolean;
+begin
+  result := value.replace('.', '').replace('-', '').replace('0', '').length = 0;
+end;
+
+function minusOne(value : String) : string;
+var
+  i : integer;
+begin
+  result := value;
+  for i := result.length downto 1 do
+  begin
+    if (result[i] = '0') then
+      result[i] := '9'
+    else if (result[i] <> '.') then
+    begin
+      result[i] := char(ord(result[i])-1);
+      break;
+    end;
+  end;
+end;
+
+function getDecimalPrecision(value : String) : integer;
+begin
+  if (value.contains('e')) then
+    value := value.substring(0, value.indexOf('e'));
+
+  if (value.contains('.')) then
+    result := value.substring(value.indexOf('.') + 1).length
+  else
+    result := 0;
+end;
+
+
+function applyPrecision(v : String; p : integer) : string;
+var
+  d : integer;
+begin
+  d := p - getDecimalPrecision(v);
+  if (d = 0) then
+    result := v
+  else if (d > 0) then
+    result := v + StringPadLeft('', '0', d)
+  else if (v[v.length+d] >= '6') then
+    result := v.substring(0, v.length+d-1)+ chr(ord(v[v.length+d])+1)
+  else
+    result := v.substring(0, v.length+d);
+end;
+
+function lowBoundaryForDecimal(value : String; precision : integer) : String;
+var
+  e : String;
+begin
+  if (value = '') then
+    raise EFslException.create('Unable to calculate lowBoundary for a null decimal string');
+
+  if (value.Contains('e')) then
+  begin
+    e := value.substring(value.indexOf('e')+1);
+    value := value.substring(0, value.indexOf('e'));
+  end
+  else
+    e := '';
+
+  if (isZero(value)) then
+    result := applyPrecision('-0.5000000000000000000000000', precision)
+  else if (value.startsWith('-')) then
+    result := '-'+highBoundaryForDecimal(value.substring(1), precision)+e
+  else if (value.contains('.')) then
+    result := applyPrecision(minusOne(value)+'50000000000000000000000000000', precision)+e
+  else
+    result := applyPrecision(minusOne(value)+'.50000000000000000000000000000', precision)+e;
+end;
+
+
+function highBoundaryForDecimal(value : String; precision : integer) : String;
+var
+  e : String;
+begin
+  if (value = '') then
+    raise EFslException.create('Unable to calculate highBoundary for a null decimal string');
+
+  if (value.Contains('e')) then
+  begin
+    e := value.substring(value.indexOf('e')+1);
+    value := value.substring(0, value.indexOf('e'));
+  end
+  else
+    e := '';
+
+  if (isZero(value)) then
+    result := applyPrecision('0.50000000000000000000000000000', precision)
+  else if (value.startsWith('-')) then
+    result := '-'+lowBoundaryForDecimal(value.substring(1), precision)+e
+  else if (value.contains('.')) then
+    result := applyPrecision(value+'50000000000000000000000000000', precision)+e
+  else
+    result := applyPrecision(value+'.50000000000000000000000000000', precision)+e;
+end;
+
+procedure splitTimezone(value : String; var tm, tz : String);
+begin
+  if (value.contains('+')) then
+  begin
+    tm := value.substring(0, value.indexOf('+'));
+    tz := value.substring(value.indexOf('+'));
+  end
+  else if value.contains('-') and value.contains('T') and (value.lastIndexOf('-') > value.indexOf('T')) then
+  begin
+    tm := value.substring(0, value.lastIndexOf('-'));
+    tz := value.substring(value.lastIndexOf('-'));
+  end
+  else if (value.contains('Z')) then
+  begin
+    tm := value.substring(0, value.indexOf('Z'));
+    tz := value.substring(value.indexOf('Z'));
+  end
+  else
+  begin
+    tm := value;
+    tz := '';
+  end;
+end;
+
+function applyDatePrecision(v : String; precision : Integer) : String;
+begin
+  case precision of
+    4: result := v.substring(0, 4);
+    6: result := v.substring(0, 7);
+    8: result := v.substring(0, 10);
+    14: result := v.substring(0, 17);
+    17: result := v;
+  else
+    raise EFslException.create('Unsupported Date precision for boundary operation: '+inttostr(precision));
+  end;
+end;
+
+function applyTimePrecision(v : String; precision : Integer) : String;
+begin
+  case precision of
+    2: result := v.substring(0, 3);
+    4: result := v.substring(0, 6);
+    6: result := v.substring(0, 9);
+    9: result := v;
+  else
+    raise EFslException.create('Unsupported Time precision for boundary operation: '+inttostr(precision));
+  end;
+end;
+
+function lowBoundaryForDate(value : String; precision : integer) : String;
+var
+  tm, tz : String;
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz);
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 4) then
+      b.append('-01');
+    if (b.length = 7) then
+      b.append('-01');
+    if (b.length = 10) then
+      b.append('T00:00');
+    if (b.length = 16) then
+      b.append(':00');
+    if (b.length = 19) then
+      b.append('.000');
+    result := applyDatePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function dayCount(y, m : integer) : String;
+begin
+  case m of
+    1: result := '31';
+    2: if ((y div 4 = 0) and ((y div 400 = 0) or not (y div 100 = 0))) then
+         result := '29'
+        else
+          result := '28';
+    3: result := '31';
+    4: result := '30';
+    5: result := '31';
+    6: result := '30';
+    7: result := '31';
+    8: result := '31';
+    9: result := '30';
+    10: result := '31';
+    11: result := '30';
+    12: result := '31';
+  end;
+end;
+
+function highBoundaryForDate(value : String; precision : integer) : String;
+var
+  tm, tz : String;    
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz); 
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 4) then
+      b.append('-12');
+    if (b.length = 7) then
+      b.append('-'+dayCount(StrtoInt(b.toString.substring(0,4)), StrtoInt(b.toString.substring(5,7))));
+    if (b.length = 10) then
+      b.append('T23:59');
+    if (b.length = 16) then
+      b.append(':59');
+    if (b.length = 19) then
+      b.append('.999');
+    result := applyDatePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function lowBoundaryForTime(value : String; precision : integer) : String;
+var
+  tm, tz : String;
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz);
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 2) then
+      b.append(':00');
+    if (b.length = 5) then
+      b.append(':00');
+    if (b.length = 8) then
+      b.append('.000');
+    result := applyTimePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function highBoundaryForTime(value : String; precision : integer) : String;
+var
+    tm, tz : String;
+    b : TStringBuilder;
+  begin
+    splitTimezone(value, tm, tz);
+    b := TStringBuilder.create(tm);
+    try
+    if (b.length = 2) then
+      b.append(':59');
+    if (b.length = 5) then
+      b.append(':59');
+    if (b.length = 8) then
+      b.append('.999');
+    result := applyTimePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function getDatePrecision(value : String) : integer;
+var
+  tm, tz : string;
+begin       
+  splitTimezone(value, tm, tz);
+  result := tm.replace('-', '').replace('T', '').replace(':', '').replace('.', '').length;
+end;
+
+function getTimePrecision(value : String) : integer;
+var
+  tm, tz : string;
+begin
+  splitTimezone(value, tm, tz);
+  result := tm.replace('T', '').replace(':', '').replace('.', '').length;
 end;
 
 Initialization

@@ -3045,6 +3045,9 @@ function AddItem(value : TFhirString): TFhirString; overload;
 
   // a complex Integer - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Integer, and extensions
+
+  { TFhirInteger }
+
   TFhirInteger = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -3058,6 +3061,7 @@ function AddItem(value : TFhirString): TFhirString; overload;
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(value : String); overload;
+    constructor Create(value : integer); overload;
     destructor Destroy; override;
     
     Function Link : TFhirInteger; Overload;
@@ -12775,10 +12779,16 @@ end;
 
 { TFhirInteger }
 
-Constructor TFhirInteger.Create(value : String);
+constructor TFhirInteger.Create(value: String);
 begin
   Create;
   FValue := value;
+end;
+
+constructor TFhirInteger.Create(value: integer);
+begin
+  Create;
+  FValue := inttostr(value);
 end;
 
 destructor TFhirInteger.Destroy;
@@ -12811,17 +12821,17 @@ begin
   FValue := TFhirInteger(oSource).Value;
 end;
 
-function TFhirInteger.AsStringValue : string;
+function TFhirInteger.AsStringValue: String;
 begin
   result := FValue;
 end;
 
-procedure TFhirInteger.SetStringValue(value : string);
+procedure TFhirInteger.SetStringValue(value: String);
 begin
   FValue := value;
 end;
 
-function TFhirInteger.equals(other : TObject) : boolean; 
+function TFhirInteger.Equals(other: TObject): boolean;
 var
   o : TFhirInteger;
 begin

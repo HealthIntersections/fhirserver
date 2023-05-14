@@ -226,8 +226,10 @@ type
   public
     constructor Create(const Pattern: string; Options: TRegExOptions); overload;
     function IsMatch(const Input: string): Boolean; overload;
+    function IsFullMatch(const Input: string): Boolean; overload;
 
     class function isMatch(const input, pattern: string): Boolean; overload;
+    class function replace(const input, pattern, repl: string): String; overload;
   end;
 
 
@@ -801,6 +803,13 @@ begin
   result := Exec(input);
 end;
 
+function TRegEx.IsFullMatch(const Input: string): Boolean;
+begin
+  result := Exec(input);
+  if (result) then
+    result := MatchLen[0] = input.length;
+end;
+
 class function TRegEx.isMatch(const input, pattern : string): Boolean;
 var
   this : TRegEx;
@@ -808,6 +817,18 @@ begin
   this := TRegEx.create(pattern);
   try
     result := this.isMatch(input);
+  finally
+    this.free;
+  end;
+end;
+
+class function TRegEx.replace(const input, pattern, repl: string): String;
+var
+  this : TRegEx;
+begin
+  this := TRegEx.create(pattern);
+  try
+    result := this.replace(input, repl);
   finally
     this.free;
   end;
