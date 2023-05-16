@@ -347,9 +347,12 @@ begin
         { this signals the end of the item name;
           compute its length. The value starts at
           the *next* character }
-      itemnamelen := cursor - itemnamestart;
+      if (itemnamelen = 0) then
+      begin
+        itemnamelen := cursor - itemnamestart;
+        itemvalstart := cursor+1;
+      end;
       cursor := cursor + 1;
-      itemvalstart := cursor;
       end
     else
       begin
