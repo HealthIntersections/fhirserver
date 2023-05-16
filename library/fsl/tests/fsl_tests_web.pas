@@ -117,15 +117,27 @@ procedure THTTPParameterTests.TestDoubleEquals;
 var
   p : THTTPParameters;
 begin
-  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs%3Disa/118672003', true);
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs%3Disa/118672003&x=&q&&f=v&y', true);
   try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
     AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
   finally
     p.free;
   end;
-  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs=isa/118672003', true);
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs=isa/118672003&x=&q&&&f=v&y', true);
   try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
     AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
   finally
     p.free;
   end;
