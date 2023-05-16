@@ -682,21 +682,21 @@ var
   s : String;
 begin
   s := info['type'];
-  if (s = 'fhir.core') then
+  if (s = 'fhir.core') or (s = 'Core') then
     result := fpkCore
-  else if (s = 'fhir.ig') then
+  else if (s = 'fhir.ig') or (s = 'IG') then
     result := fpkIG
-  else if (s = 'fhir.tool') then
+  else if (s = 'fhir.tool') or (s = 'Tool') then
     result := fpkTool
-  else if (s = 'fhir.template') then
+  else if (s = 'fhir.template') or (s = 'IG-Template') then
     result := fpkIGTemplate
   else if (s = 'fhir.core.gen') then
     result := fpkToolGen
-  else if (s = 'fhir.tool') then
+  else if (s = 'fhir.tool') or (s = 'Tool') then
     result := fpkTool
-  else if (s = 'fhir.examples') then
+  else if (s = 'fhir.examples') or (s = 'Examples') then
     result := fpkExamples
-  else if (s = 'fhir.group') or (name = 'hl7.fhir.core') then
+  else if (s = 'fhir.group') or (name = 'hl7.fhir.core') or (s = 'Group')  then
     result := fpkGroup
   else if StringArrayExistsSensitive(['hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], name) then
     result := fpkCore
