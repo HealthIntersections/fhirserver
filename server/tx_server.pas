@@ -228,8 +228,7 @@ begin
             p.Free;
           end;
         end;
-        if (hasProp('display', true)) then
-          resp.display := provider.Display(ctxt, lang);
+        resp.display := provider.Display(ctxt, lang);
         provider.extendLookup(Factory, ctxt, lang, props, resp);
       finally
         provider.Close(ctxt);
