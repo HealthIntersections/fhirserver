@@ -936,7 +936,7 @@ end;
 
 procedure TFslRegexTests.TestRegex2;
 var
-  regex : fsl_regex.TRegExpr;
+  regex : RegExpr.TRegExpr;
 begin
   regex := TRegExpr.Create('^[A-Z]{2}$');
   try
