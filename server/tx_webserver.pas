@@ -307,7 +307,7 @@ end;
 function TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   html: THtmlPublisher;
-  cs: TCodeSystemProvider;
+  cs: TCodeSystemProviderFactory;
   c: Integer;
   vars : TFslMap<TFHIRObject>;
 begin
@@ -327,9 +327,9 @@ begin
       for cs in FServer.ProviderClasses.Values do
       begin
         html.StartTableRow;
-        html.AddTableCell(cs.systemUri(nil));
-        html.AddTableCell(cs.version(nil));
-        html.AddTableCell(cs.name(nil));
+        html.AddTableCell(cs.systemUri);
+        html.AddTableCell(cs.version);
+        html.AddTableCell(cs.name);
         c := cs.TotalCount;
         if c > 0 then
           html.AddTableCell(inttostr(c))
