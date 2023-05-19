@@ -41,7 +41,7 @@ todo:
 uses
   SysUtils, Classes,
   fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions,
-  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions,
+  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris,
   fhir_codesystem_service;
 
 {  SysUtils, Classes, fsl_utilities, fsl_utilities,
@@ -60,6 +60,7 @@ const
 
 
 Type
+  TTrueFalseUnknown = (bTrue, bFalse, bUnknown);
 
   TFhirExpansionParamsVersionRuleMode = (fvmDefault, fvmCheck, fvmOverride);
   TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
@@ -259,13 +260,14 @@ Type
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
-    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : boolean; overload;
+    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
     function fixedSystemFromValueSet: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
+    function valueSetDependsOnCodeSystem(url, version: String): boolean;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -277,7 +279,7 @@ Type
 
     procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
 
-    function check(issuePath, system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : boolean; overload;
+    function check(issuePath, system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
     function check(issuePath, system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
     function check(issuePath : String; coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
     function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem, addCodeable : boolean) : TFhirParametersW; overload;
@@ -457,8 +459,10 @@ var
 begin
   if (url = '') then
     exit(nil);
-
-//  result := nil;
+  if (url = URI_NDC) then
+  begin
+    result := nil;
+  end;
 
   cs := findInAdditionalResources(url, version, 'CodeSystem') as TFhirCodeSystemW;
   if (cs <> nil) and (cs.content = cscmComplete) then
@@ -497,7 +501,7 @@ begin
       try
         FOnListCodeSystemVersions(self, url, ts);
         if (ts.Count = 0) then
-          raise ETerminologySetup.create('Unable to provide support for code system '+url)
+          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version)
         else
           raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
       finally
@@ -859,23 +863,32 @@ begin
     result := '??';
 end;
 
-function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): boolean;
+function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): TTrueFalseUnknown;
 var
   msg, ver, impliedSystem : string;
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
+  unknownSystems : TStringList;
 begin
-  result := check(issuePath, system, version, code, abstractOk, implySystem, nil, msg, ver, it, op, nil, contentMode, impliedSystem);
+  unknownSystems := TStringList.create;
+  try
+    unknownSystems.duplicates := dupIgnore;
+    unknownSystems.sorted := true;
+    result := check(issuePath, system, version, code, abstractOk, implySystem, nil, unknownSystems, msg, ver, it, op, nil, contentMode, impliedSystem);
+  finally
+    unknownSystems.free;
+  end;
 end;
 
 function TValueSetChecker.check(path, system, version, code: String; abstractOk, implySystem: boolean; displays: TConceptDesignations;
+  unknownSystems : TStringList;
   var message, ver: String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
-  vcc : TFHIRCodeableConceptW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): boolean;
+  vcc : TFHIRCodeableConceptW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): TTrueFalseUnknown;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   cc : TFhirValueSetComposeIncludeW;
-  excluded : boolean;
+  excluded, ok : boolean;
   isabstract : boolean;
   checker : TValueSetChecker;
   s, v : String;
@@ -883,8 +896,6 @@ var
   ccl : TFhirCodeSystemConceptListW;
   ccc : TFhirValueSetExpansionContainsW;
 begin
-//  result := false;
-
   FLog := '';
   {special case:}
   contentMode := cscmNull;
@@ -895,13 +906,19 @@ begin
     try
       if cs = nil then
       begin
-        result := false;
+        result := bUnknown;
         cause := itNotFound;
         FLog := 'Unknown code system';
         if (version <> '') then
-          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
+        begin
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]));
+          unknownSystems.add(system+'|'+version);
+        end
         else
+        begin
           op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]));
+          unknownSystems.add(system);
+        end;
       end
       else
       begin
@@ -912,14 +929,14 @@ begin
         begin
           if cs.contentMode <> cscmComplete then
           begin
-            result := true; // we can't say it isn't valid. Need a third status?
+            result := bTrue; // we can't say it isn't valid. Need a third status?
             cause := itNotFound;
             FLog := 'Not found in Incomplete Code System';
             op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.langCode, [code, system]));
           end
           else
           begin
-            result := false;
+            result := bFalse;
             cause := itCodeInvalid;
             FLog := 'Unknown code';
             op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('Unknown_Code__in_', FParams.langCode, [code, system]));
@@ -933,14 +950,14 @@ begin
           try
             if not (abstractOk or not cs.IsAbstract(ctxt)) then
             begin
-              result := false;
+              result := bFalse;
               FLog := 'Abstract code when not allowed';
               cause := itBusinessRule;
               op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
             end
             else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
             begin
-              result := false;
+              result := bFalse;
               FLog := 'Inactive code when not allowed';
               cause := itBusinessRule;
               op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
@@ -948,7 +965,7 @@ begin
             else
             begin
               FLog := 'found OK';
-              result := true;
+              result := bTrue;
             end;
             if (displays <> nil) then
               listDisplays(displays, cs, ctxt);
@@ -968,13 +985,19 @@ begin
     try
       if cs = nil then
       begin
-        result := false;
+        result := bUnknown;
         cause := itNotFound;
         FLog := 'Unknown code system';  
         if (version <> '') then
-          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]))
+        begin
+          op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, version]));
+          unknownSystems.add(system+'|'+version);
+        end
         else
+        begin
           op.addIssue(isError, itNotFound, path+'.system', FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]));
+          unknownSystems.add(system);
+        end;
       end
       else
       begin
@@ -985,14 +1008,14 @@ begin
         begin
           if cs.contentMode <> cscmComplete then
           begin
-            result := true; // we can't say it isn't valid. Need a third status?
+            result := bTrue; // we can't say it isn't valid. Need a third status?
             cause := itNotFound;
             FLog := 'Not found in Incomplete Code System';
             op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.langCode, [code, system]));
           end
           else
           begin
-            result := false;
+            result := bFalse;
             cause := itCodeInvalid;
             FLog := 'Unknown code';
             op.addIssue(isWarning, itNotFound, path+'.code', FI18n.translate('Unknown_Code__in_', FParams.langCode, [code, system]));
@@ -1004,14 +1027,14 @@ begin
           try
             if not (abstractOk or not cs.IsAbstract(ctxt)) then
             begin
-              result := false;
+              result := bFalse;
               FLog := 'Abstract code when not allowed';
               cause := itBusinessRule;
               op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
             end
             else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
             begin
-              result := false;
+              result := bFalse;
               FLog := 'Inactive code when not allowed';
               cause := itBusinessRule;
               op.addIssue(isError, itBusinessRule, path+'.code', FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.langCode, [system, code]));
@@ -1019,7 +1042,7 @@ begin
             else
             begin
               FLog := 'found';
-              result := true;
+              result := bTrue;
             end;
             listDisplays(displays, cs, ctxt);
           finally
@@ -1040,7 +1063,7 @@ begin
       begin
         message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.langCode, [code, FValueSet.url]);  
         op.addIssue(isError, itNotFound, path, message);
-        exit(false);
+        exit(bFalse);
       end
       else
         impliedSystem := system;
@@ -1056,12 +1079,11 @@ begin
         begin
           ccl := ics.concepts;
           try
-            result := FindCode(nil, code, ccl, displays, isabstract);
-            if result then
-            begin
-              result := abstractOk or not isabstract;
-              exit;
-            end;
+            ok := FindCode(nil, code, ccl, displays, isabstract);
+            if ok and (abstractOk or not isabstract) then
+              exit(bTrue)
+            else
+              exit(bFalse);
           finally
             ccl.Free;
           end;
@@ -1073,19 +1095,19 @@ begin
 
     if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
     begin
-      result := false;
+      result := bFalse;
       for s in FValueSet.imports do
       begin
-        if not result then
+        if result = bFalse then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem);
+          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
       begin
         if cc.systemUri = '' then
-          result := true
+          result := bTrue // why?
         else if (cc.systemUri = system) or (system = SYSTEM_NOT_APPLICABLE) then
         begin
           v := determineVersion(path, cc.systemUri, cc.version, version, op, message);
@@ -1100,37 +1122,48 @@ begin
             if (FParams.valueSetMode <> vsvmMembershipOnly) then
             begin
               if (v = '') then
-                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system])
+              begin
+                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]);
+                unknownSystems.add(system);
+              end
               else
+              begin
                 message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+                unknownSystems.add(system+'|'+v);
+              end;
               op.addIssue(isError, itNotFound, path+'.system', message);
-            end;
-            exit(false);
+              exit(bUnknown);
+            end
+            else
+              exit(bFalse);
           end;
           try
             ver := cs.version(nil);
             checkSupplements(cs, cc);
             contentMode := cs.contentMode;
 
-            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op, vcc);
+            if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, op, vcc) then
+              result := bTrue
+            else
+              result := bFalse;
           finally
             cs.free;
           end;
         end
         else
-          result := false;
+          result := bFalse;
         for s in cc.valueSets do
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          if checker <> nil then
-            result := result and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem)
-          else
+          if checker = nil then
             raise ETerminologyError.Create('No Match for '+s, itUnknown);
+          if (result = bTrue) then
+            result := checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
         end;
-        if result then
+        if result = bTrue then
           break;
       end;
-      if result then
+      if result = bTrue then
         for cc in FValueSet.excludes.forEnum do
         begin
           if cc.systemUri = '' then
@@ -1149,10 +1182,10 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(path, system, version, code, abstractOk, implySystem, displays, message, ver, cause, op, nil, contentMode, impliedSystem);
+            excluded := excluded and (checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem) = bTrue);
           end;
           if excluded then
-            exit(false);
+            exit(bFalse);
         end;
     end
     else if FValueSet.checkExpansion('ValueSetChecker.prepare', 'ValueSet.expansion') then
@@ -1160,7 +1193,7 @@ begin
       ccc := FValueSet.findContains(system, version, code);
       try
         if (ccc = nil) then
-          result := false
+          result := bFalse
         else
         begin
           if (ccc.version = '') and (version = '') then
@@ -1173,7 +1206,7 @@ begin
           begin
             message := 'The code system "'+ccc.systemUri+'" version "'+ccc.version+'" in the ValueSet expansion is different to the one in the value ("'+version+'")';
             op.addIssue(isError, itNotFound, path+'.version', message);
-            exit(false);
+            exit(bFalse);
           end;
           if (v = '') then
             cs := TCodeSystemProvider(FOthers.matches[ccc.systemUri]).link
@@ -1186,17 +1219,29 @@ begin
             if (FParams.valueSetMode <> vsvmMembershipOnly) then
             begin
               if (v = '') then
-                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system])
+              begin
+                message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [system]) ;
+                unknownSystems.add(system);
+              end
               else
+              begin
                 message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [system, v, '['+listVersions(system)+']']);
+                unknownSystems.add(system+'|'+v);
+              end;
+
               op.addIssue(isError, itNotFound, path+'.system', message);
-            end;
-            exit(false);
+              exit(bUnknown);
+            end
+            else
+              exit(bfalse);
           end;
           try
             ver := cs.version(nil);
             contentMode := cs.contentMode;
-            result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkExpansion(path, cs, ccc, code, abstractOk, displays, FValueSet, message, op);
+            if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkExpansion(path, cs, ccc, code, abstractOk, displays, FValueSet, message, op) then
+              result := bTrue
+            else
+              result := bFalse;
           finally
             cs.free;
           end;
@@ -1206,7 +1251,7 @@ begin
       end;
     end
     else
-      result := false;
+      result := bFalse;
   end;
 end;
 
@@ -1214,20 +1259,26 @@ end;
 function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem, path : String;
+  message, ver, pd, impliedSystem, path, us : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
   dc : integer;
+  ok : TTrueFalseUnknown;
+  unknownSystems : TStringList;
 begin
   path := issuePath;
+  unknownSystems := TStringList.create;
   result := FFactory.makeParameters;
   try
+    unknownSystems.sorted := true;
+    unknownSystems.duplicates := dupIgnore;
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        if check(path, coding.systemUri, coding.version, coding.code, abstractOk,  implySystem, list, message, ver, cause, op, nil, contentMode, impliedSystem) then
+        ok := check(path, coding.systemUri, coding.version, coding.code, abstractOk, implySystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+        if ok = bTrue then
         begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
@@ -1252,6 +1303,14 @@ begin
           if cause <> itNull then
             result.AddParamCode('cause', CODES_TFhirIssueType[cause]);
         end
+        else if (ok = bUnknown) then
+        begin
+          result.AddParamBool('result', false);
+          result.AddParamStr('message', 'The CodeSystem "'+coding.systemUri+'" is unknown, so the code "'+coding.code+'" is not known to be in the '+FValueSet.name);
+          //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
+          for us in unknownSystems do
+            result.addParamUri('x-caused-by-unknown-system', us);
+        end
         else
         begin
           result.AddParamBool('result', false);
@@ -1274,7 +1333,21 @@ begin
     result.Link;
   finally
     result.free;
+    unknownSystems.free;
   end;
+end;
+
+function TValueSetChecker.valueSetDependsOnCodeSystem(url, version : String) : boolean;
+var
+  inc : TFHIRValueSetComposeIncludeW;
+begin
+  for inc in FValueSet.includes.forEnum do
+  begin
+    if (inc.systemUri = url) and ((version = '') or (version = inc.version) or (inc.version = '')) then
+      exit(true)
+  end;
+
+  result := false;
 end;
 
 function hasMessage(params : TFhirParametersW; msg : String) : boolean;
@@ -1297,8 +1370,8 @@ function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW;
   end;
 var
   list : TConceptDesignations;
-  v : boolean;
-  ok, first : boolean;
+  ok, v : TTrueFalseUnknown;
+  first : boolean;
   contentMode : TFhirCodeSystemContentMode;
   cc, codelist, message, mt, ver, pd, ws, impliedSystem, path, m: String;
   prov, prov2 : TCodeSystemProvider;
@@ -1308,16 +1381,17 @@ var
   op : TFhirOperationOutcomeW;
   log : String;
   tl : TIETFLang;
-  psys, pver, pdisp, pcode : String;
+  psys, pver, pdisp, pcode, us : String;
   dc, i : integer;
   a : TStringArray;
+  unknownSystems : TStringList;
   vcc : TFHIRCodeableConceptW;
   severity : TIssueSeverity;
-  procedure msg(s : String);
+  procedure msg(s : String; clear : boolean = false);
   begin
     if (s = '') then
       exit();
-    if mt = '' then
+    if (mt = '') or (clear) then
       mt := s
     else if not mt.Contains(s) then
       mt := mt+'; '+s;
@@ -1327,13 +1401,16 @@ begin
   if FValueSet = nil then
     raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset', itInvalid);
   vcc := FFactory.wrapCodeableConcept(FFactory.makeCodeableConcept);
+  unknownSystems := TStringList.create;
   result := FFactory.makeParameters;
   try
+    unknownSystems.sorted := true;
+    unknownSystems.duplicates := dupIgnore;
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        ok := false;
+        ok := bFalse;
         codelist := '';
         mt := '';
         i := 0;
@@ -1344,10 +1421,10 @@ begin
           else
             path := issuePath;;
           list.clear;
-          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, message, ver, cause, op, vcc, contentMode, impliedSystem);
-          if not v and (message <> '') then
+          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, unknownSystems, message, ver, cause, op, vcc, contentMode, impliedSystem);
+          if (v <> bTrue) and (message <> '') then
             msg(message);
-          if not v then
+          if (v = bFalse) then
             cause := itInvalid;
           if (impliedSystem <> '') then
             ws := impliedSystem
@@ -1359,10 +1436,11 @@ begin
             cc := ws+'|'+c.version+'#'+c.code;
           CommaAdd(codelist, cc);
 
-          ok := ok or v;
+          if (ok <> bTrue) and (v <> bFalse) then
+            ok := v;
           message := '';
 
-          if (v) then
+          if (v = bTrue) then
           begin
             if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
             begin
@@ -1407,11 +1485,26 @@ begin
                prov2 := findCodeSystem(ws, '', FParams, true);
                try
                  if (prov2 = nil) then
-                   m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [ws])
+                 begin
+                   m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.langCode, [ws]);
+                   if (valueSetDependsOnCodeSystem(ws, '')) then
+                     unknownSystems.add(ws);
+                 end
                  else
+                 begin
                    m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.langCode, [ws, c.version, '['+listVersions(c.systemUri)+']']);
-                 msg(m);
+                   if (valueSetDependsOnCodeSystem(ws, c.version)) then
+                     unknownSystems.add(ws+'|'+c.version);
+                 end;
                  op.addIssue(isError, itNotFound, path+'.system', m);
+                 if (valueSetDependsOnCodeSystem(ws, c.version)) then
+                 begin
+                   m := 'Unable to check whether the code is in the value set '+FValueSet.vurl;
+                   msg(m);
+                   op.addIssue(isWarning, itNotFound, issuepath, m);
+                 end
+                 else
+                   msg(m);
                finally
                  prov2.free;
                end;
@@ -1469,12 +1562,12 @@ begin
           end;
           inc(i);
         end;
-        if (not ok) then
+        if (ok = bFalse) then
         begin
           if code.codingCount = 1 then
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, ['', FValueSet.url, codelist])
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.langCode, ['', FValueSet.vurl, codelist])
           else
-            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, ['', FValueSet.url, codelist]);
+            m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.langCode, ['', FValueSet.vurl, codelist]);
           msg(m);
           op.addIssue(isError, itInvalid, issuePath, m);
           if cause = itNull then
@@ -1484,11 +1577,14 @@ begin
         list.Free;
       end;
 
-      result.AddParamBool('result', ok and not op.hasErrors);
+      result.AddParamBool('result', (ok = bTrue) and not op.hasErrors);
       if (psys <> '') then
         result.addParamUri('system', psys)
-      else if ok and (impliedSystem <> '') then
+      else if (ok = bTrue) and (impliedSystem <> '') then
         result.addParamUri('system', impliedSystem);
+      if (ok = bUnknown) and (unknownSystems.count > 0) then
+        for us in unknownSystems do
+          result.addParamUri('x-caused-by-unknown-system', us);
       if (pcode <>'') then
         result.addParamCode('code', pcode);
       if (pver <> '') then
@@ -1499,8 +1595,6 @@ begin
         result.AddParamStr('message', mt);
       if (addCodeable and (vcc.codingCount > 0)) then
         result.addParam('codeableConcept', vcc.Element.link);
-      //if not (cause in [itNull]) then
-      //  result.addParamCode('issue-type', CODES_TFhirIssueType[cause]);
       if (op.hasIssues) then
         result.addParam('issues').resource := op.Resource.link;
     finally
@@ -1510,56 +1604,76 @@ begin
   finally
     result.free;
     vcc.free;
+    unknownSystems.free;
   end;
 end;
 
 function TValueSetChecker.check(issuePath, system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem : String;
+  message, ver, pd, impliedSystem, us : String;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
+  ok : TTrueFalseUnknown;
+  unknownSystems : TStringList;
 begin
-  result := FFactory.makeParameters;
+  unknownSystems := TStringList.create;
   try
-    op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
+    unknownSystems.sorted := true;
+    unknownSystems.duplicates := dupIgnore;
+    result := FFactory.makeParameters;
     try
-      list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+      op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
       try
-        if check(issuePath, system, version, code, true, implySystem, list, message, ver, cause, op, nil, contentMode, impliedSystem) then
-        begin
-          result.AddParamBool('result', true);
-          pd := list.preferredDisplay(FParams.displayLanguages);
-          if pd <> ''then
-            result.AddParamStr('display', pd);
-          result.addParamUri('system', system);
-          if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
-             result.AddParamStr('message', 'The system "'+system+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-          if cause <> itNull then
-            result.AddParamCode('cause', CODES_TFhirIssueType[cause]);
-        end
-        else
-        begin
-          result.AddParamBool('result', false);
-          result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
-          op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
-          if (message <> '') then
-            result.AddParamStr('message', message);
-          if cause <> itNull then
-            result.AddParamCode('cause', CODES_TFhirIssueType[cause]);
+        list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+        try
+          ok := check(issuePath, system, version, code, true, implySystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+          if ok = bTrue then
+          begin
+            result.AddParamBool('result', true);
+            pd := list.preferredDisplay(FParams.displayLanguages);
+            if pd <> ''then
+              result.AddParamStr('display', pd);
+            result.addParamUri('system', system);
+            if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
+               result.AddParamStr('message', 'The system "'+system+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
+            if cause <> itNull then
+              result.AddParamCode('cause', CODES_TFhirIssueType[cause]);
+          end
+          else if (ok = bUnknown) then
+          begin
+            result.AddParamBool('result', false);
+            result.AddParamStr('message', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
+            op.addIssue(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
+            //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
+            for us in unknownSystems do
+              result.addParamUri('x-caused-by-unknown-system', us);
+          end
+          else
+          begin
+            result.AddParamBool('result', false);
+            result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
+            op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
+            if (message <> '') then
+              result.AddParamStr('message', message);
+            if cause <> itNull then
+              result.AddParamCode('cause', CODES_TFhirIssueType[cause]);
+          end;
+        finally
+          list.Free;
         end;
+        if (op.hasIssues) then
+          result.addParam('issues').resource := op.Resource.link;
       finally
-        list.Free;
+        op.free;
       end;
-      if (op.hasIssues) then
-        result.addParam('issues').resource := op.Resource.link;
+      result.Link;
     finally
-      op.free;
+      result.free;
     end;
-    result.Link;
   finally
-    result.free;
+    unknownSystems.free;
   end;
 end;
 
@@ -1914,6 +2028,9 @@ begin
     //  exp.addParamUri('expansion-source', 'ValueSet/'+source.id)
     //else if source.url <> '' then
     //  exp.addParamUri('expansion-source', source.url);
+
+    if not filter.null then
+      exp.addParamStr('filter', filter.filter);
 
     if FParams.hasLimitedExpansion then
       exp.addParamBool('limitedExpansion', FParams.limitedExpansion);
