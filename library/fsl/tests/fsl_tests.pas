@@ -1,4 +1,4 @@
-﻿unit fsl_tests;
+unit fsl_tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -112,10 +112,13 @@ Type
   end;
 
   {$IFDEF FPC}
+
+  { TFslRegexTests }
+
   TFslRegexTests = class (TFslTestCase)
-  private
   published
     procedure testRegex;
+    procedure TestRegex2;
   end;
   {$ENDIF}
 
@@ -707,6 +710,7 @@ procedure registerTests;
 
 implementation
 
+
 { TCSVParserTests }
 
 procedure TCSVParserTests.testCSV;
@@ -927,6 +931,19 @@ begin
     assertTrue(this.Exec('http://a.example/p'));
   finally
     this.free;
+  end;
+end;
+
+procedure TFslRegexTests.TestRegex2;
+var
+  regex : fsl_regex.TRegExpr;
+begin
+  regex := TRegExpr.Create('^[A-Z]{2}$');
+  try
+    AssertTrue(regex.Exec('US'));
+    AssertFalse(regex.Exec('USA'));
+  finally
+    regex.free;
   end;
 end;
 {$ENDIF}
