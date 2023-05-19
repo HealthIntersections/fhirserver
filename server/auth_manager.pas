@@ -95,7 +95,7 @@ type
   end;
 
   // this is a server that lives at /oauth2 (or elsewhere, if configured)
-  TAuth2Server = class abstract (TFslObject)
+  TAuth2Server = class (TFslObject)
   private
     FFactory : TFHIRFactory;
     FLock : TFslLock;
