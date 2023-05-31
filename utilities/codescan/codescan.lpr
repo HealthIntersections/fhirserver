@@ -36,7 +36,9 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
+  {$IFDEF DARWIN}
   Forms, Interfaces,
+  {$ENDIF}
   Classes, SysUtils,
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
   fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions, codeScanForm;
@@ -623,6 +625,7 @@ var
 begin
   CodeApp := TCodeScanner.Create;
   try
+    {$IFDEF DARWIN}
     if paramstr(1) = 'gui' then
     begin
       //Application.Title:='FHIRToolkit';
@@ -634,6 +637,7 @@ begin
       Application.Run;
     end
     else
+    {$ENDIF}
       CodeApp.run;
   finally
     CodeApp.Free;
