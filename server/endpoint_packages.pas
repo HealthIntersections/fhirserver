@@ -596,7 +596,13 @@ end;
 function TFHIRPackageWebServer.interpretVersion(v: String): String;
   function processVersion(v: String): String;
   begin
-    if (v.StartsWith('4.0')) then
+    if (v.StartsWith('6.0')) then
+      result := 'R6'
+    else if (v.StartsWith('5.0')) then
+      result := 'R5'
+    else if (v.StartsWith('4.3')) then
+      result := 'R4B'
+    else if (v.StartsWith('4.0')) then
       result := 'R4'
     else if (v.StartsWith('3.0')) then
       result := 'R3'
@@ -767,7 +773,7 @@ begin
     fpkGroup : result := 'Group';
     fpkExamples : result := 'Examples';
   else
-    result := '??';
+    result := '?? ('+inttostr(kind)+')';
   end;
 end;
 
@@ -1300,7 +1306,9 @@ begin
       s := request.document.subString(PathWithSlash.length).split(['/']);
       if length(s) = 1 then
       begin
-        if s[0].endsWith('.html') then
+        if s[0] = '' then
+          response.Redirect('/packages/catalog')
+        else if s[0].endsWith('.html') then
         begin
           servePage(s[0], request, response, secure);
           result := 'Package Web Doco';

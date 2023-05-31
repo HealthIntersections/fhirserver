@@ -228,8 +228,7 @@ begin
             p.Free;
           end;
         end;
-        if (hasProp('display', true)) then
-          resp.display := provider.Display(ctxt, lang);
+        resp.display := provider.Display(ctxt, lang);
         provider.extendLookup(Factory, ctxt, lang, props, resp);
       finally
         provider.Close(ctxt);
@@ -1302,7 +1301,7 @@ begin
             val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
               val.prepare(vs, profile);
-              if not val.check('code', URL, version, code, true, false, nil) then
+              if val.check('code', URL, version, code, true, false, nil) <> bTrue then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
                 conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
@@ -1352,7 +1351,7 @@ begin
               begin
                 system := conn2.ColStringByName['URL'];
                 code := conn2.ColStringByName['Code'];
-                if not val.check('code', system, version, code, true, false, nil) then
+                if val.check('code', system, version, code, true, false, nil) <> bTrue then
                   conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
                 else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
                   conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');

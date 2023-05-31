@@ -93,7 +93,7 @@ type
 
   TSnomedAnalysis = class (TFslObject)
   private
-    FSnomed : TSnomedServices;
+    FSnomed : TSnomedProvider;
     FRoots : TCardinalArray;
     FColumns : TColumnDetailArray;
 
@@ -166,27 +166,27 @@ var
   ic : integer;
 begin
   iId := StrToUInt64Def(id, 0);
-  if not FSnomed.Concept.FindConcept(iId, iIndex) then
+  if not FSnomed.Services.Concept.FindConcept(iId, iIndex) then
     raise ETerminologyError.create('not defined: '+id, itInvalid);
-  allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
+  allDesc := FSnomed.Services.Refs.GetReferences(FSnomed.Services.Concept.GetAllDesc(iIndex));
   if (length(allDesc) = 0) then
   begin
-    Inbounds := FSnomed.Refs.GetReferences(FSnomed.Concept.GetInbounds(iIndex));
+    Inbounds := FSnomed.Services.Refs.GetReferences(FSnomed.Services.Concept.GetInbounds(iIndex));
     For i := 0 to length(Inbounds)-1 Do
     begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
-      if FSnomed.GetConceptId(iWork3) = '116680003' then
+      FSnomed.Services.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+      if FSnomed.Services.GetConceptId(iWork3) = '116680003' then
         raise ETerminologyError.create('Concept '+id+' has no descendants but it does!', itException);
     end;
   end;
 
   b.AppendLine(' <tr><td colspan="8"><b>');
-  b.append('<a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
+  b.append('<a href="../'+FSnomed.Services.EditionId+'/?type=snomed&id=');
   b.Append(id);
   b.Append('">');
   b.Append(id);
   b.Append('</a></b> ');
-  b.Append(FormatTextToXML(fsnomed.getDisplay(id, THTTPLanguages.Create('en')), xmlText));
+  b.Append(FormatTextToXML(FSnomed.getDisplay(id, THTTPLanguages.Create('en')), xmlText));
   b.append('.');
   b.Append(inttostr(length(alldesc)));
   b.AppendLine(' rows</td></tr>');
@@ -199,15 +199,15 @@ begin
     end;
     for i := 0 to list.count -1 do
     begin
-      cid := FSnomed.GetConceptId(list[i].FRelationship);
+      cid := FSnomed.Services.GetConceptId(list[i].FRelationship);
       if cid <> '116680003' then
       begin
 
         b.AppendLine(' <tr>');
-        b.Append('  <td><a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
-        b.Append(FSnomed.GetConceptId(list[i].FRelationship));
+        b.Append('  <td><a href="../'+FSnomed.Services.EditionId+'/?type=snomed&id=');
+        b.Append(FSnomed.Services.GetConceptId(list[i].FRelationship));
         b.Append('"/>');
-        b.Append(FSnomed.GetDisplayName(list[i].FRelationship, 0));
+        b.Append(FSnomed.Services.GetDisplayName(list[i].FRelationship, 0));
         b.Append('</a></td><td>');
         b.Append(inttostr(list[i].FIndCount));
         b.Append('</td><td>');
@@ -220,10 +220,10 @@ begin
 
         b.Append('</td><td>');
         b.Append(inttostr(list[i].FDupl+1));
-        b.Append('</td><td><a href="/snomed/'+FSnomed.EditionId+'/?type=snomed&id=');
-        b.Append(FSnomed.GetConceptId(list[i].FMax));
+        b.Append('</td><td><a href="/snomed/'+FSnomed.Services.EditionId+'/?type=snomed&id=');
+        b.Append(FSnomed.Services.GetConceptId(list[i].FMax));
         b.Append('"/>');
-        b.Append(FSnomed.GetDisplayName(list[i].FMax, 0));
+        b.Append(FSnomed.Services.GetDisplayName(list[i].FMax, 0));
         b.Append('</td><td>');
         b.Append(inttostr(list[i].FTargetCount));
         b.Append('</td><td>');
@@ -231,10 +231,10 @@ begin
         begin
           if (j > 0) then
             b.Append('<br/>');
-          b.Append('<a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
-          b.Append(FSnomed.GetConceptId(list[i].FBranches[j]));
+          b.Append('<a href="../'+FSnomed.Services.EditionId+'/?type=snomed&id=');
+          b.Append(FSnomed.Services.GetConceptId(list[i].FBranches[j]));
           b.Append('"/>');
-          b.Append(FSnomed.GetDisplayName(list[i].FBranches[j], 0));
+          b.Append(FSnomed.Services.GetDisplayName(list[i].FBranches[j], 0));
           b.Append('</a>');
         end;
         b.Append('</td>');
@@ -249,7 +249,7 @@ end;
 constructor TSnomedAnalysis.Create(snomed: TSnomedServices);
 begin
   Create;
-  FSnomed := snomed;
+  FSnomed := TSnomedProvider.create(snomed.link, nil);
   snomed.checkLoaded;
 end;
 
@@ -260,8 +260,8 @@ end;
 //  result := TFhirCodeableConcept.Create;
 //  c := result.codingList.Append;
 //  c.system := URI_SNOMED;
-//  c.code := FSnomed.GetConceptId(index);
-//  c.display := FSnomed.GetDisplayName(index, 0);
+//  c.code := FSnomed.Services.GetConceptId(index);
+//  c.display := FSnomed.Services.GetDisplayName(index, 0);
 //end;
 //
 //function TSnomedAnalysis.CreateRef(root, index: Cardinal): TFhirReference;
@@ -269,25 +269,25 @@ end;
 //  rid : String;
 //begin
 //  result := TFhirReference.Create;
-//  result.display := FSnomed.GetDisplayName(index, 0);
-//  rid := FSnomed.GetConceptId(root);
+//  result.display := FSnomed.Services.GetDisplayName(index, 0);
+//  rid := FSnomed.Services.GetConceptId(root);
 //  if (rid = '404684003') or (rid = '78621006') then
-//    result.reference := 'ConditionDefinition/'+FSnomed.GetConceptId(index)
+//    result.reference := 'ConditionDefinition/'+FSnomed.Services.GetConceptId(index)
 //  else if (rid = '123037004')  then
-//    result.reference := 'BodySite/'+FSnomed.GetConceptId(index)
+//    result.reference := 'BodySite/'+FSnomed.Services.GetConceptId(index)
 //  else if (rid = '410607006')  then
-//    result.reference := 'Organism/'+FSnomed.GetConceptId(index)
+//    result.reference := 'Organism/'+FSnomed.Services.GetConceptId(index)
 //  else if (rid = '105590001')  then
-//    result.reference := 'Substance/'+FSnomed.GetConceptId(index)
+//    result.reference := 'Substance/'+FSnomed.Services.GetConceptId(index)
 //  else if (rid = '71388002')  then
-//    result.reference := 'ProcedureDefinition/'+FSnomed.GetConceptId(index)
+//    result.reference := 'ProcedureDefinition/'+FSnomed.Services.GetConceptId(index)
 //  else
-//    result.reference := '??/'+FSnomed.GetConceptId(index)+'/'+rid
+//    result.reference := '??/'+FSnomed.Services.GetConceptId(index)+'/'+rid
 //end;
 //
 destructor TSnomedAnalysis.destroy;
 begin
-  FSnomed.Free;
+  FSnomed.Services.Free;
   inherited;
 end;
 
@@ -302,11 +302,11 @@ var
   Grp : integer;
 begin
   result := false;
-  outboundIndex := FSnomed.Concept.GetOutbounds(concept);
-  outbounds := FSnomed.Refs.GetReferences(outboundIndex);
+  outboundIndex := FSnomed.Services.Concept.GetOutbounds(concept);
+  outbounds := FSnomed.Services.Refs.GetReferences(outboundIndex);
   for o in outbounds do
   begin
-    FSnomed.Rel.GetRelationship(o, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Grp);
+    FSnomed.Services.Rel.GetRelationship(o, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Grp);
     if (grp = group) and (RelType = siblingtype) then
     begin
       result := true;
@@ -471,7 +471,7 @@ begin
     b.appendLine('    <div class="container">  <!-- container -->');
     b.appendLine('      <div class="inner-wrapper">');
     b.appendLine('        <p>');
-    b.appendLine('        <a href="/snomed/'+FSnomed.EditionId+'/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp;');
+    b.appendLine('        <a href="/snomed/'+FSnomed.Services.EditionId+'/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp;');
     b.appendLine('        </span>');
     b.appendLine('        </p>');
     b.appendLine('      </div>  <!-- /inner-wrapper -->');
@@ -551,14 +551,14 @@ var
   Active, Defining : Boolean;
   Group : Integer;
 begin
-  FSnomed.Concept.GetConcept(id, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  FSnomed.Services.Concept.GetConcept(id, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   SetLength(result, 0);
   if outboundIndex > 0 then
   begin
-    outbounds := FSnomed.Refs.GetReferences(outboundIndex);
+    outbounds := FSnomed.Services.Refs.GetReferences(outboundIndex);
     for c in outbounds do
     begin
-      FSnomed.Rel.GetRelationship(c, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
+      FSnomed.Services.Rel.GetRelationship(c, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
       if {(group = 0) and }active and (RelType = prop) then
       begin
         SetLength(result, length(result)+1);
@@ -586,7 +586,7 @@ begin
   i := 0;
   while i < c do
   begin
-    parents := FSnomed.Refs.GetReferences(FSnomed.Concept.GetParent(queue[i]));
+    parents := FSnomed.Services.Refs.GetReferences(FSnomed.Services.Concept.GetParent(queue[i]));
     for j := 0 to Length(parents) - 1 do
     begin
       for k := 0 to Length(FRoots) - 1 do
@@ -658,19 +658,19 @@ var
   cid : String;
   Active, Defining : boolean;
 begin
-  FSnomed.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
-  Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
-  outbounds := FSnomed.Refs.GetReferences(outboundIndex);
+  FSnomed.Services.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  Descriptions := FSnomed.Services.Refs.GetReferences(DescriptionIndex);
+  outbounds := FSnomed.Services.Refs.GetReferences(outboundIndex);
   SetLength(Rels, length(outbounds));
 
-  cid := FSnomed.GetConceptId(iIndex);
+  cid := FSnomed.Services.GetConceptId(iIndex);
 //  if (bnd <> Nil) { and (bnd.entryList.Count < 1000) } then
 //  begin
 //    cnd := TFhirConditionDefinition.Create;
 //    bnd.entryList.Append.resource := cnd;
 //    cnd.id := cid;
 //    cnd.url := 'http://healthintersections.com.au/sct/'+cid;
-//    cnd.name := FSnomed.GetDisplayName(iIndex, 0);
+//    cnd.name := FSnomed.Services.GetDisplayName(iIndex, 0);
 //    cnd.status := ConformanceResourceStatusDraft;
 //  end
 //  else
@@ -678,7 +678,7 @@ begin
 
   for i := Low(Outbounds) To High(Outbounds) Do
   begin
-    FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+    FSnomed.Services.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
     if Active and (group = 0) then
     begin
       rootConcepts := getRootConcepts(iWork2);
@@ -741,7 +741,7 @@ var
   c : cardinal;
   found : boolean;
 begin
-  children := FSnomed.GetConceptChildren(id);
+  children := FSnomed.Services.GetConceptChildren(id);
   for c in children do
   begin
     found := false;
@@ -753,7 +753,7 @@ begin
       end;
     if not found then
     begin
-      list.AddObject(FSnomed.GetDisplayName(c, 0), TObject(c));
+      list.AddObject(FSnomed.Services.GetDisplayName(c, 0), TObject(c));
       listChildren(c, list);
     end;
   end;
@@ -771,14 +771,14 @@ begin
     result.srcType := stTerm;
     if json['refset'] <> '' then
     begin
-      if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), result.lang) then
+      if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['refset']), result.lang) then
         raise ETerminologyError.create('Language refset '+json['refset']+' not found', itException);
     end
   end
   else if (src = 'rel-target') then
   begin
     result.srcType := stRelTarget;
-    if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), result.target) then
+    if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['rel-type']), result.target) then
       raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found', itException);
   end
   else
@@ -790,15 +790,15 @@ var
   props : TPropertyArray;
 begin
   case det.srcType of
-    stCid:tbl.Append(FSnomed.GetConceptId(child));
-    stTerm:tbl.Append(FSnomed.GetDisplayName(child, FSnomed.RefSetIndex.GetRefSetByConcept(det.lang)));
+    stCid:tbl.Append(FSnomed.Services.GetConceptId(child));
+    stTerm:tbl.Append(FSnomed.Services.GetDisplayName(child, FSnomed.Services.RefSetIndex.GetRefSetByConcept(det.lang)));
     stRelTarget:
       begin
       props := getProps(child, det.target);
       if length(props) > 1 then
-        raise ETerminologyError.create('Relationship type '+json['rel-type']+': multiple relationships found for '+FSnomed.GetConceptId(child), itException);
+        raise ETerminologyError.create('Relationship type '+json['rel-type']+': multiple relationships found for '+FSnomed.Services.GetConceptId(child), itException);
       if length(props) = 1 then
-        tbl.Append(FSnomed.GetConceptId(props[0].target));
+        tbl.Append(FSnomed.Services.GetConceptId(props[0].target));
       end;
   end;
 end;
@@ -850,7 +850,7 @@ var
 //  propCs : array of cardinal;
 //  p : TCardinalArray;
 begin
-  FSnomed.Concept.FindConcept(StrToUInt64(json['root']), root);
+  FSnomed.Services.Concept.FindConcept(StrToUInt64(json['root']), root);
 
   tbl := TFslStringBuilder.Create;
   try
@@ -918,17 +918,17 @@ begin
   else if (src = 'sibling') then
   begin
     result.srcType := stSibling;
-    if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
+    if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
       raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found', itException);
   end
   else if (src = 'refset') then
   begin
     result.srcType := stRefset;
-    if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), refset) then
+    if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['refset']), refset) then
       raise ETerminologyError.create('Specified refset '+json['refset']+' not found', itException);
-    refset := FSnomed.RefSetIndex.GetRefSetByConcept(refset);
-    FSnomed.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
-    result.members := FSnomed.RefSetMembers.GetMembers(iMembersByRef);
+    refset := FSnomed.Services.RefSetIndex.GetRefSetByConcept(refset);
+    FSnomed.Services.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    result.members := FSnomed.Services.RefSetMembers.GetMembers(iMembersByRef);
     key := json['key'];
     if key = 'rel-id' then
     begin
@@ -939,15 +939,15 @@ begin
     begin
       result.keyType := ktSiblingId;
       result.reltype := 0;
-      if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
+      if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
         raise ETerminologyError.create('sibling-type '+json['sibling-type']+' not found', itException);
     end
     else
       raise ETerminologyError.create('Unknown refset key '+key, itException);
-    names := FSnomed.Refs.GetReferences(iFieldNames);
+    names := FSnomed.Services.Refs.GetReferences(iFieldNames);
     result.field := -1;
     for i := 0 to length(names) - 1 do
-      if FSnomed.Strings.GetEntry(names[i]) = json['field'] then
+      if FSnomed.Services.Strings.GetEntry(names[i]) = json['field'] then
         result.field := i;
     if result.field = -1 then
       raise ETerminologyError.create('Refset lookup: unable to find field name '+json['field'], itException);
@@ -975,12 +975,12 @@ var
 begin
   k := 0;
   case det.srcType of
-    stMastercid : tbl.Append(FSnomed.GetConceptId(child));
-    stReltarget : tbl.Append(FSnomed.GetConceptId(target));
+    stMastercid : tbl.Append(FSnomed.Services.GetConceptId(child));
+    stReltarget : tbl.Append(FSnomed.Services.GetConceptId(target));
     stSibling :
       begin
       if findRelationshipInGroup(child, group, det.sibling, relationship) then
-        tbl.Append(FSnomed.GetConceptId(relationship.target))
+        tbl.Append(FSnomed.Services.GetConceptId(relationship.target))
       else
         tbl.Append('');
       end;
@@ -1000,17 +1000,17 @@ begin
         begin
           if (m.kind = det.reltype) and (m.Ref = k) then
           begin
-            vl := FSnomed.Refs.GetReferences(m.values);
+            vl := FSnomed.Services.Refs.GetReferences(m.values);
             case vl[det.field*2+1] of
             1 {concept} :
               if (det.display = fvString) then
-                s := FSnomed.GetDisplayName(vl[det.field*2], det.lang)
+                s := FSnomed.Services.GetDisplayName(vl[det.field*2], det.lang)
               else
-                s := FSnomed.GetConceptId(vl[det.field*2]);
-            2 {desc}    : s := FSnomed.GetDescriptionId(vl[det.field*2]);
+                s := FSnomed.Services.GetConceptId(vl[det.field*2]);
+            2 {desc}    : s := FSnomed.Services.GetDescriptionId(vl[det.field*2]);
             3 {rel}     : s := '??';
             4 {integer} : s := inttostr(vl[det.field*2]);
-            5 {string}  : s := FSnomed.Strings.GetEntry(vl[det.field*2]);
+            5 {string}  : s := FSnomed.Services.Strings.GetEntry(vl[det.field*2]);
           else
             raise ETerminologyError.create('Unknown Cell Type '+inttostr(vl[det.field*2+1]), itException);
           end;
@@ -1043,12 +1043,12 @@ begin
     if json['group-condition'].Contains('=') then
     begin
       StringSplit(json['group-condition'], '=', l, r);
-      if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondType) then
+      if not FSnomed.Services.Concept.FindConcept(StrToInt64(l), grpCondType) then
         raise ETerminologyError.create('Specified group condition '+r+' not found', itException);
-      if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondValue) then
+      if not FSnomed.Services.Concept.FindConcept(StrToInt64(l), grpCondValue) then
         raise ETerminologyError.create('Specified group condition value '+r+' not found', itException);
     end
-    else if not FSnomed.Concept.FindConcept(StrToInt64(json['group-condition']), grpCondType) then
+    else if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['group-condition']), grpCondType) then
       raise ETerminologyError.create('Specified group condition '+json['group-condition']+' not found', itException);
   end;
 
@@ -1065,7 +1065,7 @@ begin
     end;
     tbl.Append(#10);
 
-    if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), rt) then
+    if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['rel-type']), rt) then
       raise ETerminologyError.create('Relationship type '+json['rel-type']+' not found', itException);
     for i := 0 to children.count - 1 do
     begin
@@ -1114,7 +1114,7 @@ begin
   for i := 0 to length(ids)-1 do
   begin
     iId := StrToUInt64Def(ids[i], 0);
-    if not FSnomed.Concept.FindConcept(iId, iIndex) then
+    if not FSnomed.Services.Concept.FindConcept(iId, iIndex) then
       raise ETerminologyError.create('not defined: '+ids[i], itException);
     FRoots[i] := iIndex;
   end;
@@ -1125,14 +1125,14 @@ end;
 //  s : String;
 //Begin
 //  if iDesc <> 0 Then
-//    s := FSnomed.Strings.GetEntry(iDesc)
+//    s := FSnomed.Services.Strings.GetEntry(iDesc)
 //  Else
 //    s := GetPNForConcept(iIndex);
 //
 //  if bShowId Then
-//    html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+//    html.AddTableCellURL(inttostr(FSnomed.Services.Concept.GetIdentity(iIndex))+' '+Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Services.Concept.GetIdentity(iIndex)))
 //  else
-//    html.AddTableCellURL(Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)));
+//    html.AddTableCellURL(Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Services.Concept.GetIdentity(iIndex)));
 //End;
 //
 //

@@ -149,6 +149,8 @@ Type
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+    function makingAudits : boolean; override;
+
     {$IFDEF WINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
     function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -174,6 +176,8 @@ Type
     function description : String; override;
   end;
 
+
+  { TFullServerEndPoint }
 
   TFullServerEndPoint = class (TStorageEndPoint)
   private
@@ -568,6 +572,11 @@ begin
   end;
 end;
 
+function TFullServerWebEndPoint.makingAudits: boolean;
+begin
+  result := true;
+end;
+
 function TFullServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   inherited makeWebEndPoint(common);
@@ -603,7 +612,7 @@ begin
     result := result + FStore.cacheSize(magic);
 end;
 
-Procedure TFullServerEndPoint.checkDatabase();
+procedure TFullServerEndPoint.checkDatabase;
 var
   ver : integer;
   conn : TFDBConnection;
@@ -694,7 +703,8 @@ begin
   inherited;
 end;
 
-procedure TFullServerEndPoint.internalThread;
+procedure TFullServerEndPoint.internalThread(
+  callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   try
     if FStopping then exit;

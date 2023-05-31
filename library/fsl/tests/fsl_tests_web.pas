@@ -56,6 +56,13 @@ type
     Procedure TestUnicode2;
   end;
 
+  { THTTPParameterTests }
+
+  THTTPParameterTests = class (TFslTestCase)
+  published
+    Procedure TestDoubleEquals;
+  end;
+
   TLangParserTests = Class (TFslTestCase)
   Published
     Procedure testBase;
@@ -103,6 +110,38 @@ type
 procedure registerTests;
 
 implementation
+
+{ THTTPParameterTests }
+
+procedure THTTPParameterTests.TestDoubleEquals;
+var
+  p : THTTPParameters;
+begin
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs%3Disa/118672003&x=&q&&f=v&y', true);
+  try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
+    AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
+  finally
+    p.free;
+  end;
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs=isa/118672003&x=&q&&&f=v&y', true);
+  try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
+    AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
+  finally
+    p.free;
+  end;
+end;
 
 { TIdUriParserTests }
 
@@ -380,6 +419,7 @@ procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   RegisterTest('Web.IdUri', TIdUriParserTests.Suite);
+  RegisterTest('Web.HTTP Params', THTTPParameterTests.Suite);
   RegisterTest('Web.Language Parser Tests', TLangParserTests.Suite);
   RegisterTest('Web.OpenSSL', TOpenSSLTests.Suite);
   RegisterTest('Web.JWT Tests', TJWTTests.Suite);

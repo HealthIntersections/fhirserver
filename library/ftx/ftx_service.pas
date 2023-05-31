@@ -255,7 +255,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
 
-    procedure RecordUse;
+    procedure RecordUse(count : integer = 1);
     function defToThisVersion(specifiedVersion : String) : boolean; virtual;
     property UseCount : cardinal read FUseCount;
   end;
@@ -669,9 +669,9 @@ begin
   result := false;
 end;
 
-procedure TCodeSystemProvider.RecordUse;
+procedure TCodeSystemProvider.RecordUse(count : integer = 1);
 begin
-  inc(FUseCount);
+  FUseCount := FUseCount + count;
 end;
 
 function TCodeSystemProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;

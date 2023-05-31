@@ -48,6 +48,57 @@ const
 
 Type
 
+  { TCodeSystemProviderFactory }
+
+  TCodeSystemProviderFactory = class (TFslObject)
+  public
+    function link : TCodeSystemProviderFactory; overload;
+    function getProvider : TCodeSystemProvider; virtual; abstract;
+    function systemUri : String; virtual; abstract;
+    function version : String; virtual; abstract;
+    function name : String; virtual; abstract;
+    function TotalCount : integer; virtual; abstract;
+    function versionDesc : String; virtual; abstract;
+    function description : String; virtual; abstract;
+  end;
+
+  { TCodeSystemProviderGeneralFactory }
+
+  TCodeSystemProviderGeneralFactory = class (TCodeSystemProviderFactory)
+  private
+    FProvider : TCodeSystemProvider;
+  public
+    Constructor Create(provider : TCodeSystemProvider);
+    Destructor destroy; override;
+
+    function getProvider : TCodeSystemProvider; override;
+    function systemUri : String; override;
+    function version : String; override;
+    function name : String; override;
+    function TotalCount : integer; override;
+    function versionDesc : String; override;
+    function description : String; override;
+  end;
+
+
+  { TSnomedProviderFactory }
+
+  TSnomedProviderFactory = class (TCodeSystemProviderFactory)
+  private
+    FSnomed : TSnomedServices;
+  public
+    Constructor Create(snomed : TSnomedServices);
+    Destructor destroy; override;
+
+    function getProvider : TCodeSystemProvider; override;
+    function systemUri : String; override;
+    function version : String; override;
+    function name : String; override;
+    function TotalCount : integer; override;
+    function versionDesc : String; override;
+    function description : String; override;
+  end;
+
   { TCommonTerminologies }
 
   TCommonTerminologies = class (TFslObject)
@@ -61,7 +112,7 @@ Type
     FRxNorm : TRxNormServices;
     FUnii : TUniiServices;
     FACIR : TACIRServices;
-    FProviderClasses : TFslMap<TCodeSystemProvider>;
+    FProviderClasses : TFslMap<TCodeSystemProviderFactory>;
     FNDFRT: TNDFRTServices;
     FNDC : TNDCServices;
     procedure SetLoinc(const Value: TLOINCServices);
@@ -83,7 +134,8 @@ Type
 
     function add(p : TCodeSystemProvider) : TCodeSystemProvider; overload;
     procedure add(p : TCodeSystemProvider; defVer : boolean); overload;
-    Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
+    procedure add(p : TCodeSystemProviderFactory; defVer : boolean); overload;
+    Property ProviderClasses : TFslMap<TCodeSystemProviderFactory> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
     procedure sweepSnomed(callback : TFhirServerMaintenanceThreadTaskCallBack);
     procedure clearSnomed;
@@ -181,7 +233,8 @@ Type
     function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
     procedure AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
-    function getProviderClasses: TFslMap<TCodeSystemProvider>;
+    function getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
+    function defToLatestForSystem(system : String) : boolean;
   protected
     FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TFDBManager;
@@ -221,7 +274,7 @@ Type
     procedure GetValueSetList(list : TFslList<TFhirValueSetW>); overload;
     procedure GetValueSetList(list : TFslMetadataResourceList); overload;
     function GetConceptMapList : TLoadedConceptMapList;
-    Property ProviderClasses : TFslMap<TCodeSystemProvider> read getProviderClasses;
+    Property ProviderClasses : TFslMap<TCodeSystemProviderFactory> read getProviderClasses;
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
     function listSystems : TArray<String>;
@@ -288,6 +341,7 @@ Type
   TAllCodeSystemsProvider = class (TCodeSystemProvider)
   private
     FStore: TCommonTerminologies;
+    FSnomed : TSnomedProvider;
     FActCode : TCodeSystemProvider;
   public
     constructor Create(store : TCommonTerminologies; actCode : TCodeSystemProvider);
@@ -323,6 +377,14 @@ Type
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
+{ TCodeSystemProviderFactory }
+
+function TCodeSystemProviderFactory.link: TCodeSystemProviderFactory;
+begin
+  result := TCodeSystemProviderFactory(inherited link);
+end;
+
+
 function TAllCodeSystemsProvider.TotalCount : integer;
 begin
   result := FStore.DefSnomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount;
@@ -355,7 +417,7 @@ begin
     c := context as TAllCodeSystemsProviderContext;
     case c.source of
       acssLoinc : result := FStore.Loinc.systemUri(c.context);
-      acssSnomed : result := FStore.DefSnomed.systemUri(c.context);
+      acssSnomed : result := FStore.DefSnomed.systemUri();
       acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.systemUri(c.context) else result := '??';
       acssUnii : result := FStore.Unii.systemUri(c.context);
       acssActCode : result := FActCode.systemUri(c.context);
@@ -379,7 +441,7 @@ begin
       ctxt.rxnorm := FStore.RxNorm.getPrepContext;
     ctxt.unii := nil;
     ctxt.loinc := FStore.Loinc.getPrepContext;
-    ctxt.snomed := FStore.DefSnomed.getPrepContext;
+    ctxt.snomed := FSnomed.getPrepContext;
     ctxt.actcode := Factcode.getPrepContext;
     result := ctxt.link;
   finally
@@ -414,7 +476,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
-    acssSnomed : result := FStore.DefSnomed.IsAbstract(c.context);
+    acssSnomed : result := FSnomed.IsAbstract(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.IsAbstract(c.context) else result := false;
     acssUnii : result := FStore.Unii.IsAbstract(c.context);
     acssActCode : result := FActCode.IsAbstract(c.context);
@@ -428,7 +490,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Code(c.context);
-    acssSnomed : result := FStore.DefSnomed.Code(c.context);
+    acssSnomed : result := FSnomed.Code(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Code(c.context);
     acssActCode : result := FActCode.Code(c.context);
@@ -439,6 +501,7 @@ constructor TAllCodeSystemsProvider.Create(store: TCommonTerminologies; actCode 
 begin
   inherited Create(store.Languages.link);
   FStore := store;
+  FSnomed := TSnomedProvider.create(FStore.defSnomed.link, nil);
   FActCode := actCode;
 end;
 
@@ -454,7 +517,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Display(c.context, lang)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
-    acssSnomed : result := FStore.DefSnomed.Display(c.context, lang)+' (S-CT: '+FStore.DefSnomed.Code(c.context)+')';
+    acssSnomed : result := FSnomed.Display(c.context, lang)+' (S-CT: '+FSnomed.Code(c.context)+')';
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Display(c.context, lang)+' (RxN: '+FStore.RxNorm.Code(c.context)+')' else result := '';
     acssUnii : result := FStore.Unii.Display(c.context, lang)+' (Unii: '+FStore.Unii.Code(c.context)+')';
     acssActCode : result := FActCode.Display(c.context, lang)+' (ActCode: '+FActCode.Code(c.context)+')';
@@ -468,7 +531,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Definition(c.context);
-    acssSnomed : result := FStore.DefSnomed.Definition(c.context);
+    acssSnomed : result := FSnomed.Definition(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Definition(c.context);
     acssActCode : result := FActCode.Definition(c.context);
@@ -482,6 +545,7 @@ end;
 destructor TAllCodeSystemsProvider.Destroy;
 begin
   FActCode.Free;
+  FSnomed.Free;
   FStore.Free;
   inherited;
 end;
@@ -509,7 +573,7 @@ begin
       if FStore.RxNorm <> nil then
         ctxt.rxnorm := FStore.RxNorm.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).rxnorm, sort);
       ctxt.unii := nil; // FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
-      ctxt.snomed := FStore.Defsnomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
+      ctxt.snomed := FSnomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc, sort);
       ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode, sort);
       result := ctxt.Link;
@@ -534,7 +598,7 @@ begin
   if (ctxt <> nil) then
   begin
     FStore.Loinc.prepare(ctxt.loinc);
-    FStore.DefSnomed.prepare(ctxt.snomed);
+    FSnomed.prepare(ctxt.snomed);
     if FStore.RxNorm <> nil then
       FStore.RxNorm.prepare(ctxt.rxnorm);
 //    FStore.FUnii.prepare(ctxt.unii);
@@ -559,7 +623,7 @@ begin
     c := TAllCodeSystemsProviderFilter(ctxt);
     result := true;
     if not c.snomedDone then
-      c.snomedDone := not FStore.DefSnomed.FilterMore(c.snomed);
+      c.snomedDone := not FSnomed.FilterMore(c.snomed);
     if c.snomedDone then
     begin
       if not c.actcodeDone then
@@ -600,7 +664,7 @@ begin
     if not d.snomedDone then
     begin
       c.source := acssSnomed;
-      c.context := FStore.DefSnomed.FilterConcept(d.snomed);
+      c.context := FSnomed.FilterConcept(d.snomed);
     end
     else if not d.actCodeDone then
     begin
@@ -652,7 +716,7 @@ begin
     FStore.RxNorm.Close(c.rxnorm);
   FStore.unii.Close(c.unii);
   FStore.Loinc.Close(c.loinc);
-  FStore.DefSnomed.Close(c.snomed);
+  FSnomed.Close(c.snomed);
   FActCode.Close(c.actcode);
   ctxt.free;
 end;
@@ -668,7 +732,7 @@ begin
       FStore.RxNorm.Close(c.rxnorm);
     FStore.Unii.Close(c.unii);
     FStore.Loinc.Close(c.loinc);
-    FStore.DefSnomed.Close(c.snomed);
+    FSnomed.Close(c.snomed);
     FActCode.Close(c.actcode);
   end;
   ctxt.free;
@@ -681,7 +745,7 @@ begin
   c := ctxt as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : FStore.Loinc.Close(c.context);
-    acssSnomed : FStore.DefSnomed.Close(c.context);
+    acssSnomed : FSnomed.Close(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
     acssUnii : FStore.Unii.Close(c.context);
     acssActCode : FActCode.Close(c.context);
@@ -874,11 +938,19 @@ procedure TTerminologyServerStore.declareCodeSystems(list : TFslList<TFhirResour
   end;
 var
   sn : TSnomedServices;
+  sp : TSnomedProvider;
 begin
   if FCommonTerminologies.FLoinc <> nil then
     addCodesystemUri('LOINC', 'loinc', FCommonTerminologies.FLoinc.systemUri(nil), FCommonTerminologies.FLoinc.version(nil), FCommonTerminologies.FLoinc.TotalCount);
   for sn in FCommonTerminologies.FSnomed do
-    addCodesystemUri('SNOMED CT', 'sct', sn.systemUri(nil), sn.version(nil), sn.TotalCount);
+  begin
+    sp := TSnomedProvider.create(sn.link, nil);
+    try
+      addCodesystemUri('SNOMED CT', 'sct', sp.systemUri(nil), sp.version(nil), sp.TotalCount);
+    finally
+      sp.free;
+    end;
+  end;
   if FCommonTerminologies.FUcum <> nil then
     addCodesystemUri('Ucum', 'ucum', FCommonTerminologies.FUcum.systemUri(nil), FCommonTerminologies.FUcum.version(nil), FCommonTerminologies.FUcum.TotalCount);
   if FCommonTerminologies.FRxNorm <> nil then
@@ -1451,6 +1523,11 @@ begin
   FCommonTerminologies.clearSnomed;
 end;
 
+function TTerminologyServerStore.defToLatestForSystem(system : String) : boolean;
+begin
+  result := system <> URI_SNOMED;
+end;
+
 function TTerminologyServerStore.getProvider(system: String; version: String;
   profile: TFHIRExpansionParams; noException: boolean): TCodeSystemProvider;
 var
@@ -1469,14 +1546,14 @@ begin
     if (version <> '') then
     begin
       if ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
-        result := ProviderClasses[system+URI_VERSION_BREAK+version].Link
-      else if defToLatest then
+        result := ProviderClasses[system+URI_VERSION_BREAK+version].getProvider.Link
+      else if defToLatest or defToLatestForSystem(system) then
       begin
         // special support for SNOMED Editions
         if (system = URI_SNOMED) and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
-          result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
+          result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].getProvider.Link
         else
-          result := ProviderClasses[system].Link;
+          result := ProviderClasses[system].getProvider.Link;
         if (result = nil) or not (result.defToThisVersion(version)) then
         begin
           result.Free;
@@ -1487,7 +1564,7 @@ begin
       end;
     end
     else
-      result := ProviderClasses[system].Link;
+      result := ProviderClasses[system].getProvider.Link;
   end
   else if system = ALL_CODE_CS then
     if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
@@ -1520,8 +1597,8 @@ begin
     FLock.Lock('getProvider');
     try
       result.RecordUse;
-      if (result is TSnomedServices) then
-        TSnomedServices(result).checkLoaded;
+      if (result is TSnomedProvider) then
+        TSnomedProvider(result).Services.checkLoaded;
     finally
       FLock.Unlock;
     end;
@@ -1542,7 +1619,7 @@ begin
   result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
 end;
 
-function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProvider>;
+function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
 begin
   result := FCommonTerminologies.ProviderClasses;
 end;
@@ -1661,7 +1738,7 @@ end;
 function TTerminologyServerStore.listSystems: TArray<String>;
 var
   ts : TStringList;
-  p : TCodeSystemProvider;
+  p : TCodeSystemProviderFactory;
   i : integer;
   cs : TFHIRCodeSystemEntry;
 begin
@@ -1672,7 +1749,7 @@ begin
     FLock.Lock('listSystems');
     try
       for p in ProviderClasses.Values do
-        ts.Add(p.systemUri(nil));
+        ts.Add(p.systemUri);
       for cs in FCodeSystems.list do
         ts.Add(cs.url);
     finally
@@ -1772,7 +1849,7 @@ begin
   result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
-  else if (FCommonTerminologies.DefSnomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.systemUri(nil)) then
+  else if (FCommonTerminologies.DefSnomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.systemUri()) then
     result := FCommonTerminologies.DefSnomed.Subsumes(code1, code2)
   else
   begin
@@ -1871,18 +1948,26 @@ end;
 function TCommonTerminologies.add(p: TCodeSystemProvider) : TCodeSystemProvider;
 begin
   if p.version(nil) <> '' then
-    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), TCodeSystemProviderGeneralFactory.create(p.link));
   if not FProviderClasses.ContainsKey(p.systemUri(nil)) then
-    FProviderClasses.Add(p.systemUri(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil), TCodeSystemProviderGeneralFactory.create(p.link));
   result := p;
 end;
 
 procedure TCommonTerminologies.add(p: TCodeSystemProvider; defVer: boolean);
 begin
   if p.version(nil) <> '' then
-    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), TCodeSystemProviderGeneralFactory.create(p.link));
   if defVer and not FProviderClasses.ContainsKey(p.systemUri(nil)) then
-    FProviderClasses.Add(p.systemUri(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil), TCodeSystemProviderGeneralFactory.create(p.link));
+end;
+
+procedure TCommonTerminologies.add(p: TCodeSystemProviderFactory; defVer: boolean);
+begin
+  if p.version <> '' then
+    FProviderClasses.Add(p.systemUri+URI_VERSION_BREAK+p.version, p.link);
+  if defVer and not FProviderClasses.ContainsKey(p.systemUri) then
+    FProviderClasses.Add(p.systemUri, p.link);
 end;
 
 procedure TCommonTerminologies.clearSnomed;
@@ -1902,11 +1987,20 @@ begin
 end;
 
 procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
+var
+  sp : TSnomedProvider;
 begin
   if FLoinc <> nil then
     FLoinc.defineFeatures(features);
   if FDefSnomed <> nil then
-    FDefSnomed.defineFeatures(features);
+  begin
+    sp := TSnomedProvider.create(FDefSnomed.link, nil);
+    try
+      sp.defineFeatures(features);
+    finally
+      sp.free;
+    end;
+  end;
   if FUcum <> nil then
     FUcum.defineFeatures(features);
   if FRxNorm <> nil then
@@ -1961,6 +2055,7 @@ end;
 procedure TCommonTerminologies.getSummary(b: TStringBuilder);
 var
   sn : TSnomedServices;
+  sp : TSnomedProvider;
 begin
   if FLoinc = nil then
     b.append('<li>LOINC: not loaded</li>')
@@ -1971,7 +2066,7 @@ begin
   if FSnomed.Count = 0 then
     b.append('<li>Snomed: not loaded</li>')
   else for sn in FSnomed do
-    b.append('<li>Snomed: '+sn.version(nil)+' ('+inttostr(sn.UseCount)+' uses)');
+    b.append('<li>Snomed: '+sn.VersionUri+' ('+inttostr(sn.UseCount)+' uses)');
 
   if FUcum = nil then
     b.append('<li>Ucum: not loaded</li>')
@@ -2012,12 +2107,12 @@ end;
 
 procedure TCommonTerminologies.listVersions(url: String; list: TStringList);
 var
-  pc : TCodeSystemProvider;
+  pc : TCodeSystemProviderFactory;
 begin
   for pc in FProviderClasses.Values do
-    if (pc.systemUri(nil) = url) and (pc.version(nil) <> '') then
-      if list.IndexOf(pc.version(nil)) = -1 then
-        list.Add(pc.version(nil));
+    if (pc.systemUri() = url) and (pc.version() <> '') then
+      if list.IndexOf(pc.version()) = -1 then
+        list.Add(pc.version());
 end;
 
 procedure TCommonTerminologies.load(txlist: TFHIRServerConfigSection; testing : boolean);
@@ -2025,6 +2120,7 @@ var
   tx : TFHIRServerConfigSection;
   s : string;
   sn: TSnomedServices;
+  sp : TSnomedProviderFactory;
 //  def : boolean;
   p : TUriServices;
   function fixFile(name, fn : String) : String;
@@ -2046,11 +2142,12 @@ begin
   if not FileExists(s) then
     raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
   FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
+  FProviderClasses := TFslMap<TCodeSystemProviderFactory>.Create('tc.common');
+
   p := TUriServices.Create(FLanguages.link);
   try
-    FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
-    FProviderClasses.Add(p.systemUri(nil), p.link);
-    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+    FProviderClasses.Add(p.systemUri(nil), TCodeSystemProviderGeneralFactory.create(p.link));
+    FProviderClasses.Add(p.systemUri(nil)+URI_VERSION_BREAK+p.version(nil), TCodeSystemProviderGeneralFactory.create(p.link));
   finally
     p.free;
   end;
@@ -2075,9 +2172,14 @@ begin
         sn := TSnomedServices.Create(FLanguages.link);
         try
           sn.Load(fixFile('sct', tx['source'].value), tx['default'].value = 'true');
-          add(sn, tx['default'].readAsBool);
-          if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
-            FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
+          sp := TSnomedProviderFactory.create(sn.link);
+          try
+            add(sp, tx['default'].readAsBool);
+            if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) then
+              FProviderClasses.Add(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri, sp);
+          finally
+            sp.free;
+          end;
           snomed.Add(sn.Link);
           if tx['default'].readAsBool then
             DefSnomed := sn.Link;
@@ -2145,8 +2247,8 @@ begin
   FRxNorm := Value;
   if FRxNorm <> nil then
   begin
-    FProviderClasses.add(FRxNorm.systemUri(nil), FRxNorm.Link);
-    FProviderClasses.add(FRxNorm.systemUri(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), FRxNorm.Link);
+    FProviderClasses.add(FRxNorm.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FRxNorm.Link));
+    FProviderClasses.add(FRxNorm.systemUri(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), TCodeSystemProviderGeneralFactory.create(FRxNorm.Link));
   end;
 end;
 
@@ -2161,8 +2263,8 @@ begin
   FNDC := Value;
   if FNDC <> nil then
   begin
-    FProviderClasses.add(FNDC.systemUri(nil), FNDC.Link);
-    FProviderClasses.add(FNDC.systemUri(nil)+URI_VERSION_BREAK+FNDC.version(nil), FNDC.Link);
+    FProviderClasses.add(FNDC.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FNDC.Link));
+    FProviderClasses.add(FNDC.systemUri(nil)+URI_VERSION_BREAK+FNDC.version(nil), TCodeSystemProviderGeneralFactory.create(FNDC.Link));
   end;
 end;
 
@@ -2177,8 +2279,8 @@ begin
   FNDFRT := Value;
   if FNDFRT <> nil then
   begin
-    FProviderClasses.add(FNDFRT.systemUri(nil), FNDFRT.Link);
-    FProviderClasses.add(FNDFRT.systemUri(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), FNDFRT.Link);
+    FProviderClasses.add(FNDFRT.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FNDFRT.Link));
+    FProviderClasses.add(FNDFRT.systemUri(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), TCodeSystemProviderGeneralFactory.create(FNDFRT.Link));
   end;
 end;
 
@@ -2193,13 +2295,12 @@ begin
   FUnii := Value;
   if FUnii <> nil then
   begin
-    FProviderClasses.add(FUnii.systemUri(nil), FUnii.Link);
-    FProviderClasses.add(FUnii.systemUri(nil)+URI_VERSION_BREAK+FUnii.version(nil), FUnii.Link);
+    FProviderClasses.add(FUnii.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FUnii.Link));
+    FProviderClasses.add(FUnii.systemUri(nil)+URI_VERSION_BREAK+FUnii.version(nil), TCodeSystemProviderGeneralFactory.create(FUnii.Link));
   end;
 end;
 
-procedure TCommonTerminologies.sweepSnomed(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TCommonTerminologies.sweepSnomed(callback: TFhirServerMaintenanceThreadTaskCallBack);
 var
   ss : TSnomedServices;
 begin
@@ -2220,8 +2321,8 @@ begin
   FACIR := Value;
   if FACIR <> nil then
   begin
-    FProviderClasses.add(FACIR.systemUri(nil), FACIR.Link);
-    FProviderClasses.add(FACIR.systemUri(nil)+URI_VERSION_BREAK+FACIR.version(nil), FACIR.Link);
+    FProviderClasses.add(FACIR.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FACIR.Link));
+    FProviderClasses.add(FACIR.systemUri(nil)+URI_VERSION_BREAK+FACIR.version(nil), TCodeSystemProviderGeneralFactory.create(FACIR.Link));
   end;
 end;
 
@@ -2242,9 +2343,107 @@ begin
   FUcum := Value;
   if FUcum <> nil then
   begin
-    FProviderClasses.add(FUcum.systemUri(nil), FUcum.Link);
-    FProviderClasses.add(FUcum.systemUri(nil)+URI_VERSION_BREAK+FUcum.version(nil), FUcum.Link);
+    FProviderClasses.add(FUcum.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FUcum.Link));
+    FProviderClasses.add(FUcum.systemUri(nil)+URI_VERSION_BREAK+FUcum.version(nil), TCodeSystemProviderGeneralFactory.create(FUcum.Link));
   end;
+end;
+
+{ TCodeSystemProviderGeneralFactory }
+
+constructor TCodeSystemProviderGeneralFactory.Create(provider: TCodeSystemProvider);
+begin
+  inherited Create;
+  FProvider := provider;
+end;
+
+destructor TCodeSystemProviderGeneralFactory.destroy;
+begin
+  FProvider.free;
+  inherited destroy;
+end;
+
+function TCodeSystemProviderGeneralFactory.getProvider: TCodeSystemProvider;
+begin
+  result := FProvider.link;
+end;
+
+function TCodeSystemProviderGeneralFactory.systemUri: String;
+begin
+  result := FProvider.systemUri(nil);
+end;
+
+function TCodeSystemProviderGeneralFactory.version: String;
+begin
+  result := FProvider.version(nil);
+end;
+
+function TCodeSystemProviderGeneralFactory.name: String;
+begin
+  result := FProvider.Name(nil);
+end;
+
+function TCodeSystemProviderGeneralFactory.TotalCount: integer;
+begin
+  result := FProvider.TotalCount;
+end;
+
+function TCodeSystemProviderGeneralFactory.versionDesc: String;
+begin
+  result := FProvider.version(nil);
+end;
+
+function TCodeSystemProviderGeneralFactory.description: String;
+begin
+  result := FProvider.description;
+end;
+
+{ TSnomedProviderFactory }
+
+constructor TSnomedProviderFactory.Create(snomed: TSnomedServices);
+begin
+  inherited Create;
+  FSnomed := snomed;
+end;
+
+destructor TSnomedProviderFactory.destroy;
+begin
+  FSnomed.Free;
+  inherited destroy;
+end;
+
+function TSnomedProviderFactory.getProvider: TCodeSystemProvider;
+begin
+  result := TSnomedProvider.create(FSnomed.Link, nil);
+end;
+
+function TSnomedProviderFactory.systemUri: String;
+begin
+  result := FSnomed.systemUri;
+end;
+
+function TSnomedProviderFactory.version: String;
+begin
+  result := FSnomed.VersionUri;
+end;
+
+function TSnomedProviderFactory.name: String;
+begin
+  result := FSnomed.EditionName;
+end;
+
+function TSnomedProviderFactory.TotalCount: integer;
+begin
+  result := FSnomed.TotalCount;
+end;
+
+function TSnomedProviderFactory.versionDesc: String;
+begin
+  result := FSnomed.EditionName+'/'+FSnomed.VersionDate;
+end;
+
+function TSnomedProviderFactory.description: String;
+begin
+  result := 'SNOMED CT '+FSnomed.EditionName;
 end;
 
 end.

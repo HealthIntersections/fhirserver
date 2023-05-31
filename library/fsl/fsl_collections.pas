@@ -73,7 +73,7 @@ Type
   TFslItemListCompare = Function (pA, pB : Pointer) : Integer Of Object;
   PFslItemsCompare = ^TFslItemListCompare;
 
-  TFslItemListDuplicates = (dupAccept, dupIgnore, dupException);
+  TFslItemListDuplicates = (dupListAccept, dupListIgnore, dupListException);
 
   TFslItemListDirection = Integer;
 
@@ -6304,7 +6304,7 @@ Begin
         Begin
           Result := True;
 
-          If FDuplicates <> dupAccept Then
+          If FDuplicates <> dupListAccept Then
             L := I;
         End;
       End;
@@ -6511,13 +6511,13 @@ End;
 
 Procedure TFslItemList.AllowDuplicates;
 Begin
-  DuplicateBy(dupAccept);
+  DuplicateBy(dupListAccept);
 End;
 
 
 Procedure TFslItemList.IgnoreDuplicates;
 Begin
-  DuplicateBy(dupIgnore);
+  DuplicateBy(dupListIgnore);
 
   // TODO: Delete duplicates?
 End;
@@ -6525,7 +6525,7 @@ End;
 
 Procedure TFslItemList.PreventDuplicates;
 Begin
-  DuplicateBy(dupException);
+  DuplicateBy(dupListException);
 
   // TODO: Assert that there are no duplicates?
 End;
@@ -6533,19 +6533,19 @@ End;
 
 Function TFslItemList.IsAllowDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupAccept;
+  Result := FDuplicates = dupListAccept;
 End;
 
 
 Function TFslItemList.IsIgnoreDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupIgnore;
+  Result := FDuplicates = dupListIgnore;
 End;
 
 
 Function TFslItemList.IsPreventDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupException;
+  Result := FDuplicates = dupListException;
 End;
 
 

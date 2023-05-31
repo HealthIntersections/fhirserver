@@ -1310,7 +1310,7 @@ begin
     result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW;
     issuePath := 'CodeableConcept';
   end
-  else if request.Parameters.has('code') and request.Parameters.has('system') then
+  else if request.Parameters.has('code') and (request.Parameters.has('system') or request.Parameters.has('implySystem')) then
   begin
     issuePath := 'code';
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
@@ -1320,6 +1320,20 @@ begin
       coding.version := request.Parameters['systemVersion'];
       if (coding.version = '') then
         coding.version := request.Parameters['version'];
+      coding.code := request.Parameters['code'];
+      coding.display := request.Parameters['display'];
+    finally
+      coding.free;
+    end;
+  end
+  else if not isValueSet and request.Parameters.has('code') and request.Parameters.has('url') then
+  begin
+    issuePath := 'code';
+    result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+    coding := result.addCoding;
+    try
+      coding.systemUri := request.Parameters['url'];
+      coding.version := request.Parameters['version'];
       coding.code := request.Parameters['code'];
       coding.display := request.Parameters['display'];
     finally
@@ -1389,7 +1403,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
+    raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code+system in parameters ='+request.Parameters.Source+')', itNotFound);
 end;
 
 end.

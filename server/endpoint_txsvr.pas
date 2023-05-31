@@ -1699,8 +1699,8 @@ var
   h : THtmlPublisher;
   s : String;
   sct : TSnomedServices;
-  p : TCodeSystemProvider;
-  pl : TFslList<TCodeSystemProvider>;
+  p : TCodeSystemProviderFactory;
+  pl : TFslList<TCodeSystemProviderFactory>;
 begin
   h := THtmlPublisher.Create;
   try
@@ -1748,7 +1748,7 @@ begin
     h.AddTableCell('Uri', true);
     h.EndTableRow;
 
-    pl := TFslList<TCodeSystemProvider>.create;
+    pl := TFslList<TCodeSystemProviderFactory>.create;
     try
       for s in terminologies.ProviderClasses.SortedKeys do
       begin
@@ -1758,17 +1758,8 @@ begin
           pl.add(p.Link);
           h.StartTableRow;
           h.AddTableCell(p.description);
-          if p is TSnomedServices then
-          begin
-            sct := p as TSnomedServices;
-            if p = terminologies.DefSnomed then
-              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate+' (default)')
-            else
-              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate);
-          end
-          else
-            h.AddTableCell(p.version(nil));
-          h.AddTableCell(p.systemUri(nil));
+          h.AddTableCell(p.versionDesc);
+          h.AddTableCell(p.systemUri);
           h.EndTableRow;
         end;
       end;
