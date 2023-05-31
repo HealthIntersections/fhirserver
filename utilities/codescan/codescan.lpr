@@ -43,6 +43,10 @@ uses
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
   fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions;
 
+{$IFNDEF DARWIN}
+type
+  TLogEvent = procedure (msg : String; ack : boolean) of object;
+{$ENDIF}
 
 type
   TIncludeHandler = class(TInterfacedObject, IIncludeHandler)
