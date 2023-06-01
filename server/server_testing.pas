@@ -100,7 +100,7 @@ begin
   app := TIdeTesterConsoleRunner.Create(nil);
   app.Initialize;
   app.Title := 'FPCUnit Console test runner';
-  app.showProgress := true;
+  app.Mode := cpmVerbose;
   app.sparse := true;
   app.Run;
   app.Free;
