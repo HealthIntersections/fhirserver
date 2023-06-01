@@ -285,6 +285,7 @@ begin
       if FMustVerify then
         raise EFHIRException.Create('Cannot verify certificate - no match for key "'+x.AuthorityKeyIdentifier+'"');
     end;
+
     // todo: how do we verify that the certificate is a real one issued by the Australian passport office?
 
     if now > x.ValidToInGMT then

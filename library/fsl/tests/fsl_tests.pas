@@ -821,17 +821,17 @@ end;
 
 procedure TFslUtilitiesTestCases.testStringSorting;
 begin
-  AssertEquals('CompareStr(ss, tt) = -1', CompareStr('ss', 'tt'), -1);
-  AssertEquals('CompareStr(tt, ss) = 1', CompareStr('tt', 'ss'), 1);
-  AssertEquals('CompareStr(tt, tt) = 0', CompareStr('tt', 'tt'), 0);
-  AssertEquals('CompareStr(tt, tt) = 0', CompareStr('tta', 'tt'), 1);
-  AssertEquals('CompareStr(tt, tt) = -1', CompareStr('tt', 'tt:'), -1);
-  AssertEquals('CompareStr(TT, tt) = -1', CompareStr('TT', 'tt'), -1);
-  AssertEquals('CompareStr(tt, TT) = 1', CompareStr('tt', 'TT'), 1);
-  AssertEquals('CompareStr(TT, TT) = 0', CompareStr('TT', 'TT'), 0);
-  AssertEquals('CompareText(TT, tt, true) = 0', CompareText('TT', 'tt'), 0);
-  AssertEquals('CompareText(tt, TT, true) = 0', CompareText('tt', 'TT'), 0);
-  AssertEquals('CompareText(tt, tt, true) = 0', CompareText('tt', 'tt'), 0);
+  AssertTrue('CompareStr(ss, tt) < 0', CompareStr('ss', 'tt') < 0);
+  AssertTrue('CompareStr(tt, ss) > 0', CompareStr('tt', 'ss') > 0);
+  AssertTrue('CompareStr(tt, tt) = 0', CompareStr('tt', 'tt') = 0);
+  AssertTrue('CompareStr(tt, tt) = 0', CompareStr('tta', 'tt') > 0);
+  AssertTrue('CompareStr(tt, tt) < 0', CompareStr('tt', 'tt:') < 0);
+  AssertTrue('CompareStr(TT, tt) < 0', CompareStr('TT', 'tt') < 0);
+  AssertTrue('CompareStr(tt, TT) => 0', CompareStr('tt', 'TT') > 0);
+  AssertTrue('CompareStr(TT, TT) = 0', CompareStr('TT', 'TT') = 0);
+  AssertTrue('CompareText(TT, tt, true) = 0', CompareText('TT', 'tt') = 0);
+  AssertTrue('CompareText(tt, TT, true) = 0', CompareText('tt', 'TT') = 0);
+  AssertTrue('CompareText(tt, tt, true) = 0', CompareText('tt', 'tt') = 0);
   AssertEquals('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
   AssertEquals('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
 end;
@@ -4044,8 +4044,10 @@ begin
   begin
     // this may not work on linux; a root account always has full control and can always write and delete a file.
     FileSetReadOnly(filename, true);
+    {$IFNDEF LINUX}
     FileDelete(filename);
     assertTrue(FileExists(filename), 'FileExists(filename) #3');
+    {$ENDIF}
   end;
 
   if (FileCanBeReadOnly) then
