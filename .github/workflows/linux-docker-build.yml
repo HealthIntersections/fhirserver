@@ -66,3 +66,15 @@ jobs:
           -v ~/terminology:/terminology \
           -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
           fhirserver -tests
+    -
+      name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Tag and push Docker image
+      run: |
+        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:version1
+        docker push fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:version1
+
