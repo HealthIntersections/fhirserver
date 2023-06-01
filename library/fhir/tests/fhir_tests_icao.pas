@@ -97,10 +97,13 @@ end;
 {$ENDIF}
 
 procedure TFHIRICAOTests.TestIcaoCertAuBroken;
+{$IFNDEF LINUX}
 var
   imp : TICAOCardImporter;
   card : THealthcareCard;
+{$ENDIF}
 begin
+  {$IFNDEF LINUX}
   imp := TICAOCardImporter.Create;
   try
     imp.factory := TFHIRFactoryR4.Create;
@@ -119,13 +122,17 @@ begin
   finally
     imp.Free;
   end;
+  {$ENDIF}
 end;
 
 procedure TFHIRICAOTests.TestIcaoCertNoStore;
+{$IFNDEF LINUX}
 var
   imp : TICAOCardImporter;
   card : THealthcareCard;
+{$ENDIF}
 begin
+  {$IFNDEF LINUX}
   imp := TICAOCardImporter.Create;
   try
     imp.factory := TFHIRFactoryR4.Create;
@@ -143,6 +150,7 @@ begin
   finally
     imp.Free;
   end;
+  {$ENDIF}
 end;
 
 end.
