@@ -76,5 +76,5 @@ jobs:
     - name: Tag and push Docker image
       run: |
         docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:version1
-        docker push fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:version1
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:version1
 
