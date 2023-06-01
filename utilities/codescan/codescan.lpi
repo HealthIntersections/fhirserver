@@ -11,7 +11,6 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="FHIR Code Scanner"/>
-      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <Icon Value="0"/>
     </General>
@@ -26,13 +25,17 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
           </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
         </CompilerOptions>
       </Item>
       <Item Name="linux">
@@ -44,7 +47,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -62,13 +64,17 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
           </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
         </CompilerOptions>
       </Item>
     </BuildModes>
@@ -105,10 +111,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\..\library\fsl\fsl_versions.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="codescanform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CodeScannerForm"/>
@@ -126,7 +128,6 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-      <OtherUnitFiles Value="..\..\library\fsl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

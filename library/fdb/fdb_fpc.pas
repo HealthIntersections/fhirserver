@@ -1,5 +1,33 @@
 unit fdb_fpc;
 
+{
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -277,32 +305,32 @@ end;
 
 procedure TFDBSQDBConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.DropTableV(ATableName : String);
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.DropColumnV(ATableName, AColumnName : String);
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.ListTablesV(AList : TStrings);
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.ClearDatabaseV;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TFDBSQDBConnection.ColByNameV(AColName: String): Integer;
@@ -317,27 +345,27 @@ end;
 
 function TFDBSQDBConnection.DatabaseSizeV : int64;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 Function TFDBSQDBConnection.TableSizeV(sName : String):int64;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TFDBSQDBConnection.SupportsSizingV : Boolean;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TFDBSQDBConnection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TFDBSQDBConnection.FetchMetaDataV : TFDBMetaData;
 begin
-  raise Exception.create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 
@@ -407,9 +435,9 @@ begin
   if (FPlatform = kdbMySQL) then
     result := TFDBSQDBConnection.create(self, makeMySqlConnection)
   else if (FPlatform = kdbSQLServer) then
-    raise Exception.create('not supported yet')
+    raise EDBException.create('not supported yet')
   else
-    raise Exception.create('not supported');
+    raise EDBException.create('not supported');
 end;
 
 end.

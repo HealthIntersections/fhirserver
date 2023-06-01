@@ -89,13 +89,13 @@ begin
       begin
         json := TJSONParser.Parse(client.Buffer.AsText);
         try
-          raise Exception.Create('Error Sending Message: '+json.str['msg']);
+          raise EFslException.Create('Error Sending Message: '+json.str['msg']);
         finally
           json.free;
         end;
       end
       else
-        raise Exception.Create('Zulip send failed ('+inttostr(client.ResponseCode)+')');
+        raise EFslException.Create('Zulip send failed ('+inttostr(client.ResponseCode)+')');
     end;
 
   finally

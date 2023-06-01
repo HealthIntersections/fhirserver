@@ -9,7 +9,7 @@ object PronounsDialog: TPronounsDialog
   FormStyle = fsStayOnTop
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '2.2.5.0'
+  LCLVersion = '2.2.7.0'
   object Panel1: TPanel
     Left = 0
     Height = 41

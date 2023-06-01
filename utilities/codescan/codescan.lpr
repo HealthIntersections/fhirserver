@@ -30,6 +30,35 @@ Also, this program serves some utility functions in the release process - updati
 code versions, and checking that particular files exist (or not)
 }
 
+
+{
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$MODE DELPHI}
 
 uses
@@ -37,11 +66,11 @@ uses
   cthreads,
   {$ENDIF}
   {$IFDEF DARWIN}
-  Forms, Interfaces, codeScanForm,
+  Forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
-  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions;
+  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions, codeScanForm;
 
 {$IFNDEF DARWIN}
 type
@@ -149,9 +178,9 @@ procedure TCodeScanner.reportError(filename : String; line : integer; msg : Stri
 begin
   FAllOk := false;
   if (line > 0) then
-    writeln(filename+' line '+inttostr(line)+': '+msg)
+    output(filename+' line '+inttostr(line)+': '+msg)
   else
-    writeln(filename+': '+msg);
+    output(filename+': '+msg);
 end;
 
 procedure TCodeScanner.checkFileForUnicode(filename : String);
@@ -412,7 +441,10 @@ var
 begin
   if (checks = []) then
     exit;
-  write('.');
+  if (assigned(FOnLog)) then
+    FOnLog('.', false, false)
+  else
+    write('.');
   for s in TDirectory.GetFiles(folder) do
     checkFile(s, checks, incFolder);
   for s in TDirectory.GetDirectories(folder) do
@@ -483,7 +515,7 @@ end;
 procedure TCodeScanner.output(msg: String = ''; ack : boolean = false);
 begin
   if (assigned(FOnLog)) then
-    FOnLog(msg, ack)
+    FOnLog(msg, true, ack)
   else
   begin
     writeln(msg);
@@ -630,10 +662,10 @@ begin
   CodeApp := TCodeScanner.Create;
   try
     {$IFDEF DARWIN}
-    if paramstr(1) = 'gui' then
+    if paramstr(2) = 'gui' then
     begin
-      //Application.Title:='FHIRToolkit';
-      //Application.Scaled:=True;
+      Application.Title:='FHIRToolkit';
+      Application.Scaled:=True;
       Application.Initialize;
       Application.CreateForm(TCodeScannerForm, CodeScannerForm);
       CodeApp.FOnLog := CodeScannerForm.Log;
