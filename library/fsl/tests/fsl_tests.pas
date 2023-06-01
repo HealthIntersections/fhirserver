@@ -832,7 +832,7 @@ begin
   AssertTrue('CompareText(TT, tt, true) = 0', CompareText('TT', 'tt') = 0);
   AssertTrue('CompareText(tt, TT, true) = 0', CompareText('tt', 'TT') = 0);
   AssertTrue('CompareText(tt, tt, true) = 0', CompareText('tt', 'tt') = 0);
-  AssertTrue('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
+  AssertEquals('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
   AssertEquals('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
 end;
 
@@ -4044,8 +4044,10 @@ begin
   begin
     // this may not work on linux; a root account always has full control and can always write and delete a file.
     FileSetReadOnly(filename, true);
+    {$IFNDEF LINUX}
     FileDelete(filename);
     assertTrue(FileExists(filename), 'FileExists(filename) #3');
+    {$ENDIF}
   end;
 
   if (FileCanBeReadOnly) then
