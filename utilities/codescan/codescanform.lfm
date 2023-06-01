@@ -7,7 +7,6 @@ object CodeScannerForm: TCodeScannerForm
   ClientHeight = 442
   ClientWidth = 935
   Position = poScreenCenter
-  LCLVersion = '2.2.5.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -24,6 +23,7 @@ object CodeScannerForm: TCodeScannerForm
       Top = 8
       Width = 107
       Caption = 'Go'
+      OnClick = Button1Click
       TabOrder = 0
     end
     object Button2: TButton

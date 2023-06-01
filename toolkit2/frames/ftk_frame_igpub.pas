@@ -1088,7 +1088,7 @@ end;
 
 procedure TIgPubPageFrame.MenuItem1Click(Sender: TObject);
 begin
-  raise Exception.create('todo');
+  raise EFslException.create('todo');
 end;
 
 procedure TIgPubPageFrame.MenuItem2Click(Sender: TObject);

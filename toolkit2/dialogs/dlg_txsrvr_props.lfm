@@ -7,7 +7,7 @@ object TxServerPropertiesDialog: TTxServerPropertiesDialog
   ClientHeight = 163
   ClientWidth = 585
   OnCreate = FormCreate
-  LCLVersion = '2.2.5.0'
+  LCLVersion = '2.2.7.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
