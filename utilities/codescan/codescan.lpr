@@ -66,15 +66,15 @@ uses
   cthreads,
   {$ENDIF}
   {$IFDEF DARWIN}
-  Forms, Interfaces,
+  Forms, Interfaces, codeScanForm,
   {$ENDIF}
   Classes, SysUtils,
   DelphiAST, DelphiAST.Consts, DelphiAST.Classes, SimpleParser.Lexer.Types, SimplerParser.Lexer.Config,
-  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions, codeScanForm;
+  fsl_utilities, fsl_fpc, fsl_stream, fsl_unicode, fsl_versions;
 
 {$IFNDEF DARWIN}
 type
-  TLogEvent = procedure (msg : String; ack : boolean) of object;
+  TLogEvent = procedure (msg : String; line, ack : boolean) of object;
 {$ENDIF}
 
 type
