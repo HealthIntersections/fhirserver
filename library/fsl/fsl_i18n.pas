@@ -94,6 +94,8 @@ begin
     lang := filename.Substring(filename.indexOf('_')+1).replace('.properties', '')
   else
     lang := 'en';
+  if not FileExists(filename) then
+    raise EFslException.create('Properties File "'+filename+'" not found');
   msgs := TFslStringMap.create;
   try
     assignfile(f, filename);
