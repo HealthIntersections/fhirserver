@@ -21,8 +21,8 @@ COPY . /work/fhirserver
 
 RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
 RUN cp exec/pack/linux/*.so /usr/lib/
-RUN cp exec/pack/* exec/64
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
+RUN cp exec/pack/* exec/64
 
 ENV DISPLAY :99
 ENV PORT 80
