@@ -677,6 +677,7 @@ var
   ok : boolean;
   epn, cid, ip : String;
   tt : TTimeTracker;
+  fullPath: String;
 begin
   // when running with a reverse proxy, it's easier to let the reverse proxy just use non-ssl upstream, and pass through the certificate details se we know SSL is being used
   if (Common.SSLHeaderValue <> '') and (request.RawHeaders.Values['X-Client-SSL'] = Common.SSLHeaderValue) then
@@ -742,6 +743,25 @@ begin
 
           if not ok then
           begin
+            // Get full path of the requested document
+            fullPath := SourceProvider.AltFile(request.Document, '/');
+
+            // If the path corresponds to a directory, look for a default file
+            if TDirectory.Exists(fullPath) then
+            begin
+              // List of possible default files
+              const DefaultFiles: array[0..2] of String = ('index.html', 'index.htm', 'default.html');
+
+              for var DefaultFile in DefaultFiles do
+              begin
+                if TFile.Exists(fullPath + '/' + DefaultFile) then
+                begin
+                  ReturnSpecFile(response, request.Document + '/' + DefaultFile, fullPath + '/' + DefaultFile, false);
+                  Exit;  // Exit the procedure after serving a default file
+                end;
+              end;
+            end;
+
             if request.Document = '/diagnostics' then
             begin
               epn := 'WS';
