@@ -435,8 +435,6 @@ Begin
   else if AExt = '.html' then  // Add this case
     result := 'text/html'      // Use 'text/html' for .html files
   else
-
-  Else
   Begin
 {$IFDEF WINDOWS}
     Try
