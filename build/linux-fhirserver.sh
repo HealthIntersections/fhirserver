@@ -53,5 +53,5 @@ echo "## compile toolkit"
 $BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --build-mode=linux -q -q
 
 echo "## compile server"
-$BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux -q -q
+$BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux -q -q -O2 -Xs -Flto
 
