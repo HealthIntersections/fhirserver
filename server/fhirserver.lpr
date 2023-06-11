@@ -38,10 +38,9 @@ uses
   cmem, cthreads,
   {$ENDIF}
   {$IFDEF OSX}
-  cmem, cthreads, forms,
+  cmem, cthreads, forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
-  Interfaces,
   kernel, server_testing;
 
 {$R *.res}
