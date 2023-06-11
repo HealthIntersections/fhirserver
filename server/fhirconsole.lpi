@@ -143,6 +143,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <Compiler>-O2 -Xs</Compiler>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="osx">

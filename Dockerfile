@@ -19,10 +19,12 @@ RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
-RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
-RUN cp exec/pack/linux/*.so /usr/lib/
-RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
-RUN cp exec/pack/*.properties exec/64
+RUN /work/bootstrap/linux-libraries.sh /work/bootstrap && \
+    cp exec/pack/linux/*.so /usr/lib/
+RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap && \
+    cp exec/pack/*.properties exec/64 && \
+    find . -name "*.o" -type f -delete -o -name "*.ppu" -type f -delete
+
 
 ENV DISPLAY :99
 ENV PORT 80
