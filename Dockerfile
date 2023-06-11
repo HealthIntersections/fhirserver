@@ -38,4 +38,4 @@ chmod +x /bin/entrypoint.sh
 
 ENTRYPOINT ["/bin/entrypoint.sh"]
 
-CMD ["-cmd",  "exec",  "-cfg", "config.ini", "-local", "$TERMINOLOGY_CACHE"]
+CMD ["-cmd",  "exec",  "-cfg", "/config/config.ini", "-local", "$TERMINOLOGY_CACHE"]
