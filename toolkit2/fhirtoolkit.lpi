@@ -118,6 +118,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <Compiler>-O2 -Xs</Compiler>
           </Other>
         </CompilerOptions>
       </Item>
