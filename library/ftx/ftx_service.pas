@@ -389,13 +389,19 @@ end;
 function TConceptDesignations.present(allowedLangs: TFslList<TIETFLang>): String;
 var
   cd : TConceptDesignation;
+  b : TCommaSeparatedStringBuilder;
 begin
-  result := '';
-  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil)) then
-    CommaAdd(result, FDisplay.AsString);
-  for cd in designations do
-    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
-      CommaAdd(result, cd.present);
+  b := TCommaSeparatedStringBuilder.create(', ', ' or ');
+  try
+    if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil)) then
+      b.append(''''+FDisplay.AsString+'''');
+    for cd in designations do
+      if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+        b.append(''''+cd.present+'''');
+    result := b.makeString;
+  finally
+    b.free;
+  end;
 end;
 
 function TConceptDesignations.findDisplay(allowedLangs: TFslList<TIETFLang>): TConceptDesignation;

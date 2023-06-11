@@ -40,13 +40,17 @@ uses
   server_config, database_installer, server_factory,
   endpoint_txsvr;
 
-function buildConfigFromSource(src : String) : String;
+function loadRemoteConfig(src : String; local : TIniFile) : String;
 
 implementation
 
 type
+
+  { TEndPointInfo }
+
   TEndPointInfo = class (TFslObject)
   private
+    FActive: boolean;
     FVersion: TFHIRVersion;
     FFilename: String;
     FPackages: TStringList;
@@ -55,12 +59,15 @@ type
     constructor Create(version : TFHIRVersion); overload;
     destructor Destroy; override;
 
+    property active : boolean read FActive write FActive;
     property kind : String read FKind write FKind;
     property filename : String read FFilename write FFilename;
     property version : TFHIRVersion read FVersion write FVersion;
     property Packages : TStringList read FPackages;
 
   end;
+
+  { TConfigurationBuilder }
 
   TConfigurationBuilder = class (TFslObject)
   private
@@ -73,12 +80,13 @@ type
     procedure DownloadProgress(sender : TObject; progress : integer);
     procedure downloadFile(fn : String);
     procedure DownloadFiles;
+    function fixDBPath(fn: String): String;
     procedure readConfig;
-    procedure buildEndPoint(ver : string);
-    procedure buildEndPoints;
+    procedure buildEndPoint(ep : TEndPointInfo);
+    procedure setupEndPoints;
     procedure CreateDatabase(v : TFHIRVersion; fn : String);
     function doUpgrade(v : TFHIRVersion; fn : String) : boolean;
-    procedure buildConfig(fn : String);
+    procedure buildConfig(fn : String; local : TCustomIniFile);
     procedure DownloadFileList(files: TJsonObject);
     procedure seePackages(realm : TJsonObject);
   public
@@ -169,13 +177,30 @@ begin
   end;
 end;
 
-procedure TConfigurationBuilder.buildConfig(fn: String);
+function TConfigurationBuilder.fixDBPath(fn : String) : String;
+begin
+  if (ExtractFilePath(fn) = '') then
+    result := FilePath([FFolder, fn])
+  else
+    result := fn;
+end;
+
+function def(s1, s2, s3 : String) : String;
+begin
+  if (s1 <> '') then
+    result := s1
+  else if (s2 <> '') then
+    result := s2
+  else
+    result := s3;
+end;
+
+procedure TConfigurationBuilder.buildConfig(fn: String; local : TCustomIniFile);
 var
   cfg : TFHIRServerConfigFile;
   n, v : String;
   rn : integer;
   sct : TFHIRServerConfigSection;
-  ini : TIniFile;
   ep, o : TJsonObject;
   lwi : String;
 begin
@@ -194,32 +219,22 @@ begin
   cfg := TFHIRServerConfigFile.Create(fn);
   try
     cfg.section['service']['runNumber'].value := inttostr(rn);
-    lwi := FilePath([executableDirectory(), 'web.ini']);
-    if (FileExists(lwi)) then    
-      Logging.log('Using web,ini file at '+lwi)
-    else
-      Logging.log('No web,ini file found at '+lwi);
 
-    ini := TIniFile.Create(lwi);
-    try
-      cfg.web['host'].value := ini.ReadString('web', 'host', 'localhost');
-      cfg.web['http'].value := inttostr(ini.ReadInteger('web', 'http', 80));
-      cfg.web['https'].value := ini.ReadString('web', 'https', '');
-      cfg.web['rproxy-http'].value := ini.ReadString('web', 'rproxy-http', '');
-      cfg.web['rproxy-https'].value := ini.ReadString('web', 'rproxy-https', '');
-      cfg.web['rproxy-cert-header'].value := ini.ReadString('web', 'rproxy-cert-header', '');
-      cfg.web['rproxy-ssl-value'].value := ini.ReadString('web', 'rproxy-ssl-value', '');
-      cfg.web['certname'].value := ini.ReadString('web', 'certname', '');
-      cfg.web['cacertname'].value := ini.ReadString('web', 'cacertname', '');
-      cfg.web['certkey'].value := ini.ReadString('web', 'certkey', '');
-      cfg.web['password'].value := ini.ReadString('web', 'password', '');
-      cfg.web['telnet-password'].value := ini.ReadString('admin', 'telnet-pword', NewGuidId);
-      cfg.admin['email'].value := ini.ReadString('admin', 'email', 'noone@fhir.org');
-      cfg.admin['ownername'].value := ini.ReadString('admin', 'user', 'Local User');
-      cfg.admin['log-folder'].value := ini.ReadString('web', 'logFolder', '');
-    finally
-      ini.Free;
-    end;
+    cfg.web['host'].value := def(local.ReadString('web', 'host', ''), cfg.web['host'].value, 'localhost');
+    cfg.web['http'].value := def(local.ReadString('web', 'http', ''), cfg.web['http'].value, '80');
+    cfg.web['https'].value := def(local.ReadString('web', 'https', ''), cfg.web['https'].value, '');
+    cfg.web['rproxy-http'].value := def(local.ReadString('web', 'rproxy-http', ''), cfg.web['rproxy-http'].value, '');
+    cfg.web['rproxy-https'].value := def(local.ReadString('web', 'rproxy-https', ''), cfg.web['rproxy-https'].value, '');
+    cfg.web['rproxy-cert-header'].value := def(local.ReadString('web', 'rproxy-cert-header', ''), cfg.web['rproxy-cert-header'].value, '');
+    cfg.web['rproxy-ssl-value'].value := def(local.ReadString('web', 'rproxy-ssl-value', ''), cfg.web['rproxy-ssl-value'].value, '');
+    cfg.web['certname'].value := def(local.ReadString('web', 'certname', ''), cfg.web['certname'].value, '');
+    cfg.web['cacertname'].value := def(local.ReadString('web', 'cacertname', ''), cfg.web['cacertname'].value, '');
+    cfg.web['certkey'].value := def(local.ReadString('web', 'certkey', ''), cfg.web['certkey'].value, '');
+    cfg.web['password'].value := def(local.ReadString('web', 'password', ''), cfg.web['password'].value, '');
+    cfg.web['telnet-password'].value := def(local.ReadString('admin', 'telnet-pword', NewGuidId), cfg.web['telnet-password'].value, '');
+    cfg.admin['email'].value := def(local.ReadString('admin', 'email', 'noone@fhir.org'), cfg.admin['email'].value, '');
+    cfg.admin['ownername'].value := def(local.ReadString('admin', 'user', 'Local User'), cfg.admin['ownername'].value, '');
+    cfg.admin['log-folder'].value := def(local.ReadString('web', 'logFolder', ''), cfg.admin['log-folder'].value, '');
 
     cfg.web['http-max-conn'].value := '50';
     cfg.web['http-cache-time'].value := '1000';
@@ -253,8 +268,9 @@ begin
 
     for n in FEndPoints.Keys do
     begin
-      if FEndPoints[n].filename <> '' then
+      if (FEndPoints[n].active) and (FEndPoints[n].Packages.Count > 0) then
       begin
+        buildEndPoint(FEndPoints[n]);
         sct := cfg.section['endpoints'].section[n];
         sct['type'].value := 'terminology';
         sct['path'].value := '/'+n;
@@ -276,6 +292,9 @@ begin
       sct['type'].value := o.str['type'];
       sct['path'].value := o.str['path'];
       sct['active'].value := 'true';
+      sct['db-type'].value := o.str['db-type'];
+      sct['db-file'].value := fixDbPath(o.str['db-file']);
+      sct['db-auto-create'].value := o.str['db-auto-create'];
       if o.has('folder') then
         sct['folder'].value := o.str['folder'].Replace('{local}', FFolder);
     end;
@@ -286,16 +305,11 @@ begin
   end;
 end;
 
-procedure TConfigurationBuilder.buildEndPoint(ver : string);
+procedure TConfigurationBuilder.buildEndPoint(ep : TEndPointInfo);
 var
   fn : String;
-  ep : TEndPointInfo;
 begin
-  ep := FEndPoints['r'+ver];
-  if (ep = nil) then
-    raise EFslException.Create('Version "'+ver+'" is unknown');
-
-  fn := FilePath([FFolder, 'endpoint-r'+ver+'.db']);
+  fn := FilePath([FFolder, 'endpoint-r'+CODES_FHIR_GENERATED_PUBLICATION[ep.version]+'.db']);
   ep.filename := fn;
   if not FileExists(fn) then
     CreateDatabase(ep.version, fn)
@@ -306,9 +320,10 @@ begin
   end;
 end;
 
-procedure TConfigurationBuilder.buildEndPoints;
+procedure TConfigurationBuilder.setupEndPoints;
 var
   v, vl : String;
+  ep : TEndPointInfo;
 begin
   if not getCommandLineParam('version', vl) then
     vl := '*';
@@ -316,7 +331,13 @@ begin
     vl := '2,3,4,5';
 
   for v in vl.Split([';', ',']) do
-    buildEndPoint(v);
+  begin
+    ep := FEndPoints['r'+v];
+    if (ep = nil) then
+      raise EFslException.Create('Version "'+v+'" is unknown')
+    else
+      ep.active := true;
+  end;
 end;
 
 procedure TConfigurationBuilder.DownloadFileList(files : TJsonObject);
@@ -468,21 +489,12 @@ begin
   end;
 end;
 
-function buildConfigFromSource(src : String) : String;
+function loadRemoteConfig(src : String; local : TIniFile) : String;
 var
   cb : TConfigurationBuilder;
   dir : String;
-  ini : TIniFile;
 begin
-  if not getCommandLineParam('local', dir) then
-    dir := UserFolder;
-
-  ini := TIniFile.Create(FilePath([dir, 'fhir-server', 'cache.ini']));
-  try
-    dir := ini.ReadString('cache', 'location', dir);
-  finally
-    ini.free;
-  end;
+  dir := local.ReadString('config', 'local', UserFolder);
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);
   try
@@ -495,8 +507,8 @@ begin
       cb.readConfig;
       Logging.log('Local Config in '+cb.FFolder);
       cb.DownloadFiles;
-      cb.buildEndPoints;
-      cb.buildConfig(result);
+      cb.setupEndPoints;
+      cb.buildConfig(result, local);
     finally
       cb.Free;
     end;

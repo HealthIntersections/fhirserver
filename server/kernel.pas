@@ -690,22 +690,10 @@ begin
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
-procedure ExecuteFhirServerInner;
-var
-  cfg : TFHIRServerConfigFile;
-  cfgName, s : String;
-  fn : String;
-  tz : TDateTime;
-  zc : String;
+procedure initLogging(cfg : TCustomIniFile);
 begin
-  GStartTime := GetTickCount64;
-
-  {$IFDEF WINDOWS}
-  SetConsoleTitle('FHIR Server');
-  {$ENDIF}
-
-  if getCommandLineParam('log', fn) then
-    Logging.logToFile(fn)
+  if cfg.valueExists('config', 'log') then
+    Logging.logToFile(cfg.readString('config', 'log', ''))
   else
     Logging.logToFile(filePath(['[tmp]', 'fhirserver.log']));
   Logging.FileLog.Policy.FullPolicy := lfpChop;
@@ -713,8 +701,12 @@ begin
 
   // if there's no parameters, then we don't log to the screen
   // if the cmd parameter is 'console' or 'exec' then we also log to the screen
+  {$IFDEF WINDOWS}
   if ParamCount > 0 then
     Logging.LogToConsole := true;
+  {$ELSE}
+  Logging.LogToConsole := true;
+  {$ENDIF}
 
   logCompileInfo;
   logSystemInfo;
@@ -729,70 +721,98 @@ begin
   end
   else
     Logging.log(commandLineAsString+' (dir='+GetCurrentDir+')');
+  Logging.log('Command Line Parameters: see https://github.com/HealthIntersections/fhirserver/wiki/Command-line-Parameters-for-the-server');
+
+end;
+
+procedure loadDependencies;
+var
+  tz : TDateTime;
+begin
+  Logging.Log('Loading Dependencies');
+  {$IFNDEF STATICLOAD_OPENSSL}
+  {$IFDEF WINDOWS}
+  GetOpenSSLLoader.OpenSSLPath := executableDirectory();
+  {$ENDIF}
+  {$IFDEF OSX}
+  // todo: do something about this
+  GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+  {$ENDIF}
+  if GetOpenSSLLoader.OpenSSLPath = '' then
+    Logging.Log('OpenSSL 1.1 from (default)')
+  else
+    Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
+  {$ELSE}
+  // Logging.Log('OpenSSL 1.1 Statically bound');
+  {$ENDIF}
+  InitOpenSSL;
+  {$IFDEF DELPHI}
+  JclStartExceptionTracking;
+  CoInitialize(nil);
+  {$ENDIF}
+  fhir_objects.loadMessages;
+  tz := TimeZoneBias;
+  if tz = 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
+  else if tz < 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+FormatDateTime('hh:nn', tz))
+  else
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
+  Logging.Log('Loaded');
+end;
+
+procedure ExecuteFhirServerInner;
+var
+  localDir : String;
+  localConfig : TIniFile;
+  cfg : TFHIRServerConfigFile;
+  cfgName, s : String;
+  fn : String;
+  zc : String;
+begin
+  GStartTime := GetTickCount64;
+
+  {$IFDEF WINDOWS}
+  SetConsoleTitle('FHIR Server');
+  {$ENDIF}
+  {$IFDEF OSX}
+    localDir := GetAppConfigDir(false);
+  {$ELSE}
+    localDir := IncludeTrailingPathDelimiter(executableDirectory());
+  {$ENDIF}
+
+  if (getCommandLineParam('cfg', fn)) then
+    localConfig := TIniFile.create(fn)
+  else
+    localConfig := TIniFile.create(localDir + 'fhirserver.ini');
 
   try
-    Logging.Log('Loading Dependencies');
-    {$IFNDEF STATICLOAD_OPENSSL}
-    {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := executableDirectory();
-    {$ENDIF}
-    {$IFDEF OSX}
-    // todo: do something about this
-    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
-    {$ENDIF}
-    if GetOpenSSLLoader.OpenSSLPath = '' then
-      Logging.Log('OpenSSL 1.1 from (default)')
-    else
-      Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
-    {$ELSE}
-    // Logging.Log('OpenSSL 1.1 Statically bound');
-    {$ENDIF}
-    InitOpenSSL;
-    {$IFDEF DELPHI}
-    JclStartExceptionTracking;
-    CoInitialize(nil);
-    {$ENDIF}
-    fhir_objects.loadMessages;
-    Logging.Log('Loaded');
-    tz := TimeZoneBias;
-    if tz = 0 then
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
-    else if tz < 0 then
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+FormatDateTime('hh:nn', tz))
-    else
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
-
     try
-      if not getCommandLineParam('cfg', cfgName) then
-      {$IFDEF OSX}
-        cfgName := GetAppConfigDir(false)+'fhirserver.cfg';
-      {$ELSE}
-        cfgName := IncludeTrailingPathDelimiter(executableDirectory())+'fhirserver.cfg';
-      {$ENDIF}
-      Logging.Log('Config: '+cfgName);
-
-      if cfgName.StartsWith('https://') or cfgName.StartsWith('http://') or cfgName.StartsWith('file:') then
-        cfgName := buildConfigFromSource(cfgName)
-      else
-      begin
-        // zero config service support, where you don't easily get a parameter
-        s := FileToString(cfgName, TEncoding.UTF8);
-        if s.StartsWith('https://') or s.StartsWith('http://') or s.StartsWith('file:') then
-          cfgName := buildConfigFromSource(s);
-      end;
-
-
-
-      cfg := TFHIRServerConfigFile.create(cfgName);
+      initLogging(localConfig);
+      loadDependencies;
       try
-        ExecuteFhirServer(cfg);
+        if localConfig.valueExists('config', 'zero') then
+          cfgName := loadRemoteConfig(localConfig.readString('config', 'zero', ''), localConfig)
+        else if localConfig.valueExists('config', 'cfgFile') then
+          cfgName := localConfig.ReadString('config', 'cfgFile', '')
+        else
+          cfgName := localDir + 'fhirserver.cfg';
+        Logging.Log('Config: '+cfgName);
+
+          // ok, now, what are we running?
+        cfg := TFHIRServerConfigFile.create(cfgName);
+        try
+          ExecuteFhirServer(cfg);
+        finally
+          cfg.free;
+        end;
       finally
-        cfg.free;
+        {$IFDEF WINDOWS}
+        CoUninitialize();
+        {$ENDIF}
       end;
     finally
-    {$IFDEF WINDOWS}
-    CoUninitialize();
-    {$ENDIF}
+      localConfig.free;
     end;
   except
     on e : Exception do
