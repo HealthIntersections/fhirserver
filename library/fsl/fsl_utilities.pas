@@ -454,6 +454,24 @@ Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCha
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
 Type
+
+  { TCommaSeparatedStringBuilder }
+
+  TCommaSeparatedStringBuilder = class (TFslObject)
+  private
+    FSeperator : String;
+    FLastSeperator : String;
+    FList : TStringList;
+  public
+    constructor create(sep, lastSep : String);
+    destructor Destroy; override;
+
+    property Seperator : String read FSeperator;
+    property LastSeperator : String read FLastSeperator;
+    procedure append(s : String);
+    function makeString : String;
+  end;
+
   TFslStringBuilder = Class (TFslObject)
   Private
     FBuilder : TStringBuilder;
@@ -1797,7 +1815,6 @@ Type
       Property Capitals : Boolean Read FCapitals Write FCapitals;
       Property CaseSensitive : Boolean Read FCaseSensitive Write FCaseSensitive;
   End;
-
 
 function hasCommandLineParam(name : String) : boolean;
 function getCommandLineParam(name : String; out res : String) : boolean;
@@ -4092,6 +4109,7 @@ End;
 Begin
   Result := '';
 End;
+
 {$ENDIF}
 {$IFDEF LINUX}
 Begin
@@ -17450,6 +17468,43 @@ var
 begin
   splitTimezone(value, tm, tz);
   result := tm.replace('T', '').replace(':', '').replace('.', '').length;
+end;
+
+{ TCommaSeparatedStringBuilder }
+
+constructor TCommaSeparatedStringBuilder.create(sep, lastSep: String);
+begin
+  inherited Create;
+  FSeperator := sep;
+  FLastSeperator := LastSep;
+  FList := TStringList.create;
+end;
+
+destructor TCommaSeparatedStringBuilder.Destroy;
+begin
+  FList.free;
+  inherited Destroy;
+end;
+
+procedure TCommaSeparatedStringBuilder.append(s: String);
+begin
+  FList.add(s);
+end;
+
+function TCommaSeparatedStringBuilder.makeString: String;
+var
+  i : integer;
+begin
+  if FList.count = 0 then
+    result := ''
+  else
+  begin
+    result := FList[0];
+    for i := 1 to Flist.count - 2 do
+      result := result + FSeperator + Flist[i];
+    if Flist.count > 1 then
+      result := result + FLastSeperator + FList[FList.count - 1];
+  end;
 end;
 
 Initialization
