@@ -38,7 +38,7 @@ uses
   SysUtils, Classes, Generics.Collections, ZLib,
 
   fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_turtle, fsl_xml, fsl_crypto, fsl_html,
-  fsl_fetcher,
+  fsl_fetcher, fsl_web_stream,
 
   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
   fhir4_context, fhir4_types, fhir4_resources, fhir4_constants, fhir4_resources_base;
@@ -70,6 +70,7 @@ const
     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap, {$ENDIF}
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
     frtValueSet];
+  TERMINOLOGY_RESOURCES : Array of String = ['CodeSystem', 'ValueSet', 'ConceptMap'];
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
@@ -187,6 +188,8 @@ type
   TFhirConformanceContact = TFHIRContactDetail;
   TFhirQuestionnaireItemOption = TFhirQuestionnaireItemAnswerOption;
 
+  { TFhirPeriodHelper }
+
   TFhirPeriodHelper = class helper for TFhirPeriod
   private
     function GetEditString: String;
@@ -197,6 +200,7 @@ type
     class function fromEdit(s : String) : TFhirPeriod;
     property editString : String read GetEditString write SetEditString;
     function point : TDateTime;
+    function isCurrent : boolean;
   end;
 
   TFhirBinaryHelper = class helper for TFhirBinary
@@ -432,13 +436,17 @@ type
     function supportsOperation(rName, opName : string) : boolean;
   end;
 
+  { TFHIRCodeableConceptHelper }
+
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
     constructor Create(system, code : String); overload;
-    function hasCode(System, Code : String) : boolean;
+    function hasCode(System, Code : String) : boolean; overload;
+    function hasCode(System, Version, Code : String) : boolean; overload;
     function hasCoding : boolean;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
+    procedure addCoding(systemUri, version, code, display : String);
   end;
 
   TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
@@ -501,6 +509,7 @@ type
   public
     function context : string;
     function source : string;
+    function findContains(systemUri, version, code : String) : TFHIRValueSetExpansionContains;
   end;
 
   TFhirTerminologyCapabilitiesHelper = class helper for TFhirTerminologyCapabilities
@@ -508,11 +517,16 @@ type
     function context : string;
   end;
 
+  { TFhirValueSetExpansionHelper }
+
   TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
   public
     procedure AddParamStr(name, value : String); overload;
     procedure AddParamUri(name, value : String); overload;
+    procedure AddParamCanonical(name, value : String); overload;
     procedure AddParamBool(name : String; value : boolean); overload;
+    procedure addParamCode(name, value : String); overload;
+    procedure addParamInt(name : String; value : integer); overload;
   end;
 
   TFHIROperationOutcomeHelper = class helper (TFHIRDomainResourceHelper) for TFhirOperationOutcome
@@ -718,6 +732,8 @@ type
     property system : String read GetSystem;
     function context : string;
     function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
+    function isInactive(concept :  TFhirCodeSystemConcept) : boolean;
+    function isDeprecated(concept :  TFhirCodeSystemConcept) : boolean;
 
     function buildImplicitValueSet : TFhirValueSet;
   end;
@@ -828,9 +844,14 @@ type
     function summary : String;
   end;
 
+  { TFhirPatientHelper }
+
   TFhirPatientHelper = class helper for TFhirPatient
+  private
+    function findCurrentExtensionValue(url: String): TFHIRCodeableConcept;
   public
     function summary : String;
+    function genderPlus : String;
   end;
 
   TFhirPersonHelper = class helper for TFhirPerson
@@ -1812,7 +1833,7 @@ end;
 function HumanNamesAsText(names : TFhirHumanNameList):String;
 begin
   if (names = nil) or (names.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := HumanNameAsText(names[0]);
 end;
@@ -1847,7 +1868,7 @@ end;
 function IdentifiersAsText(ids : TFhirIdentifierList):String;
 begin
   if (ids = nil) or (ids.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := IdentifierAsText(ids[0]);
 end;
@@ -1865,7 +1886,7 @@ end;
 function ContactsAsText(cps : TFHIRContactPointList):String;
 begin
   if (cps = nil) or (cps.Count = 0) then
-    result := '??'
+    result := ''
   else
     result := ContactAsText(cps[0]);
 end;
@@ -2385,6 +2406,8 @@ begin
     result := boolToStr(TFhirBoolean(self.ExtensionList.Item(ndx).value).value)
   else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
     result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
+  else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+    result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
   else
     result := '';
 end;
@@ -2708,6 +2731,8 @@ begin
           result := TFhirCode(self.ExtensionList.Item(ndx).value).value
         else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
           result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+          result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
         else
           result := '';
       end;
@@ -3046,7 +3071,7 @@ end;
 
 procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = nil);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
@@ -3863,6 +3888,22 @@ begin
     raise EFHIRException.create('Unable to find code in '+StringArrayToString(systems));
 end;
 
+procedure TFHIRCodeableConceptHelper.addCoding(systemUri, version, code, display: String);
+var
+  c : TFhirCoding;
+begin
+  c := TFHIRCoding.create;
+  try
+    c.system := systemUri;
+    c.version := version;
+    c.code := code;
+    c.display := display;
+    codingList.add(c.link);
+  finally
+    c.free;
+  end;
+end;
+
 function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
 var
   i : integer;
@@ -3871,6 +3912,20 @@ begin
   if self <> nil then
     for i := 0 to codingList.Count - 1 do
       if (codingList[i].system = system) and (codingList[i].code = code) then
+      begin
+        result := true;
+        break;
+      end;
+end;
+
+function TFHIRCodeableConceptHelper.hasCode(System, Version, Code: String): boolean;
+var
+  i : integer;
+begin
+  result :=  false;
+  if self <> nil then
+    for i := 0 to codingList.Count - 1 do
+      if (codingList[i].system = system) and (codingList[i].version = version) and (codingList[i].code = code) then
       begin
         result := true;
         break;
@@ -4051,21 +4106,56 @@ end;
 
 function TFhirValueSetHelper.source: string;
 var
-  b : TFslStringBuilder;
+  ts : TStringList;
   comp : TFhirValueSetComposeInclude;
 begin
-  b := TFslStringBuilder.Create;
+  ts := TStringList.create;
   try
+    ts.sorted := true;
+
     if (compose <> nil) then
       for comp in compose.includeList do
+      begin
         if comp.system <> '' then
-          b.Append(csName(comp.system));
-    result := b.AsString;
+        begin
+          if ts.IndexOf(comp.system) = -1 then
+          begin
+            ts.add(csName(comp.system));
+          end;
+        end;
+      end;
+    result := ts.commaText;
   finally
-    b.Free;
+    ts.free;
   end;
 end;
 
+function findContainsInList(list : TFhirValueSetExpansionContainsList; systemUri, version, code: String): TFHIRValueSetExpansionContains;
+var
+  cc, t : TFhirValueSetExpansionContains;
+begin
+  for cc in list do
+  begin
+    if (systemUri = cc.system) and (code = cc.code) and ((version = '') or (version = cc.version)) then
+      exit(cc);
+    if (cc.hasContainsList) then
+    begin
+      t := findContainsInList(cc.containsList, systemUri, version, code);
+      if (t <> nil) then
+        exit(t);
+    end;
+  end;
+  result := nil;
+end;
+
+function TFhirValueSetHelper.findContains(systemUri, version, code: String): TFHIRValueSetExpansionContains;
+begin
+  if Expansion = nil then
+    result := nil
+  else
+    result := findContainsInList(Expansion.containsList, systemUri, version, code);
+
+end;
 function gen(t : TFhirType):String;
 begin
   if (t = nil) then
@@ -4118,7 +4208,7 @@ begin
   else if t.isPrimitive then
     result := t.primitiveValue
   else
-    raise EFHIRException.create('Type '+t.className+' not handled yet');
+    result := 'Type '+t.fhirType+' not handled yet in gen';
 end;
 
 function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
@@ -4269,6 +4359,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
+  result := false;
   raise EFHIRTodo.create('compareValues');
 end;
 
@@ -4985,19 +5076,20 @@ procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exemp
 var
   ext : TFHIRExtension;
 begin
-  if length(exempt) > 0 then
-  begin
-    for ext in modifierExtensionList do
-      if not StringArrayExistsInsensitive(exempt, ext.url) then
-        raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
-  end
-  else if modifierExtensionList.Count > 0 then
-    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+  if hasModifierExtensionList then
+    if length(exempt) > 0 then
+    begin
+      for ext in modifierExtensionList do
+        if not StringArrayExistsInsensitive(exempt, ext.url) then
+          raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+    end
+    else
+      raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
 procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
@@ -5150,7 +5242,41 @@ begin
   for p in concept.property_List do
     if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
       exit(true);
+  for p in concept.property_List do
+      if (p.code = 'notSelectable') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+        exit(true);
 end;
+
+function TFhirCodeSystemHelper.isInactive(concept: TFhirCodeSystemConcept): boolean;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := false;
+  for p in concept.property_List do
+  begin
+    if (p.code = 'inactive') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit(true);
+    if (p.code = 'status') and ((p.value.ToString = 'inactive') or (p.value.ToString = 'retired')) then
+      exit(true);
+  end;
+end;
+
+function TFhirCodeSystemHelper.isDeprecated(concept: TFhirCodeSystemConcept): boolean;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := false;
+  for p in concept.property_List do
+  begin
+    if (p.code = 'deprecated') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit(true);
+    if (p.code = 'deprecationDate') and (p.value is TFhirDateTime) and (TFHIRDateTime(p.value).value.before(TFslDateTime.makeUTC, false)) then
+      exit(true);
+    if (p.code = 'status') and (p.value.ToString = 'deprecated') then
+      exit(true);
+  end;
+end;
+
 
 { TFhirAuditEventHelper }
 
@@ -5419,7 +5545,7 @@ end;
 
 { TFhirValueSetExpansionHelper }
 
-procedure TFhirValueSetExpansionHelper.addParamStr(name, value: String);
+procedure TFhirValueSetExpansionHelper.AddParamStr(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
@@ -5428,7 +5554,7 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
-procedure TFhirValueSetExpansionHelper.addParamUri(name, value: String);
+procedure TFhirValueSetExpansionHelper.AddParamUri(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
@@ -5437,13 +5563,41 @@ begin
   p.value := TFhirUri.Create(value);
 end;
 
-procedure TFhirValueSetExpansionHelper.addParamBool(name: String; value: boolean);
+procedure TFhirValueSetExpansionHelper.AddParamCanonical(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirCanonical.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.AddParamBool(name: String; value: boolean
+  );
 var
   p : TFhirValueSetExpansionParameter;
 begin
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirBoolean.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamCode(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirCode.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamInt(name: String; value: integer);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirInteger.Create(value);
 end;
 
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
@@ -6388,14 +6542,15 @@ end;
 
 { TFhirPeriodHelper }
 
-class function TFhirPeriodHelper.fromDateTimes(start, end_: TDateTime) : TFHIRPeriod;
+class function TFhirPeriodHelper.fromDateTimes(start, end_: TDateTime
+  ): TFhirPeriod;
 begin
   result := TFhirPeriod.create;
   result.start := TFslDateTime.make(start, dttzUTC);
   result.end_ := TFslDateTime.make(end_, dttzUTC);
 end;
 
-class function TFhirPeriodHelper.fromDates(start, end_: TDateTime) : TFHIRPeriod;
+class function TFhirPeriodHelper.fromDates(start, end_: TDateTime): TFhirPeriod;
 begin
   result := TFhirPeriod.create;
   result.start := TFslDateTime.make(start, dttzUTC, dtpDay);
@@ -6437,6 +6592,18 @@ begin
     result := end_.DateTime
   else
     result := 0;
+end;
+
+function TFhirPeriodHelper.isCurrent: boolean;
+var
+  now : TFslDateTime;
+begin
+  now := TFslDateTime.makeUTC;
+  result := true;
+  if (not start.null) then
+    result := now.after(start, true);
+  if (not end_.null) then
+      result := now.before(end_, true);
 end;
 
 procedure TFhirPeriodHelper.SetEditString(const Value: String);
@@ -7193,6 +7360,72 @@ begin
     result := gen(nameList[0])
   else
     result := '??';
+end;
+
+function TFhirPatientHelper.findCurrentExtensionValue(url : String) : TFHIRCodeableConcept;
+var
+  ext, ep, ev : TFHIRExtension;
+begin
+  result := nil;
+  for ext in ExtensionList do
+  begin
+    if (ext.url = url) then
+    begin
+      ep := ext.getExtensionByUrl('period');
+      ev := ext.getExtensionByUrl('value');
+      if (ev <> nil) and (ev.value is TFHIRCodeableConcept) and ((ep = nil) or ((ep.value is TFHIRPeriod) and (ep.value as TFHIRPeriod).isCurrent)) then
+         exit(ev.value as TFHIRCodeableConcept);
+    end;
+  end;
+end;
+
+function TFhirPatientHelper.genderPlus: String;
+var
+  genderId : TFHIRCodeableConcept;
+  pronouns : TFHIRCodeableConcept;
+  i : String;
+  p : String;
+begin
+  genderId := findCurrentExtensionValue('http://hl7.org/fhir/StructureDefinition/individual-genderIdentity');
+  if (genderId = nil) then
+    i := ''
+  else if genderId.text <> '' then
+    i := genderId.text
+  else if genderId.hasCode('http://snomed.info/sct', '446141000124107') then
+    i := 'Female'
+  else if genderId.hasCode('http://snomed.info/sct', '446151000124109') then
+    i := 'Male'
+  else if genderId.hasCode('http://snomed.info/sct', '33791000087105') then
+    i := 'Non-Binary'
+  else if genderId.hasCode('http://terminology.hl7.org/CodeSystem/v3-NullFlavor', 'UNK') then
+    i := 'Unknown'
+  else
+    i := gen(genderId);
+  pronouns := findCurrentExtensionValue('http://hl7.org/fhir/StructureDefinition/individual-pronouns');
+  if (pronouns = nil) then
+    p := ''
+  else if pronouns.text <> '' then
+    p := '"'+pronouns.text+'"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29518-0') then
+    p := '"he/him"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29519-8') then
+    p := '"she/her"'
+  else if pronouns.hasCode('http://loinc.org', 'LA29520-6') then
+    p := '"they/them"'
+  else
+    p := gen(pronouns);
+  result := CODES_TFhirAdministrativeGenderEnum[gender];
+  if (p <> '') or (i <> '') then
+  begin
+    result := result + ' (';
+    if (i <> '') then
+      result := result + i;
+    if (p <> '') and (i <> '') then
+      result := result + ', ';
+    if (p <> '') then
+      result := result + p;
+    result := result + ')';
+  end;
 end;
 
 { TFhirPersonHelper }

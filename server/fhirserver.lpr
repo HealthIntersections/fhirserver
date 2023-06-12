@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$i fhir.inc}
 
 uses
   {$IFDEF WINDOWS}
@@ -38,10 +38,9 @@ uses
   cmem, cthreads,
   {$ENDIF}
   {$IFDEF OSX}
-  cmem, cthreads, forms,
+  cmem, cthreads, forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
-  Interfaces,
   kernel, server_testing;
 
 {$R *.res}

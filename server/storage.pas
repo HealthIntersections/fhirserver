@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json, fsl_lang,
   fsl_http,
   fdb_dialects, fsl_graphql,
   fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine, fsl_npm_cache,
@@ -82,6 +82,7 @@ type
   TFhirOperation = class abstract (TFslObject)
   protected
     FFactory : TFHIRFactory;
+    FLanguages : TIETFLanguageDefinitions;
     function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinitionW;
     function isWrite : boolean; virtual;
@@ -89,7 +90,7 @@ type
     function makeParams(request : TFHIRRequest) : TFhirParametersW;
 
   public
-    constructor Create(factory : TFHIRFactory);
+    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
     function Name : String; virtual;
     function Types : TArray<String>; virtual;
@@ -300,6 +301,8 @@ type
     procedure terminate; override;
   end;
 
+  { TFHIRStorageService }
+
   TFHIRStorageService = class (TFslObject)
   protected
     FFactory : TFHIRFactory;
@@ -318,6 +321,7 @@ type
     property Features : TFHIRFeatureEngine read FFeatures;
 
     procedure Initialise(); virtual;
+    procedure UnLoad; virtual;
 
     // OAuth Support
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); virtual;
@@ -424,12 +428,16 @@ end;
 
 function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
 begin
+  result := nil;
   raise EFHIRException.create('Expanding valuesets is not implemented in this server');
 end;
 
 
-function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
+function TFHIRStorageService.FetchAuthorization(hash: String;
+  var PatientId: String; var ConsentKey, SessionKey: Integer;
+  var Expiry: TDateTime; var jwt: String): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
@@ -440,16 +448,19 @@ end;
 
 function TFHIRStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support Async tasks');
 end;
 
@@ -460,17 +471,24 @@ end;
 
 function TFHIRStorageService.hasOAuthSession(id: String; status : integer): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.Initialise;
 begin
   defineFeatures;
+end;
+
+procedure TFHIRStorageService.UnLoad;
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.Link: TFHIRStorageService;
@@ -480,6 +498,7 @@ end;
 
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
+  result := '';
   raise EFHIRException.create('Looking up codes is not implemented in this server');
 end;
 
@@ -498,7 +517,8 @@ begin
   raise EFHIRException.create('This server does not support Async tasks');
 end;
 
-procedure TFHIRStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
+procedure TFHIRStorageService.recordOAuthChoice(id: String; scopes, jwt,
+  patient: String);
 begin
   raise EFHIRException.create('This server does not support OAuth');
 end;
@@ -620,6 +640,7 @@ end;
 
 function TFHIROperationEngine.DoSearch(request: TFHIRRequest; requestType, params: String): TFHIRBundleW;
 begin
+  result := nil;
   raise EFHIRException.create('This server does not implement the "DoSearch" function');
 end;
 
@@ -1105,6 +1126,7 @@ end;
 
 function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
 begin
+  result := '';
   raise EFHIRException.create('This server does not implement the "Create" function');
 end;
 
@@ -1138,11 +1160,13 @@ end;
 
 function TFHIROperationEngine.ExecutePatch(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not implement the "Patch" function');
 end;
 
 function TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not implement the "Read" function');
 end;
 
@@ -1205,11 +1229,13 @@ end;
 
 function TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 begin
+  result := '';
   raise EFHIRException.create('This server does not implement the "Transaction" function');
 end;
 
 function TFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not implement the "Update" function');
 end;
 
@@ -1220,6 +1246,7 @@ end;
 
 function TFHIROperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc: String): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not implement the "Validation" function');
 end;
 
@@ -1235,6 +1262,7 @@ end;
 
 function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 begin
+  result := false;
   raise EFHIRException.create('This server does not implement the "FindResource" function');
 end;
 
@@ -1245,11 +1273,13 @@ end;
 
 function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
 end;
 
 function TFHIROperationEngine.getResourcesByParam(aType: string; name, value: string; var needSecure: boolean): TFslList<TFHIRResourceV>;
 begin
+  result := nil;
   raise EFHIRException.create('This server does not implement the "getResourcesByParam" function');
 end;
 
@@ -1260,11 +1290,13 @@ end;
 
 function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 begin
+  result := nil;
   raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
 end;
 
 function TFHIRStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 begin
+  result := 0;
   raise EFHIRException.create('Asynchronous Processing is not supported on this server');
 end;
 
@@ -1386,11 +1418,13 @@ end;
 
 function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.customGet');
 end;
 
 function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.customPost');
 end;
 
@@ -1410,11 +1444,13 @@ end;
 
 function TFHIRInternalCommunicator.historyTypeV(atype: string; allRecords: boolean; params : string): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.historyTypeV');
 end;
 
 function TFHIRInternalCommunicator.historyInstanceV(atype: string; id : String; allRecords: boolean; params : string): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.historyInstanceV');
 end;
 
@@ -1425,21 +1461,25 @@ end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
 end;
 
 function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
 end;
 
@@ -1555,11 +1595,13 @@ end;
 
 function TFHIRInternalCommunicator.searchAgainV(link: String): TFHIRResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.searchAgainV');
 end;
 
 function TFHIRInternalCommunicator.searchPostV(atype: string; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFhirResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.searchPostV');
 end;
 
@@ -1583,11 +1625,13 @@ end;
 
 function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.transactionV');
 end;
 
 function TFHIRInternalCommunicator.updateResourceV(resource: TFhirResourceV): TFhirResourceV;
 begin
+  result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
@@ -1634,10 +1678,11 @@ begin
   result := nil;
 end;
 
-constructor TFhirOperation.Create(factory: TFHIRFactory);
+constructor TFhirOperation.Create(factory: TFHIRFactory; languages : TIETFLanguageDefinitions);
 begin
   inherited create;
   FFactory := factory;
+  FLanguages := languages;
 end;
 
 function TFhirOperation.CreateBaseDefinition(base : String): TFHIROperationDefinitionW;
@@ -1679,12 +1724,14 @@ end;
 
 destructor TFhirOperation.Destroy;
 begin
+  FLanguages.Free;
   FFactory.Free;
   inherited;
 end;
 
 function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
+  result := '';
   // nothing
 end;
 

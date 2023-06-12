@@ -34,12 +34,37 @@ unit fhir3_context;
 interface
 
 uses
-  SysUtils,
-  fsl_base, fsl_utilities, fsl_versions,
-  fhir_objects, fhir_factory, fhir_common,  fhir_utilities,
-  fhir3_types, fhir3_resources;
+  SysUtils, Classes,
+  fsl_base, fsl_utilities, fsl_versions, fsl_npm, fsl_threads, fsl_http,
+  fhir_objects, fhir_factory, fhir_common,  fhir_utilities, fhir_parser,
+  fhir3_types, fhir3_resources, fhir3_resources_canonical;
 
 type
+  { TFHIRResourceProxy }
+
+   TFHIRResourceProxy = class (TFHIRResourceProxyV)
+   private
+     // always available
+     FFactory : TFHIRFactory;
+
+     // for lazy loading
+     FWorker : TFHIRWorkerContextV;
+     FInfo : TNpmPackageResource;
+     FLock : TFslLock;
+
+     function GetResource : TFHIRResource;
+   protected
+     procedure loadResource;  override;
+     function wrapResource : TFHIRXVersionResourceWrapper; override;
+   public
+     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
+     constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+     destructor Destroy; override;
+
+     function link : TFHIRResourceProxy; overload;
+     property resource : TFHIRResource read GetResource;
+   end;
+
   TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;
@@ -94,7 +119,7 @@ type
     function link : TFHIRWorkerContext; overload;
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; overload; virtual; abstract;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
@@ -106,7 +131,7 @@ type
     function hasCustomResource(name : String) : boolean; virtual; abstract;
 
     // override version independent variants:
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
@@ -117,6 +142,93 @@ implementation
 
 uses
   fhir3_utilities;
+
+{ TFHIRResourceProxy }
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory;
+  resource: TFHIRResource);
+begin
+  if resource is TFHIRMetadataResource then
+    inherited Create(resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
+  else
+    inherited Create(resource, '', '');
+  FFactory := factory;
+end;
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
+  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+begin
+  inherited create(fhirVersionRelease3, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
+  FFactory := factory;
+  FWorker := worker;
+  FInfo := pi;
+  FLock := lock;
+end;
+
+destructor TFHIRResourceProxy.Destroy;
+begin
+  FFactory.Free;
+  FWorker.Free;
+  FInfo.Free;
+  FLock.Free;
+  inherited Destroy;
+end;
+
+function TFHIRResourceProxy.link : TFHIRResourceProxy;
+begin
+  result := TFHIRResourceProxy(inherited link);
+end;
+
+function TFHIRResourceProxy.GetResource: TFHIRResource;
+begin
+  result := ResourceV as TFHIRResource;
+end;
+
+procedure TFHIRResourceProxy.loadResource;
+var
+  p : TFHIRParser;
+  stream : TStream;
+  r : TFHIRResourceV;
+begin
+  if FInfo = nil then
+    exit; // not lazy loading
+
+  FLock.lock;
+  try
+    if FResourceV <> nil then
+      exit;
+  finally
+    FLock.unlock;
+  end;
+  r := nil;
+
+  p := FFactory.makeParser(FWorker.link, ffJson, THTTPLanguages.Create('en'));
+  try
+    stream := TFileStream.create(FInfo.filename, fmOpenRead);
+    try
+      try
+        r := p.parseResource(stream);
+      except
+        on e : Exception do
+          raise EFHIRException.create('Error reading '+fInfo.filename+': '+e.message);
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    p.free;
+  end;
+   try
+    FResourceV := r;
+  finally
+    FLock.unlock;
+  end;
+end;
+
+function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
+begin
+  result := FFactory.wrapResource(resource.link);
+end;
 
 { TFHIRWorkerContext }
 
@@ -155,12 +267,12 @@ begin
   result := validateCode(systemUri, version, code, vs.Resource as TFHIRValueSet);
 end;
 
-function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+function TFHIRWorkerContext.fetchResource(rType, url, version: String): TFhirResourceV;
 var
   t : TFhirResourceType;
 begin
   if RecogniseFHIRResourceName(rType, t) then
-    result := fetchResource(t, url)
+    result := fetchResource(t, url, version)
   else
     raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;

@@ -135,6 +135,7 @@ Type
   public
     constructor Create(factory : TFHIRFactory); override;
     destructor Destroy; override;
+    procedure UnLoad; override;
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); override;
     function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;

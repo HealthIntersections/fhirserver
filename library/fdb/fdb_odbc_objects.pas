@@ -2753,7 +2753,7 @@ begin
   {$IFDEF OSX}
   SetLength(result, length);
   for i := 1 to length do
-    result[i] := p[(i-1)*2];
+    result[i] := p[(i-1)];
   {$ELSE}
   result := p;
   {$ENDIF}
@@ -5793,6 +5793,7 @@ Var
   ColumnSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
+  name : String;
 Begin
   Log(1, 'TOdbcStatement.BindCols');
 
@@ -8609,7 +8610,7 @@ Begin
   If Index > -1 Then
     Result := Index+1
   Else
-    Raise EODBCExpress.Create('Identifier '+ColName+' not found in result set.');
+    Raise EODBCExpress.Create('Identifier '+ColName+' not found in result set. ('+FColNames.CommaText+')');
 End;
 
 Procedure TOdbcStatement.NullCols(Const Cols: Array Of String);

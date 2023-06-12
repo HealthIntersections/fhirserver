@@ -11,7 +11,6 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="FHIR Code Scanner"/>
-      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <Icon Value="0"/>
     </General>
@@ -26,13 +25,17 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
           </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
         </CompilerOptions>
       </Item>
       <Item Name="linux">
@@ -44,13 +47,15 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
           </CodeGeneration>
+          <Other>
+            <Compiler>-O2 -Xs</Compiler>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="osx">
@@ -62,13 +67,17 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\library\fsl"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
           </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
         </CompilerOptions>
       </Item>
     </BuildModes>
@@ -80,6 +89,18 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fui"/>
+      </Item>
+      <Item>
+        <PackageName Value="aggpaslcl"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCLBase"/>
+      </Item>
       <Item>
         <PackageName Value="PascalAST"/>
       </Item>
@@ -93,8 +114,12 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\..\library\fsl\fsl_versions.pas"/>
+        <Filename Value="codescanform.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="CodeScannerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="codeScanForm"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -106,7 +131,6 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-      <OtherUnitFiles Value="..\..\library\fsl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -119,6 +143,12 @@
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
     </Linking>
+    <Other>
+      <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>

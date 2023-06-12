@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir4.inc}
 
 interface
 
@@ -36,10 +37,35 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_versions,
   fsl_npm, fsl_npm_cache,
-  fhir_objects, fhir_factory, fhir_common, 
+  fhir_objects, fhir_factory, fhir_common, fhir_parser,
   fhir4_types, fhir4_resources, fhir4_resources_base;
 
 type
+  { TFHIRResourceProxy }
+
+  TFHIRResourceProxy = class (TFHIRResourceProxyV)
+  private
+    // always available
+    FFactory : TFHIRFactory;
+
+    // for lazy loading
+    FWorker : TFHIRWorkerContextV;
+    FInfo : TNpmPackageResource;
+    FLock : TFslLock;
+
+    function GetResource : TFHIRResource;
+  protected
+    procedure loadResource;  override;
+    function wrapResource : TFHIRXVersionResourceWrapper; override;
+  public
+    constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
+    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+    destructor Destroy; override;
+
+    function link : TFHIRResourceProxy; overload;
+    property resource : TFHIRResource read GetResource;
+  end;
+
   TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;
@@ -97,10 +123,11 @@ type
     function link : TFHIRWorkerContext; overload;
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; overload; virtual; abstract;
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; virtual; abstract;
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
@@ -116,7 +143,7 @@ type
     function hasCustomResource(name : String) : boolean; virtual; abstract;
 
     // override version independent variants:
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
@@ -156,6 +183,93 @@ implementation
 uses
   fhir4_utilities, fhir4_json, fhir_utilities;
 
+{ TFHIRResourceProxy }
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory;
+  resource: TFHIRResource);
+begin
+  if resource is TFHIRMetadataResource then
+    inherited Create(resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
+  else
+    inherited Create(resource, '', '');
+  FFactory := factory;
+end;
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
+  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+begin
+  inherited create(fhirVersionRelease4, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
+  FFactory := factory;
+  FWorker := worker;
+  FInfo := pi;
+  FLock := lock;
+end;
+
+destructor TFHIRResourceProxy.Destroy;
+begin
+  FFactory.Free;
+  FWorker.Free;
+  FInfo.Free;
+  FLock.Free;
+  inherited Destroy;
+end;
+
+function TFHIRResourceProxy.link : TFHIRResourceProxy;
+begin
+  result := TFHIRResourceProxy(inherited link);
+end;
+
+function TFHIRResourceProxy.GetResource: TFHIRResource;
+begin
+  result := ResourceV as TFHIRResource;
+end;
+
+procedure TFHIRResourceProxy.loadResource;
+var
+  p : TFHIRParser;
+  stream : TStream;
+  r : TFHIRResourceV;
+begin
+  if FInfo = nil then
+    exit; // not lazy loading
+
+  FLock.lock;
+  try
+    if FResourceV <> nil then
+      exit;
+  finally
+    FLock.unlock;
+  end;
+  r := nil;
+
+  p := FFactory.makeParser(FWorker.link, ffJson, THTTPLanguages.Create('en'));
+  try
+    stream := TFileStream.create(FInfo.filename, fmOpenRead);
+    try
+      try
+        r := p.parseResource(stream);
+      except
+        on e : Exception do
+          raise EFHIRException.create('Error reading '+fInfo.filename+': '+e.message);
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    p.free;
+  end;
+   try
+    FResourceV := r;
+  finally
+    FLock.unlock;
+  end;
+end;
+
+function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
+begin
+  result := FFactory.wrapResource(resource.link);
+end;
+
 { TFHIRWorkerContext }
 
 function TFHIRWorkerContext.GetVersion: TFHIRVersion;
@@ -180,41 +294,42 @@ end;
 
 function TFHIRWorkerContext.fetchCodeSystem(url: String): TFhirCodeSystem;
 begin
-  result := fetchResource(frtCodeSystem, url) as TFHIRCodeSystem;
+  result := fetchResource(frtCodeSystem, url, '') as TFHIRCodeSystem;
 end;
 
 function TFHIRWorkerContext.fetchConceptMap(url: String): TFhirConceptMap;
 begin
-  result := fetchResource(frtConceptMap, url) as TFHIRConceptMap;
+  result := fetchResource(frtConceptMap, url, '') as TFHIRConceptMap;
 end;
 
-function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+function TFHIRWorkerContext.fetchResource(rType, url, version: String): TFhirResourceV;
 var
   t : TFhirResourceType;
 begin
   if RecogniseFHIRResourceName(rType, t) then
-    result := fetchResource(t, url)
+    result := fetchResource(t, url, version)
   else
     raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;
 
 function TFHIRWorkerContext.fetchStructureDefinition(url: String): TFhirStructureDefinition;
 begin
-  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+  result := fetchResource(frtStructureDefinition, url, '') as TFHIRStructureDefinition;
 end;
 
 function TFHIRWorkerContext.fetchStructureMap(url: String): TFhirStructureMap;
 begin
-  result := fetchResource(frtStructureMap, url) as TFHIRStructureMap;
+  result := fetchResource(frtStructureMap, url, '') as TFHIRStructureMap;
 end;
 
 function TFHIRWorkerContext.fetchValueSet(url: String): TFhirValueSet;
 begin
-  result := fetchResource(frtValueSet, url) as TFHIRValueSet;
+  result := fetchResource(frtValueSet, url, '') as TFHIRValueSet;
 end;
 
 function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
+  result := nil;
   raise EFslException.Create('Error Message');
 end;
 
@@ -332,7 +447,7 @@ end;
 constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('metadate resource manager '+t.className);
+  FMap := TFslMap<T>.create('metadata resource manager '+t.className);
   FMap.defaultValue := T(nil);
   FList := TFslList<T>.create;
 end;
@@ -389,7 +504,8 @@ end;
 
 {$IFDEF FPC}
 function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
-var v1, v2, mm1, mm2 : string;
+var 
+  v1, v2, mm1, mm2 : string;
 begin
   v1 := l.version;
   v2 := r.version;
@@ -455,7 +571,7 @@ begin
       {$ENDIF}
 
       // the current is the latest
-      FMap.add(url, rl[rl.count-1].link);
+      FMap.AddOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
@@ -469,7 +585,7 @@ begin
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
-            FMap.add(url+'|'+lv, rl[rl.count-1].link);
+            FMap.AddOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
       end;
     end;

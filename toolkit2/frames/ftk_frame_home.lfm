@@ -7,8 +7,8 @@ object HomePageFrame: THomePageFrame
   ClientWidth = 1177
   OnResize = FrameResize
   TabOrder = 0
-  DesignLeft = 623
-  DesignTop = -488
+  DesignLeft = 551
+  DesignTop = 38
   object Panel1: TPanel
     Left = 0
     Height = 364

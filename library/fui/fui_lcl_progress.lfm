@@ -1,7 +1,7 @@
 object ProgressForm: TProgressForm
   Left = 1224
   Height = 67
-  Top = -556
+  Top = 38
   Width = 464
   BorderIcons = []
   BorderStyle = bsSingle
@@ -9,7 +9,7 @@ object ProgressForm: TProgressForm
   ClientWidth = 464
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object ProgressBar1: TProgressBar
     Left = 16
     Height = 12
@@ -20,10 +20,13 @@ object ProgressForm: TProgressForm
   end
   object Label1: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 11
-    Width = 79
+    Width = 344
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Getting Started'
+    ParentColor = False
   end
   object BitBtn1: TBitBtn
     Left = 376

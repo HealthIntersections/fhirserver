@@ -174,6 +174,7 @@ type
     edtRXNSQLiteFile: TEdit;
     edtRProxySSLPort: TEdit;
     edtRProxyCertHeader: TEdit;
+    edtZulipPassword: TEdit;
     edtUNIIDBName: TEdit;
     edtUNIIFile: TEdit;
     edtUNIISQLiteFile: TEdit;
@@ -285,6 +286,7 @@ type
     Label8: TLabel;
     Label80: TLabel;
     Label81: TLabel;
+    Label82: TLabel;
     Label9: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -538,6 +540,7 @@ type
     procedure edtRProxySSLPortChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
+    procedure edtZulipPasswordChange(Sender: TObject);
     procedure edtRProxyPortChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure edtWebMaxConnectionsChange(Sender: TObject);
@@ -569,6 +572,8 @@ type
     procedure rbRXNSQLiteClick(Sender: TObject);
     procedure rbUNIISQLiteClick(Sender: TObject);
     procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure tbLoincContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
@@ -1138,6 +1143,8 @@ begin
     edtLangFile.Enabled := true;
     edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
     edtTelnetPassword.Enabled := true;
+    edtZulipPassword.Text := FConfig['destinations'].section['zulip']['password'].value;
+    edtZulipPassword.Enabled := true;
     edtCardPrivate.Text := FConfig.web['card-key'].value;
     edtCardPrivate.Enabled := true;
     edtCardPublic.Text := FConfig.web['card-jwks'].value;
@@ -1219,7 +1226,9 @@ begin
     edtLangFile.Text := '';
     edtLangFile.Enabled := false;
     edtTelnetPassword.Text := '';
+    edtZulipPassword.Text := '';
     edtTelnetPassword.Enabled := false;
+    edtZulipPassword.Enabled := false;
     lvPackages.Enabled := true;
   finally
     FLoading := false;
@@ -1290,6 +1299,8 @@ begin
     lblDoco.caption := 'The Salt used when hashing passwords. Note that changing the salt will invalidate all passwords'
   else if ActiveControl = edtTelnetPassword then
     lblDoco.caption := 'The password required to connect to telnet when connecting from an external computer (not localhost). Default is no password required. Note that the telnet interface can make no changes on the server'
+  else if ActiveControl = edtZulipPassword then
+    lblDoco.caption := 'The password required to connect to zulip when sending messages to chat.fhir.org. Default is no password required. Note that the telnet interface can make no changes on the server'
   else if ActiveControl = edtPrivateKey then
     lblDoco.caption := 'The private key file for the SSL certificate'
   else if ActiveControl = edtSSLCert then
@@ -1438,6 +1449,12 @@ begin
 
 end;
 
+procedure TMainConsoleForm.tbLoincContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+
+end;
+
 procedure TMainConsoleForm.tbNDCContextPopup(Sender: TObject; MousePos: TPoint;
   var Handled: Boolean);
 begin
@@ -1570,6 +1587,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['telnet-password'].value := edtTelnetPassword.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtZulipPasswordChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig['destinations'].section['zulip']['password'].value := edtZulipPassword.Text;
     FConfig.Save;
   end;
 end;
@@ -3092,12 +3118,14 @@ begin
     2 { Australia } : result := '32506021000036107';
     3 { Belgium } : result := '11000172109';
     4 { Canada } : result := '20611000087101';
-    5 { Spanish } : result := '449081005';
+    5 { Spain } : result := '449081005';
     6 { Denmark } : result := '554471000005108';
     7 { Netherlands } : result := '11000146104';
     8 { Sweden } : result := '45991000052106';
-    9 { UK } : result := '999000041000000102';
-    10 { } : result := inttostr(COMBINED_MODULE_ID);
+    9 { Switzerland } : result := '2011000195101';
+    10 { UK } : result := '83821000000107';
+    11 { IPS Terminology } : result := '827022005';
+    12 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
 

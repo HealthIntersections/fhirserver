@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$I fhir.inc}
 
 Interface
@@ -74,7 +73,7 @@ Type
   TFslItemListCompare = Function (pA, pB : Pointer) : Integer Of Object;
   PFslItemsCompare = ^TFslItemListCompare;
 
-  TFslItemListDuplicates = (dupAccept, dupIgnore, dupException);
+  TFslItemListDuplicates = (dupListAccept, dupListIgnore, dupListException);
 
   TFslItemListDirection = Integer;
 
@@ -1493,6 +1492,8 @@ Type
 
   TFslNameClass = Class Of TFslName;
 
+  { TFslNameList }
+
   TFslNameList = Class(TFslObjectList)
     Private
       FSymbol : String;
@@ -1507,6 +1508,7 @@ Type
       Function ItemClass : TFslObjectClass; Override;
 
       Function CompareByName(pA, pB: Pointer): Integer; Virtual;
+      Function CompareByNamePI(pA, pB: Pointer): Integer; Virtual;
 
       Procedure DefaultCompare(Out aEvent : TFslItemListCompare); Override;
 
@@ -6302,7 +6304,7 @@ Begin
         Begin
           Result := True;
 
-          If FDuplicates <> dupAccept Then
+          If FDuplicates <> dupListAccept Then
             L := I;
         End;
       End;
@@ -6509,13 +6511,13 @@ End;
 
 Procedure TFslItemList.AllowDuplicates;
 Begin
-  DuplicateBy(dupAccept);
+  DuplicateBy(dupListAccept);
 End;
 
 
 Procedure TFslItemList.IgnoreDuplicates;
 Begin
-  DuplicateBy(dupIgnore);
+  DuplicateBy(dupListIgnore);
 
   // TODO: Delete duplicates?
 End;
@@ -6523,7 +6525,7 @@ End;
 
 Procedure TFslItemList.PreventDuplicates;
 Begin
-  DuplicateBy(dupException);
+  DuplicateBy(dupListException);
 
   // TODO: Assert that there are no duplicates?
 End;
@@ -6531,19 +6533,19 @@ End;
 
 Function TFslItemList.IsAllowDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupAccept;
+  Result := FDuplicates = dupListAccept;
 End;
 
 
 Function TFslItemList.IsIgnoreDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupIgnore;
+  Result := FDuplicates = dupListIgnore;
 End;
 
 
 Function TFslItemList.IsPreventDuplicates : Boolean;
 Begin
-  Result := FDuplicates = dupException;
+  Result := FDuplicates = dupListException;
 End;
 
 
@@ -6762,7 +6764,7 @@ Begin
   If Not IsAllowDuplicates And Find(pValue, Result) Then
   Begin
     If IsPreventDuplicates Then
-      RaiseError('Add', StringFormat('Item already exists in list ($%x)', [Integer(pValue)]));
+      RaiseError('Add', StringFormat('Item already exists in list ($%x)', [NativeUInt(pValue)]));
   End
   Else
   Begin
@@ -7664,7 +7666,7 @@ begin
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
-Constructor TFslNameList.Create;
+constructor TFslNameList.Create;
 Begin
   Inherited;
 
@@ -7672,43 +7674,46 @@ Begin
 End;
 
 
-Function TFslNameList.Link : TFslNameList;
+function TFslNameList.Link: TFslNameList;
 Begin
   Result := TFslNameList(Inherited Link);
 End;
 
 
-Function TFslNameList.Clone : TFslNameList;
+function TFslNameList.Clone: TFslNameList;
 Begin
   Result := TFslNameList(Inherited Clone);
 End;
 
 
-Function TFslNameList.ItemClass : TFslObjectClass;
+function TFslNameList.ItemClass: TFslObjectClass;
 Begin
   Result := TFslName;
 End;
 
 
-Procedure TFslNameList.DefaultCompare(Out aEvent: TFslItemListCompare);
+procedure TFslNameList.DefaultCompare(out aEvent: TFslItemListCompare);
 Begin
   aEvent := CompareByName;
 End;
 
 
-Function TFslNameList.CompareByName(pA, pB : Pointer) : Integer;
+function TFslNameList.CompareByName(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompare(TFslName(pA).Name, TFslName(pB).Name);
 End;
 
+function TFslNameList.CompareByNamePI(pA, pB: Pointer): Integer;
+begin
+  Result := CompareStr(TFslName(pA).Name, TFslName(pB).Name);
+end;
 
-Function TFslNameList.FindByName(oName: TFslName; Out iIndex: Integer): Boolean;
+function TFslNameList.FindByName(oName: TFslName; out iIndex: Integer): Boolean;
 Begin
   Result := Find(oName, iIndex, CompareByName);
 End;
 
-
-Function TFslNameList.FindByName(Const sName : String; Out iIndex : Integer) : Boolean;
+function TFslNameList.FindByName(const sName: String; out iIndex: Integer): Boolean;
 Var
   oName : TFslName;
 Begin
@@ -7722,16 +7727,14 @@ Begin
   End;
 End;
 
-
-Function TFslNameList.EnsureByName(Const sName : String) : TFslName;
+function TFslNameList.EnsureByName(const sName: String): TFslName;
 Begin
   Result := GetByName(sName);
 
   Assert(Invariants('EnsureByName', Result, ItemClass, 'Result'));
 End;
 
-
-Function TFslNameList.GetByName(Const sName: String): TFslName;
+function TFslNameList.GetByName(const sName: String): TFslName;
 Var
   iIndex : Integer;
 Begin
@@ -7742,33 +7745,33 @@ Begin
 End;
 
 
-Function TFslNameList.IndexByName(Const sName : String) : Integer;
+function TFslNameList.IndexByName(const sName: String): Integer;
 Begin
   If Not FindByName(sName, Result) Then
     Result := -1;
 End;
 
 
-Function TFslNameList.ExistsByName(Const sName: String): Boolean;
+function TFslNameList.ExistsByName(const sName: String): Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(sName));
 End;
 
 
-Function TFslNameList.IndexByName(Const oName : TFslName) : Integer;
+function TFslNameList.IndexByName(const oName: TFslName): Integer;
 Begin
   If Not FindByName(oName, Result) Then
     Result := -1;
 End;
 
 
-Function TFslNameList.ExistsByName(Const oName : TFslName): Boolean;
+function TFslNameList.ExistsByName(const oName: TFslName): Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(oName));
 End;
 
 
-Function TFslNameList.ForceByName(Const sName: String): TFslName;
+function TFslNameList.ForceByName(const sName: String): TFslName;
 Var
   oName  : TFslName;
   iIndex : Integer;
@@ -7790,7 +7793,7 @@ Begin
 End;
 
 
-Function TFslNameList.GetByName(oName : TFslName): TFslName;
+function TFslNameList.GetByName(oName: TFslName): TFslName;
 Var
   iIndex : Integer;
 Begin
@@ -7801,7 +7804,7 @@ Begin
 End;
 
 
-Procedure TFslNameList.RemoveByName(Const sName: String);
+procedure TFslNameList.RemoveByName(const sName: String);
 Var
   iIndex : Integer;
 Begin
@@ -7812,7 +7815,7 @@ Begin
 End;
 
 
-Function TFslNameList.AddByName(Const sName: String): Integer;
+function TFslNameList.AddByName(const sName: String): Integer;
 Var
   oItem : TFslName;
 Begin
@@ -7827,31 +7830,30 @@ Begin
 End;
 
 
-Function TFslNameList.IsSortedByName : Boolean;
+function TFslNameList.IsSortedByName: Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
-
-Procedure TFslNameList.SortedByName;
+procedure TFslNameList.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
 
-Function TFslNameList.GetName(iIndex : Integer) : TFslName;
+function TFslNameList.GetName(iIndex: Integer): TFslName;
 Begin
   Result := TFslName(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TFslNameList.SetName(iIndex : Integer; oName : TFslName);
+procedure TFslNameList.SetName(iIndex: Integer; oName: TFslName);
 Begin
   ObjectByIndex[iIndex] := oName;
 End;
 
 
-Function TFslNameList.GetAsText : String;
+function TFslNameList.GetAsText: String;
 Var
   oStrings : TFslStringList;
   iLoop    : Integer;
@@ -7870,7 +7872,7 @@ Begin
 End;
 
 
-Procedure TFslNameList.SetAsText(Const Value: String);
+procedure TFslNameList.SetAsText(const Value: String);
 Var
   oStrings : TFslStringList;
   iLoop    : Integer;
@@ -8093,7 +8095,7 @@ Procedure TFslBooleanList.InternalEmpty(iIndex, iLength : Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeInt(FBooleanArray) + (iIndex * SizeOf(TFslBooleanItem))), (iLength * SizeOf(TFslBooleanItem)));
+  MemoryZero(Pointer(NativeUInt(FBooleanArray) + (iIndex * SizeOf(TFslBooleanItem))), (iLength * SizeOf(TFslBooleanItem)));
 End;
 
 

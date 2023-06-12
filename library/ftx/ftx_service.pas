@@ -36,8 +36,26 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang,
   fsl_http,
-  fhir_common, fhir_factory, fhir_features,
+  fhir_common, fhir_factory, fhir_features, fhir_objects,
   fhir_cdshooks;
+
+type
+  ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
+
+  { ETerminologyError }
+
+  ETerminologyError = class (EFslException) // problem in terminology operation
+  private
+    FIssueType : TFhirIssueType;
+  public
+    constructor create(message : String; issueType : TFhirIssueType);
+    property IssueType : TFhirIssueType read FIssueType;
+  end;
+
+  ETerminologyTodo = Class(ETerminologyError)
+  public
+    Constructor Create(place : String);
+  End;
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -81,37 +99,68 @@ Type
     function Link : TCodeSystemProviderFilterPreparationContext; overload;
   end;
 
-  TCodeDisplay = class (TFslObject)
-  private
-    FLanguage: String;
-    FValue: String;
-    FLang: TIETFLang;
-    procedure SetLang(const Value: TIETFLang);
-  public
-    destructor Destroy; override;
-    function link : TCodeDisplay; overload;
+  { TConceptDesignation }
 
-    property language : String read FLanguage write FLanguage;
-    property lang : TIETFLang read FLang write SetLang;
-    property value : String read FValue write FValue;
+  TConceptDesignation = class (TFslObject)
+  private
+    FLanguage: TIETFLang;
+    FUse: TFHIRCodingW;
+    FValue : TFHIRPrimitiveW;
+    FExtensions : TFslList<TFHIRExtensionW>;
+    function GetExtensions: TFslList<TFHIRExtensionW>;
+    procedure SetLanguage(const Value: TIETFLang);
+    procedure SetUse(const Value: TFHIRCodingW);
+    procedure SetValue(const Value: TFHIRPrimitiveW);
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+    function link : TConceptDesignation; overload;
+
+    class function build(languages : TIETFLanguageDefinitions; ccd : TFhirCodeSystemConceptDesignationW) : TConceptDesignation;
+
+    property language : TIETFLang read FLanguage write SetLanguage;
+    property use : TFHIRCodingW read FUse write SetUse;
+    property value : TFHIRPrimitiveW read FValue write SetValue;
+    property extensions : TFslList<TFHIRExtensionW> read GetExtensions;
+
+    function present : String;
   end;
 
-  TCodeDisplays = class (TFslList<TCodeDisplay>)
-  private
-    function getDisplay(i: integer): String;
-    function findMatch(languages : TIETFLanguageDefinitions; lang: TIETFLang; out display : String) : boolean;
-    function langMatches(requested, stated : String) : boolean;
-  public
-    procedure see(value : String; overwrite : boolean = false); overload;
-    procedure see(values : TStringList; overwrite : boolean = false); overload;
-    procedure see(lang, value : String; overwrite : boolean = false); overload;
+  { TConceptDesignations }
 
-    function chooseDisplay(languages : TIETFLanguageDefinitions; lang : THTTPLanguages) : String;
-    function present : String;
-    function has(display : String) : boolean; overload;
-    function has(languages : TIETFLanguageDefinitions; lang : THTTPLanguages; display : String) : boolean; overload;
-    function preferred : String;
-    property display[i : integer] : String read getDisplay;
+  TConceptDesignations = class (TFslObject)
+  private
+    FFactory : TFHIRFactory;
+    FBaseLang : TIETFLang;
+    FDisplay : TFHIRPrimitiveW;
+    FDesignations : TFslList<TConceptDesignation>;
+    FLanguages : TIETFLanguageDefinitions;
+    function langMatches(allowedLangs : TFslList<TIETFLang>; stated : TIETFLang) : boolean;
+    function stringMatches(source, possible : String; caseSensitive : boolean; lang : TIETFLang) : boolean;
+    procedure SetBaseLang(value : TIETFLang);
+    procedure SetDisplay(value : TFHIRPrimitiveW);
+  public
+    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions);
+    destructor Destroy; override;
+
+    function link : TConceptDesignations; overload;
+    procedure clear;
+
+    procedure addBase(lang, display : String);
+    function  addDesignation(lang, display : String; beBase : boolean = false) : TConceptDesignation; overload;
+    procedure addDesignation(lang : string; displays : TStringList; beBase : boolean = false); overload;
+    function  addDesignation(lang : String = ''; value : TFHIRPrimitiveW = nil) : TConceptDesignation; overload;
+    function  addDesignation(index : integer; lang : String = ''; value : TFHIRPrimitiveW = nil; extensions : TFslList<TFHIRExtensionW> = nil) : TConceptDesignation; overload;
+    function hasDisplay(allowedLangs : TFslList<TIETFLang>; value : String; caseSensitive : boolean = false) : boolean;
+    function displayCount(allowedLangs : TFslList<TIETFLang>) : integer;
+    function preferredDisplay(allowedLangs : TFslList<TIETFLang>) : String;
+    function present(allowedLangs : TFslList<TIETFLang>) : String;
+    function findDisplay(allowedLangs : TFslList<TIETFLang>) : TConceptDesignation;
+
+    property factory : TFHIRFactory read FFactory;
+    property baseLang : TIETFLang read FBaseLang write SetBaseLang;
+    property display : TFHIRPrimitiveW read FDisplay write SetDisplay;
+    property designations : TFslList<TConceptDesignation> read FDesignations;
   end;
 
   TSearchFilterText = class (TFslObject)
@@ -133,12 +182,14 @@ Type
 
     function null : Boolean;
     function passes(value : String) : boolean; overload;
-    function passes(cds : TCodeDisplays) : boolean; overload;
+    function passes(cds : TConceptDesignations) : boolean; overload;
     function passes(value : String; var rating : double) : boolean; overload;
     function passes(stems : TFslStringList; var rating : double) : boolean; overload;
     property filter : string read FFilter;
     property stems : TStringList read FStems;
   end;
+
+  { TCodeSystemProvider }
 
   TCodeSystemProvider = class abstract (TFslObject)
   private
@@ -167,11 +218,18 @@ Type
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
+    function deprecated(context : TCodeSystemProviderContext) : boolean; overload; virtual;
     function IsInactive(code : String) : boolean; overload; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract;
+    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract; overload;
+    function Display(context : TCodeSystemProviderContext; lang : TFslList<TIETFLang>) : string; overload;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; virtual; abstract;  // get all displays for all languages
+    function itemWeight(context : TCodeSystemProviderContext) : string; virtual;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; virtual; abstract;  // get all displays for all languages
+    function getExtensions(context : TCodeSystemProviderContext)  : TFslList<TFHIRExtensionW>; virtual;
+    function getProperties(context : TCodeSystemProviderContext) : TFslList<TFhirCodeSystemConceptPropertyW>; virtual;
+    function parent(context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
+    function canParent : boolean; virtual;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
@@ -197,12 +255,296 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
 
-    procedure RecordUse;
+    procedure RecordUse(count : integer = 1);
     function defToThisVersion(specifiedVersion : String) : boolean; virtual;
     property UseCount : cardinal read FUseCount;
   end;
 
 implementation
+
+{ TConceptDesignations }
+
+destructor TConceptDesignations.Destroy;
+begin
+  FLanguages.Free;
+  FDisplay.Free;
+  FFactory.Free;
+  FBaselang.Free;
+  FDesignations.Free;
+  inherited Destroy;
+end;
+
+function TConceptDesignations.link: TConceptDesignations;
+begin
+  result := TConceptDesignations(inherited Link);
+end;
+
+procedure TConceptDesignations.clear;
+begin
+  BaseLang := nil;
+  Display := nil;
+  FDesignations.clear;
+end;
+
+procedure TConceptDesignations.addBase(lang, display: String);
+begin
+  FBaseLang := FLanguages.parse(lang);
+  FDisplay := FFactory.wrapPrimitive(FFactory.makeString(display));
+end;
+
+function TConceptDesignations.addDesignation(lang, display: String; beBase : boolean = false): TConceptDesignation;
+begin
+  if (beBase and (FDisplay = nil)) then
+    addBase(lang, display)
+  else
+  begin
+    result := TConceptDesignation.create;
+    try
+      result.language := FLanguages.parse(lang);
+      result.value := FFactory.wrapPrimitive(FFactory.makeString(display));
+      FDesignations.add(result.link);
+    finally
+      result.free;
+    end;
+  end;
+end;
+
+procedure TConceptDesignations.addDesignation(lang: string; displays: TStringList; beBase : boolean = false);
+var
+  s : String;
+begin
+  if (displays <> nil) then
+    for s in displays do
+      addDesignation(lang, s, beBase);
+end;
+
+function TConceptDesignations.addDesignation(lang: String; value: TFHIRPrimitiveW): TConceptDesignation;
+begin
+  result := TConceptDesignation.create;
+  try
+    result.language := FLanguages.parse(lang);
+    result.value := value; {no .link}
+    FDesignations.add(result.link);
+  finally
+    result.free;
+  end;
+end;
+
+function TConceptDesignations.addDesignation(index: integer; lang: String; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>): TConceptDesignation;
+var
+  ext : TFHIRExtensionW;
+begin
+  result := TConceptDesignation.create;
+  try
+    result.language := FLanguages.parse(lang);
+    result.value := value; {no .link}
+    if (extensions <> nil) then
+      for ext in extensions do
+        result.extensions.add(ext.link);
+    FDesignations.Insert(index, result.link);
+  finally
+    result.free;
+  end;
+end;
+
+function TConceptDesignations.hasDisplay(allowedLangs: TFslList<TIETFLang>; value: String; caseSensitive : boolean): boolean;
+var
+  cd : TConceptDesignation;
+begin
+  result := false;
+  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil) and stringMatches(value, FDisplay.asString, caseSensitive, FBaseLang)) then
+    exit(true);
+  for cd in designations do
+    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil) and stringMatches(value, cd.value.asString, caseSensitive, cd.language)) then
+      exit(true);
+end;
+
+function TConceptDesignations.displayCount(allowedLangs: TFslList<TIETFLang>): integer;
+var
+  cd : TConceptDesignation;
+begin
+  result := 0;
+  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil)) then
+    inc(result);
+  for cd in designations do
+    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+      inc(result);
+end;
+
+function TConceptDesignations.preferredDisplay(allowedLangs: TFslList<TIETFLang>): String;
+var
+  cd : TConceptDesignation;
+begin
+  result := '';
+  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil)) then
+    exit(FDisplay.AsString);
+  for cd in designations do
+    if ((cd.use = nil) and langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+      exit(cd.value.asString);
+  for cd in designations do
+    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+      exit(cd.value.asString);
+end;
+
+function TConceptDesignations.present(allowedLangs: TFslList<TIETFLang>): String;
+var
+  cd : TConceptDesignation;
+  b : TCommaSeparatedStringBuilder;
+begin
+  b := TCommaSeparatedStringBuilder.create(', ', ' or ');
+  try
+    if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil)) then
+      b.append(''''+FDisplay.AsString+'''');
+    for cd in designations do
+      if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+        b.append(''''+cd.present+'''');
+    result := b.makeString;
+  finally
+    b.free;
+  end;
+end;
+
+function TConceptDesignations.findDisplay(allowedLangs: TFslList<TIETFLang>): TConceptDesignation;
+var
+  cd : TConceptDesignation;
+begin
+  result := nil;
+  for cd in designations do
+    if ((cd.use = nil) and langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+      exit(cd);
+  for cd in designations do
+    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil)) then
+      exit(cd);
+end;
+
+function TConceptDesignations.langMatches(allowedLangs: TFslList<TIETFLang>; stated: TIETFLang): boolean;
+var
+  lang : TIETFLang;
+begin
+  if (stated = nil) or (allowedLangs.Empty) then
+    result := true
+  else
+  begin
+    result := false;
+    for lang in allowedLangs do
+      if lang.matches(stated) then
+        exit(true);
+  end;
+end;
+
+function TConceptDesignations.stringMatches(source, possible: String; caseSensitive: boolean; lang: TIETFLang): boolean;
+begin
+  // we ignore lang at this time
+  if (caseSensitive) then
+    result := source = possible
+  else
+    result := SameText(source, possible);
+end;
+
+procedure TConceptDesignations.SetBaseLang(value: TIETFLang);
+begin
+  FBaselang.Free;
+  FBaseLang := value;
+end;
+
+procedure TConceptDesignations.SetDisplay(value: TFHIRPrimitiveW);
+begin
+  FDisplay.Free;
+  FDisplay := value;
+end;
+
+constructor TConceptDesignations.Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions);
+begin
+  inherited Create;
+  FFactory := factory;
+  FLanguages := languages;
+  FDesignations := TFslList<TConceptDesignation>.create;
+end;
+
+{ TConceptDesignation }
+
+destructor TConceptDesignation.Destroy;
+begin
+  FLanguage.Free;
+  FUse.Free;
+  FValue.Free;
+  FExtensions.Free;
+  inherited Destroy;
+end;
+
+procedure TConceptDesignation.SetLanguage(const Value: TIETFLang);
+begin
+  FLanguage.Free;
+  FLanguage := Value;
+end;
+
+function TConceptDesignation.GetExtensions: TFslList<TFHIRExtensionW>;
+begin
+  if FExtensions = nil then
+    FExtensions := TFslList<TFHIRExtensionW>.create;
+  result := FExtensions;
+end;
+
+procedure TConceptDesignation.SetUse(const Value: TFHIRCodingW);
+begin
+  FUse.Free;
+  FUse := value;
+end;
+
+procedure TConceptDesignation.SetValue(const Value: TFHIRPrimitiveW);
+begin
+  FValue.Free;
+  FValue := Value;
+end;
+
+constructor TConceptDesignation.Create;
+begin
+  inherited Create;
+end;
+
+class function TConceptDesignation.build(languages : TIETFLanguageDefinitions; ccd : TFhirCodeSystemConceptDesignationW) : TConceptDesignation;
+var
+  list : TFslList<TFHIRExtensionW>;
+begin
+  result := TConceptDesignation.create;
+  try
+    result.Language := languages.parse(ccd.language);
+    result.Use := ccd.use;
+    result.Value := ccd.valueElement; {no .link}
+    list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+    try
+      if (list.count > 0) then
+        result.extensions.addAll(list);
+    finally
+      list.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TConceptDesignation.link: TConceptDesignation;
+begin
+  result := TConceptDesignation(inherited Link);
+end;
+
+function TConceptDesignation.present: String;
+begin
+  if FValue <> nil then
+    result := '"'+FValue.asString+'"'
+  else
+    result := '""';
+  if (FLanguage <> nil) or (FUse <> nil) then
+  begin
+    result := result +' (';
+    if (FLanguage <> nil) then
+      result := result + FLanguage.code;
+    if FUse <> nil then
+      result := result + '/'+FUse.renderText;
+    result := result +')';
+  end;
+end;
 
 { TCodeSystemProvider }
 
@@ -281,12 +623,32 @@ begin
   end;
 end;
 
+function TCodeSystemProvider.Display(context: TCodeSystemProviderContext; lang: TFslList<TIETFLang>): string;
+var
+  hl : THTTPLanguages;
+  l : TIETFLang;
+begin
+  for l in lang do
+    hl.AddCode(l.code);
+  result := display(context, hl);
+end;
+
+function TCodeSystemProvider.itemWeight(context: TCodeSystemProviderContext): string;
+begin
+  result := '';
+end;
+
 function TCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
 begin
   result := cscmComplete; // unless specified otherwise
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
+begin
+  result := false;
+end;
+
+function TCodeSystemProvider.deprecated(context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
@@ -313,9 +675,9 @@ begin
   result := false;
 end;
 
-procedure TCodeSystemProvider.RecordUse;
+procedure TCodeSystemProvider.RecordUse(count : integer = 1);
 begin
-  inc(FUseCount);
+  FUseCount := FUseCount + count;
 end;
 
 function TCodeSystemProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;
@@ -330,12 +692,32 @@ end;
 
 function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not implemented for '+ClassName);
+  raise ETerminologyError.create('Not implemented for '+ClassName, itException);
 end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil));
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil), itException);
+end;
+
+function TCodeSystemProvider.getExtensions(context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
+begin
+  result := nil;
+end;
+
+function TCodeSystemProvider.getProperties(context: TCodeSystemProviderContext): TFslList<TFhirCodeSystemConceptPropertyW>;
+begin
+  result := nil
+end;
+
+function TCodeSystemProvider.parent(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
+end;
+
+function TCodeSystemProvider.canParent: boolean;
+begin
+  result := false;
 end;
 
 function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
@@ -445,13 +827,18 @@ begin
   end;
 end;
 
-function TSearchFilterText.passes(cds: TCodeDisplays): boolean;
+function TSearchFilterText.passes(cds: TConceptDesignations): boolean;
 var
-  cd : TCodeDisplay;
+  cd : TConceptDesignation;
 begin
-  result := false;
-  for cd in cds do
-    if passes(cd.value) then
+  if (cds = nil) then
+    exit(false);
+  if (cds.display = nil) then
+    result := false
+  else
+    result := passes(cds.display.AsString);
+  for cd in cds.designations do
+    if (cd.value <> nil) and passes(cd.value.AsString) then
       exit(true);
 end;
 
@@ -504,188 +891,6 @@ begin
   result := TCodeSystemProviderFilterPreparationContext(inherited Link);
 end;
 
-{ TCodeDisplays }
-
-function TCodeDisplays.chooseDisplay(languages : TIETFLanguageDefinitions; lang: THTTPLanguages): String;
-var
-  l : string;
-  rl : TIETFLang;
-begin
-  result := '';
-  if (length(lang.codes) = 0) then
-  begin
-    rl := languages.parse('');
-    try
-      if findMatch(languages, rl, result) then
-        exit;
-    finally
-      rl.Free;
-    end;
-  end
-  else
-  begin
-    for l in lang.codes do
-    begin
-      rl := languages.parse(l);
-      try
-        if findMatch(languages, rl, result) then
-          exit;
-      finally
-        rl.Free;
-      end;
-    end;
-  end;
-end;
-
-function TCodeDisplays.findMatch(languages : TIETFLanguageDefinitions; lang: TIETFLang; out display: String): boolean;
-var
-  cd : TCodeDisplay;
-  a : TIETFLangPartType;
-begin
-  result := false;
-  for a := High(TIETFLangPartType) downto Low(TIETFLangPartType) do
-  begin
-    for cd in self do
-    begin
-      if cd.lang = nil then
-        cd.lang := languages.parse(cd.language);
-      if cd.lang.matches(lang, a) then
-      begin
-        display := cd.Value;
-        exit(true);
-      end;
-    end;
-  end;
-end;
-
-function TCodeDisplays.langMatches(requested, stated: String): boolean;
-begin
-  result := stated.StartsWith(requested);
-end;
-
-procedure TCodeDisplays.see(value: String; overwrite: boolean);
-begin
-  see('', value, overwrite);
-end;
-
-procedure TCodeDisplays.see(values: TStringList; overwrite: boolean);
-var
-  s : String;
-begin
-  for s in values do
-    see('', s, overwrite);
-end;
-
-procedure TCodeDisplays.see(lang, value: String; overwrite: boolean);
-var
-  cd : TCodeDisplay;
-  i : integer;
-begin
-  if overwrite then
-    for i := count - 1 downto 0 do
-      if Items[i].language = lang then
-        delete(i);
-
-  cd := TCodeDisplay.create;
-  try
-    cd.language := lang;
-    cd.value := value;
-    add(cd.Link);
-  finally
-    cd.Free;
-  end;
-end;
-
-function TCodeDisplays.getDisplay(i: integer): String;
-begin
-  result := Items[i].value;
-end;
-
-function TCodeDisplays.has(languages: TIETFLanguageDefinitions; lang: THTTPLanguages; display: String): boolean;
-var
-  l : string;
-  rl : TIETFLang;
-  cd : TCodeDisplay;
-begin
-  result := false;
-  if (length(lang.codes) = 0) then
-  begin
-    for cd in self do
-      if (SameText(cd.value, display)) then
-        exit(true);
-  end
-  else
-  begin
-    for l in lang.codes do
-    begin
-      rl := languages.parse(l);
-      try
-        for cd in self do
-          if (langMatches(l, cd.FLanguage) or (cd.FLanguage = '')) and SameText(cd.value, display) then
-            exit(true);
-      finally
-        rl.Free;
-      end;
-    end;
-  end;
-end;
-
-function TCodeDisplays.has(display: String): boolean;
-var
-  cd : TCodeDisplay;
-begin
-  result := false;
-  for cd in self do
-    if (cd.value = display) then
-      exit(true);
-end;
-
-function TCodeDisplays.preferred: String;
-begin
-  if Count = 0 then
-    result := ''
-  else
-    result := display[0];
-end;
-
-function TCodeDisplays.present: String;
-var
-  cd : TCodeDisplay;
-  wrap : boolean;
-begin
-  result := '';
-  wrap := false;
-  for cd in self do
-    wrap := wrap or cd.value.contains(',') or (cd.language <> '');
-
-  for cd in self do
-    if not wrap then
-      CommaAdd(result, ''''+cd.value+'''')
-    else if cd.FLanguage <> '' then
-      CommaAdd(result, ''''+cd.value+''' ('+cd.FLanguage+')')
-    else
-      CommaAdd(result, ''''+cd.value+'''')
-end;
-
-{ TCodeDisplay }
-
-destructor TCodeDisplay.Destroy;
-begin
-  FLang.Free;
-  inherited;
-end;
-
-function TCodeDisplay.link: TCodeDisplay;
-begin
-  result := TCodeDisplay(inherited link);
-end;
-
-procedure TCodeDisplay.SetLang(const Value: TIETFLang);
-begin
-  FLang.Free;
-  FLang := Value;
-end;
-
 { TCodeSystemIndexBasedIterator }
 
 constructor TCodeSystemIteratorContext.Create(context: TCodeSystemProviderContext; count: integer);
@@ -714,6 +919,22 @@ end;
 procedure TCodeSystemIteratorContext.next;
 begin
   inc(FCurrent);
+end;
+
+
+{ ETerminologyError }
+
+constructor ETerminologyError.create(message: String; issueType: TFhirIssueType);
+begin
+  inherited Create(message);
+  FIssueType := issueType;
+end;
+
+{ ETerminologyTodo }
+
+constructor ETerminologyTodo.Create(place: String);
+begin
+  inherited create('Not done yet @ '+place, itException);
 end;
 
 end.

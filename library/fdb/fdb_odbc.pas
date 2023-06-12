@@ -322,13 +322,14 @@ var
 begin
   tz := TFslDateTime.makeLocal.toString('Z');
   ExecSQL('SET time_zone = '''+tz+'''');
+  ExecSQL('SET collation_connection = ''utf8mb3_general_ci''');
 end;
 
 procedure TFDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + AOldTableName + ' RENAME ' + ANewTableName
-  else if Owner.Platform in [kdbDB2, kdbCtree] then
+  else if Owner.Platform in [kdbDB2] then
     FStmt.SQL := 'RENAME TABLE ' + AOldTableName + ' TO ' + ANewTableName
   else
     FStmt.SQL := 'sp_rename ' + AOldTableName + ', ' + ANewTableName;
@@ -672,7 +673,7 @@ Begin
   case Owner.Platform of
     kdbSQLServer  :
       result := DatabaseSizeMSSQL;
-  else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
+  else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
     raise EDBException.create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
@@ -683,7 +684,7 @@ Begin
   case Owner.Platform of
     kdbSQLServer  :
       result := TableSizeMSSQL(sName);
-  else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
+  else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
     raise EDBException.create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
@@ -856,11 +857,7 @@ begin
     end
   else
     begin
-    if FPlatform = kdbCtree then
-      begin
-      FAttributes.add('Host=' + FServer)
-      end
-    else if (FPlatform = kdbSybase11) or (FPlatform = kdbSybase12) then
+    if (FPlatform = kdbSybase11) or (FPlatform = kdbSybase12) then
       begin
       FAttributes.add('ServerName=' + FServer)
       end
@@ -988,9 +985,7 @@ begin
     kdbSQLServer: Result := 'SQL Server Native Client 11.0';
     kdbSybase11: Result := 'Sybase System 11';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
-    kdbCtree: Result := 'Faircom Ctree';
     kdbAccess: Result := 'Microsoft Access Driver (*.mdb)';
-    kdbDBIsam: Result := '---';
     kdbInterbase: Result := 'Intersolv Interbase ODBC Driver (*.gdb)'; // not that we would actually ever use this
     kdbDB2: Result := 'IBM DB2 ODBC DRIVER';
     kdbOracle8: Result := 'Oracle ODBC Driver';

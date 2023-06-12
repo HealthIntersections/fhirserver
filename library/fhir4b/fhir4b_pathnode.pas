@@ -49,13 +49,14 @@ type
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
     pfRepeat, pfAggregate, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfUnion, pfCombine, pfIntersect, pfExclude,
     pfIif, pfUpper, pfLower, pfToChars,
-    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
+    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfMatchesFull, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfHasExtension, pfAllFalse, pfAnyFalse, pfAllTrue, pfAnyTrue,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
     pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToDate, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
     pfAbs, pfCeiling, pfExp, pfFloor, pfLn, pfLog, pfPower, pfTruncate, pfRound, pfSqrt,
-    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin,
+    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin, pfIndexOf,
+    pfLowBoundary, pfHighBoundary, pfPrecision,
     pfCustom);
 
   TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir4b_pathengine, but is in CQL
@@ -70,13 +71,14 @@ const
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
     'repeat', 'aggregate', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'union', 'combine', 'intersect', 'exclude',
     'iif', 'upper', 'lower', 'toChars',
-    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
+    'substring', 'startsWith', 'endsWith', 'matches', 'matchesFull', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'hasExtension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
     'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToDate', 'convertsToTime',
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
     'abs', 'ceiling', 'exp', 'floor', 'ln', 'log', 'power', 'truncate', 'round', 'sqrt',
-    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join',
+    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join', 'indexOf',
+    'lowBoundary', 'highBoundary', 'precision',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
@@ -120,6 +122,8 @@ type
     class function ns(s : String) : String;
   end;
 
+  { TFHIRTypeDetails }
+
   TFHIRTypeDetails = class (TFslObject)
   private
     id : integer;
@@ -147,6 +151,7 @@ type
     function hasType(context : TFHIRWorkerContext; types : TStringList) : boolean; overload;
     procedure update(source : TFHIRTypeDetails); overload;
     procedure update(status : TFHIRCollectionStatus; types : TStringList); overload;
+    procedure update(status : TFHIRCollectionStatus; type_ : string); overload;
     function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function intersect(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function hasNoTypes() : boolean;
@@ -154,6 +159,7 @@ type
     property types : TFslList<TFHIRProfiledType> read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
+    function debugInfo : String; override;
     function type_ : String;
   end;
 
@@ -319,7 +325,7 @@ end;
 function TFHIRPathExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$this', '$resource', '$total'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource', '$total', '$index'], name)
   else
     result := true;
 end;
@@ -813,6 +819,7 @@ begin
     end;
   end;
   Ftypes.add(pt.Link);
+  updateDebugInfo;
 end;
 
 function TFHIRTypeDetails.addType(n: String) : String;
@@ -945,7 +952,7 @@ begin
   result := false;
 end;
 
-function TFHIRTypeDetails.getSystemType(url : String) : String;
+function TFHIRTypeDetails.getSystemType(url: string): String;
 var
   code : String;
 begin
@@ -962,14 +969,14 @@ procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
 var
   pt : TFHIRProfiledType;
 begin
-  for pt in source.Types do
-    addType(pt);
   if (FcollectionStatus = csNULL) then
     FcollectionStatus := source.collectionStatus
   else if (source.FcollectionStatus = csUNORDERED) then
     FcollectionStatus := source.collectionStatus
   else
     FcollectionStatus := csORDERED;
+  for pt in source.Types do
+    addType(pt);
 end;
 
 function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
@@ -996,8 +1003,19 @@ procedure TFHIRTypeDetails.update(status: TFHIRCollectionStatus; types: TStringL
 var
   s : String;
 begin
+  if (FcollectionStatus = csNULL) then
+    FcollectionStatus := status
+  else if (status = csUNORDERED) then
+    FcollectionStatus := status
+  else
+    FcollectionStatus := csORDERED;
   for s in Types do
     addType(s);
+end;
+
+procedure TFHIRTypeDetails.update(status: TFHIRCollectionStatus; type_: string);
+begin
+  addType(type_);
   if (FcollectionStatus = csNULL) then
     FcollectionStatus := status
   else if (status = csUNORDERED) then
@@ -1054,6 +1072,11 @@ begin
    result := '';
    for pt in Types do
      CommaAdd(result, pt.uri);
+end;
+
+function TFHIRTypeDetails.debugInfo: String;
+begin
+  Result := describe;
 end;
 
 function TFHIRTypeDetails.sizeInBytesV(magic : integer) : cardinal;

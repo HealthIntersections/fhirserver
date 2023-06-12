@@ -130,6 +130,7 @@ type
 
     property codes : TArray<String> read GetCodes; // in order...
     property header : String read FSource;
+    procedure addCode(s : String);
 
     function matches(code: String): boolean;
     function prefLang : String;
@@ -346,9 +347,12 @@ begin
         { this signals the end of the item name;
           compute its length. The value starts at
           the *next* character }
-      itemnamelen := cursor - itemnamestart;
+      if (itemnamelen = 0) then
+      begin
+        itemnamelen := cursor - itemnamestart;
+        itemvalstart := cursor+1;
+      end;
       cursor := cursor + 1;
-      itemvalstart := cursor;
       end
     else
       begin
@@ -620,15 +624,16 @@ begin
   list := TFslList<TLanguageSpec>.create;
   try
     for s in hdr.Split([',']) do
-    begin
-      if s.Contains(';') then
+      if (s.trim() <> '') then
       begin
-        StringSplit(s, ';', l, r);
-        list.Add(TLanguageSpec.Create(l.trim, StrToFloatDef(r, 0.5)));
-      end
-      else
-        list.Add(TLanguageSpec.Create(s.trim, 1));
-    end;
+        if s.Contains(';') then
+        begin
+          StringSplit(s, ';', l, r);
+          list.Add(TLanguageSpec.Create(l.trim, StrToFloatDef(r, 0.5)));
+        end
+        else
+          list.Add(TLanguageSpec.Create(s.trim, 1));
+      end;
     if (list.count > 1) then
     begin
       list.Sort(TLanguageSpecComparer.create);
@@ -641,12 +646,18 @@ begin
   end;
 end;
 
+procedure THTTPLanguages.addCode(s: String);
+begin
+  SetLength(FCodes, length(FCodes)+1);
+  FCodes[length(FCodes) - 1] := s;
+end;
+
 function defLang : THTTPLanguages;
 {$IFDEF FPC}
 var
-  Lang, FallbackLang: String;
+  Lang: String;
 begin
-  LazGetLanguageIDs(Lang, FallbackLang);
+  LazGetShortLanguageID(Lang);
 {$ELSE}
 var
   szLang: Array [0..254] of Char;
@@ -655,7 +666,7 @@ begin
   VerLanguageName(GetSystemDefaultLCID, szLang, SizeOf(szLang));
   Lang := StrPas(szLang);
 {$ENDIF}
-  result := THTTPLanguages.create(Lang);
+  result := THTTPLanguages.create(Lowercase(Lang));
 end;
 
 function THTTPLanguages.GetCodes: TArray<String>;

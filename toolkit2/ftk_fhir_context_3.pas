@@ -55,18 +55,18 @@ Type
     procedure checkClient;
     function  findCode(list : TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: TFHIRValueSet; var res : TValidationResult) : boolean;
-    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetVs(sender : TObject; url, version : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
-    procedure SeeResource(r : TFhirResource); override;
+    procedure SeeResourceProxy(r : TFhirResourceProxy); override;
   public
     constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager); virtual;
     destructor Destroy; Override;
 
     Function Link : TToolkitValidatorContextR3; overload;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -133,7 +133,7 @@ begin
   // todo
 end;
 
-function TToolkitValidatorContextR3.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+function TToolkitValidatorContextR3.doGetVs(sender: TObject; url, version: String): TFHIRValueSetW;
 var
   vs : TFhirValueSet;
 begin
@@ -159,12 +159,12 @@ begin
   end;
 end;
 
-function TToolkitValidatorContextR3.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TToolkitValidatorContextR3.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 begin
   if (t = frtValueSet) then
     result := FValueSets.get(url).link
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TToolkitValidatorContextR3.findCode(list: TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): TFhirCodeSystemConcept;
@@ -200,17 +200,17 @@ begin
   result := TToolkitValidatorContextR3(inherited Link);
 end;
 
-procedure TToolkitValidatorContextR3.SeeResource(r: TFhirResource);
+procedure TToolkitValidatorContextR3.SeeResourceProxy(r: TFhirResourceProxy);
 var
   vs : TFhirValueset;
 begin
-  if (r.ResourceType = frtValueSet) then
+  if (r.resource.ResourceType = frtValueSet) then
   begin
-    vs := (r as TFHIRValueSet);
+    vs := (r.resource as TFHIRValueSet);
     FValueSets.see(vs);
   end
-  else if (r.ResourceType = frtCodeSystem) then
-    FCodeSystems.see(TFHIRCodeSystem(r))
+  else if (r.resource.ResourceType = frtCodeSystem) then
+    FCodeSystems.see(TFHIRCodeSystem(r.resource))
   else
     inherited;
 end;
@@ -327,12 +327,12 @@ begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, FLanguages.link, '');
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
       try
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
-          p := validator.check(system, version, code, false);
+          p := validator.check('code', system, version, code, false);
           try
             res := TValidationResult.create;
             if p.bool('result') then

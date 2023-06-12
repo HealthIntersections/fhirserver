@@ -43,7 +43,7 @@ uses
   LCLIntf, LCLType,
   {$ENDIF}
   Classes, SysUtils, Graphics, IniFiles,
-  Controls, Forms,
+  Controls, ComCtrls, Forms,
   fsl_utilities;
 
 procedure setForOS(btnOk, btnCancel : TControl);
@@ -51,6 +51,8 @@ procedure writeFontToIni(ini : TIniFile; section : String; font : TFont);
 procedure readFontFromIni(ini : TIniFile; section : String; font : TFont; defFontName : String = '');
 
 procedure screenshot(bmp : TBitmap);
+
+procedure setToolbarForCaptions(toolbar : TToolbar; captions, big : boolean);
 
 implementation
 
@@ -129,6 +131,28 @@ begin
 end;
 {$ENDIF}
 {$ENDIF}
+
+procedure setToolbarForCaptions(toolbar : TToolbar; captions, big : boolean);
+begin
+  if big then
+    toolbar.ImagesWidth := 32
+  else
+    toolbar.ImagesWidth := 16;
+  if captions then
+  begin
+    toolbar.Height := toolbar.ImagesWidth+10+20;
+    toolbar.ButtonHeight := toolbar.ImagesWidth+20;
+    toolbar.ButtonWidth := 50;
+    toolbar.ShowCaptions := true;
+  end
+  else
+  begin
+    toolbar.Height := toolbar.ImagesWidth+10;
+    toolbar.ButtonHeight := toolbar.ImagesWidth+8;
+    toolbar.ButtonWidth := toolbar.ImagesWidth+7;
+    toolbar.ShowCaptions := false;
+  end;
+end;
 
 end.
 

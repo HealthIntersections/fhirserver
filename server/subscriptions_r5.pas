@@ -133,7 +133,7 @@ var
 begin
   subscription := sub as TFHIRSubscription;
   subscription.checkNoImplicitRules('SubscriptionManager.SeeNewSubscription', 'subscription');
-  if subscription.status in [SubscriptionStateRequested, SubscriptionStateActive, SubscriptionStateError] then
+  if subscription.status in [SubscriptionStatusCodesRequested, SubscriptionStatusCodesActive, SubscriptionStatusCodesError] then
     result := TFHIRSubscription5.Create(subscription.Link)
   else
     result := nil;

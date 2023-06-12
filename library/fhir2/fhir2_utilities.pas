@@ -38,7 +38,7 @@ uses
   SysUtils, Classes, Generics.Collections, ZLib,
 
   fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_xml, 
-  fsl_fetcher,
+  fsl_fetcher, fsl_web_stream,
 
   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
   fhir2_types, fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_other, fhir2_resources_clinical, fhir2_resources, fhir2_constants, fhir2_context;
@@ -62,6 +62,7 @@ const
     {$IFDEF FHIR_SEARCHPARAMETER}frtSearchParameter, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition, {$ENDIF}
     frtValueSet];
+  TERMINOLOGY_RESOURCES : Array of String = ['ValueSet', 'ConceptMap'];
 
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;
@@ -273,9 +274,17 @@ type
   private
     function GetXmlId: String;
     procedure SetmlId(const Value: String);
+    function GetHasUrl : boolean;
+    function GetUrl : String;
+    function GetHasVersion : boolean;
+    function GetVersion : String;
   public
     property xmlId : String read GetXmlId write SetmlId;
 
+    property hasUrlGen : boolean read GetHasUrl;
+    property urlGen : String read GetUrl;
+    property hasVersionGen : boolean read GetHasVersion;
+    property versionGen : String read GetVersion;
     procedure checkNoImplicitRules(place, role : String);
   end;
 
@@ -332,12 +341,16 @@ type
   end;
   {$ENDIF}
 
+  { TFHIRCodeableConceptHelper }
+
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
     constructor Create(system, code : String); overload;
-    function hasCode(System, Code : String) : boolean;
+    function hasCode(System, Code : String) : boolean; overload;
+    function hasCode(System, Version, Code : String) : boolean; overload;
     function fromSystem(System : String; required : boolean = false) : String; overload;
     function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
+    procedure addCoding(systemUri, version, code, display : String);
   end;
 
   TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
@@ -391,11 +404,14 @@ type
   end;
 
 
+  { TFhirValueSetHelper }
+
   TFhirValueSetHelper = class helper for TFhirValueSet
   public
     function context : string;
     function source : string;
     function conceptList : TFhirValueSetCodeSystemConceptList;
+    function findContains(systemUri, version, code : String) : TFHIRValueSetExpansionContains;
   end;
 
   TFHIROperationOutcomeHelper = class helper (TFHIRDomainResourceHelper) for TFhirOperationOutcome
@@ -559,11 +575,15 @@ type
     function getChildren(concept : TFhirValueSetCodeSystemConcept) : TFhirValueSetCodeSystemConceptList;
   end;
 
+  { TFhirValueSetExpansionHelper }
+
   TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
   public
     procedure addParamStr(name, value : String); overload;
     procedure AddParamUri(name, value : String); overload;
     procedure AddParamBool(name : String; value : boolean); overload;
+    procedure addParamCode(name, value : String); overload;
+    procedure addParamInt(name : String; value : integer); overload;
   end;
 
   TFhirSystemVersionProcessingModeEnum = (SystemVersionProcessingModeDefault, SystemVersionProcessingModeCheck, SystemVersionProcessingModeOverride);
@@ -2260,6 +2280,8 @@ begin
           result := TFhirCode(self.ExtensionList.Item(ndx).value).value
         else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
           result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+        else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+          result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
         else
           result := '';
       end;
@@ -2293,6 +2315,8 @@ begin
     result := TFhirUri(self.ExtensionList.Item(ndx).value).value
   else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
     result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
+  else if (self.ExtensionList.Item(ndx).value is TFhirDecimal) then
+    result := TFhirDecimal(self.ExtensionList.Item(ndx).value).value
   else
     result := '';
 end;
@@ -2471,7 +2495,7 @@ end;
 
 procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
@@ -2533,6 +2557,87 @@ procedure TFHIRResourceHelper.SetmlId(const Value: String);
 begin
   id := value;
 end;
+
+function TFHIRResourceHelper.GetHasUrl : boolean;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).url <> ''
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).url <> ''
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).url <> ''
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).url <> ''
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).url <> ''
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).url <> ''
+  else
+    result := false;
+end;
+
+function TFHIRResourceHelper.GetUrl : String;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).url
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).url
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).url
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).url
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).url
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).url
+  else
+    result := '';
+end;
+
+function TFHIRResourceHelper.GetHasVersion : boolean;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).version <> ''
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).version <> ''
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).version <> ''
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).version <> ''
+  else if self is TFHIRQuestionnaire then
+    result := TFHIRQuestionnaire(self).version <> ''
+  else if self is TFHIRSearchParameter then
+    result := TFHIRQuestionnaire(self).version <> ''
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).version <> ''
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).version <> ''
+  else
+    result := false;
+end;
+
+function TFHIRResourceHelper.GetVersion : String;
+begin
+  if self is TFHIRConformance then
+    result := TFHIRConformance(self).version
+  else if self is TFHIRConceptMap then
+    result := TFHIRConceptMap(self).version
+  else if self is TFHIRImplementationGuide then
+    result := TFHIRImplementationGuide(self).version
+  else if self is TFHIROperationDefinition then
+    result := TFHIROperationDefinition(self).version
+  else if self is TFHIRQuestionnaire then
+    result := TFHIRQuestionnaire(self).version
+  else if self is TFHIRSearchParameter then
+    result := TFHIRQuestionnaire(self).version
+  else if self is TFHIRStructureDefinition then
+    result := TFHIRStructureDefinition(self).version
+  else if self is TFHIRValueSet then
+    result := TFHIRValueSet(self).version
+  else
+    result := '';
+end;
+
 
 { TFHIRBundleHelper }
 
@@ -3097,6 +3202,22 @@ begin
     raise EFHIRException.create('Unable to find code in '+StringArrayToString(systems));
 end;
 
+procedure TFHIRCodeableConceptHelper.addCoding(systemUri, version, code, display: String);
+var
+  c : TFhirCoding;
+begin
+  c := TFHIRCoding.create;
+  try
+    c.system := systemUri;
+    c.version := version;
+    c.code := code;
+    c.display := display;
+    codingList.add(c.link);
+  finally
+    c.free;
+  end;
+end;
+
 function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
 var
   i : integer;
@@ -3105,6 +3226,20 @@ begin
   if self <> nil then
     for i := 0 to codingList.Count - 1 do
       if (codingList[i].system = system) and (codingList[i].code = code) then
+      begin
+        result := true;
+        break;
+      end;
+end;
+
+function TFHIRCodeableConceptHelper.hasCode(System, Version, Code: String): boolean;
+var
+  i : integer;
+begin
+  result :=  false;
+  if self <> nil then
+    for i := 0 to codingList.Count - 1 do
+      if (codingList[i].system = system) and (codingList[i].version = version) and (codingList[i].code = code) then
       begin
         result := true;
         break;
@@ -3275,6 +3410,33 @@ begin
   result := codeSystem.conceptList;
 end;
 
+function findContainsInList(list : TFhirValueSetExpansionContainsList; systemUri, version, code: String): TFHIRValueSetExpansionContains;
+var
+  cc, t : TFhirValueSetExpansionContains;
+begin
+  for cc in list do
+  begin
+    if (systemUri = cc.system) and (code = cc.code) and ((version = '') or (version = cc.version)) then
+      exit(cc);
+    if (cc.hasContainsList) then
+    begin
+      t := findContainsInList(cc.containsList, systemUri, version, code);
+      if (t <> nil) then
+        exit(t);
+    end;
+  end;
+  result := nil;
+end;
+
+function TFhirValueSetHelper.findContains(systemUri, version, code: String): TFHIRValueSetExpansionContains;
+begin
+  if Expansion = nil then
+    result := nil
+  else
+    result := findContainsInList(Expansion.containsList, systemUri, version, code);
+
+end;
+
 function TFhirValueSetHelper.context: string;
 var
   i: Integer;
@@ -3302,18 +3464,27 @@ end;
 
 function TFhirValueSetHelper.source: string;
 var
-  b : TFslStringBuilder;
+  ts : TStringList;
   comp : TFhirValueSetComposeInclude;
 begin
-  b := TFslStringBuilder.Create;
+  ts := TStringList.create;
   try
+    ts.sorted := true;
+
     if (compose <> nil) then
       for comp in compose.includeList do
+      begin
         if comp.system <> '' then
-          b.Append(csName(comp.system));
-    result := b.AsString;
+        begin
+          if ts.IndexOf(comp.system) = -1 then
+          begin
+            ts.add(csName(comp.system));
+          end;
+        end;
+      end;
+    result := ts.commaText;
   finally
-    b.Free;
+    ts.free;
   end;
 end;
 
@@ -4202,19 +4373,20 @@ procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exemp
 var
   ext : TFHIRExtension;
 begin
-  if length(exempt) > 0 then
-  begin
-    for ext in modifierExtensionList do
-      if not StringArrayExistsInsensitive(exempt, ext.url) then
-        raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
-  end
-  else if modifierExtensionList.Count > 0 then
-    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+  if hasModifierExtensionList then
+    if length(exempt) > 0 then
+    begin
+      for ext in modifierExtensionList do
+        if not StringArrayExistsInsensitive(exempt, ext.url) then
+          raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+    end
+    else
+      raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
 procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
-  if modifierExtensionList.Count > 0 then
+  if hasModifierExtensionList then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
 end;
 
@@ -4693,7 +4865,7 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
-procedure TFhirValueSetExpansionHelper.addParamUri(name, value: String);
+procedure TFhirValueSetExpansionHelper.AddParamUri(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
@@ -4711,6 +4883,23 @@ begin
   p.value := TFhirBoolean.Create(value);
 end;
 
+procedure TFhirValueSetExpansionHelper.addParamCode(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirCode.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.addParamInt(name: String; value: integer);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirInteger.Create(inttostr(value));
+end;
 
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 begin

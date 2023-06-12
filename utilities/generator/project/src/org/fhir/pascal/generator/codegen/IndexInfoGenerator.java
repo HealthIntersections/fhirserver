@@ -63,7 +63,7 @@ public class IndexInfoGenerator extends BaseGenerator {
 	      int llen = getLastLineLength(s);
 	      b.append(s);
 	      b.append(breakStringConstIntoLines(escape(sp.getExpression()), llen));
-	      b.append("', sxp"+(sp.getXpathUsage() == null ? "Null" : Utilities.capitalize(sp.getXpathUsage().toCode()))+");\r\n");
+	      b.append("', sxp"+(sp.getProcessingMode() == null ? "Normal" : Utilities.capitalize(sp.getProcessingMode().toCode()))+");\r\n");
 	    }
 	    b.append("  indexes.add('"+analysis.getName()+"', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);\r\n");
 
@@ -149,7 +149,7 @@ public class IndexInfoGenerator extends BaseGenerator {
 
   private boolean hasAllResources(List<CodeType> list) {
     for (String name : allResourceNames) {
-      if (!Utilities.existsInList(name, "Parameters")) {
+      if (!Utilities.existsInList(name, "Parameters", "CanonicalResource", "MetadataResource", "RequestGroup")) {
         boolean found = false;
         for (CodeType c : list) {
           found = found || (c.getValue().equals(name));

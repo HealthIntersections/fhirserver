@@ -206,6 +206,9 @@ type
 
 
   // Base StructureDefinition for Element Type: Base definition for all elements in a resource.
+
+  { TFhirElement }
+
   TFhirElement = class abstract (TFhirBase)
   private
     FDisallowExtensions: boolean;
@@ -245,8 +248,14 @@ type
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
+
   {$IFNDEF FPC}published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
@@ -740,6 +749,9 @@ type
 
   // a complex Integer - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Integer, and extensions
+
+  { TFhirInteger }
+
   TFhirInteger = class (TFhirPrimitiveType)
   private
     FValue: String;
@@ -753,6 +765,7 @@ type
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : String); overload;
+    constructor Create(value : integer); overload;
     destructor Destroy; override;
 
     function Link : TFhirInteger; overload;
@@ -6479,14 +6492,14 @@ type
     // This attribute provides information on the status of the marketing of the medicinal product See ISO/TS 20443 for more information and examples.
     property statusElement : TFhirCodeableConcept read FStatus write SetStatus;
 
-    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain. (defined for API consistency)
+    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain. (defined for API consistency)
     property dateRange : TFhirPeriod read FDateRange write SetDateRange;
-    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property dateRangeElement : TFhirPeriod read FDateRange write SetDateRange;
 
-    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // Typed access to The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property restoreDate : TFslDateTime read GetRestoreDateST write SetRestoreDateST;
-    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE “Placed on the market” refers to the release of the Medicinal Product into the distribution chain.
+    // The date when the Medicinal Product is placed on the market by the Marketing Authorisation Holder (or where applicable, the manufacturer/distributor) in a country and/or jurisdiction shall be provided A complete date consisting of day, month and year shall be specified using the ISO 8601 date format NOTE ï¿½Placed on the marketï¿½ refers to the release of the Medicinal Product into the distribution chain.
     property restoreDateElement : TFhirDateTime read FRestoreDate write SetRestoreDate;
 
   end;
@@ -8955,7 +8968,7 @@ begin
     inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirElement.equals(other : TObject) : boolean; 
+function TFhirElement.Equals(other: TObject): boolean;
 var
   o : TFhirElement;
 begin
@@ -9031,7 +9044,7 @@ begin
   result := FExtensionList;
 end;
 
-function TFhirElement.GetHasExtensionList : boolean;
+function TFhirElement.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
@@ -9043,13 +9056,46 @@ begin
 end;
 
 
-procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
+procedure TFhirElement.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirDataType;
+end;
+
+procedure TFhirElement.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
+procedure TFhirElement.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirElement.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirElement.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  for i := FExtensionList.count - 1 downto 0 do
+    if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+      FExtensionList.remove(i);
 end;
 
 function TFhirElement.extensionCount(url: String): integer;
@@ -9061,15 +9107,29 @@ begin
     if (ex.url = url) or (url = '') then
       inc(result);
 end;
-      
-function TFhirElement.extensions(url: String): TFslList<TFHIRObject>;
+
+function TFhirElement.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
   result := TFslList<TFHIRObject>.create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+      
+function TFhirElement.getExtensionsV(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
@@ -10402,10 +10462,16 @@ end;
 
 { TFhirInteger }
 
-Constructor TFhirInteger.Create(value : String);
+constructor TFhirInteger.Create(value: String);
 begin
   Create;
   FValue := value;
+end;
+
+constructor TFhirInteger.Create(value: integer);
+begin
+  Create;
+  FValue := inttostr(value);
 end;
 
 destructor TFhirInteger.Destroy;
@@ -10438,17 +10504,17 @@ begin
   FValue := TFhirInteger(oSource).Value;
 end;
 
-function TFhirInteger.AsStringValue : string;
+function TFhirInteger.AsStringValue: String;
 begin
   result := FValue;
 end;
 
-procedure TFhirInteger.SetStringValue(value : string);
+procedure TFhirInteger.SetStringValue(value: String);
 begin
   FValue := value;
 end;
 
-function TFhirInteger.equals(other : TObject) : boolean; 
+function TFhirInteger.Equals(other: TObject): boolean;
 var
   o : TFhirInteger;
 begin

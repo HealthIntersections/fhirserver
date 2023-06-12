@@ -36,7 +36,8 @@ uses
   SysUtils, Classes,
   fsl_testing,
   fsl_base, fsl_utilities, fsl_xml,
-  ftx_ucum_services;
+  fhir_objects,
+  ftx_service, ftx_ucum_services;
 
 type
   TUcumTest = class (TFslTestSuiteCase)
@@ -153,7 +154,7 @@ begin
   else if group.name = 'multiplication' then
     TestMultiplication(test)
   else
-    raise ETerminologyError.Create('unknown group '+group.Name);
+    raise ETerminologyError.Create('unknown group '+group.Name, itUnknown);
 end;
 
 procedure TUcumTest.TestValidation(test : TMXmlElement);

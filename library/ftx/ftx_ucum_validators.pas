@@ -35,7 +35,8 @@ Interface
 Uses
   SysUtils,
   fsl_utilities, fsl_collections, fsl_base,
-  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers;
+  fhir_objects,
+  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, ftx_service;
 
 Type
   TUcumValidator = class (TFslObject)
@@ -151,17 +152,17 @@ Begin
     begin
       if (code[i] = '[') Then
         if (inBrack) Then
-          raise ETerminologyError.create('nested [')
+          raise ETerminologyError.create('nested [', itInvalid)
   else
           inBrack := true;
       if (code[i] = ']') Then
         if (not inBrack) Then
-          raise ETerminologyError.create('] without [')
+          raise ETerminologyError.create('] without [', itInvalid)
         else
           inBrack := false;
       nonDigits := nonDigits or not ((code[i] >= '0') and (code[i] <= '9'));
       if ((code[i] >= '0') and (code[i] <= '9')) And not inBrack and nonDigits Then
-        raise ETerminologyError.create('code '+code+' is ambiguous because  it has digits outside []');
+        raise ETerminologyError.create('code '+code+' is ambiguous because  it has digits outside []', itInvalid);
     End;
   except
     on e : exception do

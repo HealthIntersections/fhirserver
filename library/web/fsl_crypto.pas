@@ -1761,10 +1761,12 @@ begin
       // 2. check the signature
       ctx := EVP_MD_CTX_new;
       try
+
         if not checkRes(EVP_DigestVerifyInit(ctx, nil, EVP_sha256, nil, pkey) = 1, 'openSSL EVP_DigestVerifyInit failed', result) then
           exit;
         if not checkRes(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_DigestUpdate failed', result) then
           exit;
+
         sig := baseToDER(sig);
         e := EVP_DigestVerifyFinal(ctx, @sig[0], length(sig));
         if not checkRes(e = 1, 'Signature is not valid (EC-256) (e = '+inttostr(e)+')', result) then

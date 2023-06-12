@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_fpc, fsl_npm_cache,
-  fhir_objects, fhir_parser, fhir_factory, fhir_uris,
+  fhir_objects, fhir_parser, fhir_factory, fhir_uris, fhir_common,
   fhir5_resources, fhir5_resources_base, fhir5_parser, fhir5_enums, fhir5_types, fhir5_context, fhir5_utilities, fhir5_constants;
 
 Const
@@ -46,14 +46,18 @@ Const
 
 
 Type
+
+  { TProfileManager }
+
   TProfileManager = class (TFslObject)
   private
     lock : TFslLock;
     FProfilesById : TFslMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
+    FProfilesByType : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
 //    FExtensions : TFslStringObjectMatch;
     function GetProfileByUrl(url: String): TFHirStructureDefinition;
-    function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
+    function GetProfileByType(typeName : String): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -61,6 +65,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     function Link : TProfileManager; overload;
+    procedure Unload;
 
     procedure SeeProfile(key : Integer; profile : TFHirStructureDefinition);
     procedure DropProfile(aType: TFhirResourceType; id : String);
@@ -71,7 +76,7 @@ Type
     function getLinks(non_resources : boolean) : TFslStringMatch;
 
     property ProfileByURL[url : String] : TFHirStructureDefinition read GetProfileByUrl; default;
-    property ProfileByType[aType : TFhirResourceType] : TFHirStructureDefinition read GetProfileByType;
+    property ProfileByType[typeName : String] : TFHirStructureDefinition read GetProfileByType;
     property ProfilesByURL : TFslMap<TFHIRStructureDefinition> read FProfilesByURL;
 
     procedure generateSnapshots;
@@ -108,6 +113,8 @@ Type
   end;
 
 
+  { TBaseWorkerContextR5 }
+
   TBaseWorkerContextR5 = class abstract (TFHIRWorkerContext)
   private
 
@@ -116,7 +123,7 @@ Type
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
-    FNamingSystems : TFslMap<fhir5_resources.TFhirNamingSystem>;
+    FNamingSystems : TFslMap<TFHIRResourceProxy>;
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
@@ -124,10 +131,12 @@ Type
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR5; overload;
+    procedure Unload; override;
 
     property Profiles : TProfileManager read FProfiles;
-    procedure SeeResource(r : TFhirResource); overload; virtual;
+    procedure seeResourceProxy(r : TFhirResourceProxy); overload; virtual;
     procedure seeResource(res : TFHIRResourceV); overload; override;
+    procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
@@ -136,9 +145,10 @@ Type
     procedure registerCustomResource(cr : TFHIRCustomResourceInformation);
     procedure setNonSecureTypes(names : Array of String); override;
     function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; override;
 
     function getResourceNames : TFslStringSet; override;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); override;
@@ -1553,7 +1563,7 @@ begin
   FLock := TFslLock.Create('worker-context r5');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create('profiles.custom');
-  FNamingSystems := TFslMap<fhir5_resources.TFhirNamingSystem>.create('profiles.ns');
+  FNamingSystems := TFslMap<TFHIRResourceProxy>.create('profiles.ns');
 end;
 
 destructor TBaseWorkerContextR5.Destroy;
@@ -1571,12 +1581,17 @@ begin
     Profiles.DropProfile(frtStructureDefinition, id);
 end;
 
-function TBaseWorkerContextR5.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TBaseWorkerContextR5.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
+var
+  r : TFHIRResourceProxy;
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
   else if (t in [frtNull, frtNamingSystem]) and FNamingSystems.ContainsKey(url) then
-    result := FNamingSystems[url].Link
+  begin
+    r := FNamingSystems[url];
+    result := r.resource.Link;
+  end
   else
     result := nil;
   end
@@ -1585,13 +1600,15 @@ end;
 function TBaseWorkerContextR5.oid2Uri(oid: String): String;
 var
   uri : String;
+  r : TFHIRResourceProxy;
   ns : TFhirNamingSystem;
 begin
   uri := UriForKnownOid(oid);
   if (uri <> '') then
     exit(uri);
-  for ns in FNamingSystems.Values do
+  for r in FNamingSystems.Values do
   begin
+    ns := r.resource as TFhirNamingSystem;
     if ns.hasOid(oid) then
     begin
       uri := ns.getUri;
@@ -1703,6 +1720,11 @@ begin
   end;
 end;
 
+function TBaseWorkerContextR5.fetchTypeDefinition(typeName: String): TFhirStructureDefinition;
+begin
+  result := FProfiles.ProfileByType[typeName];
+end;
+
 function TBaseWorkerContextR5.getStructure(url: String): TFHIRStructureDefinition;
 begin
   result := fetchStructureDefinition(url)
@@ -1711,6 +1733,14 @@ end;
 function TBaseWorkerContextR5.link: TBaseWorkerContextR5;
 begin
   result := TBaseWorkerContextR5(inherited Link);
+end;
+
+procedure TBaseWorkerContextR5.Unload;
+begin
+  inherited Unload;
+  FProfiles.Unload;
+  FCustomResources.clear;
+  FNamingSystems.Clear;
 end;
 
 procedure TBaseWorkerContextR5.LoadFromDefinitions(filename: string);
@@ -1842,9 +1872,21 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR5.SeeResource(res: TFHIRResourceV);
+procedure TBaseWorkerContextR5.seeResource(res : TFHIRResourceProxyV);
 begin
-  SeeResource(res as TFHIRResource);
+  seeResourceProxy(res as TFHIRResourceProxy)
+end;
+
+procedure TBaseWorkerContextR5.seeResource(res: TFHIRResourceV);
+var
+  proxy : TFHIRResourceProxy;
+begin
+  proxy := TFHIRResourceProxy.create(factory.link, res.link as TFHIRResource);
+  try
+    SeeResourceProxy(proxy);
+  finally
+    proxy.free;
+  end;
 end;
 
 procedure TBaseWorkerContextR5.Load(feed: TFHIRBundle);
@@ -1865,18 +1907,17 @@ begin
   FProfiles.generateSnapshots;
 end;
 
-
-procedure TBaseWorkerContextR5.SeeResource(r: TFhirResource);
+procedure TBaseWorkerContextR5.seeResourceProxy(r: TFhirResourceProxy);
 var
   p : TFhirStructureDefinition;
 begin
-  if r is TFHirStructureDefinition then
+  if r.fhirType  = 'StructureDefinition' then
   begin
-    p := r as TFHIRStructureDefinition;
+    p := r.resource as TFHirStructureDefinition;
     FProfiles.SeeProfile(0, p);
   end
-  else if (r.ResourceType = frtNamingSystem) then
-    FNamingSystems.AddOrSetValue(TFhirNamingSystem(r).url, TFhirNamingSystem(r).Link)
+  else if (r.fhirType = 'NamingSystem') then
+    FNamingSystems.AddOrSetValue(r.Id, r.Link)
 end;
 
 procedure TBaseWorkerContextR5.setNonSecureTypes(names: array of String);
@@ -1907,12 +1948,14 @@ begin
   lock := TFslLock.Create('profiles r5');
   FProfilesById := TFslMap<TFhirStructureDefinition>.create('profiles.id');
   FProfilesByURL := TFslMap<TFhirStructureDefinition>.create('profiles.url');
+  FProfilesByType := TFslMap<TFhirStructureDefinition>.create('profiles.type');
 end;
 
 destructor TProfileManager.Destroy;
 begin
   FProfilesById.free;
   FProfilesByURL.free;
+  FProfilesByType.free;
   lock.Free;
   inherited;
 end;
@@ -2014,17 +2057,32 @@ begin
   end;
 end;
 
-function TProfileManager.GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition;
+function TProfileManager.GetProfileByType(typeName : String): TFHirStructureDefinition;
+var
+  t : TFHirStructureDefinition;
 begin
-  result := GetProfileByUrl('http://hl7.org/fhir/Profile/'+CODES_TFHIRResourceType[aType]);
+  Lock.Lock('GetProfileByType');
+  try
+    if FProfilesByType.ContainsKey(typeName) then
+      result := FProfilesByType[typeName].Link
+    else
+      result := nil;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 function TProfileManager.GetProfileByUrl(url: String): TFHirStructureDefinition;
 begin
-  if FProfilesByURL.ContainsKey(url) then
-    result := FProfilesByURL[url].Link
-  else
-    result := nil;
+  Lock.Lock('GetProfileByUrl');
+  try
+    if FProfilesByURL.ContainsKey(url) then
+      result := FProfilesByURL[url].Link
+    else
+      result := nil;
+  finally
+    Lock.Unlock;
+  end;
 end;
 
 function TProfileManager.getProfileStructure(source: TFHirStructureDefinition; url: String; var profile: TFHirStructureDefinition): boolean;
@@ -2062,6 +2120,17 @@ begin
   result := TProfileManager(inherited Link);
 end;
 
+procedure TProfileManager.Unload;
+begin
+  lock.Lock;
+  try
+    FProfilesById.Clear;
+    FProfilesByURL.Clear;
+  finally
+    Lock.Unlock;
+  end;
+end;
+
 procedure TProfileManager.loadFromFeed(feed: TFHIRBundle);
 var
   i : integer;
@@ -2079,6 +2148,7 @@ begin
   try
     FProfilesById.AddOrSetValue(profile.id, profile.Link);
     FProfilesByURL.AddOrSetValue(profile.url, profile.Link);
+    FProfilesByType.AddOrSetValue(profile.type_, profile.Link);
   finally
     lock.Unlock;
   end;
@@ -2096,6 +2166,7 @@ begin
       p := FProfilesById[id];
       FProfilesByURL.Remove(p.url);
       FProfilesById.Remove(id);
+      FProfilesByType.remove(p.type_);
     end;
   finally
     lock.Unlock;
@@ -2107,6 +2178,7 @@ begin
   result := inherited sizeInBytesV(magic);
   inc(result, FProfilesById.sizeInBytes(magic));
   inc(result, FProfilesByURL.sizeInBytes(magic));
+  inc(result, FProfilesByType.sizeInBytes(magic));
 end;
 
 { TProfileDefinition }

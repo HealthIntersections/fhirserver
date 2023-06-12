@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http,
-  fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -88,7 +88,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -183,9 +183,9 @@ begin
   result := TIso4217Concept(context).display.Trim;
 end;
 
-procedure TIso4217Services.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TIso4217Services.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
 end;
 
 function TIso4217Services.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -219,14 +219,14 @@ end;
 
 function TIso4217Services.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Iso4217'); // Iso4217 doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by Iso4217', itNotSupported); // Iso4217 doesn't have formal subsumption property, so this is not used
 end;
 
 
 function TIso4217Services.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TIso4217Services.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
@@ -257,7 +257,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
 end;
 
 function TIso4217Services.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

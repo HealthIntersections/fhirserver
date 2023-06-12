@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_json,
+  fsl_base, fsl_utilities, fsl_json, fsl_lang,
   fsl_http,
   fdb_manager,
   fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities, fhir_uris,
@@ -158,7 +158,7 @@ type
     function resourceName : String; override;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; override;
   public
-    constructor Create(factory : TFhirFactory; isExport : boolean);
+    constructor Create(factory : TFhirFactory; isExport : boolean; languages : TIETFLanguageDefinitions);
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
@@ -661,39 +661,39 @@ end;
 
 procedure TFhirNativeOperationEngineR4.registerOperations;
 begin
-  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirValidationOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateDocumentOperation.create(Factory.link));
-  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, true));
-  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, false));
-  FOperations.add(TFhirEncounterEverythingOperation.create(Factory.link));
-  FOperations.add(TFhirGroupEverythingOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateQAOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateJWTOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateCodeOperation.create(Factory.link));
-  FOperations.add(TFhirHandleQAPostOperation.create(Factory.link));
-  FOperations.add(TFhirQuestionnaireGenerationOperation.create(Factory.link));
-  FOperations.add(TFhirVersionsOperation.create(Factory.link));
-  FOperations.add(TFhirProcessClaimOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateSnapshotOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateTemplateOperation.create(Factory.link));
-  FOperations.add(TFhirGenerateNarrativeOperation.create(Factory.link));
-  FOperations.add(TFhirSuggestKeyWordsOperation.create(Factory.link));
-  FOperations.add(TFhirGetMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirAddMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirDeleteMetaDataOperation.create(Factory.link));
-  FOperations.add(TFhirDiffOperation.create(Factory.link));
-  FOperations.add(TFhirConvertOperation.create(Factory.link));
-  FOperations.add(TFhirTransformOperation.create(Factory.link));
-  FOperations.add(TFhirSubsumesOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
+  FOperations.add(TFhirExpandValueSetOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirLookupCodeSystemOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirValueSetValidationOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirConceptMapTranslationOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirConceptMapClosureOperation.create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirValidationOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateDocumentOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, true, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirPatientEverythingOperation.create(Factory.link, false, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirEncounterEverythingOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGroupEverythingOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateQAOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateJWTOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateCodeOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirHandleQAPostOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirQuestionnaireGenerationOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirVersionsOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirProcessClaimOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateSnapshotOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateTemplateOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGenerateNarrativeOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirSuggestKeyWordsOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirGetMetaDataOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirAddMetaDataOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirDeleteMetaDataOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirDiffOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirConvertOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirTransformOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirSubsumesOperation.create(Factory.link, ServerContext.TerminologyServer.Link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
 //    FOperations.add(TFhirCodeSystemComposeOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
-  FOperations.add(TFhirObservationStatsOperation.create(Factory.link));
-  FOperations.add(TFhirObservationLastNOperation.create(Factory.link));
-  FOperations.add(TFhirHealthCardOperation.create(Factory.link));
+  FOperations.add(TFhirObservationStatsOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirObservationLastNOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirHealthCardOperation.create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
 end;
 
 procedure TFhirNativeOperationEngineR4.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patientId : String);
@@ -3113,9 +3113,9 @@ begin
   result := ['Patient'];
 end;
 
-constructor TFhirPatientEverythingOperation.create(factory : TFhirFactory; isExport: boolean);
+constructor TFhirPatientEverythingOperation.create(factory : TFhirFactory; isExport: boolean; languages : TIETFLanguageDefinitions);
 begin
-  inherited Create(factory);
+  inherited Create(factory, languages);
   FIsExport := isExport;
 end;
 
@@ -3642,26 +3642,26 @@ begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, itBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', request.lang);
 
-  if resource.ResourceType = frtValueSet then
-  begin
-    vs := TFHIRValueSet(resource);
-    ServerContext.TerminologyServer.checkTerminologyResource(vs)
-  end
-  else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
-    ServerContext.TerminologyServer.checkTerminologyResource(resource)
-  else if resource.ResourceType = frtStructureDefinition then
-    vc.checkResource(resource as TFhirStructureDefinition)
-  else if resource.ResourceType = frtQuestionnaire then
-    vc.checkResource(resource as TFhirQuestionnaire)
-  else if resource.ResourceType = frtEventDefinition then
-  begin
-    ed := factory.wrapEventDefinition(resource.Link);
-    try
-      // todo
-    finally
-      ed.Free;
-    end;
-  end;
+  //if resource.ResourceType = frtValueSet then
+  //begin
+  //  vs := TFHIRValueSet(resource);
+  //  ServerContext.TerminologyServer.checkTerminologyResource(vs)
+  //end
+  //else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
+  //  ServerContext.TerminologyServer.checkTerminologyResource(resource)
+  //else if resource.ResourceType = frtStructureDefinition then
+  //  vc.checkResource(resource as TFhirStructureDefinition)
+  //else if resource.ResourceType = frtQuestionnaire then
+  //  vc.checkResource(resource as TFhirQuestionnaire)
+  //else if resource.ResourceType = frtEventDefinition then
+  //begin
+  //  ed := factory.wrapEventDefinition(resource.Link);
+  //  try
+  //    // todo
+  //  finally
+  //    ed.Free;
+  //  end;
+  //end;
 end;
 
 function TFHIRNativeStorageServiceR4.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
@@ -3815,23 +3815,29 @@ procedure TFHIRNativeStorageServiceR4.SeeResource(key, vkey, pvkey: integer; id:
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;
+  p : TFHIRResourceProxy;
 begin
   resource := res as TFHIRResource;
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, itBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', lang);
 
-  if resource.ResourceType = frtValueSet then
-  begin
-    vs := TFHIRValueSet(resource);
-    vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
-    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-  end
-  else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
-    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-  else if resource.ResourceType = frtStructureDefinition then
-    ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
-  else if resource.ResourceType = frtQuestionnaire then
-    ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
+  p := TFHIRResourceProxy.create(factory.link, resource.link);
+  try
+    if resource.ResourceType = frtValueSet then
+    begin
+      vs := TFHIRValueSet(resource);
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
+      ServerContext.TerminologyServer.SeeTerminologyResource(p)
+    end
+    else if resource.ResourceType in [frtConceptMap, frtCodeSystem] then
+      ServerContext.TerminologyServer.SeeTerminologyResource(p)
+    else if resource.ResourceType = frtStructureDefinition then
+      ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
+    else if resource.ResourceType = frtQuestionnaire then
+      ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
+  finally
+    p.free;
+  end;
 
   if created then
     ServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)

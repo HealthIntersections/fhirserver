@@ -1,18 +1,18 @@
 object IGPublisherConfigForm: TIGPublisherConfigForm
-  Left = 1209
-  Height = 179
-  Top = -612
+  Left = 1017
+  Height = 174
+  Top = 505
   Width = 537
   BorderIcons = []
   Caption = 'IG Publisher Configuration'
-  ClientHeight = 179
+  ClientHeight = 174
   ClientWidth = 537
   OnCreate = FormCreate
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.5.0'
   object edtDevParams: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 85
     Width = 512
     Anchors = [akTop, akLeft, akRight]
@@ -22,7 +22,7 @@ object IGPublisherConfigForm: TIGPublisherConfigForm
   object Panel1: TPanel
     Left = 0
     Height = 41
-    Top = 138
+    Top = 133
     Width = 537
     Align = alBottom
     BevelOuter = bvNone
@@ -62,32 +62,35 @@ object IGPublisherConfigForm: TIGPublisherConfigForm
   end
   object Label1: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 64
-    Width = 221
+    Width = 258
     Caption = 'Parameters for Dev Version of IG Publisher'
+    ParentColor = False
   end
   object Label2: TLabel
     Left = 8
-    Height = 15
-    Top = 119
-    Width = 64
+    Height = 16
+    Top = 112
+    Width = 75
     Caption = 'Eclipse Help'
     Font.Color = 13959168
     Font.Style = [fsUnderline]
+    ParentColor = False
     ParentFont = False
     OnClick = Label2Click
   end
   object Label3: TLabel
     Left = 8
-    Height = 15
+    Height = 16
     Top = 8
-    Width = 82
+    Width = 93
     Caption = 'Java Command'
+    ParentColor = False
   end
   object edtJavaCmd: TEdit
     Left = 8
-    Height = 23
+    Height = 21
     Top = 24
     Width = 512
     Anchors = [akTop, akLeft, akRight]

@@ -44,6 +44,14 @@ const
   {$ENDIF}
   EMPTY_HASH = -1;
 
+{.$.DEFINE TRACK_CLASSES }
+
+{$IFDEF TRACK_CLASSES}
+const
+  CLASS_NAME_OF_INTEREST = 'TFhirString';
+  ID_OF_INTEREST = -1;
+{$ENDIF}
+
 threadvar
   gExceptionStack : String;
   gException : Exception;
@@ -101,12 +109,6 @@ Type
   public
     Constructor Create(place : String);
   End;
-  ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
-  ETerminologyError = class (EFslException); // problem in terminology operation
-  ETerminologyTodo = Class(ETerminologyError)
-  public
-    Constructor Create(place : String);
-  End;
   ETestCase = class (EFslException); // Failing test case
   EJavascriptException = class (EFslException); // exception thrown in javscript library
   EJavascriptScript = class (EJavascriptException); // error thrown by script
@@ -142,12 +144,19 @@ const
   NULL_THREAD = {$IFDEF OSX} nil {$ELSE} 0 {$ENDIF};
 
 Type
+  {$IFDEF DELPHI}
+  TStringArray = Array of String;
+  {$ENDIF}
+
   TFslObjectClass = Class Of TFslObject;
   TFslClass = TFslObjectClass;
 
   TFslReferenceCount = Integer;
 
   {$M+}
+
+  { TFslObject }
+
   TFslObject = Class(TObject)
   Private
     // Reference counted using Interlocked* Windows API functions.
@@ -155,10 +164,14 @@ Type
     FTagObject : TObject;
     FOwningThread : TThreadId;
     FMagic : integer;
+    {$IFDEF TRACK_CLASSES}
+    FNamedInstance : string;
+    {$ENDIF}
     {$IFOPT D+}
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
     FNamedClass : String;
+    FDebugInfo : String;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     FTracked : boolean;
@@ -168,6 +181,7 @@ Type
     {$ENDIF}
 
     function ObjectCrossesThreads : boolean;
+    function dumpSummary : String;
   Protected
     // Declared here for ease of implementing interfaces.
     Function _AddRef : Integer; Stdcall;
@@ -193,6 +207,9 @@ Type
     Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
     function sizeInBytesV(magic : integer) : cardinal; virtual;
+    {$IFDEF TRACK_CLASSES}
+    procedure freeNotification(done : boolean); virtual;
+    {$ENDIF}
   Public
     constructor Create; Overload; Virtual;
     destructor Destroy; Override;
@@ -219,12 +236,17 @@ Type
 
     Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
+    {$IFDEF TRACK_CLASSES}
+    property NamedInstance : string read FNamedInstance write FNamedInstance;
+    {$ENDIF}
     {$IFOPT D+}
     property NamedClass : String read FNamedClass;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     property SerialNumber : integer read FSerial;
     {$ENDIF}
+    function debugInfo : String; virtual; // what's visible to the debugger
+    procedure updateDebugInfo;
 
     class function getReport(sep : String; full : boolean) : String;
     class function classInstanceCount(namedClass : String) : integer;
@@ -716,18 +738,26 @@ Type
     property Items[const Key: String]: String read GetItem write SetItem; default;
   end;
 
+var
+  GDumpFile : String;
+
 implementation
 
 var
   GLastMagic : integer = 0;
 
 type
+
+  { TClassTrackingType }
+
   TClassTrackingType = class (TObject)
   private
     first, last : TFslObject;
     count : integer;
     dcount : integer;
     serial : integer;
+
+    function objectSummary : String;
   end;
 
 var
@@ -751,26 +781,44 @@ var
   t : TClassTrackingType;
   n, s : String;
   i : integer;
+  f : System.text;
+  ts : TStringList;
 begin
   if ShowObjectLeaks then
   begin
     s := '';
     i := 0;
-    for n in GClassTracker.Keys do
+    ts := TStringList.create;
+    try
+      for n in GClassTracker.Keys do
+        ts.add(n);
+      ts.Sort;
+      for n in ts do
+      begin
+        t := GClassTracker[n];
+        i := i + t.count;
+        if t.count > 0 then
+          s := s + n+': '+inttostr(t.count)+' [#='+inttostr(t.serial)+']'+t.objectSummary+#13#10;
+        t.Free;
+      end;
+    finally
+      ts.free;
+    end;
+    if (GDumpFile <> '') then
     begin
-      t := GClassTracker[n];
-      i := i + t.count;
-      if t.count > 0 then
-        s := s + n+': '+inttostr(t.count)+' [#='+inttostr(t.serial)+']'+#13#10;
-      t.Free;
+      assignFile(f, GDumpFile);
+      Rewrite(f);
+      writeln(f, s);
+      closeFile(f);
     end;
     if i > 0 then
     begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
       {$ELSE}
-      // todo... DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
+      // DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
       {$ENDIF}
+
     end;
   end;
   GClassTracker.Free;
@@ -852,6 +900,27 @@ begin
   gException := nil;
 end;
 
+{ TClassTrackingType }
+
+function TClassTrackingType.objectSummary: String;
+var
+  t : TFslObject;
+begin
+  result := '';
+  {$IFDEF OBJECT_TRACKING}
+  if (count > 0) and (count <= 80) then
+  begin
+    result := first.dumpSummary;
+    t := first.FNext;
+    while (t <> nil) do
+    begin
+      result := result + ',' + t.dumpSummary;
+      t := t.FNext;
+    end;
+  end
+  {$ENDIF}
+end;
+
 { EFslException }
 
 Constructor EFslException.Create(Const sSender, sMethod, sReason : String);
@@ -898,7 +967,7 @@ End;
 
 { TFslObject }
 
-Constructor TFslObject.Create;
+constructor TFslObject.Create;
 var
   t : TClassTrackingType;
 Begin
@@ -907,6 +976,11 @@ Begin
   FNamedClass := ClassName;
   {$ENDIF}
   FOwningThread := GetCurrentThreadId;
+
+  {$IFDEF TRACK_CLASSES}
+  if (className = CLASS_NAME_OF_INTEREST) then
+    freeNotification(false);
+  {$ENDIF}
 
   {$IFDEF OBJECT_TRACKING}
   if not GInited then
@@ -924,9 +998,11 @@ Begin
     inc(t.count);
     inc(t.dcount);
     inc(t.serial);
-//    if (FNamedClass = 'TFHIRFactoryR4') then
-//      writeln('Create TFHIRFactoryR4 '+inttostr(t.serial));
     FSerial := t.serial;
+    {$IFDEF TRACK_CLASSES}
+    if (t.serial = ID_OF_INTEREST) and (className = CLASS_NAME_OF_INTEREST) then
+      NamedInstance := '!';
+    {$ENDIF}
     if t.first = nil then
     begin
       t.first := self;
@@ -944,7 +1020,7 @@ Begin
   {$ENDIF}
 End;
 
-Destructor TFslObject.Destroy;
+destructor TFslObject.Destroy;
 var
   t : TClassTrackingType;
 Begin
@@ -957,8 +1033,6 @@ Begin
       begin
         dec(t.Count);
         dec(t.dCount);
-//        if (FNamedClass = 'TFHIRFactoryR4') then
-//          writeln('Destroy TFHIRFactoryR4 '+inttostr(FSerial));
         if FTracked then
         begin
           if FPrev = nil then
@@ -996,12 +1070,13 @@ Begin
   Inherited;
 End;
 
-Procedure TFslObject.AfterConstruction;
+procedure TFslObject.AfterConstruction;
 Begin
   Inherited;
+  updateDebugInfo;
 End;
 
-Procedure TFslObject.BeforeDestruction;
+procedure TFslObject.BeforeDestruction;
 Begin
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FFslObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
@@ -1009,7 +1084,7 @@ Begin
   Inherited;
 End;
 
-Procedure TFslObject.Free;
+procedure TFslObject.Free;
 var
   done : boolean;
 Begin
@@ -1027,6 +1102,10 @@ Begin
       dec(FFslObjectReferenceCount);
       done := FFslObjectReferenceCount < 0;
     end;
+    {$IFDEF TRACK_CLASSES}
+    if (classname = CLASS_NAME_OF_INTEREST) then
+      self.freeNotification(done);
+    {$ENDIF}
     If done Then
       Destroy;
   End;
@@ -1093,12 +1172,12 @@ begin
   {$ENDIF}
 end;
 
-Function TFslObject.ClassType : TFslObjectClass;
+function TFslObject.ClassType: TFslObjectClass;
 Begin
   Result := TFslObjectClass(Inherited ClassType);
 End;
 
-Function TFslObject.Unlink : TFslObject;
+function TFslObject.Unlink: TFslObject;
 var
   done : boolean;
 Begin
@@ -1123,7 +1202,7 @@ Begin
   End;
 End;
 
-Function TFslObject.Link : TFslObject;
+function TFslObject.Link: TFslObject;
 Begin
   Result := Self;
 
@@ -1135,6 +1214,10 @@ Begin
       InterlockedIncrement(FFslObjectReferenceCount)
     else
       inc(FFslObjectReferenceCount);
+    {$IFDEF TRACK_CLASSES}
+    if self.classname = CLASS_NAME_OF_INTEREST then
+      freeNotification(false);
+    {$ENDIF}
   End;
 End;
 
@@ -1144,12 +1227,12 @@ begin
   result := GLastMagic;
 end;
 
-Function TFslObject.Duplicate : TFslObject;
+function TFslObject.Duplicate: TFslObject;
 Begin
   Result := ClassType.Create;
 End;
 
-Function TFslObject.Clone : TFslObject;
+function TFslObject.Clone: TFslObject;
 Begin
   If Assigned(Self) Then
   Begin
@@ -1166,7 +1249,7 @@ Begin
   End;
 End;
 
-Function TFslObject._AddRef : Integer; stdcall;
+function TFslObject._AddRef: Integer; Stdcall;
 Begin
   If Assigned(Self) Then
   Begin
@@ -1181,7 +1264,7 @@ Begin
   End;
 End;
 
-Function TFslObject._Release: Integer; stdcall;
+function TFslObject._Release: Integer; Stdcall;
 Begin
   If Assigned(Self) Then
   Begin
@@ -1199,7 +1282,7 @@ Begin
   End;
 End;
 
-Function TFslObject.QueryInterface(const IID: TGUID; Out Obj): HResult; stdcall;
+function TFslObject.QueryInterface(const IID: TGUID; out Obj): HResult; Stdcall;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
 //  SUPPORT_INTERFACE : Array[Boolean] Of HResult = (Longint($80004002), 0);
@@ -1211,27 +1294,29 @@ Begin
     Result := E_NOINTERFACE;
 End;
 
-Function TFslObject.Assignable : Boolean;
+function TFslObject.Assignable: Boolean;
 Begin
   Result := True;
 End;
 
-Function TFslObject.ErrorClass : EFslExceptionClass;
+function TFslObject.ErrorClass: EFslExceptionClass;
 Begin
   Result := EFslException;
 End;
 
-Procedure TFslObject.RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String);
+procedure TFslObject.RaiseError(aException: EFslExceptionClass; const sMethod,
+  sMessage: String);
 Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
 
-Procedure TFslObject.RaiseError(Const sMethod, sMessage : String);
+procedure TFslObject.RaiseError(const sMethod, sMessage: String);
 Begin
   RaiseError(ErrorClass, sMethod, sMessage);
 End;
 
-Function TFslObject.Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean;
+function TFslObject.Assignable(const sLocation: String; oObject: TFslObject;
+  const sObject: String): Boolean;
 Begin
   Invariants(sLocation, oObject, ClassType, sObject);
 
@@ -1241,7 +1326,7 @@ Begin
   Result := Alterable(sLocation);
 End;
 
-Procedure TFslObject.Assign(oObject : TFslObject);
+procedure TFslObject.Assign(oObject: TFslObject);
 Begin
   Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
   Assert(Assignable('Assign', oObject, 'oObject'));
@@ -1249,7 +1334,8 @@ Begin
   // Override and inherit to assign the properties of your class.
 End;
 
-Function TFslObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
+function TFslObject.Invariants(const sLocation: String; aReference,
+  aClass: TClass; const sReference: String): Boolean;
 Begin
   // Ensure class is assigned.
   If Not Assigned(aReference) Then
@@ -1262,7 +1348,8 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
+function TFslObject.Invariants(const sLocation: String; oObject: TObject;
+  aClass: TClass; const sObject: String): Boolean;
 Begin
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
@@ -1277,19 +1364,31 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation : String; oObject: TFslObject; aClass: TClass; Const sObject : String) : Boolean;
+function TFslObject.Invariants(const sLocation: String; oObject: TFslObject;
+  aClass: TClass; const sObject: String): Boolean;
 Begin
   Invariants(sLocation, TObject(oObject), aClass, sObject);
 
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation: String; aClass: TClass) : Boolean;
+function TFslObject.Invariants(const sLocation: String; aClass: TClass
+  ): Boolean;
 Begin
   Invariants(sLocation, TObject(Self), aClass, 'Self');
 
   Result := True;
 End;
+
+function TFslObject.debugInfo: String;
+begin
+  result := '?';
+end;
+
+procedure TFslObject.updateDebugInfo;
+begin
+  FDebugInfo := debugInfo;
+end;
 
 function TFslObject.ObjectCrossesThreads: boolean;
 var
@@ -1306,7 +1405,26 @@ begin
   end;
 end;
 
-Function TFslObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
+function TFslObject.dumpSummary: String;
+begin
+  {$IFDEF TRACK_CLASSES}
+  if FNamedInstance <> '' then
+    result := FNamedInstance
+  {$ELSE}
+  if false then
+  {$ENDIF}
+  {$IFDEF OBJECT_TRACKING}
+  else if (FSerial > 0) then
+    result := inttostr(FSerial)
+  {$ENDIF}
+  else if FMagic <> 0 then
+    result := inttostr(FMagic)
+  else
+    result := 'x';
+end;
+
+function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod,
+  sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -1316,7 +1434,8 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean;
+function TFslObject.CheckCondition(bCorrect: Boolean;
+  aException: EFslExceptionClass; const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -1326,7 +1445,7 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariant(Const sMethod, sMessage: String): Boolean;
+function TFslObject.Invariant(const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Error method to raise an exception.
   // Use this when you are not sure if self is valid as it is a non-virtual method.
@@ -1336,12 +1455,12 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Alterable(Const sMethod: String): Boolean;
+function TFslObject.Alterable(const sMethod: String): Boolean;
 Begin
   Result := True;
 End;
 
-Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
+class procedure TFslObject.ClassError(const sMethod, sMessage: String);
 Begin
   Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
@@ -1392,6 +1511,18 @@ begin
   inc(result, length(FThreadName)+12);
   {$ENDIF}
 end;
+
+{$IFDEF TRACK_CLASSES}
+procedure noop(done : boolean);
+begin
+  // nothing;
+end;
+
+procedure TFslObject.freeNotification(done: boolean);
+begin
+  noop(done);
+end;
+{$ENDIF}
 
 { TFslEnumerable<T> }
 
@@ -3421,12 +3552,6 @@ begin
   inherited create('Not done yet @ '+place);
 end;
 
-{ ETerminologyTodo }
-
-constructor ETerminologyTodo.Create(place: String);
-begin
-  inherited create('Not done yet @ '+place);
-end;
 
 { EJsonTodo }
 

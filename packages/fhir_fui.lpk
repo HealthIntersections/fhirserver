@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fui;..\dependencies\mediafoundation"/>
         <UnitOutputDirectory Value="lib\fui\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -45,6 +50,10 @@
       <Item>
         <Filename Value="..\library\fui\fui_fake_console.pas"/>
         <UnitName Value="fui_fake_console"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_fake_console_settings.pas"/>
+        <UnitName Value="fui_fake_console_settings"/>
       </Item>
     </Files>
     <RequiredPkgs>

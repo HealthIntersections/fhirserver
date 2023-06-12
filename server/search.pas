@@ -1234,7 +1234,7 @@ begin
   // firstly, the vs can be a logical reference or a literal reference
   if (vs.StartsWith('valueset/')) then
   begin
-    vso := TFHIRServerContext(ServerContext).TerminologyServer.getValueSetByUrl(vs);
+    vso := TFHIRServerContext(ServerContext).TerminologyServer.getValueSetByUrl(vs, '');
     try
       if vso = nil then
         vs := 'not-found'

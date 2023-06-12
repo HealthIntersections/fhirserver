@@ -285,6 +285,7 @@ begin
       if FMustVerify then
         raise EFHIRException.Create('Cannot verify certificate - no match for key "'+x.AuthorityKeyIdentifier+'"');
     end;
+
     // todo: how do we verify that the certificate is a real one issued by the Australian passport office?
 
     if now > x.ValidToInGMT then
@@ -398,7 +399,7 @@ var
   bc : TReadResult;
 begin
   Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>'#13#10);
-  scanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
+  scanner := TScanManager.create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
   try
     bc := scanner.Scan(image);
     try

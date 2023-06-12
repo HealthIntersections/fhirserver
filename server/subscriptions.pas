@@ -162,6 +162,8 @@ Type
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
   TExecuteSearchEvent = function (typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : THTTPParameters; conn : TFDBConnection): String of object;
 
+  { TSubscriptionManager }
+
   TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
     FSubscriptions : TFHIRSubscriptionEntryList;
@@ -248,6 +250,7 @@ Type
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
+    procedure unload;
 
     procedure loadQueue(conn : TFDBConnection);
     procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TFDBConnection; reload : boolean; session : TFHIRSession);
@@ -302,6 +305,13 @@ begin
   inherited;
 end;
 
+procedure TSubscriptionManager.unload;
+begin
+  FSubscriptions.clear;
+  FSubscriptionTrackers.clear;
+  FSubscriptionTopics.clear;
+end;
+
 procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResourceV);
 var
   request : TFHIRRequest;
@@ -327,7 +337,7 @@ begin
 end;
 
 
-procedure TSubscriptionManager.processEmails;
+procedure TSubscriptionManager.ProcessEmails;
 var
   pop : TIdPOP3;
   msg : TIdMessage;
@@ -1232,13 +1242,15 @@ begin
 end;
 
 
-procedure TSubscriptionManager.processReportDeliveryMessage(id, txt: String; details: TStringList);
+procedure TSubscriptionManager.processReportDeliveryMessage(id: string;
+  txt: String; details: TStringList);
 begin
   if details.Values['Action'].Trim = 'failed' then
     Logging.log('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
 end;
 
-procedure TSubscriptionManager.processReportDeliveryNotification(id, txt: String; details: TStringList);
+procedure TSubscriptionManager.processReportDeliveryNotification(id: string;
+  txt: String; details: TStringList);
 begin
   if id = '' then
     id := details.Values['Original-Message-ID'];

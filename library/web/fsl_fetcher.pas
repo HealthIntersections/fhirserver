@@ -59,6 +59,8 @@ Type
     FOnProgress: TProgressEvent;
     FAccept: String;
     FTimeout: cardinal;
+    FResponseCode : integer;
+    FNoErrors: boolean;
 
     procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
@@ -85,10 +87,12 @@ Type
     Property Username : String read FUsername write SetUsername;
     Property Password : String read FPassword write SetPassword;
     Property Method : TInternetFetcherMethod read FMethod write FMethod;
-    Property ContentType : String read FContentType;
+    Property ContentType : String read FContentType write FContentType;
+    property ResponseCode : Integer read FResponseCode write FResponseCode;
     Property LastModified : TDateTime read FLastModified write FLastModified;
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
     property Timeout : cardinal read FTimeout write FTimeout;
+    property NoErrors : boolean read FNoErrors write FNoErrors;
 
     class function fetchUrl(url : String; timeout : cardinal = 0) : TBytes;
     class function fetchJson(url : String; timeout : cardinal = 0) : TJsonObject;
@@ -124,7 +128,7 @@ procedure TInternetFetcher.Fetch;
 var
   oUri : TIdURI;
   oHTTP: TIdHTTP;
-  oMem : TMemoryStream;
+  oMem, pMem : TMemoryStream;
   oSSL : TIdOpenSSLIOHandlerClient;
   oFtp : TIdFTP;
 begin
@@ -137,6 +141,7 @@ begin
       if (oUri.Protocol = 'http') or (oUri.Protocol = 'https') Then
       Begin
         oHTTP := TIdHTTP.Create(nil);
+        pmem := nil;
         Try
           oSSL := TIdOpenSSLIOHandlerClient.Create(Nil);
           Try
@@ -148,17 +153,32 @@ begin
             oSSL.Options.VerifyServerCertificate := false;
             oHTTP.HandleRedirects := true;
             oHTTP.Request.Accept := FAccept;
+            if FMethod = imfPost then
+            begin
+              oHTTP.Request.ContentType := FContentType;
+              pmem := TMemoryStream.create;
+              FBuffer.SaveToStream(pmem);
+              pmem.position := 0;
+            end;
             if (UserAgent <> '') then
               oHTTP.Request.UserAgent := UserAgent;
+            if (FUsername <> '') and (FPassword <> '') then
+            begin
+              oHttp.Request.BasicAuthentication := true;
+              oHTTP.Request.Username := FUsername;
+              oHTTP.Request.Password := FPassword;
+            end;
             oHTTP.URL.URI := url;
             if FTimeout > 0 then
               oHTTP.ReadTimeout := FTimeout
             else
               oHTTP.ReadTimeout := 30000;
+            if FNoErrors then
+              oHTTP.HTTPOptions := oHTTP.HTTPOptions + [hoNoProtocolErrorException, hoWantProtocolErrorContent];
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then
-                oHTTP.Post(url, oMem)
+                oHTTP.Post(url, pMem, oMem)
               else
                 oHTTP.Get(url, oMem);
               oMem.position := 0;
@@ -166,6 +186,7 @@ begin
               oMem.read(Fbuffer.Data^, oMem.Size);
               FContentType := oHTTP.Response.ContentType;
               FLastModified := oHTTP.Response.LastModified;
+              FResponseCode := oHTTP.ResponseCode;
             Finally
               oMem.Free;
             End;
@@ -174,6 +195,7 @@ begin
           End;
         Finally
           oHTTP.Free;
+          pmem.Free;
         End;
       End
       Else if oUri.Protocol = 'ftp' then

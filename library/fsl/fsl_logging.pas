@@ -170,6 +170,7 @@ Type
     procedure start(s : String);
     procedure continue(s : String);
     procedure finish(s : String = '');
+    procedure finishIfNeeded;
 
     function Counter : String;
 
@@ -780,6 +781,12 @@ begin
   finally
     FLock.unlock;
   end;
+end;
+
+procedure TLogging.finishIfNeeded;
+begin
+  if FWorkingLine <> '' then
+    finish;
 end;
 
 function TLogging.Counter: String;

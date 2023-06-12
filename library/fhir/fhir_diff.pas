@@ -112,12 +112,15 @@ type
     function adjust(index : integer) : integer;
   end;
 
+  { TDifferenceEngine }
+
   TDifferenceEngine = class (TFslObject)
   private
     FFactory : TFHIRFactory;
     FContext : TFHIRWorkerContextV;
     fpe : TFHIRPathEngineV;
 
+    function identifyingWeightFactor(name: String): integer;
     function matchRating(obj1, obj2 : TFHIRObject) : Double;
     procedure findCertainMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
     procedure findPossibleMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
@@ -353,12 +356,24 @@ begin
   end;
 end;
 
+function TDifferenceEngine.identifyingWeightFactor(name : String): integer;
+begin
+  if name = 'identifier' then
+    result := 10
+  else if name = 'name' then
+    result := 4
+  else if name = 'code' then
+    result := 4
+  else
+    result := 0;
+end;
+
 function TDifferenceEngine.matchRating(obj1, obj2: TFHIRObject): Double;
 var
   ol1, ol2 : TFHIRPropertyList;
   o1, o2 : TFHIRProperty;
   ov1, ov2 : TFHIRObject;
-  t, c, i1, i2 : integer;
+  t, c, i1, i2, w : integer;
   m : boolean;
 begin
   ol1 := obj1.createPropertyList(true);
@@ -398,7 +413,15 @@ begin
             ov1 := o1.Values[0] as TFHIRObject;
             ov2 := o2.Values[0] as TFHIRObject;
             if (ov1.fhirType = ov2.fhirType) and ((ov1.getid = ov2.getid) or compareDeep(ov1, ov2, false)) then
+            begin
               inc(c);
+              for w := 1 to identifyingWeightFactor(o1.Name) do
+              begin
+                // increase weight
+                inc(c);
+                inc(t)
+              end;
+            end;
           end;
         end;
       end;
@@ -455,11 +478,14 @@ begin
       end
       else
       begin
-        // if the next target does not exists in the base list, create it
+        // if the next target does not exist in the base list, create it
         dm := matches.matchedTarget(cm);
         if dm = nil then
         begin
-          differences.insert(path+'.'+name, cm, ml[cm].Link as TFHIRObject);
+          if (cm >= bl.count) then
+            differences.add(path, name, ml[cm].Link as TFHIRObject)
+          else
+            differences.insert(path+'.'+name, cm, ml[cm].Link as TFHIRObject);
           ol.Ins(cm);
         end
         else

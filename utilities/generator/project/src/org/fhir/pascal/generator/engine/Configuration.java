@@ -15,7 +15,7 @@ import org.hl7.fhir.utilities.Utilities;
 public class Configuration {
 
   public static final SimpleDateFormat DATE_FORMAT() {
-    return new SimpleDateFormat("EEE, MMM d, yyyy HH:mmZ", new Locale("en", "US"));
+    return new SimpleDateFormat("EEE, MMM d, yyyy", new Locale("en", "US"));
   }
 
   private Map<String, String> templates = new HashMap<>();

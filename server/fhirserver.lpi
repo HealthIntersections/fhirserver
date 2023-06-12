@@ -168,6 +168,7 @@
               <ShowNotes Value="False"/>
               <ShowHints Value="False"/>
             </Verbosity>
+            <Compiler>-O2 -Xs</Compiler>
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
@@ -235,6 +236,8 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <RelocatableUnit Value="True"/>
             <Checks>
               <IOChecks Value="True"/>
               <RangeChecks Value="True"/>
@@ -245,13 +248,13 @@
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
-              <OptimizationLevel Value="4"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf3"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <TrashVariables Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -298,7 +301,6 @@
               <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
               <UseValgrind Value="True"/>
-              <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
@@ -383,7 +385,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="83">
+    <Units Count="84">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -719,6 +721,10 @@
         <Filename Value="tx_version.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit82>
+      <Unit83>
+        <Filename Value="$000000010618A614"/>
+        <IsPartOfProject Value="True"/>
+      </Unit83>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -763,9 +769,10 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="20">
+    <Exceptions Count="37">
       <Item1>
         <Name Value="EAbort"/>
+        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>
@@ -793,12 +800,15 @@
       </Item7>
       <Item8>
         <Name Value="EIdSocketError"/>
+        <Enabled Value="False"/>
       </Item8>
       <Item9>
         <Name Value="EIdConnClosedGracefully"/>
+        <Enabled Value="False"/>
       </Item9>
       <Item10>
         <Name Value="EIdCouldNotBindSocket"/>
+        <Enabled Value="False"/>
       </Item10>
       <Item11>
         <Name Value="EXmlException"/>
@@ -810,6 +820,7 @@
       </Item12>
       <Item13>
         <Name Value="EAssertionFailedError"/>
+        <Enabled Value="False"/>
       </Item13>
       <Item14>
         <Name Value="ERegExpr"/>
@@ -817,9 +828,11 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
+        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
+        <Enabled Value="False"/>
       </Item16>
       <Item17>
         <Name Value="ETerminologyError"/>
@@ -829,10 +842,64 @@
       </Item18>
       <Item19>
         <Name Value="EIdReadTimeout"/>
+        <Enabled Value="False"/>
       </Item19>
       <Item20>
         <Name Value="EIdResolveError"/>
+        <Enabled Value="False"/>
       </Item20>
+      <Item21>
+        <Name Value="00000015EAssertionFailedError"/>
+      </Item21>
+      <Item22>
+        <Name Value="00000006EAbort"/>
+      </Item22>
+      <Item23>
+        <Name Value="00000010ESemVerException"/>
+      </Item23>
+      <Item24>
+        <Name Value="00000018ERestfulExceptionUnknown"/>
+      </Item24>
+      <Item25>
+        <Name Value="00000018EIdHTTPProtocolException"/>
+      </Item25>
+      <Item26>
+        <Name Value="EListError"/>
+        <Enabled Value="False"/>
+      </Item26>
+      <Item27>
+        <Name Value="0000000fEIdResolveError\rEIdNotASocket"/>
+      </Item27>
+      <Item28>
+        <Name Value="00000017EIdConnClosedGracefully\U00000014EIdSocketHandleError"/>
+      </Item28>
+      <Item29>
+        <Name Value="00000011ETerminologyError"/>
+      </Item29>
+      <Item30>
+        <Name Value="00000014EJsonParserException"/>
+      </Item30>
+      <Item31>
+        <Name Value="ETooCostly"/>
+      </Item31>
+      <Item32>
+        <Name Value="EFinished"/>
+      </Item32>
+      <Item33>
+        <Name Value="0000000eEFHIRException"/>
+      </Item33>
+      <Item34>
+        <Name Value="00000011ETerminologySetup"/>
+      </Item34>
+      <Item35>
+        <Name Value="0000000eEIdReadTimeout"/>
+      </Item35>
+      <Item36>
+        <Name Value="EFHIRPath"/>
+      </Item36>
+      <Item37>
+        <Name Value="00000010EParserException"/>
+      </Item37>
     </Exceptions>
   </Debugging>
 </CONFIG>

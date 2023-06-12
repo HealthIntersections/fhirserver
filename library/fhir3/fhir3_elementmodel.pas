@@ -529,7 +529,7 @@ function TFHIRMMProperty.isPrimitive(name : String): boolean;
 var
   sd : TFHIRStructureDefinition;
 begin
-  sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+name));
+  sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+name, ''));
   try
     result := (sd <> nil) and (sd.Kind = StructureDefinitionKindPRIMITIVETYPE);
   finally
@@ -670,7 +670,7 @@ begin
       end;
       if ('xhtml' <> t) then
       begin
-        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t, ''));
         try
           if (sd = nil) then
               raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
@@ -729,7 +729,7 @@ begin
     end;
     if ('xhtml' <> t) then
     begin
-      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t, ''));
       if (sd = nil) then
           raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
         children := getChildMap(sd, sd.snapshot.elementList[0]);

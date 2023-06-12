@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   IdGlobal,
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_crypto, fsl_scim, fsl_xml,
-  fsl_http, fsl_graphql,
+  fsl_http, fsl_graphql, fsl_web_stream,
   fhir_objects,  fhir_xhtml, fhir_common, fhir_factory, fhir_uris,
   fhir_indexing, security, tags, bundlebuilder;
 
@@ -829,7 +829,7 @@ begin
         ResourceName := adaptor.ResourceName;
       end
       else if not Fworker.factory.isResourceName(sType) {and not RecogniseCustomResource(sType, aResourceType)} then
-        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, itNotSupported, 'MSG_NO_MODULE', lang, [sType])
+        Raise ERestfulExceptionUnknown.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, itNotSupported, 'MSG_NO_MODULE', lang, [sType])
       else
         ResourceName := sType;
     sId := NextSegment(sURL);

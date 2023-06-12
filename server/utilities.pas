@@ -117,7 +117,8 @@ type
     FSMSToken: String;
     FSMSAccount: String;
     FHostSms: String;
-    FLangFile: String; // for status update messages
+    FLangFile: String;
+    FZulipPassword: String; // for status update messages
 
   public
     constructor Create; override;
@@ -147,6 +148,7 @@ type
     Property SMSAccount : String read FSMSAccount;// write FSMSAccount;
     Property SMSToken : String read FSMSToken;// write FSMSToken;
     Property SMSFrom : String read FSMSFrom;// write FSMSFrom;
+    Property ZulipPassword : String read FZulipPassword;
     property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
     property HostSms : String read FHostSms write FHostSms;
@@ -304,6 +306,7 @@ begin
   FSMSFrom := ini['destinations'].section['sms']['from'].value;
   FSMSToken := ini['destinations'].section['sms']['token'].value;
   FSMSAccount := ini['destinations'].section['sms']['account'].value;
+  FZulipPassword := ini['destinations'].section['zulip']['password'].value;
 
   FLangFile := ini.service['langfile'].value;
 end;
@@ -414,41 +417,44 @@ var
   msg : TIdMessage;
   ssl : TIdOpenSSLIOHandlerClient;
 begin
-  sender := TIdSMTP.Create(Nil);
-  try
-    sender.Host := settings.SMTPHost;
-    sender.port := StrToInt(settings.SMTPPort);
-    sender.Username := settings.SMTPUsername;
-    sender.Password := settings.SMTPPassword;
-    if settings.SMTPUseTLS then
-    begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
-      sender.IOHandler := ssl;
-      sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
-      ssl.Host := settings.SMTPHost;
-      ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(settings.SMTPPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-      ssl.Options.VerifyServerCertificate := false;
-    end;
-    sender.Connect;
-    msg := TIdMessage.Create(Nil);
+  if (settings.SMTPHost <> '') and (settings.SMTPPort <> '') then
+  begin
+    sender := TIdSMTP.Create(Nil);
     try
-      msg.Subject := subj;
-      msg.Recipients.Add.Address := dest;
-      msg.From.Text := settings.SMTPSender;
-      msg.Body.Text := body;
-      Logging.log('Send '+msg.MsgId+' to '+dest);
-      sender.Send(msg);
+      sender.Host := settings.SMTPHost;
+      sender.port := StrToInt(settings.SMTPPort);
+      sender.Username := settings.SMTPUsername;
+      sender.Password := settings.SMTPPassword;
+      if settings.SMTPUseTLS then
+      begin
+        ssl := TIdOpenSSLIOHandlerClient.create;
+        sender.IOHandler := ssl;
+        sender.UseTLS := utUseExplicitTLS;
+        ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
+        ssl.Host := settings.SMTPHost;
+        ssl.MaxLineAction := maException;
+        ssl.Port := StrToInt(settings.SMTPPort);
+        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+        ssl.Options.VerifyServerCertificate := false;
+      end;
+      sender.Connect;
+      msg := TIdMessage.Create(Nil);
+      try
+        msg.Subject := subj;
+        msg.Recipients.Add.Address := dest;
+        msg.From.Text := settings.SMTPSender;
+        msg.Body.Text := body;
+        Logging.log('Send '+msg.MsgId+' to '+dest);
+        sender.Send(msg);
+      Finally
+        msg.Free;
+      End;
+      sender.Disconnect;
     Finally
-      msg.Free;
+      sender.IOHandler.free;
+      sender.Free;
     End;
-    sender.Disconnect;
-  Finally
-    sender.IOHandler.free;
-    sender.Free;
-  End;
+  end;
 end;
 
 procedure sendSMS(settings : TFHIRServerSettings; Dest,Msg: String);

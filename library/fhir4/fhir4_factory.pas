@@ -37,12 +37,15 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http,
-  fsl_ucum,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_npm, fsl_threads,
+  fsl_ucum, fsl_web_stream,
   fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_xhtml, fhir_common,  fhir_elementmodel,
   fhir_client, fhir_client_threaded, fhir_uris;
 
 type
+
+  { TFHIRFactoryR4 }
+
   TFHIRFactoryR4 = class (TFHIRFactory)
   public
     function link : TFHIRFactoryR4; overload;
@@ -68,8 +71,12 @@ type
     function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
 
+    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
+    function makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
+
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
+    procedure clearXhtml(res : TFHIRResourceV); override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
     function describe(r : TFHIRResourceV) : String; override;
@@ -89,8 +96,8 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
+    function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
-    function wrapCapabilityStatement2(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
     function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; override;
@@ -129,6 +136,7 @@ type
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
+    function makeCodeableConcept(coding : TFHIRCodingW) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPeriod(r : TFHIRObject) : TFhirPeriodW; override;
@@ -304,6 +312,13 @@ begin
     TFHIRCoding(result).version := display;
 end;
 
+function TFHIRFactoryR4.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
+begin
+  result := TFHIRCodeableConcept.create;
+  if (coding <> nil) then
+    TFHIRCodeableConcept(result).codingList.add(coding.element.link);
+end;
+
 function TFHIRFactoryR4.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
 begin
   result := TFHIRParsers4.composer(worker as TFHIRWorkerContext, format, lang, style);
@@ -354,6 +369,16 @@ begin
   result := TFhirInteger.Create(s);
 end;
 
+function TFHIRFactoryR4.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxy.create(self.link, lock, worker, pi);
+end;
+
+function TFHIRFactoryR4.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxy.create(self.link, resource as TFHIRResource);
+end;
+
 function TFHIRFactoryR4.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;
 var
   iss : TFhirOperationOutcomeIssue;
@@ -396,6 +421,14 @@ begin
   result := TFHIRParameters4.Create(TFHIRParameters.Create);
 end;
 
+function TFHIRFactoryR4.wrapPrimitive(p: TFHIRObject): TFHIRPrimitiveW;
+begin
+  if (p = nil) then
+    result := nil
+  else
+    result := TFHIRPrimitive4.create(p);
+end;
+
 function TFHIRFactoryR4.makeParamsFromForm(s: TStream): TFHIRResourceV;
 begin
   result := parseParamsFromForm(s);
@@ -413,7 +446,10 @@ end;
 
 function TFHIRFactoryR4.makeString(s: string): TFHIRObject;
 begin
-  result := TFhirString.Create(s);
+  if (s = '') then
+    result := nil
+  else
+    result := TFhirString.Create(s);
 end;
 
 function TFHIRFactoryR4.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
@@ -467,6 +503,18 @@ begin
     if CODES_TFhirResourceType[a] = name then
       exit(RESOURCE_CATEGORY[a]);
   result := tcOther;
+end;
+
+procedure TFHIRFactoryR4.clearXhtml(res : TFHIRResourceV);
+var
+  r : TFHIRDomainResource;
+begin
+  if res = nil then
+    exit;
+  if not (res is TFHIRDomainResource) then
+    exit;
+  r := res as TFHIRDomainResource;
+  r.text := nil;
 end;
 
 function TFHIRFactoryR4.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
@@ -588,11 +636,6 @@ begin
     result := nil
   else
     result := TFHIRCapabilityStatement4.create(r);
-end;
-
-function TFHIRFactoryR4.wrapCapabilityStatement2(r: TFHIRResourceV): TFHIRCapabilityStatementW;
-begin
-  raise EFHIRException.Create('CapabilityStatement2 is not supported in FHIR R4');
 end;
 
 function TFHIRFactoryR4.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;

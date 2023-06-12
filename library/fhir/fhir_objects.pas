@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF} Graphics,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fhir_qrcode;
+  SysUtils, Classes, Generics.Collections, System.NetEncoding, Graphics,
+  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_xml, fsl_http, fsl_json, fhir_qrcode;
 
 Const
   ID_LENGTH = 64;
@@ -163,6 +163,7 @@ Type
   End;
 
   ETooCostly = class (EFHIRException);
+  EFinished = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
   EDefinitionExceptionTodo = Class(EDefinitionException)
@@ -184,6 +185,7 @@ Type
     Property Code : TFhirIssueType read FCode write FCode;
   End;
 
+  ERestfulExceptionUnknown = class (ERestfulException);
   EFHIRPath = class (EFHIRException)
   public
      constructor Create(problem : String); overload;
@@ -395,14 +397,12 @@ type
   private
     FTags : TFslStringDictionary;
     FTag : TFslObject;
+    FTagInt: integer;
     FLocationData : TFHIRObjectLocationData;
     FCommentsStart: TFslStringList;
     FCommentsEnd: TFslStringList;
     FFormat : TFHIRFormat;
     FNoCompose: boolean;
-    FTagInt: integer;
-    FJsHandle: pointer;
-    FJsInstance: cardinal;
     function GetCommentsStart: TFslStringList;
     function GetCommentsEnd: TFslStringList;
     procedure SetTag(const Value: TFslObject);
@@ -436,12 +436,20 @@ type
     function makeStringValue(v : String) : TFHIRObject; virtual; abstract;
     function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
     function makeIntValue(v : String) : TFHIRObject; virtual; abstract;
+
     function hasExtension(url : String) : boolean; virtual;
     function hasExtensions : boolean; virtual; abstract;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
-    function extensions(url : String) : TFslList<TFHIRObject>; virtual;
-    procedure addExtension(url : String; value : TFHIRObject); virtual;
+    function getExtensionsV : TFslList<TFHIRObject>; overload; virtual;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; virtual;
+    function getExtensionV(url : String) : TFHIRObject; virtual;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; virtual;
+    procedure addExtensionV(extension : TFHIRObject); overload; virtual;
+    procedure deleteExtensionV(extension : TFHIRObject); virtual;
+    procedure deleteExtensionByUrl(url : String); virtual;
+    procedure stripExtensions(exemptUrls : TStringArray); virtual;
+
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
     function getNamedChildren : TFslList<TFHIRNamedValue>;
@@ -454,6 +462,7 @@ type
     // create a class that is the correct type for the named property
     function createPropertyValue(propName : string): TFHIRObject; virtual;
     function getPropertyValue(propName : string): TFHIRProperty; virtual;
+    function getPrimitiveValue(propName : String) : String;
     function getTypesForProperty(propName : string): String; virtual;
 
     // set the value of the property. For properties with cardinality > 1, append to the list, or use insertProperty
@@ -473,10 +482,6 @@ type
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
     property TagInt : integer read FTagInt write FTagInt;
-
-    // javascript caching
-    property jsInstance : cardinal read FJsInstance write FJsInstance;
-    property jsHandle : pointer read FJsHandle write FJsHandle;
 
     // this is populated by the json and xml parsers if requested
     property LocationData : TFHIRObjectLocationData read GetLocationData;
@@ -575,6 +580,7 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function ToString : String; override;
     function new : TFHIRObject; reintroduce; overload; virtual;
+    procedure stripExtensions(exemptUrls : TStringArray); virtual;
 
     property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
     property HasLocationData : boolean read GetHasLocationData;
@@ -605,12 +611,14 @@ type
   protected
     FLang : THTTPLanguages;
     FPackages : TStringList;
+    FLock : TFslLock;
 
     function GetVersion: TFHIRVersion; virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link : TFHIRWorkerContextV; overload;
+    procedure Unload; virtual;
 
     property Packages : TStringList read FPackages;
 
@@ -1023,9 +1031,41 @@ begin
   result := TFHIRObject(Inherited Clone);
 end;
 
-procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
+procedure TFHIRObject.addExtensionV(url: String; value: TFHIRObject);
 begin
   raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+procedure TFHIRObject.addExtensionV(extension: TFHIRObject);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+procedure TFHIRObject.deleteExtensionV(extension: TFHIRObject);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+procedure TFHIRObject.deleteExtensionByUrl(url: String);
+begin
+  raise EFHIRException.create('Extensions are not supported on this object');
+end;
+
+procedure TFHIRObject.stripExtensions(exemptUrls: TStringArray);
+var
+  list : TFHIRPropertyList;
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  list := TFHIRPropertyList.create;
+  try
+    ListProperties(list, true, false);
+    for p in list do
+      for o in p.values do
+        o.stripExtensions(exemptUrls);
+  finally
+    list.free;
+  end;
 end;
 
 function TFHIRObject.asJson: String;
@@ -1147,6 +1187,8 @@ function TFHIRObject.fpValue: String;
 begin
   if isDateTime then
     result := '@'+primitiveValue
+  else if (fhirType = 'time') then
+    result := '@T'+primitiveValue
   else
     result := primitiveValue;
 end;
@@ -1242,7 +1284,7 @@ begin
   FTags.AddOrSetValue(name, value);
 end;
 
-function TFHIRObject.getDateValue: TFslDateTime;
+function TFHIRObject.GetDateValue: TFslDateTime;
 begin
   result := TFslDateTime.makeNull;
 end;
@@ -1279,9 +1321,31 @@ begin
   result := 0;
 end;
 
-function TFHIRObject.extensions(url: String): TFslList<TFHIRObject>;
+function TFHIRObject.getExtensionsV: TFslList<TFHIRObject>;
 begin
   result := TFslList<TFHIRObject>.create;
+end;
+
+function TFHIRObject.getExtensionsV(url: String): TFslList<TFHIRObject>;
+begin
+  result := TFslList<TFHIRObject>.create;
+end;
+
+function TFHIRObject.getExtensionV(url : String) : TFHIRObject;
+var
+  list : TFslList<TFHIRObject>;
+begin
+  list := getExtensionsV(url);
+  try
+    if list.count > 1 then
+      raise EFHIRException.create('Multiple matches for extension "'+url+'"')
+    else if list.count = 1 then
+      result := list[0].link
+    else
+      result := nil;
+  finally
+    list.free;
+  end;
 end;
 
 function TFHIRObject.GetCommentsStart: TFslStringList;
@@ -1317,6 +1381,18 @@ begin
   finally
     list.Free;
   end;
+end;
+
+function TFHIRObject.getPrimitiveValue(propName: String): String;
+var
+  p : TFHIRProperty;
+  o : TFHIRObject;
+begin
+  result := '';
+  p := getPropertyValue(propName);
+  if (p <> nil) then
+    for o in p.Values do
+      exit(o.primitiveValue);
 end;
 
 function TFHIRObject.HasXmlCommentsStart: Boolean;
@@ -1632,6 +1708,14 @@ end;
 function TFHIRObjectList.new: TFHIRObject;
 begin
   result := inherited new as TFHIRObject;
+end;
+
+procedure TFHIRObjectList.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  for i := 0 to Count -1 do
+    ObjByIndex[i].stripExtensions(exemptUrls);
 end;
 
 procedure TFHIRObjectList.SetTags(name: String; const Value: String);
@@ -2295,10 +2379,12 @@ begin
   inherited;
   FLang := defLang;
   FPackages := TStringList.create;
+  FLock := TFslLock.create(className);
 end;
 
 destructor TFHIRWorkerContextV.Destroy;
 begin
+  FLock.Free;
   FPackages.Free;
   inherited Destroy;
 end;
@@ -2311,6 +2397,11 @@ end;
 function TFHIRWorkerContextV.link: TFHIRWorkerContextV;
 begin
   result := TFHIRWorkerContextV(inherited Link);
+end;
+
+procedure TFHIRWorkerContextV.Unload;
+begin
+  // nothing?
 end;
 
 function TFHIRWorkerContextV.versionString: String;

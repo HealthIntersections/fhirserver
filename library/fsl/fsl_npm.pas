@@ -60,10 +60,15 @@ Type
 
   TNpmPackageFolder = class;
 
+  { TNpmPackageResource }
+
   TNpmPackageResource = class (TNpmPackageObject)
   private
+    FContent: String;
+    FFilename: String;
     FFolder : TNpmPackageFolder;
     FName : String;
+    FSupplements: String;
     FType : String;
     FId : String;
     FURL : String;
@@ -83,10 +88,15 @@ Type
     property Kind : String read FKind write FKind;
     property URL : String read FURL write FURL;
     property Version : String read FVersion write FVersion;
+    property Supplements : String read FSupplements write FSupplements;
+    property Content : String read FContent write FContent;
     property size : Integer read FSize write FSize;
+    property filename : String read FFilename write FFilename;
+
 
     function matches(text : String) : boolean;
   end;
+
 
   TNpmPackageFolder = class (TNpmPackageObject)
   private
@@ -116,6 +126,7 @@ Type
     FNpm : TJsonObject;
     FFolders : TFslMap<TNpmPackageFolder>;
     FInstalled: TDateTime;
+    FSuppressLoadingErrors : boolean;
     FSize: integer;
     procedure loadFiles(path : String; exemptions : TArray<String>);
     procedure loadSubFolders(path, dir : String);
@@ -153,13 +164,14 @@ Type
     class function fromFolderQuick(path : String) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream) : TNpmPackage; overload;
     class function fromPackage(tgz : TStream; desc : String) : TNpmPackage; overload;
-    class function fromPackage(tgz : TStream; desc : String; progress : TWorkProgressEvent) : TNpmPackage; overload;
-    class function fromPackage(tgz : TBytes; desc : String; progress : TWorkProgressEvent) : TNpmPackage; overload;
+    class function fromPackage(tgz : TStream; desc : String; progress : TWorkProgressEvent; suppressErrors : boolean) : TNpmPackage; overload;
+    class function fromPackage(tgz : TBytes; desc : String; progress : TWorkProgressEvent; suppressErrors : boolean) : TNpmPackage; overload;
     class function fromSource(source: String): TNpmPackage; static;
 //    procedure save(stream : TStream);
 
     function list(folder : String) : TArray<String>;
     function listResources(types : TArray<String>) : TArray<String>;
+    function listResourceInfo(folder : String) : TFslList<TNpmPackageResource>;
     function load(name : String) : TStream; overload;
     function load(folder, name : String) : TStream; overload;
     function loadBytes(name : String) : TBytes; overload;
@@ -284,6 +296,10 @@ begin
             fi.str['kind'] := json.str['kind'];
           if (json.has('type') and (json.node['type'].kind = jnkString)) then
             fi.str['type'] := json.str['type'];
+          if (json.has('supplements') and (json.node['supplements'].kind = jnkString)) then
+            fi.str['supplements'] := json.str['supplements'];
+          if (json.has('content') and (json.node['content'].kind = jnkString)) then
+            fi.str['content'] := json.str['content'];
         end;
       finally
         json.free;
@@ -415,6 +431,9 @@ begin
     r.Kind := f.str['kind'];
     r.URL := f.str['url'];
     r.Version := f.str['version'];
+    r.Supplements := f.str['supplements'];
+    r.Content := f.str['content'];
+    r.FFilename := FilePath([FFolder, f.str['filename']]);
     if FFolder <> '' then
       r.size := FileSize(FilePath([FFolder, r.name]));
   end;
@@ -465,7 +484,6 @@ begin
         end;
         try
           j := indexer.build();
-          StringToFile(j, FilePath([folder.FFolder, '.index.json']), TEncoding.UTF8);
           json := TJsonParser.parse(j);
           try
             folder.readIndex(json);
@@ -520,20 +538,21 @@ end;
 
 class function TNpmPackage.fromPackage(tgz: TStream): TNpmPackage;
 begin
-  result := fromPackage(tgz, '', nil);
+  result := fromPackage(tgz, '', nil, false);
 end;
 
 class function TNpmPackage.fromPackage(tgz: TStream; desc: String): TNpmPackage;
 begin
-  result := fromPackage(tgz, desc, nil);
+  result := fromPackage(tgz, desc, nil, false);
 end;
 
-class function TNpmPackage.fromPackage(tgz: TStream; desc: String; progress: TWorkProgressEvent): TNpmPackage;
+class function TNpmPackage.fromPackage(tgz: TStream; desc: String; progress: TWorkProgressEvent; suppressErrors : boolean): TNpmPackage;
 var
   this : TNpmPackage;
 begin
   this := TNpmPackage.create;
   try
+    this.FSuppressLoadingErrors := suppressErrors;
     this.readStream(tgz, desc, progress);
     result := this.link;
   finally
@@ -663,21 +682,21 @@ var
   s : String;
 begin
   s := info['type'];
-  if (s = 'fhir.core') then
+  if (s = 'fhir.core') or (s = 'Core') then
     result := fpkCore
-  else if (s = 'fhir.ig') then
+  else if (s = 'fhir.ig') or (s = 'IG') then
     result := fpkIG
-  else if (s = 'fhir.tool') then
+  else if (s = 'fhir.tool') or (s = 'Tool') then
     result := fpkTool
-  else if (s = 'fhir.template') then
+  else if (s = 'fhir.template') or (s = 'IG-Template') then
     result := fpkIGTemplate
   else if (s = 'fhir.core.gen') then
     result := fpkToolGen
-  else if (s = 'fhir.tool') then
+  else if (s = 'fhir.tool') or (s = 'Tool') then
     result := fpkTool
-  else if (s = 'fhir.examples') then
+  else if (s = 'fhir.examples') or (s = 'Examples') then
     result := fpkExamples
-  else if (s = 'fhir.group') or (name = 'hl7.fhir.core') then
+  else if (s = 'fhir.group') or (name = 'hl7.fhir.core') or (s = 'Group')  then
     result := fpkGroup
   else if StringArrayExistsSensitive(['hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], name) then
     result := fpkCore
@@ -819,6 +838,20 @@ begin
   end;
 end;
 
+function TNpmPackage.listResourceInfo(folder : String): TFslList<TNpmPackageResource>;
+var
+  sl : TStringList;
+  t : String;
+  f : TNpmPackageFolder;
+  r : TNpmPackageResource;
+begin
+  f := findFolder(folder);
+  if (f <> nil) then
+    result := f.FResources.link
+  else
+    result := nil;
+end;
+
 function TNpmPackage.load(folder, name: String): TStream;
 var
   f : TNpmPackageFolder;
@@ -902,7 +935,10 @@ begin
     folder := TNpmPackageFolder.create(dir);
     folders.add(dir, folder);
   end;
-  folder.FContent.add(n, TFslBuffer.create(data));
+  if FSuppressLoadingErrors or dir.contains('other') then
+    folder.FContent.AddOrSetValue(n, TFslBuffer.create(data))
+  else
+    folder.FContent.add(n, TFslBuffer.create(data))
 end;
 
 procedure TNpmPackage.loadFiles(path: String; exemptions: TArray<String>);
@@ -1051,6 +1087,8 @@ begin
       while tar.FindNext(entry) do
       begin
         n := String(entry.Name);
+        if (n.contains('..')) then
+          raise EFSLException.create('The package "'+desc+'" contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
         bi := TBytesStream.Create;
         try
           tar.ReadFile(bi);
@@ -1091,13 +1129,13 @@ begin
     result := fromPackage(TFileStream.create(source, fmOpenRead + fmShareDenyWrite));
 end;
 
-class function TNpmPackage.fromPackage(tgz: TBytes; desc: String; progress: TWorkProgressEvent): TNpmPackage;
+class function TNpmPackage.fromPackage(tgz: TBytes; desc: String; progress: TWorkProgressEvent; suppressErrors : boolean): TNpmPackage;
 var
   s : TBytesStream;
 begin
   s := TBytesStream.Create(tgz);
   try
-    result := fromPackage(s, desc, progress);
+    result := fromPackage(s, desc, progress, suppressErrors);
   finally
     s.Free;
   end;

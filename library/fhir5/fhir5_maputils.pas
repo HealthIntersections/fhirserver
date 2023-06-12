@@ -866,16 +866,16 @@ begin
     b.append(map.id);
     b.append('" {'#13#10#13#10);
 
-    if (map.source is TFhirUri) then
+    if (map.sourceScope is TFhirUri) then
     begin
       b.Append(' source "');
-      b.append(jsonEscape(TFhirUri(map.source).value, true));
+      b.append(jsonEscape(TFhirUri(map.sourceScope).value, true));
       b.append('"'#13#10);
     end;
-    if (map.target is TFhirUri) then
+    if (map.targetScope is TFhirUri) then
     begin
       b.Append(' target "');
-      b.append(jsonEscape(TFhirUri(map.target).value, true));
+      b.append(jsonEscape(TFhirUri(map.targetScope).value, true));
       b.append('"'#13#10);
     end;
 
@@ -888,9 +888,11 @@ begin
         begin
           seeSystem(pmTarget, 't', g.target);
           for d in t.dependsOnList do
-           seeSystem(pmDepends, 'd', d.system);
+            if (d.value is TFhirCoding) then
+             seeSystem(pmDepends, 'd', (d.value as TFhirCoding).system);
           for d in t.productList do
-           seeSystem(pmProduct, 'p', d.system);
+            if (d.value is TFhirCoding) then
+             seeSystem(pmProduct, 'p', (d.value as TFhirCoding).system);
         end;
       end;
     for pi in prefixes do
@@ -932,7 +934,8 @@ begin
             for d in t.dependsOnList do
             begin
               if f then f := false else b.Append(', ');
-              app(pmDepends, d.system, d.code);
+              if (d.value is TFhirCoding) then
+                app(pmDepends, (d.value as TFhirCoding).system, (d.value as TFhirCoding).code);
             end;
             b.Append(']');
           end;
@@ -948,7 +951,8 @@ begin
               for d in t.productList do
               begin
                 if f then f := false else b.Append(', ');
-                app(pmProduct, d.system, d.code);
+                if (d.value is TFhirCoding) then
+                  app(pmDepends, (d.value as TFhirCoding).system, (d.value as TFhirCoding).code);
               end;
               b.Append(']');
             end;
@@ -1071,7 +1075,7 @@ begin
       lexer.token('=');
       v := lexer.take();
       if (v = 'provided') then
-        g.unmapped.Mode := ConceptMapGroupUnmappedModeProvided
+        g.unmapped.Mode := ConceptMapGroupUnmappedModeUseSourceCode
       else
         raise lexer.error('Only unmapped mode PROVIDED is supported at this time');
     end;

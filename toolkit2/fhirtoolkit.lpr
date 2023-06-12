@@ -8,11 +8,11 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, frm_main,
+  Forms, datetimectrls, frm_main,
   { you can add units after this }
   fsl_base, fsl_threads, fsl_logging, fsl_utilities, fsl_collections, fsl_xml,
   fsl_json, fui_lcl_managers, fhir_objects, fhir_xhtml, fsl_http, v2_dictionary,
-  fsl_ucum, fhir_client, fhir_oauth, frm_file_format, ftk_context,
+  fsl_ucum, fhir_client, fhir_oauth, frm_file_format, ftk_context, fsl_web_init,
   FrameViewer09, ftk_console, ftk_store_files, ftk_store_temp, ftk_editor_ini,
   ftk_editor_text, ftk_editor_xml, ftk_factory, ftk_editor_json,
   ftk_editor_base, ftk_editor_html, ftk_editor_js, frm_settings, ftk_editor_hl7,
@@ -26,7 +26,7 @@ uses
   frm_view_manager, dlg_new_resource, ftk_fhir_context, ftk_fhir_context_5,
   ftk_image_scanner, ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner,
   dlg_upgrade, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github, ftk_engine_text,
-  ftk_text_view, dlg_ig_upload, dlg_server_upload;
+  ftk_text_view, dlg_ig_upload, dlg_server_upload, dlg_txsrvr_props, dlg_gender_identity;
 
 {$R *.res}
 
@@ -52,6 +52,7 @@ begin
   Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TServerPackageUploadForm, ServerPackageUploadForm);
+  Application.CreateForm(TTxServerPropertiesDialog, TxServerPropertiesDialog);
   Application.Run;
 end.
 

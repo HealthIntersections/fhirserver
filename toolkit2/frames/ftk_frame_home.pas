@@ -85,7 +85,7 @@ const
   HOME_PAGE =
     '## Welcome to the FHIR Toolkit'+#13#10+#13#10+
     'The FHIR Toolkit allows you to edit and validate all sorts of files that are useful when working with FHIR content.'+#13#10+
-    'In addition, you can connect to servers and explore them.</p>'+#13#10+
+    'In addition, you can connect to servers and explore them.'+#13#10+
     ''+#13#10+
     '## User Help'+#13#10+
     'The best place to task for help is on the [tooling stream on chat.fhir.org](https://chat.fhir.org/#narrow/stream/179239-tooling).'+#13#10+
@@ -122,7 +122,7 @@ var
   proc : TMarkdownProcessor;
 begin
   FMru := TStringList.create;
-  proc := TMarkdownProcessor.createDialect(mdDaringFireball); // or flavor of your choice
+  proc := TMarkdownProcessor.createDialect(mdCommonMark); // or flavor of your choice
   try
     proc.allowUnsafe := false;
     HtmlViewer1.LoadFromString(proc.process(HOME_PAGE));

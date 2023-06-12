@@ -81,3 +81,13 @@ exec/Resources
 /library/fhir5-gen
 
 testcases/snomed/test.cache
+
+exec/fhirserver.cfg
+
+toolkit/icoms/
+
+utilities/codescan/codescan.app/Contents/Info.plist
+
+utilities/codescan/codescan.app/Contents/MacOS/
+
+utilities/codescan/codescan.app/Contents/

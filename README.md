@@ -2,6 +2,8 @@
 
 Reference Implementation Server + Libraries for the FHIR Specification, written in Pascal
 
+Note: the build is broken at this time - working on it.
+
 ## Basic Information
 
 This is a set of FHIR applications written in Pascal. It is also 

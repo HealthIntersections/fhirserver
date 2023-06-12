@@ -9,12 +9,12 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom;..\dependencies\qrcodegen"/>
+        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\ftx;..\library\v2;..\library\dicom;..\dependencies\qrcodegen"/>
         <UnitOutputDirectory Value="lib\fhir\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>
-          <IgnoredMessages idx5024="True"/>
+          <IgnoredMessages idx6058="True" idx5024="True"/>
         </CompilerMessages>
       </Other>
     </CompilerOptions>
@@ -154,50 +154,6 @@
       <Item>
         <Filename Value="..\library\cda\cda_writer.pas"/>
         <UnitName Value="cda_writer"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_dialects.pas"/>
-        <UnitName Value="fdb_dialects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_logging.pas"/>
-        <UnitName Value="fdb_logging"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_manager.pas"/>
-        <UnitName Value="fdb_manager"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc.pas"/>
-        <UnitName Value="fdb_odbc"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc_fpc.pas"/>
-        <UnitName Value="fdb_odbc_fpc"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc_objects.pas"/>
-        <UnitName Value="fdb_odbc_objects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_settings.pas"/>
-        <UnitName Value="fdb_settings"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3.pas"/>
-        <UnitName Value="fdb_sqlite3"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_objects.pas"/>
-        <UnitName Value="fdb_sqlite3_objects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_utilities.pas"/>
-        <UnitName Value="fdb_sqlite3_utilities"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_wrapper.pas"/>
-        <UnitName Value="fdb_sqlite3_wrapper"/>
       </Item>
       <Item>
         <Filename Value="..\library\ftx\fhir_codesystem_service.pas"/>
@@ -403,8 +359,18 @@
         <Filename Value="..\library\fhir\fhir_tools_settings.pas"/>
         <UnitName Value="fhir_tools_settings"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_extensions.pas"/>
+        <UnitName Value="fhir_extensions"/>
+      </Item>
     </Files>
     <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_web"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fdb"/>
+      </Item>
       <Item>
         <PackageName Value="ZXing"/>
       </Item>

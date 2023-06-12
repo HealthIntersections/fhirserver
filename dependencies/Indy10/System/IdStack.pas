@@ -139,7 +139,7 @@ interface
 {$I IdCompilerDefines.inc}
 
 uses
-  Classes,
+  Classes, Contnrs,
   IdException, IdStackConsts, IdGlobal, SysUtils;
 
 type
@@ -491,6 +491,8 @@ begin
   GStackClass := AStackClass;
 end;
 
+{ TIdPacketInfo }
+
 procedure TIdPacketInfo.Reset;
 begin
   FSourceIP := '';
@@ -763,7 +765,6 @@ end;
 function TIdStack.ResolveHost(const AHost: string;
   const AIPVersion: TIdIPVersion = ID_DEFAULT_IP_VERSION): string;
 begin
-  Result := '';
   case AIPVersion of
     Id_IPv4: begin
         // Sometimes 95 forgets who localhost is

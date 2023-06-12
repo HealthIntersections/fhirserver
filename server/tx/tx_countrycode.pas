@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -84,7 +84,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -957,9 +957,9 @@ begin
   result := TCountryCodeConcept(context).display.Trim;
 end;
 
-procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TCountryCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
 end;
 
 function TCountryCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -1033,7 +1033,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

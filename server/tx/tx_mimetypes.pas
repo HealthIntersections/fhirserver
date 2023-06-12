@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -70,7 +70,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -170,9 +170,9 @@ begin
   result := getDisplay(TMTCodeSystemProviderContext(context).mt.source, lang);
 end;
 
-procedure TMimeTypeCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TMimeTypeCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
 end;
 
 function TMimeTypeCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -223,7 +223,7 @@ end;
 
 function TMimeTypeCodeServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Not a supported filter');
+  raise ETerminologyError.Create('Not a supported filter', itNotSupported);
 end;
 
 function TMimeTypeCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

@@ -245,7 +245,7 @@ Type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -308,10 +308,15 @@ type
   private
     FCode : String;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function getCode : String; override;
     function getDisplay : String; override;
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
+    function GetItemWeight : String; override;
+    procedure SetItemWeight(Value: String); override;
+    function displayElement : TFHIRPrimitiveW; override;
+
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   end;
@@ -319,6 +324,11 @@ type
 { TFhirValueSetComposeIncludeConceptLocal }
 
 function TFhirValueSetComposeIncludeConceptLocal.designations: TFslList<TFhirValueSetComposeIncludeConceptDesignationW>;
+begin
+  result := nil;
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.displayElement: TFHIRPrimitiveW;
 begin
   result := nil;
 end;
@@ -333,6 +343,11 @@ begin
   result := '';
 end;
 
+function TFhirValueSetComposeIncludeConceptLocal.GetItemWeight: String;
+begin
+  result := '';
+end;
+
 procedure TFhirValueSetComposeIncludeConceptLocal.SetCode(Value: String);
 begin
   FCode := value;
@@ -340,12 +355,24 @@ end;
 
 procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
+  // not implemented
+end;
+
+procedure TFhirValueSetComposeIncludeConceptLocal.SetItemWeight(Value: String);
+begin
+  inherited;
+
 end;
 
 function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := nil; // not supported here
 end;
 
 { TUcumServices }
@@ -397,7 +424,7 @@ begin
       s := TUcumExpressionComposer.compose(src, false);
       d := TUcumExpressionComposer.compose(dst, false);
       if s <> d then
-        raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
+        raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)', itInvalid);
       t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
@@ -590,7 +617,7 @@ var
   oSearch : TUcumSearch;
 begin
   if text = '' Then
-    raise ETerminologyError.Create('A text to search for is required');
+    raise ETerminologyError.Create('A text to search for is required', itInvalid);
   oSearch := TUcumSearch.Create;
   Try
     result := oSearch.DoSearch(model, kind, text, isRegex);
@@ -601,7 +628,7 @@ end;
 
 function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('to do');
+  raise ETerminologyError.Create('to do', itException);
 end;
 
 procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSetW);
@@ -861,9 +888,9 @@ begin
     result := getDisplay(TUCUMContext(context).concept.code, lang);
 end;
 
-procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUcumServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Code(context).Trim);
+  list.addBase('', Code(context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
@@ -1131,7 +1158,7 @@ Begin
       else if oChild.Name = 'property' Then
         result.PropertyType := oChild.allText
       else
-        raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name);
+        raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name, itInvalid);
       oChild := oChild.nextElement;
     End;
     result.Link;

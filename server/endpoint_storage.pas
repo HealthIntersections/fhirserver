@@ -41,9 +41,10 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509, IdGlobalProtocols, IdCompressorZLib, IdZlib,
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging, fsl_i18n,
   fhir_objects, fhir_client, fhir_common, fhir_parser, fhir_utilities, fhir_xhtml, fhir_ndjson,
-  fdb_manager,
+  fdb_manager, fsl_web_stream,
+  ftx_service,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
   tx_manager, tx_webserver, telnet_server, time_tracker,
@@ -132,6 +133,8 @@ type
     Property Request : TFHIRRequest read FRequest write SetRequest;
   end;
 
+  { TStorageWebEndpoint }
+
   TStorageWebEndpoint = class (TFhirWebServerEndpoint)
   private
     FContext : TFHIRServerContext;
@@ -156,7 +159,7 @@ type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker): TFHIRRequest;
-    Procedure ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
+    Procedure ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -189,6 +192,7 @@ type
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
 
     function AutoCache : boolean; virtual;
+    function makingAudits : boolean; virtual;
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon; endPoint : TStorageEndPoint);
     destructor Destroy; override;
@@ -213,7 +217,7 @@ type
   protected
     FServerContext : TFHIRServerContext;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     property ServerContext : TFHIRServerContext read FServerContext;
     function cacheSize(magic : integer) : UInt64; override;
@@ -292,9 +296,9 @@ begin
     (WebEndPoint as TStorageWebEndpoint).FContext.clearCache;
 end;
 
-constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, pcm);
+  inherited create(config, settings, db, common, pcm, i18n);
 end;
 
 destructor TStorageEndPoint.Destroy;
@@ -779,6 +783,11 @@ var
   c: integer;
   check: boolean;
 begin
+  if (makingAudits) then
+    response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
+      '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
+      'use of the API constitutes agreement to these terms. See [link] for erasure requests');
+
   Session := nil;
   try
     if (request.AuthUsername = INTERNAL_SECRET) then
@@ -904,13 +913,20 @@ begin
   end;
 end;
 
-function TStorageWebEndpoint.secureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String;
+function TStorageWebEndpoint.SecureRequest(AContext: TIdContext; ip: String;
+  request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
+  cert: TIdOpenSSLX509; id: String; tt: TTimeTracker): String;
 var
   Session: TFHIRSession;
   check: boolean;
   c: integer;
   JWT: TJWT;
 begin
+  if (makingAudits) then
+    response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
+      '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
+      'use of the API constitutes agreement to these terms. See [link] for erasure requests');
+
   Session := nil;
   try
     check := false;
@@ -1392,9 +1408,6 @@ Begin
                       response.ETag := 'W/"' + oResponse.versionId + '"';
                     response.LastModified := oResponse.lastModifiedDate;
                     // todo: timezone
-                    response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
-                      '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
-                      'use of the API constitutes agreement to these terms. See [link] for erasure requests');
                     if oResponse.tags.Count > 0 then
                       response.CustomHeaders.Add('Category: ' + oResponse.tags.AsHeader);
                     if oResponse.links.Count > 0 then
@@ -1446,12 +1459,15 @@ Begin
       end;
       on e: ETerminologyError do
       begin
-        result := result + ' (Auth needed)';
+        //result := result + ' (Auth needed)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
-        else
+        else if e.IssueType = itNull then
           SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
-            itNotSupported);
+            itNotSupported)
+          else
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
+            e.issueType)
       end;
       on e: ETerminologySetup do
       begin
@@ -1603,7 +1619,7 @@ begin
 end;
 
 
-Procedure TStorageWebEndpoint.ReadTags(header: String; request: TFHIRRequest);
+procedure TStorageWebEndpoint.ReadTags(header: String; request: TFHIRRequest);
 // var
 // s, s1, l, r, n, v : string;
 // cat : TFHIRAtomCategory;
@@ -1664,7 +1680,9 @@ begin
     cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
 end;
 
-procedure TStorageWebEndpoint.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
+procedure TStorageWebEndpoint.PopulateConformance(sender: TObject;
+  conf: TFhirCapabilityStatementW; secure: boolean; baseUrl: String;
+  caps: array of String);
 begin
   if (FAuthServer <> nil) and (Common.StatedSSLPort <> 0) then
     conf.addSmartExtensions(
@@ -1676,10 +1694,14 @@ begin
     conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
 
-Function TStorageWebEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
-  sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
-  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker)
-  : TFHIRRequest;
+function TStorageWebEndpoint.BuildRequest(const lang: THTTPLanguages; sBaseURL,
+  sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource,
+  sContentType, sContentAccept, sContentEncoding, sCookie, provenance,
+  sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;
+  var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth,
+  secure: boolean; out relativeReferenceAdjustment: integer;
+  var style: TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509;
+  tt: TTimeTracker): TFHIRRequest;
 Var
   sURL, Msg: String;
   oRequest: TFHIRRequest;
@@ -1956,8 +1978,11 @@ begin
   end;
 end;
 
-Procedure TStorageWebEndpoint.ProcessOutput(start : cardinal; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
+procedure TStorageWebEndpoint.ProcessOutput(start: UInt64;
+  oRequest: TFHIRRequest; oResponse: TFHIRResponse;
+  request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
+  relativeReferenceAdjustment: integer; style: TFHIROutputStyle; gzip,
+  cache: boolean; summary: String);
 var
   oComp: TFHIRComposer;
   b: TBytes;
@@ -2093,7 +2118,7 @@ begin
       if response.contentType = '' then
         response.contentType := 'text/plain';
       b := TEncoding.UTF8.GetBytes(oResponse.Body);
-      stream.Write(b, Length(b));
+      stream.Write(b[0], Length(b));
     end;
     stream.Position := 0;
     if gzip and (stream.Size > 0) then
@@ -2121,7 +2146,11 @@ begin
   end;
 end;
 
-procedure TStorageWebEndpoint.SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueType);
+procedure TStorageWebEndpoint.SendError(response: TIdHTTPResponseInfo;
+  logid: string; status: word; format: TFHIRFormat; const lang: THTTPLanguages;
+  message, url: String; e: exception; Session: TFHIRSession;
+  addLogins: boolean; path: String; relativeReferenceAdjustment: integer;
+  code: TFHIRIssueType);
 var
   issue: TFhirOperationOutcomeW;
   oComp: TFHIRComposer;
@@ -2141,7 +2170,7 @@ begin
       FContext.factory.setXhtml(issue.Resource, TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>' + FormatTextToXML(message, xmlText) + '</p></div>'));
       iss := FContext.factory.makeIssue(isError, code, '', message);
       try
-        iss.diagnostics := ExceptionStack(e);
+       // iss.diagnostics := ExceptionStack(e);
         issue.addIssue(iss, false);
       finally
         iss.Free;
@@ -2425,6 +2454,11 @@ begin
 end;
 
 function TStorageWebEndpoint.AutoCache: boolean;
+begin
+  result := false;
+end;
+
+function TStorageWebEndpoint.makingAudits: boolean;
 begin
   result := false;
 end;

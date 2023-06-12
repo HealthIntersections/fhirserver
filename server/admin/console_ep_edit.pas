@@ -154,12 +154,15 @@ procedure TEditEPForm.FormShow(Sender: TObject);
 var
  env : TOdbcEnv;
  adm : TOdbcAdministrator;
+ s : String;
 begin
   env := TOdbcEnv.create;
   try
     adm := TOdbcAdministrator.create(env);
     try
+      s := cbxDriver.Text;
       cbxDriver.items.assign(adm.Drivers);
+      cbxDriver.Text := s;
     finally
       adm.Free;
     end;
@@ -224,8 +227,7 @@ begin
     rbMSSQL.Checked := EP['db-type'].value = 'mssql';
     rbMySQL.Checked := EP['db-type'].value = 'mysql';
     rbSQLite.Checked := EP['db-type'].value = 'sqlite';
-    if EP['db-type'].value <> '' then
-      cbxDriver.Text := EP['db-type'].value;
+    cbxDriver.Text := EP['db-driver'].value;
     edtServer.Text := EP['db-server'].value;
     edtDBName.Text := EP['db-database'].value;
     edtUsername.Text := EP['db-username'].value;
@@ -339,7 +341,7 @@ begin
 
   EP['path'].value := edtPath.text;
   EP['folder'].value := edtFolder.Text;
-  EP['db-type'].value := cbxDriver.Text;
+  EP['db-driver'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     EP['db-type'].value := 'mysql'
   else if rbSQLite.Checked then

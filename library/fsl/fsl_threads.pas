@@ -40,7 +40,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
   {$IFDEF FPC} process, {$ENDIF}
 
-  SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
+  SysUtils, SyncObjs, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_fpc;
 
 const
@@ -64,13 +64,16 @@ function GetThreadReport : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
+procedure CloseThreadInternal(name : String);
 
 type
   {$IFNDEF FPC}
   TCriticalSectionProcedure = reference to procedure;
   {$ENDIF}
 
-  TFslLock = class(TObject)
+  { TFslLock }
+
+  TFslLock = class(TFslObject)
   Private
     FCritSect: TRTLCriticalSection;
 
@@ -97,6 +100,7 @@ type
     constructor Create; Overload;
     constructor Create(AName: String); Overload;
     destructor Destroy; Override;
+    function link : TFslLock; overload;
 
     // core functionality
     procedure Lock; Overload;
@@ -706,9 +710,6 @@ begin
     GHaveCritSect := true;
     GBackgroundTasks := TBackgroundTaskManager.Create;
     GThreadList := TList.Create;
-    IdThread.fsThreadName := SetThreadName;
-    IdThread.fsThreadStatus := SetThreadStatus;
-    IdThread.fsThreadClose := CloseThreadInternal;
     GetThreadNameStatusDelegate := GetThreadNameStatus;
   end;
 end;
@@ -719,9 +720,6 @@ var
   p : PTheadRecord;
 begin
   GHaveCritSect := false;
-  IdThread.fsThreadName := nil;
-  IdThread.fsThreadStatus := nil;
-  IdThread.fsThreadClose := nil;
   for i := GThreadList.Count - 1 downto 0 do
   begin
     p := GThreadList[i];
@@ -835,7 +833,7 @@ begin
     FProcess.Execute;
     repeat
       SetLength(Buffer, BUF_SIZE);
-      BytesRead := FProcess.Output.Read(Buffer, BUF_SIZE);
+      BytesRead := FProcess.Output.Read(Buffer[0], BUF_SIZE);
       processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
     until BytesRead = 0;
     FExitCode := FProcess.ExitCode;
@@ -1012,6 +1010,11 @@ begin
   inherited;
 end;
 
+function TFslLock.link: TFslLock;
+begin
+  result := TFslLock(Inherited link);
+end;
+
 
 function threadToString(id : TThreadId) : String;
 begin
@@ -1078,7 +1081,7 @@ begin
   FLockName[FEntryCount - 1] := Name;
 end;
 
-function TFslLock.TryLock: Boolean;
+function TFslLock.Trylock: Boolean;
 begin
   Result := TryEnterCriticalSection(FCritSect);
   if Result then

@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$i fhir.inc}
 
 interface
@@ -42,7 +41,7 @@ uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache, fsl_i18n,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_xhtml, fhir_cdshooks,
 
@@ -150,6 +149,8 @@ Type
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+    function makingAudits : boolean; override;
+
     {$IFDEF WINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
     function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -176,6 +177,8 @@ Type
   end;
 
 
+  { TFullServerEndPoint }
+
   TFullServerEndPoint = class (TStorageEndPoint)
   private
     FSubscriptionThread: TFhirServerSubscriptionThread;
@@ -196,7 +199,7 @@ Type
     procedure Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode : TOperationMode; logLevel : TOperationLoggingLevel);
     procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -425,9 +428,9 @@ begin
   FStore.clearCache;
 end;
 
-constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager);
+constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, pcm);
+  inherited create(config, settings, db, common, pcm, i18n);
   FConfig := TFslStringDictionary.create;
 end;
 
@@ -569,6 +572,11 @@ begin
   end;
 end;
 
+function TFullServerWebEndPoint.makingAudits: boolean;
+begin
+  result := true;
+end;
+
 function TFullServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   inherited makeWebEndPoint(common);
@@ -604,7 +612,7 @@ begin
     result := result + FStore.cacheSize(magic);
 end;
 
-Procedure TFullServerEndPoint.checkDatabase();
+procedure TFullServerEndPoint.checkDatabase;
 var
   ver : integer;
   conn : TFDBConnection;
@@ -669,9 +677,10 @@ begin
   FServerContext.JWTServices.Host := Settings.Ini.web['host'].value;
   FServerContext.JWTServices.cardKey := TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   FServerContext.JWTServices.cardJWKSFile := Settings.Ini.web['card-jwks'].value;
+  FServerContext.i18nSupport := I18n.link;
   //  FServerContext.JWTServices.JWKAddress := ?;
 
-  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, makeFactory, Terminologies.link);
+  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, makeFactory, Terminologies.link, FServerContext.i18nSupport.link);
   FStore.Initialise;
   FServerContext.OnGetNamedContext := OnGetNamedContext;
 
@@ -694,7 +703,8 @@ begin
   inherited;
 end;
 
-procedure TFullServerEndPoint.internalThread;
+procedure TFullServerEndPoint.internalThread(
+  callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   try
     if FStopping then exit;
@@ -1503,6 +1513,7 @@ function TFullServerWebEndPoint.HandleWebCreate(request: TFHIRRequest; response:
 //  questionnaire: TFHIRQuestionnaire;
 //  s, id, fid: String;
 begin
+  result := 0;
 //  // get the right questionnaire
 //  if request.Parameters['profile').StartsWith('Profile/') then
 //  begin
@@ -1569,6 +1580,7 @@ function TFullServerWebEndPoint.HandleWebEdit(request: TFHIRRequest; response: T
 //  s: String;
 //  comp: TFHIRComposer;
 begin
+  result := 0;
   raise ETodo.create('TFullServerWebEndPoint.HandleWebEdit');
 //  result := 0;
 //

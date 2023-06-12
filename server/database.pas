@@ -285,6 +285,8 @@ type
 //    function loadCustomResources(response : TFHIRResponse; key : integer; startup : boolean; names : TStringList) : boolean; overload;
   end;
 
+  { TFHIRNativeStorageService }
+
   TFHIRNativeStorageService = class (TFHIRStorageService)
   private
     FDB: TFDBManager;
@@ -349,6 +351,7 @@ type
     Function Link: TFHIRNativeStorageService; virtual;
     function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
     procedure Initialise(); override;
+    procedure UnLoad; override;
 //    procedure SaveResource(res: TFHIRResourceV; dateTime: TFslDateTime; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -5638,6 +5641,12 @@ begin
   end;
 end;
 
+procedure TFHIRNativeStorageService.UnLoad;
+begin
+  inherited UnLoad;
+  FQueue.clear;
+end;
+
 function TFHIRNativeStorageService.issueHealthCardKey: integer;
 begin
   FLock.Lock('issueHealthCardKey');
@@ -5681,7 +5690,8 @@ begin
 
 end;
 
-procedure TFHIRNativeStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
+procedure TFHIRNativeStorageService.recordOAuthChoice(id: String; scopes, jwt,
+  patient: String);
 var
   conn : TFDBConnection;
 begin
@@ -5863,7 +5873,7 @@ begin
         result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
       else
       begin
-        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref);
+        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref, '');
         if vs = nil then
           vs := ServerContext.TerminologyServer.getValueSetByid(ref);
         if vs = nil then
@@ -6230,7 +6240,8 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.hasOauthSession(id: String; status : integer): boolean;
+function TFHIRNativeStorageService.hasOAuthSession(id: String; status: integer
+  ): boolean;
 var
   conn : TFDBConnection;
 begin
@@ -6837,7 +6848,8 @@ begin
     conn.execsql('Update Observations set CodeList = '''+s+''' where ObservationKey = '+inttostr(ok));
 end;
 
-procedure TFHIRNativeStorageService.DropResource(key, vkey, pvkey: integer; id: string; resource: String; indexer: TFhirIndexManager; conn: TFDBConnection);
+procedure TFHIRNativeStorageService.DropResource(key, vkey, pvkey: integer; id,
+  resource: string; indexer: TFhirIndexManager; conn: TFDBConnection);
 begin
   FLock.Lock('DropResource');
   try
@@ -7428,7 +7440,8 @@ begin
   result := s;
 end;
 
-function TFHIRNativeStorageService.GetNextKey(connection : TFDBConnection; keytype: TKeyType; aType: string; var id: string): integer;
+function TFHIRNativeStorageService.GetNextKey(connection: TFDBConnection;
+  keytype: TKeyType; aType: String; var id: string): integer;
 begin
   case keytype of
     ktResource:

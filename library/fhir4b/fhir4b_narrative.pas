@@ -1454,7 +1454,7 @@ begin
     end;
   end;
 
-  ae := context.fetchResource(frtNull, url);
+  ae := context.fetchResource(frtNull, url, '');
   try
     if (ae <> nil) then
     begin

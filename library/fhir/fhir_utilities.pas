@@ -437,13 +437,17 @@ begin
   if (s.contains('(')) then
     s := s.substring(0, s.indexof('(')).trim;
   s := s.ToLower;
-  if (s = 'r5') or isMoreRecent(s, '4.0') then
+  if (s.length > 3) then
+    s := s.substring(0, 3);
+  if (s = 'r5') or s.startsWith('5.0') then
     result := fhirVersionRelease5
-  else if (s = 'r4') or isMoreRecent(s, '3.0') then
+  else if (s = 'r4b') or s.startsWith('4.3') then
+      result := fhirVersionRelease5
+  else if (s = 'r4') or s.startsWith('4.0') then
     result := fhirVersionRelease4
-  else if (s = 'r3') or isMoreRecent(s, '1.0') then
+  else if (s = 'r3') or s.startsWith('3.0') then
     result := fhirVersionRelease3
-  else if (s = 'r2') or isMoreRecent(s, '0.1') then
+  else if (s = 'r2') or s.startsWith('1.0') then
     result := fhirVersionRelease2
   else
     result := fhirVersionUnknown;

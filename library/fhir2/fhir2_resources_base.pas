@@ -274,6 +274,9 @@ function AddItem(value : TFhirResource): TFhirResource; overload;
   End;
 
   // A resource that includes narrative, extensions, and contained resources.
+
+  { TFhirDomainResource }
+
   TFhirDomainResource = class abstract (TFhirResource)
   protected
     FText : TFhirNarrative;
@@ -311,8 +314,14 @@ function AddItem(value : TFhirResource): TFhirResource; overload;
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
+
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
@@ -875,13 +884,47 @@ begin
     list.addAll(self, 'modifierExtension', FModifierExtensionList);
 end;
 
-procedure TFhirDomainResource.addExtension(url: String; value: TFHIRObject);
+procedure TFhirDomainResource.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirType;
+end;
+
+procedure TFhirDomainResource.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
+procedure TFhirDomainResource.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  if FExtensionList <> nil then
+    for i := FExtensionList.count - 1 downto 0 do
+      if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+        FExtensionList.remove(i);
 end;
 
 function TFhirDomainResource.extensionCount(url: String): integer;
@@ -894,14 +937,28 @@ begin
       inc(result);
 end;
 
-function TFhirDomainResource.extensions(url: String): TFslList<TFHIRObject>;
+function TFhirDomainResource.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
   result := TFslList<TFHIRObject>.create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
@@ -1041,7 +1098,7 @@ begin
   result := 'DomainResource';
 end;
 
-function TFhirDomainResource.equals(other : TObject) : boolean;
+function TFhirDomainResource.Equals(other: TObject): boolean;
 var
   o : TFhirDomainResource;
 begin
@@ -1092,44 +1149,44 @@ end;
 
 { TFhirDomainResource }
 
-Procedure TFhirDomainResource.SetText(value : TFhirNarrative);
+procedure TFhirDomainResource.SetText(value: TFhirNarrative);
 begin
   FText.free;
   FText := value;
 end;
 
-Function TFhirDomainResource.GetContainedList : TFhirResourceList;
+function TFhirDomainResource.GetContainedList: TFhirResourceList;
 begin
   if FContainedList = nil then
     FContainedList := TFhirResourceList.Create;
   result := FContainedList;
 end;
 
-Function TFhirDomainResource.GetHasContainedList : boolean;
+function TFhirDomainResource.GetHasContainedList: Boolean;
 begin
   result := (FContainedList <> nil) and (FContainedList.count > 0);
 end;
 
-Function TFhirDomainResource.GetExtensionList : TFhirExtensionList;
+function TFhirDomainResource.GetExtensionList: TFhirExtensionList;
 begin
   if FExtensionList = nil then
     FExtensionList := TFhirExtensionList.Create;
   result := FExtensionList;
 end;
 
-Function TFhirDomainResource.GetHasExtensionList : boolean;
+function TFhirDomainResource.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
 
-Function TFhirDomainResource.GetModifierExtensionList : TFhirExtensionList;
+function TFhirDomainResource.GetModifierExtensionList: TFhirExtensionList;
 begin
   if FModifierExtensionList = nil then
     FModifierExtensionList := TFhirExtensionList.Create;
   result := FModifierExtensionList;
 end;
 
-Function TFhirDomainResource.GetHasModifierExtensionList : boolean;
+function TFhirDomainResource.GetHasModifierExtensionList: Boolean;
 begin
   result := (FModifierExtensionList <> nil) and (FModifierExtensionList.count > 0);
 end;

@@ -73,7 +73,7 @@ end;
 
 procedure TNpmPackageTests.SetUp;
 begin
-  FCache := TFHIRPackageManager.create(true);
+  FCache := TFHIRPackageManager.create(npmModeTesting);
 end;
 
 procedure TNpmPackageTests.TearDown;

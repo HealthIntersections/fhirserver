@@ -113,7 +113,7 @@ begin
   FMessages := TStringList.create;
   Logging.addListener(self);
   Logging.LogToConsole := false;
-  MustBeUserMode := true;
+  ForcedNpmCacheMode := npmModeUser;
 end;
 
 destructor TFHIRServerController.Destroy;
@@ -207,7 +207,7 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := FilePath([ExtractFilePath(ParamStr(0)), s]);
+  result := FilePath([executableDirectory(), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;

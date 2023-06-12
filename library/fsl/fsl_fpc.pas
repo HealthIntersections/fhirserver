@@ -80,6 +80,8 @@ function unicodeChars(s : String) : TUCharArray;
 function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this function does nothing.
 function UCharArrayToString(chars : TUCharArray) : String;
 
+function FileCanBeReadOnly : boolean;
+
 {$IFDEF FPC}
 
 procedure InitializeCriticalSection(out cs : TRTLCriticalSection);
@@ -140,7 +142,7 @@ type
     FOnProgress: TNotifyEvent;
     FZStream: TZStreamRec;
     FBuffer: TBytes;
-  protected
+  public
     constructor Create(stream: TStream);
     procedure DoProgress; dynamic;
     property OnProgress: TNotifyEvent read FOnProgress write FOnProgress;
@@ -224,8 +226,10 @@ type
   public
     constructor Create(const Pattern: string; Options: TRegExOptions); overload;
     function IsMatch(const Input: string): Boolean; overload;
+    function IsFullMatch(const Input: string): Boolean; overload;
 
     class function isMatch(const input, pattern: string): Boolean; overload;
+    class function replace(const input, pattern, repl: string): String; overload;
   end;
 
 
@@ -361,6 +365,17 @@ end;
 
 {$ENDIF}
 
+function FileCanBeReadOnly : boolean;
+begin
+  {$IFDEF OSX}
+  result := false;
+  {$ELSE}
+  result := true;
+  {$ENDIF}
+
+end;
+
+
 {$IFDEF FPC}
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
@@ -461,9 +476,7 @@ begin
     raise EFslException.Create('chmod failed');
 {$ENDIF}
 {$IFDEF OSX}
-begin
-  raise EFslException.Create('Not supported');
-end;
+  // nothing
 {$ENDIF}
 end;
 
@@ -604,8 +617,9 @@ end;
 
 function TZCompressionStream.Read(var buffer; count: Longint): Longint;
 begin
+  result := 0;
   raise EIOException.Create('Cannot read from a compression stream');
-    end;
+end;
 
 function TZCompressionStream.Write(const buffer; count: Longint): Longint;
 begin
@@ -694,7 +708,7 @@ begin
   begin
     if FZStream.avail_in = 0 then
     begin
-      FZStream.avail_in := FStream.Read(FBuffer, Length(FBuffer));
+      FZStream.avail_in := FStream.Read(FBuffer[0], Length(FBuffer));
 
       if FZStream.avail_in = 0 then
       begin
@@ -727,6 +741,7 @@ end;
 
 function TZDecompressionStream.Write(const buffer; count: Longint): Longint;
 begin
+  result := 0;
   raise EIOException.Create('Invalid Operation');
 end;
 
@@ -757,14 +772,14 @@ begin
     if localOffset > 0 then
     begin
       SetLength(buf, BufSize);
-      for i := 1 to localOffset div BufSize do ReadBuffer(buf, BufSize);
-      ReadBuffer(buf, localOffset mod BufSize);
+      for i := 1 to localOffset div BufSize do ReadBuffer(buf[0], BufSize);
+      ReadBuffer(buf[0], localOffset mod BufSize);
     end;
   end
   else if (Offset = 0) and (Origin = soEnd) then
   begin
     SetLength(buf, BufSize);
-    while Read(buf, BufSize) > 0 do ;
+    while Read(buf[0], BufSize) > 0 do ;
   end
   else
     raise EIOException.Create('Invalid Operation');
@@ -788,6 +803,13 @@ begin
   result := Exec(input);
 end;
 
+function TRegEx.IsFullMatch(const Input: string): Boolean;
+begin
+  result := Exec(input);
+  if (result) then
+    result := MatchLen[0] = input.length;
+end;
+
 class function TRegEx.isMatch(const input, pattern : string): Boolean;
 var
   this : TRegEx;
@@ -795,6 +817,18 @@ begin
   this := TRegEx.create(pattern);
   try
     result := this.isMatch(input);
+  finally
+    this.free;
+  end;
+end;
+
+class function TRegEx.replace(const input, pattern, repl: string): String;
+var
+  this : TRegEx;
+begin
+  this := TRegEx.create(pattern);
+  try
+    result := this.replace(input, repl);
   finally
     this.free;
   end;
@@ -829,6 +863,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally
@@ -850,6 +885,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally
@@ -871,6 +907,7 @@ begin
           ts.add(fsl_utilities.FilePath([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
+    FindClose(SearchRec);
 
     result := ts.ToStringArray;
   finally

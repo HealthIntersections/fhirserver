@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fhir4"/>
         <UnitOutputDirectory Value="lib\fhir4\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -88,7 +93,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\fhir4\fhir4_parserbase.pas"/>
-        <UnitName Value="fhir4_parserBase"/>
+        <UnitName Value="fhir4_parserbase"/>
       </Item>
       <Item>
         <Filename Value="..\library\fhir4\fhir4_patch.pas"/>

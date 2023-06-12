@@ -231,7 +231,6 @@ Function StringCompareInsensitive(Const sA, sB : String) : Integer; Overload;
 Function StringCompareSensitive(Const sA, sB : String) : Integer; Overload;
 Function StringCompareInsensitive(Const sA, sB : String; Const iLength : Integer) : Integer; Overload;
 Function StringCompareSensitive(Const sA, sB : String; Const iLength : Integer) : Integer; Overload;
-
 Function StringEquals(Const sA, sB : String) : Boolean; Overload;
 Function StringEquals(Const sA, sB : String; Const iLength : Integer) : Boolean; Overload;
 Function StringEqualsSensitive(Const sA, sB : String) : Boolean; Overload;
@@ -455,6 +454,24 @@ Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCha
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
 Type
+
+  { TCommaSeparatedStringBuilder }
+
+  TCommaSeparatedStringBuilder = class (TFslObject)
+  private
+    FSeperator : String;
+    FLastSeperator : String;
+    FList : TStringList;
+  public
+    constructor create(sep, lastSep : String);
+    destructor Destroy; override;
+
+    property Seperator : String read FSeperator;
+    property LastSeperator : String read FLastSeperator;
+    procedure append(s : String);
+    function makeString : String;
+  end;
+
   TFslStringBuilder = Class (TFslObject)
   Private
     FBuilder : TStringBuilder;
@@ -1607,6 +1624,16 @@ Type
 end;
 
 
+function lowBoundaryForDecimal(value : String; precision : integer) : String;
+function highBoundaryForDecimal(value : String; precision : integer) : String;
+function lowBoundaryForDate(value : String; precision : integer) : String;
+function highBoundaryForDate(value : String; precision : integer) : String;
+function lowBoundaryForTime(value : String; precision : integer) : String;
+function highBoundaryForTime(value : String; precision : integer) : String;
+function getDecimalPrecision(value : String) : integer;      
+function getDatePrecision(value : String) : integer;
+function getTimePrecision(value : String) : integer;
+
 Function GUIDAsOIDWrong(Const aGUID : TGUID) : String;
 Function GUIDAsOIDRight(Const aGUID : TGUID) : String;
 
@@ -1789,10 +1816,10 @@ Type
       Property CaseSensitive : Boolean Read FCaseSensitive Write FCaseSensitive;
   End;
 
-
 function hasCommandLineParam(name : String) : boolean;
 function getCommandLineParam(name : String; out res : String) : boolean;
 function commandLineAsString : String;
+function executableDirectory : String;
 
 
 type
@@ -2645,7 +2672,7 @@ Begin
     result := false
   else
   {$ENDIF}
-  Result := SysUtils.DeleteFile(sFilename);
+    Result := SysUtils.DeleteFile(sFilename);
 End;
 
 
@@ -2811,12 +2838,16 @@ begin
     begin
       if FolderExists('c:\temp') then
         result := 'c:\temp'
+      {$IFDEF FPC}
+      else if FolderExists(GetUserDir+'temp') then
+        result := GetUserDir+'temp'
+      {$ENDIF}
       else
         result := SystemTemp();
     end
     else if s = '[exe]' then
     begin
-      result := ExtractFilePath(ParamStr(0));
+      result := executableDirectory();
     end
     else if s = '[curr]' then
     begin
@@ -3154,7 +3185,7 @@ End;
 
 Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString; overload;
 Begin
-  SetString(Result, PAnsiChar(Integer(pData) + iPosition), iLength - iPosition);
+  SetString(Result, PAnsiChar(NativeUInt(pData) + iPosition), iLength - iPosition);
 End;
 
 
@@ -4078,6 +4109,7 @@ End;
 Begin
   Result := '';
 End;
+
 {$ENDIF}
 {$IFDEF LINUX}
 Begin
@@ -6032,7 +6064,15 @@ Begin
   {$IFNDEF FPC}
   regex := TRegEx.Create(UUID_REGEX, [roCompiled]);
   result := regex.IsMatch(oid);
+  {$ELSE}
+  regex := TRegEx.create(UUID_REGEX, [roCOmpiled]);
+  try
+    result := regex.isMatch(oid);
+  finally
+    regex.free;
+  end;
   {$ENDIF}
+
 End;
 
 
@@ -7640,7 +7680,7 @@ var
   err : String;
 begin
   err := '';
-  if (year < 1000) or (year > 3000) then
+  if (year < 0001) or (year > 9999) then
     err := 'Year is not valid'
   else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
     err := 'Month is not valid'
@@ -8335,7 +8375,8 @@ begin
   format := checkFormat(format);
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
-    replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
+    if not replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2)) then ;
+      replaceSubstring(Result, 'y', copy(IntToStr(year), 3, 2));
   if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
     if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
       if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
@@ -8465,7 +8506,7 @@ begin
   result.FractionPrecision := 0;
 
   if Length(value) >=4 then
-    result.Year := vs(Value, 1, 4, 1800, 2400, 'years');
+    result.Year := vs(Value, 1, 4, 0001, 9999, 'years');
   if Length(value) < 7 then
     result.FPrecision := dtpYear
   else
@@ -8906,7 +8947,7 @@ end;
 
 function TFslDateTime.privToString: String;
 begin
-  Result := 'yyyymmddhhnnss';
+  Result := 'yyyy-mm-ddThh:nn:ss';
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
   if month <> 0 then
@@ -15604,7 +15645,7 @@ begin
         if i <= 255 then
         begin
           b.Append('%');
-          b.append(inttostr(i));
+          b.append(inttohex(i, 2));
         end
         else
           raise EFslException.Create('Not handled - non-ansi characters in URLs');
@@ -16835,6 +16876,7 @@ End;
 
 procedure init;
 begin
+  GDumpFile := FilePath(['[tmp]', ExtractFileName(paramstr(0))+'.leaks.txt']);
   SetLength(UnicodeWhitespaceArray, 26);
 
   UnicodeWhitespaceArray[0] := #$0009; //
@@ -16974,6 +17016,14 @@ begin
   end
 end;
 
+function executableDirectory : String;
+begin
+  result := PathFolder(paramstr(0));
+  {$IFDEF OSX}
+  result := PathFolder(result.replace('/Contents/MacOS/', ''));
+  {$ENDIF}
+end;
+
 function AllContentHex(s: String): Boolean;
 var
   i: Integer;
@@ -16986,6 +17036,7 @@ end;
 function ZCompressBytes(const s: TBytes): TBytes;
 begin
   {$IFDEF FPC}
+  result := nil;
   raise ETodo.create('Not done yet');
   {$ELSE}
   ZCompress(s, result);
@@ -17143,6 +17194,317 @@ end;
 function pointerToString(obj : TObject) : String;
 begin
   result := IntToHex(UInt64(obj), 16);
+end;
+
+function isZero(value : String) : boolean;
+begin
+  result := value.replace('.', '').replace('-', '').replace('0', '').length = 0;
+end;
+
+function minusOne(value : String) : string;
+var
+  i : integer;
+begin
+  result := value;
+  for i := result.length downto 1 do
+  begin
+    if (result[i] = '0') then
+      result[i] := '9'
+    else if (result[i] <> '.') then
+    begin
+      result[i] := char(ord(result[i])-1);
+      break;
+    end;
+  end;
+end;
+
+function getDecimalPrecision(value : String) : integer;
+begin
+  if (value.contains('e')) then
+    value := value.substring(0, value.indexOf('e'));
+
+  if (value.contains('.')) then
+    result := value.substring(value.indexOf('.') + 1).length
+  else
+    result := 0;
+end;
+
+
+function applyPrecision(v : String; p : integer) : string;
+var
+  d : integer;
+begin
+  d := p - getDecimalPrecision(v);
+  if (d = 0) then
+    result := v
+  else if (d > 0) then
+    result := v + StringPadLeft('', '0', d)
+  else if (v[v.length+d] >= '6') then
+    result := v.substring(0, v.length+d-1)+ chr(ord(v[v.length+d])+1)
+  else
+    result := v.substring(0, v.length+d);
+end;
+
+function lowBoundaryForDecimal(value : String; precision : integer) : String;
+var
+  e : String;
+begin
+  if (value = '') then
+    raise EFslException.create('Unable to calculate lowBoundary for a null decimal string');
+
+  if (value.Contains('e')) then
+  begin
+    e := value.substring(value.indexOf('e')+1);
+    value := value.substring(0, value.indexOf('e'));
+  end
+  else
+    e := '';
+
+  if (isZero(value)) then
+    result := applyPrecision('-0.5000000000000000000000000', precision)
+  else if (value.startsWith('-')) then
+    result := '-'+highBoundaryForDecimal(value.substring(1), precision)+e
+  else if (value.contains('.')) then
+    result := applyPrecision(minusOne(value)+'50000000000000000000000000000', precision)+e
+  else
+    result := applyPrecision(minusOne(value)+'.50000000000000000000000000000', precision)+e;
+end;
+
+
+function highBoundaryForDecimal(value : String; precision : integer) : String;
+var
+  e : String;
+begin
+  if (value = '') then
+    raise EFslException.create('Unable to calculate highBoundary for a null decimal string');
+
+  if (value.Contains('e')) then
+  begin
+    e := value.substring(value.indexOf('e')+1);
+    value := value.substring(0, value.indexOf('e'));
+  end
+  else
+    e := '';
+
+  if (isZero(value)) then
+    result := applyPrecision('0.50000000000000000000000000000', precision)
+  else if (value.startsWith('-')) then
+    result := '-'+lowBoundaryForDecimal(value.substring(1), precision)+e
+  else if (value.contains('.')) then
+    result := applyPrecision(value+'50000000000000000000000000000', precision)+e
+  else
+    result := applyPrecision(value+'.50000000000000000000000000000', precision)+e;
+end;
+
+procedure splitTimezone(value : String; var tm, tz : String);
+begin
+  if (value.contains('+')) then
+  begin
+    tm := value.substring(0, value.indexOf('+'));
+    tz := value.substring(value.indexOf('+'));
+  end
+  else if value.contains('-') and value.contains('T') and (value.lastIndexOf('-') > value.indexOf('T')) then
+  begin
+    tm := value.substring(0, value.lastIndexOf('-'));
+    tz := value.substring(value.lastIndexOf('-'));
+  end
+  else if (value.contains('Z')) then
+  begin
+    tm := value.substring(0, value.indexOf('Z'));
+    tz := value.substring(value.indexOf('Z'));
+  end
+  else
+  begin
+    tm := value;
+    tz := '';
+  end;
+end;
+
+function applyDatePrecision(v : String; precision : Integer) : String;
+begin
+  case precision of
+    4: result := v.substring(0, 4);
+    6: result := v.substring(0, 7);
+    8: result := v.substring(0, 10);
+    14: result := v.substring(0, 17);
+    17: result := v;
+  else
+    raise EFslException.create('Unsupported Date precision for boundary operation: '+inttostr(precision));
+  end;
+end;
+
+function applyTimePrecision(v : String; precision : Integer) : String;
+begin
+  case precision of
+    2: result := v.substring(0, 3);
+    4: result := v.substring(0, 6);
+    6: result := v.substring(0, 9);
+    9: result := v;
+  else
+    raise EFslException.create('Unsupported Time precision for boundary operation: '+inttostr(precision));
+  end;
+end;
+
+function lowBoundaryForDate(value : String; precision : integer) : String;
+var
+  tm, tz : String;
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz);
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 4) then
+      b.append('-01');
+    if (b.length = 7) then
+      b.append('-01');
+    if (b.length = 10) then
+      b.append('T00:00');
+    if (b.length = 16) then
+      b.append(':00');
+    if (b.length = 19) then
+      b.append('.000');
+    result := applyDatePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function dayCount(y, m : integer) : String;
+begin
+  case m of
+    1: result := '31';
+    2: if ((y div 4 = 0) and ((y div 400 = 0) or not (y div 100 = 0))) then
+         result := '29'
+        else
+          result := '28';
+    3: result := '31';
+    4: result := '30';
+    5: result := '31';
+    6: result := '30';
+    7: result := '31';
+    8: result := '31';
+    9: result := '30';
+    10: result := '31';
+    11: result := '30';
+    12: result := '31';
+  end;
+end;
+
+function highBoundaryForDate(value : String; precision : integer) : String;
+var
+  tm, tz : String;    
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz); 
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 4) then
+      b.append('-12');
+    if (b.length = 7) then
+      b.append('-'+dayCount(StrtoInt(b.toString.substring(0,4)), StrtoInt(b.toString.substring(5,7))));
+    if (b.length = 10) then
+      b.append('T23:59');
+    if (b.length = 16) then
+      b.append(':59');
+    if (b.length = 19) then
+      b.append('.999');
+    result := applyDatePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function lowBoundaryForTime(value : String; precision : integer) : String;
+var
+  tm, tz : String;
+  b : TStringBuilder;
+begin
+  splitTimezone(value, tm, tz);
+  b := TStringBuilder.create(tm);
+  try
+    if (b.length = 2) then
+      b.append(':00');
+    if (b.length = 5) then
+      b.append(':00');
+    if (b.length = 8) then
+      b.append('.000');
+    result := applyTimePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function highBoundaryForTime(value : String; precision : integer) : String;
+var
+    tm, tz : String;
+    b : TStringBuilder;
+  begin
+    splitTimezone(value, tm, tz);
+    b := TStringBuilder.create(tm);
+    try
+    if (b.length = 2) then
+      b.append(':59');
+    if (b.length = 5) then
+      b.append(':59');
+    if (b.length = 8) then
+      b.append('.999');
+    result := applyTimePrecision(b.toString(), precision)+tz;
+  finally
+    b.free;
+  end;
+end;
+
+function getDatePrecision(value : String) : integer;
+var
+  tm, tz : string;
+begin       
+  splitTimezone(value, tm, tz);
+  result := tm.replace('-', '').replace('T', '').replace(':', '').replace('.', '').length;
+end;
+
+function getTimePrecision(value : String) : integer;
+var
+  tm, tz : string;
+begin
+  splitTimezone(value, tm, tz);
+  result := tm.replace('T', '').replace(':', '').replace('.', '').length;
+end;
+
+{ TCommaSeparatedStringBuilder }
+
+constructor TCommaSeparatedStringBuilder.create(sep, lastSep: String);
+begin
+  inherited Create;
+  FSeperator := sep;
+  FLastSeperator := LastSep;
+  FList := TStringList.create;
+end;
+
+destructor TCommaSeparatedStringBuilder.Destroy;
+begin
+  FList.free;
+  inherited Destroy;
+end;
+
+procedure TCommaSeparatedStringBuilder.append(s: String);
+begin
+  FList.add(s);
+end;
+
+function TCommaSeparatedStringBuilder.makeString: String;
+var
+  i : integer;
+begin
+  if FList.count = 0 then
+    result := ''
+  else
+  begin
+    result := FList[0];
+    for i := 1 to Flist.count - 2 do
+      result := result + FSeperator + Flist[i];
+    if Flist.count > 1 then
+      result := result + FLastSeperator + FList[FList.count - 1];
+  end;
 end;
 
 Initialization

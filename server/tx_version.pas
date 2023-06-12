@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 const
-  TX_SERVER_VERSION = '1.0.0';
+  TX_SERVER_VERSION = '2.0.0';
 
 {
 This version constant is published in the terminology capabilities resource.
@@ -49,6 +49,7 @@ Past versions, and change reasons:
 
 Version   Date        Reason changed
 1.0.0     2021-11-18  first introduced
+2.0.0     2023-04-27  Multi-lingual project driven breaking changes to language handling
 }
 
 implementation

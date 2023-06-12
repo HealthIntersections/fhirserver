@@ -388,8 +388,9 @@ begin
        ' Id                nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Version           nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Kind              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' UploadCount       int                                      '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' DownloadCount     int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
-       ' ManualToken       nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
+       ' ManualToken       nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' Canonical         nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' FhirVersions      nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Description       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //

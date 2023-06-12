@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Registry,
   IdContext, IdCustomHTTPServer,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads, fsl_web_stream,
   fhir_objects,
   session,
   storage,
@@ -432,7 +432,9 @@ Begin
     result := 'video/mpeg'
   Else if AExt = '.js' Then
     result := 'text/javascript'
-  Else
+  else if AExt = '.html' then  // Add this case
+    result := 'text/html'      // Use 'text/html' for .html files
+  else
   Begin
 {$IFDEF WINDOWS}
     Try

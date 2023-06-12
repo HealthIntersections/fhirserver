@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, Generics.Defaults,
   fsl_http,
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream, fsl_lang,
   IdContext, IdCustomHTTPServer,
   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   fhir_valuesets,
@@ -65,6 +65,7 @@ Type
     FWorker : TFHIRWorkerContextWithFactory;
     FServer : TTerminologyServer;
     FFHIRPath : String;
+    FLanguages : TIETFLanguageDefinitions;
     FReturnProcessFileEvent : TWebReturnProcessedFileEvent;
 
     function asJson(r : TFHIRResourceV) : String;
@@ -102,7 +103,7 @@ Type
     function ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
   public
-    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
+    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequestVersion(path : String) : boolean;
     function HandlesRequestNoVersion(path : String) : boolean;
@@ -118,7 +119,7 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
 begin
   create;
   FServer := server;
@@ -127,10 +128,12 @@ begin
   if (server <> nil) then
     FServer.webBase := BaseURl;
   FWorker := worker;
+  FLanguages := languages;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
+  FLanguages.Free;
   FWorker.Free;
   FServer.free;
   inherited;
@@ -304,7 +307,7 @@ end;
 function TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   html: THtmlPublisher;
-  cs: TCodeSystemProvider;
+  cs: TCodeSystemProviderFactory;
   c: Integer;
   vars : TFslMap<TFHIRObject>;
 begin
@@ -324,9 +327,9 @@ begin
       for cs in FServer.ProviderClasses.Values do
       begin
         html.StartTableRow;
-        html.AddTableCell(cs.systemUri(nil));
-        html.AddTableCell(cs.version(nil));
-        html.AddTableCell(cs.name(nil));
+        html.AddTableCell(cs.systemUri);
+        html.AddTableCell(cs.version);
+        html.AddTableCell(cs.name);
         c := cs.TotalCount;
         if c > 0 then
           html.AddTableCell(inttostr(c))
@@ -490,14 +493,15 @@ var
   res : TFHIRValueSetW;
   vs : TFHIRValueSetW;
   profile : TFhirExpansionParams;
+  s : String;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
   profile := TFhirExpansionParams.Create;
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
-    if lang.header <> '' then
-      profile.displayLanguage := lang;
+    for s in lang.codes do
+      profile.displayLanguages.add(FLanguages.parse(s));
 
     try
       res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);

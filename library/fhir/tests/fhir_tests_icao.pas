@@ -97,10 +97,13 @@ end;
 {$ENDIF}
 
 procedure TFHIRICAOTests.TestIcaoCertAuBroken;
+{$IFNDEF LINUX}
 var
   imp : TICAOCardImporter;
   card : THealthcareCard;
+{$ENDIF}
 begin
+  {$IFNDEF LINUX}
   imp := TICAOCardImporter.Create;
   try
     imp.factory := TFHIRFactoryR4.Create;
@@ -119,13 +122,17 @@ begin
   finally
     imp.Free;
   end;
+  {$ENDIF}
 end;
 
 procedure TFHIRICAOTests.TestIcaoCertNoStore;
+{$IFNDEF LINUX}
 var
   imp : TICAOCardImporter;
   card : THealthcareCard;
+{$ENDIF}
 begin
+  {$IFNDEF LINUX}
   imp := TICAOCardImporter.Create;
   try
     imp.factory := TFHIRFactoryR4.Create;
@@ -133,7 +140,6 @@ begin
     imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
     imp.mustVerify := true;
     imp.Store := TX509CertificateStore.create;
-
     try
       card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao-broken.json']), TEncoding.UTF8));
       assertFail('Should have blown up');
@@ -144,6 +150,7 @@ begin
   finally
     imp.Free;
   end;
+  {$ENDIF}
 end;
 
 end.

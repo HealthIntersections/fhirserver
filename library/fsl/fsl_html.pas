@@ -1566,6 +1566,10 @@ type
     procedure text(s : String);
     procedure start(s : String);
     procedure finish(s : String);
+
+    procedure ulS;
+    procedure ulF;
+    procedure li(cnt : String);
   end;
 
 Implementation
@@ -1585,6 +1589,23 @@ end;
 procedure TFslHtmlBuilder.finish(s: String);
 begin
   append('</'+s+'>');
+end;
+
+procedure TFslHtmlBuilder.ulS;
+begin
+  start('ul');
+end;
+
+procedure TFslHtmlBuilder.ulF;
+begin
+  finish('ul');
+end;
+
+procedure TFslHtmlBuilder.li(cnt: String);
+begin
+  start('li');
+  text(cnt);
+  start('li');
 end;
 
 

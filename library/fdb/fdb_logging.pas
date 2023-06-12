@@ -86,13 +86,14 @@ implementation
 
 uses
   fsl_utilities,
-  Math,
-  IdGlobal;
+  Math;
 
 const
   ASSERT_UNIT = 'KDBLogger';
   MAX_EXCEPTION_LIST = 20;
   MILLI_SECOND_LENGTH = DATETIME_SECOND_ONE / 1000;
+  CR = #13;
+  LF = #10;
   EOL_WINDOWS = CR + LF;
   EOL_PLATFORM = EOL_WINDOWS;
 

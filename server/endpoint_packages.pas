@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_versions,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_versions, fsl_i18n,
   fdb_manager,
   fhir_objects,
   package_spider,
@@ -54,6 +54,7 @@ type
     FEndPoint : TPackageServerEndPoint;
     FNextRun : TDateTime;
     FLastEmail : TDateTime;
+    FZulip : TZulipTracker;
     procedure RunUpdater;
     procedure doSendEmail(dest, subj, body : String);
   protected
@@ -118,7 +119,7 @@ type
     FSystemToken : String;
     procedure upgradeDatabase;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     property SystemToken : String read FSystemToken write FSystemToken;
@@ -149,9 +150,9 @@ begin
   inherited;
 end;
 
-constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, nil);
+  inherited create(config, settings, db, common, nil, i18n);
   upgradeDatabase;
   FSystemToken := settings.Ini.service.prop['system-token'].value;
 end;
@@ -270,35 +271,48 @@ var
   c : TFDBConnection;
   m : TFDBMetaData;
   t : TFDBTable;
+  inst : TFHIRDatabaseInstaller;
 begin
   c := Database.GetConnection('Version check');
   try
     m := c.FetchMetaData;
     try
-      if m.HasTable('Packages') then
+      if not (m.HasTable('Packages')) then
       begin
-        t := m.GetTable('Packages');
-        if not t.hasColumn('Security') then
-          c.ExecSQL('ALTER TABLE Packages ADD Security int NULL');
-      end;
-      if m.HasTable('PackageVersions') then
-      begin
-        t := m.GetTable('PackageVersions');
-        if not t.hasColumn('UploadCount') then
-        begin
-          c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
-          c.ExecSQL('Update PackageVersions set UploadCount = 1');
+        inst := TFHIRDatabaseInstaller.create(c, nil, nil);
+        try
+          inst.installPackageServer;
+        finally
+          inst.free;
         end;
-      end;
-      if not m.HasTable('PackageURLs') then
+      end
+      else
       begin
-        c.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
-        c.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
-        c.ExecSQL('Delete from PackageDependencies');
-        c.ExecSQL('Delete from PackageFHIRVersions');
-        c.ExecSQL('Delete from PackagePermissions');
-        c.ExecSQL('Delete from PackageVersions');
-        c.ExecSQL('Delete from PackageDependencies');
+        if m.HasTable('Packages') then
+        begin
+          t := m.GetTable('Packages');
+          if not t.hasColumn('Security') then
+            c.ExecSQL('ALTER TABLE Packages ADD Security int NULL');
+        end;
+        if m.HasTable('PackageVersions') then
+        begin
+          t := m.GetTable('PackageVersions');
+          if not t.hasColumn('UploadCount') then
+          begin
+            c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
+            c.ExecSQL('Update PackageVersions set UploadCount = 1');
+          end;
+        end;
+        if not m.HasTable('PackageURLs') then
+        begin
+          c.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+          c.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
+          c.ExecSQL('Delete from PackageDependencies');
+          c.ExecSQL('Delete from PackageFHIRVersions');
+          c.ExecSQL('Delete from PackagePermissions');
+          c.ExecSQL('Delete from PackageVersions');
+          c.ExecSQL('Delete from PackageDependencies');
+        end;
       end;
     finally
       m.Free;
@@ -318,11 +332,14 @@ begin
   FDB := db;
   FEndPoint := endPoint;
   FNextRun := now + 1/(24 * 60);
+  FZulip := TZulipTracker.Create('https://fhir.zulipchat.com/api/v1/messages',
+      'pascal-github-bot@chat.fhir.org', FEndPoint.Settings.ZulipPassword);
 end;
 
 destructor TPackageUpdaterThread.Destroy;
 begin
   FDB.Free;
+  FZulip.Free;
   inherited;
 end;
 
@@ -355,7 +372,7 @@ var
 begin
   conn := FDB.getConnection('server.packages.update');
   try
-    upd := TPackageUpdater.create;
+    upd := TPackageUpdater.create(FZulip.link);
     try
       upd.OnSendEmail := doSendEmail;
       try
@@ -579,7 +596,13 @@ end;
 function TFHIRPackageWebServer.interpretVersion(v: String): String;
   function processVersion(v: String): String;
   begin
-    if (v.StartsWith('4.0')) then
+    if (v.StartsWith('6.0')) then
+      result := 'R6'
+    else if (v.StartsWith('5.0')) then
+      result := 'R5'
+    else if (v.StartsWith('4.3')) then
+      result := 'R4B'
+    else if (v.StartsWith('4.0')) then
       result := 'R4'
     else if (v.StartsWith('3.0')) then
       result := 'R3'
@@ -750,7 +773,7 @@ begin
     fpkGroup : result := 'Group';
     fpkExamples : result := 'Examples';
   else
-    result := '??';
+    result := '?? ('+inttostr(kind)+')';
   end;
 end;
 
@@ -870,6 +893,8 @@ begin
     if dependency <> '' then
       if dependency.Contains('#') then
         filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'%'')'
+      else if dependency.Contains('|') then
+        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency.Replace('|', '#'))+'%'')'
       else
         filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'#%'')';
 
@@ -1020,7 +1045,7 @@ begin
   try
     check(isValidPackageId(id), 404, 'Invalid Package ID "'+id+'"');
     src := StreamToBytes(request.PostStream);
-    npm := TNpmPackage.fromPackage(src, 'Post Content', nil);
+    npm := TNpmPackage.fromPackage(src, 'Post Content', nil, false);
     try
       check(npm.name = id, 400, 'Package ID mismatch: "'+id+'" vs "'+npm.name+'"');
       check(npm.version <> '', 400, 'Package has no version');
@@ -1119,7 +1144,7 @@ begin
     if request.PostStream = nil then
       raise EFslException.Create('No Post Content found');
     blob := StreamToBytes(request.PostStream);
-    npm := TNpmPackage.fromPackage(blob, '', nil);
+    npm := TNpmPackage.fromPackage(blob, '', nil, false);
     try
       id := npm.info['name'];
       version := npm.info['version'];
@@ -1281,7 +1306,9 @@ begin
       s := request.document.subString(PathWithSlash.length).split(['/']);
       if length(s) = 1 then
       begin
-        if s[0].endsWith('.html') then
+        if s[0] = '' then
+          response.Redirect('/packages/catalog')
+        else if s[0].endsWith('.html') then
         begin
           servePage(s[0], request, response, secure);
           result := 'Package Web Doco';

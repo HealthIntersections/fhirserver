@@ -163,7 +163,8 @@ type
     FResource : TFHIRObject;
     FContext : TFHIRObject;
     FTotal : TFHIRSelectionList;
-     FThis : TFHIRObject;
+    FThis : TFHIRObject;
+    FIndex : integer;
     procedure SetTotal(const Value: TFHIRSelectionList);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -176,7 +177,8 @@ type
     property context : TFHIRObject read Fcontext;
     property total : TFHIRSelectionList read FTotal write SetTotal;
     property this : TFHIRObject read FThis write FThis;
-    function changeThis(this : TFHIRObject) : TFHIRPathExecutionContext;
+    property index : integer read FIndex;
+    function changeThis(this : TFHIRObject; index : integer) : TFHIRPathExecutionContext;
   end;
 
   TFHIRPathDebugPackage = class (TFslObject)
@@ -398,12 +400,13 @@ begin
   result := TFHIRPathExecutionContext(inherited Link);
 end;
 
-function TFHIRPathExecutionContext.changeThis(this: TFHIRObject): TFHIRPathExecutionContext;
+function TFHIRPathExecutionContext.changeThis(this: TFHIRObject; index : integer): TFHIRPathExecutionContext;
 begin
   result := TFHIRPathExecutionContext.Create(FAppinfo.Link, FResource.Link, FContext.Link);
   try
     result.FThis := this;
     result.total := FTotal.Link;
+    result.FIndex := index;
     result.link;
   finally
     result.free;
@@ -775,7 +778,7 @@ begin
           escape := false
         else
           escape := (FPath[FCursor] = '\');
-        if CharInSet(FPath[FCursor], [#13, #10, #9]) then
+        if (ord(FPath[FCursor]) < 32) and not CharInSet(FPath[FCursor], [#13, #10, #9]) then
           raise EFHIRPath.create('illegal character in string');
         nextChar;
       end;
@@ -1000,7 +1003,7 @@ end;
 function TFHIRPathLexer.readConstant(desc : String): String;
 begin
   if (not isStringConstant()) then
-    raise error('Found '+current+' expecting "['+desc+']"');
+    raise error('Found "'+current+'" expecting "['+desc+']"');
 
   result := processConstant(take);
 end;

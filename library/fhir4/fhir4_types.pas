@@ -2945,6 +2945,9 @@ Type
   TFhirDurationList = class;
 
   // Base definition for all elements in a resource.
+
+  { TFhirElement }
+
   TFhirElement = class (TFHIRObject4)
   private
     FDisallowExtensions: boolean;
@@ -2986,8 +2989,14 @@ Type
     function hasExtension(url : string) : boolean; override;
     function getExtensionString(url : String) : String; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
+
   {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
@@ -13150,7 +13159,7 @@ begin
   inc(result, FextensionList.sizeInBytes(magic));
 end;
 
-function TFHIRElement.getId : string;
+function TFhirElement.getId: String;
 begin
   result := id;
 end;
@@ -13166,13 +13175,47 @@ begin
   result := self;
 end;
 
-procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
+procedure TFhirElement.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirType;
+end;
+
+procedure TFhirElement.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
+procedure TFhirElement.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirElement.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirElement.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  if FExtensionList <> nil then
+    for i := FExtensionList.count - 1 downto 0 do
+      if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+        FExtensionList.remove(i);
 end;
 
 function TFhirElement.extensionCount(url: String): integer;
@@ -13184,15 +13227,29 @@ begin
     if (ex.url = url) or (url = '') then
       inc(result);
 end;
-      
-function TFhirElement.extensions(url: String): TFslList<TFHIRObject>;
+
+function TFhirElement.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
   result := TFslList<TFHIRObject>.create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+      
+function TFhirElement.getExtensionsV(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
@@ -13335,7 +13392,7 @@ begin
   result := inherited isEmpty  and isEmptyProp(FId) and isEmptyProp(FextensionList);
 end;
 
-function TFhirElement.equals(other : TObject) : boolean; 
+function TFhirElement.Equals(other: TObject): boolean;
 var
   o : TFhirElement;
 begin
@@ -13372,13 +13429,13 @@ end;
 
 { TFhirElement }
 
-Procedure TFhirElement.SetId(value : TFhirId);
+procedure TFhirElement.SetId(value: TFhirId);
 begin
   FId.free;
   FId := value;
 end;
 
-Function TFhirElement.GetIdST : String;
+function TFhirElement.GetIdST: String;
 begin
   if FId = nil then
     result := ''
@@ -13386,7 +13443,7 @@ begin
     result := FId.value;
 end;
 
-Procedure TFhirElement.SetIdST(value : String);
+procedure TFhirElement.SetIdST(value: String);
 begin
   if value <> '' then
   begin
@@ -13398,14 +13455,14 @@ begin
     FId.value := '';
 end;
 
-Function TFhirElement.GetExtensionList : TFhirExtensionList;
+function TFhirElement.GetExtensionList: TFhirExtensionList;
 begin
   if FExtensionList = nil then
     FExtensionList := TFhirExtensionList.Create;
   result := FExtensionList;
 end;
 
-Function TFhirElement.GetHasExtensionList : boolean;
+function TFhirElement.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;

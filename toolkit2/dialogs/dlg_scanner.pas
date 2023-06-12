@@ -132,7 +132,7 @@ begin
   setForOs(btnOk, btnCancel);
   FImage := TBitmap.create;
   FOriginalImage := TBitmap.create;
-  FScanner := TScanManager.create(TBarcodeFormat.QR_CODE, nil);
+  FScanner := TScanManager.create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
   //FScreens := TStringList.create;
   //listScreens(FScreens);
   //pmScreens.Items.Clear;

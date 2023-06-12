@@ -287,7 +287,7 @@ begin
         begin
           form := TSmartOnFhirLoginForm.create(self);
           try
-            form.logoPath := path([ExtractFilePath(paramstr(0)), ChangeFileExt(ExtractFileName(paramstr(0)), '.png')]);
+            form.logoPath := path([ExtractFilePath(paramstr(0)), ChangeFileExt(executableDirectory(), '.png')]);
             form.server := server.link;
             form.scopes := 'openid profile ' + KFHIRAuthScopeStr[TFHIRAuthScope(cbAuthScope.ItemIndex)]; // 'openid profile user/Patient.read user/MedicationOrder.read user/MedicationStatement.read user/AllergyIntolerance.read';
             form.handleError := true;

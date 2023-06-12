@@ -12,12 +12,15 @@ import org.hl7.fhir.r5.model.CodeType;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.ElementDefinition.ElementDefinitionBindingComponent;
 import org.hl7.fhir.r5.model.ElementDefinition.TypeRefComponent;
+import org.hl7.fhir.r5.model.Enumeration;
+import org.hl7.fhir.r5.model.Enumerations.AllResourceTypes;
 import org.hl7.fhir.r5.model.Enumerations.BindingStrength;
 import org.hl7.fhir.r5.model.SearchParameter;
 import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.r5.model.ValueSet.ConceptSetComponent;
+import org.hl7.fhir.r5.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.Utilities;
 
 public class Analyser {
@@ -41,7 +44,11 @@ public class Analyser {
   public Analysis analyse(StructureDefinition sd) throws Exception {
     Analysis res = new Analysis(definitions, sd);
 
-    res.setAncestor(definitions.getStructures().get(sd.getBaseDefinition()));
+    if (sd.hasExtension("http://hl7.org/fhir/StructureDefinition/structuredefinition-implements")) {
+      res.setAncestor(definitions.getStructures().get(ToolingExtensions.readStringExtension(sd, "http://hl7.org/fhir/StructureDefinition/structuredefinition-implements")));
+    } else {
+      res.setAncestor(definitions.getStructures().get(sd.getBaseDefinition()));
+    }
     res.setAbstract(sd.getAbstract());
     res.setInterface(sd.hasExtension("http://hl7.org/fhir/StructureDefinition/structuredefinition-interface"));
     res.setClassName("TFhir"+sd.getName());

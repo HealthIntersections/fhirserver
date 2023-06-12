@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang,
-  fhir_common, fhir_features,
+  fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -83,7 +83,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -267,9 +267,9 @@ begin
   result := TUSStateConcept(context).display.Trim;
 end;
 
-procedure TUSStateServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUSStateServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
 end;
 
 function TUSStateServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -303,14 +303,14 @@ end;
 
 function TUSStateServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by USState'); // USState doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by USState', itNotSupported); // USState doesn't have formal subsumption property, so this is not used
 end;
 
 
 function TUSStateServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TUSStateServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
@@ -325,7 +325,7 @@ end;
 
 function TUSStateServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil));
+  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
 end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

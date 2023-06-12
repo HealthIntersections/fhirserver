@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fhir3"/>
         <UnitOutputDirectory Value="lib\fhir3\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -80,7 +85,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\fhir3\fhir3_parserbase.pas"/>
-        <UnitName Value="fhir3_parserBase"/>
+        <UnitName Value="fhir3_parserbase"/>
       </Item>
       <Item>
         <Filename Value="..\library\fhir3\fhir3_patch.pas"/>

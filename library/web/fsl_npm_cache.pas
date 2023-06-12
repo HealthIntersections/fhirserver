@@ -83,9 +83,13 @@ type
     procedure load(id, ver: String);
   end;
 
+  TFHIRPackageManagerMode = (npmModeNone, npmModeUser, npmModeSystem, npmModeTesting);
+
+  { TFHIRPackageManager }
+
   TFHIRPackageManager = class (TFslObject)
   private
-    FUser : boolean;
+    FMode : TFHIRPackageManagerMode;
     FFolder : String;
     FIni : TIniFile;
     FOnWork : TWorkProgressEvent;
@@ -93,6 +97,7 @@ type
     FLock : TFslLock;
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
+    FCaching : boolean;
     function PathForPackage(id, ver : String) : String;
 
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
@@ -109,7 +114,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(user : boolean); overload;
+    constructor Create(mode : TFHIRPackageManagerMode); overload;
     constructor Create(dir : String); overload;
     destructor Destroy; override;
     function Link : TFHIRPackageManager;
@@ -118,8 +123,9 @@ type
     property OnCheck : TCheckEvent read FOnCheck write FOnCheck;
 
     property Folder : String read FFolder;
-    property UserMode : boolean read FUser;
+    property Mode : TFHIRPackageManagerMode read FMode;
     function description : String;
+    property Caching : boolean read FCaching write FCaching;
 
     procedure listAllKnownPackages(list: TFslList<TFHIRPackageInfo>; ver : String);
     procedure ListPackageIds(list : TStrings);
@@ -138,6 +144,7 @@ type
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation); overload;
 
     procedure clear;
+    procedure UnLoad;
 
     function import(content : TBytes) : TNpmPackage; overload;
     function install(url : String) : boolean;
@@ -200,7 +207,7 @@ const
 
 
 var
-  MustBeUserMode : boolean = false;
+  ForcedNpmCacheMode : TFHIRPackageManagerMode = npmModeNone;
   GPackageLoaderTaskId : integer;
 
 
@@ -312,20 +319,27 @@ end;
 
 { TFHIRPackageManager }
 
-constructor TFHIRPackageManager.Create(user : boolean);
+constructor TFHIRPackageManager.Create(mode : TFHIRPackageManagerMode);
 begin
   inherited Create;
-  FUser := user or MustBeUserMode;
+  if ForcedNpmCacheMode <> npmModeNone then
+    FMode := ForcedNpmCacheMode
+  else
+    FMode := mode;
   {$IFDEF WINDOWS}
-  if FUser then
-    FFolder := FilePath([UserFolder, '.fhir', 'packages'])
-  else
-    FFolder := FilePath([ProgData, '.fhir', 'packages']);
+  case FMode of
+    npmModeNone: raise EFslException.create('Error- must provide a NPM Cache mode');
+    npmModeUser: FFolder := FilePath([UserFolder, '.fhir', 'packages']);
+    npmModeSystem: FFolder := FilePath([ProgData, '.fhir', 'packages']);
+    npmModeTesting: FFolder := FilePath(['[tmp]', '.fhir', 'packages']);
+  end;
   {$ELSE}
-  if FUser then
-    FFolder := ExpandFileNameUTF8('~/.fhir/packages')
-  else
-    FFolder := '/var/lib/.fhir/packages';
+  case FMode of
+    npmModeNone: raise EFslException.create('Error- must provide a NPM Cache mode');
+    npmModeUser: FFolder := ExpandFileNameUTF8('~/.fhir/packages');
+    npmModeSystem: FFolder := '/var/lib/.fhir/packages';
+    npmModeTesting: FFolder := FilePath(['[tmp]', '.fhir', 'packages']);
+  end;
   {$ENDIF}
   init;
 end;
@@ -333,7 +347,7 @@ end;
 constructor TFHIRPackageManager.Create(dir: String);
 begin
   inherited Create;
-  if (MustBeUserMode) then
+  if (ForcedNpmCacheMode <> npmModeNone) then
     raise EFslException.Create('Unable to create PackageManager for a specific directory');
   FFolder := dir;
   init;
@@ -432,10 +446,12 @@ end;
 
 function TFHIRPackageManager.description: String;
 begin
-  if FUser then
-    result := 'User Cache'
-  else
-    result := 'System Cache';
+  case FMode of
+    npmModeNone:result := 'Unknown Mode Cache'; // can't happen
+    npmModeUser:result := 'User Cache';
+    npmModeSystem:result := 'System Cache';
+    npmModeTesting:result := 'Testing Cache';
+  end;
 end;
 
 function TFHIRPackageManager.getId(url: String): String;
@@ -518,7 +534,7 @@ begin
         end;
       end;
       work(100, false, 'Installing');
-      StringToFile(indexer.build, FilePath([FFolder, '.index.json']), TEncoding.UTF8);
+      StringToFile(indexer.build, FilePath([FFolder, id+'#'+ver, 'package', '.index.json']), TEncoding.UTF8);
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
       work(100, true, 'Installing');
@@ -694,6 +710,11 @@ begin
       FolderDelete(s);
 end;
 
+procedure TFHIRPackageManager.UnLoad;
+begin
+  FCache.Clear;
+end;
+
 procedure TFHIRPackageManager.ListPackages(list: TStrings);
 var
   s : String;
@@ -756,7 +777,8 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.loadPackage(id, ver: String; resources: Array of String; loadInfo : TPackageLoadingInformation);
+procedure TFHIRPackageManager.loadPackage(id, ver: String;
+  resources: array of String; loadInfo: TPackageLoadingInformation);
 var
   fsl : TFslStringSet;
 begin
@@ -881,11 +903,14 @@ begin
     if not FileExists(FilePath([folder, 'package', '.index.json'])) then
       buildPackageIndex(folder);
     result := TNpmPackage.fromFolder(folder);
-    FLock.Lock;
-    try
-      FCache.add(folder, result.Link);
-    finally
-      FLock.Unlock;
+    if FCaching then
+    begin
+      FLock.Lock;
+      try
+        FCache.add(folder, result.Link);
+      finally
+        FLock.Unlock;
+      end;
     end;
   end;
 end;
@@ -1035,7 +1060,8 @@ begin
     except
     end;
     try
-      TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
+      if list.Empty then
+        TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
     except
     end;
     pck := nil;

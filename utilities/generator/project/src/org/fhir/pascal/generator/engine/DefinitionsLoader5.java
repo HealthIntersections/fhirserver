@@ -10,11 +10,14 @@ import org.hl7.fhir.r5.model.CapabilityStatement;
 import org.hl7.fhir.r5.model.CodeSystem;
 import org.hl7.fhir.r5.model.CompartmentDefinition;
 import org.hl7.fhir.r5.model.ConceptMap;
+import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.OperationDefinition;
 import org.hl7.fhir.r5.model.Resource;
 import org.hl7.fhir.r5.model.SearchParameter;
 import org.hl7.fhir.r5.model.StructureDefinition;
+import org.hl7.fhir.r5.model.UrlType;
 import org.hl7.fhir.r5.model.ValueSet;
+import org.hl7.fhir.r5.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.npm.NpmPackage;
 
 public class DefinitionsLoader5 {
@@ -35,7 +38,7 @@ public class DefinitionsLoader5 {
       res.getStatements().see((CapabilityStatement) load(npm, t), null);
     }
     for (String t : npm.listResources("StructureDefinition")) {
-      res.getStructures().see((StructureDefinition) load(npm, t), null);
+      res.getStructures().see(fixSD((StructureDefinition) load(npm, t)), null);
     }
     for (String t : npm.listResources("OperationDefinition")) {
       res.getOperations().see((OperationDefinition) load(npm, t), null);
@@ -50,6 +53,24 @@ public class DefinitionsLoader5 {
       loadBundle(npm, t, res);
     }
     return res;
+  }
+
+  private static StructureDefinition fixSD(StructureDefinition sd) {
+    for (ElementDefinition ed : sd.getSnapshot().getElement()) {
+      if ("Element.id".equals(ed.getPath()) || "Element.id".equals(ed.getBase().getPath())) {
+        ToolingExtensions.setUriExtension(ed.getTypeFirstRep(), 
+            "http://hl7.org/fhir/StructureDefinition/structuredefinition-fhir-type", 
+            "string");
+      }
+    }
+    for (ElementDefinition ed : sd.getDifferential().getElement()) {
+      if ("Element.id".equals(ed.getPath()) || "Element.id".equals(ed.getBase().getPath())) {
+        ToolingExtensions.setUriExtension(ed.getTypeFirstRep(), 
+            "http://hl7.org/fhir/StructureDefinition/structuredefinition-fhir-type", 
+            "string");
+      }
+    }
+    return sd;
   }
 
   public static void loadBundle(NpmPackage npm, String t, Definitions def) throws FHIRFormatError, IOException {

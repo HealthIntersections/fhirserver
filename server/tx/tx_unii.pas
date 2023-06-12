@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads,
   fdb_manager,
-  fhir_features, fhir_uris,
+  fhir_objects, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -89,7 +89,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -377,10 +377,10 @@ begin
   result := TUniiConcept(context).FDisplay.trim;
 end;
 
-procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TUniiServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(Display(context, THTTPLanguages.create('en')));
-  list.see(TUniiConcept(context).FOthers);
+  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation('', TUniiConcept(context).FOthers);
 end;
 
 function TUniiServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -425,7 +425,7 @@ end;
 
 function TUniiServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Unii'); // Unii doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by Unii', itNotSupported); // Unii doesn't have formal subsumption property, so this is not used
 end;
 
 

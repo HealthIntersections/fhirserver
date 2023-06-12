@@ -71,7 +71,7 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -152,9 +152,9 @@ begin
   result := Code(Context);
 end;
 
-procedure THGVSProvider.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure THGVSProvider.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.see(code(context));
+  list.addBase('', code(context));
 end;
 
 function THGVSProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
@@ -169,27 +169,27 @@ end;
 
 function THGVSProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 procedure THGVSProvider.getCDSInfo(card: TCDSHookCard; const lang: THTTPLanguages; baseURL, code, display: String);
@@ -220,7 +220,7 @@ end;
 
 function THGVSProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -247,22 +247,27 @@ function THGVSProvider.locate(code: String; var message: String): TCodeSystemPro
 var
   json, o : TJsonObject;
 begin
-  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
   try
-    if json.bool['valid'] then
-    begin
-      result := THGVSCode.Create;
-      THGVSCode(result).code := code;
-    end
-    else
-    begin
-      result := nil;
-      message := '';
-      for o in json.forceArr['messages'].asObjects.forEnum do
-        CommaAdd(message, o.str['message']);
+    json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
+    try
+      if json.bool['valid'] then
+      begin
+        result := THGVSCode.Create;
+        THGVSCode(result).code := code;
+      end
+      else
+      begin
+        result := nil;
+        message := '';
+        for o in json.forceArr['messages'].asObjects.forEnum do
+          CommaAdd(message, o.str['message']);
+      end;
+    finally
+      json.Free;
     end;
-  finally
-    json.Free;
+  except
+    on e : Exception do
+      raise EFHIRException.create('Error parsing HGVS response: '+e.message);
   end;
 end;
 
@@ -285,12 +290,12 @@ end;
 
 function THGVSProvider.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.SpecialEnumeration: String;
@@ -300,12 +305,12 @@ end;
 
 function THGVSProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Filters are not supported for HGVS');
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.Create('Subsumption is not supported for HGVS');
+  raise ETerminologyError.Create('Subsumption is not supported for HGVS', itNotSupported);
 end;
 
 function THGVSProvider.systemUri(context: TCodeSystemProviderContext): String;

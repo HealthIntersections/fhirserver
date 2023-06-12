@@ -347,7 +347,35 @@ Type
     Property OnReceiveError: TReceiveErrorEvent Read FOnReceiveError Write FOnReceiveError;
   End;
 
+
 Implementation
+
+uses
+  fsl_stream;
+
+//var
+//  GLock : TFslLock;
+//
+//const filename = '/Users/grahamegrieve/temp/logs/hlog.txt';
+//
+//procedure hlog(s : String);
+//var
+//  f : String;
+//begin
+//  if GLock = nil then
+//    GLock := TFslLock.create('hlog');
+//  GLock.lock;
+//  try
+//    if FileExists(filename) then
+//      f := FileToString(filename, TEncoding.UTF8)
+//    else
+//      f := '';
+//    f := f + s + #13#10;
+//    StringToFile(f, filename, TEncoding.UTF8);
+//  finally
+//    GLock.unlock;
+//  end;
+//end;
 
 //Uses
 //  IdResourceStrings;
@@ -1293,24 +1321,29 @@ Begin
         Repeat
           FOwner.InternalSetStatus(IsConnecting, rsHL7StatusConnecting);
           Try
+            //hlog('Client Connecting to '+FClient.host+':'+inttostr(FClient.Port));
             FClient.Connect;
+            //hlog('Client Connected');
             FClient.Socket.UseNagle := true;
             FLastTraffic := now;
           Except
             On e:
             Exception Do
               Begin
+              //hlog('unable to Connect: '+e.message);
               LRecTime := Now + ((FOwner.FReconnectDelay / 1000) * {second length} (1 / (24 * 60 * 60)));
               FOwner.InternalSetStatus(IsWaitReconnect, Format(rsHL7StatusReConnect, [DescribePeriod(LRecTime - Now), e.Message])); {do not localize??}
               End;
             End;
           If Not Terminated And Not FClient.Connected Then
             Begin
+            //hlog('terminated');
             FCloseEvent.WaitFor(FOwner.FReconnectDelay);
             End;
         Until Terminated Or FClient.Connected;
         If Terminated Then
           Begin
+          //hlog('terminated 2');
           Exit;
           End;
         SetThreadStatus('Connected');
@@ -1332,7 +1365,9 @@ Begin
           FOwner.FOnConnect(FOwner);
           End;
         Try
+          //hlog('client: polling');
           PollStack;
+          //hlog('client: done polling');
         Finally
           if FOwner <> nil then
           begin
@@ -1346,10 +1381,12 @@ Begin
             Finally
               FOwner.FLock.Leave;
               End;
+            //hlog('client: disconnect');
             If Assigned(FOwner.FOnDisconnect) Then
               Begin
               FOwner.FOnDisconnect(FOwner);
               End;
+            //hlog('client: disconnected');
             End;
           End;
         If TimedOut Then
@@ -1371,10 +1408,12 @@ Begin
       FreeAndNil(FClient);
       SetThreadStatus('Done');
     End;
+    //hlog('client: Done');
   Except
     On e: Exception Do
       // presumably some comms or indy related exception
       // there's not really anyplace good to put this????
+      //hlog('client: dead '+e.message);
     End;
   closeThread;
 End;

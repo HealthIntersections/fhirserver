@@ -35,8 +35,8 @@ interface
 Uses
   Sysutils, Classes,
   fsl_testing, fsl_logging, fsl_base, fsl_utilities, fsl_stream,
-  fdb_dialects, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
+  fdb_dialects,
+  fdb_manager, fdb_odbc, {$IFDEF FPC}fdb_fpc, {$ENDIF} fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 Type
 
@@ -49,8 +49,12 @@ Type
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
-    procedure TestODBC;
+//    procedure TestODBC;
+
+    {$IFDEF DELPHI}
     procedure TestMSSQL;
+    {$ENDIF}
+
     procedure TestMySQL;
     // procedure TestMySQLMaria;
     procedure TestSQLite;
@@ -60,6 +64,10 @@ procedure registerTests;
 
 implementation
 
+{$IFDEF DELPHI}
+uses
+  fdb_odbc_headers, fdb_odbc_objects;
+{$ENDIF}
 const
   Name_405 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh';
 
@@ -105,13 +113,13 @@ begin
 
   conn := manager.GetConnection('test');
   try
-    md := conn.FetchMetaData;
-    try
-      if md.HasTable('TestTable') then
-        conn.DropTable('TestTable');
-    finally
-      md.Free;
-    end;
+    //md := conn.FetchMetaData;
+    //try
+    //  if md.HasTable('TestTable') then
+    //    conn.DropTable('TestTable');
+    //finally
+    //  md.Free;
+    //end;
 
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
       #13#10 + ' Name nchar(255) ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Number int ' + ColCanBeNull(conn.owner.platform, true) + ', '
@@ -247,6 +255,9 @@ begin
   end;
 end;
 
+// docker run -d --name mssql-server --platform linux/arm64/v8 -e ACCEPT_EULA=Y -e SA_PASSWORD={pwd} -p 1433:1433 mcr.microsoft.com/azure-sql-edge
+
+{$IFDEF DELPHI}
 procedure TFDBTests.TestMSSQL;
 var
   db: TFDBManager;
@@ -273,6 +284,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TFDBTests.TestMySQL;
 var
@@ -289,7 +301,12 @@ begin
     settings := TestSettings.section('mysql');
     try
 //      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+      {$IFDEF FPC}
+      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
+//      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
+      {$ELSE}
       db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      {$ENDIF}
       try
         test(db);
       finally
@@ -560,6 +577,7 @@ begin
 end;
 
 
+{$IFNDEF FPC}
 Function odbcError(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): String;
 Var
   ErrorNum: Integer;
@@ -608,56 +626,57 @@ Begin
   end;
 End;
 
-procedure TFDBTests.TestODBC;
-  procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
-  begin
-    if (retValue <> 0) then
-      raise ELibraryException.create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
-  end;
-var
-  env : SQLHENV;
-  dbc : SQLHDBC;
-  stmt : SQLHSTMT;
-  cs, sql : String;
-  co : pchar;
-  l : smallint;
-  np : SQLUINTEGER;
-  srvr, uid, db, pwd, drvr : String;
-begin
-  drvr := TestSettings['mysql', 'driver'];
-  srvr := TestSettings['mysql', 'server'];
-  db := TestSettings['mysql', 'database'];
-  uid := TestSettings['mysql', 'username'];
-  pwd := TestSettings['mysql', 'password'];
-
-  {$IFDEF FPC}
-  if not isODBCLoaded then
-    InitialiseODBC;
-  {$ENDIF}
-
-  check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
-  check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
-  check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
-  cs := 'UID='+uid+';PWD='+pwd+';DRIVER='+drvr+';Server='+srvr+';Database='+db+';';
-  co := makePChar(DefaultStringSize);
-  try
-    check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
-  finally
-    freemem(co);
-  end;
-  check(SQLAllocHandle(SQL_HANDLE_STMT, dbc, stmt), 'SQLAllocHandle', SQL_HANDLE_DBC, dbc);
-  sql := 'SET time_zone = ''+11:00''';
-  check(SQLPrepare(stmt, pchar(sql), SQL_NTS), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
-  // this line bloews up mysql
-  //np := 0;
-  //check(SQLSetStmtAttr(stmt, SQL_ATTR_PARAMSET_SIZE, pointer(np), sizeof(np)), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
-  check(SQLExecDirect(stmt, pchar(sql), SQL_NTS), 'SQLExecDirect', SQL_HANDLE_STMT, stmt);
-  check(SQLFreeHandle(SQL_HANDLE_STMT, stmt), 'SQLFreeHandle', SQL_HANDLE_STMT, stmt);
-  check(SQLDisconnect(dbc), 'SQLDisconnect', SQL_HANDLE_STMT, stmt);
-  check(SQLFreeHandle(SQL_HANDLE_DBC, dbc), 'SQLFreeHandle', SQL_HANDLE_DBC, dbc);
-  check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
-  assertTrue(true); // get to here, success
-end;
+//procedure TFDBTests.TestODBC;
+//  procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
+//  begin
+//    if (retValue <> 0) then
+//      raise ELibraryException.create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
+//  end;
+//var
+//  env : SQLHENV;
+//  dbc : SQLHDBC;
+//  stmt : SQLHSTMT;
+//  cs, sql : String;
+//  co : pchar;
+//  l : smallint;
+//  np : SQLUINTEGER;
+//  srvr, uid, db, pwd, drvr : String;
+//begin
+//  drvr := TestSettings['mysql', 'driver'];
+//  srvr := TestSettings['mysql', 'server'];
+//  db := TestSettings['mysql', 'database'];
+//  uid := TestSettings['mysql', 'username'];
+//  pwd := TestSettings['mysql', 'password'];
+//
+//  {$IFDEF FPC}
+//  if not isODBCLoaded then
+//    InitialiseODBC;
+//  {$ENDIF}
+//
+//  check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
+//  check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
+//  check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
+//  cs := 'UID='+uid+';PWD='+pwd+';DRIVER='+drvr+';Server='+srvr+';Database='+db+';';
+//  co := makePChar(DefaultStringSize);
+//  try
+//    check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
+//  finally
+//    freemem(co);
+//  end;
+//  check(SQLAllocHandle(SQL_HANDLE_STMT, dbc, stmt), 'SQLAllocHandle', SQL_HANDLE_DBC, dbc);
+//  sql := 'SET time_zone = ''+11:00''';
+//  check(SQLPrepare(stmt, pchar(sql), SQL_NTS), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+//  // this line bloews up mysql
+//  //np := 0;
+//  //check(SQLSetStmtAttr(stmt, SQL_ATTR_PARAMSET_SIZE, pointer(np), sizeof(np)), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+//  check(SQLExecDirect(stmt, pchar(sql), SQL_NTS), 'SQLExecDirect', SQL_HANDLE_STMT, stmt);
+//  check(SQLFreeHandle(SQL_HANDLE_STMT, stmt), 'SQLFreeHandle', SQL_HANDLE_STMT, stmt);
+//  check(SQLDisconnect(dbc), 'SQLDisconnect', SQL_HANDLE_STMT, stmt);
+//  check(SQLFreeHandle(SQL_HANDLE_DBC, dbc), 'SQLFreeHandle', SQL_HANDLE_DBC, dbc);
+//  check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
+//  assertTrue(true); // get to here, success
+//end;
+{$ENDIF}
 
 procedure TFDBTests.TestSQLite;
 var

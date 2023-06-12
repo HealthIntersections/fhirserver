@@ -44,6 +44,9 @@ Uses
   tx_server;
 
 type
+
+  { TFHIRServerWorkerContextR5 }
+
   TFHIRServerWorkerContextR5 = class (TBaseWorkerContextR5)
   private
     FTerminologyServer : TTerminologyServer;
@@ -62,13 +65,14 @@ type
     destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR5; overload;
+    procedure Unload; override;
 
-    procedure SeeResource(r : TFhirResource); override;
+    procedure SeeResourceProxy(r : TFhirResourceProxy); override;
     procedure checkResource(r : TFhirResource);
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -127,6 +131,12 @@ begin
   result := TFHIRServerWorkerContextR5(inherited Link);
 end;
 
+procedure TFHIRServerWorkerContextR5.Unload;
+begin
+  inherited Unload;
+  FQuestionnaires.clear;
+end;
+
 procedure TFHIRServerWorkerContextR5.LoadingFinished;
 begin
   inherited;
@@ -177,43 +187,40 @@ begin
   result := FPatientIdExpressions[rt];
 end;
 
-procedure TFHIRServerWorkerContextR5.SeeResource(r : TFhirResource);
+procedure TFHIRServerWorkerContextR5.SeeResourceProxy(r : TFhirResourceProxy);
 var
   sp : TFhirSearchParameter;
   b : TFhirEnum;
   s : string;
 begin
-  checkResource(r);
-  if r is TFHIRDomainResource then
-    TFHIRDomainResource(r).text := nil;
-  if (r.ResourceType in [frtValueSet, frtConceptMap, frtCodeSystem]) then
+  if StringArrayExists(TERMINOLOGY_RESOURCES, r.fhirType) then
     FTerminologyServer.SeeSpecificationResource(r)
-  else if r.resourceType = frtSearchParameter then
+  else if r.fhirType = 'SearchParameter' then
   begin
-    sp := r as TFhirSearchParameter;
+    sp := r.resource as TFhirSearchParameter;
     for b in sp.base do
     begin
       s := b.value+'.'+sp.code;
       if not FSearchParameters.ContainsKey(s) then
-        FSearchParameters.Add(b.value+'.'+sp.code, sp.link)
+        FSearchParameters.Add(s, sp.link)
     end;
   end
-  else if r.resourceType = frtCompartmentDefinition then
-    FCompartments.Add(TFhirCompartmentDefinition(r).url, TFhirCompartmentDefinition(r).link)
-  else if r.resourceType = frtQuestionnaire then
+  else if r.fhirType = 'CompartmentDefinition' then
+    FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
+  else if r.fhirType = 'Questionnaire' then
   begin
     FLock.lock;
     try
       if FQuestionnaires.ContainsKey(r.id) then
-        FQuestionnaires[r.id] := (r as TFhirQuestionnaire).link
+        FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
       else
-        FQuestionnaires.add(r.id, (r as TFhirQuestionnaire).link)
+        FQuestionnaires.add(r.id, (r.resource as TFhirQuestionnaire).link)
     finally
       FLock.Unlock;
     end;
   end
   else
-    inherited SeeResource(r);
+    inherited SeeResourceProxy(r);
 end;
 
 function TFHIRServerWorkerContextR5.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
@@ -260,13 +267,13 @@ begin
   FTerminologyServer := Value;
 end;
 
-function TFHIRServerWorkerContextR5.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+function TFHIRServerWorkerContextR5.fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource;
 var
   vsw : TFHIRValueSetW;
 begin
   if t = frtValueSet then
   begin
-    vsw := FTerminologyServer.getValueSetByUrl(url);
+    vsw := FTerminologyServer.getValueSetByUrl(url, version);
     if vsw <> nil then
     begin
       try
@@ -281,7 +288,7 @@ begin
   else if t = frtQuestionnaire then
     result := getQuestionnaire(url)
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TFHIRServerWorkerContextR5.getQuestionnaire(url: string): TFhirQuestionnaire;
@@ -411,7 +418,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
+        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, false, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then

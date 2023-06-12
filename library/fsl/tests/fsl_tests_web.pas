@@ -40,7 +40,7 @@ uses
   IdLogDebug, IdServerInterceptLogFile,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   fsl_json, fsl_utilities,
-  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto;
+  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto, fsl_zulip;
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
@@ -54,6 +54,13 @@ type
     Procedure TestFail;
     Procedure TestUnicode1;
     Procedure TestUnicode2;
+  end;
+
+  { THTTPParameterTests }
+
+  THTTPParameterTests = class (TFslTestCase)
+  published
+    Procedure TestDoubleEquals;
   end;
 
   TLangParserTests = Class (TFslTestCase)
@@ -70,6 +77,11 @@ type
     procedure TestCert;
     procedure TestEc256;
     procedure TestHash;
+  End;
+
+  TZulipTests = Class (TFslTestCase)
+  Published
+    procedure TestSend;
   End;
 
   TOpenSSLTests = Class (TFslTestCase)
@@ -98,6 +110,38 @@ type
 procedure registerTests;
 
 implementation
+
+{ THTTPParameterTests }
+
+procedure THTTPParameterTests.TestDoubleEquals;
+var
+  p : THTTPParameters;
+begin
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs%3Disa/118672003&x=&q&&f=v&y', true);
+  try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
+    AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
+  finally
+    p.free;
+  end;
+  p := THTTPParameters.create('system=http://snomed.info/sct&code=22298006&url=http://snomed.info/sct?fhir_vs=isa/118672003&x=&q&&&f=v&y', true);
+  try
+    AssertEquals('http://snomed.info/sct', p['system']);
+    AssertEquals('22298006', p['code']);
+    AssertEquals('http://snomed.info/sct?fhir_vs=isa/118672003', p['url']);
+    AssertEquals('v', p['f']);
+    AssertEquals('', p['y']);
+    AssertEquals('', p['x']);
+    AssertEquals('', p['q']);
+  finally
+    p.free;
+  end;
+end;
 
 { TIdUriParserTests }
 
@@ -375,9 +419,11 @@ procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   RegisterTest('Web.IdUri', TIdUriParserTests.Suite);
+  RegisterTest('Web.HTTP Params', THTTPParameterTests.Suite);
   RegisterTest('Web.Language Parser Tests', TLangParserTests.Suite);
   RegisterTest('Web.OpenSSL', TOpenSSLTests.Suite);
   RegisterTest('Web.JWT Tests', TJWTTests.Suite);
+  RegisterTest('Web.Zulip Tests', TZulipTests.Suite);
 end;
 
 { TOpenSSLTests }
@@ -395,7 +441,7 @@ begin
   end;
 
   assertTrue(TestSettings.SMTPUsername <> '', 'Must provide username(/source email) for SMTP test in '+TestSettings.filename+' ([email] sender=)');
-  assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destinatino for SMTP test in '+TestSettings.filename+' ([email] destination=)');
+  assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destination for SMTP test in '+TestSettings.filename+' ([email] destination=)');
 
   sender := TIdSMTP.Create(Nil);
   try
@@ -420,6 +466,7 @@ begin
       msg.From.Text := TestSettings.SMTPUsername;
       msg.Body.Text := 'Test Email from FHIRServer Unit tests';
       sender.Send(msg);
+      assertTrue(true);
     Finally
       msg.Free;
     End;
@@ -574,6 +621,25 @@ begin
       // nothing
     end;
   end;
+end;
+
+{ TZulipTests }
+
+procedure TZulipTests.TestSend;
+var
+  zs : TZulipSender;
+begin
+  if TestSettings.ZulipPassword <> '' then
+  begin
+    zs := TZulipSender.Create('https://fhir.zulipchat.com/api/v1/messages',
+      'pascal-github-bot@chat.fhir.org', TestSettings.ZulipPassword);
+    try
+      zs.sendMessage('testing', 'Pascal Library Test', 'This is a test message [2]');
+    finally
+      zs.free;
+    end;
+  end;
+  assertPass;
 end;
 
 end.

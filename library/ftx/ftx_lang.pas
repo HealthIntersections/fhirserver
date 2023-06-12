@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http, fsl_lang,
-  fhir_common, fhir_features, fhir_uris,
+  fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
 type
@@ -89,7 +89,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -171,7 +171,7 @@ begin
   result := nil;
 end;
 
-procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+procedure TIETFLanguageCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
@@ -179,9 +179,9 @@ begin
   if (context <> nil) then
   begin
     c := context as TIETFLanguageCodeConcept;
-    list.see(FLanguages.present(c.FInfo).Trim);
+    list.addBase('', FLanguages.present(c.FInfo).Trim);
     if c.FInfo.isLangRegion then
-      list.see(FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+      list.addDesignation('', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
   end;
 end;
 
@@ -275,7 +275,7 @@ begin
   if (i >= 0) and (op = foExists) and ((value = 'true') or (value = 'false')) then
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
   else
-    raise ETerminologyError.Create('Not a supported filter');
+    raise ETerminologyError.Create('Not a supported filter', itInvalid);
 end;
 
 function TIETFLanguageCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -314,7 +314,7 @@ end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar');
+  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;
 
 function TIETFLanguageCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

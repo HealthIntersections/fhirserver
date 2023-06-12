@@ -406,16 +406,23 @@ begin
     LIn.Port := TEST_PORT;
     LIn.IsListener := True;
     LIn.OnReceiveMessage := MessageReply;
+    LIn.ReconnectDelay := 2000;
+    //hlog('test: in start');
     LIn.Start;
+    //hlog('test: in started');
     sleep(200);
     LOut := Tv2Protocol.Create(NIL);
     try
       LOut.CommunicationMode := cmSynchronous;
       LOut.IsListener := False;
       LOut.Port := TEST_PORT;
+      //hlog('test: out start');
       LOut.Start;
+      //hlog('test: out started');
       LIn.WaitForConnection(6000);
-      Sleep(50);
+      //hlog('test: wait 1');
+      Sleep(500);
+      //hlog('test: wait 2');
       assertTrue(LIn.Connected, 'in not connected');
       assertTrue(LOut.Connected, 'Out not connected');
       LOut.CheckSynchronousSendResult(LOut.SynchronousSend(StringAsBytes('test'), LMsg), '');

@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils, Graphics, IniFiles,
   Controls, ComCtrls, Dialogs, UITypes, Menus,
-  fsl_base, fsl_utilities, fsl_json, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_json, fsl_fpc, fsl_stream,
   fui_lcl_managers,
   fhir_client,
   ftk_utilities, ftk_constants, ftk_context;
@@ -47,6 +47,27 @@ const
   CODES_TFHIRProjectNodeKind : array [TFHIRProjectNodeKind] of String = ('project', 'folder', 'file');
 
 type
+  { TProjectIgnorer }
+
+  TProjectIgnorer = class (TFslObject)
+  private
+    FFolder : String;
+    FIgnoreFile : String;
+    FLines : TStringList;
+    FLoaded : TDateTime;
+    function matchesLine(line, path : String) : boolean;
+    procedure load;
+
+  public
+    constructor Create(folder, ignoreFile: String);
+    destructor Destroy; override;
+    function Link : TProjectIgnorer; overload;
+
+    procedure checkTime;
+    function ignore(path : String) : boolean;
+    procedure addPath(path : String);
+  end;
+
   { TFHIRProjectNode }
 
   TFHIRProjectNode = class (TFslTreeNode)
@@ -54,9 +75,15 @@ type
     FId : String;
     FName : String;
     FAddress : String;
+    FIgnoreFile : String;
+    FIgnorer : TProjectIgnorer;
     FKind : TFHIRProjectNodeKind;
+    FFormat : TSourceEditorKind;
     FChildren : TFslList<TFHIRProjectNode>;
     function nameExists(name : String) : boolean;
+    function contains(node : TFHIRProjectNode) : boolean;
+    function sortChildren(sender : TObject; const o1, o2 : TFHIRProjectNode) : Integer;
+    procedure loadIgnorer;
   protected
     function getChildCount : integer; override;
     function getChild(index : integer) : TFslTreeNode; override;
@@ -78,6 +105,8 @@ type
     property kind : TFHIRProjectNodeKind read FKind write FKind;
     property name : String read FName write FName;
     property address : String read FAddress write FAddress;
+    property format : TSourceEditorKind read FFormat write FFormat;
+    property ignoreFile : String read FIgnoreFile write FIgnoreFile;
     property children : TFslList<TFHIRProjectNode> read FChildren;
   end;
 
@@ -90,6 +119,7 @@ type
     FView : TFHIRProjectsView;
     FContext : TToolkitContext;
     function getKindByMode(mode : String) : TSourceEditorKind;
+    function getProjectForNode(node : TFHIRProjectNode) : TFHIRProjectNode;
     procedure SetContext(AValue: TToolkitContext);
   public
     destructor Destroy; override;
@@ -101,6 +131,8 @@ type
     function readOnly : boolean; override;
 
     function allowedOperations(item : TFHIRProjectNode) : TNodeOperationSet; override;
+    procedure getCopyModes(modes : TStringList); override;
+
     function loadData : boolean; override;
 
     procedure buildMenu; override;
@@ -117,6 +149,9 @@ type
     function deleteItem(parent, item : TFHIRProjectNode) : boolean; override;
     function executeItem(item : TFHIRProjectNode; mode : String) : boolean; override;
     function refreshItem(item : TFHIRProjectNode) : boolean; override;
+    function updateItem(item : TFHIRProjectNode; mode : String) : TFHIRProjectNode; override;
+    function getCanCopy(item : TFHIRProjectNode; mode : String) : boolean; override;
+    function getCopyValue(item : TFHIRProjectNode; mode : String) : String; override;
   end;
 
 
@@ -179,6 +214,7 @@ end;
 destructor TFHIRProjectNode.Destroy;
 begin
   FChildren.Free;
+  FIgnorer.Free;
   inherited Destroy;
 end;
 
@@ -200,6 +236,35 @@ begin
       if SameText(ExtractFileName(s), name) then
         exit(true);
   end;
+end;
+
+function TFHIRProjectNode.contains(node: TFHIRProjectNode): boolean;
+var
+  n : TFHIRProjectNode;
+begin
+  if node = self then
+    result := true
+  else
+  begin
+    result := false;
+    if FChildren <> nil then
+      for n in FChildren do
+        if n.contains(node) then
+          exit(true);
+  end;
+end;
+
+function TFHIRProjectNode.sortChildren(sender: TObject; const o1, o2: TFHIRProjectNode): Integer;
+begin
+  result := ord(o1.kind) - ord(o2.kind);
+  if result = 0 then
+    result := compareStr(o1.name, o2.name);
+end;
+
+procedure TFHIRProjectNode.loadIgnorer;
+begin
+  if (FIgnorer = nil) then
+    FIgnorer := TProjectIgnorer.create(address, FIgnoreFile);
 end;
 
 function TFHIRProjectNode.getChildCount: integer;
@@ -228,6 +293,8 @@ begin
     result['kind'] := CODES_TFHIRProjectNodeKind[FKind];
     result['name'] := FName;
     result['address'] := FAddress;
+    result['ignoreFile'] := FIgnoreFile;
+    result.int['format'] := integer(FFormat);
     if FChildren.Count > 0 then
       for i := 0 to FChildren.count - 1 do
          result.forceArr['children'].add(FChildren[i].toJson);
@@ -247,6 +314,8 @@ begin
     result.FKind := TFHIRProjectNodeKind(StringArrayIndexOf(CODES_TFHIRProjectNodeKind, json['kind']));
     result.FName := json['name'];
     result.FAddress := json['address'];
+    result.FIgnoreFile := json['ignoreFile'];
+    result.FFormat := TSourceEditorKind(json.int['format']);
     for i := 0 to json.forceArr['children'].count - 1 do
        result.FChildren.add(TFHIRProjectNode.fromJson(json.forceArr['children'].Obj[i]));
     result.link;
@@ -257,38 +326,46 @@ end;
 
 procedure TFHIRProjectNode.loadFromAddress;
 var
-  s : String;
+  s, ext : String;
   n : TFHIRProjectNode;
+  i : integer;
 begin
   FChildren.clear;
+  loadIgnorer;
 
   if address <> '' then
   begin
     for s in TDirectory.getDirectories(address) do
     begin
-      if FileGetAttr(s) and faHidden = 0 then
+      if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s+'/') then
       begin
         n := TFHIRProjectNode.create;
         FChildren.add(n);
         n.kind := pnkFolder;
         n.name := ExtractFileName(s);
         n.address := s;
+        n.FIgnorer := FIgnorer.Link;
         n.loadFromAddress;
       end;
     end;
 
     for s in TDirectory.GetFiles(address) do
     begin
-      if FileGetAttr(s) and faHidden = 0 then
+      if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s) then
       begin
         n := TFHIRProjectNode.create;
         FChildren.add(n);
         n.kind := pnkFile;
         n.name := ExtractFileName(s);
         n.address := s;
+        ext := lowercase(ExtractFileExt(s));
+        i := StringArrayIndexOf(EXTENSIONS_TSourceEditorKind, ext);
+        if (i > -1) then
+          n.format := TSourceEditorKind(i);
       end;
     end;
   end;
+  FChildren.SortE(sortChildren);
 end;
 
 function TFHIRProjectNode.getNewName(ext: String): String;
@@ -356,6 +433,16 @@ begin
     result := sekNull;
 end;
 
+function TProjectTreeManager.getProjectForNode(node : TFHIRProjectNode): TFHIRProjectNode;
+var
+  n : TFHIRProjectNode;
+begin
+  result := nil;
+  for n in Data do
+    if (n.contains(node)) then
+      exit(n);
+end;
+
 procedure TProjectTreeManager.SetContext(AValue: TToolkitContext);
 begin
   FContext.Free;
@@ -381,13 +468,25 @@ begin
   result := [];
   if item <> nil then
     case item.kind of
-      pnkProject, pnkFolder:
+      pnkProject:
         if item.address <> '' then
-          result := [opAdd, opDelete, opRefresh, opEdit]
+          result := [opAdd, opDelete, opRefresh, opEdit, opInfo]
         else
           result := [opAdd, opDelete, opEdit];
-      pnkFile: result := [opDelete, opRefresh, opEdit, opExecute];
+      pnkFolder:
+        if item.address <> '' then
+          result := [opAdd, opDelete, opRefresh, opEdit, opInfo, opUpdate]
+        else
+          result := [opAdd, opDelete, opEdit];
+      pnkFile: result := [opDelete, opRefresh, opEdit, opExecute, opUpdate];
     end;
+end;
+
+procedure TProjectTreeManager.getCopyModes(modes: TStringList);
+begin
+  modes.addPair('name', 'Name');
+  modes.addPair('path', 'Path');
+  modes.addPair('content', 'Contents');
 end;
 
 function TProjectTreeManager.loadData : boolean;
@@ -427,11 +526,20 @@ begin
       else
         registerSubMenuEntry(mnu, t.Caption, t.ImageIndex, copAdd, 'paste');
   registerMenuEntry('Open', ICON_EXECUTE, copExecute);
+  mnu := registerMenuEntry('Open As', ICON_EXECUTE, copExecute, 'group');
+  for t in MainToolkitForm.pmNew.Items do
+    if t.visible then
+      if t.tag > 0 then
+        registerSubMenuEntry(mnu, t.Caption, t.ImageIndex, copExecute, CODES_TSourceEditorKind[TSourceEditorKind(t.tag)]);
+  registerMenuEntry('Copy', ICON_COPY, copCopy);
   registerMenuEntry('Refresh', ICON_REFRESH, copRefresh);
   registerMenuEntry('Delete', ICON_DELETE, copDelete);
+  registerMenuEntry('Hide', ICON_HIDE, copUpdate, 'hide');
 end;
 
 function TProjectTreeManager.getImageIndex(item: TFHIRProjectNode): integer;
+var
+  fmt : TSourceEditorKind;
 begin
   case item.kind of
     pnkProject :
@@ -444,7 +552,11 @@ begin
       if (item.address <> '') and (Context.EditorForAddress('file:'+item.address) <> nil) then
         result := ICON_OPEN_FILE
       else
-        result := ICON_FILE;
+      begin
+        result := ICONS_TSourceEditorKind[item.format];
+        if (result = -1) then
+          result := ICON_FILE;
+      end
   else
     result := -1;
   end;
@@ -637,11 +749,21 @@ begin
 end;
 
 function TProjectTreeManager.executeItem(item: TFHIRProjectNode; mode: String): boolean;
+var
+  kind : TSourceEditorKind;
 begin
-
-  if (item.kind = pnkFile) then
+  if (item.kind = pnkFile) and (mode <> 'group') then
   begin
-    MainToolkitForm.openFile('file:'+item.address);
+    if mode <> '' then
+    begin
+      kind := TSourceEditorKind(StringArrayIndexOf(CODES_TSourceEditorKind, mode));
+      if kind <= sekNull then
+        MainToolkitForm.openFile('file:'+item.address)
+      else
+        MainToolkitForm.openFile('file:'+item.address, kind);
+    end
+    else
+      MainToolkitForm.openFile('file:'+item.address);
     result := true;
   end
   else
@@ -659,6 +781,42 @@ begin
   end
   else
     result := false;
+end;
+
+function TProjectTreeManager.updateItem(item: TFHIRProjectNode; mode : String): TFHIRProjectNode;
+var
+  n : TFHIRProjectNode;
+begin
+  n := getProjectForNode(item);
+  n.loadIgnorer;
+  n.FIgnorer.addPath(item.address.substring(n.address.length+1));
+  result := n;
+end;
+
+function TProjectTreeManager.getCanCopy(item: TFHIRProjectNode; mode: String): boolean;
+begin
+  if (mode = 'content') then
+    result := item.kind = pnkFile
+  else if (mode = 'path') then
+    result := item.address <> ''
+  else if (mode = 'name') then
+    result := true
+  else if (mode = '') then
+    result := true
+  else
+    result := false;
+end;
+
+function TProjectTreeManager.getCopyValue(item: TFHIRProjectNode; mode: String): String;
+begin
+  if (mode = 'name') then
+    result := item.name
+  else if (mode = 'path') then
+    result := item.address
+  else if (mode = 'content') then
+    result := FileToString(item.address, TEncoding.UTF8)
+  else
+    result := '';
 end;
 
 { TFHIRProjectsView }
@@ -843,6 +1001,86 @@ begin
     p.name := ExtractFileName(new);
     save;
     FManager.refresh(p);
+  end;
+end;
+
+{ TProjectIgnorer }
+
+function TProjectIgnorer.matchesLine(line, path: String): boolean;
+var
+  n : String;
+begin
+  path := path.trim;
+  if path.startsWith('#') then
+    exit(false);
+
+  result := false;
+  n := path.substring(FFolder.length);
+  if (n = line) then
+    exit(true);
+  if (path.endsWith('/')) then
+    path := path.subString(0, path.Length-1);
+  n := extractFileName(path);
+  if (n = line) then
+    exit(true);
+end;
+
+procedure TProjectIgnorer.load;
+begin
+  FLoaded := FileGetModified(FilePath([FFolder, FIgnoreFile]));
+  if FIgnoreFile <> '' then
+  begin
+    FLines.LoadFromFile(FilePath([FFolder, FIgnoreFile]));
+  end;
+end;
+
+constructor TProjectIgnorer.Create(folder, ignoreFile : String);
+begin
+  inherited Create;
+  FLines := TStringList.create;
+  FFolder := folder;
+  FIgnoreFile := ignoreFile;
+  load();
+end;
+
+destructor TProjectIgnorer.Destroy;
+begin
+  FLines.free;
+  inherited Destroy;
+end;
+
+function TProjectIgnorer.Link : TProjectIgnorer;
+begin
+  result := TProjectIgnorer(inherited Link);
+end;
+
+procedure TProjectIgnorer.checkTime;
+begin
+  if FLoaded <> FileGetModified(FilePath([FFolder, FIgnoreFile])) then
+    load;
+end;
+
+function TProjectIgnorer.ignore(path : String) : boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in FLines do
+    if matchesLine(s, path) then
+      exit(true);
+end;
+
+procedure TProjectIgnorer.addPath(path: String);
+var
+  ts : TStringList;
+begin
+  ts := TStringlist.create;
+  try
+    ts.LoadFromFile(FilePath([FFolder, FIgnoreFile]));
+    ts.add(path);
+    ts.SaveToFile(FilePath([FFolder, FIgnoreFile]));
+  finally
+    ts.free;
   end;
 end;
 

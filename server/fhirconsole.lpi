@@ -143,6 +143,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <Compiler>-O2 -Xs</Compiler>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="osx">
@@ -188,13 +191,31 @@
             <OtherUnitFiles Value="admin;tx"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
             </Debugging>
           </Linking>
           <Other>
@@ -262,10 +283,10 @@
     </RunParams>
     <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="fcomp"/>
       </Item1>
       <Item2>
-        <PackageName Value="fcomp"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item2>
       <Item3>
         <PackageName Value="LazControls"/>
@@ -414,7 +435,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="4">
+    <Exceptions Count="5">
       <Item1>
         <Name Value="EIdSocketError"/>
       </Item1>
@@ -427,6 +448,9 @@
       <Item4>
         <Name Value="&lt;Unknown Class>"/>
       </Item4>
+      <Item5>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item5>
     </Exceptions>
   </Debugging>
 </CONFIG>
