@@ -53,6 +53,9 @@
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
           </CodeGeneration>
+          <Other>
+            <Compiler>-O2 -Xs</Compiler>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="osx">

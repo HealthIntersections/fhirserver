@@ -58,7 +58,7 @@ The content loads and works extremely quickly.
 }
 
 Uses
-  SysUtils, Classes, Generics.Collections, Character,
+  SysUtils, Classes, Generics.Collections, Character, Dialogs,
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -840,7 +840,7 @@ begin
   if FIsUTF16 then
     result := memU16ToString(FMaster, iIndex+2, i)
   else
-  result := memU8ToString(FMaster, iIndex+2, i)
+    result := memU8ToString(FMaster, iIndex+2, i)
 end;
 
 procedure TSnomedStrings.Reopen;
@@ -852,15 +852,16 @@ end;
 function TSnomedStrings.AddString(const s: String): Cardinal;
 var
   i : word;
-  b : TArray<Byte>;
+  b : TBytes;
 begin
   if Length(s) > 65535 Then
     raise ETerminologySetup.Create('Snomed Description too long: '+String(s));
   result := FBuilder.Length;
   if FIsUTF16 then
     b := TEncoding.BigEndianUnicode.GetBytes(s)
-  else
-    b := TEncoding.UTF8.GetBytes(s);
+    else
+    b := TEncoding.UTF8.GetBytes(s) ;
+
   i := length(b);
   FBuilder.AddWord(i);
   FBuilder.Append(b);

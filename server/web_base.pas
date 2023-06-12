@@ -432,7 +432,9 @@ Begin
     result := 'video/mpeg'
   Else if AExt = '.js' Then
     result := 'text/javascript'
-  Else
+  else if AExt = '.html' then  // Add this case
+    result := 'text/html'      // Use 'text/html' for .html files
+  else
   Begin
 {$IFDEF WINDOWS}
     Try
