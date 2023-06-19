@@ -2,7 +2,7 @@
 
 Reference Implementation Server + Libraries for the FHIR Specification, written in Pascal
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/HealthIntersections/fhirserver/linux-docker-build?label=Build%20status)
+![Build Status](https://img.shields.io/github/actions/workflow/status/HealthIntersections/fhirserver/linux-docker-build.yml?label=Build%20status)
 
 ## Basic Information
 
