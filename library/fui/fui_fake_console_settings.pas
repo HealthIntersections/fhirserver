@@ -45,6 +45,8 @@ type
     btnOk: TButton;
     chkForwards: TCheckBox;
     chkAutoClose: TCheckBox;
+    eLines: TEdit;
+    Label1: TLabel;
     Panel1: TPanel;
   private
 
