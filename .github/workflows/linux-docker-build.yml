@@ -33,10 +33,10 @@ jobs:
         docker  build \
           --tag fhirserver \
         .
-#    - name: Scan Code
-#      run: |
-#        export DISPLAY=0:0
-#        docker run --entrypoint /work/fhirserver/utilities/codescan/codescan fhirserver /work/bootstrap
+    - name: Scan Code
+      run: |
+        export DISPLAY=0:0
+        docker run --entrypoint /work/fhirserver/utilities/codescan/codescan fhirserver /work/bootstrap
     - name: Prepare ini file
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
