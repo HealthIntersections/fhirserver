@@ -2176,7 +2176,7 @@ begin
           try
             add(sp, tx['default'].readAsBool);
             if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) then
-              FProviderClasses.Add(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri, sp);
+              FProviderClasses.Add(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri, sp.link);
           finally
             sp.free;
           end;
