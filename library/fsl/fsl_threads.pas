@@ -472,13 +472,13 @@ type
     state : String;
     stateTick : UInt64;
   end;
-  PTheadRecord = ^TTheadRecord;
+  PThreadRecord = ^TTheadRecord;
 
 procedure closeThread;
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   EnterCriticalSection(GCritSct);
@@ -501,7 +501,7 @@ procedure SetThreadName(name : String);
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   EnterCriticalSection(GCritSct);
@@ -525,7 +525,6 @@ begin
     {$IFDEF FPC}
     TThread.NameThreadForDebugging(name, p.id);
     {$ENDIF}
-
     GThreadList.Add(p);
   finally
     LeaveCriticalSection(GCritSct);
@@ -536,7 +535,7 @@ procedure SetThreadStatus(status : String);
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   if not GHaveCritSect then
@@ -556,7 +555,7 @@ begin
     new(p);
     p.startTick := GetTickCount64;
     p.id := id;
-    p.name := 'Unknown';
+    p.name := 'Unnamed';
     p.state := status;
     p.stateTick := GetTickCount64;
     GThreadList.Add(p);
@@ -597,7 +596,7 @@ begin
   end;
 end;
 
-function info(p : PTheadRecord; id : boolean) : String;
+function info(p : PThreadRecord; id : boolean) : String;
 begin
   if (id) then
     result := inttohex(NativeUInt(p.id), 8)+': '
@@ -617,7 +616,7 @@ function GetThreadNameStatus : String;
 var
   id : TThreadId;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
   s : String;
 begin
   s := 'Unknown thread';
@@ -643,7 +642,7 @@ function GetThreadInfo : String;
 var
   id : TThreadId;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
   s : String;
 begin
   s := 'Unknown thread';
@@ -679,7 +678,7 @@ function GetThreadReport : String;
 var
   i : integer;
   s : String;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   s := '';
   EnterCriticalSection(GCritSct);
@@ -717,7 +716,7 @@ end;
 procedure DoneUnit;
 var
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   GHaveCritSect := false;
   for i := GThreadList.Count - 1 downto 0 do
@@ -1377,11 +1376,13 @@ begin
     // ignore any further exceptions
   End;
   FOwner.FRunning := False;
-  SetThreadName('');
   if FOwner.AutoFree then
   begin
     FOwner.Free;
-    Destroy;
+    try
+      Destroy;
+    except
+    end;
   end;
 end;
 
