@@ -76,3 +76,4 @@ jobs:
       run: |
         docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+
