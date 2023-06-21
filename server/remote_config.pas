@@ -231,10 +231,10 @@ begin
     cfg.web['cacertname'].value := def(local.ReadString('web', 'cacertname', ''), cfg.web['cacertname'].value, '');
     cfg.web['certkey'].value := def(local.ReadString('web', 'certkey', ''), cfg.web['certkey'].value, '');
     cfg.web['password'].value := def(local.ReadString('web', 'password', ''), cfg.web['password'].value, '');
-    cfg.web['telnet-password'].value := def(local.ReadString('admin', 'telnet-pword', NewGuidId), cfg.web['telnet-password'].value, '');
-    cfg.admin['email'].value := def(local.ReadString('admin', 'email', 'noone@fhir.org'), cfg.admin['email'].value, '');
-    cfg.admin['ownername'].value := def(local.ReadString('admin', 'user', 'Local User'), cfg.admin['ownername'].value, '');
+    cfg.web['telnet-password'].value := def(local.ReadString('config', 'telnet-pword', NewGuidId), cfg.web['telnet-password'].value, '');
     cfg.admin['log-folder'].value := def(local.ReadString('web', 'logFolder', ''), cfg.admin['log-folder'].value, '');
+    cfg.admin['email'].value := def(local.ReadString('config', 'email', ''), cfg.admin['email'].value, 'noone@fhir.org');
+    cfg.admin['ownername'].value := def(local.ReadString('config', 'user', ''), cfg.admin['ownername'].value, 'Local User');
 
     cfg.web['http-max-conn'].value := '50';
     cfg.web['http-cache-time'].value := '1000';
