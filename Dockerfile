@@ -38,4 +38,4 @@ chmod +x /bin/entrypoint.sh
 
 ENTRYPOINT ["/bin/entrypoint.sh"]
 
-CMD ["-cmd",  "exec",  "-cfg", "http://tx.fhir.org/config", "-version",  "4", "-local", "$TERMINOLOGY_CACHE"]
+CMD ["-cmd",  "exec",  "-cfg", "https://storage.googleapis.com/tx-fhir-org", "-version",  "4", "-local", "$TERMINOLOGY_CACHE"]
