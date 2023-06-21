@@ -566,7 +566,8 @@ begin
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
 {$ELSE}
-  result := 0;
+  with GetFPCHeapStatus do
+    result := CurrHeapUsed
 {$ENDIF}
 end;
 

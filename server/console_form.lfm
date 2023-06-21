@@ -12,7 +12,6 @@ object MainConsoleForm: TMainConsoleForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '2.2.5.0'
   object sBar: TStatusBar
     Left = 0
     Height = 18
@@ -58,10 +57,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 600
       Top = 1
       Width = 684
-      ActivePage = tbTerminologies
+      ActivePage = tbThreads
       Align = alClient
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 1
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -220,6 +219,7 @@ object MainConsoleForm: TMainConsoleForm
           Font.Name = 'Courier New'
           Font.Pitch = fpFixed
           ParentFont = False
+          ScrollBars = ssAutoVertical
           TabOrder = 1
         end
       end
