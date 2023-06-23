@@ -35,7 +35,7 @@ uses
   Windows,
   {$ENDIF}
   {$IFDEF LINUX}
-  // cmem,
+  cmem,
   cthreads,
   {$ENDIF}
   {$IFDEF OSX}
@@ -43,12 +43,16 @@ uses
   cthreads, forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
+  fsl_fpc_memory,
   kernel, server_testing, server_stats, remote_config, telnet_server;
 
 {$R *.res}
 
 begin
   isMultiThread := true;
+  {$IFDEF FPC}
+  TFPCMemoryManagerTracker.install;
+  {$ENDIF}
   ExecuteFhirServer;
 end.
 

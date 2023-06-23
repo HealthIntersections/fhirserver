@@ -136,6 +136,10 @@
         <Filename Value="..\library\fsl\fsl_i18n.pas"/>
         <UnitName Value="fsl_i18n"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_fpc_memory.pas"/>
+        <UnitName Value="fsl_fpc_memory"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
