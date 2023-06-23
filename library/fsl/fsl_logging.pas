@@ -518,24 +518,24 @@ Begin
     Result := '0'
   Else If b = 0 Then
     Result := '0'
-  Else If b < 1024 Then
+  Else If b < 1024 * 4 Then
     Result := IntToStr(b) + 'b'
-  Else If b < 1024 * 1024 Then
+  Else If b < 1024 * 1024 * 4 Then
     Result := IntToStr(b Div 1024) + 'kb'
-  Else If b < 1204 * 1024 * 1024 Then
+  Else If b < 1204 * 1024 * 1024 * 4 Then
     Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
   Else
     Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
 End;
 
-
-function memToMb(v : UInt64) : string;
-begin
-  v := v div 1024;
-  v := v div 1024;
-  result := inttostr(v)+'MB';
-end;
-
+//
+//function memToMb(v : UInt64) : string;
+//begin
+//  v := v div 1024;
+//  v := v div 1024;
+//  result := inttostr(v)+'MB';
+//end;
+//
 function OSMem : UInt64;
 {$IFDEF WINDOWS}
 var
@@ -557,17 +557,19 @@ begin
 end;
 
 function TLogging.InternalMem : UInt64;
-{$IFDEF DELPHI}
 var
+{$IFDEF DELPHI}
   st : TMemoryManagerUsageSummary;
+{$ELSE}
+  hs : TFPCHeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
 {$ELSE}
-  with GetFPCHeapStatus do
-    result := CurrHeapUsed
+  hs := GetFPCHeapStatus;
+  result := hs.CurrHeapSize; // CurrHeapUsed;
 {$ENDIF}
 end;
 
@@ -580,12 +582,12 @@ begin
   begin
   os := OSMem;
   if os <> 0 then
-    result := memToMB(Logging.InternalMem) + ' / '+memToMB(os)
+    result := DescribeSize(Logging.InternalMem, 0) + ' / '+DescribeSize(os, 0)
   else
-    result := memToMB(Logging.InternalMem);
+    result := DescribeSize(Logging.InternalMem, 0);
   end
   else
-    result := memToMB(Logging.InternalMem);
+    result := DescribeSize(Logging.InternalMem, 0);
 end;
 
 procedure TLogging.checkDay;
@@ -635,7 +637,6 @@ begin
     except
     end;
   end;
-
 end;
 
 procedure TLogging.log(s: String);
@@ -655,7 +656,7 @@ begin
 
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then
