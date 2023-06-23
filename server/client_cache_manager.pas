@@ -35,10 +35,8 @@ interface
 uses
   SysUtils,
   fsl_base, fsl_threads,
-  fhir_common;
-
-Const
-  DWELL_TIME = 30 / (24*60) {min};
+  fhir_common,
+  server_constants, server_stats;
 
 type
   TClientCacheManagerEntry = class (TFslObject)
@@ -54,8 +52,11 @@ type
     procedure update(list : TFslMetadataResourceList);
   end;
 
+  { TClientCacheManager }
+
   TClientCacheManager = class (TFslObject)
   private
+    FCacheDwellTime: TDateTime;
     FList : TFslList<TClientCacheManagerEntry>;
     FLock : TFslLock;
   protected
@@ -68,6 +69,8 @@ type
     procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
+    procedure recordStats(var rec : TStatusRecord); 
+    property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
 
 implementation
@@ -160,6 +163,7 @@ begin
   inherited;
   FLock := TFslLock.Create('ClientCacheManager');
   FList := TFslList<TClientCacheManagerEntry>.create;
+  FCacheDwellTime := DEFAULT_DWELL_TIME;
 end;
 
 destructor TClientCacheManager.Destroy;
@@ -187,7 +191,7 @@ begin
     try
       for i in FList do
       begin
-        if i.FLastTouched + DWELL_TIME < n then
+        if i.FLastTouched + FCacheDwellTime < n then
           list.Add(i.Link);
       end;
       if list.count > 0 then
@@ -234,6 +238,23 @@ begin
     result.link;
   finally
     result.Free;
+  end;
+end;
+
+procedure TClientCacheManager.recordStats(var rec: TStatusRecord);
+var
+  e : TClientCacheManagerEntry;
+begin
+  FLock.Lock();
+  try
+    rec.ClientCacheCount := rec.ClientCacheCount + FList.count;
+    for e in FList do
+    begin
+      rec.ClientCacheObjectCount := rec.ClientCacheObjectCount + e.FList.Count;
+      rec.ClientCacheSize := rec.ClientCacheSize + e.FList.sizeInBytes(rec.magic);
+    end;
+  finally
+    FLock.Unlock;
   end;
 end;
 

@@ -41,7 +41,7 @@ uses
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs,
-  utilities, server_config, kernel_thread;
+  utilities, server_config, kernel_thread, server_stats;
 
 const
   URI_VERSION_BREAK = '#';
@@ -142,7 +142,8 @@ Type
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
 
-    // load external terminology resources (snomed, Loinc, etc)
+    // load external terminology resources (snomed, Loinc, etc)     
+    procedure recordStats(var rec : TStatusRecord);
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
     procedure listVersions(url : String; list : TStringList);
 
@@ -290,6 +291,8 @@ Type
     function NextValueSetMemberKey : integer;
 
     function cacheSize(magic : integer) : UInt64; virtual;
+    procedure recordStats(var rec : TStatusRecord); virtual;
+
     procedure Unload; virtual;
 
     procedure clearCache; virtual;
@@ -802,6 +805,11 @@ end;
 function TTerminologyServerStore.cacheSize(magic : integer): UInt64;
 begin
   result := 0;
+end;
+
+procedure TTerminologyServerStore.recordStats(var rec: TStatusRecord);
+begin
+  // nothing?
 end;
 
 procedure TTerminologyServerStore.Unload;
@@ -2050,6 +2058,15 @@ begin
     ci.Add('ProviderClasses', FProviderClasses.sizeInBytes(ci.magic));
   if FNDFRT <> nil then
     ci.Add('NDFRT', FNDFRT.sizeInBytes(ci.magic));
+end;
+
+procedure TCommonTerminologies.recordStats(var rec: TStatusRecord);
+var
+  ss : TSnomedServices;
+begin
+  for ss in FSnomed do
+    if (ss.Loaded) then
+      inc(rec.SnomedsLoaded);
 end;
 
 procedure TCommonTerminologies.getSummary(b: TStringBuilder);

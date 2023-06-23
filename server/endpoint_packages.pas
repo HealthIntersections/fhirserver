@@ -42,7 +42,7 @@ uses
 
   server_config, utilities,
   database_installer, telnet_server,
-  tx_manager, time_tracker, kernel_thread,
+  tx_manager, time_tracker, kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
 type
@@ -112,6 +112,8 @@ type
     function logId : string; override;
   end;
 
+  { TPackageServerEndPoint }
+
   TPackageServerEndPoint = class (TFHIRServerEndPoint)
   private
     FPackageServer : TFHIRPackageWebServer;
@@ -133,9 +135,11 @@ type
     Procedure Unload; override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
-    procedure clearCache; override;
+    procedure clearCache; override; 
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 implementation
@@ -148,6 +152,11 @@ end;
 procedure TPackageServerEndPoint.clearCache;
 begin
   inherited;
+end;
+
+procedure TPackageServerEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
 end;
 
 constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
@@ -168,6 +177,12 @@ procedure TPackageServerEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
 
+end;
+
+procedure TPackageServerEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  // nothing
 end;
 
 procedure TPackageServerEndPoint.Load;
@@ -228,7 +243,8 @@ begin
   end;
 end;
 
-procedure TPackageServerEndPoint.internalThread;
+procedure TPackageServerEndPoint.internalThread(
+  callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   // nothing, for now
   // todo: health check on spider

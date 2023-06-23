@@ -557,19 +557,21 @@ begin
 end;
 
 function TLogging.InternalMem : UInt64;
-var
 {$IFDEF DELPHI}
+var
   st : TMemoryManagerUsageSummary;
 {$ELSE}
-  hs : TFPCHeapStatus;
+  //hs : TFPCHeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
 {$ELSE}
-  hs := GetFPCHeapStatus;
-  result := hs.CurrHeapSize; // CurrHeapUsed;
+  //hs := GetFPCHeapStatus;
+  //result := hs.CurrHeapSize; // CurrHeapUsed;
+  threadPing;
+  result := totalMemoryAllThreads;
 {$ENDIF}
 end;
 
@@ -656,7 +658,7 @@ begin
 
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then

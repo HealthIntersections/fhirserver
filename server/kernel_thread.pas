@@ -125,6 +125,7 @@ procedure TFhirServerMaintenanceThreadTaskThread.Execute;
 var
   t : UInt64;
 begin
+  SetThreadName(FTask.FName);
   if (FTask.FThread <> self) then
     if FTask.FThread = nil then
       raise EFslException.Create('Error in internal thread: task '+FTask.name+' has no thread associated with it')
@@ -275,6 +276,7 @@ begin
   while not Terminated do
   begin
     sleep(100);
+    ThreadPing;
     for t in FTasks do
       t.checkStatus;
   end;
