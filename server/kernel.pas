@@ -51,7 +51,7 @@ Uses
 
   server_constants, server_config, utilities, server_context,
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
-  server_testing, kernel_thread,
+  server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
   endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao;
 
@@ -90,6 +90,7 @@ type
     FPcm : TFHIRPackageManager;
     FMaxMem : UInt64;
     FI18n : TI18nSupport;
+    FStatsCount : integer;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -98,6 +99,9 @@ type
     procedure stopWebServer;
     procedure unloadEndpoints;
     procedure unloadTerminologies;
+
+    procedure recordStats(callback : TFhirServerMaintenanceThreadTaskCallBack);
+    procedure sweepCaches(callback : TFhirServerMaintenanceThreadTaskCallBack);
 
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
@@ -190,12 +194,15 @@ begin
     LoadEndPoints;
     StartWebServer();
 
+    recordStats(nil);
     FMaintenanceThread := TFhirServerMaintenanceThread.Create;
     FMaintenanceThread.defineTask('mem-check', checkMem, 5);
+    FMaintenanceThread.defineTask('stats', recordStats, 60);
     for ep in FEndPoints do
       FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 5);
     FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 10);
     FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 10);
+    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 10);
     FMaintenanceThread.Start;
 
 
@@ -326,6 +333,7 @@ var
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
+  FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
 
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
@@ -354,6 +362,7 @@ begin
   for ep in FEndPoints do
     FWebServer.registerEndPoint(ep);
 
+  FTelnet.stats := FWebServer.stats.link;
   FWebServer.Start;
 end;
 
@@ -383,6 +392,31 @@ procedure TFHIRServiceKernel.unloadTerminologies;
 begin
   FTerminologies.Free;
   FTerminologies := nil;
+end;
+
+procedure TFHIRServiceKernel.recordStats (callback : TFhirServerMaintenanceThreadTaskCallBack);
+var
+  rec : TStatusRecord;
+  ep : TFHIRServerEndPoint;
+begin
+  inc(FStatsCount);
+  FillChar(rec, sizeof(rec), 0);
+  rec.magic := FStatsCount;
+  rec.Threads := GetThreadCount;
+  rec.Memory := Logging.InternalMem;
+
+  FTerminologies.recordStats(rec);
+  for ep in FEndPoints do
+    ep.recordStats(rec);
+  FWebServer.recordStats(rec);
+end;
+
+procedure TFHIRServiceKernel.sweepCaches(callback: TFhirServerMaintenanceThreadTaskCallBack);
+var
+  ep : TFHIRServerEndPoint;
+begin
+  for ep in FEndPoints do
+    ep.SweepCaches;
 end;
 
 procedure TFHIRServiceKernel.dump;
@@ -515,11 +549,13 @@ end;
 procedure TFHIRServiceKernel.checkMem (callback : TFhirServerMaintenanceThreadTaskCallBack);
 var
   ep : TFhirServerEndpoint;
+  mem : UInt64;
 begin
+  mem := Logging.InternalMem;
   callback(self, 'Checking Memory Status', -1);
-  if (FMaxMem > 0) and (Logging.InternalMem > FMaxMem) then
+  if (FMaxMem > 0) and (mem > FMaxMem) then
   begin
-    Logging.log('Clear Caches because memory in use = '+DescribeBytes(Logging.InternalMem)+', and max is '+DescribeBytes(FMaxMem));
+    Logging.log('Clear Caches because memory in use = '+DescribeBytes(mem)+', and max is '+DescribeBytes(FMaxMem));
     WebServer.clearCache;
     for ep in FEndPoints do
       ep.clearCache;

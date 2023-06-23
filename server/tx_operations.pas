@@ -273,11 +273,13 @@ begin
           else if params.has('valueSet') then
           begin
             vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+            vs.tagInt := 1;
             txResources := processAdditionalResources(context, manager, vs, params);
           end
           else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
           begin
             vs := FFactory.wrapValueSet(request.Resource.Link);
+            vs.tagInt := 1;
             txResources := processAdditionalResources(context, manager, vs, params);
           end
           else if params.has('context') then
@@ -1152,6 +1154,8 @@ var
   p : TFhirParametersParameterW;
   list : TFslMetadataResourceList;
   cacheId : String;
+  vs : TFHIRValueSetW;
+  cs : TFHIRCodeSystemW;
 begin
   cacheId := '';
   list := TFslMetadataResourceList.create;
@@ -1168,11 +1172,15 @@ begin
       begin
         if p.resource.fhirType = 'ValueSet' then
         begin
-          list.Add(FFactory.wrapValueSet(p.resource.link))
+          vs := FFactory.wrapValueSet(p.resource.link);
+          list.Add(vs);
+          vs.TagInt := 1; // marks it as not stored
         end
         else if p.resource.fhirType = 'CodeSystem' then
         begin
-          list.Add(FFactory.wrapCodeSystem(p.resource.link))
+          cs := FFactory.wrapCodeSystem(p.resource.link);
+          list.Add(cs);
+          cs.TagInt := 1; // marks it as not stored
         end;
       end;
     end;

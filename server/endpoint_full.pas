@@ -61,7 +61,7 @@ uses
   scim_server, telnet_server, session, security, jwt,
   database_installer, server_version, server_config, utilities, bundlebuilder, html_builder, server_constants,
   server_context, auth_manager,
-  storage, database, time_tracker, kernel_thread,
+  storage, database, time_tracker, kernel_thread, server_stats,
   server_factory, indexing, subscriptions,
   web_base, endpoint, endpoint_storage;
 
@@ -215,8 +215,10 @@ Type
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override; 
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 implementation
@@ -428,6 +430,12 @@ begin
   FStore.clearCache;
 end;
 
+procedure TFullServerEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
+  FStore.Sweep;
+end;
+
 constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited create(config, settings, db, common, pcm, i18n);
@@ -459,6 +467,11 @@ procedure TFullServerEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
   FStore.getCacheInfo(ci);
+end;
+
+procedure TFullServerEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
 end;
 
 procedure TFullServerEndPoint.Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode: TOperationMode; logLevel : TOperationLoggingLevel);

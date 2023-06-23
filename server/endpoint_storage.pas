@@ -47,7 +47,7 @@ uses
   ftx_service,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
-  tx_manager, tx_webserver, telnet_server, time_tracker,
+  tx_manager, tx_webserver, telnet_server, time_tracker, server_stats,
   web_base, web_cache, endpoint;
 
 type
@@ -212,6 +212,8 @@ type
     function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
+  { TStorageEndPoint }
+
   TStorageEndPoint = class abstract (TFHIRServerEndPoint)
   private
   protected
@@ -222,8 +224,10 @@ type
     property ServerContext : TFHIRServerContext read FServerContext;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override; 
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 implementation
@@ -296,6 +300,13 @@ begin
     (WebEndPoint as TStorageWebEndpoint).FContext.clearCache;
 end;
 
+procedure TStorageEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
+  if WebEndPoint <> nil then
+    (WebEndPoint as TStorageWebEndpoint).FContext.sweepCache;
+end;
+
 constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited create(config, settings, db, common, pcm, i18n);
@@ -312,6 +323,13 @@ begin
   inherited;
   if WebEndPoint <> nil then
     (WebEndPoint as TStorageWebEndpoint).FContext.getCacheInfo(ci);
+end;
+
+procedure TStorageEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  FServerContext.ClientCacheManager.recordStats(rec);
+  // nothing else
 end;
 
 procedure TStorageEndPoint.SetCacheStatus(status: boolean);

@@ -36,14 +36,15 @@ Uses
   SysUtils, Classes,
   IdCustomHTTPServer, IdContext,
   fsl_base, fsl_threads, fsl_stream, fsl_utilities,
-  kernel_thread;
+  kernel_thread, server_stats, server_constants;
 
 type
   TCachedHTTPResponse = class (TFslBuffer)
   private
     FContentType: String;
     FSummary : String;
-    FHitCount : Cardinal;
+    FHitCount : Cardinal;   
+    FLastTouched : TDateTime;
   public
     function Link : TCachedHTTPResponse; overload;
     property ContentType : String read FContentType write FContentType;
@@ -51,8 +52,11 @@ type
     property HitCount : Cardinal read FHitCount write FHitCount;
   end;
 
+  { THTTPCacheManager }
+
   THTTPCacheManager = class (TFslObject)
   private
+    FCacheDwellTime: TDateTime;
     FLock : TFslLock;
     FSize : Cardinal;
     FCache : TFslMap<TCachedHTTPResponse>;
@@ -70,7 +74,9 @@ type
     procedure Clear;
     procedure Trim(callback : TFhirServerMaintenanceThreadTaskCallBack);
     property Caching : boolean read FCaching write FCaching;
-    property MaxSize : Cardinal read FMaxSize write FMaxSize;
+    property MaxSize : Cardinal read FMaxSize write FMaxSize;    
+    property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
+    procedure recordStats(var rec : TStatusRecord);
   end;
 
 
@@ -93,6 +99,7 @@ begin
   FSize := 0;
   FMaxSize := 1024 * 1024 * 1024; // 1 GB
   FMinTat := minTat;
+  FCacheDwellTime := DEFAULT_DWELL_TIME;
 end;
 
 destructor THTTPCacheManager.Destroy;
@@ -130,6 +137,7 @@ begin
       co.ContentType := response.ContentType;
       co.LoadFromStream(response.ContentStream);
       co.Summary := summary;
+      co.FLastTouched := now;
       FLock.Lock;
       try
         FCache.AddOrSetValue(key, co.Link);
@@ -165,6 +173,7 @@ begin
   if result then
   begin
     try
+      co.FLastTouched := now;
       response.ContentStream := TMemoryStream.create;
       co.SaveToStream(response.ContentStream);
       response.ContentStream.Position := 0;
@@ -188,12 +197,25 @@ var
   s : String;
   list : TStringList;
   v : TCachedHTTPResponse;
+  dt : TDateTime;
 begin
   callback(self, 'Trimming Cache', -1);
   list := TStringList.create;
   try
     FLock.Lock;
     try
+      dt := now - FCacheDwellTime;
+      for s in FCache.Keys do
+      begin
+        v := FCache[s];
+        if (v.FLastTouched < dt) then
+        begin
+          list.add(s);
+          FSize := FSize - v.Size;
+        end;
+      end;
+      FCache.RemoveKeys(list);
+
       i := 1;
       while FSize > FMaxSize do
       begin
@@ -218,6 +240,12 @@ begin
   finally
     list.Free;
   end;
+end;
+
+procedure THTTPCacheManager.recordStats(var rec: TStatusRecord);
+begin
+  rec.HTTPCacheCount := FCache.Count;
+  rec.HTTPCacheSize := FSize;
 end;
 
 procedure THTTPCacheManager.Clear;

@@ -46,22 +46,55 @@ uses
   fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
-  ftx_lang, closuremanager, adaptations, utilities, bundlebuilder,
-  tx_manager, ftx_sct_expressions;
+  ftx_lang, closuremanager, adaptations, utilities, bundlebuilder, server_stats,
+  tx_manager, ftx_sct_expressions, server_constants;
 
 Type
+
+  { TCachedItem }
+
+  TCachedItem = class (TFslObject)
+  private
+    FExpires : TDateTime;
+  public
+    constructor Create(expires : TDateTime);
+    property expires : TDateTime read FExpires;
+  end;
+
+  { TCachedValueSet }
+
+  TCachedValueSet = class (TCachedItem)
+  private
+    FValueSet : TFhirValueSetW;
+  public
+    constructor Create(expires : TDateTime; vs : TFhirValueSetW);
+    destructor Destroy; override;
+    property valueSet : TFhirValueSetW read FValueSet;
+  end;
+
+  { TCachedIds }
+
+  TCachedIds = class (TCachedItem)
+  private
+    FIds : TFslStringList;
+  public
+    constructor Create(expires : TDateTime; ids : TFslStringList);
+    destructor Destroy; override;
+    property ids : TFslStringList read FIds;
+  end;
 
   { TTerminologyServer }
 
   TTerminologyServer = class (TTerminologyServerStore)
   private
-    FExpansions : TFslStringObjectMatch;
-    FDependencies : TFslStringObjectMatch; // object is TFslStringList of identity
+    FExpansions : TFslMap<TCachedValueSet>;
+    FDependencies : TFslMap<TCachedIds>; // object is TFslStringList of identity
     FClosures : TFslMap<TClosureManager>;
     FWebBase : String;
     FCaching : boolean;
+    FCacheDwellTime : TDateTime;
 
-    procedure AddDependency(name, value : String);
+    procedure AddDependency(name, value : String; dt : TDateTime);
 //    function getCodeDefinition(c : TFhirCodeSystemConceptW; code : string) : TFhirCodeSystemConceptW; overload;
 //    function getCodeDefinition(vs : TFhirCodeSystemW; code : string) : TFhirCodeSystemConceptW; overload;
     function makeAnyValueSet: TFhirValueSetW;
@@ -128,15 +161,54 @@ Type
     procedure Unload; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure sweep;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    procedure recordStats(var rec : TStatusRecord); override;
+    property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
 
 implementation
 
 uses
   fsl_logging;
+
+{ TCachedItem }
+
+constructor TCachedItem.Create(expires: TDateTime);
+begin
+  inherited Create;
+  FExpires := expires;
+end;
+
+{ TCachedIds }
+
+constructor TCachedIds.Create(expires: TDateTime; ids: TFslStringList);
+begin
+  inherited create(expires);
+  FIds := ids;
+end;
+
+destructor TCachedIds.Destroy;
+begin
+  FIds.free;
+  inherited Destroy;
+end;
+
+{ TCachedValueSet }
+
+constructor TCachedValueSet.Create(expires: TDateTime; vs: TFhirValueSetW);
+begin
+  inherited create(expires);
+  FValueSet := vs;
+end;
+
+destructor TCachedValueSet.Destroy;
+begin
+  FValueSet.free;
+  inherited Destroy;
+end;
 
 
 { TTerminologyServer }
@@ -145,10 +217,11 @@ constructor TTerminologyServer.Create(db : TFDBManager; factory : TFHIRFactory; 
 begin
   inherited;
   FCaching := true;
-  FExpansions := TFslStringObjectMatch.create;
-  FExpansions.PreventDuplicates;
-  FDependencies := TFslStringObjectMatch.create;
-  FDependencies.PreventDuplicates;
+  FCacheDwellTime := DEFAULT_DWELL_TIME;
+  FExpansions := TFslMap<TCachedValueSet>.create;
+  FExpansions.defaultValue := nil;
+  FDependencies := TFslMap<TCachedIds>.create;
+  FDependencies.defaultValue := nil;
   FClosures := TFslMap<TClosureManager>.create('tx.closure');
   if (DB <> nil) then
     LoadClosures;
@@ -157,6 +230,18 @@ end;
 procedure TTerminologyServer.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
   inherited;
+end;
+
+procedure TTerminologyServer.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  FLock.Lock;
+  try
+    rec.ServerCacheCount := rec.ServerCacheCount + FExpansions.Count + FDependencies.Count;
+    rec.ServerCacheSize := rec.ServerCacheSize + FExpansions.sizeInBytes(rec.magic) + FDependencies.sizeInBytes(rec.magic);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 destructor TTerminologyServer.Destroy;
@@ -246,17 +331,17 @@ begin
   result := TTerminologyServer(inherited Link);
 end;
 
-procedure TTerminologyServer.AddDependency(name, value : String);
+procedure TTerminologyServer.AddDependency(name, value : String; dt : TDateTime);
 var
   ts : TFslStringList;
 begin
   // must be in lock
-  if FDependencies.ExistsByKey(name) then
-    ts := FDependencies.GetValueByKey(name) as TFslStringList
+  if FDependencies.containsKey(name) then
+    ts := FDependencies[name].Ids
   else
   begin
     ts := TFslStringList.Create;
-    FDependencies.Add(name, ts);
+    FDependencies.AddOrSetValue(name, TCachedIds.create(dt, ts.link));
   end;
   if not ts.ExistsByValue(value) then
     ts.Add(value);
@@ -266,19 +351,27 @@ procedure TTerminologyServer.invalidateVS(id: String);
 var
   ts : TFslStringList;
   i : integer;
+  s : String;
 begin
   // must be in lock
-  if FDependencies.ExistsByKey(id) then
+  if FDependencies.containsKey(id) then
   begin
-    ts := FDependencies.GetValueByKey(id) as TFslStringList;
+    ts := FDependencies[id].Ids;
     for i := 0 to ts.Count - 1 do
-      if FExpansions.ExistsByKey(ts[i]) then
-        FExpansions.DeleteByKey(ts[i]);
-    FDependencies.DeleteByKey(id);
+      if FExpansions.containsKey(ts[i]) then
+        FExpansions.Remove(ts[i]);
+    FDependencies.remove(id);
   end;
-  for i := FExpansions.Count - 1 downto 0 do
-   if FExpansions.KeyByIndex[i].StartsWith(id+#1) then
-     FExpansions.DeleteByIndex(i);
+  ts := TFslStringList.create;
+  try
+    for s in FExpansions.Keys do
+      if s.startsWith(id+#1) then
+        ts.add(s);
+    for i := 0 to ts.count - 1 do
+     FExpansions.remove(ts[i]);
+  finally
+    ts.Free;
+  end;
 end;
 
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
@@ -334,6 +427,7 @@ var
   s, d, key: String;
   p : TArray<String>;
   exp : TFHIRValueSetExpander;
+  dt : TDateTime;
 begin
   result := nil;
   if (dependencies.Count > 0) and FCaching then
@@ -341,9 +435,9 @@ begin
     key := cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)+#1+inttostr(offset)+#1+hashTx(txResources);
     FLock.Lock('expandVS.1');
     try
-      if FExpansions.ExistsByKey(key) then
+      if FExpansions.containsKey(key) then
       begin
-        result := (FExpansions.matches[key] as TFhirValueSetW).link;
+        result := FExpansions[key].valueSet.link;
         p := result.Tags['cache'].Split([#1]);
         for s in p do
           if (s <> '') then
@@ -358,20 +452,21 @@ begin
     exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
-      if (dependencies.Count > 0) and FCaching then
+      if (dependencies.Count > 0) and FCaching and (vs.TagInt = 0) then
       begin
         if FCaching then
         begin
           FLock.Lock('expandVS.2');
           try
-            if not FExpansions.ExistsByKey(key) then
+            dt := now + FCacheDwellTime;
+            if not FExpansions.ContainsKey(key) then
             begin
-              FExpansions.Add(key, result.Link);
+              FExpansions.AddOrSetValue(key, TCachedValueSet.create(dt, result.Link));
               // in addition, we trace the dependencies so we can expire the cache
               d := '';
               for s in dependencies do
               begin
-                AddDependency(s, cacheId);
+                AddDependency(s, cacheId, dt);
                 d := d + s+#1;
               end;
               result.Tags['cache'] := d;
@@ -683,6 +778,36 @@ begin
     FDependencies.Clear;
   finally
     FLock.UnLock;
+  end;
+end;
+
+procedure TTerminologyServer.sweep;
+var
+  ts : TStringList;
+  s : String;
+  dt : TDateTime;
+begin
+  ts := TStringList.create;
+  try
+    Flock.Lock('sweep');
+    try
+      dt := now;
+      for s in FExpansions.Keys do
+        if FExpansions[s].expires < dt then
+          ts.add(s);
+      for s in ts do
+        FExpansions.remove(s);
+      ts.clear;
+      for s in FDependencies.Keys do
+        if FDependencies[s].expires < dt then
+          ts.add(s);
+      for s in ts do
+        FDependencies.remove(s);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    ts.free;
   end;
 end;
 

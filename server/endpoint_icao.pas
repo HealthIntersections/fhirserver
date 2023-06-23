@@ -42,7 +42,7 @@ uses
   fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n,
   fhir_objects, fhir_icao, fsl_web_stream,
   fhir4_factory,
-  utilities, server_config, time_tracker, storage,
+  utilities, server_config, time_tracker, storage, server_stats,
   web_base, endpoint, healthcard_generator;
 
 type
@@ -74,6 +74,8 @@ type
     function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
+  { TICAOWebEndPoint }
+
   TICAOWebEndPoint = class (TFHIRServerEndPoint)
   private
     FICAOServer : TICAOWebServer;
@@ -87,6 +89,7 @@ type
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
     function cacheSize(magic : integer) : UInt64; override;
+    procedure recordStats(var rec : TStatusRecord); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
@@ -115,6 +118,11 @@ end;
 function TICAOWebEndPoint.cacheSize(magic : integer): UInt64;
 begin
   result := inherited cacheSize(magic);
+end;
+
+procedure TICAOWebEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
 end;
 
 procedure TICAOWebEndPoint.getCacheInfo(ci: TCacheInformation);

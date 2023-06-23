@@ -42,7 +42,7 @@ uses
   fdb_manager,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server, time_tracker,
+  tx_manager, telnet_server, time_tracker, server_stats,
   web_base, endpoint;
 
 type
@@ -68,6 +68,8 @@ type
     function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
+  { TFolderWebEndPoint }
+
   TFolderWebEndPoint = class (TFHIRServerEndPoint)
   private
     FFolderServer : TFolderWebServer;
@@ -78,7 +80,8 @@ type
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
     function cacheSize(magic : integer) : UInt64; override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override; 
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 implementation
@@ -106,6 +109,11 @@ end;
 procedure TFolderWebEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
+end;
+
+procedure TFolderWebEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
 end;
 
 function TFolderWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;

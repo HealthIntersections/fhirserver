@@ -1,7 +1,7 @@
 Unit fsl_utilities;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -11315,7 +11315,7 @@ end;
 function getIanaNameForWindowsTimezone(zone : String; country : String) : String;
 begin
   // source : https://github.com/unicode-org/cldr/blob/master/common/supplemental/windowsZones.xml
-  // Copyright © 1991-2013 Unicode, Inc.
+  // Copyright ï¿½ 1991-2013 Unicode, Inc.
   // version 2020a
   if country = '' then
     country := '001'; // default;

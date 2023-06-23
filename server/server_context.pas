@@ -38,7 +38,7 @@ uses
   fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager, fhir_uris,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
-  subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine,
+  subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine, server_constants,
   client_cache_manager;
 
 Const
@@ -113,6 +113,7 @@ Type
     FOnGetNamedContext : TGetNamedContextEvent;
     FPcm: TFHIRPackageManager;
 
+    procedure updateSettings;
     procedure SetI18nSupport(AValue: TI18nSupport);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -171,6 +172,7 @@ Type
 
     function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
+    procedure sweepCache;
     procedure SetCacheStatus(status : boolean);
     procedure getCacheInfo(ci: TCacheInformation);
     procedure UnLoad;
@@ -378,6 +380,13 @@ begin
   FClientCacheManager.clearCache;
 end;
 
+procedure TFHIRServerContext.sweepCache;
+begin
+  if FTerminologyServer <> nil then
+    FTerminologyServer.sweep;
+  FClientCacheManager.sweep;
+end;
+
 constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory; pcm : TFHIRPackageManager);
 var
   a: String;
@@ -485,6 +494,14 @@ begin
   result := TFHIRServerContext(inherited Link);
 end;
 
+procedure TFHIRServerContext.updateSettings;
+begin
+  if (FGlobals <> nil) and (FClientCacheManager <> nil) then
+    FClientCacheManager.cacheDwellTime := FGlobals.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+  if (FGlobals <> nil) and (FTerminologyServer <> nil) then
+    FTerminologyServer.cacheDwellTime := FGlobals.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+end;
+
 procedure TFHIRServerContext.seeMap(map: TFHIRStructureMapW);
 begin
   FLock.Lock;
@@ -547,6 +564,7 @@ procedure TFHIRServerContext.SetClientCacheManager(const Value: TClientCacheMana
 begin
   FClientCacheManager.Free;
   FClientCacheManager := Value;
+  updateSettings;
 end;
 
 procedure TFHIRServerContext.SetConsentEngine(const Value: TFHIRConsentEngine);
@@ -559,6 +577,7 @@ procedure TFHIRServerContext.SetGlobals(const Value: TFHIRServerSettings);
 begin
   FGlobals.Free;
   FGlobals := Value;
+  updateSettings;
 end;
 
 procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionManager);
@@ -572,6 +591,7 @@ begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
   ServerFactory.setTerminologyServer(FValidatorContext, value.link);
+  updateSettings;
 end;
 
 function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMapW>;

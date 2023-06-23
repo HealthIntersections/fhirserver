@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities, fsl_fetcher, fsl_logging, fsl_json,
   fdb_manager, fdb_sqlite3,
   fhir_objects,
-  server_config, database_installer, server_factory,
+  server_config, database_installer, server_factory, server_constants,
   endpoint_txsvr;
 
 function loadRemoteConfig(src : String; local : TIniFile) : String;
@@ -235,6 +235,8 @@ begin
     cfg.admin['log-folder'].value := def(local.ReadString('web', 'logFolder', ''), cfg.admin['log-folder'].value, '');
     cfg.admin['email'].value := def(local.ReadString('config', 'email', ''), cfg.admin['email'].value, 'noone@fhir.org');
     cfg.admin['ownername'].value := def(local.ReadString('config', 'user', ''), cfg.admin['ownername'].value, 'Local User');
+    cfg.service['max-memory'].value := def(local.ReadString('config', 'max-memory', ''), cfg.service['max-memory'].value, '0');
+    cfg.service['cache-time'].value := def(local.ReadString('config', 'cache-time', ''), cfg.service['cache-time'].value, inttostr(DEFAULT_DWELL_TIME_MIN));
 
     cfg.web['http-max-conn'].value := '50';
     cfg.web['http-cache-time'].value := '1000';

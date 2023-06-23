@@ -222,6 +222,8 @@ Type
     function logId : string; override;
   end;
 
+  { TBridgeEndPoint }
+
   TBridgeEndPoint = class (TStorageEndPoint)
   private
   public
@@ -238,6 +240,7 @@ Type
     procedure updateAdminPassword; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
   end;
@@ -254,6 +257,11 @@ end;
 procedure TBridgeEndPoint.clearCache;
 begin
   inherited;
+end;
+
+procedure TBridgeEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
 end;
 
 constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
   fsl_base, fsl_utilities, fsl_threads, fsl_logging,
-  endpoint;
+  endpoint, server_stats;
 
 type
   TFHIRTelnetServer = class;
@@ -67,16 +67,20 @@ type
     Procedure Execute; override;
   end;
 
+  { TFHIRTelnetServer }
+
   TFHIRTelnetServer = class (TLogListener)
   Private
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
     FEndPoints : TFslList<TFHIRServerEndPoint>;
+    FStats : TStatusRecords;
     FPassword : String;
     FLog : TStringList;
     FWelcomeMsg : String;
     FThread : TFHIRTelnetServerThread;
+    procedure SetStats(AValue: TStatusRecords);
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
     procedure internalThread;
@@ -87,6 +91,7 @@ type
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
+    property stats : TStatusRecords read FStats write SetStats;
 
     procedure addEndPoint(ep : TFHIRServerEndPoint);
     procedure removeEndPoint(ep : TFHIRServerEndPoint);
@@ -96,11 +101,12 @@ implementation
 
 { TFHIRTelnetServer }
 
-constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg : String);
+constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg: String);
 begin
   inherited Create;
   FWelcomeMsg := WelcomeMsg;
   FLock := TFslLock.Create('TelnetServer');
+  FStats := stats;
   FClients := TFslList<TTelnetThreadHelper>.create;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 
@@ -123,6 +129,7 @@ end;
 destructor TFHIRTelnetServer.Destroy;
 begin
   try
+    FStats.Free;
     FThread.StopAndWait(100);
     FThread.Free;
     FServer.Active := false;
@@ -137,7 +144,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRTelnetServer.Log(const msg: String);
+procedure TFHIRTelnetServer.log(const msg: String);
 begin
   FLock.Lock;
   try
@@ -209,6 +216,12 @@ begin
     AAuthenticated := true
   else
     AAuthenticated := true;
+end;
+
+procedure TFHIRTelnetServer.SetStats(AValue: TStatusRecords);
+begin
+  FStats.free;
+  FStats := AValue;
 end;
 
 procedure TFHIRTelnetServer.telnetExecute(AThread: TIdContext);
@@ -320,6 +333,11 @@ begin
   begin
     Logging.log('Console requested Object Class Delta');
     send('$@classes: '+TFslObject.getReport('|', true))
+  end
+  else if (s = '@stats') then
+  begin
+    Logging.log('Console requested stats');
+    send('$@stats: '+FServer.FStats.asCSVLine);
   end
   else if (s = '@caches') then
   begin
