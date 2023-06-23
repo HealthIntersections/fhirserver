@@ -36,15 +36,14 @@ uses
   {$IFDEF WINDOWS}Windows, {$ENDIF}
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls,
   StdCtrls, Registry, Types, ExtCtrls, Menus, ActnList, StdActns, Buttons,
-  DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, IniFiles, Math, IdTelnet,
-  IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_logging,
-  fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc, fsl_npm_cache,
-  fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
-  fhir_colour_utils,
-  fui_lcl_utilities,
-  ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
-  tx_unii, fui_lcl_managers, fui_lcl_cache, fcomp_graph, server_config,
-  server_constants, console_managers, frm_about, test_form;
+  DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, CheckLst, IniFiles, Math,
+  IdTelnet, IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities,
+  fsl_logging, fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
+  fsl_npm_cache, fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
+  fhir_colour_utils, fui_lcl_utilities, ftx_sct_services, ftx_sct_importer,
+  ftx_loinc_importer, tx_ndc, tx_rxnorm, tx_unii, fui_lcl_managers,
+  fui_lcl_cache, fcomp_graph, server_config, server_constants, console_managers,
+  frm_about, test_form;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -334,6 +333,7 @@ type
     lblLoincAmount: TLabel;
     lblSCTAction: TLabel;
     lblSCTAmount: TLabel;
+    ListBox1: TListBox;
     lvPackages: TListView;
     lvID: TListView;
     lvTx: TListView;
@@ -357,7 +357,6 @@ type
     MenuItem37: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
-    mStats: TMemo;
     N4: TMenuItem;
     N8: TMenuItem;
     dlgOpen: TOpenDialog;

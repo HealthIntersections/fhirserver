@@ -32,7 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 uses
   {$IFNDEF WINDOWS}
-  cmem, cthreads,
+  // cmem,
+  cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
