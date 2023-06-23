@@ -2765,7 +2765,7 @@ begin
       mConsole.lines.delete(0);
     end;
     mConsole.SelStart := mConsole.Lines.Text.Length;
-    mStats.Text := rs;
+    //mStats.Text := rs;
   finally
     ts.free;
     tsth.free;
