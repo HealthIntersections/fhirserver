@@ -39,7 +39,7 @@ Uses
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager, kernel_thread,
-  web_event, web_base, web_cache, time_tracker;
+  web_event, web_base, web_cache, time_tracker, server_stats;
 
 type
   TFHIRWebServerClientInfo = class(TFslObject)
@@ -145,8 +145,10 @@ type
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual;
     function cacheSize(magic : integer) : UInt64; virtual;
     procedure clearCache; virtual;
+    procedure SweepCaches; virtual;
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
+    procedure recordStats(var rec : TStatusRecord); virtual;
 
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
@@ -376,6 +378,11 @@ begin
   end;
 end;
 
+procedure TFHIRServerEndPoint.SweepCaches;
+begin
+  // nothing
+end;
+
 constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited create;
@@ -409,12 +416,18 @@ begin
   end;
 end;
 
+procedure TFHIRServerEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  Common.cache.recordStats(rec);
+end;
+
 procedure TFHIRServerEndPoint.InstallDatabase;
 begin
  // nothing
 end;
 
-procedure TFHIRServerEndPoint.internalThread;
+procedure TFHIRServerEndPoint.internalThread(
+  callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   // nothing
 end;

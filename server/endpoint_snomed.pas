@@ -40,7 +40,7 @@ uses
   ftx_service, ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server, time_tracker,
+  tx_manager, telnet_server, time_tracker, server_stats,
   web_base, endpoint;
 
 type
@@ -62,6 +62,8 @@ type
     function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
   end;
 
+  { TSnomedWebEndPoint }
+
   TSnomedWebEndPoint = class (TFHIRServerEndPoint)
   private
     FSnomedServer : TSnomedWebServer;
@@ -78,9 +80,11 @@ type
     procedure Load; override;
     Procedure Unload; override;
     function cacheSize(magic : integer) : UInt64; override;
-    procedure clearCache; override;
+    procedure clearCache; override; 
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;  
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 
@@ -98,6 +102,11 @@ begin
   inherited;
 end;
 
+procedure TSnomedWebEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
+end;
+
 constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
   inherited create(config, settings, nil, common, nil, i18n);
@@ -111,6 +120,12 @@ end;
 procedure TSnomedWebEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
+end;
+
+procedure TSnomedWebEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  // nothing
 end;
 
 function TSnomedWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;

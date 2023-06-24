@@ -43,7 +43,7 @@ uses
   ftx_loinc_services, ftx_loinc_publisher,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server, time_tracker,
+  tx_manager, telnet_server, time_tracker, server_stats,
   web_base, endpoint;
 
 type
@@ -63,6 +63,8 @@ type
     function logId : string; override;
   end;
 
+  { TLoincWebEndPoint }
+
   TLoincWebEndPoint = class (TFHIRServerEndPoint)
   private
     FLoincServer : TLoincWebServer;
@@ -80,8 +82,10 @@ type
     Procedure Unload; override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;  
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 implementation
@@ -98,6 +102,11 @@ begin
   inherited;
 end;
 
+procedure TLoincWebEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
+end;
+
 constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
   inherited create(config, settings, db, common, nil, i18n);
@@ -111,6 +120,12 @@ end;
 procedure TLoincWebEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
+end;
+
+procedure TLoincWebEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  // nothing
 end;
 
 function TLoincWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;

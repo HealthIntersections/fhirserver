@@ -35,13 +35,15 @@ uses
   Windows,
   {$ENDIF}
   {$IFDEF LINUX}
-  cmem, cthreads,
+  // cmem,
+  cthreads,
   {$ENDIF}
   {$IFDEF OSX}
-  cmem, cthreads, forms, Interfaces,
+  // cmem,
+  cthreads, forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
-  kernel, server_testing;
+  kernel, server_testing, server_stats, remote_config, telnet_server;
 
 {$R *.res}
 

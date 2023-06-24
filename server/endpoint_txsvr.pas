@@ -52,7 +52,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, time_tracker,
-  telnet_server, kernel_thread,
+  telnet_server, kernel_thread, server_stats,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -237,6 +237,8 @@ type
   end;
 
 
+  { TTerminologyServerEndPoint }
+
   TTerminologyServerEndPoint = class (TStorageEndPoint)
   private
     FStore : TTerminologyFhirServerStorage;
@@ -258,8 +260,10 @@ type
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
-    procedure getCacheInfo(ci: TCacheInformation); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;    
+    procedure recordStats(var rec : TStatusRecord); override;
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -1481,6 +1485,12 @@ begin
   ServerContext.ClientCacheManager.clearCache;
 end;
 
+procedure TTerminologyServerEndPoint.SweepCaches;
+begin
+  inherited SweepCaches;
+  ServerContext.ClientCacheManager.sweep;
+end;
+
 constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
   inherited Create(config, settings, db, common, pcm, i18n);
@@ -1497,6 +1507,12 @@ procedure TTerminologyServerEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
   inherited;
   ci.add('Terminology Data', FStore.FData.sizeInBytes(ci.magic));
+end;
+
+procedure TTerminologyServerEndPoint.recordStats(var rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  FServerContext.TerminologyServer.recordStats(rec);
 end;
 
 function TTerminologyServerEndPoint.summary: String;

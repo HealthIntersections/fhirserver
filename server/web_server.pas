@@ -92,7 +92,7 @@ Uses
   fhir_graphql, fhir_ndjson,
   {$IFNDEF NO_CONVERSION} fxver_convertors,{$ENDIF}
   tx_server, tx_manager, ftx_sct_expressions, ftx_loinc_services, ftx_loinc_publisher, tx_webserver, ftx_service,
-  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_config,
+  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_config, server_stats,
   scim_server,
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
@@ -168,6 +168,7 @@ Type
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
     FSecureCount, FPlainCount : Integer;
+    FStats : TStatusRecords;
 
     function isLogging : boolean;
     procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
@@ -196,6 +197,7 @@ Type
     Procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     function  ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
+    function  ReturnStatistics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure, asHtml: boolean) : String;
 
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -208,12 +210,14 @@ Type
     destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerConfigFile);
     property settings : TFHIRServerSettings read FSettings;
+    property stats : TStatusRecords read FStats;
 
     procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean); // private (hint busting)
 
     Procedure Start; // (active, threads: boolean);
     Procedure Close;
     Procedure Stop;
+    procedure recordStats(var rec : TStatusRecord);
 
     Procedure clearCache;
     procedure SetCacheStatus(status : boolean);
@@ -263,10 +267,12 @@ Begin
 
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
+  FStats := TStatusRecords.create;
 End;
 
 destructor TFhirWebServer.Destroy;
 Begin
+  FStats.Free;
   FUsageServer.Free;
   FEndPoints.Free;
   FSettings.Free;
@@ -480,6 +486,13 @@ Begin
   FActive := false;
   StopServer;
 End;
+
+procedure TFhirWebServer.recordStats(var rec : TStatusRecord);
+begin
+  rec.Requests := Common.Stats.TotalCount;
+  // todo: update....
+  FStats.addToList(rec);
+end;
 
 procedure TFhirWebServer.StartServer;
 Begin
@@ -775,6 +788,16 @@ begin
               epn := 'WS';
               summ := 'diagnostics';
               summ := ReturnDiagnostics(AContext, request, response, false, false)
+            end
+            else if request.Document = '/statistics' then
+            begin
+              epn := 'WS';
+              summ := ReturnStatistics(AContext, request, response, false, false, true)
+            end
+            else if request.Document = '/stats' then
+            begin
+              epn := 'WS';
+              summ := ReturnStatistics(AContext, request, response, false, false, false)
             end
             else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
             begin
@@ -1168,6 +1191,23 @@ begin
     vars.Free;
   end;
   result := 'Diagnostics';
+end;
+
+function TFhirWebServer.ReturnStatistics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure, ashtml: boolean): String;
+begin
+  response.Expires := Now + 1;
+  if (asHtml) then
+  begin
+    response.ContentStream := TStringStream.Create(FStats.asHtml);
+    response.contentType := 'text/html';
+  end
+  else
+  begin
+    response.ContentStream := TStringStream.Create(FStats.asCSV);
+    response.contentType := 'text/csv';
+  end;
+  response.FreeContentStream := true;
+  result := 'Statistics'
 end;
 
 procedure TFhirWebServer.ReturnFileSource(sender: TObject; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String);
