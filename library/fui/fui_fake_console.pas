@@ -43,6 +43,9 @@ uses
   fsl_utilities, fsl_logging, fsl_threads,
   fui_fake_console_settings;
 
+const
+  MAX_MEMO_LINE_COUNT = 200;
+
 type
   TFakeConsoleForm = class;
 
@@ -54,7 +57,6 @@ type
     FLines : TStringList;
     FLock : TFslLock;
     FFinished : boolean;
-    FWorkingLine : integer;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -116,8 +118,9 @@ type
     FAutoClose : boolean;
     FOp: TWorkProcedure;
     FIni : TIniFile;
-
-
+    FCache : TStringList;
+    FWorkingLine : integer;
+    FMaxLines : integer;
     procedure start;
   public
     property Listener : TFakeConsoleListener read FListener;
@@ -179,7 +182,12 @@ end;
 
 procedure TFakeConsoleListener.log(const s: String);
 begin
-  FLines.add(s);
+  FLock.Lock;
+  try
+    FLines.add(s);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TFakeConsoleListener.closing;
@@ -194,19 +202,34 @@ end;
 
 procedure TFakeConsoleListener.logStart(s: String);
 begin
-  FLine := s;
-  FFinished := false;
+  FLock.Lock;
+  try
+    FLine := s;
+    FFinished := false;
+  finally
+     FLock.Unlock;
+   end;
 end;
 
 procedure TFakeConsoleListener.logContinue(s: String);
 begin
-  FLine := FLine + s;
+  FLock.Lock;
+  try
+    FLine := FLine + s;
+  finally
+     FLock.Unlock;
+   end;
 end;
 
 procedure TFakeConsoleListener.logFinish(s: String);
 begin
-  FLine := FLine + s;
-  FFinished := true;
+  FLock.Lock;
+  try
+    FLine := FLine + s;
+    FFinished := true;
+  finally
+     FLock.Unlock;
+   end;
 end;
 
 { TFakeConsoleForm }
@@ -221,6 +244,8 @@ begin
   FIni := TIniFile.create(FilePath([GetAppConfigDir(false), 'fhir_fake_console.ini']));
   FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
   FForwards := FIni.ReadBool('settings', 'forwards', true);
+  FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
+  FCache := TStringList.create;
 end;
 
 procedure TFakeConsoleForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -232,6 +257,7 @@ procedure TFakeConsoleForm.FormDestroy(Sender: TObject);
 begin
   Logging.removeListener(FListener);
   FListener.free;
+  FCache.Free;
 end;
 
 procedure TFakeConsoleForm.FormShow(Sender: TObject);
@@ -255,12 +281,15 @@ begin
   try
     FakeConsoleSettingsForm.chkForwards.checked := FIni.ReadBool('settings', 'forwards', false);
     FakeConsoleSettingsForm.chkAutoClose.checked := FIni.ReadBool('settings', 'autoclose', false);
+    FakeConsoleSettingsForm.eLines.text := inttostr(FMaxLines);
     if FakeConsoleSettingsForm.showModal = mrOK then
     begin
       FIni.WriteBool('settings', 'forwards', FakeConsoleSettingsForm.chkForwards.checked);
       FIni.WriteBool('settings', 'autoclose', FakeConsoleSettingsForm.chkAutoClose.checked);
+      FIni.WriteInteger('settings', 'maxlines', StrToIntDef(FakeConsoleSettingsForm.eLines.text, MAX_MEMO_LINE_COUNT));
       FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
       FForwards := FIni.ReadBool('settings', 'forwards', true);
+      FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
     end;
   finally
     FakeConsoleSettingsForm.Free;
@@ -276,60 +305,68 @@ end;
 
 procedure TFakeConsoleForm.Timer1Timer(Sender: TObject);
 var
-  s : String;
-  b : boolean;
+  l, s : String;
+  f, b : boolean;
 begin
   if not FStarted then
     start;
   FListener.FLock.Lock;
   try
-    if FForwards then
-    begin
-      if (FListener.FLine <> '') then
-      begin
-        if FListener.FWorkingLine < 0 then
-        begin
-          FListener.FWorkingLine := memo1.lines.count;
-          memo1.lines.add('');
-        end;
-        memo1.lines[FListener.FWorkingLine] := FListener.FLine;
-      end;
-      b := false;
-      for s in FListener.FLines do
-      begin
-        memo1.lines.append(s);
-        b := true;
-      end;
-      if (b) then
-        memo1.selStart := length(memo1.text) - length(memo1.lines[memo1.lines.count-1]);
-    end
-    else
-    begin
-      if (FListener.FLine <> '') then
-      begin
-        if FListener.FWorkingLine < 0 then
-        begin
-          FListener.FWorkingLine := 0;
-          memo1.lines.insert(0, s)
-        end;
-        memo1.lines[FListener.FWorkingLine] := FListener.FLine;
-      end;
-      for s in FListener.FLines do
-      begin
-        memo1.lines.insert(0, s);
-        if FListener.FWorkingLine >= 0 then
-          inc(FListener.FWorkingLine);
-      end;
-    end;
-    if FListener.FFinished then
-    begin
-      FListener.FLine := '';
-      FListener.FWorkingLine := -1;
-    end;
+    l := FListener.FLine;
+    FCache.assign(FListener.FLines);
     FListener.FLines.clear;
+    f := FListener.FFinished;
+    if f then
+      FListener.FLine := '';
   finally
     FListener.FLock.UnLock;
   end;
+  if FForwards then
+  begin
+    while memo1.lines.count > FMaxLines do
+      memo1.lines.delete(0);
+    if (l <> '') then
+    begin
+      if FWorkingLine < 0 then
+      begin
+        FWorkingLine := memo1.lines.count;
+        memo1.lines.add('');
+      end;
+      memo1.lines[FWorkingLine] := l;
+    end;
+    b := false;
+    for s in FCache do
+    begin
+      memo1.lines.append(s);
+      b := true;
+    end;
+    if (b) then
+      memo1.selStart := length(memo1.text) - length(memo1.lines[memo1.lines.count-1]);
+  end
+  else
+  begin
+    while memo1.lines.count > FMaxLines do
+      memo1.lines.delete(memo1.lines.count - 1);
+
+    if (l <> '') then
+    begin
+      if FWorkingLine < 0 then
+      begin
+        FWorkingLine := 0;
+        memo1.lines.insert(0, s)
+      end;
+      memo1.lines[FWorkingLine] := l;
+    end;
+    for s in FCache do
+    begin
+      memo1.lines.insert(0, s);
+      if FWorkingLine >= 0 then
+        inc(FWorkingLine);
+    end;
+  end;
+  if f then
+    FWorkingLine := -1;
+
   mnuStop.enabled := not GFinished;
   if GFinished and FAutoClose then
     Close;

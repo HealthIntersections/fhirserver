@@ -158,7 +158,7 @@ begin
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
     if not FileExists(FFIlename) then
-      raise EDBException.create('SQLite Database '+FFIlename+' not found');
+      raise EDBException.create('SQLite Database '+FFilename+' not found');
 end;
 
 function TFDBSQLiteManager.sizeInBytesV(magic : integer) : cardinal;

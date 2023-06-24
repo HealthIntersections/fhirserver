@@ -12,7 +12,6 @@ object FakeConsoleForm: TFakeConsoleForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.5.0'
   object Memo1: TMemo
     Left = 0
     Height = 409
@@ -72,6 +71,7 @@ object FakeConsoleForm: TFakeConsoleForm
       object mnuStop: TMenuItem
         Caption = '&Stop'
         ShortCut = 16497
+        ShortCutKey2 = 16451
         OnClick = mnuStopClick
       end
     end
