@@ -38,7 +38,7 @@ type
   // is thread specific, and out of the box, there's no way to get the status of the
   // entire heap. This class intercepts the calls and tracks the entire memory usage.
   //
-  // there's a small overhead for this (~0.3%?)
+  // there's a small performance overhead for this (~0.3%?)
   //
   // It should be installed sometime during the start up process before any additional
   // threads are started. There's no need to uninstall it
@@ -58,50 +58,47 @@ implementation
 
 var
   GRealMM : TMemoryManager;
-  GFacadeMM : TMemoryManager;
   GTotalMemory : UInt64;
+
+Function MemSize(p : pointer) : ptruint;
+begin
+  if p = nil then
+    result := 0
+  else
+    result := GRealMM.MemSize(p);
+end;
 
 Function RGetMem(Size:ptruint):Pointer;
 begin
   result := GRealMM.GetMem(size);
-  if (result <> nil) then
-    interlockedExchangeAdd64(GTotalMemory, GRealMM.MemSize(result));
+  interlockedExchangeAdd64(GTotalMemory, MemSize(result));
 end;
 
 Function RFreemem(p:pointer):ptruint;
 begin
-  if (p <> nil) then
-    interlockedExchangeAdd64(GTotalMemory, -GRealMM.MemSize(p));
+  interlockedExchangeAdd64(GTotalMemory, -MemSize(p));
   result := GRealMM.FreeMem(p);
 end;
 
 Function RFreememSize(p:pointer;Size:ptruint):ptruint;
 begin
-  if (p <> nil) then
-    interlockedExchangeAdd64(GTotalMemory, -GRealMM.MemSize(p));
+  interlockedExchangeAdd64(GTotalMemory, -MemSize(p));
   result := GRealMM.FreememSize(p, size);
 end;
 
 Function RAllocMem(Size:ptruint):Pointer;
 begin
   result := GRealMM.AllocMem(Size);
-  if (result <> nil) then
-    interlockedExchangeAdd64(GTotalMemory, GRealMM.MemSize(result));
+  interlockedExchangeAdd64(GTotalMemory, MemSize(result));
 end;
 
 Function RReAllocMem(var p:pointer;Size:ptruint):Pointer;
 var
-  s : UInt64;
+  s : ptruint;
 begin
-  if (p <> nil) then
-    s := GRealMM.MemSize(p)
-  else
-    s := 0;
+  s := MemSize(p);
   result := GRealMM.ReAllocMem(p, size);
-  if (result <> nil) then
-    interlockedExchangeAdd64(GTotalMemory, GRealMM.MemSize(result)-s)
-  else
-    interlockedExchangeAdd64(GTotalMemory, -s)
+  interlockedExchangeAdd64(GTotalMemory, MemSize(result)-s);
 end;
 
 class function TFPCMemoryManagerTracker.totalMemory: UInt64;
@@ -110,22 +107,20 @@ begin
 end;
 
 class procedure TFPCMemoryManagerTracker.install;
+var
+  mm : TMemoryManager;
 begin
   GetMemoryManager(GRealMM);
-  GFacadeMM.NeedLock            := GRealMM.NeedLock;
-  GFacadeMM.Getmem              := RGetMem;
-  GFacadeMM.Freemem             := RFreemem;
-  GFacadeMM.FreememSize         := RFreememSize;
-  GFacadeMM.AllocMem            := RAllocMem;
-  GFacadeMM.ReAllocMem          := RReAllocMem;
-  GFacadeMM.MemSize             := GRealMM.MemSize;
-  GFacadeMM.InitThread          := GRealMM.InitThread;
-  GFacadeMM.DoneThread          := GRealMM.DoneThread;
-  GFacadeMM.RelocateHeap        := GRealMM.RelocateHeap;
-  GFacadeMM.GetHeapStatus       := GRealMM.GetHeapStatus;
-  GFacadeMM.GetFPCHeapStatus    := GRealMM.GetFPCHeapStatus;
+  mm := GRealMM;
+
+  mm.Getmem      := RGetMem;
+  mm.Freemem     := RFreemem;
+  mm.FreememSize := RFreememSize;
+  mm.AllocMem    := RAllocMem;
+  mm.ReAllocMem  := RReAllocMem;
+
   GTotalMemory := GetFPCHeapStatus.CurrHeapSize;
-  SetMemoryManager(GFacadeMM);
+  SetMemoryManager(mm);
 end;
 
 end.
