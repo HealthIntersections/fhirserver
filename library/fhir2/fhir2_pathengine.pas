@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
+  SysUtils, Classes, Math,  Generics.Collections, Character,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_regex,
   fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
   fhir2_pathnode, fhir2_types, fhir2_utilities, fhir2_context, fhir2_constants,
@@ -1088,7 +1088,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
   s, p : String;
-  reg : TRegEx;
+  reg : TRegularExpression;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -1098,12 +1098,16 @@ begin
     finally
       res.free;
     end;
-    reg := TRegEx.Create(p, [roCompiled]);
-    for item in focus do
-    begin
-      s := convertToString(item.value);
-      if (reg.isMatch(s)) then
-        result.Add(item.Link);
+    reg := TRegularExpression.Create(p, [roCompiled]);
+    try
+      for item in focus do
+      begin
+        s := convertToString(item.value);
+        if (reg.isMatch(s)) then
+          result.Add(item.Link);
+      end;
+    finally
+      reg.free;
     end;
     result.Link;
   finally

@@ -37,7 +37,7 @@ Interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Math, Generics.Collections, Character, {$IFDEF DELPHI} system.NetEncoding, RegularExpressions, {$ENDIF}
+  SysUtils, Classes, Math, Generics.Collections, Character, {$IFDEF DELPHI} system.NetEncoding, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_turtle, fsl_http,
   fhir_objects,  fhir_xhtml;
 

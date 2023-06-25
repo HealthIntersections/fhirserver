@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
+  SysUtils, Classes, Math,  Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_xml, fsl_json, fsl_regex,
   fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
@@ -2521,7 +2521,7 @@ function TFHIRPathEngine.funcMatches(context : TFHIRPathExecutionContext; focus:
 var
   res : TFHIRSelectionList;
   s, p : String;
-  reg : TRegEx;
+  reg : TRegularExpression;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -2536,9 +2536,13 @@ begin
             result.add(TFHIRBoolean.create(false))
           else
           begin
-            reg := TRegEx.Create('(?s)' + p, [roCompiled]);
-            s := convertToString(focus[0].value);
-            result.add(TFHIRBoolean.create(reg.isMatch(s)));
+            reg := TRegularExpression.Create('(?s)' + p, [roCompiled]);
+            try
+              s := convertToString(focus[0].value);
+              result.add(TFHIRBoolean.create(reg.isMatch(s)));
+            finally
+              reg.free;
+            end;
           end;
         end;
       finally
@@ -2764,7 +2768,7 @@ begin
           else
           begin
             n := f.replace(t, r);
-            result.add(TFHIRString.create(TRegEx.replace(n, t, r)));
+            result.add(TFHIRString.create(TRegularExpression.replace(n, t, r)));
           end
         end
         else
@@ -4435,7 +4439,7 @@ begin
     else if (focus[0].value is TFHIRDateTime) or (focus[0].value is TFHIRDate) then
       result.add(TFHIRBoolean.create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegEx.isMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.create(TRegularExpression.isMatch(convertToString(focus[0].value),
           '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?'
        )).noExtensions())
     else
@@ -4455,7 +4459,7 @@ begin
     else if (focus[0].value is TFHIRDateTime) or (focus[0].value is TFHIRDate) then
       result.add(TFHIRBoolean.create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegEx.isMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.create(TRegularExpression.isMatch(convertToString(focus[0].value),
           '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?'
        )).noExtensions())
     else
@@ -4475,7 +4479,7 @@ begin
     else if (focus[0].value is TFHIRTime) then
       result.add(TFHIRBoolean.create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegEx.IsMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.create(TRegularExpression.IsMatch(convertToString(focus[0].value),
           '(T)?([01][0-9]|2[0-3])(:[0-5][0-9](:([0-5][0-9]|60))?)?(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?')).noExtensions())
     else
       result.add(TFHIRBoolean.create(false).noExtensions());

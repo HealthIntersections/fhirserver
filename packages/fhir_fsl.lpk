@@ -140,6 +140,10 @@
         <Filename Value="..\library\fsl\fsl_fpc_memory.pas"/>
         <UnitName Value="fsl_fpc_memory"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_regex.pas"/>
+        <UnitName Value="fsl_regex"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

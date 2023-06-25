@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} RegExpr, {$ELSE} System.RegularExpressions{$ENDIF},
+  {$IFDEF FPC} RegExpr, {$ELSE} System.RegularExpressions, {$ENDIF}
   fsl_base;
 
 type
@@ -32,7 +32,7 @@ type
   private
     FPattern : String;
     {$IFDEF FPC}
-    FImpl : (Regexpr.TRegExpr)
+    FImpl : TRegExpr;
     {$ELSE}
     FImpl : TRegex;
     {$ENDIF}
@@ -44,59 +44,13 @@ type
     function IsMatch(const Input: string): Boolean; overload;
     function IsFullMatch(const Input: string): Boolean; overload;
     function replace(const input, repl: string): String; overload;
-  end;
+
+    class function isMatch(const input, pattern : string): Boolean;
+    class function replace(const input, pattern, repl : string): String;
+end;
 
 implementation
 
-(*
-constructor TRegExpression.Create(const Pattern: string; Options: TRegExOptions);
-begin
-  inherited Create(pattern);
-end;
-
-function TRegExpression.IsMatch(const Input: string): Boolean;
-begin
-  result := Exec(input);
-end;
-
-function TRegExpression.IsFullMatch(const Input: string): Boolean;
-begin
-
-end;
-
-class function TRegExpression.isMatch(const input, pattern : string): Boolean;
-var
-  this : TRegEx;
-begin
-  this := TRegEx.create(pattern);
-  try
-    result := this.isMatch(input);
-  finally
-    this.free;
-  end;
-end;
-
-class function TRegExpression.replace(const input, pattern, repl: string): String;
-var
-  this : TRegEx;
-begin
-  this := TRegEx.create(pattern);
-  try
-    result := this.replace(input, repl);
-  finally
-    this.free;
-  end;
-end;
-
-          {$IFNDEF FPC}
-{ TRegExpression }
-
-class function TRegExpression.isFullMatch(const Input, Pattern: string): Boolean;
-begin
-
-end;
-{$ENDIF}
-*)
 { TRegularExpression }
 
 constructor TRegularExpression.Create(const Pattern: string; Options: TRegExOptions);
@@ -104,7 +58,7 @@ begin
   inherited create;
   FPattern := pattern;
   {$IFDEF FPC}
-  FImpl := inherited Create(pattern, options);
+  FImpl := TRegExpr.Create(pattern);
   {$ELSE}
   FImpl := TRegex.Create(pattern, options);
   {$ENDIF}
@@ -115,7 +69,7 @@ begin
   inherited create;
   FPattern := pattern;
   {$IFDEF FPC}
-    FImpl : (Regexpr.TRegExpr)
+  FImpl := TRegExpr.Create(pattern);
   {$ELSE}
   FImpl := TRegex.Create(pattern);
   {$ENDIF}
@@ -124,7 +78,7 @@ end;
 destructor TRegularExpression.Destroy;
 begin
   {$IFDEF FPC}
-  FImpl : (Regexpr.TRegExpr)
+  FImpl.free;
   {$ENDIF}
   inherited;
 end;
@@ -143,7 +97,7 @@ end;
 function TRegularExpression.IsMatch(const Input: string): Boolean;
 begin
   {$IFDEF FPC}
-  FImpl : (Regexpr.TRegExpr)
+  result := FImpl.Exec(input);
   {$ELSE}
   result := FImpl.isMatch(Input);
   {$ENDIF}
@@ -152,10 +106,34 @@ end;
 function TRegularExpression.replace(const input, repl: string): String;
 begin
   {$IFDEF FPC}
-  FImpl : (Regexpr.TRegExpr)
+  result := FImpl.Replace(input, repl);
   {$ELSE}
   result := FImpl.Replace(input, repl);
   {$ENDIF}
+end;
+
+class function TRegularExpression.isMatch(const input, pattern : string): Boolean;
+var
+  this : TRegularExpression;
+begin
+  this := TRegularExpression.create(pattern);
+  try
+    result := this.isMatch(input);
+  finally
+    this.free;
+  end;
+end;
+
+class function TRegularExpression.replace(const input, pattern, repl: string): String;
+var
+  this : TRegularExpression;
+begin
+  this := TRegularExpression.create(pattern);
+  try
+    result := this.replace(input, repl);
+  finally
+    this.free;
+  end;
 end;
 
 end.

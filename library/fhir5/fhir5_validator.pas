@@ -35,8 +35,8 @@ interface
 
 
 Uses
-  SysUtils, Classes, Character, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc,
+  SysUtils, Classes, Character, 
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc, fsl_regex,
   fhir_objects,  fhir_xhtml, fhir_factory, fhir_common, fhir_pathengine,
   fhir5_pathnode, fhir5_context, fhir5_resources, fhir5_resources_base, fhir5_enums, fhir5_types, fhir5_pathengine, fhir5_elementmodel;
 
@@ -2554,7 +2554,7 @@ procedure TFHIRValidator5.checkPrimitive(ctxt: TFHIRValidatorContext; path,
   ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement;
   profile: TFhirStructureDefinition);
 var
-  regex: TRegEx;
+  regex: TRegularExpression;
   xhtml : TFhirXHtmlNode;
   ns : String;
 begin
@@ -2574,16 +2574,24 @@ begin
   if (ty = 'dateTime') then
   begin
     rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
-    regex := TRegEx.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
-      'if a date has a time, it must have a timezone');
+    regex := TRegularExpression.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
+    try
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
+        'if a date has a time, it must have a timezone');
+    finally
+      regex.free;
+    end;
   end;
   if (ty = 'instant') then
   begin
-    regex := TRegEx.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    regex := TRegularExpression.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
+    try
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    finally
+      regex.free;
+    end;
   end;
 
   if (ty = 'code') then

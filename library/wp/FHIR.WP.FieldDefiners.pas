@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Vcl.Graphics, RegularExpressions,
+  SysUtils, Vcl.Graphics, 
   fsl_utilities, fsl_collections,
   wp_definers, FHIR.WP.Control, wp_types, wp_document, FHIR.WP.Icons, FHIR.WP.Dialogs;
 

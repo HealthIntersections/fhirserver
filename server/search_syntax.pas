@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_utilities, fsl_base, fsl_fpc,
+  SysUtils, 
+  fsl_utilities, fsl_base, fsl_regex,
   fhir_objects;
 
 Type
@@ -522,10 +522,14 @@ end;
 
 function TFSFilterParser.IsDate(s: String): boolean;
 var
-  reg :  TRegex;
+  reg :  TRegularExpression;
 begin
-  reg := TRegex.Create(XML_DATE_PATTERN);
-  result := reg.IsMatch(s);
+  reg := TRegularExpression.Create(XML_DATE_PATTERN);
+  try
+    result := reg.IsMatch(s);
+  finally
+    reg.free;
+  end;
 end;
 
 { TFSCharIssuer }
