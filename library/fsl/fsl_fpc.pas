@@ -44,7 +44,7 @@ uses
   {$IFDEF OSX}
   MacOSAll, CFBase, CFString,
   {$ENDIF}
-  RegExpr, dateutils{$ENDIF};
+  dateutils{$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -215,22 +215,6 @@ const
 
 {$IFDEF FPC}
 type
-  TRegExOption = (roNone, roIgnoreCase, roMultiLine, roExplicitCapture,
-    roCompiled, roSingleLine, roIgnorePatternSpace, roNotEmpty);
-  TRegExOptions = set of TRegExOption;
-
-  { TRegEx }
-
-  TRegEx = class (Regexpr.TRegExpr)
-  private
-  public
-    constructor Create(const Pattern: string; Options: TRegExOptions); overload;
-    function IsMatch(const Input: string): Boolean; overload;
-    function IsFullMatch(const Input: string): Boolean; overload;
-
-    class function isMatch(const input, pattern: string): Boolean; overload;
-    class function replace(const input, pattern, repl: string): String; overload;
-  end;
 
 
   { TDirectory }
@@ -790,49 +774,6 @@ end;
 {$ENDIF}
 
 {$IFDEF FPC}
-
-{ TRegEx }
-
-constructor TRegEx.Create(const Pattern: string; Options: TRegExOptions);
-begin
-  inherited Create(pattern);
-end;
-
-function TRegEx.IsMatch(const Input: string): Boolean;
-begin
-  result := Exec(input);
-end;
-
-function TRegEx.IsFullMatch(const Input: string): Boolean;
-begin
-  result := Exec(input);
-  if (result) then
-    result := MatchLen[0] = input.length;
-end;
-
-class function TRegEx.isMatch(const input, pattern : string): Boolean;
-var
-  this : TRegEx;
-begin
-  this := TRegEx.create(pattern);
-  try
-    result := this.isMatch(input);
-  finally
-    this.free;
-  end;
-end;
-
-class function TRegEx.replace(const input, pattern, repl: string): String;
-var
-  this : TRegEx;
-begin
-  this := TRegEx.create(pattern);
-  try
-    result := this.replace(input, repl);
-  finally
-    this.free;
-  end;
-end;
 
 { TFile }
 

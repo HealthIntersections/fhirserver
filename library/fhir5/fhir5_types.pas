@@ -588,6 +588,7 @@ type
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : TFslDateTime); overload;
+    constructor Create(value : string); overload;
     destructor Destroy; override;
 
     function Link : TFhirDateTime; overload;
@@ -10905,6 +10906,12 @@ end;
 function TFhirDateTime.Clone : TFhirDateTime;
 begin
   result := TFhirDateTime(inherited Clone);
+end;
+
+constructor TFhirDateTime.Create(value: string);
+begin
+  Create;
+  FValue := TFslDateTime.fromXML(value);
 end;
 
 procedure TFhirDateTime.setValue(value : TFslDateTime);

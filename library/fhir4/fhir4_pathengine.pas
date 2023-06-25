@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_xml, fsl_json,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_xml, fsl_json, fsl_regex,
   fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, fhir_uris,
   fhir4_pathnode, fhir4_types, fhir4_resources, fhir4_utilities, fhir4_context, fhir4_constants;
@@ -2557,7 +2557,7 @@ function TFHIRPathEngine.funcMatchesFull(context : TFHIRPathExecutionContext; fo
 var
   res : TFHIRSelectionList;
   s, p : String;
-  reg : TRegEx;
+  reg : TREgularExpression;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -2572,9 +2572,13 @@ begin
             result.add(TFHIRBoolean.create(false))
           else
           begin
-            reg := TRegEx.Create('(?s)' + p, [roCompiled]);
-            s := convertToString(focus[0].value);
-            result.add(TFHIRBoolean.create(reg.isFullMatch(s)));
+            reg := TREgularExpression.Create('(?s)' + p, [roCompiled]);
+            try
+              s := convertToString(focus[0].value);
+              result.add(TFHIRBoolean.create(reg.isFullMatch(s)));
+            finally
+              reg.free;
+            end;
           end;
         end;
       finally

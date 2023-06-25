@@ -1,4 +1,4 @@
-unit fsl_tests;
+﻿unit fsl_tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -821,19 +821,19 @@ end;
 
 procedure TFslUtilitiesTestCases.testStringSorting;
 begin
-  AssertTrue('CompareStr(ss, tt) < 0', CompareStr('ss', 'tt') < 0);
-  AssertTrue('CompareStr(tt, ss) > 0', CompareStr('tt', 'ss') > 0);
-  AssertTrue('CompareStr(tt, tt) = 0', CompareStr('tt', 'tt') = 0);
-  AssertTrue('CompareStr(tt, tt) = 0', CompareStr('tta', 'tt') > 0);
-  AssertTrue('CompareStr(tt, tt) < 0', CompareStr('tt', 'tt:') < 0);
-  AssertTrue('CompareStr(TT, tt) < 0', CompareStr('TT', 'tt') < 0);
-  AssertTrue('CompareStr(tt, TT) => 0', CompareStr('tt', 'TT') > 0);
-  AssertTrue('CompareStr(TT, TT) = 0', CompareStr('TT', 'TT') = 0);
-  AssertTrue('CompareText(TT, tt, true) = 0', CompareText('TT', 'tt') = 0);
-  AssertTrue('CompareText(tt, TT, true) = 0', CompareText('tt', 'TT') = 0);
-  AssertTrue('CompareText(tt, tt, true) = 0', CompareText('tt', 'tt') = 0);
-  AssertEquals('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
-  AssertEquals('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
+  AssertTrue(CompareStr('ss', 'tt') < 0, 'CompareStr(ss, tt) < 0');
+  AssertTrue(CompareStr('tt', 'ss') > 0, 'CompareStr(tt, ss) > 0');
+  AssertTrue(CompareStr('tt', 'tt') = 0, 'CompareStr(tt, tt) = 0');
+  AssertTrue(CompareStr('tta', 'tt') > 0, 'CompareStr(tt, tt) = 0');
+  AssertTrue(CompareStr('tt', 'tt:') < 0, 'CompareStr(tt, tt) < 0');
+  AssertTrue(CompareStr('TT', 'tt') < 0, 'CompareStr(TT, tt) < 0');
+  AssertTrue(CompareStr('tt', 'TT') > 0, 'CompareStr(tt, TT) => 0');
+  AssertTrue(CompareStr('TT', 'TT') = 0, 'CompareStr(TT, TT) = 0');
+  AssertTrue(CompareText('TT', 'tt') = 0, 'CompareText(TT, tt, true) = 0');
+  AssertTrue(CompareText('tt', 'TT') = 0, 'CompareText(tt, TT, true) = 0');
+  AssertTrue(CompareText('tt', 'tt') = 0, 'CompareText(tt, tt, true) = 0');
+  AssertEqual('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
+  AssertEqual('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
 end;
 
 { TXmlParserTest2 }

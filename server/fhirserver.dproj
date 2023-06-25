@@ -712,6 +712,7 @@
         <DCCReference Include="..\library\fsl\fsl_i18n.pas"/>
         <DCCReference Include="..\library\fhir\fhir_extensions.pas"/>
         <DCCReference Include="..\library\web\fsl_web_init.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_regex.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

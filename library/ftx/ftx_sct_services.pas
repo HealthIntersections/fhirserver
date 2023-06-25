@@ -4900,7 +4900,7 @@ end;
 
 constructor TSnomedProvider.create(sct: TSnomedServices; supplements: TFslList<TFHIRCodeSystemW>);
 begin
-  inherited Create;
+  inherited Create(sct.FLanguages.link);
   FSct := sct;
   FSupplements := supplements;
 end;
