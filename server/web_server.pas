@@ -489,8 +489,9 @@ End;
 
 procedure TFhirWebServer.recordStats(var rec : TStatusRecord);
 begin
+  rec.endpoints.clear;
   rec.Requests := Common.Stats.TotalCount;
-  // todo: update....
+  rec.ConnCount := FClients.Count;
   FStats.addToList(rec);
 end;
 
@@ -603,7 +604,7 @@ begin
         b.Append(ci.Activity);
         b.Append('</td><td>');
         if ci.Start > 0 then
-          b.Append(inttostr(GetTickCount - ci.Start));
+          b.Append(inttostr(GetTickCount64 - ci.Start));
         b.Append('</td></tr>'#13#10);
       end;
     finally
@@ -842,6 +843,7 @@ begin
   wep.OnReturnFile := ReturnProcessedFile;
   wep.OnReturnFileSource := ReturnFileSource;
   wep.OnProcessFile := ProcessFile;
+  FStats.EndPointNames.add(endPoint.WebEndPoint.code);
 end;
 
 procedure TFhirWebServer.SecureRequest(AContext: TIdContext;
@@ -1106,7 +1108,7 @@ begin
     ci.Activity := request.Command + ' ' + request.Document + '?' + request.UnparsedParams;
     ci.Count := ci.Count + 1;
     Common.Stats.totalStart;
-    ci.Start := GetTickCount;
+    ci.Start := GetTickCount64;
   finally
     Common.Lock.Unlock;
   end;
@@ -1121,7 +1123,7 @@ begin
   Common.Lock.Lock;
   try
     ci.Activity := '';
-    Common.Stats.totalFinish(GetTickCount - ci.Start);
+    Common.Stats.totalFinish(GetTickCount64 - ci.Start);
     ci.Start := 0;
   finally
     Common.Lock.Unlock;
@@ -1156,8 +1158,8 @@ begin
     vars.Add('status.web-rest-count', TFHIRSystemString.Create(inttostr(Common.Stats.RestCount)));
     vars.Add('status.web-total-time', TFHIRSystemString.Create(inttostr(Common.Stats.TotalTime)));
     vars.Add('status.web-rest-time', TFHIRSystemString.Create(inttostr(Common.Stats.RestTime)));
-    vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount - Common.Stats.StartTime) * DATETIME_MILLISECOND_ONE)));
-    vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount - Common.Stats.StartTime)));
+    vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount64 - Common.Stats.StartTime) * DATETIME_MILLISECOND_ONE)));
+    vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount64 - Common.Stats.StartTime)));
     ReturnProcessedFile(self, request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics.html', ''), false, vars);
   finally
     vars.Free;

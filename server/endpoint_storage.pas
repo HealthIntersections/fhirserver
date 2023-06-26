@@ -329,7 +329,8 @@ procedure TStorageEndPoint.recordStats(var rec: TStatusRecord);
 begin
   inherited recordStats(rec);
   FServerContext.ClientCacheManager.recordStats(rec);
-  // nothing else
+  rec.countEP(webendPoint.code, webendPoint.RequestCount);
+  rec.UserCount := rec.UserCount + FServerContext.SessionManager.Count;
 end;
 
 procedure TStorageEndPoint.SetCacheStatus(status: boolean);
@@ -801,6 +802,7 @@ var
   c: integer;
   check: boolean;
 begin
+  countRequest;
   if (makingAudits) then
     response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
       '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
@@ -940,6 +942,7 @@ var
   c: integer;
   JWT: TJWT;
 begin
+  countRequest;
   if (makingAudits) then
     response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
       '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+

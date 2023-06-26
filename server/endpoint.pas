@@ -48,7 +48,7 @@ type
     FActivity: String;
     FSession: TFHIRSession;
     FCount: integer;
-    FStart: cardinal;
+    FStart: UInt64;
     procedure SetSession(const Value: TFHIRSession);
   public
     destructor Destroy; Override;
@@ -56,7 +56,7 @@ type
     property Session: TFHIRSession read FSession write SetSession;
     property Activity: String read FActivity write FActivity;
     property Count: integer read FCount write FCount;
-    property Start : cardinal read FStart write FStart;
+    property Start : UInt64 read FStart write FStart;
   end;
 
   TTokenRedirectManager = class (TFslObject)
@@ -73,6 +73,8 @@ type
     procedure clear;
   end;
 
+  { TFhirWebServerEndpoint }
+
   TFhirWebServerEndpoint = class abstract (TFHIRWebServerBase)
   private
     FCode : String;
@@ -81,7 +83,7 @@ type
     FOnReturnFileSource : TWebReturnDirectFileEvent;
     FOnReturnFile : TWebReturnProcessedFileEvent;
     FOnProcessFile : TWebProcessFileEvent;
-//    function EndPointDesc(secure: boolean): String;
+    FRequestCount : cardinal;
   protected
     FTokenRedirects : TTokenRedirectManager;
 
@@ -89,6 +91,7 @@ type
     function AbsoluteURL(secure: boolean) : String;
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
 
+    procedure countRequest;
     function processFile(session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) : string; overload;
     procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean); overload;
@@ -102,6 +105,7 @@ type
     property code : String read FCode;
     function ClientAddress(secure: boolean): String;
     function logId : String; virtual; abstract;
+    property RequestCount : Cardinal read FRequestCount;
 
     property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
     property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;
@@ -110,6 +114,7 @@ type
     function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; virtual; abstract;
     function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; virtual; abstract;
     function description : string; virtual; abstract;
+
   end;
 
   { TFHIRServerEndPoint }
@@ -233,7 +238,8 @@ end;
 
 { TFhirWebServerEndpoint }
 
-constructor TFhirWebServerEndpoint.create(code, path: String; common : TFHIRWebServerCommon);
+constructor TFhirWebServerEndpoint.Create(code, path: String;
+  common: TFHIRWebServerCommon);
 begin
   inherited create(common);
   FCode := code;
@@ -256,7 +262,7 @@ begin
   inherited;
 end;
 
-function TFhirWebServerEndPoint.OAuthPath(secure: boolean): String;
+function TFhirWebServerEndpoint.OAuthPath(secure: boolean): String;
 begin
   if secure then
   begin
@@ -274,7 +280,8 @@ begin
   end;
 end;
 
-function TFhirWebServerEndpoint.processFile(session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
+function TFhirWebServerEndpoint.processFile(session: TFhirSession; named,
+  path: String; secure: boolean; variables: TFslMap<TFHIRObject>): string;
 begin
   FOnProcessFile(self, session, named, path, secure, variables, result);
 end;
@@ -322,7 +329,8 @@ begin
     result := 'http://'+common.host+HTTPPort(false)+FPathNoSlash;
 end;
 
-procedure TFhirWebServerEndPoint.cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
+procedure TFhirWebServerEndpoint.cacheResponse(response: TIdHTTPResponseInfo;
+  caching: TFHIRCacheControl);
 begin
   case caching of
     cacheNotAtAll:
@@ -334,6 +342,11 @@ begin
     cacheLong:
       response.CacheControl := 'public, max-age=31536000';
   end;
+end;
+
+procedure TFhirWebServerEndpoint.countRequest;
+begin
+  interlockedIncrement(FRequestCount);
 end;
 
 //function TFhirWebServerEndPoint.EndPointDesc(secure: boolean): String;
