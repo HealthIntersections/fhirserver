@@ -321,6 +321,9 @@ type
   end;
 
   { TVTreeManager }
+  {$IFDEF FPC3_3}
+  TVirtualStringTree = TLazVirtualStringTree
+  {$ENDIF}
 
   TVTreeManager<T : TFslTreeNode> = class abstract (TListOrTreeManagerBase)
   private
