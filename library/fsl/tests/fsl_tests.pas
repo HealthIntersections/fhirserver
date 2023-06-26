@@ -832,8 +832,8 @@ begin
   AssertTrue(CompareText('TT', 'tt') = 0, 'CompareText(TT, tt, true) = 0');
   AssertTrue(CompareText('tt', 'TT') = 0, 'CompareText(tt, TT, true) = 0');
   AssertTrue(CompareText('tt', 'tt') = 0, 'CompareText(tt, tt, true) = 0');
-  AssertEqual('Checking sort order (false)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false));
-  AssertEqual('Checking sort order (true)', ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true));
+  AssertEqual(' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~', buildPI(false), 'Checking sort order (false)');
+  AssertEqual(' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~', buildPI(true), 'Checking sort order (true)');
 end;
 
 { TXmlParserTest2 }
