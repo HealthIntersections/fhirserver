@@ -564,7 +564,8 @@ uses
   fsl_web_stream in '..\library\web\fsl_web_stream.pas',
   fsl_i18n in '..\library\fsl\fsl_i18n.pas',
   fhir_extensions in '..\library\fhir\fhir_extensions.pas',
-  fsl_web_init in '..\library\web\fsl_web_init.pas';
+  fsl_web_init in '..\library\web\fsl_web_init.pas',
+  fsl_regex in '..\library\fsl\fsl_regex.pas';
 
 begin
   ExecuteFhirServer;

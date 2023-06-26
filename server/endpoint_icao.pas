@@ -463,6 +463,7 @@ function TICAOWebServer.PlainRequest(AContext: TIdContext; ip : String; request:
 var
   tgt : String;
 begin
+  countRequest;
   tgt := URLPath([AbsoluteURL(true), request.document.Substring(PathWithSlash.Length)]);
   result := 'Redirect to '+tgt;
   response.redirect(tgt);
@@ -486,6 +487,7 @@ var
   s : TStream;
   ct : String;
 begin
+  countRequest;
   response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
   response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
   response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST');

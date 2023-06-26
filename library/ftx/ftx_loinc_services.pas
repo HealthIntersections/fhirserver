@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http, fsl_regex,
   fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
@@ -2391,7 +2391,7 @@ var
   aMatches, aChildren : ftx_loinc_services.TCardinalArray;
   p : TArray<String>;
   v : String;
-  regex : TRegEx;
+  regex : TRegularExpression;
   i, t : integer;
 begin
   if not (op in [foEqual, foIn, foRegex]) then
@@ -2401,15 +2401,19 @@ begin
   begin
     SetLength(aMatches, CodeList.Count);
     t := 0;
-    regex := TRegEx.Create(value);
-    for i := 0 to CodeList.Count - 1 do
-    begin
-      v := getProp(i);
-      if regex.IsMatch(v) then
+    regex := TRegularExpression.Create(value);
+    try
+      for i := 0 to CodeList.Count - 1 do
       begin
-        aMatches[t] := i;
-        inc(t);
+        v := getProp(i);
+        if regex.IsMatch(v) then
+        begin
+          aMatches[t] := i;
+          inc(t);
+        end;
       end;
+    finally
+      regex.free;
     end;
     SetLength(aMatches, t);
     result := TLoincFilterHolder.create;

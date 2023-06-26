@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Character, {$IFDEF DELPHI}RegularExpressions, {$ENDIF} Generics.Collections,
-  fsl_base, fsl_utilities, fsl_stream, fsl_fpc;
+  SysUtils, Classes, Character, Generics.Collections,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_regex;
 
 Const
   GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
@@ -390,7 +390,7 @@ end;
 
 procedure TTurtleURL.setUri(value: String);
 begin
-  if (not TRegEx.isMatch(value, IRI_URL)) then
+  if (not TRegularExpression.isMatch(value, IRI_URL)) then
     raise ERdfException.create('Illegal URI '+value);
   FUri := value;
 end;
@@ -1292,7 +1292,7 @@ begin
               //lang tag - skip it
               lexer.token('@');
               lang := lexer.word();
-              if (not TRegEx.IsMatch(lang, LANG_REGEX)) then
+              if (not TRegularExpression.IsMatch(lang, LANG_REGEX)) then
                 lexer.error('Invalid Language tag '+lang);
             end;
             result.addPredicate(uri, ul.Link);

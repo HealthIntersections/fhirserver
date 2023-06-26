@@ -37,12 +37,17 @@ uses
   fsl_base, fsl_collections, fsl_utilities;
 
 type
+
+  { TStatusRecord }
+
   TStatusRecord = record
     magic : integer;
 
     Memory : UInt64;
     Threads : word;
     Requests : Cardinal;
+    UserCount : Cardinal;
+    ConnCount : Cardinal;
     HTTPCacheCount : Cardinal;
     HTTPCacheSize : UInt64;
     ClientCacheCount : Cardinal;
@@ -51,12 +56,25 @@ type
     ServerCacheCount : Cardinal;
     ServerCacheSize : UInt64;
     SnomedsLoaded : byte;
+
+    endpoints : TStringList;
+
+    function count(n : String) : cardinal;
+    procedure countEP(n : String; c : cardinal);
   end;
 
   { TStatusRecords }
 
   TStatusRecords = class (TFslStringList)
+  private
+    FLastCount : integer;
+    FEndPointNames : TStringList;
   public
+    constructor create;
+    destructor Destroy; override;
+
+    property EndPointNames : TStringList read FEndPointNames;
+
     function link : TStatusRecords; overload;
 
     procedure addToList(status : TStatusRecord);
@@ -67,7 +85,44 @@ type
 
 implementation
 
+{ TStatusRecord }
+
+function TStatusRecord.count(n: String): cardinal;
+var
+  i : integer;
+begin
+  result := 0;
+  for i := 0 to endpoints.count - 1 do
+    if endpoints[i] = n then
+      exit(cardinal(endpoints.Objects[i]));
+end;
+
+procedure TStatusRecord.countEP(n: String; c: cardinal);
+var
+  i : integer;
+begin
+  for i := 0 to endpoints.count - 1 do
+    if endpoints[i] = n then
+    begin
+      endpoints.Objects[i] := TObject(cardinal(endpoints.Objects[i]) + c);
+      exit;
+    end;
+  endpoints.AddObject(n, TObject(c));
+end;
+
 { TStatusRecords }
+
+constructor TStatusRecords.create;
+begin
+  inherited create;
+  FEndPointNames := TStringList.create;
+end;
+
+destructor TStatusRecords.Destroy;
+begin
+  FEndPointNames.free;
+  inherited Destroy;
+end;
 
 function TStatusRecords.link: TStatusRecords;
 begin
@@ -75,12 +130,18 @@ begin
 end;
 
 procedure TStatusRecords.addToList(status: TStatusRecord);
+var
+  s, n : String;
 begin
-  add(
+  s :=
+    inttostr(count)+#9+
     FormatDateTime('', now)+#9+
     inttostr(status.Memory)+#9+
     inttostr(status.Threads)+#9+
+    inttostr(status.Requests - FLastCount)+#9+
     inttostr(status.Requests)+#9+
+    inttostr(status.UserCount)+#9+
+    inttostr(status.ConnCount)+#9+
     inttostr(status.HTTPCacheCount)+#9+
     inttostr(status.HTTPCacheSize)+#9+
     inttostr(status.ClientCacheCount)+#9+
@@ -88,21 +149,30 @@ begin
     inttostr(status.ClientCacheSize)+#9+
     inttostr(status.ServerCacheCount)+#9+
     inttostr(status.ServerCacheSize)+#9+
-    inttostr(status.SnomedsLoaded));
-
+    inttostr(status.SnomedsLoaded);
+  for n in FEndPointNames do
+    s := s + #9 + inttostr(status.count(n));
+  add(s);
+  FLastCount := status.Requests;
 end;
 
 function TStatusRecords.asCSV: String;
 var
   b : TStringBuilder;
   i : integer;
+  s, n: String;
 begin
   b := TStringBuilder.create;
   try
-    b.append('Date/Time'+#9+'Memory'+#9+'Threads'+#9+'Requests'+#9+
-        'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
-        'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
-        'ServerCacheCount'+#9+'ServerCacheSize'+#9+'SnomedsLoaded'+#13#10);
+    s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
+         'Request Count'+#9+'Total Requests'+#9+
+         'User Count'+#9+
+         'ConnCount'+#9+'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
+         'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
+         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded';
+    for n in FEndpointNames do
+      s := s + #9 + n;
+    b.append(s+#13#10);
     for i := 0 to count - 1 do
       b.append(items[i]+#13#10);
     result := b.toString();
@@ -115,13 +185,19 @@ function TStatusRecords.asCSVLine: String;
 var
   b : TStringBuilder;
   i : integer;
+  s, n : String;
 begin
   b := TStringBuilder.create;
   try
-    b.append('Date/Time'+#9+'Memory'+#9+'Threads'+#9+'Requests'+#9+
-        'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
-        'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
-        'ServerCacheCount'+#9+'ServerCacheSize'+#9+'SnomedsLoaded'+'|');
+    s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
+         'Request Count'+#9+'Total Requests'+#9+
+         'User Count'+#9+
+         'ConnCount'+#9+'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
+         'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
+         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded';
+    for n in FEndpointNames do
+      s := s + #9 + n;
+    b.append(s+'|');
     for i := 0 to count - 1 do
       b.append(items[i]+'|');
     result := b.toString();
@@ -135,14 +211,20 @@ function TStatusRecords.asHtml: String;
 var
   b : TStringBuilder;
   i : integer;
+  s, n : String;
 begin
   b := TStringBuilder.create;
   try
     b.append('<table>'+#13#10);
-    b.append('<tr><td>Date/Time</td><td>Memory</td><td>Threads</td><td>Requests</td><td>'+
-        'HTTPCacheCount</td><td>HTTPCacheSize</td><td>'+
-        'ClientCacheCount</td><td>ClientCacheObjectCount</td><td>ClientCacheSize</td><td>'+
-        'ServerCacheCount</td><td>ServerCacheSize</td><td>SnomedsLoaded</td></tr>'+#13#10);
+    s := '<tr><td>Minutes</td><td>Date/Time</td><td>Memory</td><td>Threads</td><td>'+
+         'Request Count</td><td>Total Requests</td><td>'+
+         'User Count</td><td>'+
+         'ConnCount</td><td>HTTPCacheCount</td><td>HTTPCacheSize</td><td>'+
+         'ClientCacheCount</td><td>ClientCacheObjectCount</td><td>ClientCacheSize</td><td>'+
+         'ServerCacheCount</td><td>ServerCacheSize</td><td>SnomedsLoaded</td>';
+    for n in FEndpointNames do
+      s := s + '<td>' + n + '</td>';
+    b.append(s+'</tr>'+#13#10);
     for i := 0 to count - 1 do
       b.append('<tr><td>'+items[i].replace(#9, '</td><td>')+'</td></tr>'+#13#10);
     b.append('</table>'+#13#10);

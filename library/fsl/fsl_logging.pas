@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  fsl_threads, fsl_base, fsl_utilities, fsl_collections, fsl_fpc_memory;
+  fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -510,6 +510,9 @@ begin
   FFileLogger := TLogger.Create(filename);
 end;
 
+const
+  kb : UInt64 = 1024;
+
 function TLogging.DescribeSize(b, min: UInt64): String;
 Begin
   If b = $FFFFFFFF Then
@@ -518,14 +521,14 @@ Begin
     Result := '0'
   Else If b = 0 Then
     Result := '0'
-  Else If b < 1024 * 4 Then
+  Else If b < kb * 4 Then
     Result := IntToStr(b) + 'b'
-  Else If b < 1024 * 1024 * 4 Then
+  Else If b < kb * kb * 4 Then
     Result := IntToStr(b Div 1024) + 'kb'
-  Else If b < 1204 * 1024 * 1024 * 4 Then
-    Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
+  Else If b < kb * kb * kb * 4 Then
+    Result := IntToStr(b Div (kb * kb)) + 'Mb'
   Else
-    Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
+    Result := IntToStr(b Div (kb * kb * kb)) + 'Gb';
 End;
 
 //

@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, Character, {$IFDEF DELPHI}RegularExpressions, {$ENDIF}
+  SysUtils, Classes, Generics.Collections, Character, 
   MarkdownHTMLEntities,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_regex;
 
 const
   DEF_BUF_SIZE = 128;
@@ -2995,7 +2995,7 @@ end;
 procedure TMXmlDocument.funcMatches(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
   p1, p2 : TFslList<TMXmlNode>;
-  reg : TRegEx;
+  reg : TRegularExpression;
 begin
   if expr.Params.Count <> 2 then
     raise EXmlException.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
@@ -3007,8 +3007,12 @@ begin
         work.Add(TMXmlBoolean.Create(false))
       else
       begin
-        reg := TRegEx.create(p2[0].ToString, [roCompiled]);
-        work.Add(TMXmlBoolean.Create(reg.IsMatch(p1[0].ToString)));
+        reg := TRegularExpression.create(p2[0].ToString, [roCompiled]);
+        try
+          work.Add(TMXmlBoolean.Create(reg.IsMatch(p1[0].ToString)));
+        finally
+          reg.free;
+        end;
       end;
     finally
       p2.free;

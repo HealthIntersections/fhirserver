@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Defaults, Generics.Collections,  {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging,
+  SysUtils, Classes, Generics.Defaults, Generics.Collections,  
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex,
   fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
@@ -1252,17 +1252,15 @@ procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemCon
 var
   c : TFhirCodeSystemConceptW;
   ok : boolean;
-  rx: TRegEx;
+  rx: TRegularExpression;
 begin
   for c in src do
   begin
-    rx := TRegEx.create('^'+regex+'$');
+    rx := TRegularExpression.create('^'+regex+'$');
     try
       ok := rx.isMatch(c.code);
     finally
-      {$IFDEF FPC}
       rx.free;
-      {$ENDIF}
     end;
     //ok := c.code.length = 5;
     if ok then

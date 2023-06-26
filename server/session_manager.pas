@@ -76,6 +76,7 @@ Type
     function DumpSessions : String;
     procedure EndAllSessions(cookie, ip : String);
     function buildTable : String;
+    function count : integer;
     procedure Clear;
   end;
 
@@ -122,6 +123,11 @@ begin
   finally
     b.free;
   end;
+end;
+
+function TFHIRSessionManager.count: integer;
+begin
+  result := FSessions.count;
 end;
 
 procedure TFHIRSessionManager.Clear;
