@@ -12,7 +12,6 @@ object MainConsoleForm: TMainConsoleForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '2.2.7.0'
   object sBar: TStatusBar
     Left = 0
     Height = 18
@@ -58,10 +57,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 600
       Top = 1
       Width = 859
-      ActivePage = tbStatistics
+      ActivePage = tbTerminologies
       Align = alClient
       ParentFont = False
-      TabIndex = 2
+      TabIndex = 4
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -102,7 +101,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object ToolButton2: TToolButton
             Left = 24
-            Height = 8
+            Height = 22
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
@@ -385,11 +384,11 @@ object MainConsoleForm: TMainConsoleForm
             Height = 464
             Top = 40
             Width = 851
-            ActivePage = tbGeneral
+            ActivePage = tbUserAdmin
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 0
+            TabIndex = 3
             TabOrder = 1
             object tbGeneral: TTabSheet
               Caption = 'General Settings'
@@ -2781,12 +2780,12 @@ object MainConsoleForm: TMainConsoleForm
           Height = 570
           Top = 0
           Width = 738
-          ActivePage = tbLoinc
+          ActivePage = tbSnomed
           Align = alClient
           ParentFont = False
           ShowTabs = False
           Style = tsButtons
-          TabIndex = 2
+          TabIndex = 0
           TabOrder = 1
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
@@ -2914,7 +2913,7 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
               TabOrder = 2
               object lblSCTAmount: TLabel
-                Left = 695
+                Left = 761
                 Height = 16
                 Top = 10
                 Width = 34
@@ -3783,6 +3782,7 @@ object MainConsoleForm: TMainConsoleForm
               ClientWidth = 738
               ParentFont = False
               TabOrder = 2
+              OnClick = Panel14Click
               object lblLoincAmount: TLabel
                 Left = 695
                 Height = 16
