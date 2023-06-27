@@ -75,8 +75,8 @@ type
     function IsFullMatch(const Input: string): Boolean; overload;
     function replace(const input, repl: string): String; overload;
 
-    class function isMatch(const input, pattern : string): Boolean;
-    class function replace(const input, pattern, repl : string): String;
+    class function isMatch(const input, pattern : string): Boolean; overload;
+    class function replace(const input, pattern, repl : string): String; overload;
 end;
 
 implementation
