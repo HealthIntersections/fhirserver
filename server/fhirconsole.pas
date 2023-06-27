@@ -31,14 +31,16 @@ POSSIBILITY OF SUCH DAMAGE.
 {$i fhir.inc}
 
 uses
-  {$IFNDEF WINDOWS}
-  // cmem,
+  {$IFDEF WINDOWS}
+  FastMM4,
+  {$ELSE}
+  cmem,
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   SysUtils, Forms, Dialogs, datetimectrls, lazcontrols,
   IdOpenSSLLoader,
-  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl, fsl_web_init,
+  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl, fsl_web_init, fsl_fpc_memory,
   fdb_odbc_fpc,
   console_form,
   console_tx_edit, console_ep_edit, install_form, install_log, installer, 
@@ -49,6 +51,7 @@ uses
 var
   ok : boolean;
 begin
+  TFPCMemoryManagerTracker.install;
   try
     InitialiseODBC;
     {$IFNDEF STATICLOAD_OPENSSL}

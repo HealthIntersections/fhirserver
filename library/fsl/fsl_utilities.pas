@@ -48,12 +48,12 @@ Uses
   {$IFDEF FPC}
   base64,
   {$ELSE}
-  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions, ZLib,
+  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, ZLib,
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
   TZDB,
-  fsl_fpc, fsl_base;
+  fsl_fpc, fsl_base, fsl_regex;
 
 type
   TEqualityTriState = (equalNull, equalFalse, equalTrue);
@@ -6044,35 +6044,24 @@ end;
 
 Function isOid(oid : String) : Boolean;
 var
-  regex : TRegEx;
+  regex : TRegularExpression;
 Begin
   if (pos('.', oid) = 0) or (length(oid) > 64) then
     result := false
   else
   begin
-    {$IFNDEF FPC}
-    regex := TRegEx.Create(OID_REGEX, [roCompiled]);
-    result := regex.IsMatch(oid);
-    {$ENDIF}
+    regex := TRegularExpression.Create(OID_REGEX, [roCompiled]);
+    try
+      result := regex.IsMatch(oid);
+    finally
+      regex.free;
+    end;
   end;
 End;
 
 Function isUUid(oid : String) : Boolean;
-var
-  regex : TRegEx;
 Begin
-  {$IFNDEF FPC}
-  regex := TRegEx.Create(UUID_REGEX, [roCompiled]);
-  result := regex.IsMatch(oid);
-  {$ELSE}
-  regex := TRegEx.create(UUID_REGEX, [roCOmpiled]);
-  try
-    result := regex.isMatch(oid);
-  finally
-    regex.free;
-  end;
-  {$ENDIF}
-
+  result := TRegularExpression.IsMatch(oid, UUID_REGEX);
 End;
 
 

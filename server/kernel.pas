@@ -401,14 +401,20 @@ var
 begin
   inc(FStatsCount);
   FillChar(rec, sizeof(rec), 0);
-  rec.magic := FStatsCount;
-  rec.Threads := GetThreadCount;
-  rec.Memory := Logging.InternalMem;
+  rec.endpoints := TStringList.create;
+  try
+    rec.magic := FStatsCount;
+    rec.Threads := GetThreadCount;
+    rec.Memory := Logging.InternalMem;
 
-  FTerminologies.recordStats(rec);
-  for ep in FEndPoints do
-    ep.recordStats(rec);
-  FWebServer.recordStats(rec);
+    FTerminologies.recordStats(rec);
+    for ep in FEndPoints do
+      ep.recordStats(rec);
+    FWebServer.recordStats(rec);
+  finally
+    rec.endpoints.free;
+    rec.endpoints := nil;
+  end;
 end;
 
 procedure TFHIRServiceKernel.sweepCaches(callback: TFhirServerMaintenanceThreadTaskCallBack);

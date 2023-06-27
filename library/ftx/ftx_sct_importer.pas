@@ -65,6 +65,8 @@ Const
   STEP_NORMAL_FORMS = 17;
   STEP_END = 18;
   STEP_TOTAL = 18;
+  DEF_ARRAY_DELTA = 16;
+
 
 Type
 
@@ -98,6 +100,8 @@ Type
     function GetRefset(id : String) : TRefset;
   end;
 
+  { TConcept }
+
   TConcept = class (TFslObject)
   Private
     Index : Cardinal;
@@ -106,16 +110,26 @@ Type
     FStatus : UInt64;
     Flag : Byte;
     FDate : TSnomedDate;
-    FInBounds : TRelationshipArray;
-    FOutbounds : TRelationshipArray;
+    FInBounds : TCardinalArray;
+    FInBoundsLength : cardinal;
+    FOutbounds : TCardinalArray;
+    FOutboundsLength : cardinal;
     FActiveParents : TCardinalArray;
+    FActiveParentsLength : cardinal;
     FInActiveParents : TCardinalArray;
+    FInActiveParentsLength : cardinal;
     descCount : integer;
     FDescriptions : TCardinalArray;
     Active : boolean;
 //    FClosed : Boolean;
 //    FClosure : TCardinalArray;
     Stems : TFslIntegerList;
+
+    procedure addInBound(index : cardinal);
+    procedure addOutBound(index : cardinal);
+    procedure addActiveParent(index : cardinal);
+    procedure addInActiveParent(index : cardinal);
+    procedure closeArrays;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -372,11 +386,53 @@ end;
 
 { TConcept }
 
+procedure TConcept.addInBound(index: cardinal);
+begin
+  if (FInboundsLength = Length(FInbounds)) then
+    SetLength(FInbounds, Length(FInbounds)*2);
+  FInbounds[FInboundsLength] := index;
+  inc(FInboundsLength);
+end;
+
+procedure TConcept.addOutBound(index: cardinal);
+begin
+  if (FOutboundsLength = Length(FOutbounds)) then
+    SetLength(FOutbounds, Length(FOutbounds)*2);
+  FOutbounds[FOutboundsLength] := index;
+  inc(FOutboundsLength);
+end;
+
+procedure TConcept.addActiveParent(index: cardinal);
+begin
+  if (FActiveParentsLength = Length(FActiveParents)) then
+    SetLength(FActiveParents, Length(FActiveParents)+DEF_ARRAY_DELTA);
+  FActiveParents[FActiveParentsLength] := index;
+  inc(FActiveParentsLength);
+end;
+
+procedure TConcept.addInActiveParent(index: cardinal);
+begin
+  if (FInActiveParentsLength = Length(FInActiveParents)) then
+    SetLength(FInActiveParents, Length(FInActiveParents)+DEF_ARRAY_DELTA);
+  FInActiveParents[FInActiveParentsLength] := index;
+  inc(FInActiveParentsLength);
+end;
+
+procedure TConcept.closeArrays;
+begin
+  SetLength(FInbounds, FInboundsLength);
+  SetLength(FOutbounds, FOutboundsLength);
+  SetLength(FActiveParents, FActiveParentsLength);
+  SetLength(FInActiveParents, FInActiveParentsLength);
+end;
+
 constructor TConcept.Create;
 begin
   inherited;
   Stems := TFslIntegerList.Create;
   Stems.SortAscending;
+  SetLength(FOutbounds, DEF_ARRAY_DELTA);
+  SetLength(FInbounds, DEF_ARRAY_DELTA);
 end;
 
 destructor TConcept.Destroy;
@@ -936,7 +992,7 @@ var
   active, defining : boolean;
 
   iRel : UInt64;
-  line : integer;
+  line, i : integer;
   Function Next(ch : byte) : integer;
   begin
     inc(iCursor);
@@ -981,7 +1037,6 @@ Begin
       iCursor := Next(13);  // modifierId
       iRef := iCursor;
 
-
       iRel := StrToUInt64(memU8toString(s, iStart, iRelid - iStart));
       date := ReadDate(memU8toString(s, iRelId+1, (iDate - iRelId) - 1));
       active := memU8toString(s, iDate+1, iStatus - iDate-1) = '1';
@@ -1008,25 +1063,20 @@ Begin
         if (oRelType.Index = Findex_is_a) and (defining) Then
         Begin
           if (active) then
-          begin
-            SetLength(oSource.FActiveParents, Length(oSource.FActiveParents)+1);
-            oSource.FActiveParents[Length(oSource.FActiveParents)-1] := oTarget.Index;
-          end
+            oSource.addActiveParent(oTarget.Index)
           else
-          begin
-            SetLength(oSource.FInActiveParents, Length(oSource.FInActiveParents)+1);
-            oSource.FInActiveParents[Length(oSource.FInActiveParents)-1] := oTarget.Index;
-          end;
+            oSource.addInActiveParent(oTarget.Index);
         end;
         i_c := 0; // todo
         i_r := 0; // todo
-        SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
-        oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
+        oSource.addOutBound(iIndex);
+
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
-        SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
-        oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
+
+        oTarget.addInBound(iIndex);
+
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
@@ -1043,6 +1093,8 @@ Begin
     // see https://confluence.ihtsdotools.org/display/DOCTSG/3.1+Generating+Dynamic+Snapshot+Views
     FDuplicateRelationships.add('more');
   end;
+  for i := 0 to FConcepts.count - 1 do
+    (FConcepts[i] as TConcept).closeArrays;
 End;
 
 
@@ -1063,8 +1115,8 @@ begin
     result := nil;
 end;
 
-Function SortRelationshipArray(a : TRelationshipArray):TCardinalArray;
-  Function Compare(const a, b: TRelationship) : Integer;
+Function SortRelationshipArray(a : TCardinalArray):TCardinalArray;
+  Function Compare(const a, b: Cardinal) : Integer;
   Begin
     //rf.f  result := a.characteristic - b.characteristic;
     //if result = 0 then
@@ -1072,13 +1124,13 @@ Function SortRelationshipArray(a : TRelationshipArray):TCardinalArray;
     //if result = 0 then
     //  result := a.Refinability - b.Refinability;
     //if result = 0 then
-      result := integer(a.relationship) - integer(b.relationship)
+      result := a-b;// integer(a{.relationship}) - integer(b{.relationship})
   End;
 
   Procedure QuickSort(L, R: Integer);
   Var
     I, J, K : Integer;
-    t : TRelationship;
+    t : cardinal;
   Begin
     // QuickSort routine (Recursive)
     // * Items is the default indexed property that returns a pointer, subclasses
@@ -1128,7 +1180,7 @@ Begin
     QuickSort(0, length(a) - 1);
   SetLength(result, length(a));
   For i := 0 to length(result) - 1 do
-    result[i] := a[i].relationship;
+    result[i] := a[i]{.relationship};
 End;
 
 Procedure TSnomedImporter.SaveConceptLinks(var active, inactive : UInt64Array);

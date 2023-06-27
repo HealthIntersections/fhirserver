@@ -66,7 +66,6 @@ function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
 procedure CloseThreadInternal(name : String);
-function totalMemoryAllThreads : integer;
 
 type
   {$IFNDEF FPC}
@@ -461,7 +460,6 @@ var
   GCount: Integer = 0;
   GTotal: Integer = 0;
   GBackgroundTaskUniqueID : integer = 0;
-  GTotalMem : integer = 0;
 
 var
   GThreadList : TList;
@@ -473,29 +471,9 @@ type
     startTick : UInt64;
     name : String;
     state : String;
-    memory : UInt64;
     stateTick : UInt64;
   end;
   PThreadRecord = ^TTheadRecord;
-
-function totalMemoryAllThreads : integer;
-begin
-  result := GTotalMem;
-end;
-
-procedure updateMemory;
-var
-  i, t : UInt64; 
-  p : PThreadRecord;
-begin
-  t := 0;
-  for i := GThreadList.Count - 1 downto 0 do
-  begin
-    p := GThreadList[i];
-    t := t + p.memory;
-  end;
-  GTotalMem := t;
-end;
 
 procedure closeThread;
 var
@@ -515,7 +493,6 @@ begin
         GThreadList.Delete(i);
       end;
     end;
-    updateMemory;
   finally
     LeaveCriticalSection(GCritSct);
   end;
@@ -534,11 +511,7 @@ begin
     begin
       p := GThreadList[i];
       if (p.id = id) then
-      begin
-        p.memory := GetFPCHeapStatus.CurrHeapSize;
-        updateMemory;
         exit;
-      end;
     end;
   finally
     LeaveCriticalSection(GCritSct);
@@ -563,8 +536,6 @@ begin
         {$IFDEF FPC}
         TThread.NameThreadForDebugging(name, p.id);
         {$ENDIF}
-        p.memory := GetFPCHeapStatus.CurrHeapSize;
-        updateMemory;
         exit;
       end;
     end;
@@ -576,8 +547,6 @@ begin
     TThread.NameThreadForDebugging(name, p.id);
     {$ENDIF}
     GThreadList.Add(p);
-    p.memory := GetFPCHeapStatus.CurrHeapSize;
-    updateMemory;
   finally
     LeaveCriticalSection(GCritSct);
   end;
@@ -601,8 +570,6 @@ begin
       begin
         p.state := status;
         p.stateTick := GetTickCount64;
-        p.memory := GetFPCHeapStatus.CurrHeapSize;
-        updateMemory;
         exit;
       end;
     end;
@@ -613,8 +580,6 @@ begin
     p.state := status;
     p.stateTick := GetTickCount64;
     GThreadList.Add(p);
-    p.memory := GetFPCHeapStatus.CurrHeapSize;
-    updateMemory;
   finally
     LeaveCriticalSection(GCritSct);
   end;

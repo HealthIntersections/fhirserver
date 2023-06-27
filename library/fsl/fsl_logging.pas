@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  fsl_threads, fsl_base, fsl_utilities, fsl_collections;
+  fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -174,7 +174,7 @@ Type
 
     function Counter : String;
 
-    Function DescribeSize(b, min: Cardinal): String;
+    Function DescribeSize(b, min: UInt64): String;
     function MemoryStatus(full : boolean) : String;
 
     function InternalMem : UInt64;
@@ -510,7 +510,10 @@ begin
   FFileLogger := TLogger.Create(filename);
 end;
 
-function TLogging.DescribeSize(b, min: Cardinal): String;
+const
+  kb : UInt64 = 1024;
+
+function TLogging.DescribeSize(b, min: UInt64): String;
 Begin
   If b = $FFFFFFFF Then
     Result := '??'
@@ -518,14 +521,14 @@ Begin
     Result := '0'
   Else If b = 0 Then
     Result := '0'
-  Else If b < 1024 * 4 Then
+  Else If b < kb * 4 Then
     Result := IntToStr(b) + 'b'
-  Else If b < 1024 * 1024 * 4 Then
+  Else If b < kb * kb * 4 Then
     Result := IntToStr(b Div 1024) + 'kb'
-  Else If b < 1204 * 1024 * 1024 * 4 Then
-    Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
+  Else If b < kb * kb * kb * 4 Then
+    Result := IntToStr(b Div (kb * kb)) + 'Mb'
   Else
-    Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
+    Result := IntToStr(b Div (kb * kb * kb)) + 'Gb';
 End;
 
 //
@@ -568,10 +571,7 @@ begin
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
 {$ELSE}
-  //hs := GetFPCHeapStatus;
-  //result := hs.CurrHeapSize; // CurrHeapUsed;
-  threadPing;
-  result := totalMemoryAllThreads;
+  result := TFPCMemoryManagerTracker.totalMemory;
 {$ENDIF}
 end;
 
@@ -658,7 +658,7 @@ begin
 
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then

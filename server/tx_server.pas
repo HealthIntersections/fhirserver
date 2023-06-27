@@ -134,8 +134,8 @@ Type
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
-    function validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem, addCodeable: boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    function validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem, addCodeable: boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
     function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
     function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -624,7 +624,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -637,7 +637,7 @@ begin
     check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       check.prepare(vs, profile);
-      result := check.check('Coding', coding, abstractOk, implySystem);
+      result := check.check('Coding', coding, abstractOk, inferSystem);
       summary := check.log;
     finally
       check.Free;
@@ -648,7 +648,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem, addCodeable : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
+function TTerminologyServer.validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem, addCodeable : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -661,7 +661,7 @@ begin
     check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       check.prepare(vs, profile);
-      result := check.check(issuePath, coded, abstractOk, implySystem, addCodeable);
+      result := check.check(issuePath, coded, abstractOk, inferSystem, addCodeable);
       summary := check.log;
     finally
       check.Free;

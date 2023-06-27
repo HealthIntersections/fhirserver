@@ -342,14 +342,13 @@ type
     function makeResource(const name : String) : TFHIRResourceV;
     function makeBoolean(b : boolean): TFHIRObject; override;
     function makeCode(s : string) : TFHIRObject; override;
-    function makeCoding(systemUri, code : String) : TFHIRObject; overload;
-    function makeCoding(systemUri, code, display : String) : TFHIRObject; overload;
     function makeCoding(systemUri, version, code, display : String) : TFHIRObject; overload; override;
+    function makeCodeableConcept(coding : TFHIRCodingW = nil) : TFHIRObject; override;
     function makeString(s : string) : TFHIRObject; override;
     function makeUri(s : string) : TFHIRObject; override;
     function makeInteger(s : string) : TFHIRObject; override;
     function makeDecimal(s : string) : TFHIRObject; override;
-    function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
+    function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; override;
@@ -592,14 +591,9 @@ begin
   raise EFslException.create('makeCode is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeCoding(systemUri, code: String): TFHIRObject;
+function TFHIRFactoryX.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
 begin
-  raise EFslException.create('makeCoding is not implemented in the non-versioned FHIRFactory');
-end;
-
-function TFHIRFactoryX.makeCoding(systemUri, code, display: String): TFHIRObject;
-begin
-  raise EFslException.create('makeCoding is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.create('makeCodeableConcept is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeCoding(systemUri, version, code, display: String): TFHIRObject;
@@ -883,6 +877,11 @@ end;
 function TFHIRFactoryX.makeValueSetContains: TFhirValueSetExpansionContainsW;
 begin
   raise EFslException.create('makeValueSetContains is not implemented in the non-versioned FHIRFactory');
+end;
+
+function TFHIRFactoryX.makeBase64Binary(s : string) : TFHIRObject;
+begin
+  raise EFslException.create('makeBase64Binary is not implemented in the non-versioned FHIRFactory');
 end;
 
 { TFHIRFactory }

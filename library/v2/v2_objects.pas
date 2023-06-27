@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_fpc,
+  SysUtils, Classes, 
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_fpc, fsl_regex,
   v2_base, v2_dictionary;
 
 Type
@@ -1100,18 +1100,18 @@ Type
   THL7V2ParsedQuery = class (THL7V2WorkerObject)
   private
     FSegQuery : String;
-    FSegReg : TRegEx;
+    FSegReg : TRegularExpression;
     FHasSegReg : boolean;
     FSegIndex : THL7V2ParsedQueryRange;
     FDE : THL7V2ParsedQueryRange;
     FRep : THL7V2ParsedQueryRange;
-    FDERegEx : TRegEx;
+    FDERegEx : TRegularExpression;
     FHasDERegEx : boolean;
     FComp : THL7V2ParsedQueryRange;
-    FCompRegEx : TRegEx;
+    FCompRegEx : TRegularExpression;
     FHasCompRegEx : boolean;
     FSubComp : THL7V2ParsedQueryRange;
-    FSubCompRegEx : TRegEx;
+    FSubCompRegEx : TRegularExpression;
     FHasSubCompRegEx : boolean;
     procedure parseDE(var VQuery : String);
     procedure parseComp(var VQuery : String);
@@ -6390,6 +6390,12 @@ begin
   FComp.Free;
   FSubComp.Free;
   FRep.Free;
+
+  FSegReg.Free;
+  FDERegEx.Free;
+  FCompRegEx.Free;
+  FSubCompRegEx.Free;
+
   inherited;
 end;
 
@@ -6471,7 +6477,7 @@ begin
   if AQuery[1] = ^ then
     begin
     StringSplit(AQuery, '$', s, AQuery);
-    FSegReg := TRegEx.create(s + '$');
+    FSegReg := TRegularExpression.create(s + '$');
     FHasSegReg := true;
     end
   else
@@ -6508,7 +6514,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FDERegEx := TRegEx.create(s);
+      FDERegEx := TRegularExpression.create(s);
       FHasDERegEx := true;
       end;
     if VQuery <> '' then
@@ -6542,7 +6548,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FCompRegEx := TRegEx.create(s);
+      FCompRegEx := TRegularExpression.create(s);
       FHasCompRegEx := true;
       end;
     if VQuery <> '' then
@@ -6567,7 +6573,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FSubCompRegEx := TRegEx.create(s);
+      FSubCompRegEx := TRegularExpression.create(s);
       FHasSubCompRegEx := true;
       end;
     if VQuery <> '' then
@@ -7014,10 +7020,14 @@ end;
 
 function THL7V2QueryConditional.DoRegex(sLeft, sRight: String): Boolean;
 var
-  oExpr : TRegEx;
+  oExpr : TRegularExpression;
 begin
-  oExpr := TRegEx.Create(sRight);
-  result := oExpr.isMatch(sLeft);
+  oExpr := TRegularExpression.Create(sRight);
+  try
+    result := oExpr.isMatch(sLeft);
+  finally
+    oExpr.free;
+  end;
 end;
 
 function THL7V2QueryConditional.sizeInBytesV(magic : integer) : cardinal;

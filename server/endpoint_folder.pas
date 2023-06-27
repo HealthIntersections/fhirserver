@@ -242,6 +242,7 @@ end;
 
 function TFolderWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
 begin
+  countRequest;
   if request.CommandType <> hcGET then
     result := send404(AContext, request, response)
   else
@@ -250,6 +251,7 @@ end;
 
 function TFolderWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
+  countRequest;
   if request.CommandType = hcPUT then
     result := handlePut(AContext, ip, request, response)
   else if request.CommandType <> hcGET then

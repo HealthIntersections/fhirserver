@@ -1222,6 +1222,7 @@ end;
 
 function TFHIRPackageWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
 begin
+  countRequest;
   result := doRequest(AContext, request, response, id, false);
 end;
 
@@ -1368,6 +1369,7 @@ end;
 
 function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 begin
+  countRequest;
   result := doRequest(AContext, request, response, id, true);
 end;
 

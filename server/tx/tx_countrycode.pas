@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang,
+  SysUtils, Classes, 
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang, fsl_regex,
   fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
@@ -1015,7 +1015,7 @@ end;
 
 function TCountryCodeServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
-  regex : TRegex;
+  regex : TRegularExpression;
   list : TCountryCodeConceptFilter;
   concept : TCountryCodeConcept;
 begin
@@ -1023,10 +1023,14 @@ begin
   begin
     list := TCountryCodeConceptFilter.Create;
     try
-      regex := TRegEx.Create(value);
-      for concept in FCodes do
-        if regex.IsMatch(concept.code) then
-          list.FList.Add(concept.link);
+      regex := TRegularExpression.Create(value);
+      try
+        for concept in FCodes do
+          if regex.IsMatch(concept.code) then
+            list.FList.Add(concept.link);
+      finally
+        regex.free;
+      end;
       result := list.link;
     finally
       list.Free;

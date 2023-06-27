@@ -405,7 +405,6 @@
             </Delphi.Personality>
             <Deployment Version="4">
                 <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource"/>
-                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource"/>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
@@ -438,8 +437,6 @@
                 <DeployFile LocalName="OSX64\Debug\FHIRToolkitR3.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements"/>
                 <DeployFile LocalName="OSX64\Debug\FHIRToolkitR3.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList"/>
                 <DeployFile LocalName="OSX64\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="Win32\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">

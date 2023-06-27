@@ -47,6 +47,17 @@
           <Mode Name="osx"/>
         </BuildModes>
       </Target>
+      <Target FileName="server/fhirconsole.lpi">
+        <BuildModes>
+          <Mode Name="default" Compile="True"/>
+          <Mode Name="win32"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
+        </BuildModes>
+      </Target>
     </Targets>
   </ProjectGroup>
 </CONFIG>

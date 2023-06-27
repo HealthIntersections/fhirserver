@@ -101,7 +101,7 @@ const
 
 type
   UInt64Array = Array of UInt64;
-  TCardinalArray = array of Cardinal;
+  TCardinalArray = packed array of Cardinal;
   TMatch = record
     index : cardinal;
     term : UInt64;
@@ -4900,7 +4900,7 @@ end;
 
 constructor TSnomedProvider.create(sct: TSnomedServices; supplements: TFslList<TFHIRCodeSystemW>);
 begin
-  inherited Create;
+  inherited Create(sct.FLanguages.link);
   FSct := sct;
   FSupplements := supplements;
 end;

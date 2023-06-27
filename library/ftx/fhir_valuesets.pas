@@ -260,7 +260,7 @@ Type
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
-    function check(path, system, version, code : String; abstractOk, implySystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : TTrueFalseUnknown; overload;
+    function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
@@ -279,10 +279,10 @@ Type
 
     procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
 
-    function check(issuePath, system, version, code : String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
-    function check(issuePath, system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
-    function check(issuePath : String; coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
-    function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem, addCodeable : boolean) : TFhirParametersW; overload;
+    function check(issuePath, system, version, code : String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
+    function check(issuePath, system, version, code : String; inferSystem : boolean) : TFhirParametersW; overload;
+    function check(issuePath : String; coding : TFhirCodingW; abstractOk, inferSystem : boolean): TFhirParametersW; overload;
+    function check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, inferSystem, addCodeable : boolean) : TFhirParametersW; overload;
 
     property log : String read FLog;
   end;
@@ -863,7 +863,7 @@ begin
     result := '??';
 end;
 
-function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, implySystem : boolean; op : TFhirOperationOutcomeW): TTrueFalseUnknown;
+function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW): TTrueFalseUnknown;
 var
   msg, ver, impliedSystem : string;
   it : TFhirIssueType;
@@ -874,13 +874,13 @@ begin
   try
     unknownSystems.duplicates := dupIgnore;
     unknownSystems.sorted := true;
-    result := check(issuePath, system, version, code, abstractOk, implySystem, nil, unknownSystems, msg, ver, it, op, nil, contentMode, impliedSystem);
+    result := check(issuePath, system, version, code, abstractOk, inferSystem, nil, unknownSystems, msg, ver, it, op, nil, contentMode, impliedSystem);
   finally
     unknownSystems.free;
   end;
 end;
 
-function TValueSetChecker.check(path, system, version, code: String; abstractOk, implySystem: boolean; displays: TConceptDesignations;
+function TValueSetChecker.check(path, system, version, code: String; abstractOk, inferSystem: boolean; displays: TConceptDesignations;
   unknownSystems : TStringList;
   var message, ver: String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
   vcc : TFHIRCodeableConceptW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): TTrueFalseUnknown;
@@ -1056,7 +1056,7 @@ begin
   end
   else
   begin
-    if (system = '') and implySystem then
+    if (system = '') and inferSystem then
     begin
       system := determineSystem(code);
       if (system = '') then
@@ -1101,7 +1101,7 @@ begin
         if result = bFalse then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+          result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -1158,7 +1158,7 @@ begin
           if checker = nil then
             raise ETerminologyError.Create('No Match for '+s, itUnknown);
           if (result = bTrue) then
-            result := checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+            result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
         end;
         if result = bTrue then
           break;
@@ -1182,7 +1182,7 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and (checker.check(path, system, version, code, abstractOk, implySystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem) = bTrue);
+            excluded := excluded and (checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem) = bTrue);
           end;
           if excluded then
             exit(bFalse);
@@ -1256,7 +1256,7 @@ begin
 end;
 
 
-function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
+function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, inferSystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
   message, ver, pd, impliedSystem, path, us : String;
@@ -1277,7 +1277,7 @@ begin
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        ok := check(path, coding.systemUri, coding.version, coding.code, abstractOk, implySystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+        ok := check(path, coding.systemUri, coding.version, coding.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
         if ok = bTrue then
         begin
           result.AddParamBool('result', true);
@@ -1360,7 +1360,7 @@ begin
       exit(true);
 end;
 
-function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, implySystem, addCodeable : boolean) : TFhirParametersW;
+function TValueSetChecker.check(issuePath : String; code: TFhirCodeableConceptW; abstractOk, inferSystem, addCodeable : boolean) : TFhirParametersW;
   function Summary(code: TFhirCodeableConceptW) : String;
   begin
     if (code.codingCount = 1) then
@@ -1421,7 +1421,7 @@ begin
           else
             path := issuePath;;
           list.clear;
-          v := check(path, c.systemUri, c.version, c.code, abstractOk, implySystem, list, unknownSystems, message, ver, cause, op, vcc, contentMode, impliedSystem);
+          v := check(path, c.systemUri, c.version, c.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, vcc, contentMode, impliedSystem);
           if (v <> bTrue) and (message <> '') then
             msg(message);
           if (v = bFalse) then
@@ -1608,7 +1608,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.check(issuePath, system, version, code: String; implySystem : boolean): TFhirParametersW;
+function TValueSetChecker.check(issuePath, system, version, code: String; inferSystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
   message, ver, pd, impliedSystem, us : String;
@@ -1628,7 +1628,7 @@ begin
       try
         list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
         try
-          ok := check(issuePath, system, version, code, true, implySystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+          ok := check(issuePath, system, version, code, true, inferSystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
           if ok = bTrue then
           begin
             result.AddParamBool('result', true);

@@ -2861,6 +2861,7 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(value : TFslDateTime); overload;
+    constructor Create(value : String); overload;
     destructor Destroy; override;
     
     Function Link : TFhirDateTime; Overload;
@@ -12401,6 +12402,12 @@ end;
 function TFhirDateTime.Clone : TFhirDateTime;
 begin
   result := TFhirDateTime(inherited Clone);
+end;
+
+constructor TFhirDateTime.Create(value: String);
+begin
+  Create;
+  FValue := TFslDateTime.fromXML(value);
 end;
 
 procedure TFhirDateTime.setValue(value : TFslDateTime);
