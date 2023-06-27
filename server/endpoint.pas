@@ -33,6 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
+  {$IFDEF WINDOWS}
+  Windows,
+  {$ENDIF}
   SysUtils, Classes, Generics.Collections,
   IdCustomHTTPServer, IdContext, IdOpenSSLX509,
   fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache, fsl_i18n,
@@ -83,7 +86,7 @@ type
     FOnReturnFileSource : TWebReturnDirectFileEvent;
     FOnReturnFile : TWebReturnProcessedFileEvent;
     FOnProcessFile : TWebProcessFileEvent;
-    FRequestCount : cardinal;
+    FRequestCount : integer;
   protected
     FTokenRedirects : TTokenRedirectManager;
 
@@ -105,7 +108,7 @@ type
     property code : String read FCode;
     function ClientAddress(secure: boolean): String;
     function logId : String; virtual; abstract;
-    property RequestCount : Cardinal read FRequestCount;
+    property RequestCount : integer read FRequestCount;
 
     property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
     property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;
