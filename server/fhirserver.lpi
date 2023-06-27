@@ -284,7 +284,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>

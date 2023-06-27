@@ -31,16 +31,17 @@ POSSIBILITY OF SUCH DAMAGE.
 {$i fhir.inc}
 
 uses
-  {$IFDEF WINDOWS}
-  Windows,
-  {$ENDIF}
-  {$IFDEF LINUX}
+  {$IFDEF FPC}
   cmem,
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  FastMM4,
+  Windows,
+  {$ELSE}
   cthreads,
   {$ENDIF}
   {$IFDEF OSX}
-  // cmem,
-  cthreads, forms, Interfaces,
+  forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
   fsl_fpc_memory,
