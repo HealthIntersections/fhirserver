@@ -46,7 +46,7 @@ This unit contains a set of classes that orchestrate the UI interface
 Interface
 
 uses
-  SysUtils, Classes, Contnrs, Graphics, IniFiles,
+  SysUtils, Classes, Contnrs, Graphics, IniFiles, LCLVersion,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus, ClipBrd,
   SynEdit, SynEditTypes,
   laz.virtualtrees,
@@ -321,7 +321,7 @@ type
   end;
 
   { TVTreeManager }
-  {$IFDEF FPC3_3}
+  {$IF LCL_FullVersion >= 02030000}
   TVirtualStringTree = TLazVirtualStringTree
   {$ENDIF}
 

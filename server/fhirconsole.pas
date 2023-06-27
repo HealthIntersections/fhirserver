@@ -31,8 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 {$i fhir.inc}
 
 uses
-  {$IFNDEF WINDOWS}
-  // cmem,
+  {$IFDEF WINDOWS}
+  FastMM4,
+  {$ELSE}
+  cmem,
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
