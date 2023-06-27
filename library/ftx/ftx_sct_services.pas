@@ -101,7 +101,7 @@ const
 
 type
   UInt64Array = Array of UInt64;
-  TCardinalArray = array of Cardinal;
+  TCardinalArray = packed array of Cardinal;
   TMatch = record
     index : cardinal;
     term : UInt64;

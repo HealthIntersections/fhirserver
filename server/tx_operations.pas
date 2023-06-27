@@ -411,7 +411,7 @@ var
   cacheId, url, summary, issuePath, version : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
-  abstractOk, implySystem : boolean;
+  abstractOk, inferSystem : boolean;
   params, pout : TFhirParametersW;
   needSecure, isValueSet, addCodeable : boolean;
   profile : TFhirExpansionParams;
@@ -489,7 +489,7 @@ begin
               end;
 
               abstractOk := params.str('abstract') = 'true';
-              implySystem := params.str('implySystem') = 'true';
+              inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
 
               if (coded = nil) then
                 raise ETerminologyError.create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
@@ -503,7 +503,7 @@ begin
                 txResources := processAdditionalResources(context, manager, nil, params);
 
               profile := buildExpansionParams(request, manager, params);
-              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, implySystem, addCodeable, txResources, summary);
+              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, addCodeable, txResources, summary);
               try
                 if summary <> '' then
                   result := result + ': '+summary;
@@ -1318,7 +1318,7 @@ begin
     result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW;
     issuePath := 'CodeableConcept';
   end
-  else if request.Parameters.has('code') and (request.Parameters.has('system') or request.Parameters.has('implySystem')) then
+  else if request.Parameters.has('code') and (request.Parameters.has('system') or request.Parameters.has('inferSystem') or request.Parameters.has('implySystem')) then
   begin
     issuePath := 'code';
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
@@ -1369,7 +1369,7 @@ begin
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link);
         issuePath := 'CodeableConcept';
       end
-      else if isValueSet and (params.has('code') and (params.has('system') or params.bool('implySystem'))) then
+      else if isValueSet and (params.has('code') and (params.has('system') or params.bool('inferSystem') or params.bool('implySystem'))) then
       begin
         issuePath := 'code';
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));

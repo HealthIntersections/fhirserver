@@ -37,7 +37,7 @@ uses
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls,
   StdCtrls, Registry, Types, ExtCtrls, Menus, ActnList, StdActns, Buttons,
   DateTimePicker, LvlGraphCtrl, Interfaces, LclIntf, CheckLst, IniFiles, Math,
-  IdTelnet, IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities,
+  IdTelnet, IdGlobal, fsl_base, fsl_threads, fsl_fpc, fsl_utilities, fsl_fpc_memory,
   fsl_logging, fsl_npm_client, fsl_openssl, fdb_odbc_fpc, fdb_manager, fdb_odbc,
   fsl_npm_cache, fdb_dialects, fdb_odbc_objects, fdb_sqlite3, ftx_sct_combiner,
   fhir_colour_utils, fui_lcl_utilities, ftx_sct_services, ftx_sct_importer,
@@ -561,6 +561,7 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
+    procedure Panel14Click(Sender: TObject);
     procedure Panel46Click(Sender: TObject);
     procedure pnlProcessNDCClick(Sender: TObject);
     procedure pnlProcessUNIIClick(Sender: TObject);
@@ -1363,6 +1364,11 @@ begin
 end;
 
 procedure TMainConsoleForm.MenuItem8Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainConsoleForm.Panel14Click(Sender: TObject);
 begin
 
 end;
@@ -2949,7 +2955,7 @@ end;
 procedure TMainConsoleForm.sctCallback(pct: Integer; action: String);
 begin
   prgSnomedImport.Position := pct;
-  lblSCTAction.Caption := action;
+  lblSCTAction.Caption := action+' ('+Logging.MemoryStatus(true)+')';
   lblSCTAmount.Caption := inttostr(pct)+'%';
   prgSnomedImport.Update;
   lblSCTAction.Update;
@@ -2962,7 +2968,7 @@ end;
 procedure TMainConsoleForm.cmbCallback(pct: Integer; action: String);
 begin
   prgCombine.Position := pct;
-  lblCombineAction.Caption := action;
+  lblCombineAction.Caption := action+' ('+Logging.MemoryStatus(true)+')';
   lblCombineAmount.Caption := inttostr(pct)+'%';
   prgCombine.Update;
   lblCombineAction.Update;
@@ -2975,7 +2981,7 @@ end;
 procedure TMainConsoleForm.loincCallback(pct: Integer; action: String);
 begin
   prgLoincImport.Position := pct;
-  lblLoincAction.Caption := action;
+  lblLoincAction.Caption := action+' ('+Logging.MemoryStatus(true)+')';
   lblLoincAmount.Caption := inttostr(pct)+'%';
   prgLoincImport.Update;
   lblLoincAction.Update;
@@ -2988,7 +2994,7 @@ end;
 procedure TMainConsoleForm.rxNormCallback(sender : TObject; pct : integer; done : boolean; desc : String);
 begin
   prgRxNormImport.Position := pct;
-  lblRxNormAction.Caption := desc;
+  lblRxNormAction.Caption := desc+' ('+Logging.MemoryStatus(true)+')';
   lblRxNormAmount.Caption := inttostr(pct)+'%';
   prgRxNormImport.Update;
   lblRxNormAction.Update;
@@ -3001,7 +3007,7 @@ end;
 procedure TMainConsoleForm.ndcCallback(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
   prgNDCImport.Position := pct;
-  lblNDCAction.Caption := desc;
+  lblNDCAction.Caption := desc+' ('+Logging.MemoryStatus(true)+')';
   lblNDCAmount.Caption := inttostr(pct)+'%';
   prgNDCImport.Update;
   lblNDCAction.Update;
@@ -3015,7 +3021,7 @@ procedure TMainConsoleForm.uniiCallback(sender: TObject; pct: integer; done: boo
 begin
   prgUNIIImport.Position := pct;
   lblUNIIAction.Caption := desc;
-  lblUNIIAmount.Caption := inttostr(pct)+'%';
+  lblUNIIAmount.Caption := inttostr(pct)+'% ('+Logging.MemoryStatus(true)+')';
   prgUNIIImport.Update;
   lblUNIIAction.Update;
   lblUNIIAmount.Update;
