@@ -374,6 +374,7 @@ begin
        ' Id              nchar(64)                            '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Canonical       nchar(128)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' DownloadCount   int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Security        int                                      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' ManualToken     nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' CurrentVersion  '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Packages', 'PackageKey')+') '+CreateTableInfo(FConn.owner.platform));
