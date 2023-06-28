@@ -153,7 +153,7 @@ var
 
 
 {$IFDEF FPC}
-procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+//procedure RegisterTestClass(ASuitePath: String; ATestClass: TTestCaseClass); overload;
 procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
 {$ELSE}
 procedure RegisterTest(SuitePath: string; test: ITest);
@@ -162,7 +162,7 @@ procedure RegisterTest(SuitePath: string; test: ITest);
 implementation
 
 {$IFDEF FPC}
-procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+procedure RegisterTestClass(ASuitePath: String; ATestClass: TTestCaseClass); overload;
 begin
   TestRegistry.RegisterTest(ASuitePath, ATestClass);
 end;
