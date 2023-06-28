@@ -322,7 +322,7 @@ type
 
   { TVTreeManager }
   {$IF LCL_FullVersion >= 02030000}
-  TVirtualStringTree = TLazVirtualStringTree
+  TVirtualStringTree = TLazVirtualStringTree;
   {$ENDIF}
 
   TVTreeManager<T : TFslTreeNode> = class abstract (TListOrTreeManagerBase)
