@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-  pull_request:
+#  pull_request:
 jobs:
   Build-Docker-Image:
     runs-on: ubuntu-latest
@@ -41,6 +41,7 @@ jobs:
         .
     - name: Scan Code
       run: |
+        export DISPLAY=0:0
         docker run --entrypoint /work/fhirserver/utilities/codescan/codescan fhirserver /work/bootstrap
     - name: Prepare ini file
       env:
@@ -74,6 +75,13 @@ jobs:
 
     - name: Tag and push Docker image
       run: |
-        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+        # Extract the FHIR server version from the library/version.inc file
+        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
 
+        # Tag the Docker image with the extracted version and "latest"
+        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+
+        # Push both tagged images to Docker Hub
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
