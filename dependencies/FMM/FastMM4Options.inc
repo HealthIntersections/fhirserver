@@ -5,6 +5,7 @@ Fast Memory Manager: Options Include File
 Set the default options for FastMM here.
 
 }
+{$DEFINE IgnoreMemoryAllocatedBefore}
 
 {---------------------------Miscellaneous Options-----------------------------}
 

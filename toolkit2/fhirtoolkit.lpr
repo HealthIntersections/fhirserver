@@ -3,10 +3,13 @@ program fhirtoolkit;
 {$I fhir.inc}
 
 uses
+  {$IFDEF WINDOWS}
+  FastMM4,
+  {$ELSE}
   cmem,
-  {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
+
   Interfaces, // this includes the LCL widgetset
   Forms, datetimectrls, frm_main,
   { you can add units after this }

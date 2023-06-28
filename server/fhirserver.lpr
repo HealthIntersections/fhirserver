@@ -30,15 +30,16 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$i fhir.inc}
 
-uses
-  {$IFDEF FPC}
-  cmem,
-  {$ENDIF}
+uses             
   {$IFDEF WINDOWS}
   FastMM4,
-  Windows,
   {$ELSE}
+  cmem,
   cthreads,
+  {$ENDIF}
+
+  {$IFDEF WINDOWS}
+  Windows,
   {$ENDIF}
   {$IFDEF OSX}
   forms, Interfaces,
