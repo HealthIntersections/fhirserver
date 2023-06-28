@@ -401,7 +401,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
       <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-      <OtherUnitFiles Value="admin;tx"/>
+      <OtherUnitFiles Value="admin;tx;..\dependencies\FMM"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>
