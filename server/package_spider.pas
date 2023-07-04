@@ -567,7 +567,10 @@ begin
     end;
   end;
   if msg <> '' then
+  begin
+    Logging.log('Send to Zulip: '+msg);
     FZulip.sendMessage('tooling/Package Crawlers', 'Packages2', msg);
+  end;
 end;
 
 end.
