@@ -217,7 +217,7 @@ Type
     Procedure Start; // (active, threads: boolean);
     Procedure Close;
     Procedure Stop;
-    procedure recordStats(var rec : TStatusRecord);
+    procedure recordStats(rec : TStatusRecord);
 
     Procedure clearCache;
     procedure SetCacheStatus(status : boolean);
@@ -487,9 +487,8 @@ Begin
   StopServer;
 End;
 
-procedure TFhirWebServer.recordStats(var rec : TStatusRecord);
+procedure TFhirWebServer.recordStats(rec : TStatusRecord);
 begin
-  rec.endpoints.clear;
   rec.Requests := Common.Stats.TotalCount;
   rec.ConnCount := FClients.Count;
   FStats.addToList(rec);

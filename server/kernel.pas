@@ -91,6 +91,7 @@ type
     FMaxMem : UInt64;
     FI18n : TI18nSupport;
     FStatsCount : integer;
+    FStatsRecord : TStatusRecord;
 
     procedure loadTerminologies;
     procedure loadEndPoints;
@@ -164,11 +165,12 @@ begin
 
   FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
   FEndPoints := TFslList<TFHIRServerEndPoint>.create;
-
+  FStatsRecord := TStatusRecord.create;
 end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FStatsRecord.free;
   FI18n.free;
   FPcm.Free;
   Logging.removeListener(FTelnet);
@@ -396,25 +398,18 @@ end;
 
 procedure TFHIRServiceKernel.recordStats (callback : TFhirServerMaintenanceThreadTaskCallBack);
 var
-  rec : TStatusRecord;
   ep : TFHIRServerEndPoint;
 begin
   inc(FStatsCount);
-  FillChar(rec, sizeof(rec), 0);
-  rec.endpoints := TStringList.create;
-  try
-    rec.magic := FStatsCount;
-    rec.Threads := GetThreadCount;
-    rec.Memory := Logging.InternalMem;
+  FStatsRecord.clear;
+  FStatsRecord.magic := FStatsCount;
+  FStatsRecord.Threads := GetThreadCount;
+  FStatsRecord.Memory := Logging.InternalMem;
 
-    FTerminologies.recordStats(rec);
-    for ep in FEndPoints do
-      ep.recordStats(rec);
-    FWebServer.recordStats(rec);
-  finally
-    rec.endpoints.free;
-    rec.endpoints := nil;
-  end;
+  FTerminologies.recordStats(FStatsRecord);
+  for ep in FEndPoints do
+    ep.recordStats(FStatsRecord);
+  FWebServer.recordStats(FStatsRecord);
 end;
 
 procedure TFHIRServiceKernel.sweepCaches(callback: TFhirServerMaintenanceThreadTaskCallBack);

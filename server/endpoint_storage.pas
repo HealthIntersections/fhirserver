@@ -227,7 +227,7 @@ type
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override; 
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
   end;
 
 implementation
@@ -325,11 +325,10 @@ begin
     (WebEndPoint as TStorageWebEndpoint).FContext.getCacheInfo(ci);
 end;
 
-procedure TStorageEndPoint.recordStats(var rec: TStatusRecord);
+procedure TStorageEndPoint.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
   FServerContext.ClientCacheManager.recordStats(rec);
-  rec.countEP(webendPoint.code, webendPoint.RequestCount);
   rec.UserCount := rec.UserCount + FServerContext.SessionManager.Count;
 end;
 

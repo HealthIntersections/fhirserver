@@ -143,7 +143,7 @@ Type
     procedure getCacheInfo(ci: TCacheInformation); virtual;
 
     // load external terminology resources (snomed, Loinc, etc)     
-    procedure recordStats(var rec : TStatusRecord);
+    procedure recordStats(rec : TStatusRecord);
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
     procedure listVersions(url : String; list : TStringList);
 
@@ -291,7 +291,7 @@ Type
     function NextValueSetMemberKey : integer;
 
     function cacheSize(magic : integer) : UInt64; virtual;
-    procedure recordStats(var rec : TStatusRecord); virtual;
+    procedure recordStats(rec : TStatusRecord); virtual;
 
     procedure Unload; virtual;
 
@@ -807,7 +807,7 @@ begin
   result := 0;
 end;
 
-procedure TTerminologyServerStore.recordStats(var rec: TStatusRecord);
+procedure TTerminologyServerStore.recordStats(rec: TStatusRecord);
 begin
   // nothing?
 end;
@@ -2060,13 +2060,13 @@ begin
     ci.Add('NDFRT', FNDFRT.sizeInBytes(ci.magic));
 end;
 
-procedure TCommonTerminologies.recordStats(var rec: TStatusRecord);
+procedure TCommonTerminologies.recordStats(rec: TStatusRecord);
 var
   ss : TSnomedServices;
 begin
   for ss in FSnomed do
     if (ss.Loaded) then
-      inc(rec.SnomedsLoaded);
+      rec.SnomedsLoaded := rec.SnomedsLoaded + 1;
 end;
 
 procedure TCommonTerminologies.getSummary(b: TStringBuilder);

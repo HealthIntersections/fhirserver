@@ -76,7 +76,7 @@ type
     property Caching : boolean read FCaching write FCaching;
     property MaxSize : Cardinal read FMaxSize write FMaxSize;    
     property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
-    procedure recordStats(var rec : TStatusRecord);
+    procedure recordStats(rec : TStatusRecord);
   end;
 
 
@@ -242,7 +242,7 @@ begin
   end;
 end;
 
-procedure THTTPCacheManager.recordStats(var rec: TStatusRecord);
+procedure THTTPCacheManager.recordStats(rec: TStatusRecord);
 begin
   rec.HTTPCacheCount := FCache.Count;
   rec.HTTPCacheSize := FSize;

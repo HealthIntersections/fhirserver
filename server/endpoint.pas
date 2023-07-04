@@ -156,7 +156,7 @@ type
     procedure SweepCaches; virtual;
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
-    procedure recordStats(var rec : TStatusRecord); virtual;
+    procedure recordStats(rec : TStatusRecord); virtual;
 
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
@@ -432,9 +432,15 @@ begin
   end;
 end;
 
-procedure TFHIRServerEndPoint.recordStats(var rec: TStatusRecord);
+procedure TFHIRServerEndPoint.recordStats(rec: TStatusRecord);
+var
+  s : String;
+  c : cardinal;
 begin
   Common.cache.recordStats(rec);
+  s := webendPoint.code;
+  c := webendPoint.RequestCount;
+  rec.countEP(s, c);
 end;
 
 procedure TFHIRServerEndPoint.InstallDatabase;
