@@ -17,11 +17,11 @@ const
   {$IFDEF LINUX}
   {$IFDEF STATICLOAD_OPENSSL}
   // experimentally, this is works for static binding by the linker
-  CLibCrypto = CLibCryptoRaw;
-  CLibSSL = CLibSSLRaw;
+  CLibCrypto = CLibCryptoRaw+'.so.1.1';
+  CLibSSL = CLibSSLRaw+'.so.1.1';
   {$ELSE}
-  CLibCrypto = CLibCryptoRaw+'-1_1.so';
-  CLibSSL = CLibSSLRaw+'-1_1.so';
+  CLibCrypto = CLibCryptoRaw+'.so.1.1';
+  CLibSSL = CLibSSLRaw+'.so.1.1';
   {$ENDIF}
   {$ENDIF}
   {$IFDEF MSWINDOWS}

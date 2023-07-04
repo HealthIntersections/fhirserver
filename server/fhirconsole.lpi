@@ -138,11 +138,15 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-k--verbose -k--library-path=/home/grahame/work/fhirserver/dependencies/openssl/linux-x86_64/"/>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="osx">

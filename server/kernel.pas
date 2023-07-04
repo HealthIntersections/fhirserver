@@ -709,15 +709,15 @@ begin
 
   s := os+cpu+compiler;
   {$IFOPT C+}
-  s := s + ' +Assertions';
+  s := s + '+Assertions';
   {$ENDIF}
 
   {$IFOPT D+}
-  s := s + ' +Debug';
+  s := s + '+Debug';
   {$ENDIF}
 
   {$IFOPT O+}
-  s := s + ' +Optimizations';
+  s := s + '+Optimizations';
   {$ENDIF}
 
   {$IFDEF OBJECT_TRACKING}

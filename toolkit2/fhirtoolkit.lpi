@@ -866,6 +866,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-k--library-path=/home/grahame/work/fhirserver/dependencies/openssl/linux-x86_64/"/>
     </Other>
   </CompilerOptions>
   <Debugging>

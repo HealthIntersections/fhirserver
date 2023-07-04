@@ -129,6 +129,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/home/grahame/work/fhirserver/dependencies/openssl/linux-x86_64/"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -780,7 +781,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="37">
+    <Exceptions Count="38">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -843,7 +844,6 @@
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
-        <Enabled Value="False"/>
       </Item16>
       <Item17>
         <Name Value="ETerminologyError"/>
@@ -911,6 +911,9 @@
       <Item37>
         <Name Value="00000010EParserException"/>
       </Item37>
+      <Item38>
+        <Name Value="EFslInvariant"/>
+      </Item38>
     </Exceptions>
   </Debugging>
 </CONFIG>
