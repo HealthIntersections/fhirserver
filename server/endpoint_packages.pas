@@ -139,7 +139,7 @@ type
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
   end;
 
 implementation
@@ -179,7 +179,7 @@ begin
 
 end;
 
-procedure TPackageServerEndPoint.recordStats(var rec: TStatusRecord);
+procedure TPackageServerEndPoint.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
   // nothing

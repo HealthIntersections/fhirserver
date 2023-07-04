@@ -218,7 +218,7 @@ Type
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override; 
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
   end;
 
 implementation
@@ -469,7 +469,7 @@ begin
   FStore.getCacheInfo(ci);
 end;
 
-procedure TFullServerEndPoint.recordStats(var rec: TStatusRecord);
+procedure TFullServerEndPoint.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
 end;

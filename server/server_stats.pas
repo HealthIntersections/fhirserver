@@ -40,25 +40,46 @@ type
 
   { TStatusRecord }
 
-  TStatusRecord = record
-    magic : integer;
+  TStatusRecord = class (TFslObject)
+  private
+    FMagic : integer;
 
-    Memory : UInt64;
-    Threads : word;
-    Requests : Cardinal;
-    UserCount : Cardinal;
-    ConnCount : Cardinal;
-    HTTPCacheCount : Cardinal;
-    HTTPCacheSize : UInt64;
-    ClientCacheCount : Cardinal;
-    ClientCacheObjectCount : Cardinal;
-    ClientCacheSize : UInt64;
-    ServerCacheCount : Cardinal;
-    ServerCacheSize : UInt64;
-    SnomedsLoaded : byte;
+    FMemory : UInt64;
+    FThreads : word;
+    FRequests : Cardinal;
+    FUserCount : Cardinal;
+    FConnCount : Cardinal;
+    FHTTPCacheCount : Cardinal;
+    FHTTPCacheSize : UInt64;
+    FClientCacheCount : Cardinal;
+    FClientCacheObjectCount : Cardinal;
+    FClientCacheSize : UInt64;
+    FServerCacheCount : Cardinal;
+    FServerCacheSize : UInt64;
+    FSnomedsLoaded : byte;
 
-    endpoints : TStringList;
+    FEndpoints : TStringList;
 
+  public
+    constructor create; override;
+    destructor destroy; override;
+
+    property Magic : integer read FMagic write FMagic;
+    property Memory : UInt64 read FMemory write FMemory;
+    property Threads : word read FThreads write FThreads;
+    property Requests : Cardinal read FRequests write FRequests;
+    property UserCount : Cardinal read FUserCount write FUserCount;
+    property ConnCount : Cardinal read FConnCount write FConnCount;
+    property HTTPCacheCount : Cardinal read FHTTPCacheCount write FHTTPCacheCount;
+    property HTTPCacheSize : UInt64 read FHTTPCacheSize write FHTTPCacheSize;
+    property ClientCacheCount : Cardinal read FClientCacheCount write FClientCacheCount;
+    property ClientCacheObjectCount : Cardinal read FClientCacheObjectCount write FClientCacheObjectCount;
+    property ClientCacheSize : UInt64 read FClientCacheSize write FClientCacheSize;
+    property ServerCacheCount : Cardinal read FServerCacheCount write FServerCacheCount;
+    property ServerCacheSize : UInt64 read FServerCacheSize write FServerCacheSize;
+    property SnomedsLoaded : byte read FSnomedsLoaded write FSnomedsLoaded;
+
+    procedure clear;
     function count(n : String) : cardinal;
     procedure countEP(n : String; c : cardinal);
   end;
@@ -87,27 +108,67 @@ implementation
 
 { TStatusRecord }
 
+constructor TStatusRecord.create;
+begin
+  inherited create;
+  FEndpoints := TStringList.create;
+end;
+
+destructor TStatusRecord.destroy;
+begin
+  FEndpoints.free;
+  inherited destroy;
+end;
+
+procedure TStatusRecord.clear;
+begin
+  FEndpoints.clear;
+  Magic := 0;
+  Memory := 0;
+  Threads := 0;
+  Requests := 0;
+  UserCount := 0;
+  ConnCount := 0;
+  HTTPCacheCount := 0;
+  HTTPCacheSize := 0;
+  ClientCacheCount := 0;
+  ClientCacheObjectCount := 0;
+  ClientCacheSize := 0;
+  ServerCacheCount := 0;
+  ServerCacheSize := 0;
+  SnomedsLoaded := 0;
+end;
+
 function TStatusRecord.count(n: String): cardinal;
 var
   i : integer;
+  c : cardinal;
 begin
   result := 0;
-  for i := 0 to endpoints.count - 1 do
-    if endpoints[i] = n then
-      exit(cardinal(endpoints.Objects[i]));
+  for i := 0 to FEndpoints.count - 1 do
+    if FEndpoints[i] = n then
+    begin
+      c := cardinal(FEndpoints.Objects[i]);
+      exit(c);
+    end;
 end;
 
 procedure TStatusRecord.countEP(n: String; c: cardinal);
 var
   i : integer;
 begin
-  for i := 0 to endpoints.count - 1 do
-    if endpoints[i] = n then
+  if (c <> 0) then
+  begin
+    for i := 0 to FEndpoints.count - 1 do
     begin
-      endpoints.Objects[i] := TObject(cardinal(endpoints.Objects[i]) + c);
-      exit;
+      if FEndpoints[i] = n then
+      begin
+        FEndpoints.Objects[i] := TObject(cardinal(FEndpoints.Objects[i]) + c);
+        exit;
+      end;
     end;
-  endpoints.AddObject(n, TObject(c));
+    FEndpoints.AddObject(n, TObject(c));
+  end;
 end;
 
 { TStatusRecords }

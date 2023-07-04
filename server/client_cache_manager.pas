@@ -69,7 +69,7 @@ type
     procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
-    procedure recordStats(var rec : TStatusRecord); 
+    procedure recordStats(rec : TStatusRecord);
     property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
 
@@ -241,7 +241,7 @@ begin
   end;
 end;
 
-procedure TClientCacheManager.recordStats(var rec: TStatusRecord);
+procedure TClientCacheManager.recordStats(rec: TStatusRecord);
 var
   e : TClientCacheManagerEntry;
 begin

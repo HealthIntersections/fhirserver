@@ -165,7 +165,7 @@ Type
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
     property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
 
@@ -232,7 +232,7 @@ begin
   inherited;
 end;
 
-procedure TTerminologyServer.recordStats(var rec: TStatusRecord);
+procedure TTerminologyServer.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
   FLock.Lock;

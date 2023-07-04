@@ -100,7 +100,7 @@ begin
   if GWorkerContext = nil then
   begin
     GWorkerContext := TTestingWorkerContext4.create(TFHIRFactoryR4.create, TFHIRPackageManager.Create(npmModeUser));
-    pcm := TFHIRPackageManager.Create(npmModeSystem);
+    pcm := TFHIRPackageManager.Create(npmModeUser);
     li := TPackageLoadingInformation.create(fhir4_constants.FHIR_GENERATED_VERSION);
     try
       li.OnLoadEvent := GWorkerContext.loadResourceJson;

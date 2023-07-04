@@ -89,7 +89,7 @@ type
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
     function cacheSize(magic : integer) : UInt64; override;
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
     procedure getCacheInfo(ci: TCacheInformation); override;
   end;
 
@@ -120,7 +120,7 @@ begin
   result := inherited cacheSize(magic);
 end;
 
-procedure TICAOWebEndPoint.recordStats(var rec: TStatusRecord);
+procedure TICAOWebEndPoint.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
 end;

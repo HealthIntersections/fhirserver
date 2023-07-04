@@ -57,9 +57,8 @@ begin
     {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := executableDirectory();
-    {$ENDIF}
-    {$IFDEF OSX}
-    GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+    {$ELSE}
+    Must static load openssl if not on windows
     {$ENDIF}
     {$ENDIF}
 

@@ -263,7 +263,7 @@ type
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;    
-    procedure recordStats(var rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -1509,7 +1509,7 @@ begin
   ci.add('Terminology Data', FStore.FData.sizeInBytes(ci.magic));
 end;
 
-procedure TTerminologyServerEndPoint.recordStats(var rec: TStatusRecord);
+procedure TTerminologyServerEndPoint.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
   FServerContext.TerminologyServer.recordStats(rec);

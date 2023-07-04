@@ -129,7 +129,10 @@ begin
   end
   {$ENDIF}
   else
+  begin
+    Logging.LogToConsole := false;
     RunTestConsole(ini);
+  end;
 end;
 
 end.
