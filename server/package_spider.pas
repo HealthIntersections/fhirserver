@@ -34,6 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
+  IdHashSHA,
   fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging, fsl_versions,
   fsl_fetcher, fsl_zulip,
   fdb_manager, fdb_dialects,
@@ -112,6 +113,9 @@ Type
     class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; urls : TStringList; kind : TFHIRPackageKind);
   end;
 
+
+function genHash(bytes : TBytes) : String;
+
 implementation
 
 function fix(url : String) : String;
@@ -128,14 +132,15 @@ var
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
-    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :c)';
+    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Hash, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :hash, :c)';
   conn.prepare;
   conn.BindDateTimeEx('d', date);
   conn.BindString('u', canonical);
   conn.BindString('f', npm.fhirVersionList);
   conn.BindBlobFromString('desc', description);
   conn.BindString('mt', token);
+  conn.BindString('hash', genHash(pck));
   conn.BindBlob('c', pck);
   conn.Execute;
   conn.Terminate;
@@ -572,5 +577,18 @@ begin
     FZulip.sendMessage('tooling/Package Crawlers', 'Packages2', msg);
   end;
 end;
+
+function genHash(bytes : TBytes) : String;
+var
+  hash : TIdHashSHA1;
+begin
+  hash := TIdHashSHA1.Create;
+  try
+    result := hash.HashBytesAsHex(bytes);
+  finally
+    hash.Free;
+  end;
+end;
+
 
 end.

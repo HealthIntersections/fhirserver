@@ -119,7 +119,8 @@ type
     FPackageServer : TFHIRPackageWebServer;
     FUpdater : TPackageUpdaterThread;
     FSystemToken : String;
-    procedure upgradeDatabase;
+    procedure upgradeDatabase;         
+    procedure generateHashes(conn : TFDBConnection);
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
@@ -318,6 +319,10 @@ begin
             c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
             c.ExecSQL('Update PackageVersions set UploadCount = 1');
           end;
+          if not t.hasColumn('Hash') then
+          begin
+            c.ExecSQL('ALTER TABLE PackageVersions ADD Hash nchar(128) NULL');
+          end;
         end;
         if not m.HasTable('PackageURLs') then
         begin
@@ -333,10 +338,32 @@ begin
     finally
       m.Free;
     end;
+    generateHashes(c);
     c.Release;
   except
     on e: Exception do
       c.Error(e);
+  end;
+end;
+
+procedure TPackageServerEndPoint.generateHashes(conn : TFDBConnection);
+var
+  hashes : TFslStringDictionary;
+  s : String;
+begin
+  hashes := TFslStringDictionary.create;
+  try
+    conn.SQL := 'select PackageVersionKey, Content from PackageVersions where Hash is NULL';
+    conn.prepare;
+    conn.execute;
+    while conn.FetchNext do
+      hashes.AddOrSetValue(conn.ColStringByName['PackageVersionKey'], genHash(conn.ColBlobByName['Content']));
+    conn.Terminate;
+
+    for s in hashes.keys do
+      conn.ExecSQL('update PackageVersions set Hash = '''+hashes[s]+''' where PackageVersionKey = '+s);
+  finally
+    hashes.free;
   end;
 end;
 
@@ -796,14 +823,14 @@ end;
 procedure TFHIRPackageWebServer.serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
 conn : TFDBConnection;
-json, v: TJsonObject;
+json, v, dist: TJsonObject;
 src : String;
 vars : TFslMap<TFHIRObject>;
 list : TFslList<TJsonObject>;
 begin
   conn := FDB.getConnection('Package.server.versions');
   try
-    conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
+    conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, Hash, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
     conn.prepare;
     conn.Execute;
     list := TFslList<TJsonObject>.create;
@@ -832,6 +859,12 @@ begin
               v['description'] := conn.ColBlobAsStringByName['Description'];
             end;
             v['url'] := URLPath([AbsoluteUrl(secure), id, conn.ColStringByName['Version']]);
+            dist := v.forceObj['dist'];
+            dist['shasum'] := conn.ColStringByName['Hash'];
+            if (secure) then
+              dist['tarball'] := 'https://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version']
+            else
+              dist['tarball'] := 'http://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version'];
           end;
 
           vars.add('name', TFHIRObjectText.create(json['name']));
@@ -1090,9 +1123,9 @@ begin
       begin
         vkey := c.CountSQL('Select Max(PackageVersionKey) from PackageVersions') + 1; 
         c.SQL := 'Insert into PackageVersions '+
-         '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Content) values ('+
+         '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Hash, Content) values ('+
          inttostr(vkey)+', '''+SQLWrapString(NewGuidId)+''', :d, getDate(), '''+SQLWrapString(id)+''', ''current'', '''+
-           inttostr(ord(npm.kind))+''', 0, :u, :f, 1, :desc, null, :c)';
+           inttostr(ord(npm.kind))+''', 0, :u, :f, 1, :desc, null, :hash, :c)';
       end
       else
       begin
@@ -1106,6 +1139,7 @@ begin
       c.BindString('u', npm.canonical);
       c.BindString('f', npm.fhirVersionList);
       c.BindBlobFromString('desc', 'Content from IG publisher');
+      c.BindString('hash', genHash(src));
       c.BindBlob('c', src);
       c.Execute;
       c.Terminate;
