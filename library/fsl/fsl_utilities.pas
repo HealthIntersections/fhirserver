@@ -750,6 +750,7 @@ Function SystemPageSize : Cardinal;
 Function SystemProcessorIdentifier : String;
 Function SystemProcessorVendorIdentifier : String;
 Function ProcessName : String; Overload;
+function ProcessCpuUsage : UInt64; // actual value is not accurate but is consistent
 
 Type
   TInternetHost = Cardinal;
@@ -1420,12 +1421,6 @@ Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : S
 Function DateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String; Overload;
 Function DateTimeOffsetZero : TDateTimeOffset;
 
-Function DurationToDaysString(Const aValue : TDurationMS) : String; Overload;
-Function DurationToHoursString(Const aValue : TDurationMS) : String; Overload;
-Function DurationToMinutesString(Const aValue : TDurationMS) : String; Overload;
-Function DurationToSecondsString(Const aValue : TDurationMS) : String; Overload;
-Function DurationToShortSecondsString(Const aValue : TDurationMS) : String; Overload;
-Function DurationToMillisecondsString(Const aValue : TDurationMS) : String; Overload;
 
 
 function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
@@ -1435,6 +1430,12 @@ Function TimeZone : TTimeZoneCode; Overload;
 Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
 Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
 {$ENDIF}
+Function DurationToSecondsString(Const aValue : TDurationMS) : String; Overload;
+Function DurationToDaysString(Const aValue : TDurationMS) : String; Overload;
+Function DurationToHoursString(Const aValue : TDurationMS) : String; Overload;
+Function DurationToMinutesString(Const aValue : TDurationMS) : String; Overload;
+Function DurationToShortSecondsString(Const aValue : TDurationMS) : String; Overload;
+Function DurationToMillisecondsString(Const aValue : TDurationMS) : String; Overload;
 
 function TimeZoneIANAName : String;
 function DateTimeToUnix(ConvDate: TDateTime): Longint;
@@ -17495,6 +17496,25 @@ begin
       result := result + FLastSeperator + FList[FList.count - 1];
   end;
 end;
+
+function ProcessCpuUsage : UInt64; // actual value is not accurate but is consistent
+{$IFDEF LINUX}
+begin
+  result := 0;
+end;
+{$ENDIF}
+
+{$IFDEF OSX}
+begin
+  result := 0;
+end;
+{$ENDIF}
+
+{$IFDEF WINDOWS}
+begin
+  result := 0;
+end;
+{$ENDIF}
 
 Initialization
   init;

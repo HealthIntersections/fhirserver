@@ -421,27 +421,27 @@ begin
 //  GetMD2HashInst := OpenSSLGetMD2HashInst;
 //  IsMD4HashIntfAvail := OpenSSLIsMD4HashIntfAvail;
 //  GetMD4HashInst := OpenSSLGetMD4HashInst;
-//  IsMD5HashIntfAvail := OpenSSLIsMD5HashIntfAvail;
-//  GetMD5HashInst := OpenSSLGetMD5HashInst;
-//  IsSHA1HashIntfAvail := OpenSSLIsSHA1HashIntfAvail;
-//  GetSHA1HashInst := OpenSSLGetSHA1HashInst;
+  IsMD5HashIntfAvail := OpenSSLIsMD5HashIntfAvail;
+  GetMD5HashInst := OpenSSLGetMD5HashInst;
+  IsSHA1HashIntfAvail := OpenSSLIsSHA1HashIntfAvail;
+  GetSHA1HashInst := OpenSSLGetSHA1HashInst;
 //  IsSHA224HashIntfAvail := OpenSSLIsSHA224HashIntfAvail;
 //  GetSHA224HashInst := OpenSSLGetSHA224HashInst;
-//  IsSHA256HashIntfAvail := OpenSSLIsSHA256HashIntfAvail;
+  IsSHA256HashIntfAvail := OpenSSLIsSHA256HashIntfAvail;
   GetSHA256HashInst := OpenSSLGetSHA256HashInst;
 //  IsSHA384HashIntfAvail := OpenSSLIsSHA384HashIntfAvail;
 //  GetSHA384HashInst := OpenSSLGetSHA384HashInst;
-//  IsSHA512HashIntfAvail := OpenSSLIsSHA512HashIntfAvail;
-//  GetSHA512HashInst := OpenSSLGetSHA512HashInst;
+  IsSHA512HashIntfAvail := OpenSSLIsSHA512HashIntfAvail;
+  GetSHA512HashInst := OpenSSLGetSHA512HashInst;
   UpdateHashInst := OpenSSLUpdateHashInst;
   FinalHashInst := OpenSSLFinalHashInst;
 
   IsHMACAvail := OpenSSLIsHMACAvail;
 
-  //  IsHMACMD5Avail := OpenSSLIsHMACMD5Avail;
-//  GetHMACMD5HashInst := OpenSSLGetHMACMD5Inst;
-//  IsHMACSHA1Avail  := OpenSSLIsHMACSHA1Avail;
-//  GetHMACSHA1HashInst := OpenSSLGetHMACSHA1Inst;
+  IsHMACMD5Avail := OpenSSLIsHMACMD5Avail;
+  GetHMACMD5HashInst := OpenSSLGetHMACMD5Inst;
+  IsHMACSHA1Avail  := OpenSSLIsHMACSHA1Avail;
+  GetHMACSHA1HashInst := OpenSSLGetHMACSHA1Inst;
 //  IsHMACSHA224Avail := OpenSSLIsHMACSHA224Avail;
 //  GetHMACSHA224HashInst := OpenSSLGetHMACSHA224Inst;
 
@@ -450,8 +450,8 @@ begin
 
 //  IsHMACSHA384Avail := OpenSSLIsHMACSHA384Avail;
 //  GetHMACSHA384HashInst := OpenSSLGetHMACSHA384Inst;
-//  IsHMACSHA512Avail := OpenSSLIsHMACSHA512Avail;
-//  GetHMACSHA512HashInst := OpenSSLGetHMACSHA512Inst;
+  IsHMACSHA512Avail := OpenSSLIsHMACSHA512Avail;
+  GetHMACSHA512HashInst := OpenSSLGetHMACSHA512Inst;
 
   UpdateHMACInst := OpenSSLUpdateHMACInst;
   FinalHMACInst := OpenSSLFinalHMACInst;

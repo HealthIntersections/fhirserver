@@ -125,6 +125,7 @@ Type
     procedure move(index, delta : integer);
     procedure clear;
 
+    procedure readStrings(ts : TStrings);
     function asObjects : TFslList<TJsonObject>;
     function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
@@ -2088,6 +2089,14 @@ end;
 procedure TJsonArray.clear;
 begin
   FItems.Clear;
+end;
+
+procedure TJsonArray.readStrings(ts: TStrings);
+var
+  i : integer;
+begin
+  for I := 0 to count - 1 do
+    ts.Add(Value[i]);
 end;
 
 function TJsonArray.compare(other: TJsonNode): boolean;

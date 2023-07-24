@@ -128,12 +128,12 @@ end;
 
 function hasDatabase(typ : String) : boolean;
 begin
-  result := not ((typ = 'snomed') or (typ = 'loinc') or (typ = 'folder') or (typ = 'icao'));
+  result := not ((typ = 'snomed') or (typ = 'loinc') or (typ = 'folder') or (typ = 'icao') or (typ = 'tx-registry'));
 end;
 
 function hasSrcFolder(typ : String) : boolean;
 begin
-  result := (typ = 'folder');
+  result := (typ = 'folder') or (typ = 'tx-registry');
 end;
 
 { TEditEPForm }

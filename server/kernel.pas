@@ -53,7 +53,7 @@ Uses
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
-  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao;
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao, endpoint_txregistry;
 
 
 // how the kernel works:
@@ -516,6 +516,8 @@ begin
   // we generate by type and mode
   if config['type'].value = 'package' then
     result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
+  else if config['type'].value = 'tx-registry' then
+    result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'folder' then
     result := TFolderWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'icao' then
