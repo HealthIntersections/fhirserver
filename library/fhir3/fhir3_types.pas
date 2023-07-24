@@ -2432,7 +2432,8 @@ Type
     procedure addExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
-    procedure stripExtensions(exemptUrls : TStringArray); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override; 
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
 
   {$IFNDEF FPC}Published{$ENDIF}
     // Typed access to unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
@@ -11072,6 +11073,21 @@ begin
     for i := FExtensionList.count - 1 downto 0 do
       if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
         FExtensionList.remove(i);
+end;
+
+procedure TFhirElement.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+var
+  ext : TFHIRExtension;
+begin
+  inherited copyExtensions(src, exemptUrls);
+  if (src is TFhirElement) then
+  begin
+    for ext in (src as TFhirElement).extensionList do
+    begin
+      if (length(exemptUrls) = 0) or StringArrayExists(exemptUrls, ext.url) then
+        extensionList.Add(ext.Clone);
+    end;
+  end;
 end;
 
 function TFhirElement.extensionCount(url: String): integer;

@@ -39,7 +39,7 @@ uses
 type
   ESemVerException = class (EFslException);
 
-  TSemanticVersionLevel = (semverMajor, semverMinor, semverPatch, semverLabel);
+  TSemanticVersionLevel = (semverAuto, semverMajor, semverMinor, semverPatch, semverLabel);
 
   { TSemanticVersion }
 
@@ -51,6 +51,7 @@ type
     FMinor: integer;
     FPatch: integer;
     FValid : boolean;
+    FLevel : TSemanticVersionLevel;
 
     procedure SetBuildLabel(const value: String);
 
@@ -65,6 +66,7 @@ type
     property Minor : integer read FMinor write FMinor;
     property Patch : integer read FPatch write FPatch;
     property BuildLabel : String read FBuildLabel write SetBuildLabel;
+    property level : TSemanticVersionLevel read FLevel;
 
     class function isValid(ver : String) : boolean;
 
@@ -127,17 +129,35 @@ begin
   if (ver = '') then
     exit(nil);
   if (SameText(ver, 'r2')) then
-    result := TSemanticVersion.fromString('1.0.2')
+  begin
+    result := TSemanticVersion.fromString('1.0.2');
+    result.FLevel := semverMinor;
+  end
   else if (SameText(ver, 'r2b')) then
-    result := TSemanticVersion.fromString('1.4.0')
+  begin
+    result := TSemanticVersion.fromString('1.4.0');
+    result.FLevel := semverMinor;
+  end
   else if (SameText(ver, 'r3')) then
-    result := TSemanticVersion.fromString('3.0.2')
+  begin
+    result := TSemanticVersion.fromString('3.0.2');
+    result.FLevel := semverMinor;
+  end
   else if (SameText(ver, 'r4')) then
-    result := TSemanticVersion.fromString('4.0.1')
+  begin
+    result := TSemanticVersion.fromString('4.0.1');
+    result.FLevel := semverMinor;
+  end
   else if (SameText(ver, 'r4b')) then
-    result := TSemanticVersion.fromString('4.3.0')
+  begin
+    result := TSemanticVersion.fromString('4.3.0');
+    result.FLevel := semverMinor;
+  end
   else if (SameText(ver, 'r5')) then
-    result := TSemanticVersion.fromString('5.0.0')
+  begin
+    result := TSemanticVersion.fromString('5.0.0');
+    result.FLevel := semverMinor;
+  end
   else
   begin
     c := ver.CountChar('.');
@@ -161,28 +181,40 @@ begin
       result.FValid := true;
 
       if (length(parts) > 0) then
+      begin
         if StrToIntDef(parts[0], -1) > -1 then
           result.FMajor := StrToInt(parts[0])
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
         else
           result.FValid := false;
+        result.FLevel := semverMajor;
+      end;
 
       if (length(parts) > 1) then
+      begin
         if StrToIntDef(parts[1], -1) > -1 then
           result.FMinor := StrToInt(parts[1])
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
         else
           result.FValid := false;
+        result.FLevel := semverMinor;
+      end;
 
       if (length(parts) > 2) then
+      begin
         if StrToIntDef(parts[2], -1) > -1 then
           result.FPatch := StrToInt(parts[2])
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
         else
           result.FValid := false;
+        if result.FBuildLabel <> '' then
+          result.FLevel := semverLabel
+        else
+          result.FLevel := semverPatch;
+      end;
 
       result.Link;
     finally
@@ -289,7 +321,11 @@ begin
         if (not o1.valid) or (not o2.valid) then
           result := o1.raw = o2.raw
         else
+        begin
+          if level = semverAuto then
+            level := o1.level;
           result := o1.matches(o2, level);
+        end;
       finally
         o2.free;
       end;

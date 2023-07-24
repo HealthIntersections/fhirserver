@@ -476,7 +476,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override;
+    procedure addProperty(code : String; value : TFHIRObject); override;  overload;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -585,7 +586,8 @@ type
     procedure setVersion(value : String); override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
-    function checkCompose(place, role : String) : boolean; override;
+    function checkCompose(place, role : String) : boolean; override;      
+    function getComposeExtensions : TFslList<TFHIRExtensionW>; override;
     function checkExpansion(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
     function inlineCS : TFHIRValueSetCodeSystemW; override;
@@ -2786,6 +2788,21 @@ begin
     vs.compose.checkNoModifiers(place, role, []);
 end;
 
+function TFHIRValueSet4.getComposeExtensions: TFslList<TFHIRExtensionW>;
+var
+  ext : TFHIRObject;
+begin
+  result := TFslList<TFHIRExtensionW>.create;
+  try
+    if (vs.compose <> nil) then
+      for ext in vs.compose.getExtensionsV.forEnum do
+        result.add(TFHIRExtension4.create(ext.link));
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFHIRValueSet4.checkExpansion(place, role: String): boolean;
 begin
   result := vs.expansion <> nil;
@@ -4140,6 +4157,17 @@ begin
   p.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property';
   p.addExtension('code', code);
   p.addExtension('value', value.link as TFhirType);
+end;
+
+procedure TFhirValueSetExpansionContains4.addProperty(code: String; prop: TFhirCodeSystemConceptPropertyW);
+var
+  p : TFhirExtension;
+begin
+  p := (Element as TFhirValueSetExpansionContains).extensionList.append;
+  p.url := 'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property';
+  p.addExtension('code', code);
+  p.addExtension('value', prop.value.link as TFhirType);
+  p.copyExtensions(prop.element, []);
 end;
 
 procedure TFhirValueSetExpansionContains4.addContains(contained: TFhirValueSetExpansionContainsW);

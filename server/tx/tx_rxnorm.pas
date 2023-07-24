@@ -95,7 +95,7 @@ type
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -592,7 +592,7 @@ begin
   end;
 end;
 
-function TUMLSServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
+function TUMLSServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 var
   qry : TFDBConnection;
   res : TUMLSConcept;

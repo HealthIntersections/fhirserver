@@ -261,6 +261,8 @@ type
     property ServerContextObject : TFslObject read FServerContext;
   end;
 
+  { TFHIRInternalCommunicator }
+
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)
   private
     FServerContext : TFslObject;
@@ -280,7 +282,8 @@ type
     function address : String; override;
     procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
 
-    function conformanceV(summary : boolean) : TFHIRResourceV; override;
+    function conformanceV(summary : boolean) : TFHIRResourceV; override; 
+    function conformanceModeV(mode : string) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : string; id : String) : TFHIRResourceV; override;
@@ -1384,7 +1387,32 @@ begin
   end;
 end;
 
-function TFHIRInternalCommunicator.createResourceV(resource: TFhirResourceV; var id: String): TFHIRResourceV;
+function TFHIRInternalCommunicator.conformanceModeV(mode: string): TFHIRResourceV;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+begin
+  req := TFHIRRequest.Create(context, roOperation, nil);
+  try
+    req.CommandType := fcmdMetadata;
+    resp := TFHIRResponse.Create(FContext.link);
+    try
+      if (mode = 'terminology') then
+        FEngine.ExecuteTerminologyCapabilities(req, resp)
+      else
+        FEngine.ExecuteMetadata(nil, req, resp);
+      checkOutcome(resp);
+      result := resp.Resource.Link;
+    finally
+      resp.Free;
+    end;
+  finally
+    req.Free;
+  end;
+end;
+
+function TFHIRInternalCommunicator.createResourceV(resource: TFHIRResourceV;
+  var id: String): TFHIRResourceV;
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
@@ -1561,7 +1589,8 @@ begin
   end;
 end;
 
-function TFHIRInternalCommunicator.searchV(atype: string; allRecords: boolean; params: string): TFhirResourceV;
+function TFHIRInternalCommunicator.searchV(atype: string; allRecords: boolean;
+  params: string): TFHIRResourceV;
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
@@ -1599,7 +1628,9 @@ begin
   raise EFHIRTodo.create('TFHIRInternalCommunicator.searchAgainV');
 end;
 
-function TFHIRInternalCommunicator.searchPostV(atype: string; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.searchPostV(atype: string;
+  allRecords: boolean; params: TStringList; resource: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
   result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.searchPostV');
@@ -1623,13 +1654,15 @@ begin
 
 end;
 
-function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.transactionV(bundle: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
   result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.transactionV');
 end;
 
-function TFHIRInternalCommunicator.updateResourceV(resource: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.updateResourceV(resource: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
   result := nil;
   raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');

@@ -381,6 +381,7 @@ type
     procedure deleteExtensionV(extension : TFHIRObject); override;
     procedure deleteExtensionByUrl(url : String); override;
     procedure stripExtensions(exemptUrls : TStringArray); override;
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
 
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -931,6 +932,21 @@ begin
     for i := FExtensionList.count - 1 downto 0 do
       if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
         FExtensionList.remove(i);
+end;
+
+procedure TFhirDomainResource.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+var
+  ext : TFHIRExtension;
+begin
+  inherited copyExtensions(src, exemptUrls);
+  if (src is TFhirDomainResource) then
+  begin
+    for ext in (src as TFhirDomainResource).extensionList do
+    begin
+      if (length(exemptUrls) = 0) or StringArrayExists(exemptUrls, ext.url) then
+        extensionList.Add(ext.Clone);
+    end;
+  end;
 end;
 
 function TFhirDomainResource.extensionCount(url: String): integer;

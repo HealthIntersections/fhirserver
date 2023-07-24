@@ -39,9 +39,12 @@ uses
 
 type
 
+  { TFhirThreadedClientPackage }
+
   TFhirThreadedClientPackage = class (TFslObject)
   private
     FCommand: TFHIRCommandType;
+    FMode: string;
     FSummary: boolean;
     FError: String;
     FResult: TFhirResourceV;
@@ -74,6 +77,7 @@ type
 
     property command : TFHIRCommandType read FCommand write FCommand;
     property summary : boolean read FSummary write FSummary;
+    property mode : string read FMode write FMode;
     property resourceType : TFhirResourceTypeV read FResourceType write FResourceType;
     property allRecords : boolean read FAllRecords write FAllRecords;
     property params : TStringList read FParams write FParams;
@@ -103,6 +107,8 @@ type
     destructor Destroy; override;
   end;
 
+  { TFhirFacadeCommunicator }
+
   TFhirFacadeCommunicator = class abstract (TFHIRClientCommunicator)
   protected
     FInternal : TFhirClientV;
@@ -112,7 +118,8 @@ type
     destructor Destroy; override;
 
     function address : String; override;
-    function conformanceV(summary : boolean) : TFHIRResourceV; override;
+    function conformanceV(summary : boolean) : TFHIRResourceV; override;  
+    function conformanceModeV(mode : string) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
@@ -224,7 +231,10 @@ begin
   try
     try
       case FPackage.command of
-        fcmdMetadata: FPackage.result := FClient.conformanceV(FPackage.summary);
+        fcmdMetadata: if FPackage.mode <> '' then
+            FPackage.result := FClient.conformanceModeV(FPackage.mode)
+          else
+            FPackage.result := FClient.conformanceV(FPackage.summary);
         fcmdTransaction : FPackage.result := FCLient.transactionV(FPackage.resource as TFHIRResourceV);
         fcmdRead : FPackage.result := FClient.readResourceV(FPackage.ResourceType, FPackage.id);
         fcmdVersionRead : FPackage.result := FClient.vreadResourceV(FPackage.ResourceType, FPackage.id, FPackage.vid);
@@ -311,7 +321,27 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.createResourceV(resource: TFhirResourceV; var id: String): TFHIRResourceV;
+function TFhirFacadeCommunicator.conformanceModeV(mode: string): TFHIRResourceV;
+var
+  pack : TFhirThreadedClientPackage;
+begin
+  pack := TFhirThreadedClientPackage.create;
+  try
+    pack.command := fcmdMetadata;
+    pack.mode := mode;
+    pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
+    process(pack);
+    result := pack.result.link;
+    FHeaders := FInternal.LastHeaders;
+    FClient.LastUrl := pack.lastUrl;
+    FClient.LastStatus := pack.lastStatus;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirFacadeCommunicator.createResourceV(resource: TFHIRResourceV;
+  var id: String): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -374,22 +404,26 @@ begin
   end;
 end;
 
-procedure TFhirFacadeCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
+procedure TFhirFacadeCommunicator.deleteResourceV(atype: TFHIRResourceTypeV;
+  id: String);
 begin
  raise EFHIRTodo.create('TFhirThreadedCommunicator.deleteResourceV');
 end;
 
-function TFhirFacadeCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.historyTypeV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: string): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.historyTypeV');
 end;
 
-function TFhirFacadeCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.historyInstanceV(atype: TFHIRResourceTypeV;
+  id: String; allRecords: boolean; params: string): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.historyInstanceV');
 end;
 
-function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.operationV(atype: TFHIRResourceTypeV; id,
+  opName: String; params: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -421,7 +455,8 @@ begin
   raise EFslException.Create('not done yet');
 end;
 
-function TFhirFacadeCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.operationV(atype: TFHIRResourceTypeV;
+  opName: String; params: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -483,7 +518,8 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.searchV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
+function TFhirFacadeCommunicator.searchV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: string): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -524,7 +560,9 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.searchPostV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: TStringList; resource: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
   raise EFHIRTodo.create('TFhirThreadedCommunicator.searchPostV');
 end;
@@ -548,7 +586,8 @@ begin
   end;
 end;
 
-function TFhirFacadeCommunicator.updateResourceV(resource: TFhirResourceV): TFHIRResourceV;
+function TFhirFacadeCommunicator.updateResourceV(resource: TFHIRResourceV
+  ): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
 begin

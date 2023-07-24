@@ -167,6 +167,10 @@
         <Filename Value="..\library\fhir4\fhir4_questionnaire.pas"/>
         <UnitName Value="fhir4_questionnaire"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_ips.pas"/>
+        <UnitName Value="fhir4_ips"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

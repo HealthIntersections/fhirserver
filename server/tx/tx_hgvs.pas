@@ -63,8 +63,7 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
-    function locate(code : String) : TCodeSystemProviderContext; overload; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
@@ -243,7 +242,7 @@ begin
   result := THGVSProvider(inherited link);
 end;
 
-function THGVSProvider.locate(code: String; var message: String): TCodeSystemProviderContext;
+function THGVSProvider.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
 var
   json, o : TJsonObject;
 begin
@@ -269,13 +268,6 @@ begin
     on e : Exception do
       raise EFHIRException.create('Error parsing HGVS response: '+e.message);
   end;
-end;
-
-function THGVSProvider.locate(code: String): TCodeSystemProviderContext;
-var
-  msg : String;
-begin
-  result := locate(code, msg);
 end;
 
 function THGVSProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;

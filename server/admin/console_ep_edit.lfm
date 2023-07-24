@@ -11,7 +11,6 @@ object EditEPForm: TEditEPForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.5.0'
   object cbxVersion: TComboBox
     Left = 80
     Height = 20
@@ -258,6 +257,7 @@ object EditEPForm: TEditEPForm
       'loinc'
       'folder'
       'icao'
+      'tx-registry'
     )
     OnChange = cbxTypeChange
     ParentFont = False
@@ -468,8 +468,8 @@ object EditEPForm: TEditEPForm
     Left = 14
     Height = 16
     Top = 348
-    Width = 27
-    Caption = 'Path'
+    Width = 52
+    Caption = 'File Path'
     ParentColor = False
     ParentFont = False
   end

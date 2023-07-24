@@ -390,7 +390,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="86">
+    <Units Count="92">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -738,6 +738,30 @@
         <Filename Value="telnet_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit85>
+      <Unit86>
+        <Filename Value="tx\tx_omop.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit86>
+      <Unit87>
+        <Filename Value="package_spider.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit87>
+      <Unit88>
+        <Filename Value="tx_registry_spider.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit88>
+      <Unit89>
+        <Filename Value="tx_registry_model.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit89>
+      <Unit90>
+        <Filename Value="endpoint_txregistry.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit90>
+      <Unit91>
+        <Filename Value="endpoint_icao.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit91>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -782,7 +806,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="38">
+    <Exceptions Count="39">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -915,6 +939,9 @@
       <Item38>
         <Name Value="EFslInvariant"/>
       </Item38>
+      <Item39>
+        <Name Value="00000016EIdOpenSSLConnectError"/>
+      </Item39>
     </Exceptions>
   </Debugging>
 </CONFIG>

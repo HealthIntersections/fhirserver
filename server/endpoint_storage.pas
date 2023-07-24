@@ -72,6 +72,8 @@ type
     function processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; virtual;
   end;
 
+  { TFHIRWebServerCommunicator }
+
   TFHIRWebServerCommunicator = class (TFHIRClientCommunicator)
   private
     FEndPoint : TStorageWebEndpoint;
@@ -81,7 +83,8 @@ type
     function makeUrl(tail : String) : String;
   public
     constructor Create(ep : TStorageWebEndpoint; secure : boolean; session : TFHIRSession);
-    function conformanceV(summary : boolean) : TFHIRResourceV; override;
+    function conformanceV(summary : boolean) : TFHIRResourceV; override; 
+    function conformanceModeV(mode : string) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
@@ -367,6 +370,11 @@ begin
 end;
 
 function TFHIRWebServerCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
+begin
+  raise EFslException.Create('Not done yet');
+end;
+
+function TFHIRWebServerCommunicator.conformanceModeV(mode: string): TFHIRResourceV;
 begin
   raise EFslException.Create('Not done yet');
 end;

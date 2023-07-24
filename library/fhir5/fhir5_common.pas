@@ -473,7 +473,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override;
+    procedure addProperty(code : String; value : TFHIRObject); override; overload;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -583,6 +584,7 @@ type
     function getDescription : String; override;
     procedure setDescription(value : String); override;
     function checkCompose(place, role : String) : boolean; override;
+    function getComposeExtensions : TFslList<TFHIRExtensionW>; override;
     function checkExpansion(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
     function inlineCS : TFHIRValueSetCodeSystemW; override;
@@ -2777,6 +2779,21 @@ begin
     vs.compose.checkNoModifiers(place, role, []);
 end;
 
+function TFHIRValueSet5.getComposeExtensions: TFslList<TFHIRExtensionW>;
+var
+  ext : TFHIRObject;
+begin
+  result := TFslList<TFHIRExtensionW>.create;
+  try
+    if (vs.compose <> nil) then
+      for ext in vs.compose.getExtensionsV do
+        result.add(TFHIRExtension5.create(ext.link));
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFHIRValueSet5.checkExpansion(place, role: String): boolean;
 begin
   result := vs.expansion <> nil;
@@ -4118,6 +4135,16 @@ begin
   p := (Element as TFhirValueSetExpansionContains).property_list.Append;
   p.code := code;
   p.value := value.link as TFhirDataType;
+end;
+
+procedure TFhirValueSetExpansionContains5.addProperty(code: String; prop: TFhirCodeSystemConceptPropertyW);
+var
+  p : TFhirValueSetExpansionContainsProperty;
+begin
+  p := (Element as TFhirValueSetExpansionContains).property_list.Append;
+  p.code := code;
+  p.value := prop.value.link as TFhirDataType;
+  p.copyExtensions(prop.element, []);
 end;
 
 procedure TFhirValueSetExpansionContains5.addContains(contained: TFhirValueSetExpansionContainsW);

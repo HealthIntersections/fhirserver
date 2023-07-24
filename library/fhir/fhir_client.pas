@@ -206,6 +206,7 @@ Type
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV; virtual; abstract;
+    function conformanceModeV(mode : string) : TFHIRResourceV; virtual; abstract;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; virtual; abstract;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual; abstract;
@@ -229,6 +230,8 @@ Type
   end;
 
   TFhirClientProgressEvent = procedure (client : TObject; details : String; pct : integer; done : boolean) of Object;
+
+  { TFhirClientV }
 
   TFhirClientV = class abstract (TFslObject)
   private
@@ -284,6 +287,7 @@ Type
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV;
+    function conformanceModeV(mode : string) : TFHIRResourceV;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV;
@@ -508,7 +512,8 @@ end;
 
 { TFhirClientV }
 
-constructor TFhirClientV.create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
+constructor TFhirClientV.Create(worker: TFHIRWorkerContextV;
+  const lang: THTTPLanguages; communicator: TFHIRClientCommunicator);
 begin
   inherited Create;
   FWorker := worker;
@@ -585,6 +590,11 @@ end;
 function TFhirClientV.conformanceV(summary : boolean) : TFHIRResourceV;
 begin
   result := FCommunicator.conformanceV(summary);
+end;
+
+function TFhirClientV.conformanceModeV(mode : string) : TFHIRResourceV;
+begin
+  result := FCommunicator.conformanceModeV('terminology');
 end;
 
 function TFhirClientV.transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
@@ -672,7 +682,8 @@ begin
   result := FCommunicator.historyTypeV(aType, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
+function TFhirClientV.historyinstanceV(atype: TFHIRResourceTypeV; id: String;
+  allRecords: boolean; params: TStringList): TFHIRResourceV;
 begin
   result := FCommunicator.historyinstanceV(aType, id, allRecords, encodeParams(params));
 end;

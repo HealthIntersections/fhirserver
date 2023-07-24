@@ -38,6 +38,9 @@ uses
   fhir4_parser, fhir4_resources, fhir4_constants, fhir4_utilities, fhir4_context, fhir4_common;
 
 Type
+
+  { TFhirClient4 }
+
   TFhirClient4 = class (TFhirClientV)
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
@@ -50,6 +53,7 @@ Type
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; override;
 
     function conformance(summary : boolean) : TFhirCapabilityStatement;
+    function terminologyCaps : TFhirTerminologyCapabilities;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
@@ -106,6 +110,11 @@ end;
 function TFhirClient4.conformance(summary : boolean) : TFhirCapabilityStatement;
 begin
   result := conformanceV(summary) as TFhirCapabilityStatement;
+end;
+
+function TFhirClient4.terminologyCaps: TFhirTerminologyCapabilities;
+begin
+  result := conformanceModeV('terminology') as TFhirTerminologyCapabilities;
 end;
 
 function TFhirClient4.transaction(bundle : TFHIRBundle) : TFHIRBundle;

@@ -79,7 +79,7 @@ type
     function version(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -924,7 +924,7 @@ begin
 
 end;
 
-function TCountryCodeServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
+function TCountryCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
   result := FMap[code];
 end;
