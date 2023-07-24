@@ -449,7 +449,7 @@ type
     procedure deleteExtensionV(extension : TFHIRObject); virtual;
     procedure deleteExtensionByUrl(url : String); virtual;
     procedure stripExtensions(exemptUrls : TStringArray); virtual;
-
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); virtual;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
     function getNamedChildren : TFslList<TFHIRNamedValue>;
@@ -1066,6 +1066,11 @@ begin
   finally
     list.free;
   end;
+end;
+
+procedure TFHIRObject.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+begin
+  // nothing
 end;
 
 function TFHIRObject.asJson: String;

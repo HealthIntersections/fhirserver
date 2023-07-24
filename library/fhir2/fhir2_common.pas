@@ -468,7 +468,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override;
+    procedure addProperty(code : String; value : TFHIRObject); override; overload;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -656,6 +657,7 @@ type
     function getName : String; override;
     function getURL : String; override;
     function checkCompose(place, role : String) : boolean; override;
+    function getComposeExtensions : TFslList<TFHIRExtensionW>; override;
     function checkExpansion(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
     function inlineCS : TFHIRValueSetCodeSystemW; override;
@@ -2684,6 +2686,21 @@ begin
     vs.compose.checkNoModifiers(place, role, []);
 end;
 
+function TFHIRValueSet2.getComposeExtensions: TFslList<TFHIRExtensionW>;
+var
+  ext : TFHIRObject;
+begin
+  result := TFslList<TFHIRExtensionW>.create;
+  try
+    if (vs.compose <> nil) then
+      for ext in vs.compose.getExtensionsV do
+        result.add(TFHIRExtension2.create(ext.link));
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFHIRValueSet2.checkExpansion(place, role: String): boolean;
 begin
   result := vs.expansion <> nil;
@@ -3890,6 +3907,11 @@ begin
 end;
 
 procedure TFhirValueSetExpansionContains2.addProperty(code: String; value: TFHIRObject);
+begin
+  // nothing in R2
+end;
+
+procedure TFhirValueSetExpansionContains2.addProperty(code: String; prop: TFhirCodeSystemConceptPropertyW);
 begin
   // nothing in R2
 end;
