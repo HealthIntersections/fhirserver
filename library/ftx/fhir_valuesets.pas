@@ -120,6 +120,7 @@ Type
     FHasexcludeNotForUI : boolean;
     FHasValueSetMode : boolean;
     FHasDisplayWarning : boolean;
+    FAltCodeRules : TAlternateCodeOptions;
 
     procedure SetLanguage(value : TIETFLang);
     procedure SetActiveOnly(value : boolean);
@@ -167,6 +168,7 @@ Type
     property incompleteOK : boolean read FIncompleteOK write SetIncompleteOK;
     property displayWarning : boolean read FDisplayWarning write SetDisplayWarning;
     property properties : TStringList read FProperties;
+    property altCodeRules : TAlternateCodeOptions read FAltCodeRules;
 
     property hasActiveOnly : boolean read FHasactiveOnly;
     property hasIncludeDefinition : boolean read FHasincludeDefinition;
@@ -238,6 +240,10 @@ Type
     procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
     procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   protected
+    FAllAltCodes : TAlternateCodeOptions;
+
+    procedure seeValueSet(vs : TFHIRValueSetW);
+
     function sizeInBytesV(magic : integer) : cardinal; override;
     procedure listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
     procedure listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); overload;
@@ -312,7 +318,7 @@ Type
     function passesImports(imports : TFslList<TFHIRImportedValueSet>; system, code : String; offset : integer) : boolean;
     function passesImport(import : TFHIRImportedValueSet; system, code : String) : boolean;
 
-    function processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String; isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
+    function processCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String; isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
         imports : TFslList<TFHIRImportedValueSet>; csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; srcURL : string) : TFhirValueSetExpansionContainsW;
     procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcURL : String);
     function key(system, code : String): string; overload;
@@ -365,10 +371,13 @@ begin
   FLanguages := languages;
   FRequiredSupplements := TStringList.create;
   FI18n := i18n;
+  FAllAltCodes := TAlternateCodeOptions.create;
+  FAllAltCodes.all := true;
 end;
 
 destructor TValueSetWorker.Destroy;
 begin
+  FAllAltCodes.free;
   FRequiredSupplements.Free;
   FLanguages.Free;
   FAdditionalResources.Free;
@@ -389,6 +398,26 @@ begin
   for i := FRequiredSupplements.count - 1 downto 0 do
     if cs.hasSupplement(FRequiredSupplements[i]) then
       FRequiredSupplements.delete(i);
+end;
+
+procedure TValueSetWorker.seeValueSet(vs: TFHIRValueSetW);
+var
+  ext : TFHIRExtensionW;
+  n, v : String;
+begin
+  for ext in vs.getComposeExtensions.forEnum do
+  begin
+    if (ext.url = 'http://hl7.org/fhir/tools/StructureDefinion/valueset-expansion-param') then
+    begin
+      n := ext.getExtensionString('name');
+      if (n = 'includeAlternateCodes') then
+      begin
+        v := ext.getExtensionString('value');
+        if (v <> '') then
+          FParams.altCodeRules.seeParam(v);
+      end;
+    end;
+  end;
 end;
 
 procedure TValueSetWorker.loadSupplements(cse : TFHIRCodeSystemEntry; url : String);
@@ -673,7 +702,7 @@ begin
         end
         else
         begin
-          loc := cs.locate(code, msg);
+          loc := cs.locate(code, nil, msg);
           if loc <> nil then
           begin
             cs.Close(loc);
@@ -727,6 +756,7 @@ var
   cs : TFhirCodeSystemProvider;
 begin
   FParams := params.Link;
+  seeValueSet(vs);
 
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   FFactory.checkNoModifiers(vs, 'ValueSetChecker.prepare', 'ValueSet');
@@ -924,7 +954,7 @@ begin
       begin
         ver := cs.version(nil);
         contentMode := cs.contentMode;
-        ctxt := cs.locate(code, message);
+        ctxt := cs.locate(code, nil, message);
         if (ctxt = nil) then
         begin
           if cs.contentMode <> cscmComplete then
@@ -1309,7 +1339,7 @@ begin
           result.AddParamStr('message', 'The CodeSystem "'+coding.systemUri+'" is unknown, so the code "'+coding.code+'" is not known to be in the '+FValueSet.name);
           //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
           for us in unknownSystems do
-            result.addParamUri('x-caused-by-unknown-system', us);
+            result.addParamCanonical('x-caused-by-unknown-system', us);
         end
         else
         begin
@@ -1512,7 +1542,7 @@ begin
              end
              else
              begin
-               ctxt := prov.locate(c.code, message);
+               ctxt := prov.locate(c.code, FAllAltCodes, message);
                try
                  if ctxt = nil then
                  begin
@@ -1584,7 +1614,7 @@ begin
         result.addParamUri('system', impliedSystem);
       if (ok = bUnknown) and (unknownSystems.count > 0) then
         for us in unknownSystems do
-          result.addParamUri('x-caused-by-unknown-system', us);
+          result.addParamCanonical('x-caused-by-unknown-system', us);
       if (pcode <>'') then
         result.addParamCode('code', pcode);
       if (pver <> '') then
@@ -1648,7 +1678,7 @@ begin
             op.addIssue(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
             //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
             for us in unknownSystems do
-              result.addParamUri('x-caused-by-unknown-system', us);
+              result.addParamCanonical('x-caused-by-unknown-system', us);
           end
           else
           begin
@@ -1706,7 +1736,7 @@ begin
   result := false;
   if (not cset.hasConcepts) and (not cset.hasFilters) then
   begin
-    loc := cs.locate(code, message);
+    loc := cs.locate(code, FParams.altCodeRules, message);
     try
       result := false;
       if loc = nil then
@@ -1737,7 +1767,7 @@ begin
     c := cc.code;
     if (code = c) then
     begin
-      loc := cs.locate(code);
+      loc := cs.locate(code, FAllAltCodes);
       try
         if Loc <> nil then
         begin
@@ -1840,7 +1870,7 @@ begin
                 result := (loc = nil);
                 if (result) then
                 begin
-                  loc := cs.locate(code, msg);
+                  loc := cs.locate(code, nil, msg);
                   if Loc <> nil then
                   begin
                     listDisplays(displays, cs, loc);
@@ -1912,7 +1942,7 @@ var
   loc :  TCodeSystemProviderContext;
 begin
   result := false;
-  loc := cs.locate(code, message);
+  loc := cs.locate(code, nil, message);
   try
     result := false;
     if loc = nil then
@@ -1970,6 +2000,7 @@ begin
   FFactory.checkNoModifiers(source, 'ValueSetExpander.Expand', 'ValueSet');
 
   FParams := params.Link;
+  seeValueSet(source);
 
   result := Ffactory.wrapValueSet(source.Resource.Clone as TFHIRResourceV);
   result.id := '';
@@ -2207,7 +2238,7 @@ begin
       begin
         result := TSpecialProviderFilterContextConcepts.create;
         for cc in inc.concepts.forEnum do
-          TSpecialProviderFilterContextConcepts(result).add(cs.locate(cc.code, message));
+          TSpecialProviderFilterContextConcepts(result).add(cs.locate(cc.code, nil, message));
         exit;
       end;
     end;
@@ -2348,7 +2379,7 @@ begin
     cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
     try
       listDisplays(cds, c);
-      n := processCode(parent, false, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c),  cds, c.definition, c.itemWeight,
+      n := processCode(nil, parent, false, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c),  cds, c.definition, c.itemWeight,
          nil, imports, c.getAllExtensionsW, nil, c.properties, nil, srcUrl);
     finally
       cds.Free;
@@ -2362,6 +2393,8 @@ function TFHIRValueSetExpander.canonical(system, version : String) : String;
 begin
   if FFactory.version = fhirVersionRelease2 then
     result := system + '?version='+version
+  else if version = '' then
+    result := system
   else
     result := system + '|'+version
 end;
@@ -2407,17 +2440,18 @@ begin
         exit(ext.value.ToString);
 end;
 
-function TFHIRValueSetExpander.processCode(parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String;
+function TFHIRValueSetExpander.processCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String;
     isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
     csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; srcURL : string) : TFhirValueSetExpansionContainsW;
 var
   n : TFhirValueSetExpansionContainsW;
-  s, pn : String;
+  s, pn, vs : String;
   srcLang, dstLang, tl : TIETFLang;
   usedDisplay : boolean;
   tu, t : TConceptDesignation;
   ext : TFHIRExtensionW;
   cp : TFhirCodeSystemConceptPropertyW;
+  ts : TStringList;
 begin
   try
     if not passesImports(imports, system, code, 0) then
@@ -2431,11 +2465,23 @@ begin
         raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.langCode, [srcUrl, '>'+inttostr(FLimitCount)]));
     end;
 
-    if (expansion <> nil) and (version <> '') then
+    if (expansion <> nil) then
     begin
       s := canonical(system, version);
       if not expansion.hasParam('version', s) then
         expansion.addParamUri('version', s);
+      if (cs <> nil) then
+      begin
+        ts := TStringList.create;
+        try
+          cs.listSupplements(ts);
+          for vs in ts do
+            if not expansion.hasParam('version', vs) then
+              expansion.addParamUri('version', vs);
+        finally
+          ts.free;
+        end;
+      end;
     end;
 
     s := key(system, code);
@@ -2522,7 +2568,7 @@ begin
             for cp in csprops do
             begin
               if cp.code = pn then
-                n.addProperty(pn, cp.value);
+                n.addProperty(pn, cp);
             end;
         end;
 
@@ -2737,7 +2783,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display, ov : String;
+  s, display, ov, code : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -2870,7 +2916,7 @@ begin
                       cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                       try
                         listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                        processCode(nil, doDelete, cs.systemUri(c), cs.version(c), cs.code(c),  cs.isAbstract(c), cs.isInactive(c), cs.deprecated(c),
+                        processCode(cs, nil, doDelete, cs.systemUri(c), cs.version(c), cs.code(c),  cs.isAbstract(c), cs.isInactive(c), cs.deprecated(c),
                         cds, cs.definition(c), cs.itemWeight(c), expansion, valueSets, cs.getExtensions(c), nil, cs.getProperties(c), nil, vsSrc.url);
                       finally
                         cds.free;
@@ -2892,7 +2938,7 @@ begin
             begin
               cds.Clear;
               FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-              cctxt := cs.locate(cc.code);
+              cctxt := cs.locate(cc.code, FAllAltCodes);
               try
                 if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(cctxt)) and passesFilters(cctxt, 0) then
                 begin
@@ -2903,7 +2949,7 @@ begin
                     ov := cc.itemWeight;
                     if ov = '' then
                       ov := cs.itemWeight(cctxt);
-                    processCode(nil, doDelete, cs.systemUri(nil), cs.version(nil), cc.code, cs.isAbstract(cctxt), cs.isInactive(cctxt), cs.deprecated(cctxt), cds,
+                    processCode(cs, nil, doDelete, cs.systemUri(nil), cs.version(nil), cc.code, cs.isAbstract(cctxt), cs.isInactive(cctxt), cs.deprecated(cctxt), cds,
                          cs.Definition(cctxt), ov, expansion, valueSets, cs.getExtensions(cctxt), cc.getAllExtensionsW, cs.getProperties(cctxt), nil, vsSrc.url);
                   end;
                 end;
@@ -2971,7 +3017,8 @@ begin
                                 FCanBeHierarchy := false;
                                 parent := nil;
                               end;
-                              processCode(parent, doDelete, cs.systemUri(nil), cs.version(nil), cs.code(c), cs.isAbstract(c), cs.IsInactive(c),
+                              for code in cs.listCodes(c, FParams.altCodeRules) do
+                                processCode(cs, parent, doDelete, cs.systemUri(nil), cs.version(nil), code, cs.isAbstract(c), cs.IsInactive(c),
                                   cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, vsSrc.url);
                             end;
                           finally
@@ -3009,25 +3056,41 @@ end;
 procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcUrl : String);
 var
   i : integer;
-  vs : String;
+  vs, code : String;
   cds : TConceptDesignations;
   iter : TCodeSystemIteratorContext;
-  n : TFhirValueSetExpansionContainsW;
+  n, t : TFhirValueSetExpansionContainsW;
+  ts : TStringList;
 begin
   try
-    if (cs.version(nil) <> '') and (expansion <> nil) then
+    if (expansion <> nil) then
     begin
       vs := canonical(cs.systemUri(nil), cs.version(nil));
       if not expansion.hasParam('version', vs) then
         expansion.addParamUri('version', vs);
+      ts := TStringList.create;
+      try
+        cs.listSupplements(ts);
+        for vs in ts do
+          if not expansion.hasParam('version', vs) then
+            expansion.addParamUri('version', vs);
+      finally
+        ts.free;
+      end;
     end;
+    n := nil;
     if (not FParams.excludeNotForUI or not cs.IsAbstract(context)) and (not FParams.activeOnly or not cs.isInActive(context)) then
     begin
       cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
         listDisplays(cds, cs, context);
-        n := processCode(parent, doDelete, cs.systemUri(context), '', cs.Code(context), cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
+        for code in cs.listCodes(context, FParams.altCodeRules) do
+        begin
+          t := processCode(cs, parent, doDelete, cs.systemUri(context), cs.version(context), code, cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
              cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context), nil, srcUrl);
+          if (n = nil) then
+            n := t;
+        end;
       finally
         cds.Free;
       end;
@@ -3054,6 +3117,7 @@ begin
   FVersionRules := TFslList<TFhirExpansionParamsVersionRule>.create;
   FDisplayLanguages := TFslList<TIETFLang>.create;
   FProperties := TStringList.create;
+  FAltCodeRules := TAlternateCodeOptions.create;
 
   FGenerateNarrative := true;
 end;
@@ -3213,6 +3277,7 @@ end;
 
 destructor TFHIRExpansionParams.Destroy;
 begin
+  FAltCodeRules.Free;
   FVersionRules.Free;
   FDisplayLanguages.Free;
   FLanguage.Free;

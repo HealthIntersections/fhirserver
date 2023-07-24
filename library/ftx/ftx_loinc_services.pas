@@ -440,7 +440,7 @@ Type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -2311,8 +2311,7 @@ begin
   result := false; // loinc don't do abstract
 end;
 
-function TLOINCServices.locate(code: String; var message: String
-  ): TCodeSystemProviderContext;
+function TLOINCServices.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
 var
   i : Cardinal;
 begin

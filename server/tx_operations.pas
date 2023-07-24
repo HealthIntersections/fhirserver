@@ -1245,7 +1245,9 @@ begin
     else if (p.name = 'property') then
       result.properties.add(p.valueString)
     else if (p.name = 'mode') and (p.valueString = 'lenient-display-validation') then
-      result.displayWarning := true;
+      result.displayWarning := true
+    else if (p.name = 'includeAlternateCodes') then
+      result.altCodeRules.seeParam(p.valueString);
   end;
   if params.has('profile') then
   begin

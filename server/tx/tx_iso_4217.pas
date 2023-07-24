@@ -83,7 +83,7 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -152,7 +152,7 @@ begin
   result := nil;
 end;
 
-function TIso4217Services.locate(code : String; var message : String) : TCodeSystemProviderContext;
+function TIso4217Services.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
   result := TIso4217Concept.Create(FCurrencies.Map[code].link);
 end;

@@ -241,7 +241,7 @@ Type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -1022,7 +1022,7 @@ begin
   result := true;
 end;
 
-function TUcumServices.locate(code: String; var message : String): TCodeSystemProviderContext;
+function TUcumServices.locate(code: String; altOpt : TAlternateCodeOptions; var message : String): TCodeSystemProviderContext;
 var
   s : String;
 begin

@@ -74,7 +74,7 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function locate(code : String) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -272,7 +272,7 @@ begin
   result := nil;
 end;
 
-function TICD11Provider.locate(code: String; var message: String): TCodeSystemProviderContext;
+function TICD11Provider.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
 begin
   result := nil;
 end;

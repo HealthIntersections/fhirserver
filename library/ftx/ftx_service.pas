@@ -189,6 +189,22 @@ Type
     property stems : TStringList read FStems;
   end;
 
+  { TAlternateCodeOptions }
+
+  TAlternateCodeOptions = class (TFslObject)
+  private
+    FAll: boolean;
+    FUses: TStringList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    property all : boolean read FAll write FAll;
+    property useTypes : TStringList read FUses;
+
+    procedure seeParam(value : String);
+    function passes(prop : TFhirCodeSystemConceptPropertyW) : boolean;
+  end;
+
   { TCodeSystemProvider }
 
   TCodeSystemProvider = class abstract (TFslObject)
@@ -212,8 +228,8 @@ Type
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; const lang : THTTPLanguages):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
-    function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
+    function locate(code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; virtual;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; virtual;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
@@ -228,11 +244,13 @@ Type
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; virtual; abstract;  // get all displays for all languages
     function getExtensions(context : TCodeSystemProviderContext)  : TFslList<TFHIRExtensionW>; virtual;
     function getProperties(context : TCodeSystemProviderContext) : TFslList<TFhirCodeSystemConceptPropertyW>; virtual;
+    function listCodes(ctxt : TCodeSystemProviderContext; altOpt : TAlternateCodeOptions) : TStringArray; virtual;
     function parent(context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
     function canParent : boolean; virtual;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
+    procedure listSupplements(ts : TStringList); virtual;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
@@ -261,6 +279,56 @@ Type
   end;
 
 implementation
+
+{ TAlternateCodeOptions }
+
+constructor TAlternateCodeOptions.Create;
+begin
+  inherited Create;
+  FUses := TStringList.create;
+end;
+
+destructor TAlternateCodeOptions.Destroy;
+begin
+  FUses.free;
+  inherited Destroy;
+end;
+
+procedure TAlternateCodeOptions.seeParam(value: String);
+begin
+  if (value = 'true') then
+    FAll := true
+  else if (value = 'false') then
+  begin
+    FAll := false;
+    FUses.clear;
+  end
+  else
+    FUses.add(value);
+end;
+
+function TAlternateCodeOptions.passes(prop: TFhirCodeSystemConceptPropertyW): boolean;
+var
+  ext : TFHIRExtensionW;
+  c : TFHIRCodingW;
+begin
+  if all then
+    result := true
+  else
+  begin
+    for ext in prop.getExtensionsW('http://hl7.org/fhir/StructureDefinition/alternate-code-use').forEnum do
+    begin
+      c := ext.valueAsCoding;
+      try
+        if FUses.indexOf(c.code) > -1 then
+          exit(true);
+      finally
+        c.free;
+      end;
+    end;
+  end;
+end;
+
 
 { TConceptDesignations }
 
@@ -611,6 +679,11 @@ begin
   result := false;
 end;
 
+procedure TCodeSystemProvider.listSupplements(ts: TStringList);
+begin
+  // nothing
+end;
+
 function TCodeSystemProvider.IsInactive(code: String): boolean;
 var
   ctxt : TCodeSystemProviderContext;
@@ -658,11 +731,11 @@ begin
   result := TCodeSystemProvider(inherited link);
 end;
 
-function TCodeSystemProvider.locate(code: String): TCodeSystemProviderContext;
+function TCodeSystemProvider.locate(code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
 var
   msg : String;
 begin
-  result := locate(code, msg);
+  result := locate(code, altOpt, msg);
 end;
 
 function TCodeSystemProvider.name(context: TCodeSystemProviderContext): String;
@@ -708,6 +781,12 @@ end;
 function TCodeSystemProvider.getProperties(context: TCodeSystemProviderContext): TFslList<TFhirCodeSystemConceptPropertyW>;
 begin
   result := nil
+end;
+
+function TCodeSystemProvider.listCodes(ctxt: TCodeSystemProviderContext; altOpt: TAlternateCodeOptions): TStringArray;
+begin
+  SetLength(result, 1);
+  result[0] := code(ctxt);
 end;
 
 function TCodeSystemProvider.parent(context: TCodeSystemProviderContext): String;

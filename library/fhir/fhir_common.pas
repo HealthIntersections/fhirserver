@@ -115,6 +115,7 @@ type
     procedure deleteExtensionW(extension : TFHIRExtensionW);
     procedure deleteExtensionByUrl(url : String); override;
     procedure stripExtensions(exemptUrls : TStringArray); override;
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
@@ -841,7 +842,8 @@ type
 
     procedure addDesignation(lang, use, value : String); overload; virtual; abstract;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); overload; virtual; abstract;
-    procedure addProperty(code : String; value : TFHIRObject); virtual; abstract;
+    procedure addProperty(code : String; value : TFHIRObject); virtual; abstract; overload;
+    procedure addProperty(code : String; value : TFhirCodeSystemConceptPropertyW); virtual; abstract; overload;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); virtual; abstract;
     procedure clearContains(); virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
@@ -949,6 +951,7 @@ type
     function source : String; virtual; abstract;
 
     function checkCompose(place, role : String) : boolean; virtual; abstract;
+    function getComposeExtensions : TFslList<TFHIRExtensionW>; virtual; abstract;
     function checkExpansion(place, role : String) : boolean; virtual; abstract;
     function imports : TArray<String>; virtual; abstract; // only in R2
     function hasInlineCS : boolean; virtual; abstract;
@@ -1924,6 +1927,11 @@ begin
   FElement.stripExtensions(exemptUrls);
 end;
 
+procedure TFHIRXVersionElementWrapper.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+begin
+  FElement.copyExtensions(src, exemptUrls);
+end;
+
 constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
 begin
   inherited create;
@@ -2486,9 +2494,10 @@ end;
 
 function TFHIRMetadataResourceW.GetVUrl: String;
 begin
-  result := url;
-  if version <> '' then
-    result := result + '|'+version;
+  if version = '' then
+    result := url
+  else
+    result := url + '|'+version;
 end;
 
 function TFHIRMetadataResourceW.link: TFHIRMetadataResourceW;
