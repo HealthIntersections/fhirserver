@@ -34,7 +34,7 @@ type
 
     property params : THTTPParameters read FParams write SetParams;
 
-    function generate(params : THTTPParameters) : TFhirBundle;
+    function generate() : TFhirBundle;
   end;
 
 
@@ -80,9 +80,12 @@ procedure TIPSGenerator.addToBundle(bnd : TFhirBundle; resource : TFHIRResource)
 var
   e : TFHIRBundleEntry;
 begin
-  e := bnd.entryList.Append;
-  e.fullUrl := URLPath([ROOT, resource.fhirType, resource.id]);
-  e.resource := resource.Link;
+  if (resource <> nil) then
+  begin
+    e := bnd.entryList.Append;
+    e.fullUrl := URLPath([ROOT, resource.fhirType, resource.id]);
+    e.resource := resource.Link;
+  end;
 end;
 
 function TIPSGenerator.addSection(comp : TFhirComposition; title, systemUri, code : String) : TFHIRCompositionSection;
@@ -210,20 +213,25 @@ end;
 
 function TIPSGenerator.makeFuncStatusCondition(sect: TFHIRCompositionSection; paramName, systemUri, code, display: String): TFHIRCondition;
 begin
-  result := TFHIRCondition.create;
-  try
-    result.id := newGuidId;
-    result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'actice', 'Active');
-    result.code := makeCodeableConcept(systemUri, code, display);
-    result.subject := TFHIRReference.create('Patient/p1');
-    sect.entryList.Append.reference := 'Condition/'+result.id;
-    result.link;
-  finally
-    result.free;
+  if params[paramName] <> 'true' then
+    result := nil
+  else
+  begin
+    result := TFHIRCondition.create;
+    try
+      result.id := newGuidId;
+      result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'actice', 'Active');
+      result.code := makeCodeableConcept(systemUri, code, display);
+      result.subject := TFHIRReference.create('Patient/p1');
+      sect.entryList.Append.reference := 'Condition/'+result.id;
+      result.link;
+    finally
+      result.free;
+    end;
   end;
 end;
 
-function TIPSGenerator.generate(params: THTTPParameters): TFhirBundle;
+function TIPSGenerator.generate : TFhirBundle;
 var
   bnd : TFHIRBundle;
   comp : TFHIRComposition;
@@ -244,7 +252,7 @@ begin
     // sect := addSection(comp, 'Care Directives', 'http://loinc.org', '42348-3');
     // cp :=
 
-    bnd.Link;
+    result := bnd.Link;
   finally
     bnd.free;
   end;

@@ -39,13 +39,16 @@ uses
   Sysutils, Classes, Graphics, {$IFDEF DELPHI}IOUtils, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   PdfiumCore,
-  fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n,
+  fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n, fsl_logging,
   fhir_objects, fhir_icao, fsl_web_stream,
-  fhir4_factory,
+  fhir4_factory, fhir4_ips, fhir4_json, fhir4_resources,
   utilities, server_config, time_tracker, storage, server_stats,
   web_base, endpoint, healthcard_generator;
 
 type
+
+  { TICAOWebServer }
+
   TICAOWebServer = class (TFhirWebServerEndpoint)
   private
     FJWK : TJWK;
@@ -63,6 +66,9 @@ type
     function renderError(message, log: String): String;
     function renderStartPage(path: string): String;
     function extractFile(request: TIdHTTPRequestInfo; var ct : String): TStream;
+
+    function genIPS(request: TIdHTTPRequestInfo) : TFhirBundle;
+    procedure processIPS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon);
     destructor Destroy; override;
@@ -305,7 +311,8 @@ begin
   end
 end;
 
-function TICAOWebServer.processError(message, accept : String; htmlLog : String; response: TIdHTTPResponseInfo): String;
+function TICAOWebServer.processError(message, accept, htmlLog: String;
+  response: TIdHTTPResponseInfo): String;
 begin
   result := 'Convert ICAO card to SHC error: '+message;
   response.ResponseNo := 500;
@@ -461,12 +468,19 @@ end;
 
 function TICAOWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
 var
-  tgt : String;
+  path, tgt : String;
 begin
   countRequest;
-  tgt := URLPath([AbsoluteURL(true), request.document.Substring(PathWithSlash.Length)]);
-  result := 'Redirect to '+tgt;
-  response.redirect(tgt);
+  path := PathWithSlash;
+  Logging.log(path+' : '+request.Document);
+  if request.Document = path+'IPS' then
+    processIPS(request, response)
+  else
+  begin
+    tgt := URLPath([AbsoluteURL(true), request.document.Substring(PathWithSlash.Length)]);
+    result := 'Redirect to '+tgt;
+    response.redirect(tgt);
+  end;
 end;
 
 function TICAOWebServer.extractFile(request: TIdHTTPRequestInfo; var ct : String) : TStream;
@@ -482,65 +496,103 @@ begin
   end;
 end;
 
+function TICAOWebServer.genIPS(request: TIdHTTPRequestInfo): TFhirBundle;
+var
+  ipsGen : TIPSGenerator;
+begin
+  ipsGen := TIPSGenerator.create;
+  try
+    ipsGen.params := THTTPParameters.Create(request.UnparsedParams);
+    result := ipsGen.generate;
+  finally
+    ipsGen.free;
+  end;
+end;
+
+procedure TICAOWebServer.processIPS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  bnd : TFHIRBundle;
+  json : TFHIRJsonComposer;
+begin
+  bnd := genIPS(request);
+  try
+    response.ResponseNo := 200;
+    response.ContentType := 'application/json';
+    json := TFHIRJsonComposer.create(nil, OutputStylePretty, defLang);
+    try
+      response.ContentText := json.Compose(bnd);
+    finally
+      json.Free;
+    end;
+  finally
+    bnd.free;
+  end;
+end;
+
 function TICAOWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 var
   s : TStream;
   ct : String;
 begin
   countRequest;
-  response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-  response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-  response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST');
-  if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-    response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-
-  if (request.Command = 'POST') and (request.ContentType = 'application/json') then
-    result := processCard(request.PostStream, request.Accept, response)
-  else if (request.Command = 'POST') and (request.ContentType.startsWith('image/')) then
-    result := processQRCode(request.PostStream, request.Accept, response)
-  else if (request.Command = 'POST') and (request.ContentType = 'application/pdf') then
-    result := processPDF(request.PostStream, request.Accept, response)
-  else if (request.Command = 'POST') and request.ContentType.StartsWith('multipart/') then
-  begin
-    s := extractFile(request, ct);
-    try
-      if ct = 'application/pdf' then
-        result := processPDF(s, request.Accept, response)
-      else
-        result := processQRCode(s, request.Accept, response)
-    finally
-       s.Free;
-    end;
-  end
-  else if (request.Command = 'POST') then
-  begin
-    result := ProcessGenerationForm(aContext, ip, request, response);
-  end
-  else if (request.Command = 'GET') and (request.document = URLPath([PathNoSlash, '.well-known/jwks.json'])) then
-  begin
-    result := 'Health card JKWS';
-    response.ResponseNo := 200;
-    response.ResponseText := 'OK';
-    response.ContentStream := TFileStream.Create(FJWKSFile, fmOpenRead + fmShareDenyWrite);
-    response.Expires := Now + 1;
-    response.FreeContentStream := true;
-    response.contentType := 'application/json';
-  end
-  else if (request.Command = 'GET') and (request.Document.Length > PathWithSlash.Length) and request.Accept.contains('text/html') then
-  begin
-    result := 'Start Page';
-    response.ResponseNo := 200;
-    response.ResponseText := 'OK';
-    response.ContentText := renderStartPage(request.Document);
-    response.Expires := Now + 1;
-    response.FreeContentStream := true;
-    response.contentType := 'text/html';
-  end
+  if request.Document = PathWithSlash+'ips' then
+    processIPS(request, response)
   else
   begin
-    response.ResponseNo := 404;
-    response.ContentText := request.Document+' not found on this server';
-    result := request.Command+' to '+request.Document;
+    response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+    response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+    response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST');
+    if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+      response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+
+    if (request.Command = 'POST') and (request.ContentType = 'application/json') then
+      result := processCard(request.PostStream, request.Accept, response)
+    else if (request.Command = 'POST') and (request.ContentType.startsWith('image/')) then
+      result := processQRCode(request.PostStream, request.Accept, response)
+    else if (request.Command = 'POST') and (request.ContentType = 'application/pdf') then
+      result := processPDF(request.PostStream, request.Accept, response)
+    else if (request.Command = 'POST') and request.ContentType.StartsWith('multipart/') then
+    begin
+      s := extractFile(request, ct);
+      try
+        if ct = 'application/pdf' then
+          result := processPDF(s, request.Accept, response)
+        else
+          result := processQRCode(s, request.Accept, response)
+      finally
+         s.Free;
+      end;
+    end
+    else if (request.Command = 'POST') then
+    begin
+      result := ProcessGenerationForm(aContext, ip, request, response);
+    end
+    else if (request.Command = 'GET') and (request.document = URLPath([PathNoSlash, '.well-known/jwks.json'])) then
+    begin
+      result := 'Health card JKWS';
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      response.ContentStream := TFileStream.Create(FJWKSFile, fmOpenRead + fmShareDenyWrite);
+      response.Expires := Now + 1;
+      response.FreeContentStream := true;
+      response.contentType := 'application/json';
+    end
+    else if (request.Command = 'GET') and (request.Document.Length > PathWithSlash.Length) and request.Accept.contains('text/html') then
+    begin
+      result := 'Start Page';
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      response.ContentText := renderStartPage(request.Document);
+      response.Expires := Now + 1;
+      response.FreeContentStream := true;
+      response.contentType := 'text/html';
+    end
+    else
+    begin
+      response.ResponseNo := 404;
+      response.ContentText := request.Document+' not found on this server';
+      result := request.Command+' to '+request.Document;
+    end;
   end;
 end;
 

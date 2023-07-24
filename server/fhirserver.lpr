@@ -46,7 +46,7 @@ uses
   {$ENDIF}
   Classes, SysUtils, fsl_fpc_memory, kernel, server_testing, server_stats,
   remote_config, telnet_server, package_spider, tx_registry_spider, tx_omop,
-  tx_registry_model, endpoint_txregistry;
+  tx_registry_model, endpoint_txregistry, endpoint_icao;
 
 {$R *.res}
 
