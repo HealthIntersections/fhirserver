@@ -45,6 +45,9 @@ type
   TFhirHTTPClientHTTPVerb = (httpGet, httpPost, httpPut, httpDelete, httpOptions, httpPatch);
 
   // use only in one thread at a time
+
+  { TFHIRHTTPCommunicator }
+
   TFHIRHTTPCommunicator = class (TFHIRClientCommunicator)
   private
     FUrl : String;
@@ -111,6 +114,7 @@ type
     function address : String; override;
 
     function conformanceV(summary : boolean) : TFHIRResourceV; override;
+    function conformanceModeV(mode : string) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
@@ -176,7 +180,7 @@ begin
   {$ENDIF}
 end;
 
-destructor TFHIRHTTPCommunicator.destroy;
+destructor TFHIRHTTPCommunicator.Destroy;
 begin
   ssl.Free;
   indy.free;
@@ -722,6 +726,13 @@ begin
     result := FetchResource(MakeUrl('metadata'), httpGet, nil, headers);
 end;
 
+function TFHIRHTTPCommunicator.conformanceModeV(mode: string): TFHIRResourceV;
+var
+  headers : THTTPHeaders;
+begin
+  result := FetchResource(MakeUrl('metadata')+'?mode='+mode, httpGet, nil, headers);
+end;
+
 function TFHIRHTTPCommunicator.transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
 Var
   src : TStream;
@@ -735,7 +746,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.createResourceV(resource: TFhirResourceV; var id : String): TFHIRResourceV;
+function TFHIRHTTPCommunicator.createResourceV(resource: TFHIRResourceV;
+  var id: String): TFHIRResourceV;
 Var
   src : TStream;
   headers : THTTPHeaders;
@@ -781,7 +793,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.updateResourceV(resource : TFhirResourceV) : TFHIRResourceV;
+function TFHIRHTTPCommunicator.updateResourceV(resource: TFHIRResourceV
+  ): TFHIRResourceV;
 Var
   src : TStream;
   headers : THTTPHeaders;
@@ -799,14 +812,16 @@ begin
   end;
 end;
 
-procedure TFHIRHTTPCommunicator.deleteResourceV(atype : TFhirResourceTypeV; id : String);
+procedure TFHIRHTTPCommunicator.deleteResourceV(atype: TFHIRResourceTypeV;
+  id: String);
 var
   headers : THTTPHeaders;
 begin
   exchange(MakeUrl(aType+'/'+id), httpDelete, nil, headers).free;
 end;
 
-function TFHIRHTTPCommunicator.searchV(atype: TFhirResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
+function TFHIRHTTPCommunicator.searchV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: string): TFHIRResourceV;
 var
   s : String;
   bnd : TFHIRResourceV;
@@ -847,7 +862,9 @@ begin
   result := fetchResource(link, httpGet, nil, headers) as TFHIRResourceV;
 end;
 
-function TFHIRHTTPCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params: TStringList; resource: TFhirResourceV): TFHIRResourceV;
+function TFHIRHTTPCommunicator.searchPostV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: TStringList; resource: TFHIRResourceV
+  ): TFHIRResourceV;
 var
   src, frm : TStream;
   ct : String;
@@ -867,7 +884,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.operationV(atype : TFhirResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV;
+function TFHIRHTTPCommunicator.operationV(atype: TFHIRResourceTypeV;
+  opName: String; params: TFHIRResourceV): TFHIRResourceV;
 Var
   src : TStream;
   headers : THTTPHeaders;
@@ -884,7 +902,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.operationV(atype : TFhirResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV;
+function TFHIRHTTPCommunicator.operationV(atype: TFHIRResourceTypeV; id,
+  opName: String; params: TFHIRResourceV): TFHIRResourceV;
 Var
   src : TStream;
   headers : THTTPHeaders;
@@ -933,7 +952,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
+function TFHIRHTTPCommunicator.historyTypeV(atype: TFHIRResourceTypeV;
+  allRecords: boolean; params: string): TFHIRResourceV;
 var
   s : String;
   feed : TFHIRResourceV;
@@ -967,7 +987,8 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params: string): TFHIRResourceV;
+function TFHIRHTTPCommunicator.historyInstanceV(atype: TFHIRResourceTypeV;
+  id: String; allRecords: boolean; params: string): TFHIRResourceV;
 var
   s : String;
   feed : TFHIRResourceV;
