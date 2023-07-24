@@ -363,10 +363,6 @@
         <Filename Value="..\library\fhir\fhir_extensions.pas"/>
         <UnitName Value="fhir_extensions"/>
       </Item>
-      <Item>
-        <Filename Value="..\library\fhir\fhir_ips.pas"/>
-        <UnitName Value="fhir_ips"/>
-      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
