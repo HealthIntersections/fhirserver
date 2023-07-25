@@ -31,7 +31,7 @@ rem -- run the installer- will finish with a full install of Lazarus
 
 tools\fpclazup --fpcVersion="stable.gitlab" --lazVersion="stable.gitlab" --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
 rem tools\fpclazup --installdir=tools --noconfirm --include=anchordocking,lazprojectgroups,virtualtreeview,fpdebug
-tools\fpclazup --ostarget="linux" --cputarget="x86_64" --only="FPCCleanOnly,FPCBuildOnly" --installdir=tools. --noconfirm 
+tools\fpclazup --ostarget="linux" --cputarget="x86_64" --only="FPCCleanOnly,FPCBuildOnly" --installdir=tools --noconfirm 
 
 Rem ----  back to the fhirserver directory ----------
 
