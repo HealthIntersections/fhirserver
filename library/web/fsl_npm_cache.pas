@@ -738,7 +738,7 @@ begin
     result := TDictionary<String, TBytes>.create;
     bo := TBytesStream.Create(content);
     try
-      z := TZDecompressionStream.Create(bo, 15+16);
+      z := TZDecompressionStream.Create(bo, false); //  15+16);
       try
         work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
         tar := TTarArchive.Create(z);

@@ -35,9 +35,9 @@ Interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
-  {$IFNDEF FPC} AnsiStrings, {$ENDIF}
+  {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging;
 
 type
   EParserException = class;
@@ -366,6 +366,7 @@ type
     Procedure SaveToStream(oStream : TFslStream); overload;
     Procedure LoadFromStream(oStream : TStream); overload;
     Procedure SaveToStream(oStream : TStream); overload;
+    function asStream: TStream;
 
     Property Data : Pointer Read FData Write SetData;
     Property Capacity : Cardinal Read FCapacity Write SetCapacity;
@@ -1262,6 +1263,8 @@ type
     FCompressedSized : LongWord;
     FDate : Word;
     FTime : Word;
+    FName : AnsiString;
+    FComment : AnsiString;
   End;
 
   TFslZipWriter = Class (TFslZipWorker)
@@ -2060,6 +2063,11 @@ Begin
    oStream.Write(Data^, Capacity);
    assert(oStream.Position = i + integer(Capacity));
 End;
+
+function TFslBuffer.asStream: TStream;
+begin
+  result := TBytesStream.create(asBytes);
+end;
 
 
 procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
@@ -5148,6 +5156,8 @@ Begin
     oBuffer.Name := string(ReadString(iNameLen));    // filename (variable size)
     Skip(iExtraLen);                  // extra field (variable size)
 
+    logging.log(oBuffer.Name+': '+inttostr(iSizeComp)+' -> '+inttostr(iSizeUncomp)+' @ '+inttostr(TFslAccessStream(stream).Position));
+
     {Immediately following the local header for a file
       is the compressed or stored data for the file. }
     ReadData(oBuffer.Name, iFlags, iComp, iSizeComp, iSizeUncomp, oBuffer);
@@ -5291,12 +5301,6 @@ Begin
   result := 0;
   Raise EFslException.Create('Should never be called');
 End;
-
-
-{$IFDEF FPC}
-type
-   TZDecompressionStream = TDecompressionStream;
-{$ENDIF}
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
@@ -5457,6 +5461,8 @@ Var
 Begin
   oInfo := TFslZippedData.Create;
   Try
+    oInfo.FName := oPart.Name;
+    oInfo.FComment := oPart.Comment;
     oInfo.FOffset := FOffset;
     WriteLongWord(SIG_LOCAL_FILE_HEADER);
     WriteWord($14);    // version needed to extract. don't know why $14, just observed in any .zip file
@@ -5477,15 +5483,18 @@ Begin
         Compress(oPart, oCompressed);
 
       oInfo.FCompressedSized := oCompressed.Capacity;
+
       WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
       WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-      WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+      WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
       WriteWord(0);                     // extra field length - we don't use
-      WriteString(AnsiString(oPart.Name));
+      WriteString(oInfo.FName);
+
+      logging.log(oInfo.FName+': '+inttostr(oPart.Capacity)+'-> '+inttostr(oInfo.FCompressedSized)+ ' @ '+inttostr(oInfo.FOffset)+'/'+inttostr(FOffset));
 
       If (oCompressed.Capacity > 0) Then
       Begin
-        Stream.Write(oCompressed.Data^, oCompressed.Capacity);
+        Stream.Write(oCompressed.asBytes[0], oCompressed.Capacity);
         Inc(FOffset, oCompressed.Capacity);
       End;
 
@@ -5517,21 +5526,22 @@ end;
 Procedure TFslZipWriter.Compress(oSource, oDestination: TFslBuffer);
 Var
   oCompressor: TCompressionStream;
-  oCompressedStream: TMemoryStream;
-  pData : PAnsiChar;
+  oCompressedStream: TBytesStream;
+  pData : pointer;
+  bytes : TBytes;
 Begin
-  oCompressedStream := TMemoryStream.Create;
+  oCompressedStream := TBytesStream.Create;
   Try
+    bytes := oSource.AsBytes;
     oCompressor := TCompressionStream.Create(clMax, oCompressedStream);
     Try
-      oCompressor.Write(oSource.Data^, oSource.Capacity);
+      oCompressor.Write(bytes[0], length(bytes));
+      oCompressor.flush;
     Finally
       oCompressor.Free;
     End;
-    pData := oCompressedStream.Memory;
-    pData := PData + 2;
-    oDestination.Capacity := oCompressedStream.Size - 6; // 2 off the front, 4 off the back
-    MemoryMove(oDestination.Data, pData, oDestination.Capacity);
+    bytes := copy(oCompressedStream.Bytes, 0, oCompressedStream.Size);
+    oDestination.AsBytes := copy(bytes, 2, length(bytes)-6);
   Finally
     oCompressedStream.Free;
   End;
@@ -5556,15 +5566,15 @@ Begin
   WriteLongWord(GetCRC(oPart.AsBytes));     // crc-32  TODO: cache this?
   WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
   WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-  WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+  WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
   WriteWord(0);                     // extra field length - we don't use
-  WriteWord(Length(oPart.Comment));    // file comment length             2 bytes
+  WriteWord(Length(oInfo.FComment));    // file comment length             2 bytes
   WriteWord(0);                     // disk number start               2 bytes
   WriteWord(0);                     // internal file attributes        2 bytes
   WriteLongWord(0);                 // external file attributes        4 bytes
   WriteLongWord(oInfo.FOffset);
-  WriteString(AnsiString(oPart.Name));          // filename (variable size)
-  WriteString(AnsiString(oPart.Comment));       // file comment (variable size)
+  WriteString(oPart.Name);          // filename (variable size)
+  WriteString(oPart.Comment);       // file comment (variable size)
 
 End;
 

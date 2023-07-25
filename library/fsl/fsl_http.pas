@@ -404,7 +404,7 @@ function THTTPParameters.has(const n: String): Boolean;
 var
   i: Integer;
 begin
-  Result := retrieveNameIndex(n, i);
+  Result := retrieveNameIndex(n, i) and (getVar(n) <> '');
 end;
 
 // only return first variable

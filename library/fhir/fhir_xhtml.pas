@@ -110,6 +110,9 @@ Type
     An xhtml node. Has a type - is either an element, with a name and children,
     or a different type of node with text (usually text or comment)
   }
+
+  { TFhirXHtmlNode }
+
   TFhirXHtmlNode = class (TFHIRObject)
   private
     FLocation : TSourceLocation;
@@ -229,6 +232,17 @@ Type
       Note that namespaces are not supported in FHIR xhtml
     }
     function SetAttribute(name, value : String) : TFhirXHtmlNode;
+
+    // helper methods
+    function tx(text : String) : TFhirXHtmlNode;
+    function sep(text : String) : TFhirXHtmlNode;
+    function ah(link : String) : TFhirXHtmlNode;
+    function li : TFhirXHtmlNode;
+    function ul : TFhirXHtmlNode;
+    function p : TFhirXHtmlNode;
+    function b : TFhirXHtmlNode;
+    function br : TFhirXHtmlNode;
+    function code : TFhirXHtmlNode;
   end;
 
   TFHIRXhtmlNodeListEnumerator = class (TFslObject)
@@ -825,7 +839,7 @@ begin
   inherited;
 end;
 
-function TFhirXHtmlNode.equals(other : TObject): boolean;
+function TFhirXHtmlNode.Equals(other: TObject): boolean;
 var
   o : TFhirXHtmlNode;
   i : integer;
@@ -864,7 +878,7 @@ begin
   end;
 end;
 
-function TFhirXHtmlNode.FhirType: String;
+function TFhirXHtmlNode.fhirType: String;
 begin
   result := 'xhtml';
 end;
@@ -1016,6 +1030,53 @@ begin
       exit;
     end;
   FAttributes.add(TFHIRAttribute.create(name, value));
+end;
+
+function TFhirXHtmlNode.tx(text: String): TFhirXHtmlNode;
+begin
+  result := AddText(text);
+end;
+
+function TFhirXHtmlNode.sep(text: String): TFhirXHtmlNode;
+begin
+  if (childNodes.Count > 0) and (ChildNodes[ChildNodes.count-1].NodeType = fhntText) then
+    result := AddText(text);
+end;
+
+function TFhirXHtmlNode.ah(link: String): TFhirXHtmlNode;
+begin
+  result := addTag('a');
+  result.attribute('href', link);
+end;
+
+function TFhirXHtmlNode.li: TFhirXHtmlNode;
+begin
+  result := addTag('li');
+end;
+
+function TFhirXHtmlNode.ul: TFhirXHtmlNode;
+begin
+  result := addTag('ul');
+end;
+
+function TFhirXHtmlNode.p: TFhirXHtmlNode;
+begin
+  result := addTag('p');
+end;
+
+function TFhirXHtmlNode.b: TFhirXHtmlNode;
+begin
+  result := addTag('b');
+end;
+
+function TFhirXHtmlNode.br: TFhirXHtmlNode;
+begin
+  result := addTag('br');
+end;
+
+function TFhirXHtmlNode.code: TFhirXHtmlNode;
+begin
+  result := addTag('code');
 end;
 
 procedure TFhirXHtmlNode.setIdValue(id: String);

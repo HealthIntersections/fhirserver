@@ -1079,7 +1079,7 @@ var
   b : TBytes;
   bi : TBytesStream;
 begin
-  z := TZDecompressionStream.Create(tgz, 15+16);
+  z := TZDecompressionStream.Create(tgz, false); // 15+16);
   try
     tar := TTarArchive.Create(z);
     try

@@ -74,7 +74,7 @@ certificate you nominate
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} ZLib, IOUtils, {$ENDIF}
+  SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} ZLib, IOUtils, {$ELSE} ZStream, {$ENDIF}
   IdGlobal, IdCTypes, IdHMAC, IdHash, IdHashSHA, IdHMACSHA1,
   IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_asn1,
   IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
@@ -1398,7 +1398,7 @@ var
 begin
   b1 := TBytesStream.create(b);
   try
-    z := TZDecompressionStream.create(b1, -15);
+    z := TZDecompressionStream.create(b1, false); // -15);
     try
       b2  := TBytesStream.create;
       try
@@ -1423,7 +1423,7 @@ var
 begin
   s := TBytesStream.create();
   try
-    z := TZCompressionStream.create(s, zcMax, -15);
+    z := TZCompressionStream.create(clMax, s); // , -15);
     try
       z.Write(b, length(b));
     finally

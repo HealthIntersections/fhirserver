@@ -153,7 +153,7 @@ type
     constructor Create(common : TFHIRWebServerCommon);
     destructor Destroy; override;
 
-    function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
+    function loadMultipartForm(const request: TStream; const contentType: String; out mode : TOperationMode): TMimeMessage;
     function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     function port(actual, default: integer): String;
 
@@ -330,7 +330,7 @@ begin
   inherited;
 end;
 
-function TFHIRWebServerBase.loadMultipartForm(const request: TStream; const contentType: String; var mode: TOperationMode): TMimeMessage;
+function TFHIRWebServerBase.loadMultipartForm(const request: TStream; const contentType: String; out mode: TOperationMode): TMimeMessage;
 var
   m: TMimeMessage;
   mp: TMimePart;
@@ -340,8 +340,11 @@ begin
     m.ReadFromStream(request, contentType);
     result := m;
     for mp in m.Parts do
+    begin
       if SameText(mp.FileName, 'cda.zip') then
         mode := opmUpload;
+
+    end;
   Except
     on e: exception do
     begin

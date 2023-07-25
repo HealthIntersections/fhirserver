@@ -39,7 +39,7 @@ uses
   {$IFDEF LINUX}
   baseunix, unix,
   {$ENDIF}
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, ZStream, Types
   {$IFDEF FPC},
   {$IFDEF OSX}
   MacOSAll, CFBase, CFString,
@@ -124,92 +124,97 @@ procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 
 //function ColorToString(Color: TColor): AnsiString;
 
+
 type
-  TZCompressionLevel = (zcNone, zcFastest, zcDefault, zcMax);
+   TZDecompressionStream = TDecompressionStream;
+   TZCompressionStream = TCompressionStream;
 
-  // CG: Define old enum for compression level
-  TCompressionLevel = (clNone = Integer(zcNone), clFastest, clDefault, clMax);
-
-  TZStreamRec = z_stream;
-
-  {** TCustomZStream ********************************************************}
-
-  TCustomZStream = class(TStream)
-  private
-    FStream: TStream;
-    FStreamStartPos: Int64;
-    FStreamPos: Int64;
-    FOnProgress: TNotifyEvent;
-    FZStream: TZStreamRec;
-    FBuffer: TBytes;
-  public
-    constructor Create(stream: TStream);
-    procedure DoProgress; dynamic;
-    property OnProgress: TNotifyEvent read FOnProgress write FOnProgress;
-  end;
-  // CG: Add alias of classname to old Zlib classname
-  TCustomZLibStream = TCustomZStream;
-
-  {** TZCompressionStream ***************************************************}
-
-  TZCompressionStream = class(TCustomZStream)
-  private
-    function GetCompressionRate: Single;
-  public
-    constructor Create(dest: TStream); overload;
-    constructor Create(dest: TStream; compressionLevel: TZCompressionLevel; windowBits: Integer); overload;
-    // CG: Add overloaded constructor for old parameter type and order
-    constructor Create(compressionLevel: TCompressionLevel; dest: TStream); overload;
-    destructor Destroy; override;
-    function Read(var buffer; count: Longint): Longint; override;
-    function Write(const buffer; count: Longint): Longint; override;
-
-    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
-    property CompressionRate: Single read GetCompressionRate;
-    property OnProgress;
-  end;
-
-  // CG: Add alias of classname to old Zlib classname
-  TCompressionStream = TZCompressionStream;
-
-  {** TZDecompressionStream *************************************************}
-
-  TZDecompressionStream = class(TCustomZStream)
-  private
-    FOwnsStream: Boolean;
-  public
-    constructor Create(source: TStream); overload;
-    constructor Create(source: TStream; WindowBits: Integer); overload;
-    constructor Create(source: TStream; WindowBits: Integer; OwnsStream: Boolean); overload;
-    destructor Destroy; override;
-    function Read(var buffer; count: Longint): Longint; override;
-    function Write(const buffer; count: Longint): Longint; override;
-    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
-    property OnProgress;
-  end;
-  // CG: Add alias of classname to old Zlib classname
-  TDecompressionStream = TZDecompressionStream;
-
-const
-    ZLevels: array[TZCompressionLevel] of Shortint = (
-    Z_NO_COMPRESSION,
-    Z_BEST_SPEED,
-    Z_DEFAULT_COMPRESSION,
-    Z_BEST_COMPRESSION
-    );
-
-  _z_errmsg: array [0..9] of String = (
-    'need dictionary',      // Z_NEED_DICT      (2)
-    'stream end',           // Z_STREAM_END     (1)
-    '',                     // Z_OK             (0)
-    'file error',           // Z_ERRNO          (-1)
-    'stream error',         // Z_STREAM_ERROR   (-2)
-    'data error',           // Z_DATA_ERROR     (-3)
-    'insufficient memory',  // Z_MEM_ERROR      (-4)
-    'buffer error',         // Z_BUF_ERROR      (-5)
-    'incompatible version', // Z_VERSION_ERROR  (-6)
-    ''
-    );
+//type
+//  TZCompressionLevel = (zcNone, zcFastest, zcDefault, zcMax);
+//
+//  // CG: Define old enum for compression level
+//  TCompressionLevel = (clNone = Integer(zcNone), clFastest, clDefault, clMax);
+//
+//  TZStreamRec = z_stream;
+//
+//  {** TCustomZStream ********************************************************}
+//
+//  TCustomZStream = class(TStream)
+//  private
+//    FStream: TStream;
+//    FStreamStartPos: Int64;
+//    FStreamPos: Int64;
+//    FOnProgress: TNotifyEvent;
+//    FZStream: TZStreamRec;
+//    FBuffer: TBytes;
+//  public
+//    constructor Create(stream: TStream);
+//    procedure DoProgress; dynamic;
+//    property OnProgress: TNotifyEvent read FOnProgress write FOnProgress;
+//  end;
+//  // CG: Add alias of classname to old Zlib classname
+//  TCustomZLibStream = TCustomZStream;
+//
+//  {** TZCompressionStream ***************************************************}
+//
+//  TZCompressionStream = class(TCustomZStream)
+//  private
+//    function GetCompressionRate: Single;
+//  public
+//    constructor Create(dest: TStream); overload;
+//    constructor Create(dest: TStream; compressionLevel: TZCompressionLevel; windowBits: Integer); overload;
+//    // CG: Add overloaded constructor for old parameter type and order
+//    constructor Create(compressionLevel: TCompressionLevel; dest: TStream); overload;
+//    destructor Destroy; override;
+//    function Read(var buffer; count: Longint): Longint; override;
+//    function Write(const buffer; count: Longint): Longint; override;
+//
+//    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
+//    property CompressionRate: Single read GetCompressionRate;
+//    property OnProgress;
+//  end;
+//
+//  // CG: Add alias of classname to old Zlib classname
+//  TCompressionStream = TZCompressionStream;
+//
+//  {** TZDecompressionStream *************************************************}
+//
+//  TZDecompressionStream = class(TCustomZStream)
+//  private
+//    FOwnsStream: Boolean;
+//  public
+//    constructor Create(source: TStream); overload;
+//    constructor Create(source: TStream; WindowBits: Integer); overload;
+//    constructor Create(source: TStream; WindowBits: Integer; OwnsStream: Boolean); overload;
+//    destructor Destroy; override;
+//    function Read(var buffer; count: Longint): Longint; override;
+//    function Write(const buffer; count: Longint): Longint; override;
+//    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
+//    property OnProgress;
+//  end;
+//  // CG: Add alias of classname to old Zlib classname
+//  TDecompressionStream = TZDecompressionStream;
+//
+//const
+//    ZLevels: array[TZCompressionLevel] of Shortint = (
+//    Z_NO_COMPRESSION,
+//    Z_BEST_SPEED,
+//    Z_DEFAULT_COMPRESSION,
+//    Z_BEST_COMPRESSION
+//    );
+//
+//  _z_errmsg: array [0..9] of String = (
+//    'need dictionary',      // Z_NEED_DICT      (2)
+//    'stream end',           // Z_STREAM_END     (1)
+//    '',                     // Z_OK             (0)
+//    'file error',           // Z_ERRNO          (-1)
+//    'stream error',         // Z_STREAM_ERROR   (-2)
+//    'data error',           // Z_DATA_ERROR     (-3)
+//    'insufficient memory',  // Z_MEM_ERROR      (-4)
+//    'buffer error',         // Z_BUF_ERROR      (-5)
+//    'incompatible version', // Z_VERSION_ERROR  (-6)
+//    ''
+//    );
 
 {$ENDIF}
 
@@ -495,281 +500,281 @@ function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
 begin
   result := System.TryEnterCriticalSection(cs) > 0;
 end;
-
-function ZCompressCheck(code: Integer): Integer; overload;
-begin
-  Result := code;
-
-  if code < 0 then
-     raise EIOException.Create(string(_z_errmsg[2 - code]));
-end;
-
-function ZCompressCheckWithoutBufferError(code: Integer): Integer; overload;
-      begin
-  Result := code;
-
-  if code < 0 then
-    if (code <> Z_BUF_ERROR) then
-     raise EIOException.Create(string(_z_errmsg[2 - code]));
-      end;
-
-function ZDecompressCheck(code: Integer): Integer; overload;
-begin
-  Result := code;
-
-  if code < 0 then
-     raise EIOException.Create(string(_z_errmsg[2 - code]));
-end;
-
-function ZDecompressCheckWithoutBufferError(code: Integer): Integer; overload;
-begin
-  Result := code;
-
-  if code < 0 then
-    if (code <> Z_BUF_ERROR) then
-     raise EIOException.Create(string(_z_errmsg[2 - code]));
-    end;
-
-
-
-{ TCustomZStream }
-
-constructor TCustomZStream.Create(stream: TStream);
-begin
-  inherited Create;
-  FStream := stream;
-  FStreamStartPos := Stream.Position;
-  FStreamPos := FStreamStartPos;
-  SetLength(FBuffer, $10000);
-  end;
-
-procedure TCustomZStream.DoProgress;
-begin
-  if Assigned(FOnProgress) then FOnProgress(Self);
-end;
-
-
-{ TZCompressionStream }
-
-constructor TZCompressionStream.Create(dest: TStream);
-begin
-  Create(dest, zcDefault, 15);
-end;
-
-constructor TZCompressionStream.Create(dest: TStream;
-  compressionLevel: TZCompressionLevel; windowBits: Integer);
-begin
-  inherited Create(dest);
-
-  FZStream.next_out := @FBuffer[0];
-  FZStream.avail_out := Length(FBuffer);
-
-  ZCompressCheck(DeflateInit2(FZStream, ZLevels[compressionLevel], Z_DEFLATED, windowBits, 8, Z_DEFAULT_STRATEGY));
-end;
-
-constructor TZCompressionStream.Create(compressionLevel: TCompressionLevel; dest: TStream);
-begin
-  Create(dest, TZCompressionLevel(Byte(compressionLevel)), 15);
-end;
-
-destructor TZCompressionStream.Destroy;
-begin
-  FZStream.next_in := nil;
-  FZStream.avail_in := 0;
-
-    try
-    if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
-
-    while ZCompressCheckWithoutBufferError(deflate(FZStream, Z_FINISH)) <> Z_STREAM_END do
-      begin
-      FStream.WriteBuffer(FBuffer, Length(FBuffer) - Integer(FZStream.avail_out));
-
-      FZStream.next_out := @FBuffer[0];
-      FZStream.avail_out := Length(FBuffer);
-    end;
-
-    if Integer(FZStream.avail_out) < Length(FBuffer) then
-    begin
-      FStream.WriteBuffer(FBuffer, Length(FBuffer) - Integer(FZStream.avail_out));
-      end;
-    finally
-    deflateEnd(FZStream);
-  end;
-
-  inherited Destroy;
-end;
-
-function TZCompressionStream.Read(var buffer; count: Longint): Longint;
-begin
-  result := 0;
-  raise EIOException.Create('Cannot read from a compression stream');
-end;
-
-function TZCompressionStream.Write(const buffer; count: Longint): Longint;
-begin
-  FZStream.next_in := @buffer;
-  FZStream.avail_in := count;
-
-  if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
-
-  while FZStream.avail_in > 0 do
-  begin
-    ZCompressCheckWithoutBufferError(deflate(FZStream, Z_NO_FLUSH));
-
-    if FZStream.avail_out = 0 then
-    begin
-      FStream.WriteBuffer(FBuffer, Length(FBuffer));
-
-      FZStream.next_out := @FBuffer[0];
-      FZStream.avail_out := Length(FBuffer);
-
-      FStreamPos := FStream.Position;
-
-      DoProgress;
-  end;
-end;
-
-  result := Count;
-end;
-
-function TZCompressionStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
-begin
-  if (offset = 0) and (origin = soCurrent) then
-  begin
-    result := FZStream.total_in;
-  end
-  else
-    raise EIOException.Create('Invalid Operation');
-end;
-
-function TZCompressionStream.GetCompressionRate: Single;
-begin
-  if FZStream.total_in = 0 then result := 0
-  else result := (1.0 - (FZStream.total_out / FZStream.total_in)) * 100.0;
-end;
-
-{ TZDecompressionStream }
-
-constructor TZDecompressionStream.Create(source: TStream);
-begin
-  Create(source, 15, False);
-end;
-
-constructor TZDecompressionStream.Create(source: TStream; WindowBits: Integer);
-begin
-  Create(source, WindowBits, False);
-end;
-
-constructor TZDecompressionStream.Create(source: TStream; WindowBits: Integer; OwnsStream: Boolean);
-begin
-  inherited Create(source);
-  FZStream.next_in := @FBuffer[0];
-  FZStream.avail_in := 0;
-  ZDecompressCheckWithoutBufferError(InflateInit2(FZStream, WindowBits));
-  FOwnsStream := OwnsStream;
-end;
-
-destructor TZDecompressionStream.Destroy;
-begin
-  inflateEnd(FZStream);
-  if FOwnsStream then
-    FStream.Free;
-  inherited Destroy;
-end;
-
-function TZDecompressionStream.Read(var buffer; count: Longint): Longint;
-var
-  zresult: Integer;
-begin
-  FZStream.next_out := @buffer;
-  FZStream.avail_out := count;
-
-  if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
-
-  zresult := Z_OK;
-
-  while (FZStream.avail_out > 0) and (zresult <> Z_STREAM_END) do
-  begin
-    if FZStream.avail_in = 0 then
-    begin
-      FZStream.avail_in := FStream.Read(FBuffer[0], Length(FBuffer));
-
-      if FZStream.avail_in = 0 then
-      begin
-        result := NativeUInt(count) - FZStream.avail_out;
-
-        Exit;
-      end;
-      if (length(FBuffer) = 0) then
-        raise EFslException.Create('read File returned an empty buffer but claimed it wasn''t');
-
-      FZStream.next_in := @FBuffer[0];
-      FStreamPos := FStream.Position;
-
-      DoProgress;
-    end;
-
-    zresult := ZDecompressCheckWithoutBufferError(inflate(FZStream, Z_NO_FLUSH));
-  end;
-
-  if (zresult = Z_STREAM_END) and (FZStream.avail_in > 0) then
-  begin
-    FStream.Position := FStream.Position - FZStream.avail_in;
-    FStreamPos := FStream.Position;
-
-    FZStream.avail_in := 0;
-  end;
-
-  result := NativeUInt(count) - FZStream.avail_out;
-end;
-
-function TZDecompressionStream.Write(const buffer; count: Longint): Longint;
-begin
-  result := 0;
-  raise EIOException.Create('Invalid Operation');
-end;
-
-function TZDecompressionStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
-const
-  BufSize = 8192;
-var
-  buf: TBytes;
-  i: Integer;
-  localOffset: Int64;
-begin
-  if (Offset = 0) and (Origin = soBeginning) then
-  begin
-    ZDecompressCheck(inflateReset(FZStream));
-
-    FZStream.next_in := @FBuffer;
-    FZStream.avail_in := 0;
-
-    FStream.Position := FStreamStartPos;
-    FStreamPos := FStreamStartPos;
-  end
-  else if ((Offset >= 0) and (Origin = soCurrent)) or
-    (((NativeUInt(offset) - FZStream.total_out) > 0) and (Origin = soBeginning)) then
-  begin
-    localOffset := Offset;
-    if (Origin = soBeginning) then Dec(localOffset, FZStream.total_out);
-
-    if localOffset > 0 then
-    begin
-      SetLength(buf, BufSize);
-      for i := 1 to localOffset div BufSize do ReadBuffer(buf[0], BufSize);
-      ReadBuffer(buf[0], localOffset mod BufSize);
-    end;
-  end
-  else if (Offset = 0) and (Origin = soEnd) then
-  begin
-    SetLength(buf, BufSize);
-    while Read(buf[0], BufSize) > 0 do ;
-  end
-  else
-    raise EIOException.Create('Invalid Operation');
-
-  result := FZStream.total_out;
-end;
+//
+//function ZCompressCheck(code: Integer): Integer; overload;
+//begin
+//  Result := code;
+//
+//  if code < 0 then
+//     raise EIOException.Create(string(_z_errmsg[2 - code]));
+//end;
+//
+//function ZCompressCheckWithoutBufferError(code: Integer): Integer; overload;
+//      begin
+//  Result := code;
+//
+//  if code < 0 then
+//    if (code <> Z_BUF_ERROR) then
+//     raise EIOException.Create(string(_z_errmsg[2 - code]));
+//      end;
+//
+//function ZDecompressCheck(code: Integer): Integer; overload;
+//begin
+//  Result := code;
+//
+//  if code < 0 then
+//     raise EIOException.Create(string(_z_errmsg[2 - code]));
+//end;
+//
+//function ZDecompressCheckWithoutBufferError(code: Integer): Integer; overload;
+//begin
+//  Result := code;
+//
+//  if code < 0 then
+//    if (code <> Z_BUF_ERROR) then
+//     raise EIOException.Create(string(_z_errmsg[2 - code]));
+//    end;
+//
+//
+//
+//{ TCustomZStream }
+//
+//constructor TCustomZStream.Create(stream: TStream);
+//begin
+//  inherited Create;
+//  FStream := stream;
+//  FStreamStartPos := Stream.Position;
+//  FStreamPos := FStreamStartPos;
+//  SetLength(FBuffer, $10000);
+//  end;
+//
+//procedure TCustomZStream.DoProgress;
+//begin
+//  if Assigned(FOnProgress) then FOnProgress(Self);
+//end;
+//
+//
+//{ TZCompressionStream }
+//
+//constructor TZCompressionStream.Create(dest: TStream);
+//begin
+//  Create(dest, zcDefault, 15);
+//end;
+//
+//constructor TZCompressionStream.Create(dest: TStream;
+//  compressionLevel: TZCompressionLevel; windowBits: Integer);
+//begin
+//  inherited Create(dest);
+//
+//  FZStream.next_out := @FBuffer[0];
+//  FZStream.avail_out := Length(FBuffer);
+//
+//  ZCompressCheck(DeflateInit2(FZStream, ZLevels[compressionLevel], Z_DEFLATED, windowBits, 8, Z_DEFAULT_STRATEGY));
+//end;
+//
+//constructor TZCompressionStream.Create(compressionLevel: TCompressionLevel; dest: TStream);
+//begin
+//  Create(dest, TZCompressionLevel(Byte(compressionLevel)), 15);
+//end;
+//
+//destructor TZCompressionStream.Destroy;
+//begin
+//  FZStream.next_in := nil;
+//  FZStream.avail_in := 0;
+//
+//    try
+//    if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
+//
+//    while ZCompressCheckWithoutBufferError(deflate(FZStream, Z_FINISH)) <> Z_STREAM_END do
+//      begin
+//      FStream.WriteBuffer(FBuffer, Length(FBuffer) - Integer(FZStream.avail_out));
+//
+//      FZStream.next_out := @FBuffer[0];
+//      FZStream.avail_out := Length(FBuffer);
+//    end;
+//
+//    if Integer(FZStream.avail_out) < Length(FBuffer) then
+//    begin
+//      FStream.WriteBuffer(FBuffer, Length(FBuffer) - Integer(FZStream.avail_out));
+//      end;
+//    finally
+//    deflateEnd(FZStream);
+//  end;
+//
+//  inherited Destroy;
+//end;
+//
+//function TZCompressionStream.Read(var buffer; count: Longint): Longint;
+//begin
+//  result := 0;
+//  raise EIOException.Create('Cannot read from a compression stream');
+//end;
+//
+//function TZCompressionStream.Write(const buffer; count: Longint): Longint;
+//begin
+//  FZStream.next_in := @buffer;
+//  FZStream.avail_in := count;
+//
+//  if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
+//
+//  while FZStream.avail_in > 0 do
+//  begin
+//    ZCompressCheckWithoutBufferError(deflate(FZStream, Z_NO_FLUSH));
+//
+//    if FZStream.avail_out = 0 then
+//    begin
+//      FStream.WriteBuffer(FBuffer, Length(FBuffer));
+//
+//      FZStream.next_out := @FBuffer[0];
+//      FZStream.avail_out := Length(FBuffer);
+//
+//      FStreamPos := FStream.Position;
+//
+//      DoProgress;
+//  end;
+//end;
+//
+//  result := Count;
+//end;
+//
+//function TZCompressionStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
+//begin
+//  if (offset = 0) and (origin = soCurrent) then
+//  begin
+//    result := FZStream.total_in;
+//  end
+//  else
+//    raise EIOException.Create('Invalid Operation');
+//end;
+//
+//function TZCompressionStream.GetCompressionRate: Single;
+//begin
+//  if FZStream.total_in = 0 then result := 0
+//  else result := (1.0 - (FZStream.total_out / FZStream.total_in)) * 100.0;
+//end;
+//
+//{ TZDecompressionStream }
+//
+//constructor TZDecompressionStream.Create(source: TStream);
+//begin
+//  Create(source, 15, False);
+//end;
+//
+//constructor TZDecompressionStream.Create(source: TStream; WindowBits: Integer);
+//begin
+//  Create(source, WindowBits, False);
+//end;
+//
+//constructor TZDecompressionStream.Create(source: TStream; WindowBits: Integer; OwnsStream: Boolean);
+//begin
+//  inherited Create(source);
+//  FZStream.next_in := @FBuffer[0];
+//  FZStream.avail_in := 0;
+//  ZDecompressCheckWithoutBufferError(InflateInit2(FZStream, WindowBits));
+//  FOwnsStream := OwnsStream;
+//end;
+//
+//destructor TZDecompressionStream.Destroy;
+//begin
+//  inflateEnd(FZStream);
+//  if FOwnsStream then
+//    FStream.Free;
+//  inherited Destroy;
+//end;
+//
+//function TZDecompressionStream.Read(var buffer; count: Longint): Longint;
+//var
+//  zresult: Integer;
+//begin
+//  FZStream.next_out := @buffer;
+//  FZStream.avail_out := count;
+//
+//  if FStream.Position <> FStreamPos then FStream.Position := FStreamPos;
+//
+//  zresult := Z_OK;
+//
+//  while (FZStream.avail_out > 0) and (zresult <> Z_STREAM_END) do
+//  begin
+//    if FZStream.avail_in = 0 then
+//    begin
+//      FZStream.avail_in := FStream.Read(FBuffer[0], Length(FBuffer));
+//
+//      if FZStream.avail_in = 0 then
+//      begin
+//        result := NativeUInt(count) - FZStream.avail_out;
+//
+//        Exit;
+//      end;
+//      if (length(FBuffer) = 0) then
+//        raise EFslException.Create('read File returned an empty buffer but claimed it wasn''t');
+//
+//      FZStream.next_in := @FBuffer[0];
+//      FStreamPos := FStream.Position;
+//
+//      DoProgress;
+//    end;
+//
+//    zresult := ZDecompressCheckWithoutBufferError(inflate(FZStream, Z_NO_FLUSH));
+//  end;
+//
+//  if (zresult = Z_STREAM_END) and (FZStream.avail_in > 0) then
+//  begin
+//    FStream.Position := FStream.Position - FZStream.avail_in;
+//    FStreamPos := FStream.Position;
+//
+//    FZStream.avail_in := 0;
+//  end;
+//
+//  result := NativeUInt(count) - FZStream.avail_out;
+//end;
+//
+//function TZDecompressionStream.Write(const buffer; count: Longint): Longint;
+//begin
+//  result := 0;
+//  raise EIOException.Create('Invalid Operation');
+//end;
+//
+//function TZDecompressionStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
+//const
+//  BufSize = 8192;
+//var
+//  buf: TBytes;
+//  i: Integer;
+//  localOffset: Int64;
+//begin
+//  if (Offset = 0) and (Origin = soBeginning) then
+//  begin
+//    ZDecompressCheck(inflateReset(FZStream));
+//
+//    FZStream.next_in := @FBuffer;
+//    FZStream.avail_in := 0;
+//
+//    FStream.Position := FStreamStartPos;
+//    FStreamPos := FStreamStartPos;
+//  end
+//  else if ((Offset >= 0) and (Origin = soCurrent)) or
+//    (((NativeUInt(offset) - FZStream.total_out) > 0) and (Origin = soBeginning)) then
+//  begin
+//    localOffset := Offset;
+//    if (Origin = soBeginning) then Dec(localOffset, FZStream.total_out);
+//
+//    if localOffset > 0 then
+//    begin
+//      SetLength(buf, BufSize);
+//      for i := 1 to localOffset div BufSize do ReadBuffer(buf[0], BufSize);
+//      ReadBuffer(buf[0], localOffset mod BufSize);
+//    end;
+//  end
+//  else if (Offset = 0) and (Origin = soEnd) then
+//  begin
+//    SetLength(buf, BufSize);
+//    while Read(buf[0], BufSize) > 0 do ;
+//  end
+//  else
+//    raise EIOException.Create('Invalid Operation');
+//
+//  result := FZStream.total_out;
+//end;
 
 {$ENDIF}
 

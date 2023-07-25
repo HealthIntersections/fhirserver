@@ -4927,7 +4927,7 @@ begin
   try
     stream := TFileStream.Create(filename, fmOpenRead);
     try
-      z := TZDecompressionStream.Create(stream, 15+16);
+      z := TZDecompressionStream.Create(stream, false); // 15+16);
       try
         tar := TTarArchive.Create(z);
         try
