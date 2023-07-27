@@ -1367,21 +1367,28 @@ end;
 function TSubscriptionManager.LoadResourceFromDBByVer(conn: TFDBConnection; vkey: integer; var id : String; canBeNull : boolean): TFhirResourceV;
 var
   parser : TFHIRParser;
+  typ : String;
 begin
-  conn.SQL := 'select ResourceName, Ids.Id, Status, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
+  conn.SQL := 'select ResourceName, Ids.Id, Status, Tags, XmlContent From Versions, Ids, Types where '+
+    'ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
     conn.Execute;
     if not conn.FetchNext then
       raise EFHIRException.create('Cannot find resource');
     id := conn.ColStringByName['Id'];
+    typ := conn.ColStringByName['ResourceName'];
     if conn.ColIntegerByName['Status'] = 2 then
     begin
       // deleted
       if canBeNull then
         exit(nil)
       else
-        raise EFHIRException.create('Resource has been deleted');
+      begin
+        conn.terminate;
+        //conn.ExecSQL('Delete from SubscriptionQueue where ResourceVersionKey = '+inttostr(vkey));
+        raise EFHIRException.create('Resource '+typ+'/'+id+' for vkey '+inttostr(vkey)+' has been deleted');
+      end;
     end;
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['XmlContent'])
