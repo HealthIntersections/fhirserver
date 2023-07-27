@@ -2735,7 +2735,7 @@ end;
 
 function TSnomedServices.StringToId(const s: String): UInt64;
 begin
-  result := StrToUInt64(s);
+  result :=  StrToUInt64(s);
 end;
 
 function TSnomedServices.CheckLangSet(sTerm: String): Cardinal;
@@ -5407,9 +5407,16 @@ var
   index : cardinal;
 begin
   FSct.checkIsLoaded;
-  iId := StrToUInt64Def(code, 0);
+  iId := FSct.StringToIdOrZero(code);
   if iId = 0 then
-    result := TSnomedExpressionContext.Create(code, FSct.parseExpression(code))
+  begin
+    try
+      result := TSnomedExpressionContext.Create(code, FSct.parseExpression(code))
+    except
+      Message := 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')';
+      result := nil;
+    end
+  end
   else if FSct.Concept.FindConcept(iId, index) Then
     result := TSnomedExpressionContext.create(code, index)
   else
