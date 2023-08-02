@@ -5549,6 +5549,10 @@ procedure TFhirValueSetExpansionHelper.AddParamStr(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirString.Create(value);
@@ -5558,6 +5562,10 @@ procedure TFhirValueSetExpansionHelper.AddParamUri(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirUri.Create(value);
@@ -5567,16 +5575,23 @@ procedure TFhirValueSetExpansionHelper.AddParamCanonical(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirCanonical.Create(value);
 end;
 
-procedure TFhirValueSetExpansionHelper.AddParamBool(name: String; value: boolean
-  );
+procedure TFhirValueSetExpansionHelper.AddParamBool(name: String; value: boolean);
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = LCBooleanToString(value)) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirBoolean.Create(value);
@@ -5586,6 +5601,10 @@ procedure TFhirValueSetExpansionHelper.addParamCode(name, value: String);
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirCode.Create(value);
@@ -5595,6 +5614,10 @@ procedure TFhirValueSetExpansionHelper.addParamInt(name: String; value: integer)
 var
   p : TFhirValueSetExpansionParameter;
 begin
+  for p in parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = inttostr(value)) then
+      exit;
+
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirInteger.Create(value);

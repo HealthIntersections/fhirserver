@@ -267,6 +267,7 @@ Type
 
     function SpecialEnumeration : String; virtual;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
+    procedure getStatus(out status: TPublicationStatus; out standardsStatus: String); virtual;
     procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
@@ -761,6 +762,12 @@ end;
 function TCodeSystemProvider.SpecialEnumeration: String;
 begin
   result := '';
+end;
+
+procedure TCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String);
+begin
+  status := psNull;
+  standardsStatus := '';
 end;
 
 function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;

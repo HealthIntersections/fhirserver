@@ -196,6 +196,8 @@ Type
     procedure add(c : TCodeSystemProviderContext);
   end;
 
+  { TFHIRImportedValueSet }
+
   TFHIRImportedValueSet = class (TFslObject)
   private
     FValueSet: TFHIRValueSetW;
@@ -206,6 +208,7 @@ Type
   public
     constructor Create(valueSet : TFHIRValueSetW);
     destructor Destroy; override;
+    function link :TFHIRImportedValueSet; overload;
 
     procedure buildMap;
     function hasCode(system, code : String) : boolean;
@@ -262,11 +265,15 @@ Type
     FId: String;
     FLog : String;
 
+    procedure checkCanonicalStatus(params : TFhirParametersW; resource : TFHIRMetadataResourceW); overload;
+    procedure checkCanonicalStatus(params : TFhirParametersW; cs : TCodeSystemProvider); overload;
+    procedure checkCanonicalStatus(params: TFhirParametersW; vurl : String; status: TPublicationStatus; standardsStatus: String); overload;
+
     function dispWarning : TIssueSeverity;
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
-    function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : TTrueFalseUnknown; overload;
+    function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; op : TFHIROperationOutcomeW) : boolean;
@@ -306,6 +313,10 @@ Type
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
 
+    procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; resource : TFHIRMetadataResourceW); overload;
+    procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; cs : TCodeSystemProvider); overload;
+    procedure checkCanonicalStatus(expansion: TFhirValueSetExpansionW; vurl : String; status: TPublicationStatus; standardsStatus: String); overload;
+    procedure importValueSetItem(p, c: TFhirValueSetExpansionContainsW; imports: TFslList<TFHIRImportedValueSet>; offset: integer);
     function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
     procedure processCodeAndDescendants(doDelete : boolean; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; srcUrl : String);
 
@@ -584,6 +595,37 @@ begin
   FOthers.Free;
   inherited;
 end;
+
+procedure TValueSetChecker.checkCanonicalStatus(params: TFhirParametersW; resource: TFHIRMetadataResourceW);
+begin
+  checkCanonicalStatus(params, resource.vurl, resource.status, resource.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status'));
+end;
+
+procedure TValueSetChecker.checkCanonicalStatus(params: TFhirParametersW; cs: TCodeSystemProvider);
+var
+  status: TPublicationStatus;
+  standardsStatus: String;
+begin
+  cs.getStatus(status, standardsStatus);
+  if (cs.version(nil) <> '') then
+    checkCanonicalStatus(params, cs.systemUri(nil)+'|'+cs.version(nil), status, standardsStatus)
+  else
+    checkCanonicalStatus(params, cs.systemUri(nil), status, standardsStatus);
+end;
+
+procedure TValueSetChecker.checkCanonicalStatus(params: TFhirParametersW; vurl: String; status: TPublicationStatus; standardsStatus: String);
+begin
+  if params <> nil then
+  begin
+    if standardsStatus = 'deprecated' then
+      params.addParamUri('warning-deprecated', vurl)
+    else if standardsStatus = 'withdrawn' then
+      params.addParamUri('warning-withdrawn', vurl)
+    else if status = psRetired then
+      params.addParamUri('warning-retired', vurl);
+  end;
+end;
+
 
 function TValueSetChecker.dispWarning: TIssueSeverity;
 begin
@@ -904,7 +946,7 @@ begin
   try
     unknownSystems.duplicates := dupIgnore;
     unknownSystems.sorted := true;
-    result := check(issuePath, system, version, code, abstractOk, inferSystem, nil, unknownSystems, msg, ver, it, op, nil, contentMode, impliedSystem);
+    result := check(issuePath, system, version, code, abstractOk, inferSystem, nil, unknownSystems, msg, ver, it, op, nil, nil, contentMode, impliedSystem);
   finally
     unknownSystems.free;
   end;
@@ -913,7 +955,7 @@ end;
 function TValueSetChecker.check(path, system, version, code: String; abstractOk, inferSystem: boolean; displays: TConceptDesignations;
   unknownSystems : TStringList;
   var message, ver: String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
-  vcc : TFHIRCodeableConceptW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): TTrueFalseUnknown;
+  vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string): TTrueFalseUnknown;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -952,6 +994,7 @@ begin
       end
       else
       begin
+        checkCanonicalStatus(params, cs);
         ver := cs.version(nil);
         contentMode := cs.contentMode;
         ctxt := cs.locate(code, nil, message);
@@ -1031,6 +1074,7 @@ begin
       end
       else
       begin
+        checkCanonicalStatus(params, cs);
         ver := cs.version(nil);
         contentMode := cs.contentMode;
         ctxt := cs.locate(code);
@@ -1131,7 +1175,8 @@ begin
         if result = bFalse then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+          checkCanonicalStatus(params, checker.FValueSet);
+          result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, params, contentMode, impliedSystem);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -1168,6 +1213,7 @@ begin
               exit(bFalse);
           end;
           try
+            checkCanonicalStatus(params, cs);
             ver := cs.version(nil);
             checkSupplements(cs, cc);
             contentMode := cs.contentMode;
@@ -1187,8 +1233,9 @@ begin
           checker := TValueSetChecker(FOthers.matches[s]);
           if checker = nil then
             raise ETerminologyError.Create('No Match for '+s, itUnknown);
+          checkCanonicalStatus(params, checker.FValueSet);
           if (result = bTrue) then
-            result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+            result := checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil,  params, contentMode, impliedSystem);
         end;
         if result = bTrue then
           break;
@@ -1204,6 +1251,7 @@ begin
               cs := TCodeSystemProvider(FOthers.matches[cc.systemUri])
             else
               cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+cc.version]);
+            checkCanonicalStatus(params, cs);
             checkSupplements(cs, cc);
             ver := cs.version(nil);
             contentMode := cs.contentMode;
@@ -1212,7 +1260,8 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and (checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem) = bTrue);
+            checkCanonicalStatus(params, checker.FValueSet);
+            excluded := excluded and (checker.check(path, system, version, code, abstractOk, inferSystem, displays, unknownSystems, message, ver, cause, op, nil, params, contentMode, impliedSystem) = bTrue);
           end;
           if excluded then
             exit(bFalse);
@@ -1266,6 +1315,7 @@ begin
               exit(bfalse);
           end;
           try
+            checkCanonicalStatus(params, cs);
             ver := cs.version(nil);
             contentMode := cs.contentMode;
             if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri(nil) = system)) and checkExpansion(path, cs, ccc, code, abstractOk, displays, FValueSet, message, op) then
@@ -1301,13 +1351,14 @@ begin
   unknownSystems := TStringList.create;
   result := FFactory.makeParameters;
   try
+    checkCanonicalStatus(result, FValueSet);
     unknownSystems.sorted := true;
     unknownSystems.duplicates := dupIgnore;
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
     try
       list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
       try
-        ok := check(path, coding.systemUri, coding.version, coding.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+        ok := check(path, coding.systemUri, coding.version, coding.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, nil, result, contentMode, impliedSystem);
         if ok = bTrue then
         begin
           result.AddParamBool('result', true);
@@ -1430,10 +1481,12 @@ begin
   cause := itNull;
   if FValueSet = nil then
     raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset', itInvalid);
+
   vcc := FFactory.wrapCodeableConcept(FFactory.makeCodeableConcept);
   unknownSystems := TStringList.create;
   result := FFactory.makeParameters;
   try
+    checkCanonicalStatus(result, FValueSet);
     unknownSystems.sorted := true;
     unknownSystems.duplicates := dupIgnore;
     op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
@@ -1451,7 +1504,7 @@ begin
           else
             path := issuePath;;
           list.clear;
-          v := check(path, c.systemUri, c.version, c.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, vcc, contentMode, impliedSystem);
+          v := check(path, c.systemUri, c.version, c.code, abstractOk, inferSystem, list, unknownSystems, message, ver, cause, op, vcc, result, contentMode, impliedSystem);
           if (v <> bTrue) and (message <> '') then
             msg(message);
           if (v = bFalse) then
@@ -1542,6 +1595,7 @@ begin
              end
              else
              begin
+               checkCanonicalStatus(result, prov);
                ctxt := prov.locate(c.code, FAllAltCodes, message);
                try
                  if ctxt = nil then
@@ -1653,12 +1707,13 @@ begin
     unknownSystems.sorted := true;
     unknownSystems.duplicates := dupIgnore;
     result := FFactory.makeParameters;
-    try
+    try                             
+      checkCanonicalStatus(result, FValueSet);
       op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
       try
         list := TConceptDesignations.Create(FFactory.link, FLanguages.link);
         try
-          ok := check(issuePath, system, version, code, true, inferSystem, list, unknownSystems, message, ver, cause, op, nil, contentMode, impliedSystem);
+          ok := check(issuePath, system, version, code, true, inferSystem, list, unknownSystems, message, ver, cause, op, nil, result, contentMode, impliedSystem);
           if ok = bTrue then
           begin
             result.AddParamBool('result', true);
@@ -1977,7 +2032,9 @@ end;
 { TFHIRValueSetExpander }
 
 
-function TFHIRValueSetExpander.Expand(source: TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSetW;
+function TFHIRValueSetExpander.expand(source: TFHIRValueSetW;
+  params: TFHIRExpansionParams; textFilter: String; dependencies: TStringList;
+  limit, count, offset: integer): TFHIRValueSetW;
 var
   i, t, o : integer;
   c : TFhirValueSetExpansionContainsW;
@@ -2078,6 +2135,7 @@ begin
       exp.addParamBool('excludeNotForUI', FParams.excludeNotForUI);
     if FParams.hasExcludePostCoordinated then
       exp.addParamBool('excludePostCoordinated', FParams.excludePostCoordinated);
+    checkCanonicalStatus(exp, source);
     if FOffset + Fcount > 0 then
     begin
       exp.addParamInt('offset', FOffset);
@@ -2204,6 +2262,33 @@ begin
   result := key(c.systemUri, c.Code);
 end;
 
+procedure TFHIRValueSetExpander.checkCanonicalStatus(expansion: TFhirValueSetExpansionW; vurl : String; status : TPublicationStatus; standardsStatus : String);
+begin
+  if standardsStatus = 'deprecated' then
+    expansion.addParamUri('warning-deprecated', vurl)
+  else if standardsStatus = 'withdrawn' then
+    expansion.addParamUri('warning-withdrawn', vurl)
+  else if status = psRetired then
+    expansion.addParamUri('warning-retired', vurl);
+end;
+
+procedure TFHIRValueSetExpander.checkCanonicalStatus(expansion: TFhirValueSetExpansionW; resource: TFHIRMetadataResourceW);
+begin                              
+  checkCanonicalStatus(expansion, resource.vurl, resource.status, resource.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status'));
+end;
+
+procedure TFHIRValueSetExpander.checkCanonicalStatus(expansion: TFhirValueSetExpansionW; cs: TCodeSystemProvider);
+var
+  status: TPublicationStatus;
+  standardsStatus: String;
+begin
+  cs.getStatus(status, standardsStatus);
+  if (cs.version(nil) <> '') then
+    checkCanonicalStatus(expansion, cs.systemUri(nil)+'|'+cs.version(nil), status, standardsStatus)
+  else
+    checkCanonicalStatus(expansion, cs.systemUri(nil), status, standardsStatus);
+end;
+
 function TFHIRValueSetExpander.makeFilterForValueSet(cs: TCodeSystemProvider; vs: TFHIRValueSetW): TCodeSystemProviderFilterContext;
 var
   inc : TFhirValueSetComposeIncludeW;
@@ -2257,6 +2342,7 @@ begin
   begin
     vs := expandValueSet(s, '', filter.filter, dependencies, notClosed);
     try
+      checkCanonicalStatus(expansion, vs);
       importValueSet(vs, expansion, nil, 0);
     finally
       vs.free;
@@ -2654,7 +2740,8 @@ begin
   end;
 end;
 
-function TFHIRValueSetExpander.expandValueSet(uri, version: String; filter : String; dependencies : TStringList;  var notClosed : boolean) : TFHIRValueSetW;
+function TFHIRValueSetExpander.expandValueSet(uri, version, filter: String;
+  dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
 var
   dep : TStringList;
   exp : TFhirValueSetExpansionW;
@@ -2680,20 +2767,32 @@ end;
 procedure TFHIRValueSetExpander.importValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
 var
   c : TFhirValueSetExpansionContainsW;
-  s : String;
 begin
   FCanBeHierarchy := false;
   expansion.copyParams(vs.expansion);
+  checkCanonicalStatus(expansion, vs);
 
   for c in vs.expansion.contains.forEnum do
+     importValueSetItem(nil, c, imports, offset);
+end;
+
+procedure TFHIRValueSetExpander.importValueSetItem(p, c : TFhirValueSetExpansionContainsW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+var
+  s : String;              
+  cc : TFhirValueSetExpansionContainsW;
+begin
+  s := key(c);
+  if passesImports(imports, c.systemUri, c.code, offset) and not FMap.containsKey(s) then
   begin
-    s := key(c);
-    if passesImports(imports, c.systemUri, c.code, offset) and not FMap.containsKey(s) then
-    begin
-      FFullList.add(c.link);
-      FMap.add(s, c.link);
-    end;
+    FFullList.add(c.link);
+    if FCanBeHierarchy and (p <> nil) then
+      p.addContains(c)
+    else
+      FRootList.add(c.link);
+    FMap.add(s, c.link);
   end;
+  for cc in c.contains.forEnum do
+     importValueSetItem(c, cc, imports, offset);
 end;
 
 procedure TFHIRValueSetExpander.excludeValueSet(vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
@@ -2792,6 +2891,7 @@ var
   iter : TCodeSystemIteratorContext;
   vs : TFHIRValueSetW;
   parent : TFhirValueSetExpansionContainsW;
+  ivs : TFHIRImportedValueSet;
   function passesFilters(c : TCodeSystemProviderContext; offset : integer) : boolean;
   var
     j : integer;
@@ -2827,7 +2927,16 @@ begin
     if cset.systemUri = '' then
     begin
       for s in cset.valueSets do
-        valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed)));
+      begin
+        ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
+        try
+          checkCanonicalStatus(expansion, ivs.FValueSet);
+          expansion.addParamUri('version', ivs.FValueSet.vurl);
+          valueSets.add(ivs.link);
+        finally
+          ivs.free;
+        end;
+      end;
       if doDelete then
         excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1)
       else
@@ -2840,6 +2949,7 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
         try
           checkSupplements(cs, cset);
+          checkCanonicalStatus(expansion, cs);
           for s in cset.valueSets do
           begin
             f := nil;
@@ -3362,6 +3472,11 @@ begin
   FMap.Free;
   FValueSet.free;
   inherited;
+end;
+
+function TFHIRImportedValueSet.link: TFHIRImportedValueSet;
+begin
+  result := TFHIRImportedValueSet(inherited link);
 end;
 
 procedure TFHIRImportedValueSet.SetValueSet(const Value: TFHIRValueSetW);

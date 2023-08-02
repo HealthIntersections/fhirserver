@@ -1977,27 +1977,52 @@ begin
 end;
 
 procedure TFhirParametersParameter2.addParamBool(name: String; value: boolean);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.partList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = LCBooleanToString(value)) then
+      exit;
   parameter.AddParameter(name).value := TFHIRBoolean.Create(value);
 end;
 
 procedure TFhirParametersParameter2.addParamCode(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.partList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
 end;
 
 procedure TFhirParametersParameter2.addParamUri(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.partList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 procedure TFhirParametersParameter2.addParamCanonical(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.partList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 procedure TFhirParametersParameter2.addParamStr(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.partList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRString.Create(value);
 end;
 
@@ -2111,27 +2136,52 @@ begin
 end;
 
 procedure TFHIRParameters2.addParamBool(name: String; value: boolean);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = LCBooleanToString(value)) then
+      exit;
   parameter.AddParameter(name).value := TFHIRBoolean.Create(value);
 end;
 
 procedure TFHIRParameters2.addParamCode(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRCode.Create(value);
 end;
 
 procedure TFHIRParameters2.addParamUri(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 procedure TFHIRParameters2.addParamCanonical(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRUri.Create(value);
 end;
 
 procedure TFHIRParameters2.addParamStr(name: String; value: string);
+var
+  p : TFhirParametersParameter;
 begin
+  for p in parameter.parameterList do
+    if (p.name = name) and (p.value <> nil) and (p.value.primitiveValue = value) then
+      exit;
   parameter.AddParameter(name).value := TFHIRString.Create(value);
 end;
 
