@@ -679,6 +679,7 @@ type
     function getDate: TFslDateTime; override;
     procedure setDate(Value: TFslDateTime); override;
     function hasInlineCS : boolean; override;
+    function excludeInactives : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
     function getPublisher: String; override;
@@ -2851,6 +2852,11 @@ end;
 function TFHIRValueSet2.hasInlineCS: boolean;
 begin
   result := vs.codeSystem <> nil;
+end;
+
+function TFHIRValueSet2.excludeInactives: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRValueSet2.imports: TArray<String>;

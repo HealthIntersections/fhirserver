@@ -126,6 +126,9 @@ Type
     function present : String;
   end;
 
+  TDisplayCheckingStyle = (dcsExact, dcsCaseInsensitive, dcsNormalised);
+  TDisplayDifference = (ddDifferent, ddCase, ddNormalised);
+
   { TConceptDesignations }
 
   TConceptDesignations = class (TFslObject)
@@ -136,7 +139,7 @@ Type
     FDesignations : TFslList<TConceptDesignation>;
     FLanguages : TIETFLanguageDefinitions;
     function langMatches(allowedLangs : TFslList<TIETFLang>; stated : TIETFLang) : boolean;
-    function stringMatches(source, possible : String; caseSensitive : boolean; lang : TIETFLang) : boolean;
+    function stringMatches(source, possible : String; mode : TDisplayCheckingStyle; lang : TIETFLang) : boolean;
     procedure SetBaseLang(value : TIETFLang);
     procedure SetDisplay(value : TFHIRPrimitiveW);
   public
@@ -151,7 +154,7 @@ Type
     procedure addDesignation(lang : string; displays : TStringList; beBase : boolean = false); overload;
     function  addDesignation(lang : String = ''; value : TFHIRPrimitiveW = nil) : TConceptDesignation; overload;
     function  addDesignation(index : integer; lang : String = ''; value : TFHIRPrimitiveW = nil; extensions : TFslList<TFHIRExtensionW> = nil) : TConceptDesignation; overload;
-    function hasDisplay(allowedLangs : TFslList<TIETFLang>; value : String; caseSensitive : boolean = false) : boolean;
+    function hasDisplay(allowedLangs : TFslList<TIETFLang>; value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
     function displayCount(allowedLangs : TFslList<TIETFLang>) : integer;
     function preferredDisplay(allowedLangs : TFslList<TIETFLang>) : String;
     function present(allowedLangs : TFslList<TIETFLang>) : String;
@@ -416,16 +419,45 @@ begin
   end;
 end;
 
-function TConceptDesignations.hasDisplay(allowedLangs: TFslList<TIETFLang>; value: String; caseSensitive : boolean): boolean;
+function TConceptDesignations.hasDisplay(allowedLangs: TFslList<TIETFLang>; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
 var
   cd : TConceptDesignation;
 begin
   result := false;
-  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil) and stringMatches(value, FDisplay.asString, caseSensitive, FBaseLang)) then
+  diff := ddDifferent;
+  if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil) and stringMatches(value, FDisplay.asString, mode, FBaseLang)) then
     exit(true);
   for cd in designations do
-    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil) and stringMatches(value, cd.value.asString, caseSensitive, cd.language)) then
+    if (langMatches(allowedLangs, cd.language) and (cd.value <> nil) and stringMatches(value, cd.value.asString, mode, cd.language)) then
       exit(true);
+  if mode = dcsExact then
+  begin
+    if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil) and stringMatches(value, FDisplay.asString, dcsCaseInsensitive, FBaseLang)) then
+    begin
+      diff := ddCase;
+      exit(false);
+    end;
+    for cd in designations do
+      if (langMatches(allowedLangs, cd.language) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsCaseInsensitive, cd.language)) then
+      begin
+        diff := ddCase;
+        exit(false);
+      end;
+  end;
+  if mode <> dcsNormalised then
+  begin
+    if (langMatches(allowedLangs, FBaseLang) and (FDisplay <> nil) and stringMatches(value, FDisplay.asString, dcsNormalised, FBaseLang)) then
+    begin
+      diff := ddNormalised;
+      exit(false);
+    end;
+    for cd in designations do
+      if (langMatches(allowedLangs, cd.language) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsNormalised, cd.language)) then
+      begin
+        diff := ddNormalised;
+        exit(false);
+      end;
+  end;
 end;
 
 function TConceptDesignations.displayCount(allowedLangs: TFslList<TIETFLang>): integer;
@@ -501,13 +533,16 @@ begin
   end;
 end;
 
-function TConceptDesignations.stringMatches(source, possible: String; caseSensitive: boolean; lang: TIETFLang): boolean;
+function TConceptDesignations.stringMatches(source, possible: String; mode : TDisplayCheckingStyle; lang: TIETFLang): boolean;
 begin
   // we ignore lang at this time
-  if (caseSensitive) then
-    result := source = possible
+  case mode of
+    dcsExact: result := source = possible;
+    dcsCaseInsensitive: result := SameText(source, possible);
+    dcsNormalised: result := SameText(StringNormalizeWhitespace(source), StringNormalizeWhitespace(possible));
   else
-    result := SameText(source, possible);
+    result := false;
+  end;
 end;
 
 procedure TConceptDesignations.SetBaseLang(value: TIETFLang);

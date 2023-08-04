@@ -1381,9 +1381,9 @@ end;
 function TNDCServices.packageDisplay(conn: TFDBConnection): String;
 begin
   if conn.ColStringByName['Suffix'] <> '' then
-    result := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+', '+conn.ColStringByName['Description']+' (package)'
+    result := StringNormalizeWhitespace(conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+', '+conn.ColStringByName['Description']+' (package)')
   else
-    result := conn.ColStringByName['TradeName']+', '+conn.ColStringByName['Description']+' (package)';
+    result := StringNormalizeWhitespace(conn.ColStringByName['TradeName']+', '+conn.ColStringByName['Description']+' (package)');
 end;
 
 function TNDCServices.productDisplay(conn: TFDBConnection): String;

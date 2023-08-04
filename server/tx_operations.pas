@@ -312,7 +312,9 @@ begin
             offset := StrToIntDef(params.str('offset'), 0);
             limit := StrToIntDef(params.str('_limit'), 0);
             if (limit < 0) then
-              limit := 0;
+              limit := 0
+            else if limit > UPPER_LIMIT_TEXT then
+              limit := UPPER_LIMIT_TEXT; // can't ask for more than this externally, though you can internally
 
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);

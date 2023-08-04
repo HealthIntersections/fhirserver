@@ -179,9 +179,12 @@ begin
   if (context <> nil) then
   begin
     c := context as TIETFLanguageCodeConcept;
-    list.addBase('', FLanguages.present(c.FInfo).Trim);
-    if c.FInfo.isLangRegion then
-      list.addDesignation('', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+    if (c.FInfo <> nil) then
+    begin
+      list.addBase('', FLanguages.present(c.FInfo).Trim);
+      if (c.FInfo.isLangRegion) then
+        list.addDesignation('', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+    end;
   end;
 end;
 

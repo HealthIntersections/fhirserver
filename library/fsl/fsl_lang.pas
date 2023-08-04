@@ -749,25 +749,30 @@ var
     b.Append(v);
   end;
 begin
-  b := TStringBuilder.Create;
-  try
-    b.append(FLanguages[code.language].display);
-    if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
-    begin
-      b.Append(' (');
-      first := true;
-      if (code.script <> '') then
-        note('Script', FScripts[code.script].display);
-      if (code.region <> '') then
-        note('Region', FRegions[code.region].display);
-      if (code.variant <> '') then
-        note('Region', FVariants[code.variant].display);
-      b.Append(')');
-    end;
+  if (code = nil) then
+    result := ''
+  else
+  begin
+    b := TStringBuilder.Create;
+    try
+      b.append(FLanguages[code.language].display);
+      if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
+      begin
+        b.Append(' (');
+        first := true;
+        if (code.script <> '') then
+          note('Script', FScripts[code.script].display);
+        if (code.region <> '') then
+          note('Region', FRegions[code.region].display);
+        if (code.variant <> '') then
+          note('Region', FVariants[code.variant].display);
+        b.Append(')');
+      end;
 
-    result := b.ToString;
-  finally
-    b.Free;
+      result := b.ToString;
+    finally
+      b.Free;
+    end;
   end;
 end;
 

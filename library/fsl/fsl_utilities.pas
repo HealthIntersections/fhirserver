@@ -294,6 +294,7 @@ Function StringTrimWhitespaceLeft(Const sValue : String) : String; Overload;
 Function StringTrimSetRight(Const sValue : String; aChars : TCharSet) : String; Overload;
 Function StringTrimSetLeft(Const sValue : String; aChars : TCharSet) : String; Overload;
 Function StringTrimSet(Const sValue : String; aChars : TCharSet) : String; Overload;
+Function StringNormalizeWhitespace(Const sValue : String) : String; Overload;
 
 Function StringToBoolean(Const sValue : String) : Boolean; Overload;
 Function StringToReal(Const sValue : String) : Real; Overload;
@@ -5175,6 +5176,37 @@ Begin
   Result := Copy(sValue, 1, iFinish);
 End;
 
+
+Function StringNormalizeWhitespace(Const sValue : String) : String; Overload;
+var
+  s : String;
+  i, j : integer;
+  ws : boolean;
+  procedure add(ch : char);
+  begin
+    inc(j);
+    result[j] := ch;
+  end;
+begin
+  s := Sysutils.Trim(sValue);
+  result := s;
+  j := 0;
+  ws := false;
+  for i := 1 to length(s) do
+  begin
+    if not isWhitespace(s[i]) then
+    begin
+      ws := false;
+      add(s[i]);
+    end
+    else if not ws then
+    begin
+      ws := true;
+      add(' ')
+    end;
+  end;
+  setLength(result, j);
+end;
 
 Function StringTrimWhitespace(Const sValue : String) : String;
 Begin

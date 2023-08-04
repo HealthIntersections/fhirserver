@@ -5215,6 +5215,8 @@ begin
   begin
     if (p.code = 'inactive') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
       exit(true);
+    if (p.code = 'inactive') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
+      exit(true);
     if (p.code = 'status') and ((p.value.ToString = 'inactive') or (p.value.ToString = 'retired')) then
       exit(true);
   end;

@@ -656,7 +656,8 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     function getDate: TFslDateTime; override;
     procedure setDate(Value: TFslDateTime); override;
-    function hasInlineCS : boolean; override;
+    function hasInlineCS : boolean; override;      
+    function excludeInactives : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
     function getPublisher: String; override;
@@ -3279,6 +3280,11 @@ end;
 function TFHIRValueSet3.hasInlineCS: boolean;
 begin
   result := false;
+end;
+
+function TFHIRValueSet3.excludeInactives: boolean;
+begin
+  result := (vs.compose.inactiveElement <> nil) and not vs.compose.inactive;
 end;
 
 function TFHIRValueSet3.imports: TArray<String>;

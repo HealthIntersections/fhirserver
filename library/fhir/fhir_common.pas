@@ -954,6 +954,7 @@ type
     function getComposeExtensions : TFslList<TFHIRExtensionW>; virtual; abstract;
     function checkExpansion(place, role : String) : boolean; virtual; abstract;
     function imports : TArray<String>; virtual; abstract; // only in R2
+    function excludeInactives : boolean; virtual; abstract;
     function hasInlineCS : boolean; virtual; abstract;
     function inlineCS : TFHIRValueSetCodeSystemW; virtual; abstract;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
