@@ -150,6 +150,7 @@ type
 var
   TestSettings : TFslTestSettings;
   GSnomedDataFile : string = '';
+  GCPTDataFile : string = '';
 
 
 {$IFDEF FPC}
@@ -424,11 +425,14 @@ begin
     MDTestRoot := FIni.ReadString('locations', 'markdown', '');
   if not getCommandLineParam('snomed-data', GSnomedDataFile) then
     GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
   Logging.log('Test Locations: ');
   Logging.log('  fhirserver='+FServerTestsRoot);
   Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
   Logging.log('  markdown='+MDTestRoot);
   Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
 end;
 
 constructor TFslTestSettings.Create(filename: String);
@@ -446,11 +450,15 @@ begin
     MDTestRoot := FIni.ReadString('locations', 'markdown', '');
   if not getCommandLineParam('snomed-data', GSnomedDataFile) then
     GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
+
   Logging.log('Test Locations: ');
   Logging.log('  fhirserver='+FServerTestsRoot);
   Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
   Logging.log('  markdown='+MDTestRoot);
   Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
 end;
 
 destructor TFslTestSettings.Destroy;

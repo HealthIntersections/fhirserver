@@ -307,11 +307,12 @@ begin
         if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
         begin
           p := resp.addProp('abstract');
-          try
-            p.value := Factory.makeBoolean(true);
-          finally
-            p.Free;
-          end;
+          p.value := Factory.makeBoolean(true);
+        end;
+        if (hasProp('inactive', true)) then
+        begin
+          p := resp.addProp('inactive');
+          p.value := Factory.makeBoolean(provider.IsInactive(ctxt));
         end;
         resp.display := provider.Display(ctxt, lang);
         provider.extendLookup(Factory, ctxt, lang, props, resp);
