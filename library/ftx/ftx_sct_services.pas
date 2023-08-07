@@ -769,6 +769,7 @@ operations
     procedure Close(ctxt : TCodeSystemProviderContext); override;
 
     property Services : TSnomedServices read FSct;
+    procedure checkReady; override;
   end;
 
 
@@ -5142,6 +5143,11 @@ begin
   ctxt.Free;
 end;
 
+procedure TSnomedProvider.checkReady;
+begin
+  // FSct.checkLoaded;
+end;
+
 function TSnomedProvider.Code(context: TCodeSystemProviderContext): string;
 var
   Identity : UInt64;
@@ -5277,10 +5283,6 @@ begin
 
     p := resp.addProp('copyright');
     p.value := factory.makeString('This response content from SNOMED CT, which is copyright ) 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
-    if hasProp(props, 'inactive', true) then
-    begin
-      resp.addProp('inactive').value := factory.makeBoolean(not FSct.IsActive(TSnomedExpressionContext(ctxt).reference));
-    end;
 
     if hasProp(props, 'moduleId', true) then
     begin

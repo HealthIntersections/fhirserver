@@ -3069,7 +3069,8 @@ begin
   FDate := TFslDateTime.fromXml(params['date']);
   FDisplayLanguage := params['displayLanguage'];
   for s in params['property'].Split([';']) do
-    FProperty_List.add(s); 
+    if (s <> '') then
+      FProperty_List.add(s);
   loadExtensions(params);
 end;
 

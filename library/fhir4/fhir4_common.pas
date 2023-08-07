@@ -613,6 +613,8 @@ type
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
   end;
 
+  { TFHIRLookupOpRequest4 }
+
   TFHIRLookupOpRequest4 = class (TFHIRLookupOpRequestW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
@@ -624,12 +626,23 @@ type
     function displayLanguage : String; override;
   end;
 
+  TFHIRLookupOpRespSubProperty4 = class (TFHIRLookupOpRespSubPropertyW)
+  public
+    function getDescription: string; override;
+    procedure setDescription(Value: string); override;
+    function getValue: String; override;
+    procedure setValue(Value: String); override;
+  end;
+
+  { TFHIRLookupOpRespProperty4 }
+
   TFHIRLookupOpRespProperty4 = class (TFHIRLookupOpRespPropertyW)
   public
     function getDescription: string; override;
     procedure setDescription(Value: string); override;
     function getValue: TFHIRObject; override;
     procedure setValue(Value: TFHIRObject); override;
+    function addSubProp(name : String) : TFHIRLookupOpRespSubPropertyW; override;
   end;
 
   TFHIRLookupOpRespDesignation4 = class (TFHIRLookupOpRespDesignationW)
@@ -3275,6 +3288,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation4.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;
@@ -3290,6 +3304,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation4.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;
@@ -3314,6 +3329,7 @@ begin
     p.code := name;
     (op as TFHIRLookupOpResponse).property_List.Add(p.link as TFHIRLookupOpRespProperty_);
     result := TFHIRLookupOpRespProperty4.create(p.Link);
+    List.add(result); // make sure it gets cleaned up
   finally
     p.Free;
   end;
@@ -3376,26 +3392,63 @@ begin
   (obj as TFHIRLookupOpRespDesignation).use := value as TFhirCoding;
 end;
 
+{ TFHIRLookupOpRespSubProperty4 }
+
+function TFHIRLookupOpRespSubProperty4.GetDescription: string;
+begin
+  result := (obj as TFHIRLookupOpRespSubproperty).description;
+end;
+
+function TFHIRLookupOpRespSubProperty4.GetValue: String;
+begin
+  result := (obj as TFHIRLookupOpRespSubproperty).value;
+end;
+
+procedure TFHIRLookupOpRespSubProperty4.SetDescription(Value: string);
+begin
+  (obj as TFHIRLookupOpRespSubproperty).description := value;
+end;
+
+procedure TFHIRLookupOpRespSubProperty4.SetValue(Value: String);
+begin
+  (obj as TFHIRLookupOpRespSubproperty).value := value;
+end;
+
 { TFHIRLookupOpRespProperty4 }
 
-function TFHIRLookupOpRespProperty4.GetDescription: string;
+function TFHIRLookupOpRespProperty4.getDescription: string;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).description;
 end;
 
-function TFHIRLookupOpRespProperty4.GetValue: TFHIRObject;
+function TFHIRLookupOpRespProperty4.getValue: TFHIRObject;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).value;
 end;
 
-procedure TFHIRLookupOpRespProperty4.SetDescription(Value: string);
+procedure TFHIRLookupOpRespProperty4.setDescription(Value: string);
 begin
   (obj as TFHIRLookupOpRespProperty_).description := value;
 end;
 
-procedure TFHIRLookupOpRespProperty4.SetValue(Value: TFHIRObject);
+procedure TFHIRLookupOpRespProperty4.setValue(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespProperty_).value := value as TFhirType;
+end;
+
+function TFHIRLookupOpRespProperty4.addSubProp(name: String): TFHIRLookupOpRespSubPropertyW;
+var
+  p : TFHIRLookupOpRespSubproperty;
+begin
+  p := TFHIRLookupOpRespSubproperty.create;
+  try
+    p.code := name;
+    (obj as TFHIRLookupOpRespProperty_).subpropertyList.Add(p.link as TFHIRLookupOpRespSubproperty);
+    result := TFHIRLookupOpRespSubProperty4.create(p.Link);
+    List.add(result); // make sure it gets cleaned up
+  finally
+    p.Free;
+  end;
 end;
 
 { TFHIRExtension4 }
@@ -5638,7 +5691,10 @@ begin
   if (op as TFHIRLookupOpRequest).coding = nil then
     result := nil
   else
+  begin
     result := TFHIRCoding4.Create((op as TFHIRLookupOpRequest).coding.Link);
+    list.add(result);
+  end;
 end;
 
 function TFHIRLookupOpRequest4.displayLanguage: String;

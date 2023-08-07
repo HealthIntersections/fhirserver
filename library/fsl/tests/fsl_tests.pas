@@ -64,6 +64,7 @@ Type
 
   TFslUtilitiesTestCases = class (TFslTestCase)
   published
+    procedure TestObjectTracking;
     procedure testSemVer;
     procedure testUnicode;
     procedure testStringSorting;
@@ -744,6 +745,67 @@ begin
 end;
 
 { TFslUtilitiesTestCases }
+
+procedure TFslUtilitiesTestCases.TestObjectTracking;
+var
+  a, b, c : TFslTestObject;
+begin
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  c.free;
+  b.free;
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  a.free;
+  b.free;
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  b.free;
+  a.free;
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  c.free;
+  a.free;
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  a.free;
+  c.free;
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+
+  a := TFslTestObject.create;
+  b := TFslTestObject.create;
+  c := TFslTestObject.create;
+  AssertEqual(3, classCount('TFslTestObject'));
+  b.free;
+  c.free;
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+end;
 
 procedure TFslUtilitiesTestCases.testSemVer;
 begin

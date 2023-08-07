@@ -262,20 +262,31 @@ type
     property Resource : TFHIRResourceV read FRes;
   end;
 
+  { TFHIRXVersionOperationObjectWrapper }
+
   TFHIRXVersionOperationObjectWrapper = class (TFslObject)
+  private
+     FList : TFslList<TFslObject>;
   protected
     FObj : TFslObject;
+
     function sizeInBytesV(magic : integer) : cardinal; override;
+    function List : TFslList<TFslObject>;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
     property Obj : TFslObject read FObj;
   end;
 
+  { TFHIRXVersionOperationWrapper }
+
   TFHIRXVersionOperationWrapper = class (TFslObject)
+  private
+     FList : TFslList<TFslObject>;
   protected
     FOp : TFslObject;
     function sizeInBytesV(magic : integer) : cardinal; override;
+    function List : TFslList<TFslObject>;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -1048,6 +1059,20 @@ type
     function summary : String; virtual; abstract;
   end;
 
+  { TFHIRLookupOpRespSubPropertyW }
+
+  TFHIRLookupOpRespSubPropertyW = class (TFHIRXVersionOperationObjectWrapper)
+  public
+    function link : TFHIRLookupOpRespSubPropertyW; overload;
+    function getDescription: string; virtual; abstract;
+    procedure setDescription(Value: string); virtual; abstract;
+    function getValue: String; virtual; abstract;
+    procedure setValue(Value: String); virtual; abstract;
+
+    property description : string read GetDescription write SetDescription;
+    property value : String read GetValue write SetValue;
+  end;
+
   TFHIRLookupOpRespPropertyW = class (TFHIRXVersionOperationObjectWrapper)
   public
     function link : TFHIRLookupOpRespPropertyW; overload;
@@ -1058,6 +1083,8 @@ type
 
     property description : string read GetDescription write SetDescription;
     property value : TFHIRObject read GetValue write SetValue;
+
+    function addSubProp(name : String) : TFHIRLookupOpRespSubPropertyW; virtual; abstract;
   end;
 
   TFHIRLookupOpRespDesignationW = class (TFHIRXVersionOperationObjectWrapper)
@@ -1578,6 +1605,13 @@ type
    end;
 
 implementation
+
+{ TFHIRLookupOpRespSubPropertyW }
+
+function TFHIRLookupOpRespSubPropertyW.link: TFHIRLookupOpRespSubPropertyW;
+begin
+  result := TFHIRLookupOpRespSubPropertyW(inherited Link);
+end;
 
 { TFhirValueSetExpansionContainsPropertyW }
 
@@ -2197,6 +2231,7 @@ end;
 
 destructor TFHIRXVersionOperationWrapper.Destroy;
 begin
+  FList.Free;
   FOp.Free;
   inherited;
 end;
@@ -2205,6 +2240,13 @@ function TFHIRXVersionOperationWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FOp.sizeInBytes(magic));
+end;
+
+function TFHIRXVersionOperationWrapper.List: TFslList<TFslObject>;
+begin
+  if FList = nil then
+    FList := TFslList<TFslObject>.create;
+  result := FList;
 end;
 
 { TFHIRLookupOpResponseW }
@@ -2465,15 +2507,22 @@ end;
 
 destructor TFHIRXVersionOperationObjectWrapper.Destroy;
 begin
+  FList.Free;
   FObj.Free;
   inherited;
 end;
-
 
 function TFHIRXVersionOperationObjectWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FObj.sizeInBytes(magic));
+end;
+
+function TFHIRXVersionOperationObjectWrapper.List: TFslList<TFslObject>;
+begin
+  if FList = nil then
+    FList := TFslList<TFslObject>.create;
+  result := FList;
 end;
 
 { TFHIRGroupW }

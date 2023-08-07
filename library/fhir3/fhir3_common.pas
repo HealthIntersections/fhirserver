@@ -782,12 +782,23 @@ type
     function displayLanguage : String; override;
   end;
 
+  TFHIRLookupOpRespSubProperty3 = class (TFHIRLookupOpRespSubPropertyW)
+  public
+    function getDescription: string; override;
+    procedure setDescription(Value: string); override;
+    function getValue: String; override;
+    procedure setValue(Value: String); override;
+  end;
+
+  { TFHIRLookupOpRespProperty3 }
+
   TFHIRLookupOpRespProperty3 = class (TFHIRLookupOpRespPropertyW)
   public
     function getDescription: string; override;
     procedure setDescription(Value: string); override;
     function getValue: TFHIRObject; override;
     procedure setValue(Value: TFHIRObject); override;
+    function addSubProp(name : String) : TFHIRLookupOpRespSubPropertyW; override;
   end;
 
   TFHIRLookupOpRespDesignation3 = class (TFHIRLookupOpRespDesignationW)
@@ -3595,6 +3606,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation3.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;
@@ -3610,6 +3622,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation3.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;
@@ -3634,6 +3647,7 @@ begin
     p.code := name;
     (op as TFHIRLookupOpResponse).property_List.Add(p.link as TFHIRLookupOpRespProperty_);
     result := TFHIRLookupOpRespProperty3.create(p.Link);
+    List.add(result); // make sure it gets cleaned up
   finally
     p.Free;
   end;
@@ -3696,26 +3710,63 @@ begin
   (obj as TFHIRLookupOpRespDesignation).use := value as TFhirCoding;
 end;
 
+{ TFHIRLookupOpRespSubProperty3 }
+
+function TFHIRLookupOpRespSubProperty3.GetDescription: string;
+begin
+  result := (obj as TFHIRLookupOpRespSubproperty).description;
+end;
+
+function TFHIRLookupOpRespSubProperty3.GetValue: String;
+begin
+  result := (obj as TFHIRLookupOpRespSubproperty).value;
+end;
+
+procedure TFHIRLookupOpRespSubProperty3.SetDescription(Value: string);
+begin
+  (obj as TFHIRLookupOpRespSubproperty).description := value;
+end;
+
+procedure TFHIRLookupOpRespSubProperty3.SetValue(Value: String);
+begin
+  (obj as TFHIRLookupOpRespSubproperty).value := value;
+end;
+
 { TFHIRLookupOpRespProperty3 }
 
-function TFHIRLookupOpRespProperty3.GetDescription: string;
+function TFHIRLookupOpRespProperty3.getDescription: string;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).description;
 end;
 
-function TFHIRLookupOpRespProperty3.GetValue: TFHIRObject;
+function TFHIRLookupOpRespProperty3.getValue: TFHIRObject;
 begin
   result := (obj as TFHIRLookupOpRespProperty_).value;
 end;
 
-procedure TFHIRLookupOpRespProperty3.SetDescription(Value: string);
+procedure TFHIRLookupOpRespProperty3.setDescription(Value: string);
 begin
   (obj as TFHIRLookupOpRespProperty_).description := value;
 end;
 
-procedure TFHIRLookupOpRespProperty3.SetValue(Value: TFHIRObject);
+procedure TFHIRLookupOpRespProperty3.setValue(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespProperty_).value := value as TFhirType;
+end;
+
+function TFHIRLookupOpRespProperty3.addSubProp(name: String): TFHIRLookupOpRespSubPropertyW;
+var
+  p : TFHIRLookupOpRespSubproperty;
+begin
+  p := TFHIRLookupOpRespSubproperty.create;
+  try
+    p.code := name;
+    (obj as TFHIRLookupOpRespProperty_).subpropertyList.Add(p.link as TFHIRLookupOpRespSubproperty);
+    result := TFHIRLookupOpRespSubProperty3.create(p.Link);
+    List.add(result); // make sure it gets cleaned up
+  finally
+    p.Free;
+  end;
 end;
 
 { TFHIRExtension3 }

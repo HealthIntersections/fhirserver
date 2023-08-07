@@ -1554,14 +1554,14 @@ begin
     if (version <> '') then
     begin
       if ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
-        result := ProviderClasses[system+URI_VERSION_BREAK+version].getProvider.Link
+        result := ProviderClasses[system+URI_VERSION_BREAK+version].getProvider
       else if defToLatest or defToLatestForSystem(system) then
       begin
         // special support for SNOMED Editions
         if (system = URI_SNOMED) and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
-          result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].getProvider.Link
+          result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].getProvider
         else
-          result := ProviderClasses[system].getProvider.Link;
+          result := ProviderClasses[system].getProvider;
         if (result = nil) or not (result.defToThisVersion(version)) then
         begin
           result.Free;
@@ -1572,7 +1572,7 @@ begin
       end;
     end
     else
-      result := ProviderClasses[system].getProvider.Link;
+      result := ProviderClasses[system].getProvider;
   end
   else if system = ALL_CODE_CS then
     if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
@@ -1604,9 +1604,8 @@ begin
   begin
     FLock.Lock('getProvider');
     try
+      result.checkReady;
       result.RecordUse;
-      if (result is TSnomedProvider) then
-        TSnomedProvider(result).Services.checkLoaded;
     finally
       FLock.Unlock;
     end;
@@ -1620,8 +1619,7 @@ begin
 end;
 
 
-function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW;
-  profile: TFHIRExpansionParams): TCodeSystemProvider;
+function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRExpansionParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
   result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));

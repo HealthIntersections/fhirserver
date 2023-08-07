@@ -804,18 +804,15 @@ begin
         lang := request.lang;
         if req.displayLanguage <> '' then
           lang := THTTPLanguages.Create(req.displayLanguage);
+        result := 'lookup code '+req.coding.renderText;
 
         response.Body := '';
         response.LastModifiedDate := now;
         resp := ffactory.makeOpRespLookup;
         try
           try
-            c := req.coding;
-            try
-              FServer.lookupCode(c, lang, req.propList, resp);  // currently, we ignore the date
-            finally
-              c.Free;
-            end;
+            FServer.lookupCode(req.coding, lang, req.propList, resp);  // currently, we ignore the date
+            response.CacheControl := cacheNotAtAll;
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';

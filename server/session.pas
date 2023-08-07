@@ -518,6 +518,9 @@ Type
     A script may modify any of the values of the response, though changing the
     type of the resource may have unexpected catastrophic outcomes.
   }
+
+  { TFHIRResponse }
+
   TFHIRResponse = class (TFslObject)
   private
     Fworker: TFHIRWorkerContextWithFactory;
@@ -654,6 +657,7 @@ Type
       The degree of caching to use on the response
     }
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
+    function NoInternalCache : boolean;
 
     property Progress : String read FProgress write FProgress;
   end;
@@ -1371,6 +1375,11 @@ end;
 function TFHIRResponse.Link: TFHIRResponse;
 begin
   result := TFHIRResponse(Inherited Link);
+end;
+
+function TFHIRResponse.NoInternalCache: boolean;
+begin
+  result := FCacheControl = cacheNotAtAll;
 end;
 
 procedure TFHIRResponse.SetOutcome(const Value: TFHIROperationOutcomeW);

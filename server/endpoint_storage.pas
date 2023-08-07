@@ -1404,7 +1404,7 @@ Begin
                           result := ProcessAsyncRequest(Context, oRequest, oResponse)
                         else
                           result := ProcessRequest(Context, oRequest, oResponse, tt);
-                        cache := context.CacheResponse;
+                        cache := context.CacheResponse and not oResponse.NoInternalCache;
                       finally
                         Context.Free;
                       end;

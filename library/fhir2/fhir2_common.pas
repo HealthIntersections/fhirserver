@@ -3320,6 +3320,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation2.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;
@@ -3335,6 +3336,7 @@ begin
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);
     result := TFHIRLookupOpRespDesignation2.create(p.Link);
+    list.add(result);
   finally
     p.free;
   end;

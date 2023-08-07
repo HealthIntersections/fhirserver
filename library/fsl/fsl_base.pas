@@ -174,7 +174,6 @@ Type
     FDebugInfo : String;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
-    FTracked : boolean;
     FSerial : integer;
     FNext, FPrev : TFslObject; // same class type
     FThreadName : String;
@@ -738,6 +737,8 @@ Type
     property Items[const Key: String]: String read GetItem write SetItem; default;
   end;
 
+function classCount(name : String) : integer;
+
 var
   GDumpFile : String;
 
@@ -752,12 +753,13 @@ type
 
   TClassTrackingType = class (TObject)
   private
-    first, last : TFslObject;
+    firstObject, lastObject : TFslObject;
     count : integer;
-    dcount : integer;
+    deltaCount : integer;
     serial : integer;
 
     function objectSummary : String;
+    procedure check(msg : String; condition : boolean);
   end;
 
 var
@@ -786,7 +788,7 @@ var
 begin
   if ShowObjectLeaks then
   begin
-    s := '';
+    s := 'Memory Leak Report at '+formatDateTime('c', now)+#13#10;
     i := 0;
     ts := TStringList.create;
     try
@@ -826,6 +828,22 @@ begin
   GInited := false;
 end;
 
+
+function classCount(name : String) : integer;
+var
+  t : TClassTrackingType;
+begin
+  result := 0;
+  if GClassTracker.TryGetValue(name, t) then
+  begin
+    result := t.count;
+    if (t.count = 0) then
+    begin
+      assert(t.firstObject = nil);
+      assert(t.lastObject = nil);
+    end;
+  end;
+end;
 
 Function ExceptObject : Exception;
 Begin
@@ -910,8 +928,8 @@ begin
   {$IFDEF OBJECT_TRACKING}
   if (count > 0) and (count <= 80) then
   begin
-    result := first.dumpSummary;
-    t := first.FNext;
+    result := firstObject.dumpSummary;
+    t := firstObject.FNext;
     while (t <> nil) do
     begin
       result := result + ',' + t.dumpSummary;
@@ -919,6 +937,12 @@ begin
     end;
   end
   {$ENDIF}
+end;
+
+procedure TClassTrackingType.check(msg: String; condition: boolean);
+begin
+  if not condition then
+    raise EFslException(msg);
 end;
 
 { EFslException }
@@ -994,25 +1018,28 @@ Begin
       t := TClassTrackingType.Create;
       GClassTracker.Add(FNamedClass, t);
     end;
-    FTracked := true;
     inc(t.count);
-    inc(t.dcount);
+    inc(t.deltaCount);
     inc(t.serial);
     FSerial := t.serial;
     {$IFDEF TRACK_CLASSES}
     if (t.serial = ID_OF_INTEREST) and (className = CLASS_NAME_OF_INTEREST) then
       NamedInstance := '!';
     {$ENDIF}
-    if t.first = nil then
+    if t.firstObject = nil then
     begin
-      t.first := self;
-      t.last := self;
+      assert(t.count = 1);
+      t.firstObject := self;
+      t.lastObject := self;
+      FPrev := nil;
+      FNext := nil;
     end
     else
     begin
-      t.last.FNext := self;
-      FPrev := t.last;
-      t.last := self;
+      t.lastObject.FNext := self;
+      FPrev := t.lastObject;
+      FNext := nil;
+      t.lastObject := self;
     end;
   finally
     LeaveCriticalSection(GLock);
@@ -1032,34 +1059,32 @@ Begin
       if GClassTracker.TryGetValue(FNamedClass, t) then // this will succeed
       begin
         dec(t.Count);
-        dec(t.dCount);
-        if FTracked then
+        assert(t.count >= 0);
+        dec(t.deltaCount);
+        if FPrev = nil then
         begin
-          if FPrev = nil then
-          begin
-            t.first := self.FNext;
-            if self.FNext <> nil then
-              self.FNext.FPrev := nil;
-          end
-          else
-          begin
-            if self.FNext <> nil then
-              self.FNext.FPrev := self.FPrev;
-            self.FPrev.FNext := self.FNext;
-          end;
-
-          if FNext = nil then
-          begin
-            t.last := self.FPrev;
-            if self.FPrev <> nil then
-              self.FPrev.FNext := nil;
-          end
-          else
-          begin
-            if self.FPrev <> nil then
-              self.FPrev.FNext := self.FNext;
+          t.firstObject := self.FNext;
+          if self.FNext <> nil then
+            self.FNext.FPrev := nil;
+        end
+        else
+        begin
+          if self.FNext <> nil then
             self.FNext.FPrev := self.FPrev;
-          end;
+          self.FPrev.FNext := self.FNext;
+        end;
+
+        if FNext = nil then
+        begin
+          t.lastObject := self.FPrev;
+          if self.FPrev <> nil then
+            self.FPrev.FNext := nil;
+        end
+        else
+        begin
+          if self.FPrev <> nil then
+            self.FPrev.FNext := self.FNext;
+          self.FNext.FPrev := self.FPrev;
         end;
       end;
     finally
@@ -1130,29 +1155,26 @@ begin
       begin
         ts := TStringList.Create;
         try
-          if t.dcount <> 0 then
+          if t.deltaCount <> 0 then
           begin
-            o := t.first;
+            o := t.firstObject;
             while o <> nil do
             begin
               i := ts.IndexOf(o.FThreadName);
               if i = -1 then
                 i := ts.Add(o.FThreadName);
               ts.Objects[i] := TObject(integer(ts.Objects[i])+1);
-              o.FTracked := false;
               o.FThreadName := '';
               o := o.FNext;
             end;
-            t.first := nil;
-            t.last := nil;
-            result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+'. Delta = '+inttostr(t.dcount);
+            result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+'. Delta = '+inttostr(t.deltaCount);
             if ts.Count <> 0 then
             begin
               result := result + ': ';
               for i := 0 to ts.Count - 1 do
                 result := result + ts[i]+': '+inttostr(integer(ts.objects[i]))+',';
             end;
-            t.dcount := 0;
+            t.deltaCount := 0;
             result := result + sep;
           end;
         finally
@@ -1423,8 +1445,7 @@ begin
     result := 'x';
 end;
 
-function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod,
-  sMessage: String): Boolean;
+function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -1434,8 +1455,7 @@ Begin
   Result := True;
 End;
 
-function TFslObject.CheckCondition(bCorrect: Boolean;
-  aException: EFslExceptionClass; const sMethod, sMessage: String): Boolean;
+function TFslObject.CheckCondition(bCorrect: Boolean; aException: EFslExceptionClass; const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
