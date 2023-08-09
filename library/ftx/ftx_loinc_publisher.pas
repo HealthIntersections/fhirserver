@@ -988,7 +988,7 @@ begin
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
     html.StartTableRow;
-    if a[i].iscode then
+    if a[i].kind = lpckCode then
     begin
       FLoinc.CodeList.GetInformation(a[i].index, nil, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
