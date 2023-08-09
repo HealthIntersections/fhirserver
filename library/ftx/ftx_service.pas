@@ -222,8 +222,9 @@ Type
     function Link : TCodeSystemProvider; overload;
 
     function contentMode : TFhirCodeSystemContentMode; virtual;
-    function description : String;  virtual; abstract;
-    function TotalCount : integer;  virtual; abstract;
+    function expandLimitation : Integer; virtual;
+    function description : String; virtual; abstract;
+    function TotalCount : integer; virtual; abstract;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
@@ -751,6 +752,11 @@ end;
 function TCodeSystemProvider.contentMode: TFhirCodeSystemContentMode;
 begin
   result := cscmComplete; // unless specified otherwise
+end;
+
+function TCodeSystemProvider.expandLimitation: Integer;
+begin
+  result := 0; // no limit
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;

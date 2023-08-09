@@ -251,10 +251,13 @@ begin
       sct := cfg.section['terminologies'].section[PathTitle(n)];
       sct['type'].value := FFiles[n];
       sct['active'].value := 'true';
-      if StringArrayExists(['rxnorm', 'ndc', 'unii'], FFiles[n]) then
+      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt'], FFiles[n]) then
       begin
         sct['db-type'].value := 'sqlite';
-        sct['db-file'].value := FilePath([FFolder, n]);
+        if (FFiles[n] = 'cpt') and (local.ValueExists('cpt', 'local-source')) then
+          sct['db-file'].value := local.ReadString('cpt', 'local-source', '')
+        else
+          sct['db-file'].value := FilePath([FFolder, n]);
         sct['db-auto-create'].value := 'false';
       end
       else

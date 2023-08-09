@@ -1,28 +1,27 @@
 object EditTxForm: TEditTxForm
   Left = 690
-  Height = 454
+  Height = 462
   Top = -803
-  Width = 497
+  Width = 639
   Caption = 'Edit Terminology'
-  ClientHeight = 454
-  ClientWidth = 497
+  ClientHeight = 462
+  ClientWidth = 639
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 44
-    Top = 410
-    Width = 497
+    Top = 418
+    Width = 639
     Align = alBottom
     ClientHeight = 44
-    ClientWidth = 497
+    ClientWidth = 639
     TabOrder = 0
     object btnDBTest1: TBitBtn
-      Left = 328
+      Left = 470
       Height = 26
       Top = 8
       Width = 75
@@ -69,7 +68,7 @@ object EditTxForm: TEditTxForm
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
-      Left = 408
+      Left = 550
       Height = 26
       Top = 8
       Width = 75
@@ -163,20 +162,21 @@ object EditTxForm: TEditTxForm
   end
   object edtIdentity: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 8
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 1
     Text = 'edtIdentity'
   end
   object cbxType: TComboBox
     Left = 80
-    Height = 23
+    Height = 20
     Top = 36
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 26
+    ItemIndex = 0
     Items.Strings = (
       'snomed'
       'loinc'
@@ -187,79 +187,81 @@ object EditTxForm: TEditTxForm
       'unii'
       'ndfrt'
       'nci'
+      'cpt'
     )
     OnChange = cbxTypeChange
     Style = csDropDownList
     TabOrder = 2
+    Text = 'snomed'
   end
   object edtFile: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 160
-    Width = 320
+    Width = 462
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 3
     Text = 'edtFile'
   end
   object edtVersion: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 90
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
     Text = 'edtVersion'
   end
   object Label1: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 8
-    Width = 40
+    Width = 46
     Caption = 'Identity'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 36
-    Width = 24
+    Width = 30
     Caption = 'Type'
     ParentColor = False
   end
   object Label4: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 162
-    Width = 18
+    Width = 21
     Caption = 'File'
     ParentColor = False
   end
   object Label5: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 94
-    Width = 38
+    Width = 45
     Caption = 'Version'
     ParentColor = False
   end
   object Label6: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 66
-    Width = 38
+    Width = 44
     Caption = 'Default'
     ParentColor = False
   end
   object chkDefault: TCheckBox
     Left = 80
-    Height = 19
+    Height = 18
     Top = 66
-    Width = 178
+    Width = 211
     Caption = 'This is the default for this type'
     TabOrder = 5
   end
   object btnSource: TBitBtn
-    Left = 409
+    Left = 551
     Height = 24
     Top = 160
     Width = 75
@@ -306,95 +308,95 @@ object EditTxForm: TEditTxForm
   end
   object cbxDriver: TComboBox
     Left = 82
-    Height = 23
+    Height = 20
     Top = 216
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 19
     TabOrder = 7
     Text = 'cbxDriver'
   end
   object edtServer: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 246
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 8
     Text = 'edtServer'
   end
   object edtDBName: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 274
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 9
     Text = 'edtDBName'
   end
   object edtUsername: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 302
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 10
     Text = 'edtUsername'
   end
   object edtPassword: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 330
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 11
     Text = 'edtPassword'
   end
   object Label3: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 190
-    Width = 48
+    Width = 57
     Caption = 'Database'
     ParentColor = False
   end
   object Label7: TLabel
     Left = 17
-    Height = 15
+    Height = 16
     Top = 220
-    Width = 31
+    Width = 36
     Caption = 'Driver'
     ParentColor = False
   end
   object Label8: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 246
-    Width = 32
+    Width = 39
     Caption = 'Server'
     ParentColor = False
   end
   object Label9: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 274
-    Width = 50
+    Width = 57
     Caption = 'DB Name'
     ParentColor = False
   end
   object Label10: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 302
-    Width = 53
+    Width = 62
     Caption = 'Username'
     ParentColor = False
   end
   object Label11: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 332
-    Width = 50
+    Width = 58
     Caption = 'Password'
     ParentColor = False
   end
@@ -424,23 +426,23 @@ object EditTxForm: TEditTxForm
     Left = 8
     Height = 14
     Top = 134
-    Width = 482
+    Width = 624
     Anchors = [akTop, akLeft, akRight]
     Shape = bsBottomLine
   end
   object chkActive: TCheckBox
     Left = 80
-    Height = 19
+    Height = 18
     Top = 120
-    Width = 198
+    Width = 234
     Caption = 'Load this when starting the Server'
     TabOrder = 14
   end
   object Label12: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 122
-    Width = 33
+    Width = 37
     Caption = 'Active'
     ParentColor = False
     ParentFont = False
@@ -458,31 +460,31 @@ object EditTxForm: TEditTxForm
   end
   object Label13: TLabel
     Left = 17
-    Height = 15
+    Height = 16
     Top = 360
-    Width = 55
+    Width = 65
     Caption = 'SQLite File'
     ParentColor = False
   end
   object edtSQLiteFile: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 358
-    Width = 322
+    Width = 464
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 16
     Text = 'edtSQLiteFile'
   end
   object cbAutocreate: TCheckBox
     Left = 82
-    Height = 19
+    Height = 18
     Top = 388
-    Width = 239
+    Width = 278
     Caption = 'Automatically create File if it doesn''t exist'
     TabOrder = 17
   end
   object btnSource1: TBitBtn
-    Left = 409
+    Left = 551
     Height = 24
     Top = 358
     Width = 75

@@ -123,7 +123,7 @@ end;
 
 function TEditTxForm.isDatabase(type_ : String) : boolean;
 begin
-  result := (type_ = 'rxnorm') or (type_ = 'ndc') or (type_ = 'unii') or (type_ = 'ndfrt') or (type_ = 'nci');
+  result := (type_ = 'rxnorm') or (type_ = 'ndc') or (type_ = 'unii') or (type_ = 'ndfrt') or (type_ = 'nci') or (type_ = 'cpt');
 end;
 
 procedure TEditTxForm.cbxTypeChange(Sender: TObject);

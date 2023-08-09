@@ -40,7 +40,7 @@ uses
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
-  tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs,
+  tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt,
   utilities, server_config, kernel_thread, server_stats;
 
 const
@@ -103,6 +103,7 @@ Type
 
   TCommonTerminologies = class (TFslObject)
   private
+    FCPT: TCPTServices;
     FSettings : TFHIRServerSettings;
     FLanguages : TIETFLanguageDefinitions;
     FLoinc : TLOINCServices;
@@ -115,6 +116,7 @@ Type
     FProviderClasses : TFslMap<TCodeSystemProviderFactory>;
     FNDFRT: TNDFRTServices;
     FNDC : TNDCServices;
+    procedure SetCPT(AValue: TCPTServices);
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
@@ -156,6 +158,7 @@ Type
     Property NDC : TNDCServices read FNDC write SetNDC;
     Property NDFRT : TNDFRTServices read FNDFRT write SetNDFRT;
     Property Unii : TUniiServices read FUnii write SetUnii;
+    property CPT : TCPTServices read FCPT write SetCPT;
     Property ACIR : TACIRServices read FACIR write SetACIR;
   end;
 
@@ -967,6 +970,8 @@ begin
     addCodesystemUri('NDFRT', 'ndfrt', FCommonTerminologies.NDFRT.systemUri(nil), FCommonTerminologies.NDFRT.version(nil), FCommonTerminologies.NDFRT.TotalCount);
   if FCommonTerminologies.FUnii <> nil then
     addCodesystemUri('Unii', 'unii', FCommonTerminologies.FUnii.systemUri(nil), FCommonTerminologies.FUnii.version(nil), FCommonTerminologies.FUnii.TotalCount);
+  if FCommonTerminologies.FCPT <> nil then
+    addCodesystemUri('CPT', 'cpt', FCommonTerminologies.FCPT.systemUri(nil), FCommonTerminologies.FCPT.version(nil), FCommonTerminologies.FCPT.TotalCount);
   if FCommonTerminologies.FACIR <> nil then
     addCodesystemUri('ACIR', 'acir', FCommonTerminologies.FACIR.systemUri(nil), FCommonTerminologies.FACIR.version(nil), FCommonTerminologies.FACIR.TotalCount);
 end;
@@ -2013,6 +2018,8 @@ begin
     FRxNorm.defineFeatures(features);
   if FUnii <> nil then
     FUnii.defineFeatures(features);
+  if FCPT <> nil then
+    FCPT.defineFeatures(features);
   if FACIR <> nil then
     FACIR.defineFeatures(features);
   if FNDFRT <> nil then
@@ -2031,6 +2038,7 @@ begin
   FDefSnomed.Free;
   FSnomed.free;
   FUnii.Free;
+  FCPT.Free;
   FACIR.Free;
   FUcum.free;
   FRxNorm.Free;
@@ -2102,6 +2110,11 @@ begin
     b.append('<li>Unii: not loaded</li>')
   else
     b.append('<li>Unii: '+FUnii.version(nil)+' ('+inttostr(FUnii.UseCount)+' uses)');
+
+  if FCPT = nil then
+    b.append('<li>CPT: not loaded</li>')
+  else
+    b.append('<li>CPT: '+FCPT.version(nil)+' ('+inttostr(FCPT.UseCount)+' uses)');
 
   if FACIR = nil then
     b.append('<li>ACIR: not loaded</li>')
@@ -2239,6 +2252,11 @@ begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
         Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx))
       end
+      else if tx['type'].value = 'cpt' then
+      begin
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx))
+      end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
     end;
@@ -2249,6 +2267,22 @@ procedure TCommonTerminologies.SetLoinc(const Value: TLOINCServices);
 begin
   FLoinc.Free;
   FLoinc := Value;
+end;
+
+procedure TCommonTerminologies.SetCPT(AValue: TCPTServices);
+begin
+  if FCPT <> nil then
+  begin
+    FProviderClasses.Remove(FCPT.systemUri(nil));
+    FProviderClasses.Remove(FCPT.systemUri(nil)+URI_VERSION_BREAK+FCPT.version(nil));
+  end;
+  FCPT.Free;
+  FCPT := AValue;
+  if FCPT <> nil then
+  begin
+    FProviderClasses.add(FCPT.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FCPT.Link));
+    FProviderClasses.add(FCPT.systemUri(nil)+URI_VERSION_BREAK+FCPT.version(nil), TCodeSystemProviderGeneralFactory.create(FCPT.Link));
+  end;
 end;
 
 procedure TCommonTerminologies.SetRxNorm(const Value: TRxNormServices);

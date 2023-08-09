@@ -1564,13 +1564,11 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     ok : boolean;
     lang : byte;
     sCode1 : String;
-    description : String;
   Begin
     Entries.GetEntry(index, code, text, parents, children, concepts, descendentConcepts, stems);
     r1 := 0;
     Desc := Refs.GetRefs(stems);
     sCode1 := FDesc.GetEntry(code, lang);
-    description := FDesc.GetEntry(text, lang);
     matches := 0;
     For i := 0 to length(words) - 1 do
     begin

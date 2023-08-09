@@ -300,6 +300,16 @@ Type
     property log : String read FLog;
   end;
 
+  { TValueSetCounter }
+
+  TValueSetCounter = class (TFslObject)
+  private
+    FCount : integer;
+  public
+    property count : Integer read FCount;
+    procedure increment;
+  end;
+
   { TFHIRValueSetExpander }
 
   TFHIRValueSetExpander = class (TValueSetWorker)
@@ -312,6 +322,7 @@ Type
     FRootList : TFslList<TFhirValueSetExpansionContainsW>;
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
+    FCSCounter : TFslMap<TValueSetCounter>;
 
     procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; resource : TFHIRMetadataResourceW); overload;
     procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; cs : TCodeSystemProvider); overload;
@@ -340,6 +351,7 @@ Type
     procedure checkCanExpandValueset(uri, version: String);
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    destructor Destroy; override;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -348,6 +360,13 @@ const
    CODES_TFhirExpansionParamsVersionRuleMode : array [TFhirExpansionParamsVersionRuleMode] of String = ('Default', 'Check', 'Override');
 
 implementation
+
+{ TValueSetCounter }
+
+procedure TValueSetCounter.increment;
+begin
+  inc(FCount);
+end;
 
 { TSpecialProviderFilterContextConcepts }
 
@@ -2504,6 +2523,14 @@ end;
 constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited create(factory, getVS, getCS, getVersions, getExpansion, txResources, languages, i18n);
+  FCSCounter := TFslMap<TValueSetCounter>.create;
+  FCSCounter.defaultValue := nil;
+end;
+
+destructor TFHIRValueSetExpander.Destroy;
+begin
+  FCSCounter.free;
+  inherited Destroy;
 end;
 
 procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; system: string; c: TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; excludeInactive : boolean; srcURL : String);
@@ -2590,12 +2617,24 @@ var
   ext : TFHIRExtensionW;
   cp : TFhirCodeSystemConceptPropertyW;
   ts : TStringList;
+  cnt : TValueSetCounter;
 begin
   try
     if not passesImports(imports, system, code, 0) then
       exit;
     if isInactive and excludeInactive then
       exit;
+
+    cnt := FCSCounter[cs.systemUri(nil)];
+    if (cnt = nil) then
+    begin
+      cnt := TValueSetCounter.create;
+      FCSCounter.Add(cs.systemUri(nil), cnt);
+    end;
+    cnt.increment;
+    if (cs.expandLimitation > 0) and (cnt.count > cs.expandLimitation) then
+      exit;
+
 
     if (FLimitCount > 0) and (FFullList.Count >= FLimitCount) and not doDelete then
     begin

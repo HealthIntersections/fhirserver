@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -95,11 +95,12 @@ type
 
   TCPTFilterContext = class (TCodeSystemProviderFilterContext)
   private
+    FName : String;
     FClosed : boolean;
     FIndex : integer;
     FList : TFslList<TCPTConcept>;
   public
-    constructor create(list : TFslList<TCPTConcept>; closed : boolean);
+    constructor create(name : String; list : TFslList<TCPTConcept>; closed : boolean);
     destructor Destroy; override;
 
     property closed : boolean read FClosed;
@@ -123,6 +124,8 @@ type
 
     property focus : TCPTConcept read FFocus write SetFocus;
     property modifiers : TFslList<TCPTConcept> read FModifiers;
+
+    function expression : String;
   end;
 
   { TCPTIteratorContext }
@@ -155,6 +158,7 @@ type
 
     class function checkDB(conn : TFDBConnection) : String;
 
+    function expandLimitation : Integer; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -194,12 +198,22 @@ implementation
 
 { TCPTFilterContext }
 
-constructor TCPTFilterContext.create(list: TFslList<TCPTConcept>; closed: boolean);
+constructor TCPTFilterContext.create(name : String; list: TFslList<TCPTConcept>; closed: boolean);
+var
+  i : integer;
+  s : String;
 begin
   inherited create;
+  FName := name;
   FList := list;
   FClosed := closed;
   FIndex := -1;
+  s := '';
+  for i := 0 to integerMin(list.count, 50) do
+    s := s+list[i].code+',';
+  for i := integerMax(0, list.count - 10) to list.count - 1 do
+    s := s+','+list[i].code;
+  Logging.log('CPT filter '+name+': '+inttostr(list.count)+' concepts in filter (closed = '+boolToStr(FClosed)+'): '+s);
 end;
 
 destructor TCPTFilterContext.Destroy;
@@ -334,6 +348,15 @@ begin
   result := TCPTExpression(inherited link);
 end;
 
+function TCPTExpression.expression: String;
+var
+  m  : TCPTConcept;
+begin
+  result := focus.code;
+  for m in modifiers do
+    result := result + ':' + m.code;
+end;
+
 procedure TCPTExpression.SetFocus(AValue: TCPTConcept);
 begin
   FFocus.Free;
@@ -382,6 +405,11 @@ begin
   finally
     meta.free;
   end;
+end;
+
+function TCPTServices.expandLimitation: Integer;
+begin
+  Result := 1000; // agreement with AMA
 end;
 
 function TCPTServices.parse(code: String; var msg: String): TCPTExpression;
@@ -564,18 +592,36 @@ end;
 
 function TCPTServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
 var
+  e : TCPTExpression;
   c : TCPTConcept;
 begin
-  c := (context as TCPTConcept);
-  result := c.hasProperty('kind', 'metadata');
+  if (context is TCPTExpression) then
+  begin
+    e := (context as TCPTExpression);
+    result := false;
+  end
+  else
+  begin
+    c := (context as TCPTConcept);
+    result := c.hasProperty('kind', 'metadata');
+  end;
 end;
 
 function TCPTServices.Code(context : TCodeSystemProviderContext) : string;
 var
+  e : TCPTExpression;
   c : TCPTConcept;
 begin
-  c := (context as TCPTConcept);
-  result := c.code;
+  if (context is TCPTExpression) then
+  begin
+    e := (context as TCPTExpression);
+    result := e.expression;
+  end
+  else
+  begin
+    c := (context as TCPTConcept);
+    result := c.code;
+  end;
 end;
 
 function TCPTServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
@@ -688,7 +734,7 @@ var
   c : TCPTIteratorContext;
 begin
   c := context as TCPTIteratorContext;
-  if (c.FList = nil) or (c.current >= c.FList.Count) or (c.current >= 1000) then // 1000 - special rules for CPT, agreement with HL7
+  if (c.FList = nil) or (c.current >= c.FList.Count) then
     result := nil
   else
   begin
@@ -714,21 +760,24 @@ begin
   //  * modifier = true / false
   //  * kind = x
 
+  // todo:
+  //   code in 86701-86703;87389-87389
+
   if (prop = 'modifier') then
   begin
     b := value = 'true';
     if b then
-      result := TCPTFilterContext.create(FModifier.link, true)
+      result := TCPTFilterContext.create('modifier:true', FModifier.link, true)
     else
-      result := TCPTFilterContext.create(FBase.link, true)
+      result := TCPTFilterContext.create('modifier:false', FBase.link, true)
   end
   else if (prop = 'modified') and (op = foEqual) then
   begin
     b := value = 'true';
     if (b) then
-      result := TCPTFilterContext.create(TFslList<TCPTConcept>.create, false)
+      result := TCPTFilterContext.create('modified:true', TFslList<TCPTConcept>.create, false)
     else
-      result := TCPTFilterContext.create(FList.link, true);
+      result := TCPTFilterContext.create('modified:false', FList.link, true);
   end
   else if (prop = 'kind') and (op = foEqual) then
   begin
@@ -737,7 +786,7 @@ begin
       for item in Flist do
         if item.hasProperty('kind', value) then
           list.add(item.link);
-      result := TCPTFilterContext.create(list.link, true);
+      result := TCPTFilterContext.create('kind:'+value, list.link, true);
     finally
       list.free;
     end;
@@ -764,7 +813,7 @@ var
 begin             
   fc := ctxt as TCPTFilterContext;
   fc.next;
-  result := (fc.Index < fc.Flist.count) and (fc.index < 1000); // special CPT rule - agreement with HL7
+  result := (fc.Index < fc.Flist.count);
 end;
 
 function TCPTServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
@@ -778,7 +827,6 @@ end;
 function TCPTServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 var
   fc : TCPTFilterContext;
-var
   e : TCPTExpression;
   c : TCPTConcept;
 begin            
@@ -792,7 +840,7 @@ begin
   begin
     c := (concept as TCPTConcept);
     result := fc.FList.contains(c);
-
+    //Logging.log(c.code +' in '+fc.FName+': '+boolToStr(result));
   end;
 end;
 
