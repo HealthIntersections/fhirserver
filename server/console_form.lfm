@@ -57,10 +57,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 600
       Top = 1
       Width = 859
-      ActivePage = tbTerminologies
+      ActivePage = tbConsole
       Align = alClient
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 0
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -77,6 +77,10 @@ object MainConsoleForm: TMainConsoleForm
           Color = 15724527
           Font.Name = 'Courier New'
           Font.Pitch = fpFixed
+          Lines.Strings = (
+            'This is a test'
+            'of some lines'
+          )
           ParentFont = False
           ReadOnly = True
           TabOrder = 0

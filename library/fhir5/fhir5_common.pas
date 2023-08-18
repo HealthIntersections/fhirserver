@@ -849,6 +849,8 @@ type
     procedure setPublisher(Value: String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRMeta5 }
@@ -1178,6 +1180,8 @@ type
     procedure setPublisher(Value: String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function getUri : String; override;
@@ -1280,6 +1284,8 @@ type
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setDescription(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
 
 
     function getContext: String; override;
@@ -4456,6 +4462,16 @@ begin
   result := cm.targetDesc;
 end;
 
+function TFhirConceptMap5.getExperimental: boolean;
+begin
+  result := cm.experimental;
+end;
+
+procedure TFhirConceptMap5.setExperimental(value: boolean);
+begin
+  cm.experimental := value;
+end;
+
 function TFhirConceptMap5.getURL: String;
 begin
   result := cm.url;
@@ -6084,6 +6100,16 @@ begin
   // nothing
 end;
 
+function TFHIRNamingSystem5.getExperimental: boolean;
+begin
+  result := nm.experimental;
+end;
+
+procedure TFHIRNamingSystem5.setExperimental(value: boolean);
+begin
+  nm.experimental := value;
+end;
+
 function TFHIRNamingSystem5.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
   result := TFHIRExtension5.create(extension.link);
@@ -6657,6 +6683,15 @@ begin
   ts.description := value;
 end;
 
+function TFHIRTestScript5.getExperimental: boolean;
+begin
+  result := ts.experimental;
+end;
+
+procedure TFHIRTestScript5.setExperimental(value: boolean);
+begin
+  ts.experimental := value;
+end;
 
 procedure TFHIRTestScript5.SetLanguage(const Value: String);
 begin

@@ -126,6 +126,7 @@ type
     property modifiers : TFslList<TCPTConcept> read FModifiers;
 
     function expression : String;
+    function hasModifier(code : String) : boolean;
   end;
 
   { TCPTIteratorContext }
@@ -149,6 +150,7 @@ type
     FBase : TFslList<TCPTConcept>;
     FModifier : TFslList<TCPTConcept>;
 
+    function validateExpression(exp : TCPTExpression) : String;
     function parse(code : String; var msg : String) : TCPTExpression;
     procedure load;
   public
@@ -209,7 +211,7 @@ begin
   FClosed := closed;
   FIndex := -1;
   s := '';
-  for i := 0 to integerMin(list.count, 50) do
+  for i := 0 to integerMin(list.count, 50) - 1 do
     s := s+list[i].code+',';
   for i := integerMax(0, list.count - 10) to list.count - 1 do
     s := s+','+list[i].code;
@@ -357,6 +359,16 @@ begin
     result := result + ':' + m.code;
 end;
 
+function TCPTExpression.hasModifier(code: String): boolean;
+var
+  modifier : TCPTConcept;
+begin
+  result := false;
+  for modifier in modifiers do
+    if modifier.code = code then
+      exit(true);
+end;
+
 procedure TCPTExpression.SetFocus(AValue: TCPTConcept);
 begin
   FFocus.Free;
@@ -412,6 +424,92 @@ begin
   Result := 1000; // agreement with AMA
 end;
 
+procedure checkMutuallyExclusive(list : TStringList; exp : TCPTExpression; modifiers : Array of String);
+var
+  modifier : TCPTConcept;
+  c : integer;
+begin
+  c := 0;
+  for modifier in exp.modifiers do
+    if StringArrayExists(modifiers, modifier.code) then
+        inc(c);
+  if c > 1 then
+    list.add('There can only one modifier in the set '+StringArrayToString(modifiers));
+end;
+
+function codeInSet(code, min, max : String) : boolean;
+begin
+  result := (code >= min) and (code <= max);
+end;
+
+function TCPTServices.validateExpression(exp: TCPTExpression): String;
+var
+  modifier : TCPTConcept;
+  prop : TCPTConceptProperty;
+  list : TStringList;
+  s : string;
+begin
+  list := TStringList.create;
+  try
+    for modifier in exp.modifiers do
+    begin
+      for prop in modifier.properties do
+      begin
+        if prop.name = 'kind' then
+        begin
+          if prop.value = 'cat-2' then
+          begin
+            if not exp.focus.hasProperty('kind', 'cat-2') then
+              list.add('The modifier '+modifier.code+' is a cat-2 modifier that can only be used with cat-2 codes');
+          end;
+          if (prop.value = 'physical') then
+          begin
+            if (exp.focus.code < '00100') or (exp.focus.code > '01999') then
+              list.add('The modifier '+modifier.code+' is a physical status modifier that can only be used with codes in the range 00100 - 01999');
+          end;
+          if (prop.value = 'hcpcs') then
+          begin
+            if (exp.hasModifier('59')) then
+              list.add('The modifier '+modifier.code+' is an hcpcs code that can only be used if the modifier 59 is also used');
+          end;
+        end;
+      end;
+      // specific rules:
+      if (modifier.code = '50') or (modifier.code = '51') then
+      begin
+        if exp.focus.hasProperty('kind', 'cat-2') then
+          list.add('The modifier '+modifier.code+' cannot be used with cat-2 codes');
+      end;
+      if (modifier.code = '63') then
+      begin
+        if not codeInSet(exp.focus.code, '20100', '69990') and not StringArrayExists(['92920', '92928', '92953', '92960', '92986', '92987', '92990', '92997', '92998', '93312', '93313', '93314', '93315', '93316', '93317', '93318', '93452', '93505', '93563', '93564', '93568', '93569', '93573', '93574', '93575', '93580', '93581', '93582', '93590', '93591', '93592', '93593', '93594', '93595', '93596', '93597', '93598', '93615', '93616'],
+          exp.focus.code) then
+            list.add('The modifier '+modifier.code+' cannot be used with the code '+exp.focus.code);
+      end;
+      if (modifier.code = '92') then
+      begin
+        if not codeInSet(exp.focus.code, '86701' ,'86703') and (exp.focus.code <> '87389') then
+            list.add('The modifier '+modifier.code+' cannot be used with the code '+exp.focus.code);
+      end;
+      if (modifier.code = '95') then
+      begin
+        if not exp.focus.hasProperty('telemedicine', 'true') then
+            list.add('The modifier '+modifier.code+' cannot be used with the code '+exp.focus.code+' as it is not designated for telemedicine');
+      end;
+      // 76 | 77: not to an E/M service
+    end;
+    checkMutuallyExclusive(list, exp, ['25', '57', '59']);
+    checkMutuallyExclusive(list, exp, ['52', '53', '73', '74']);
+    checkMutuallyExclusive(list, exp, ['76', '77', '78', '79']);
+    checkMutuallyExclusive(list, exp, ['93', '95']);
+    result := '';
+    for s in list do
+     CommaAdd(result, s);
+  finally
+    list.free;
+  end;
+end;
+
 function TCPTServices.parse(code: String; var msg: String): TCPTExpression;
 var
   parts : TArray<String>;
@@ -445,7 +543,11 @@ begin
           else
             exp.modifiers.add(c.link);
         end;
-        result := exp.link;
+        msg := validateExpression(exp);
+        if (msg <> '') then
+          result := nil
+        else
+          result := exp.link;
       finally
         exp.free;
       end;
@@ -548,7 +650,9 @@ end;
 function TCPTServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
   if code.Contains(':') then
-    result := parse(code, message)
+  begin
+    result := parse(code, message);
+  end
   else
   begin
     result := FMap[code].link;
@@ -629,7 +733,9 @@ var
   e : TCPTExpression;
   c : TCPTConcept;
 begin
-  if (context is TCPTExpression) then
+  if (context = nil) then
+    result := ''
+  else if (context is TCPTExpression) then
   begin
     e := (context as TCPTExpression);
     result := '';

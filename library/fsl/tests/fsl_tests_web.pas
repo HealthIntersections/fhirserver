@@ -35,11 +35,10 @@ interface
 
 uses
   Sysutils,
-  fsl_testing,
   IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer, IdSSLOpenSSL, IdHTTP, IdTcpClient,
   IdLogDebug, IdServerInterceptLogFile,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
-  fsl_json, fsl_utilities,
+  fsl_base, fsl_testing, fsl_json, fsl_utilities,
   fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto, fsl_zulip;
 
 const
@@ -285,6 +284,8 @@ var
   s : String;
   jwt : TJWT;
 begin
+  raise EFslException.create('fix me');
+
   jwk := TJWK.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
   try
     // this test is from the spec

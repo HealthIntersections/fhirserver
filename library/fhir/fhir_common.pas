@@ -750,6 +750,7 @@ type
     function getDescription: String; virtual; abstract;
     function getDate: TFslDateTime; virtual; abstract;
     function getPublisher: String; virtual; abstract;
+    function getExperimental : boolean; virtual; abstract;
     procedure setPublisher(Value: String); virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
@@ -758,6 +759,7 @@ type
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
+    procedure setExperimental(value : boolean); virtual; abstract;
   public
     function link : TFHIRMetadataResourceW; overload;
 
@@ -770,6 +772,7 @@ type
     property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext;
     property publisher : String read GetPublisher write SetPublisher;
+    property experimental : boolean read getExperimental write setExperimental;
   end;
 
   TFslMetadataResourceList = class (TFslList<TFHIRMetadataResourceW>)

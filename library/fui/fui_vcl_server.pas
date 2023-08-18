@@ -286,7 +286,7 @@ begin
   else if FCapabilityStatement.hasFormat('xml') then
     cbxFormat.ItemIndex := 1
   else
-    ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
+    ShowMessage('This end point doens''t have any compatible formats in its conformance statement');
 end;
 
 procedure TEditRegisteredServerForm.Button4Click(Sender: TObject);

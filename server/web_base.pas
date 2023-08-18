@@ -46,7 +46,7 @@ Const
   OWIN_TOKEN_PATH = 'oauth/token';
   PLAIN_KEEP_ALIVE = false;
   SECURE_KEEP_ALIVE = false;
-  DEF_SERVER_CONN_LIMIT = 15;
+  DEF_SERVER_CONN_LIMIT = 30;
 
 type
   TFHIRWebServerStats = class (TFslObject)

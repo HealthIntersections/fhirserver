@@ -70,7 +70,7 @@ Const
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
-  LOAD_PERIOD = DATETIME_MINUTE_ONE * 30;
+  LOAD_PERIOD = 0; // never unload for now... DATETIME_MINUTE_ONE * 30;
 
 var
   SNOMED_DATE_FORMAT : TFormatSettings;
@@ -1466,7 +1466,7 @@ begin
   if not FileExists(FSourceFile) then
     raise ETerminologySetup.create('The SNOMED CT Source File '+sFilename+' does not exist');
 
-  if immediate then
+  if immediate or (LOAD_PERIOD = 0) then
     LoadFromSource
   else
     InitialLoad;
@@ -4351,7 +4351,7 @@ procedure TSnomedServices.checkUnloadMe;
 begin
   FLock.Lock;
   try
-    if (FLoaded > 0) and (FLastUse < now - LOAD_PERIOD) then
+    if (FLoaded > 0) and (LOAD_PERIOD > 0) and (FLastUse < now - LOAD_PERIOD) then
       UnloadMe;
   finally
     FLock.Unlock;
@@ -5145,7 +5145,7 @@ end;
 
 procedure TSnomedProvider.checkReady;
 begin
-  // FSct.checkLoaded;
+  FSct.checkLoaded;
 end;
 
 function TSnomedProvider.Code(context: TCodeSystemProviderContext): string;

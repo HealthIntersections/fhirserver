@@ -235,7 +235,7 @@ type
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
-    procedure getStatus(out status: TPublicationStatus; out standardsStatus: String); override;
+    procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); override;
 
   end;
 
@@ -431,10 +431,11 @@ begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'child:exists'));
 end;
 
-procedure TFhirCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String);
+procedure TFhirCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean);
 begin
   status := FCs.FCodeSystem.status;
-  standardsStatus := FCs.FCodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')
+  standardsStatus := FCs.FCodeSystem.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+  experimental := FCs.CodeSystem.experimental;
 end;
 
 function TFhirCodeSystemProvider.Definition(context: TCodeSystemProviderContext): string;

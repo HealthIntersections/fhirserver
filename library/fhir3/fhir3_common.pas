@@ -664,6 +664,8 @@ type
     procedure setPublisher(Value: String); override;
     function source : String; override;
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFhirCodeSystemConceptProperty3 }
@@ -751,6 +753,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
 
     function valueSet : String; override;
     function supplements : String; override;
@@ -900,6 +904,8 @@ type
     procedure setPublisher(Value: String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRMeta3 }
@@ -1218,6 +1224,8 @@ type
     procedure setPublisher(Value: String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function getUri : String; override;
@@ -1279,6 +1287,8 @@ type
     function listProvisions : TFslList<TFhirConsentProvisionW>; override;
   end;
 
+  { TFHIRTestScript3 }
+
   TFHIRTestScript3 = class (TFHIRTestScriptW)
   private
     function ts : TFHIRTestScript;
@@ -1301,6 +1311,8 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setDescription(Value: String); override;
     function getContext: String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFhirProvenance3 }
@@ -3383,6 +3395,16 @@ begin
     result := TFhirValueSetExpansionContains3.create(cc.link);
 end;
 
+function TFHIRValueSet3.getExperimental: boolean;
+begin
+  result := vs.experimental;
+end;
+
+procedure TFHIRValueSet3.setExperimental(value: boolean);
+begin
+  vs.experimental := value;
+end;
+
 function TFHIRValueSet3.getName: String;
 begin
   result := vs.name;
@@ -4326,6 +4348,16 @@ begin
   cs.publisher := value;
 end;
 
+function TFhirCodeSystem3.getExperimental: boolean;
+begin
+  result := cs.experimental;
+end;
+
+procedure TFhirCodeSystem3.setExperimental(value: boolean);
+begin
+  cs.experimental := value;
+end;
+
 procedure TFhirCodeSystem3.setStatus(Value: TPublicationStatus);
 begin
   cs.status := MAP_TPublicationStatus[Value];
@@ -4779,6 +4811,16 @@ end;
 function TFhirConceptMap3.targetDesc: String;
 begin
   result := cm.targetDesc;
+end;
+
+function TFhirConceptMap3.getExperimental: boolean;
+begin
+  result := cm.experimental;
+end;
+
+procedure TFhirConceptMap3.setExperimental(value: boolean);
+begin
+  cm.experimental := value;
 end;
 
 function TFhirConceptMap3.getURL: String;
@@ -6393,6 +6435,16 @@ begin
   // nothing
 end;
 
+function TFHIRNamingSystem3.getExperimental: boolean;
+begin
+  result := nm.experimental;
+end;
+
+procedure TFHIRNamingSystem3.setExperimental(value: boolean);
+begin
+  nm.experimental := value;
+end;
+
 function TFHIRNamingSystem3.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
   result := TFHIRExtension3.create(extension.link);
@@ -6811,12 +6863,22 @@ begin
   result := '';
 end;
 
-function TFhirTestScript3.getDate: TFslDateTime;
+function TFHIRTestScript3.getExperimental: boolean;
+begin
+  result := ts.experimental;
+end;
+
+procedure TFHIRTestScript3.setExperimental(value: boolean);
+begin
+  ts.experimental := value;
+end;
+
+function TFHIRTestScript3.getDate: TFslDateTime;
 begin
   result := ts.date;
 end;
 
-function TFhirTestScript3.getDescription: String;
+function TFHIRTestScript3.getDescription: String;
 begin
   result := ts.description;
 end;
@@ -6826,37 +6888,37 @@ begin
   result := (resource as TFHIRResource).language;
 end;
 
-function TFhirTestScript3.getName: String;
+function TFHIRTestScript3.getName: String;
 begin
   result := ts.name;
 end;
 
-function TFhirTestScript3.getPublisher: String;
+function TFHIRTestScript3.getPublisher: String;
 begin
   result := ts.publisher;
 end;
 
-function TFhirTestScript3.getStatus: TPublicationStatus;
+function TFHIRTestScript3.getStatus: TPublicationStatus;
 begin
   result := MAP_TPublicationStatusR[ts.Status];
 end;
 
-function TFhirTestScript3.getURL: String;
+function TFHIRTestScript3.getURL: String;
 begin
   result := ts.url;
 end;
 
-function TFhirTestScript3.getVersion: String;
+function TFHIRTestScript3.getVersion: String;
 begin
   result := ts.version;
 end;
 
-procedure TFhirTestScript3.setDate(Value: TFslDateTime);
+procedure TFHIRTestScript3.setDate(Value: TFslDateTime);
 begin
   ts.date := value;
 end;
 
-procedure TFhirTestScript3.setDescription(Value: String);
+procedure TFHIRTestScript3.setDescription(Value: String);
 begin
   ts.description := value;
 end;
@@ -6866,32 +6928,32 @@ begin
   (resource as TFHIRResource).language := value;
 end;
 
-procedure TFhirTestScript3.setName(Value: String);
+procedure TFHIRTestScript3.setName(Value: String);
 begin
   ts.name := value;
 end;
 
-procedure TFhirTestScript3.setPublisher(Value: String);
+procedure TFHIRTestScript3.setPublisher(Value: String);
 begin
   ts.publisher := value;
 end;
 
-procedure TFhirTestScript3.setStatus(Value: TPublicationStatus);
+procedure TFHIRTestScript3.setStatus(Value: TPublicationStatus);
 begin
   ts.Status := MAP_TPublicationStatus[Value];
 end;
 
-procedure TFhirTestScript3.setUrl(Value: String);
+procedure TFHIRTestScript3.setUrl(Value: String);
 begin
   ts.url := value;
 end;
 
-procedure TFhirTestScript3.setVersion(Value: String);
+procedure TFHIRTestScript3.setVersion(Value: String);
 begin
   ts.version := value;
 end;
 
-function TFhirTestScript3.ts : TFhirTestScript;
+function TFHIRTestScript3.ts: TFHIRTestScript;
 begin
   result := (Fres as TFhirTestScript);
 end;

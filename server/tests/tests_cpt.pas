@@ -65,6 +65,9 @@ type
     procedure TestUnModifiedFilter;
     procedure TestModifiedFilter;
     procedure TestKindFilter;
+
+    procedure TestExpression1;  
+    procedure TestExpression2;
   end;
 
 procedure registerTests;
@@ -170,7 +173,7 @@ begin
       c := FCPT.getNextContext(iter);
       try
         s := FCPT.code(c);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['metadata-kinds', 'metadata-designations', '99202', '99203', '25', 'P1'], s));
+        AssertTrue('Unexpected code '+s, StringArrayExists(['metadata-kinds', 'metadata-designations', '99202', '99203', '0001A', '99252', '25', '95', 'P1', '1P', 'F1'], s));
       finally
         c.free;
       end;
@@ -198,12 +201,12 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try               
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['25', 'P1'], s));
+        AssertTrue('Unexpected code '+s, StringArrayExists(['25', '95', 'P1', '1P', 'F1'], s));
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(2, c);
+    AssertEquals(5, c);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertFalse(FCPT.inFilter(filter, ctxt));
@@ -245,12 +248,12 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203'], s));
+        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '0001A', '99252'], s));
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(2, c);
+    AssertEquals(4, c);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -292,12 +295,12 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '25', 'P1'], s));
+        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '0001A', '99252', '25', 'P1', '1P', 'F1', '95'], s));
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(4, c);
+    AssertEquals(9, c);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -378,12 +381,12 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203'], s));
+        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '99252'], s));
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(2, c);
+    AssertEquals(3, c);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -404,6 +407,36 @@ begin
     end;
   finally
     FCPT.Close(filter);
+  end;
+end;
+
+procedure TCPTTests.TestExpression1;
+var
+  ctxt : TCodeSystemProviderContext;
+  msg : String;
+begin
+  ctxt := FCPT.locate('99202:25', nil, msg);
+  try
+    assertTrue(ctxt <> nil);
+    assertTrue(msg = '');
+    assertEquals('', FCPT.Display(ctxt, defLang));
+  finally
+    FCPT.Close(ctxt);
+  end;
+end;
+
+procedure TCPTTests.TestExpression2;
+var
+  ctxt : TCodeSystemProviderContext;
+  msg : String;
+begin
+  ctxt := FCPT.locate('99252:95', nil, msg);
+  try
+    assertTrue(ctxt = nil);
+    assertEquals('The modifier 95 cannot be used with the code 99252 as it is not designated for telemedicine', msg);
+    assertEquals('', FCPT.Display(ctxt, defLang));
+  finally
+    FCPT.Close(ctxt);
   end;
 end;
 

@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,
+  // Windows,
   SysUtils, Classes, Graphics,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream,
   wp_graphics;

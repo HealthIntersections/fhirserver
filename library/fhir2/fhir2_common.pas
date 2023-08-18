@@ -640,6 +640,8 @@ type
     procedure setPublisher(Value: String); override;
     function valueSet : String; override;
     function supplements : String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRValueSet2 }
@@ -686,6 +688,8 @@ type
     procedure setPublisher(Value: String); override;
     function source : String; override;
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRLookupOpRequest2 }
@@ -805,6 +809,8 @@ type
     procedure setPublisher(Value: String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRMeta2 }
@@ -1101,6 +1107,8 @@ type
     procedure setPublisher(Value: String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   public
     function GetLanguage: String; override;
     procedure SetLanguage(const Value: String); override;
@@ -1161,6 +1169,8 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setDescription(Value: String); override;
     function getContext: String; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFhirProvenance2 }
@@ -2956,6 +2966,16 @@ begin
     result := TFhirValueSetExpansionContains2.create(cc.link);
 end;
 
+function TFHIRValueSet2.getExperimental: boolean;
+begin
+  result := vs.experimental;
+end;
+
+procedure TFHIRValueSet2.setExperimental(value: boolean);
+begin
+  vs.experimental := value;
+end;
+
 function TFHIRValueSet2.getName: String;
 begin
   result := vs.name;
@@ -3823,6 +3843,16 @@ begin
   result := '';
 end;
 
+function TFhirCodeSystem2.getExperimental: boolean;
+begin
+  result := vs.experimental;
+end;
+
+procedure TFhirCodeSystem2.setExperimental(value: boolean);
+begin
+  vs.experimental := true;
+end;
+
 function TFhirCodeSystem2.getURL: String;
 begin
   result := cs.system;
@@ -4149,6 +4179,16 @@ end;
 function TFhirConceptMap2.targetDesc: String;
 begin
   result := cm.targetDesc;
+end;
+
+function TFhirConceptMap2.getExperimental: boolean;
+begin
+  result := cm.experimental;
+end;
+
+procedure TFhirConceptMap2.setExperimental(value: boolean);
+begin
+  cm.experimental := value;
 end;
 
 function TFhirConceptMap2.getURL: String;
@@ -5675,6 +5715,15 @@ begin
   // nothing
 end;
 
+function TFHIRNamingSystem2.getExperimental: boolean;
+begin
+  result := false;
+end;
+
+procedure TFHIRNamingSystem2.setExperimental(value: boolean);
+begin
+end;
+
 { TFhirPatient2 }
 
 function TFhirPatient2.pat: TFHIRPatient;
@@ -6033,6 +6082,16 @@ end;
 function TFHIRTestScript2.getContext: String;
 begin
   result := '';
+end;
+
+function TFHIRTestScript2.getExperimental: boolean;
+begin
+  result := ts.experimental;
+end;
+
+procedure TFHIRTestScript2.setExperimental(value: boolean);
+begin
+  ts.experimental := value;
 end;
 
 function TFHIRTestScript2.getDate: TFslDateTime;

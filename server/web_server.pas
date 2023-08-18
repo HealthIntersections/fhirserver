@@ -1397,7 +1397,7 @@ end;
 
 procedure TFHIRHTTPServer.DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler);
 begin
-  logging.log('Max Connections Exceeeded');
+  logging.log('Max Connections Exceeded');
 end;
 
 End.

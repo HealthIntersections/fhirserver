@@ -56,7 +56,7 @@ type
     procedure loadPropertiesFile(filename : String);
 
     function translate(id, lang : String; const args : TStringArray) :  String;
-    function translatePlural(i : integer; id, lang : String; const args : TStringArray) :  String;
+    function translatePlural(count : integer; id, lang : String; const args : TStringArray) :  String;
   end;
 
 implementation
@@ -136,9 +136,28 @@ begin
   end;
 end;
 
-function TI18nSupport.translatePlural(i: integer; id, lang: String; const args: TStringArray): String;
+function TI18nSupport.translatePlural(count: integer; id, lang: String; const args: TStringArray): String;
+var
+  fmt : String;
+  i : integer;
 begin
+  if (count = 1) then
+    id := id + '_one'
+  else
+    id := id + '_other';
 
+  fmt := chooseForLang(lang)[id];
+  if (fmt = '') then
+    fmt := chooseForLang('')[id];
+  if fmt = '' then
+    result := id
+  else
+  begin
+    fmt := fmt.replace('{0}', inttostr(count));
+    for i := 0 to length(args) - 1 do
+      fmt := fmt.replace('{'+inttostr(i+1)+'}', args[i]);
+    result := fmt.replace('''''', '''');
+  end;
 end;
 
 

@@ -1209,8 +1209,32 @@ begin
       for s in ServerContext.TerminologyServer.listSystems do
         oConf.systemUri(s);
 
-      oConf.addExpansionParameter('cache-id', 'This server supports caching terminology resources between calls. Clients only need to send value sets and codesystems once; there after tehy are automatically in scope for calls with the same cache-id. The cache is retained for 30 min from last call');
+      oConf.addExpansionParameter('cache-id', 'This server supports caching terminology resources between calls. Clients only need to send value sets and codesystems once; there after they are automatically in scope for calls with the same cache-id. The cache is retained for 30 min from last call');
       oConf.addExpansionParameter('tx-resource', 'Additional valuesets needed for evaluation e.g. value sets referred to from the import statement of the value set being expanded');
+      oConf.addExpansionParameter('_incomplete', '');
+      oConf.addExpansionParameter('abstract', '');
+      oConf.addExpansionParameter('activeOnly', '');
+      oConf.addExpansionParameter('check-system-version', '');
+      oConf.addExpansionParameter('count', '');
+      oConf.addExpansionParameter('default-to-latest-version', '');
+      oConf.addExpansionParameter('displayLanguage', '');
+      oConf.addExpansionParameter('excludeNested', '');
+      oConf.addExpansionParameter('excludeNotForUI', '');
+      oConf.addExpansionParameter('excludePostCoordinated', '');
+      oConf.addExpansionParameter('force-system-version', '');
+      oConf.addExpansionParameter('inactive', '');
+      oConf.addExpansionParameter('includeAlternateCodes', '');
+      oConf.addExpansionParameter('includeDefinition', '');
+      oConf.addExpansionParameter('includeDesignations', '');
+      oConf.addExpansionParameter('incomplete-ok', '');
+      oConf.addExpansionParameter('limitedExpansion', '');
+      oConf.addExpansionParameter('mode', '=lenient-display-validation');
+      oConf.addExpansionParameter('no-cache', '');
+      oConf.addExpansionParameter('offset', '');
+      oConf.addExpansionParameter('profile', '');
+      oConf.addExpansionParameter('property', '');
+      oConf.addExpansionParameter('system-version', '');
+      oConf.addExpansionParameter('valueSetMode', '= CHECK_MEMBERSHIP_ONLY | NO_MEMBERSHIP_CHECK');
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
         processGraphQL(request.Parameters['_graphql'], request, response);

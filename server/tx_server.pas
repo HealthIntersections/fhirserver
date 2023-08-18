@@ -110,7 +110,7 @@ Type
 
     function workerGetDefinition(sender : TObject; url, version : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
-    function workerGetExpansion(sender : TObject; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
+    function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
     procedure workerGetVersions(sender : TObject; url : String; list : TStringList);
   protected
     procedure invalidateVS(id : String); override;
@@ -127,11 +127,14 @@ Type
 
     // given a value set, expand it
     function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
     function expandVS(uri, version : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
 
     // these are internal services - not for use outside the terminology server
     function expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
+    function expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
     function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
@@ -376,12 +379,17 @@ begin
 end;
 
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+begin
+  result := expandVS(vs, cacheId, profile, nil, textFilter, limit, count, offset, txResources);
+end;
+
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   ts : TStringList;
 begin
   ts := TStringList.create;
   try
-    result := expandVS(vs, cacheId, profile, textFilter, ts, limit, count, offset, txResources);
+    result := expandVS(vs, cacheId, profile, opContext, textFilter, ts, limit, count, offset, txResources);
   finally
     ts.free;
   end;
@@ -424,6 +432,12 @@ end;
 
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList;
     limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+begin
+  result := expandVS(vs, cacheId, profile, nil, textFilter, dependencies, limit, count, offset, txResources);
+end;
+
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList;
+    limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   s, d, key: String;
   p : TArray<String>;
@@ -450,7 +464,10 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
+    if opContext = nil then
+      exp := TFHIRValueSetExpander.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link)
+    else
+      exp := TFHIRValueSetExpander.create(Factory.link, opContext.copy, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and FCaching and (vs.TagInt = 0) then
@@ -516,7 +533,7 @@ begin
   try
     vs := getValueSetByUrl(uri, version, txResources);
     try
-      result := expandVS(vs, uri, profile, textFilter, ts, limit, count, offset.MaxValue, txResources);
+      result := expandVS(vs, uri, profile, nil, textFilter, ts, limit, count, offset.MaxValue, txResources);
     finally
       vs.Free;
     end;
@@ -526,6 +543,11 @@ begin
 end;
 
 function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+begin
+  result := expandVS(uri, version, profile, nil, textFilter, dependencies, limit, count, offset, txResources);
+end;
+
+function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
 begin
@@ -533,7 +555,7 @@ begin
   try
     if vs = nil then
       raise ETerminologyError.create('Unable to find value set "'+uri+'"', itUnknown);
-    result := expandVS(vs, uri, profile, textFilter, limit, count, offset, txResources);
+    result := expandVS(vs, uri, profile, opContext, textFilter, limit, count, offset, txResources);
   finally
     vs.Free;
   end;
@@ -611,11 +633,11 @@ function TTerminologyServer.MakeChecker(uri, version: string; profile : TFHIRExp
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
+  result := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
   try
     vs := getValueSetByUrl(uri, version);
     try
-      result.prepare(vs, profile);
+      result.prepare(vs, profile, true);
     finally
       vs.Free;
     end;
@@ -635,10 +657,11 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
-      check.prepare(vs, profile);
-      result := check.check('Coding', coding, abstractOk, inferSystem);
+      result := check.prepare(vs, profile, false);
+      if result = nil then
+        result := check.check('Coding', coding, abstractOk, inferSystem);
       summary := check.log;
     finally
       check.Free;
@@ -659,10 +682,11 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
-      check.prepare(vs, profile);
-      result := check.check(issuePath, coded, abstractOk, inferSystem, addCodeable);
+      result := check.prepare(vs, profile, false);
+      if result = nil then
+        result := check.check(issuePath, coded, abstractOk, inferSystem, addCodeable);
       summary := check.log;
     finally
       check.Free;
@@ -677,9 +701,9 @@ begin
   result := getValueSetByUrl(url, version);
 end;
 
-function TTerminologyServer.workerGetExpansion(sender: TObject; url, version, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer): TFHIRValueSetW;
+function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer): TFHIRValueSetW;
 begin
-  result := expandVS(url, version, params, filter, dependencies, limit, 0, 0, additionalResources);
+  result := expandVS(url, version, params, opContext, filter, dependencies, limit, 0, 0, additionalResources);
 end;
 
 function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
@@ -1424,9 +1448,9 @@ begin
         profile := TFHIRExpansionParams.Create;
         try
           try
-            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+            val := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
-              val.prepare(vs, profile);
+              val.prepare(vs, profile, true);
               if val.check('code', URL, version, code, true, false, nil) <> bTrue then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
@@ -1466,9 +1490,9 @@ begin
       profile := TFHIRExpansionParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+          val := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
           try
-            val.prepare(vs, profile);
+            val.prepare(vs, profile, true);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
             conn2.Prepare;
             try

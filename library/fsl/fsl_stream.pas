@@ -5156,8 +5156,6 @@ Begin
     oBuffer.Name := string(ReadString(iNameLen));    // filename (variable size)
     Skip(iExtraLen);                  // extra field (variable size)
 
-    logging.log(oBuffer.Name+': '+inttostr(iSizeComp)+' -> '+inttostr(iSizeUncomp)+' @ '+inttostr(TFslAccessStream(stream).Position));
-
     {Immediately following the local header for a file
       is the compressed or stored data for the file. }
     ReadData(oBuffer.Name, iFlags, iComp, iSizeComp, iSizeUncomp, oBuffer);
@@ -5489,8 +5487,6 @@ Begin
       WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
       WriteWord(0);                     // extra field length - we don't use
       WriteString(oInfo.FName);
-
-      logging.log(oInfo.FName+': '+inttostr(oPart.Capacity)+'-> '+inttostr(oInfo.FCompressedSized)+ ' @ '+inttostr(oInfo.FOffset)+'/'+inttostr(FOffset));
 
       If (oCompressed.Capacity > 0) Then
       Begin

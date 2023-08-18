@@ -1487,7 +1487,7 @@ var
   i : integer;
 begin
   p := x.addTag('p');
-  p.addText('This value set defines it''s own terms in the system '+vs.CodeSystem.System);
+  p.addText('This value set defines its own terms in the system '+vs.CodeSystem.System);
   t := x.addTag('table');
   addTableHeaderRowStandard(t);
   for i := 0 to vs.CodeSystem.ConceptList.Count - 1 do

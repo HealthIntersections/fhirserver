@@ -1321,7 +1321,7 @@ begin
   end
   else if request.Parameters.has('code') and (request.Parameters.has('system') or request.Parameters.has('inferSystem') or request.Parameters.has('implySystem')) then
   begin
-    issuePath := 'code';
+    issuePath := '';
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
     try
@@ -1337,7 +1337,7 @@ begin
   end
   else if not isValueSet and request.Parameters.has('code') and request.Parameters.has('url') then
   begin
-    issuePath := 'code';
+    issuePath := '';
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
     try
@@ -1372,7 +1372,7 @@ begin
       end
       else if isValueSet and (params.has('code') and (params.has('system') or params.bool('inferSystem') or params.bool('implySystem'))) then
       begin
-        issuePath := 'code';
+        issuePath := '';
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
@@ -1391,7 +1391,7 @@ begin
       end
       else if not isValueSet and (params.has('code') and params.has('url')) then
       begin
-        issuePath := 'code';
+        issuePath := '';
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
