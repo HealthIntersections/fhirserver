@@ -238,6 +238,7 @@ Type
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
+    function getCodeStatus(context : TCodeSystemProviderContext) : String; overload; virtual;
     function deprecated(context : TCodeSystemProviderContext) : boolean; overload; virtual;
     function IsInactive(code : String) : boolean; overload; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
@@ -762,6 +763,11 @@ end;
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
+end;
+
+function TCodeSystemProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
+begin
+  result := '';
 end;
 
 function TCodeSystemProvider.deprecated(context: TCodeSystemProviderContext): boolean;

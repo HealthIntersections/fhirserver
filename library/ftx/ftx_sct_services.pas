@@ -761,6 +761,7 @@ operations
     function subsumesTest(codeA, codeB : String) : String; overload; override;
     procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
+    function getCodeStatus(context : TCodeSystemProviderContext) : String; override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -5395,6 +5396,17 @@ begin
     result := false // not sure what to do here?
   else
     result := not FSct.IsActive(TSnomedExpressionContext(context).reference);
+end;
+
+function TSnomedProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
+begin
+  FSct.checkIsLoaded;
+  if TSnomedExpressionContext(context).isComplex then
+    result := ''
+  else if FSct.IsActive(TSnomedExpressionContext(context).reference) then
+    result := 'active'
+  else
+    result := 'inactive';
 end;
 
 function TSnomedProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;

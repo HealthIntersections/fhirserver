@@ -767,6 +767,7 @@ type
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;
+    function codeStatus(c : TFhirCodeSystemConceptW) : String; override;
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; override;
     function isDeprecated(c : TFhirCodeSystemConceptW) : boolean; override;
     function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
@@ -4282,6 +4283,11 @@ end;
 function TFhirCodeSystem3.isInactive(c: TFhirCodeSystemConceptW): boolean;
 begin
   result := cs.isInactive(c.Element as TFhirCodeSystemConcept);
+end;
+
+function TFhirCodeSystem3.codeStatus(c: TFhirCodeSystemConceptW): String;
+begin
+  result := cs.codeStatus(c.Element as TFhirCodeSystemConcept);
 end;
 
 function TFhirCodeSystem3.isAbstract(c: TFhirCodeSystemConceptW): boolean;

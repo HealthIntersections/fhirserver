@@ -718,6 +718,8 @@ type
     procedure deleteProp(code : String);
   end;
 
+  { TFhirCodeSystemHelper }
+
   TFhirCodeSystemHelper = class helper for TFhirCodeSystem
   private
     function locate(parent: TFhirCodeSystemConcept; list: TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirCodeSystemConcept): boolean;
@@ -734,6 +736,7 @@ type
     function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
     function isInactive(concept :  TFhirCodeSystemConcept) : boolean;
     function isDeprecated(concept :  TFhirCodeSystemConcept) : boolean;
+    function codeStatus(concept :  TFhirCodeSystemConcept) : String;
 
     function buildImplicitValueSet : TFhirValueSet;
   end;
@@ -5276,6 +5279,35 @@ begin
       exit(true);
     if (p.code = 'status') and (p.value.ToString = 'deprecated') then
       exit(true);
+  end;
+end;
+
+function TFhirCodeSystemHelper.codeStatus(concept: TFhirCodeSystemConcept): String;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := '';
+  for p in concept.property_List do
+    if (p.code = 'status') then
+      exit(p.value.ToString);
+  for p in concept.property_List do
+  begin
+    if (p.code = 'deprecated') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit('deprecated');
+    if (p.code = 'deprecated') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
+      exit('deprecated');
+    if (p.code = 'deprecationDate') and (p.value is TFhirDateTime) and (TFHIRDateTime(p.value).value.before(TFslDateTime.makeUTC, false)) then
+      exit('deprecated');
+    if (p.code = 'status') and (p.value.ToString = 'deprecated') then
+      exit('deprecated');
+    if (p.code = 'inactive') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit('inactive');
+    if (p.code = 'inactive') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
+      exit('inactive');
+    if (p.code = 'retired') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit('retired');
+    if (p.code = 'retired') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
+      exit('retired');
   end;
 end;
 

@@ -206,6 +206,7 @@ type
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
+    function getCodeStatus(context : TCodeSystemProviderContext) : String; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
@@ -806,6 +807,12 @@ function TFhirCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext)
 begin
   Result := FCs.CodeSystem.isInactive(TFhirCodeSystemProviderContext(context).concept);
 end;
+
+function TFhirCodeSystemProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
+begin
+  Result := FCs.CodeSystem.codeStatus(TFhirCodeSystemProviderContext(context).concept);
+end;
+
 
 function TFhirCodeSystemProvider.conceptHasProperty(
   concept: TFhirCodeSystemConceptW; url: String; value: string): boolean;

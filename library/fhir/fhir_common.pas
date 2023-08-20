@@ -811,6 +811,7 @@ type
 
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
+    function codeStatus(c : TFhirCodeSystemConceptW) : String; virtual; abstract;
     function isDeprecated(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
