@@ -190,6 +190,7 @@ end;
 procedure TFHIRServiceKernel.postStart;
 var
   ep : TFhirServerEndpoint;
+  i : integer;
 begin
   try
     LoadTerminologies;
@@ -198,13 +199,17 @@ begin
 
     recordStats(nil);
     FMaintenanceThread := TFhirServerMaintenanceThread.Create;
-    FMaintenanceThread.defineTask('mem-check', checkMem, 5);
+    FMaintenanceThread.defineTask('mem-check', checkMem, 35);
     FMaintenanceThread.defineTask('stats', recordStats, 60);
+    i := 0;
     for ep in FEndPoints do
-      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 5);
-    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 10);
-    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 10);
-    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 10);
+    begin
+      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, (60+i)*10);
+      i := i + 5;
+    end;
+    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
+    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
+    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
     FMaintenanceThread.Start;
 
 

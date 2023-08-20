@@ -684,7 +684,7 @@ begin
   try
     check := TValueSetChecker.create(Factory.link, TTerminologyOperationContext.create(I18n.link, profile.langCode), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
-      result := check.prepare(vs, profile, false);
+      result := check.prepare(vs, profile, true);
       if result = nil then
         result := check.check(issuePath, coded, abstractOk, inferSystem, addCodeable);
       summary := check.log;

@@ -86,7 +86,7 @@ type
     property status : TFhirServerMaintenanceThreadTaskStatus read FStatus;
     property State : String read FState;
 
-    function describe(pad : integer) : String;
+    function describe(pad : integer; due : boolean) : String;
   end;
 
   TFhirServerMaintenanceThread = class (TFslThread)
@@ -102,7 +102,7 @@ type
     destructor Destroy; override;
 
     procedure defineTask(name : String; event : TFhirServerMaintenanceThreadTaskEvent; frequency : integer);
-    procedure logStatus(workingOnly : boolean);
+    procedure logStatus(workingOnly, due : boolean);
   end;
 
 implementation
@@ -123,7 +123,7 @@ end;
 
 procedure TFhirServerMaintenanceThreadTaskThread.Execute;
 var
-  t : UInt64;
+  t, p : UInt64;
 begin
   SetThreadName(FTask.FName);
   if (FTask.FThread <> self) then
@@ -139,15 +139,18 @@ begin
     t := GetTickCount64;
     try
       FTask.FEvent(callback);
+      p := GetTickCount64 - t;
+      logging.log('Task '+FTask.name+' completed in '+inttostr(p)+'ms');
     except
       on e : Exception do
       begin
+        p := GetTickCount64 - t;
         FTask.FLastError := e.Message;
-        logging.log('Kernel thread exception ('+FTask.name+'): '+e.message);
+        logging.log('Kernel thread exception ('+FTask.name+'): '+e.message+' ('+inttostr(p)+'ms)');
       end;
     end;
   finally
-    FTask.FRunTime := FTask.FRunTime + (GetTickCount64 - t);
+    FTask.FRunTime := FTask.FRunTime + p;
     FTask.FState := '';
     FTask.FStatus := ktsResting;
   end;
@@ -186,18 +189,25 @@ begin
 end;
 
 {$OVERFLOWCHECKS OFF}
-function TFhirServerMaintenanceThreadTask.describe(pad : integer): String;
+function TFhirServerMaintenanceThreadTask.describe(pad : integer; due : boolean): String;
+var
+  sfx : string;
 begin
-  result := StringPadRight(FName, ' ', pad)+' ('+inttostr(FFrequency)+'s): ';
+  result := StringPadRight(FName, ' ', pad)+' ('+inttostr(FFrequency)+'s)';
+  if due then
+    sfx := ' (due in '+inttostr((FLastStarted + (FFrequency * 1000)) - GetTickCount64)+'ms)'
+  else
+    sfx := '';
+
   case FStatus of
-    ktsInitialised: result := result + 'Waiting (due in '+inttostr((FLastStarted + (FFrequency * 1000)) - GetTickCount64)+'ms)';
+    ktsInitialised: result := result + 'Waiting'+sfx;
     ktsPreparing: result := result + 'Preparing';
     ktsInProcess: result := result + 'In Process ('+inttostr(GetTickCount64 - FLastStarted)+'ms): '+FState;
     ktsResting:
       if FLastError = '' then
-        result := result + 'Resting (due in '+inttostr(GetTickCount64 - (FLastStarted + (FFrequency * 1000)))+'ms)';
+        result := result + 'Resting'+sfx;
       else
-        result := result + 'Failed (due again in '+inttostr((FLastStarted + (FFrequency * 1000)) - GetTickCount64)+'ms): '+FLastError;
+        result := result + 'Failed'+sfx+': '+FLastError;
   end;
   if (FCount > 1) then
     if FStatus in [ktsPreparing, ktsInProcess] then
@@ -266,7 +276,7 @@ begin
   {$IFDEF WINDOWS}
   CoInitialize(nil);
   {$ENDIF}
-  logStatus(false);
+  logStatus(false, false);
 end;
 
 procedure TFhirServerMaintenanceThread.Execute;
@@ -304,7 +314,7 @@ begin
       if l < GetTickCount64 then
       begin
         l := GetTickCount64 + 5000;
-        logStatus(true);
+        logStatus(true, false);
       end;
     until b or (s < GetTickCount64);
   except
@@ -316,7 +326,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TFhirServerMaintenanceThread.logStatus(workingOnly : boolean);
+procedure TFhirServerMaintenanceThread.logStatus(workingOnly, due : boolean);
 var
   t : TFhirServerMaintenanceThreadTask;
   pad : integer;
@@ -327,7 +337,7 @@ begin
 
   for t in FTasks do
     if (t.FStatus in [ktsPreparing, ktsInProcess]) or not workingOnly then
-      Logging.log(t.describe(pad));
+      Logging.log(t.describe(pad, due));
 end;
 
 end.

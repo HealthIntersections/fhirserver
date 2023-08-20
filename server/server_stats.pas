@@ -46,15 +46,16 @@ type
 
     FMemory : UInt64;
     FThreads : word;
-    FRequests : Cardinal;
-    FUserCount : Cardinal;
-    FConnCount : Cardinal;
-    FHTTPCacheCount : Cardinal;
+    FRequests : UInt64;
+    FRequestTime : UInt64;
+    FUserCount : UInt64;
+    FConnCount : UInt64;
+    FHTTPCacheCount : UInt64;
     FHTTPCacheSize : UInt64;
-    FClientCacheCount : Cardinal;
-    FClientCacheObjectCount : Cardinal;
+    FClientCacheCount : UInt64;
+    FClientCacheObjectCount : UInt64;
     FClientCacheSize : UInt64;
-    FServerCacheCount : Cardinal;
+    FServerCacheCount : UInt64;
     FServerCacheSize : UInt64;
     FSnomedsLoaded : byte;
 
@@ -67,21 +68,22 @@ type
     property Magic : integer read FMagic write FMagic;
     property Memory : UInt64 read FMemory write FMemory;
     property Threads : word read FThreads write FThreads;
-    property Requests : Cardinal read FRequests write FRequests;
-    property UserCount : Cardinal read FUserCount write FUserCount;
-    property ConnCount : Cardinal read FConnCount write FConnCount;
-    property HTTPCacheCount : Cardinal read FHTTPCacheCount write FHTTPCacheCount;
+    property Requests : UInt64 read FRequests write FRequests;
+    property RequestTime : UInt64 read FRequestTime write FRequestTime;
+    property UserCount : UInt64 read FUserCount write FUserCount;
+    property ConnCount : UInt64 read FConnCount write FConnCount;
+    property HTTPCacheCount : UInt64 read FHTTPCacheCount write FHTTPCacheCount;
     property HTTPCacheSize : UInt64 read FHTTPCacheSize write FHTTPCacheSize;
-    property ClientCacheCount : Cardinal read FClientCacheCount write FClientCacheCount;
-    property ClientCacheObjectCount : Cardinal read FClientCacheObjectCount write FClientCacheObjectCount;
+    property ClientCacheCount : UInt64 read FClientCacheCount write FClientCacheCount;
+    property ClientCacheObjectCount : UInt64 read FClientCacheObjectCount write FClientCacheObjectCount;
     property ClientCacheSize : UInt64 read FClientCacheSize write FClientCacheSize;
-    property ServerCacheCount : Cardinal read FServerCacheCount write FServerCacheCount;
+    property ServerCacheCount : UInt64 read FServerCacheCount write FServerCacheCount;
     property ServerCacheSize : UInt64 read FServerCacheSize write FServerCacheSize;
     property SnomedsLoaded : byte read FSnomedsLoaded write FSnomedsLoaded;
 
     procedure clear;
-    function count(n : String) : cardinal;
-    procedure countEP(n : String; c : cardinal);
+    function count(n : String) : UInt64;
+    procedure countEP(n : String; c : UInt64);
   end;
 
   { TStatusRecords }
@@ -89,6 +91,7 @@ type
   TStatusRecords = class (TFslStringList)
   private
     FLastCount : integer;
+    FLastTime : UInt64;
     FEndPointNames : TStringList;
   public
     constructor create;
@@ -127,6 +130,7 @@ begin
   Memory := 0;
   Threads := 0;
   Requests := 0;
+  RequestTime := 0;
   UserCount := 0;
   ConnCount := 0;
   HTTPCacheCount := 0;
@@ -139,21 +143,21 @@ begin
   SnomedsLoaded := 0;
 end;
 
-function TStatusRecord.count(n: String): cardinal;
+function TStatusRecord.count(n: String): UInt64;
 var
   i : integer;
-  c : cardinal;
+  c : UInt64;
 begin
   result := 0;
   for i := 0 to FEndpoints.count - 1 do
     if FEndpoints[i] = n then
     begin
-      c := cardinal(FEndpoints.Objects[i]);
+      c := UInt64(FEndpoints.Objects[i]);
       exit(c);
     end;
 end;
 
-procedure TStatusRecord.countEP(n: String; c: cardinal);
+procedure TStatusRecord.countEP(n: String; c: UInt64);
 var
   i : integer;
 begin
@@ -163,7 +167,7 @@ begin
     begin
       if FEndpoints[i] = n then
       begin
-        FEndpoints.Objects[i] := TObject(cardinal(FEndpoints.Objects[i]) + c);
+        FEndpoints.Objects[i] := TObject(UInt64(FEndpoints.Objects[i]) + c);
         exit;
       end;
     end;
@@ -192,8 +196,13 @@ end;
 
 procedure TStatusRecords.addToList(status: TStatusRecord);
 var
-  s, n : String;
+  s, n, avg : String;
 begin
+  if (status.RequestTime = 0) or (status.Requests = 0) then
+    avg := '0'
+  else
+    avg := inttostr(trunc((status.RequestTime - FLastTime) / status.Requests));
+
   s :=
     inttostr(count)+#9+
     FormatDateTime('', now)+#9+
@@ -210,11 +219,13 @@ begin
     inttostr(status.ClientCacheSize)+#9+
     inttostr(status.ServerCacheCount)+#9+
     inttostr(status.ServerCacheSize)+#9+
-    inttostr(status.SnomedsLoaded);
+    inttostr(status.SnomedsLoaded)+#9+
+    avg;
   for n in FEndPointNames do
     s := s + #9 + inttostr(status.count(n));
   add(s);
   FLastCount := status.Requests;
+  FLastTime := status.RequestTime;
 end;
 
 function TStatusRecords.asCSV: String;
@@ -230,7 +241,7 @@ begin
          'User Count'+#9+
          'ConnCount'+#9+'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
          'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
-         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded';
+         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded'+#9+'AverageTAT';
     for n in FEndpointNames do
       s := s + #9 + n;
     b.append(s+#13#10);
@@ -255,7 +266,7 @@ begin
          'User Count'+#9+
          'ConnCount'+#9+'HTTPCacheCount'+#9+'HTTPCacheSize'+#9+
          'ClientCacheCount'+#9+'ClientCacheObjectCount'+#9+'ClientCacheSize'+#9+
-         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded';
+         'TxCacheCount'+#9+'TxCacheSize'+#9+'SnomedsLoaded'+#9+'AverageTAT';
     for n in FEndpointNames do
       s := s + #9 + n;
     b.append(s+'|');
@@ -282,7 +293,7 @@ begin
          'User Count</td><td>'+
          'ConnCount</td><td>HTTPCacheCount</td><td>HTTPCacheSize</td><td>'+
          'ClientCacheCount</td><td>ClientCacheObjectCount</td><td>ClientCacheSize</td><td>'+
-         'ServerCacheCount</td><td>ServerCacheSize</td><td>SnomedsLoaded</td>';
+         'ServerCacheCount</td><td>ServerCacheSize</td><td>SnomedsLoaded</td><td>AverageTAT</td>';
     for n in FEndpointNames do
       s := s + '<td>' + n + '</td>';
     b.append(s+'</tr>'+#13#10);

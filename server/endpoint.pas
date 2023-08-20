@@ -448,8 +448,7 @@ begin
  // nothing
 end;
 
-procedure TFHIRServerEndPoint.internalThread(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TFHIRServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   // nothing
 end;

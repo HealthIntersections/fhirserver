@@ -490,6 +490,7 @@ End;
 procedure TFhirWebServer.recordStats(rec : TStatusRecord);
 begin
   rec.Requests := Common.Stats.TotalCount;
+  rec.RequestTime := Common.Stats.TotalTime;
   rec.ConnCount := FClients.Count;
   FStats.addToList(rec);
 end;

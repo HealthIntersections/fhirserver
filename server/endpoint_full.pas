@@ -716,8 +716,7 @@ begin
   inherited;
 end;
 
-procedure TFullServerEndPoint.internalThread(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TFullServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   try
     if FStopping then exit;

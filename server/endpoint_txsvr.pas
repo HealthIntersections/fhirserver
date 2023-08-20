@@ -1596,10 +1596,10 @@ begin
     FWeb.Common.Google.commit;
     callback(self, 'Checking Async Tasks', 25);
     FWeb.CheckAsyncTasks;
-    callback(self, 'Sweeping Client Cache', 50);
-    FServerContext.ClientCacheManager.sweep;
-    callback(self, 'Build Terminology Indexes', 75);
-    FServerContext.TerminologyServer.BuildIndexes(false);
+    //callback(self, 'Sweeping Client Cache', 50);
+    //FServerContext.ClientCacheManager.sweep;
+    //callback(self, 'Build Terminology Indexes', 75);
+    //FServerContext.TerminologyServer.BuildIndexes(false);
   except
     on e : exception do
       Logging.log('Error in internal thread for '+Config.name+': '+e.Message);

@@ -244,8 +244,7 @@ begin
   end;
 end;
 
-procedure TPackageServerEndPoint.internalThread(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TPackageServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   // nothing, for now
   // todo: health check on spider

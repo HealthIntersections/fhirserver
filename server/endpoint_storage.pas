@@ -1493,7 +1493,7 @@ Begin
         else if e.IssueType = itNull then
           SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
             itNotSupported)
-          else
+        else
           SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
             e.issueType)
       end;
