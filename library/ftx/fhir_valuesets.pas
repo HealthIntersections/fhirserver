@@ -416,7 +416,7 @@ end;
 
 function TTerminologyOperationContext.deadCheck: boolean;
 begin
-  result := GetTickCount64 > FDeadTime;
+  result := (FDeadTime > 0) and (GetTickCount64 > FDeadTime);
 end;
 
 procedure TTerminologyOperationContext.seeContext(vurl: String);
@@ -852,7 +852,7 @@ begin
           loc := cs.locate(code, nil, msg);
           if loc <> nil then
           begin
-            cs.Close(loc);
+            loc.free;
             if (result = '') then
               result := vsi.systemUri
             else if (result <> vsi.systemUri) then
@@ -1221,7 +1221,7 @@ begin
             if (displays <> nil) then
               listDisplays(displays, cs, ctxt);
           finally
-            cs.Close(ctxt);
+            ctxt.free;;
           end;
         end;
       end;
@@ -1298,7 +1298,7 @@ begin
             end;
             listDisplays(displays, cs, ctxt);
           finally
-            cs.Close(ctxt);
+            ctxt.free;;
           end;
         end;
       end;
@@ -1846,7 +1846,7 @@ begin
                      result.addParamStr('version', prov.version(nil));
                  end;
                finally
-                 prov.Close(ctxt);
+                 ctxt.free;;
                end;
              end;
             finally
@@ -1989,14 +1989,14 @@ Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderConte
 begin
   result := ctxt <> nil;
   if result then
-    cs.Close(ctxt);
+    ctxt.free;;
 end;
 
 Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderFilterContext) : boolean; overload;
 begin
   result := ctxt <> nil;
   if result then
-    cs.Close(ctxt);
+    ctxt.free;;
 end;
 
 function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW): boolean;
@@ -2050,7 +2050,7 @@ begin
         exit;
       end;
     finally
-      cs.Close(loc);
+      loc.free;
     end;
   end;
 
@@ -2088,7 +2088,7 @@ begin
           end;
         end;
       finally
-        cs.close(loc);
+        loc.free;
       end;
     end;
   end;
@@ -2138,7 +2138,7 @@ begin
               end;
             end;
           finally
-            cs.Close(loc);
+            loc.free;
           end;
         end
         else
@@ -2170,7 +2170,7 @@ begin
                 else
                   result := false;
               finally
-                cs.Close(loc);
+                loc.free;
               end;
             end
             else if ('concept' = fc.prop) and (fc.Op = foIsNotA) then
@@ -2208,7 +2208,7 @@ begin
                   end;
                 end;
               finally
-                cs.Close(loc);
+                loc.free;
               end;
             end
             else
@@ -2245,7 +2245,7 @@ begin
                   end;
                 end;
               finally
-                cs.Close(loc);
+                loc.free;
               end;
             end;
             if not result then
@@ -2255,8 +2255,8 @@ begin
         end;
       finally
         for i := 0 to cfl.count - 1 do
-          cs.Close(filters[i]);
-        cs.Close(prep);
+          filters[i].free;
+        prep.free;
       end;
     finally
       cfl.free;
@@ -2293,7 +2293,7 @@ begin
       exit;
     end;
   finally
-    cs.Close(loc);
+    loc.free;
   end;
 end;
 
@@ -2341,9 +2341,7 @@ begin
   table := nil;
   div_ := nil;
   if not FParams.includeDefinition then
-    result.clearDefinition
-  else
-    result.clearDefinitionExtensions([]);
+    result.clearDefinition;
 
   FRequiredSupplements.clear;
   for ext in source.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
@@ -3395,10 +3393,10 @@ begin
                     end;
                   end;
                 finally
-                  cs.Close(ctxt);
+                  ctxt.free;;
                 end;
               finally
-                cs.Close(prep);
+                prep.free;
               end;
             end;
           end;
@@ -3425,7 +3423,7 @@ begin
                   end;
                 end;
               finally
-                cs.Close(cctxt);
+                cctxt.free;
               end;
             end;
           finally
@@ -3438,73 +3436,68 @@ begin
             try
               prep := cs.getPrepContext;
               try
-                try
-                  offset := 0;
-                  if not filter.null then
-                  begin
-                    filters.Insert(0, cs.searchFilter(filter, prep, true)); // this comes first, because it imposes order
-                    inc(offset);
-                  end;
+                offset := 0;
+                if not filter.null then
+                begin
+                  filters.Insert(0, cs.searchFilter(filter, prep, true)); // this comes first, because it imposes order
+                  inc(offset);
+                end;
 
-                  if cs.specialEnumeration <> '' then
-                  begin
-                    filters.Insert(offset, cs.specialFilter(prep, true));
-                    expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                if cs.specialEnumeration <> '' then
+                begin
+                  filters.Insert(offset, cs.specialFilter(prep, true));
+                  expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                  notClosed := true;
+                end;
+                for i := 0 to fcl.count - 1 do
+                begin
+                  fc := fcl[i];
+                  ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
+                  f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                  if f = nil then
+                    raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri(nil), itNotSupported);
+                  filters.Insert(offset, f);
+                  if cs.isNotClosed(filter, f) then
                     notClosed := true;
-                  end;
-                  for i := 0 to fcl.count - 1 do
-                  begin
-                    fc := fcl[i];
-                    ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                    f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
-                    if f = nil then
-                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri(nil), itNotSupported);
-                    filters.Insert(offset, f);
-                    if cs.isNotClosed(filter, f) then
-                      notClosed := true;
-                  end;
+                end;
 
-                  inner := cs.prepare(prep);
-                  count := 0;
-                  While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
-                  begin
-                    deadCheck('processCodes#5');
-                    c := cs.FilterConcept(filters[0]);
-                    try
-                      ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
-                      if ok then
+                inner := cs.prepare(prep);
+                count := 0;
+                While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
+                begin
+                  deadCheck('processCodes#5');
+                  c := cs.FilterConcept(filters[0]);
+                  try
+                    ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
+                    if ok then
+                    begin
+                      inc(count);
+                      if count > FOffset then
                       begin
-                        inc(count);
-                        if count > FOffset then
-                        begin
-                          cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-                          try
-                            if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
+                        cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+                        try
+                          if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
+                          begin
+                            listDisplays(cds, cs, c);
+                            if cs.canParent then
+                              parent := FMap[key(cs.systemUri(c), cs.parent(c))]
+                            else
                             begin
-                              listDisplays(cds, cs, c);
-                              if cs.canParent then
-                                parent := FMap[key(cs.systemUri(c), cs.parent(c))]
-                              else
-                              begin
-                                FCanBeHierarchy := false;
-                                parent := nil;
-                              end;
-                              for code in cs.listCodes(c, FParams.altCodeRules) do
-                                processCode(cs, parent, doDelete, cs.systemUri(nil), cs.version(nil), code, cs.isAbstract(c), cs.IsInactive(c),
-                                  cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
+                              FCanBeHierarchy := false;
+                              parent := nil;
                             end;
-                          finally
-                            cds.free;
+                            for code in cs.listCodes(c, FParams.altCodeRules) do
+                              processCode(cs, parent, doDelete, cs.systemUri(nil), cs.version(nil), code, cs.isAbstract(c), cs.IsInactive(c),
+                                cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
                           end;
+                        finally
+                          cds.free;
                         end;
                       end;
-                    finally
-                      cs.close(c);
                     end;
+                  finally
+                    c.free;
                   end;
-                finally
-                  for f in filters do
-                    cs.Close(f.Link);
                 end;
               finally
                 prep.free;
@@ -3585,7 +3578,7 @@ begin
       iter.Free;
     end;
   finally
-    cs.Close(context);
+    context.free;
   end;
 end;
 

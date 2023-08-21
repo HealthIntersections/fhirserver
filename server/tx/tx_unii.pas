@@ -104,9 +104,6 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -467,21 +464,6 @@ end;
 function TUniiServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TUniiServices.InFilter');
-end;
-
-procedure TUniiServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUniiServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUniiServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // raise ETerminologyTodo.create();
 end;
 
 { TUniiPrep }

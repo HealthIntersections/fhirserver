@@ -190,9 +190,6 @@ type
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -961,21 +958,6 @@ begin
     fc := propFilter as TCPTFilterContext;
     result := not fc.closed;
   end;
-end;
-
-procedure TCPTServices.Close(ctxt : TCodeSystemProviderFilterPreparationContext);
-begin
-  ctxt.free;
-end;
-
-procedure TCPTServices.Close(ctxt : TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TCPTServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
- ctxt.free;
 end;
 
 procedure TCPTServices.defineFeatures(features : TFslList<TFHIRFeature>);

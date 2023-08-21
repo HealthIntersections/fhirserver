@@ -118,9 +118,6 @@ type
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -747,7 +744,7 @@ function TUMLSServices.getIterator(context : TCodeSystemProviderContext) : TCode
 var
   qry : TFDBConnection;
 begin
-  qry := db.GetConnection(dbprefix+'.display');
+  qry := db.GetConnection(dbprefix+'.getIterator');
   try
     result := TCodeSystemIteratorContext.Create(nil, qry.CountSQL('Select count(cui1) from RXNCONSO'));
     qry.Release;
@@ -982,33 +979,6 @@ begin
   raise ETerminologyError.create('Error in internal logic - filter not prepped?', itException);
 end;
 
-procedure TUMLSServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUMLSServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-
-
-procedure TUMLSServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-var
-  filter : TUMLSFilter;
-begin
-  for filter in TUMLSPrep(ctxt).filters do
-  begin
-    if filter.qry <> nil then
-    begin
-      filter.qry.terminate;
-      filter.qry.release;
-      filter.qry := nil;
-    end;
-  end;
-  ctxt.free;
-end;
 
 { TUMLSPrep }
 
@@ -1019,7 +989,18 @@ begin
 end;
 
 destructor TUMLSPrep.Destroy;
+var
+  filter : TUMLSFilter;
 begin
+  for filter in filters do
+  begin
+    if filter.qry <> nil then
+    begin
+      filter.qry.terminate;
+      filter.qry.release;
+      filter.qry := nil;
+    end;
+  end;
   filters.Free;
   inherited;
 end;

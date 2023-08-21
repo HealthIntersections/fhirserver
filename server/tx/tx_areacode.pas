@@ -100,10 +100,6 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
-
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
   end;
 
 implementation
@@ -446,7 +442,7 @@ end;
 
 function TAreaCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -507,7 +503,7 @@ end;
 
 function TAreaCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FCodes[context.current];
+  result := FCodes[context.current].link;
   context.next;
 end;
 
@@ -574,27 +570,12 @@ end;
 
 function TAreaCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TAreaCodeConceptFilter(ctxt).FList[TAreaCodeConceptFilter(ctxt).FCursor];
+  result := TAreaCodeConceptFilter(ctxt).FList[TAreaCodeConceptFilter(ctxt).FCursor].link;
 end;
 
 function TAreaCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TAreaCodeServices.InFilter');
-end;
-
-procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TAreaCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // nothing
 end;
 
 { TAreaCodeConcept }

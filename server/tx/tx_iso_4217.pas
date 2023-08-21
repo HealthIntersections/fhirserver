@@ -103,9 +103,6 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -273,27 +270,12 @@ end;
 
 function TIso4217Services.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TIso4217ConceptFilter(ctxt).FList[TIso4217ConceptFilter(ctxt).FCursor];
+  result := TIso4217ConceptFilter(ctxt).FList[TIso4217ConceptFilter(ctxt).FCursor].link;
 end;
 
 function TIso4217Services.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TIso4217Services.InFilter');
-end;
-
-procedure TIso4217Services.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TIso4217Services.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TIso4217Services.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyTodo.create('TIso4217Services.Close');
 end;
 
 { TIso4217ConceptFilter }

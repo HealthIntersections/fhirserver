@@ -263,9 +263,6 @@ type
     procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -869,21 +866,6 @@ begin
   finally
     meta.free;
   end;
-end;
-
-procedure TNDCServices.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.Free;
-end;
-
-procedure TNDCServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
-end;
-
-procedure TNDCServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  ctxt.Free;
 end;
 
 procedure TNDCServices.loadDict(conn : TFDBConnection; dict : TDictionary<integer, String>; sql : String);

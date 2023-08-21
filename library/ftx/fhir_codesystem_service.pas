@@ -226,8 +226,6 @@ type
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
@@ -604,11 +602,6 @@ begin
     result := TCodeSystemIteratorContext.Create(context.Link, TFhirCodeSystemProviderContext(context).concept.conceptCount + TFhirCodeSystemProviderContext(context).concept.extensionCount('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes'));
 end;
 
-procedure TFhirCodeSystemProvider.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
-end;
-
 function TFhirCodeSystemProvider.Code(context: TCodeSystemProviderContext): string;
 begin
   result := TFhirCodeSystemProviderContext(context).concept.code;
@@ -685,7 +678,7 @@ begin
       end;
 
     finally
-      close(ctxt);
+      ctxt.free;
     End;
     if FCs.CodeSystem.copyright <> '' then
       b.Append(FCs.CodeSystem.copyright+#13#10);
@@ -858,7 +851,7 @@ begin
     else
       result := Definition(ctxt);
   finally
-    Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -873,7 +866,7 @@ begin
     else
       result := Display(ctxt, lang);
   finally
-    Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -1194,11 +1187,6 @@ begin
    result := FCs.CodeSystem.version;
 end;
 
-procedure TFhirCodeSystemProvider.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.Free;
-end;
-
 procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
 var
   i : integer;
@@ -1242,7 +1230,7 @@ begin
         try
           iterateCodes(TFhirCodeSystemProviderContext(ctxt).concept, list, filter, context, true);
         finally
-          Close(ctxt);
+          ctxt.free;
         end;
       finally
         ex.free;
@@ -1366,7 +1354,7 @@ begin
         end;
       end;
     finally
-      Close(code)
+      code.free;
     end;
   end
   else if (op in [foIsNotA]) and (prop = 'concept') then
@@ -1387,7 +1375,7 @@ begin
         end;
       end;
     finally
-      Close(code)
+      code.free;
     end;
   end
   else if (op = foIn) and (prop = 'concept') then
@@ -1406,7 +1394,7 @@ begin
             else
               TFhirCodeSystemProviderFilterContext(result).Add(code.concept.Link, 0);
           finally
-            Close(code)
+            code.free;
           end;
         end;
       finally

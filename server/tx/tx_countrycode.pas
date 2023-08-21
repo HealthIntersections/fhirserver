@@ -99,9 +99,6 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -926,7 +923,7 @@ end;
 
 function TCountryCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -987,7 +984,7 @@ end;
 
 function TCountryCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FCodes[context.current];
+  result := FCodes[context.current].link;
   context.next;
 end;
 
@@ -1042,7 +1039,7 @@ end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -1053,29 +1050,13 @@ end;
 
 function TCountryCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TCountryCodeConceptFilter(ctxt).FList[TCountryCodeConceptFilter(ctxt).FCursor];
+  result := TCountryCodeConceptFilter(ctxt).FList[TCountryCodeConceptFilter(ctxt).FCursor].link;
 end;
 
 function TCountryCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TCountryCodeServices.InFilter');
 end;
-
-procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TCountryCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // nothing
-end;
-
 
 { TCountryCodeConcept }
 

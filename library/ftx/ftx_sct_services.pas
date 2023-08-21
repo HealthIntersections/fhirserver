@@ -766,9 +766,6 @@ operations
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-
     property Services : TSnomedServices read FSct;
     procedure checkReady; override;
   end;
@@ -5139,11 +5136,6 @@ begin
   result := TCodeSystemIteratorContext.Create(context.Link, ndx);
 end;
 
-procedure TSnomedProvider.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
-end;
-
 procedure TSnomedProvider.checkReady;
 begin
   FSct.checkLoaded;
@@ -5379,7 +5371,7 @@ begin
     else
       result := Display(ctxt, lang);
   finally
-    Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -5454,11 +5446,6 @@ end;
 function TSnomedProvider.version(context: TCodeSystemProviderContext): String;
 begin
   result := FSct.FVersionUri;
-end;
-
-procedure TSnomedProvider.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  TSnomedFilterContext(ctxt).free;
 end;
 
 function TSnomedProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;

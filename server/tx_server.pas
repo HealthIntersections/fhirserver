@@ -320,7 +320,7 @@ begin
         resp.display := provider.Display(ctxt, lang);
         provider.extendLookup(Factory, ctxt, lang, props, resp);
       finally
-        provider.Close(ctxt);
+        ctxt.free;
       end;
     finally
       provider.Free;
@@ -771,7 +771,7 @@ begin
             result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(lct, THTTPLanguages.create(''))),
             'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, THTTPLanguages.Create(''))+'"');
         finally
-          cp.Close(lct);
+          lct.free;
         end;
       finally
         cp.Free;
@@ -1112,7 +1112,7 @@ begin
       try
         result := lct <> nil;
       finally
-        cp.Close(lct);
+        lct.free;
       end;
     finally
       cp.Free;

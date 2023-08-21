@@ -275,10 +275,6 @@ Type
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); virtual;
     procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); virtual;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
-    procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
-
     procedure RecordUse(count : integer = 1);
     procedure checkReady; virtual;
     function defToThisVersion(specifiedVersion : String) : boolean; virtual;
@@ -292,6 +288,7 @@ implementation
 constructor TAlternateCodeOptions.Create;
 begin
   inherited Create;
+  FAll := false;
   FUses := TStringList.create;
 end;
 
@@ -655,11 +652,6 @@ end;
 
 { TCodeSystemProvider }
 
-procedure TCodeSystemProvider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // do nothing
-end;
-
 constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions);
 begin
   inherited create;
@@ -686,8 +678,7 @@ begin
   try
     result := ctxt <> nil;
   finally
-    if result then
-      Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -731,7 +722,7 @@ begin
   try
     result := IsInactive(ctxt);
   finally
-    Close(ctxt);
+    ctxt.free;
   end;
 end;
 

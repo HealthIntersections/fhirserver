@@ -113,7 +113,7 @@ begin
     assertTrue(ctxt <> nil);
     assertEquals('Office or other outpatient visit for the evaluation and management of a new patient, which requires a medically appropriate history and/or examination and straightforward medical decision making. When using time for code selection, 15-29 minutes of total time is spent on the date of the encounter.', FCPT.Display(ctxt, defLang));
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -128,7 +128,7 @@ begin
     assertNull(ctxt);
     assertTrue(msg <> '');
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -142,7 +142,7 @@ begin
     assertTrue(ctxt <> nil);
     assertEquals('', FCPT.Display(ctxt, defLang));
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -156,7 +156,7 @@ begin
     assertNull(ctxt);
     assertTrue(msg <> '');
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -226,7 +226,7 @@ begin
       ctxt.free;
     end;
   finally
-    FCPT.Close(filter);
+    filter.free;
   end;
 end;
 
@@ -273,7 +273,7 @@ begin
       ctxt.free;
     end;
   finally
-    FCPT.Close(filter);
+    filter.free;
   end;
 end;
 
@@ -320,7 +320,7 @@ begin
       ctxt.free;
     end;
   finally
-    FCPT.Close(filter);
+    filter.free;
   end;
 end;
 
@@ -358,7 +358,7 @@ begin
       ctxt.free;
     end;
   finally
-    FCPT.Close(filter);
+    filter.free;
   end;
 end;
 
@@ -406,7 +406,7 @@ begin
       ctxt.free;
     end;
   finally
-    FCPT.Close(filter);
+    filter.free;
   end;
 end;
 
@@ -421,7 +421,7 @@ begin
     assertTrue(msg = '');
     assertEquals('', FCPT.Display(ctxt, defLang));
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -436,7 +436,7 @@ begin
     assertEquals('The modifier 95 cannot be used with the code 99252 as it is not designated for telemedicine', msg);
     assertEquals('', FCPT.Display(ctxt, defLang));
   finally
-    FCPT.Close(ctxt);
+    ctxt.free;
   end;
 end;
 

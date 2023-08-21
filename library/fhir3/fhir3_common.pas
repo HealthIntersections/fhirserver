@@ -3621,10 +3621,13 @@ var
 begin
   p := TFHIRLookupOpRespDesignation.create;
   try
-    p.use := TFHIRCoding.Create;
-    p.use.system := system;
-    p.use.display := display;
-    p.use.code := code;
+    if (system <> '') then
+    begin
+      p.use := TFHIRCoding.Create;
+      p.use.system := system;
+      p.use.display := display;
+      p.use.code := code;
+    end;
     p.language := lang;
     p.value := value;
     (op as TFHIRLookupOpResponse).designationList.Add(p.link as TFHIRLookupOpRespDesignation);

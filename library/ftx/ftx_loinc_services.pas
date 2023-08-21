@@ -454,8 +454,6 @@ Type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
@@ -2127,11 +2125,6 @@ begin
     result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-procedure TLOINCServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
-end;
-
 function TLOINCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   if (context.context = nil) then
@@ -2366,11 +2359,6 @@ function TLOINCServices.InFilter(ctxt: TCodeSystemProviderFilterContext;
   concept: TCodeSystemProviderContext): Boolean;
 begin
   result := TLoincFilterHolder(ctxt).HasChild(lpckCode, integer(concept)-1);
-end;
-
-procedure TLOINCServices.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  TLoincFilterHolder(ctxt).free;
 end;
 
 function TLOINCServices.FilterByPropertyId(prop: TLoincPropertyType;

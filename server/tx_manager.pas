@@ -40,7 +40,7 @@ uses
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
-  tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt,
+  tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt, tx_omop,
   utilities, server_config, kernel_thread, server_stats;
 
 const
@@ -116,7 +116,10 @@ Type
     FProviderClasses : TFslMap<TCodeSystemProviderFactory>;
     FNDFRT: TNDFRTServices;
     FNDC : TNDCServices;
+    FOMOP : TOMOPServices;
+
     procedure SetCPT(AValue: TCPTServices);
+    procedure SetOMOP(AValue: TOMOPServices);
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
@@ -159,6 +162,7 @@ Type
     Property NDFRT : TNDFRTServices read FNDFRT write SetNDFRT;
     Property Unii : TUniiServices read FUnii write SetUnii;
     property CPT : TCPTServices read FCPT write SetCPT;
+    property OMOP : TOMOPServices read FOMOP write SetOMOP;
     Property ACIR : TACIRServices read FACIR write SetACIR;
   end;
 
@@ -309,6 +313,9 @@ Type
 implementation
 
 Type
+
+  { TAllCodeSystemsProviderFilterPreparationContext }
+
   TAllCodeSystemsProviderFilterPreparationContext = class (TCodeSystemProviderFilterPreparationContext)
   private
     rxnorm : TCodeSystemProviderFilterPreparationContext;
@@ -317,6 +324,8 @@ Type
     loinc : TCodeSystemProviderFilterPreparationContext;
     actcode : TCodeSystemProviderFilterPreparationContext;
     unii : TCodeSystemProviderFilterPreparationContext;
+  public
+    destructor Destroy; override;
   end;
 
   TAllCodeSystemsProviderFilter = class (TCodeSystemProviderFilterContext)
@@ -334,14 +343,20 @@ Type
     snomed : TCodeSystemProviderFilterContext;
     loinc : TCodeSystemProviderFilterContext;
     actcode : TCodeSystemProviderFilterContext;
+  public
+    destructor Destroy; override;
   end;
 
   TAllCodeSystemsSource = (acssLoinc, acssSnomed, acssRxNorm, acssActCode, acssUnii);
+
+  { TAllCodeSystemsProviderContext }
 
   TAllCodeSystemsProviderContext = class (TCodeSystemProviderContext)
   private
     source : TAllCodeSystemsSource;
     context : TCodeSystemProviderContext;
+  public
+    destructor Destroy; override;
   end;
 
   TAllCodeSystemsProvider = class (TCodeSystemProvider)
@@ -376,12 +391,39 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
-    procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
+
+{ TAllCodeSystemsProviderContext }
+
+destructor TAllCodeSystemsProviderContext.Destroy;
+begin
+  context.free;
+  inherited Destroy;
+end;
+
+destructor TAllCodeSystemsProviderFilter.Destroy;
+begin
+  rxnorm.free;
+  unii.free;
+  loinc.free;
+  snomed.free;
+  actcode.free;
+  inherited Destroy;
+end;
+
+{ TAllCodeSystemsProviderFilterPreparationContext }
+
+destructor TAllCodeSystemsProviderFilterPreparationContext.Destroy;
+begin
+  rxnorm.free;
+  unii.free;
+  loinc.free;
+  snomed.free;
+  actcode.free;
+  inherited Destroy;
+end;
 
 { TCodeSystemProviderFactory }
 
@@ -713,53 +755,6 @@ begin
   result := true;
 end;
 
-procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderFilterPreparationContext);
-var
-  c : TAllCodeSystemsProviderFilterPreparationContext;
-begin
-  c := ctxt as TAllCodeSystemsProviderFilterPreparationContext;
-  if FStore.RxNorm <> nil then
-    FStore.RxNorm.Close(c.rxnorm);
-  FStore.unii.Close(c.unii);
-  FStore.Loinc.Close(c.loinc);
-  FSnomed.Close(c.snomed);
-  FActCode.Close(c.actcode);
-  ctxt.free;
-end;
-
-procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderFilterContext);
-var
-  c : TAllCodeSystemsProviderFilter;
-begin
-  c := ctxt as TAllCodeSystemsProviderFilter;
-  if (c <> nil) then
-  begin
-    if FStore.RxNorm <> nil then
-      FStore.RxNorm.Close(c.rxnorm);
-    FStore.Unii.Close(c.unii);
-    FStore.Loinc.Close(c.loinc);
-    FSnomed.Close(c.snomed);
-    FActCode.Close(c.actcode);
-  end;
-  ctxt.free;
-end;
-
-procedure TAllCodeSystemsProvider.Close(ctxt : TCodeSystemProviderContext);
-var
-  c : TAllCodeSystemsProviderContext;
-begin
-  c := ctxt as TAllCodeSystemsProviderContext;
-  case c.source of
-    acssLoinc : FStore.Loinc.Close(c.context);
-    acssSnomed : FSnomed.Close(c.context);
-    acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
-    acssUnii : FStore.Unii.Close(c.context);
-    acssActCode : FActCode.Close(c.context);
-  end;
-  ctxt.free;
-end;
-
-
 { TTerminologyServerStore }
 
 procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
@@ -972,6 +967,8 @@ begin
     addCodesystemUri('Unii', 'unii', FCommonTerminologies.FUnii.systemUri(nil), FCommonTerminologies.FUnii.version(nil), FCommonTerminologies.FUnii.TotalCount);
   if FCommonTerminologies.FCPT <> nil then
     addCodesystemUri('CPT', 'cpt', FCommonTerminologies.FCPT.systemUri(nil), FCommonTerminologies.FCPT.version(nil), FCommonTerminologies.FCPT.TotalCount);
+  if FCommonTerminologies.FOMOP <> nil then
+    addCodesystemUri('OMOP', 'omop', FCommonTerminologies.FOMOP.systemUri(nil), FCommonTerminologies.FOMOP.version(nil), FCommonTerminologies.FOMOP.TotalCount);
   if FCommonTerminologies.FACIR <> nil then
     addCodesystemUri('ACIR', 'acir', FCommonTerminologies.FACIR.systemUri(nil), FCommonTerminologies.FACIR.version(nil), FCommonTerminologies.FACIR.TotalCount);
 end;
@@ -1870,7 +1867,7 @@ begin
       try
         loc := prov.locateIsA(code2, code1);
         result := Loc <> nil;
-        prov.Close(loc);
+        loc.free;
       finally
         prov.Free;
       end;
@@ -2020,6 +2017,8 @@ begin
     FUnii.defineFeatures(features);
   if FCPT <> nil then
     FCPT.defineFeatures(features);
+  if FOMOP <> nil then
+    FOMOP.defineFeatures(features);
   if FACIR <> nil then
     FACIR.defineFeatures(features);
   if FNDFRT <> nil then
@@ -2039,6 +2038,7 @@ begin
   FSnomed.free;
   FUnii.Free;
   FCPT.Free;
+  FOMOP.Free;
   FACIR.Free;
   FUcum.free;
   FRxNorm.Free;
@@ -2115,6 +2115,11 @@ begin
     b.append('<li>CPT: not loaded</li>')
   else
     b.append('<li>CPT: '+FCPT.version(nil)+' ('+inttostr(FCPT.UseCount)+' uses)');
+
+  if FOMOP = nil then
+    b.append('<li>OMOP: not loaded</li>')
+  else
+    b.append('<li>OMOP: '+FOMOP.version(nil)+' ('+inttostr(FOMOP.UseCount)+' uses)');
 
   if FACIR = nil then
     b.append('<li>ACIR: not loaded</li>')
@@ -2256,6 +2261,11 @@ begin
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
         CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx))
+      end    
+      else if tx['type'].value = 'omop' then
+      begin
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
@@ -2282,6 +2292,22 @@ begin
   begin
     FProviderClasses.add(FCPT.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FCPT.Link));
     FProviderClasses.add(FCPT.systemUri(nil)+URI_VERSION_BREAK+FCPT.version(nil), TCodeSystemProviderGeneralFactory.create(FCPT.Link));
+  end;
+end;
+
+procedure TCommonTerminologies.SetOMOP(AValue: TOMOPServices);
+begin
+  if FOMOP <> nil then
+  begin
+    FProviderClasses.Remove(FOMOP.systemUri(nil));
+    FProviderClasses.Remove(FOMOP.systemUri(nil)+URI_VERSION_BREAK+FOMOP.version(nil));
+  end;
+  FOMOP.Free;
+  FOMOP := AValue;
+  if FOMOP <> nil then
+  begin
+    FProviderClasses.add(FOMOP.systemUri(nil), TCodeSystemProviderGeneralFactory.create(FOMOP.Link));
+    FProviderClasses.add(FOMOP.systemUri(nil)+URI_VERSION_BREAK+FOMOP.version(nil), TCodeSystemProviderGeneralFactory.create(FOMOP.Link));
   end;
 end;
 

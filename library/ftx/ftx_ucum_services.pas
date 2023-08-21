@@ -249,8 +249,6 @@ Type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -862,11 +860,6 @@ begin
   result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-procedure TUcumServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
-end;
-
 function TUcumServices.Code(context: TCodeSystemProviderContext): string;
 begin
   if context = nil then
@@ -1050,11 +1043,6 @@ function TUcumServices.TotalCount: integer;
 begin
   // this is not true, but this is not too big to expand (the primary purpose of this function)
   result := 0;
-end;
-
-procedure TUcumServices.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.Free;
 end;
 
 function TUcumServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;

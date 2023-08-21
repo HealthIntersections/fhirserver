@@ -107,9 +107,6 @@ type
 
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -361,19 +358,6 @@ end;
 function TACIRServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TACIRServices.InFilter');
-end;
-
-procedure TACIRServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-end;
-
-procedure TACIRServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-end;
-
-procedure TACIRServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyTodo.create('TACIRServices.Close');
 end;
 
 { TACIRPrep }

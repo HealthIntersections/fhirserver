@@ -98,9 +98,6 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -236,7 +233,7 @@ end;
 
 function TUSStateServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -297,7 +294,7 @@ end;
 
 function TUSStateServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FCodes[context.current];
+  result := FCodes[context.current].link;
   context.next;
 end;
 
@@ -341,29 +338,13 @@ end;
 
 function TUSStateServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TUSStateConceptFilter(ctxt).FList[TUSStateConceptFilter(ctxt).FCursor];
+  result := TUSStateConceptFilter(ctxt).FList[TUSStateConceptFilter(ctxt).FCursor].link;
 end;
 
 function TUSStateServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TUSStateServices.InFilter');
 end;
-
-procedure TUSStateServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TUSStateServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUSStateServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyTodo.create('TUSStateServices.Close');
-end;
-
 
 { TUSStateConcept }
 

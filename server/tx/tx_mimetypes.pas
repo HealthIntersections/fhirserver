@@ -84,9 +84,6 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -245,22 +242,6 @@ function TMimeTypeCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyTodo.create('TMimeTypeCodeServices.InFilter');
 end;
-
-procedure TMimeTypeCodeServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TMimeTypeCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TMimeTypeCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  ctxt.free;
-end;
-
 
 { TMTCodeSystemProviderContext }
 
