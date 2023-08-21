@@ -251,7 +251,7 @@ begin
       sct := cfg.section['terminologies'].section[PathTitle(n)];
       sct['type'].value := FFiles[n];
       sct['active'].value := 'true';
-      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt'], FFiles[n]) then
+      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt', 'omop'], FFiles[n]) then
       begin
         sct['db-type'].value := 'sqlite';
         if (FFiles[n] = 'cpt') and (local.ValueExists('cpt', 'local-source')) then
