@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, FastMM4, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
   {$IFDEF FPC} gui_lcl, Interfaces, {$ELSE} gui_vcl, {$ENDIF}
 
@@ -734,12 +734,35 @@ begin
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
+
+var
+  logFilename : String;
+
+procedure logDebuggingInfo;
+var
+  s : String;
+begin
+  s := 'Logging to '+logFilename+'. ';
+  if UnderDebugger then
+    s := s + 'Being debugged. '
+  else
+    s := s + 'No Debugger. ';
+  {$IFDEF WINDOWS}
+  if SuppressLeakDialog then
+    s := s + 'No Leak Dialog'
+  else
+    s := s + 'Leaks displayed at end.';
+  {$ENDIF}
+  Logging.log(s);
+end;
+
 procedure initLogging(cfg : TCustomIniFile);
 begin
   if cfg.valueExists('config', 'log') then
-    Logging.logToFile(cfg.readString('config', 'log', ''))
+    logFilename := cfg.readString('config', 'log', '')
   else
-    Logging.logToFile(filePath(['[tmp]', 'fhirserver.log']));
+    logFilename := filePath(['[tmp]', 'fhirserver.log']);
+  Logging.logToFile(logFilename);
   Logging.FileLog.Policy.FullPolicy := lfpChop;
   Logging.FileLog.Policy.MaximumSize := 1024 * 1024;
 
@@ -754,6 +777,7 @@ begin
 
   logCompileInfo;
   logSystemInfo;
+  logDebuggingInfo;
 
   if ParamCount = 0 then
   begin
@@ -873,6 +897,16 @@ end;
 procedure ExecuteFhirServer;
 {$IFDEF FPC}
 begin
+  if hasCommandLineParam('debugging') then
+    UnderDebugger := true
+  else
+  begin
+    {$IFDEF WINDOWS}
+    noFMMLeakMessageBox := true;
+    {$ENDIF}
+    SuppressLeakDialog := true;
+  end;
+
   if hasCommandLineParam('fake-console') then
   begin
     RequireDerivedFormResource := True;

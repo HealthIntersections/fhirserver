@@ -52,6 +52,11 @@ const
   ID_OF_INTEREST = -1;
 {$ENDIF}
 
+
+var
+  UnderDebugger : boolean = false; // this doesn't automatically detect whether debugging; you have to set this through a command line parameter
+  SuppressLeakDialog : boolean = false;
+
 threadvar
   gExceptionStack : String;
   gException : Exception;
@@ -790,21 +795,26 @@ begin
   begin
     s := 'Memory Leak Report at '+formatDateTime('c', now)+#13#10;
     i := 0;
-    ts := TStringList.create;
+    EnterCriticalSection(GLock);
     try
-      for n in GClassTracker.Keys do
-        ts.add(n);
-      ts.Sort;
-      for n in ts do
-      begin
-        t := GClassTracker[n];
-        i := i + t.count;
-        if t.count > 0 then
-          s := s + n+': '+inttostr(t.count)+' [#='+inttostr(t.serial)+']'+t.objectSummary+#13#10;
-        t.Free;
+      ts := TStringList.create;
+      try
+        for n in GClassTracker.Keys do
+          ts.add(n);
+        ts.Sort;
+        for n in ts do
+        begin
+          t := GClassTracker[n];
+          i := i + t.count;
+          if t.count > 0 then
+            s := s + n+': '+inttostr(t.count)+' [#='+inttostr(t.serial)+']'+t.objectSummary+#13#10;
+          t.Free;
+        end;
+      finally
+        ts.free;
       end;
     finally
-      ts.free;
+      LeaveCriticalSection(GLock);
     end;
     if (GDumpFile <> '') then
     begin
@@ -813,7 +823,7 @@ begin
       writeln(f, s);
       closeFile(f);
     end;
-    if i > 0 then
+    if (i > 0) and not SuppressLeakDialog then
     begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
@@ -834,14 +844,19 @@ var
   t : TClassTrackingType;
 begin
   result := 0;
-  if GClassTracker.TryGetValue(name, t) then
-  begin
-    result := t.count;
-    if (t.count = 0) then
+  EnterCriticalSection(GLock);
+  try
+    if GClassTracker.TryGetValue(name, t) then
     begin
-      assert(t.firstObject = nil);
-      assert(t.lastObject = nil);
+      result := t.count;
+      if (t.count = 0) then
+      begin
+        assert(t.firstObject = nil);
+        assert(t.lastObject = nil);
+      end;
     end;
+  finally
+    LeaveCriticalSection(GLock);
   end;
 end;
 

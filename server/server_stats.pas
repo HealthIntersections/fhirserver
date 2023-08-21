@@ -201,7 +201,7 @@ begin
   if (status.RequestTime = 0) or (status.Requests = 0) then
     avg := '0'
   else
-    avg := inttostr(trunc((status.RequestTime - FLastTime) / status.Requests));
+    avg := inttostr(trunc((status.RequestTime - FLastTime) / status.Requests - FLastCount));
 
   s :=
     inttostr(count)+#9+

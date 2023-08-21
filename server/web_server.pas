@@ -631,6 +631,21 @@ begin
   VPassword := AAuthData;
 end;
 
+function letterForOp(request : TIdHTTPRequestInfo) : String;
+begin
+  case request.CommandType of
+    hcUnknown : result := 'u';
+    hcHEAD : result := 'h';
+    hcGET : result := 'g';
+    hcPOST : result := 'p';
+    hcDELETE : result := 'd';
+    hcPUT : result := 'l';
+    hcTRACE : result := 't';
+    hcOPTION  : result := 'o';
+    hcPATCH : result := 'a';
+  end;
+end;
+
 procedure TFhirWebServer.logOutput(AContext: TIdContext;
   request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: string;
   tt: TTimeTracker; secure: boolean; epn, summ: string);
@@ -668,9 +683,9 @@ begin
     s := s + StringPadLeft(inttostr(FSSLServer.Contexts.count), ' ', 2) + ' ';
 
   if secure then
-    s := s + 's'
+    s := s + letterForOp(request).ToUpper
   else
-    s := s + 'p';
+    s := s + letterForOp(request);
   s := s + mimeType(request.ContentType);
   s := s + mimeType(response.ContentType)+' ';
   s := s + inttostr(response.ResponseNo)+' '+

@@ -55,9 +55,6 @@ Uses
   TZDB,
   fsl_fpc, fsl_base, fsl_regex;
 
-var
-  UnderDebugger : boolean = false; // this doesn't automatically detect whether debugging; you have to set this through a command line parameter
-
 type
   TEqualityTriState = (equalNull, equalFalse, equalTrue);
   TComparisonQuadState = (compNull, compLess, compEqual, compGreater);
