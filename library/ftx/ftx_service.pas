@@ -316,6 +316,7 @@ var
   ext : TFHIRExtensionW;
   c : TFHIRCodingW;
 begin
+  result := false;
   if all then
     result := true
   else
