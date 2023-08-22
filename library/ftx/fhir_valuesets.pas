@@ -2963,7 +2963,9 @@ begin
         dstLang := FParams.Language;
 
         usedDisplay := false;
-        if (FParams.DisplayLanguages.Count > 0) then
+        if (dstLang <> nil) and dstLang.matches(srcLang) and (displays.display <> nil) then
+          tu := nil
+        else if (FParams.DisplayLanguages.Count > 0) then
           tu := displays.findDisplay(FParams.displayLanguages)
         else
           tu := nil;
