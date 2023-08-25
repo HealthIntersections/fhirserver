@@ -1241,6 +1241,8 @@ Begin
         end
         else if request.PostStream <> nil then
         begin
+          if request.PostStream.Size > 10 * 1024 * 1024 then
+            raise ERestfulException.create('TFhirWebServer.HandleRequest', HTTP_ERR_BAD_REQUEST, itTooCostly, 'POST Stream too large (>10MB)', lang);
           oStream := TMemoryStream.Create;
           oStream.CopyFrom(request.PostStream, request.PostStream.Size);
           oStream.Position := 0;
@@ -2219,6 +2221,8 @@ begin
           oComp := FContext.factory.makeComposer(self.Context.ValidatorContext.link, ffJson, lang, OutputStyleNormal);
         ffText:
           oComp := TFHIRTextComposer.Create(self.Context.ValidatorContext.link, OutputStyleNormal, lang);
+      else
+        oComp := FContext.factory.makeComposer(self.Context.ValidatorContext.link, ffJson, lang, OutputStyleNormal);
       end;
       try
         response.contentType := oComp.MimeType;
