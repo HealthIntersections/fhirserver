@@ -840,10 +840,8 @@ begin
   if (c.FList = nil) or (c.current >= c.FList.Count) then
     result := nil
   else
-  begin
     result := c.FList[c.current].link;
-    context.next;
-  end;
+  context.next;
 end;
 
 

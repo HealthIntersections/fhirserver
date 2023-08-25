@@ -949,6 +949,7 @@ type
     function addConcept : TFhirValueSetComposeIncludeConceptW; virtual; abstract;
     function hasFilters : boolean; virtual; abstract;
     function filterCount : integer; virtual; abstract;
+    function conceptCount : integer; virtual; abstract;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; virtual; abstract;
     function addFilter : TFhirValueSetComposeIncludeFilterW; virtual; abstract;
   end;

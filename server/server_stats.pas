@@ -196,12 +196,15 @@ end;
 
 procedure TStatusRecords.addToList(status: TStatusRecord);
 var
+  r, t : integer;
   s, n, avg : String;
 begin
-  if (status.RequestTime = 0) or (status.Requests = 0) then
+  r := (status.Requests - FLastCount);
+  t := status.RequestTime - FLastTime;
+  if (r = 0) then
     avg := '0'
   else
-    avg := inttostr(trunc((status.RequestTime - FLastTime) / (status.Requests - FLastCount)));
+    avg := inttostr(trunc(t / r));
 
   s :=
     inttostr(count)+#9+

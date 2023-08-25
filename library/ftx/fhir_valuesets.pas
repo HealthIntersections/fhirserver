@@ -44,13 +44,6 @@ uses
   fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris, fhir_parser,
   fhir_codesystem_service;
 
-{  SysUtils, Classes, fsl_utilities, fsl_utilities,
-  fsl_utilities,
-  fsl_collections, fsl_base,
-  fhir_objects,  fhir_common, fhir_factory,
-  ftx_service;
-  //, ftx_loinc_services, ftx_sct_services, ftx_ucum_services, FHIR.Tx.Server, FHIR.Tx.Manager;}
-
 const
   UPPER_LIMIT_NO_TEXT = 1000;
   UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
@@ -347,7 +340,6 @@ Type
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
     FCSCounter : TFslMap<TValueSetCounter>;
-
 
     procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; resource : TFHIRMetadataResourceW; source : TFHIRValueSetW); overload;
     procedure checkCanonicalStatus(expansion : TFhirValueSetExpansionW; cs : TCodeSystemProvider; source : TFHIRValueSetW); overload;
@@ -2378,7 +2370,7 @@ begin
   try
     if limit > 0 then
       FLimitCount := limit
-    else if filter.null then
+    else if not filter.null then
       FLimitCount := UPPER_LIMIT_TEXT
     else
       FLimitCount := UPPER_LIMIT_NO_TEXT;
@@ -3238,7 +3230,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display, ov, code : String;
+  s, display, ov, code, vsId : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -3273,6 +3265,10 @@ var
     end;
   end;
 begin
+  vsId := FValueSet.vurl;
+  if (vsId = '') then
+    vsId := '<anon>';
+
   deadCheck('processCodes#1');
   valueSets := TFslList<TFHIRImportedValueSet>.create;
   try
@@ -3285,6 +3281,7 @@ begin
     begin
       for s in cset.valueSets do
       begin
+        //Logging.log('Processing '+vsId+', import value set '+s);
         deadCheck('processCodes#2');
         ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
         try
@@ -3307,10 +3304,12 @@ begin
       try
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
         try
+          //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
           checkSupplements(cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
           for s in cset.valueSets do
           begin
+            //Logging.log(' ...import value set '+s);
             deadCheck('processCodes#3');
             f := nil;
             // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
@@ -3360,7 +3359,8 @@ begin
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete and (FOffset + Fcount = 0) then
                   raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.langCode, [vsSrc.url, '>'+inttostr(FLimitCount)]));
                 while iter.more do
-                begin
+                begin                
+                  deadCheck('processCodes#3a');
                   c := cs.getNextContext(iter);
                   if passesFilters(c, 0) then
                     processCodeAndDescendants(doDelete, cs, c, expansion, valueSets, nil, excludeInactive, vsSrc.url);
@@ -3575,7 +3575,10 @@ begin
     iter := cs.getIterator(context);
     try
       while iter.more do
+      begin
+        deadCheck('processCodeAndDescendants#3');
         processCodeAndDescendants(doDelete, cs, cs.getNextContext(iter), expansion, imports, n, excludeInactive, srcUrl);
+      end;
     finally
       iter.Free;
     end;

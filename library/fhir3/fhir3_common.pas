@@ -616,6 +616,7 @@ type
     function hasFilters : boolean; override;
     function hasValueSets : boolean; override;
     function filterCount : integer; override;
+    function conceptCount : integer; override;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
     function addConcept : TFhirValueSetComposeIncludeConceptW; override;
     function addFilter : TFhirValueSetComposeIncludeFilterW; override;
@@ -3462,6 +3463,11 @@ begin
   result := (Element as TFhirValueSetComposeInclude).filterList.Count;
 end;
 
+function TFhirValueSetComposeInclude3.conceptCount: integer;
+begin
+  result := (Element as TFhirValueSetComposeInclude).conceptList.Count;
+end;
+
 function TFhirValueSetComposeInclude3.filters: TFslList<TFhirValueSetComposeIncludeFilterW>;
 var
   i : TFhirValueSetComposeIncludeFilter;
@@ -4524,10 +4530,23 @@ end;
 
 procedure TFhirValueSetExpansion3.copyParams(source: TFhirValueSetExpansionW);
 var
-  param : TFhirValueSetExpansionParameter;
+  param, t : TFhirValueSetExpansionParameter;
+  found : boolean;
 begin
   for param in (source.Element as TFhirValueSetExpansion).parameterList do
-    (Element as TFhirValueSetExpansion).parameterList.Add(param.Link);
+  begin
+    found := false;
+    for t in (Element as TFhirValueSetExpansion).parameterList do
+    begin
+      if (t.name = param.name) and (t.valueElement.ToString = param.valueElement.ToString) then
+      begin
+        found := true;
+        break;
+      end;
+    end;
+    if not (found) then
+      (Element as TFhirValueSetExpansion).parameterList.Add(param.Link);
+  end;
 end;
 
 function TFhirValueSetExpansion3.exp: TFhirValueSetExpansion;

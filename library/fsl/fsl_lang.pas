@@ -576,6 +576,9 @@ end;
 
 function TIETFLang.matches(other: TIETFLang): boolean;
 begin
+  if other = nil then
+      exit(false);
+
   if FExtension <> '' then
     if FExtension <> other.FExtension then
       exit(false);

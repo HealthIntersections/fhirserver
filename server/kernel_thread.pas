@@ -140,7 +140,7 @@ begin
     try
       FTask.FEvent(callback);
       p := GetTickCount64 - t;
-      logging.log('Task '+FTask.name+' completed in '+inttostr(p)+'ms');
+      //logging.log('Task '+FTask.name+' completed in '+inttostr(p)+'ms');
     except
       on e : Exception do
       begin

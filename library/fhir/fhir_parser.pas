@@ -1285,7 +1285,7 @@ begin
   stream := TBytesStream.create;
   try
     compose(stream, oResource);
-    result := stream.Bytes;
+    result := copy(stream.Bytes, 0, stream.Size);
   finally
     stream.Free;
   end;

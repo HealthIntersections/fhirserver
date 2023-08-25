@@ -870,7 +870,8 @@ end;
 
 function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := nil;
+  raise ETerminologyError.Create('not safe');
+//  result := nil;
 end;
 
 function TUcumServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;

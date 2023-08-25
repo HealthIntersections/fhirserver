@@ -2705,8 +2705,7 @@ begin
   result := TLoincProviderContext.create(ref.kind, ref.index);
 end;
 
-function TLOINCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext
-  ): boolean;
+function TLOINCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
   inc(TLoincFilterHolder(ctxt).FIndex);
   result := TLoincFilterHolder(ctxt).FIndex <= length(TLoincFilterHolder(ctxt).FChildren);

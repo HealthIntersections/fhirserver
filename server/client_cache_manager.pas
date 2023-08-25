@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_threads,
+  fsl_base, fsl_threads, fsl_logging,
   fhir_common,
   server_constants, server_stats;
 
@@ -115,6 +115,7 @@ begin
             FSize := 0
           else
             FSize := FSize - c;
+          //Logging.log('Cache '+FCacheId+': remove '+j.vurl);
           remove.Add(j.link);
         end;
     end;
@@ -123,6 +124,7 @@ begin
     begin
       if (i.url <> '') then
       begin
+        //Logging.log('Cache '+FCacheId+': add '+i.vurl);
         FSize := FSize + i.sizeInBytes(magic);
         FList.Add(i.link);
       end;
